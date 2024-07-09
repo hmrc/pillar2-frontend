@@ -37,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RfmEntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
+  featureAction:                                     FeatureFlagActionFactory,
   rfmIdentify:                                       RfmIdentifierAction,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
@@ -51,10 +52,8 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData) async {
+    implicit request =>
       request.userAnswers
         .get(RfmUkBasedPage)
         .map { ukBased =>
@@ -73,9 +72,6 @@ class RfmEntityTypeController @Inject() (
             .getOrElse(Future.successful(Ok(view(form, mode))))
         }
         .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

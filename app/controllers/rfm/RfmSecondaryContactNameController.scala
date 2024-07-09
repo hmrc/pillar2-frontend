@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RfmSecondaryContactNameController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
+  featureAction:             FeatureFlagActionFactory,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
@@ -49,14 +50,10 @@ class RfmSecondaryContactNameController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData) {
+    implicit request =>
       val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

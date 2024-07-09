@@ -44,7 +44,7 @@ class AuthenticateControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to UnderConstruction page when rfm feature false" in {
+    "must redirect to error page not found when rfm feature false" in {
 
       val application = applicationBuilder(userAnswers = None)
         .configure(
@@ -57,7 +57,7 @@ class AuthenticateControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
 
     }

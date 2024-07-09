@@ -31,6 +31,8 @@ class FeatureFlagActionFactory @Inject() (configuration: Configuration, controll
   def asaAccessAction:        ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("asaAccessEnabled")
   def repaymentsAccessAction: ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("repaymentsAccessEnabled")
 
+  def rfmAccessAction: ActionBuilder[MessagesRequest, AnyContent] = actionStart andThen whenEnabled("rfmAccessEnabled")
+
   private def actionStart: ActionBuilder[MessagesRequest, AnyContent] =
     controllerComponents.messagesActionBuilder.compose(controllerComponents.actionBuilder)
 

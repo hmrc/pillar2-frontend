@@ -34,6 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityCheckController @Inject() (
   sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
   rfmIdentify:              RfmIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
@@ -47,15 +48,11 @@ class SecurityCheckController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form

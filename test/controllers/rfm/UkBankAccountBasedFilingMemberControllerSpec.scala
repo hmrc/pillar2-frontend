@@ -69,7 +69,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           status(result) mustBe OK
         }
       }
-      "redirect to under construction page if rfm functionality is off" in {
+      "redirect to error not found page if rfm functionality is off" in {
         val ua = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
         val application = applicationBuilder(userAnswers = Some(ua))
           .configure("features.rfmAccessEnabled" -> false)
@@ -80,10 +80,11 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           val result  = route(application, request).value
 
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+          redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
         }
       }
     }
+
     "onSubmit" should {
       "return bad request if invalid data is submitted" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))

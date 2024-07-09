@@ -36,6 +36,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class GroupRegistrationDateReportController @Inject() (
   sessionRepository:        SessionRepository,
+  featureAction:            FeatureFlagActionFactory,
   rfmIdentify:              RfmIdentifierAction,
   getSessionData:           SessionDataRetrievalAction,
   requireSessionData:       SessionDataRequiredAction,
@@ -49,15 +50,11 @@ class GroupRegistrationDateReportController @Inject() (
 
   def form: Form[RegistrationDate] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(v => form.fill(RegistrationDate(v))).getOrElse(form)
       Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form

@@ -69,7 +69,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         }
       }
 
-      "redirect to Under Construction page when RFM access is disabled" in {
+      "redirect to error not found page when RFM access is disabled" in {
         val testConfig = Configuration("features.rfmAccessEnabled" -> false)
         val application = applicationBuilder()
           .configure(testConfig)
@@ -79,7 +79,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
         }
       }
     }

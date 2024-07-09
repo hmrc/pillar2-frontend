@@ -17,14 +17,16 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
+import controllers.actions.{FeatureFlagActionFactory, RfmIdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactDetailsRegistrationView
+
 import javax.inject.Inject
 
 class RfmContactDetailsRegistrationController @Inject() (
+  featureAction:            FeatureFlagActionFactory,
   rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmContactDetailsRegistrationView
@@ -32,12 +34,7 @@ class RfmContactDetailsRegistrationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = rfmIdentify { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Ok(view())
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify) { implicit request =>
+    Ok(view())
   }
 }

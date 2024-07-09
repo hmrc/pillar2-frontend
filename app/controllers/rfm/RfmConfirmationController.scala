@@ -17,21 +17,21 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
+import utils.{Pillar2Reference, ViewHelpers}
 import views.html.rfm.RfmConfirmationView
-import utils.ViewHelpers
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class RfmConfirmationController @Inject() (
+  featureAction:            FeatureFlagActionFactory,
   getData:                  DataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
@@ -43,9 +43,8 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
   val dateHelper = new ViewHelpers()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
+    implicit request =>
       val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
       sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
         (for {
@@ -55,9 +54,5 @@ class RfmConfirmationController @Inject() (
                          .orElse(userAnswer.get(PlrReferencePage))
         } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
-
   }
 }

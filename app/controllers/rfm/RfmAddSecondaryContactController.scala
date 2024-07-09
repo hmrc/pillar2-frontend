@@ -33,6 +33,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmAddSecondaryContactController @Inject() (
+  featureAction:             FeatureFlagActionFactory,
   val userAnswersConnectors: UserAnswersConnectors,
   rfmIdentify:               RfmIdentifierAction,
   getData:                   DataRetrievalAction,
@@ -47,9 +48,8 @@ class RfmAddSecondaryContactController @Inject() (
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmPrimaryContactNamePage)
         .map { contactName =>
@@ -57,9 +57,6 @@ class RfmAddSecondaryContactController @Inject() (
           Ok(view(preparedForm, contactName, mode))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

@@ -70,7 +70,7 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to Journey Recovery page when RFM feature is disabled" in {
+    "redirect to not found error page when RFM feature is disabled" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure("features.rfmAccessEnabled" -> false)
         .build()
@@ -82,7 +82,7 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/under-construction")
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
     }
 

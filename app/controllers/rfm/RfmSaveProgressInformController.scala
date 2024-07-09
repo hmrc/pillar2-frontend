@@ -18,13 +18,14 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, RfmIdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressInformController @Inject() (
+  featureAction:            FeatureFlagActionFactory,
   rfmIdentify:              RfmIdentifierAction,
   getData:                  DataRetrievalAction,
   requireData:              DataRequiredAction,
@@ -34,12 +35,7 @@ class RfmSaveProgressInformController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
-      Ok(view())
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData) { implicit request =>
+    Ok(view())
   }
 }

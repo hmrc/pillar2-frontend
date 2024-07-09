@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{RfmIdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.{FeatureFlagActionFactory, RfmIdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.{InternalIssueError, Mode}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
@@ -36,6 +36,7 @@ import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
+  featureAction:             FeatureFlagActionFactory,
   rfmIdentify:               RfmIdentifierAction,
   val userAnswersConnectors: UserAnswersConnectors,
   getSessionData:            SessionDataRetrievalAction,
@@ -47,9 +48,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
           RfmSecurityCheckSummary.row(request.userAnswers),
@@ -61,10 +61,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       } else {
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
 
   def onSubmit: Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {

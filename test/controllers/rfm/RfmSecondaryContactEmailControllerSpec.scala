@@ -105,7 +105,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under-construction page when rfm feature is set to false" in {
+    "must redirect to the error not found page when rfm feature is set to false" in {
 
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -123,7 +123,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
     }
 

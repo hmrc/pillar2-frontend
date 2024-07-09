@@ -38,7 +38,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
   "RfmEntityTypeController Controller" when {
 
-    "must return Under Construction  view when rfm feature false" in {
+    "must return error not found page when rfm feature false" in {
 
       val application = applicationBuilder(userAnswers = None)
         .configure(
@@ -51,7 +51,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
       }
 
     }

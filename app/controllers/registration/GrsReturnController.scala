@@ -18,7 +18,7 @@ package controllers.registration
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction, RfmIdentifierAction}
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -40,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class GrsReturnController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
+  featureAction:                                     FeatureFlagActionFactory,
   identify:                                          IdentifierAction,
   rfmIdentify:                                       RfmIdentifierAction,
   getData:                                           DataRetrievalAction,
@@ -229,9 +230,8 @@ class GrsReturnController @Inject() (
 
   }
 
-  def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def continueRfm(journeyId: String): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers
         .get(RfmEntityTypePage)
         .map {
@@ -327,11 +327,7 @@ class GrsReturnController @Inject() (
               }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
     }
-
-  }
 
   private def handleGrsAndBvResult(
     identifiersMatch: Boolean,

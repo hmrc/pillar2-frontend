@@ -17,16 +17,18 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
+import controllers.actions.{FeatureFlagActionFactory, RfmIdentifierAction}
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CheckNewFilingMemberView
+
 import javax.inject.Inject
 import scala.concurrent.Future
 
 class CheckNewFilingMemberController @Inject() (
+  featureAction:            FeatureFlagActionFactory,
   rfmIdentify:              RfmIdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     CheckNewFilingMemberView
@@ -34,15 +36,11 @@ class CheckNewFilingMemberController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = rfmIdentify { implicit request =>
-    if (appConfig.rfmAccessEnabled) {
-      Ok(view(mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify) { implicit request =>
+    Ok(view(mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = rfmIdentify.async {
+  def onSubmit(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen rfmIdentify).async {
     Future.successful(Redirect(controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(mode)))
   }
 }

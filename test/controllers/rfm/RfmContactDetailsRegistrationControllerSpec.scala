@@ -21,34 +21,35 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmContactDetailsRegistrationView
 
-class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
+class RfmContactDetailsRegistrationControllerSpec extends SpecBase {
 
-  "Rfm Contact Details Registration Controller" when {
+  "RfmContactDetailsRegistration Controller" must {
 
-    "return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
+    "must return OK and the correct view for a GET" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure(
+          Seq(
+            "features.rfmAccessEnabled" -> true
+          ): _*
+        )
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RfmContactDetailsRegistrationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[RfmContactDetailsRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
-          request,
-          appConfig(application),
-          messages(application)
-        ).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "must redirect to error not found page if RFM access is disabled" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
+    "must redirect to correct view when rfm feature false" in {
+
+      val application = applicationBuilder(userAnswers = None)
         .configure(
           Seq(
             "features.rfmAccessEnabled" -> false
@@ -57,12 +58,12 @@ class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RfmContactDetailsRegistrationController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
     }
   }

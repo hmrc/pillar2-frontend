@@ -81,7 +81,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to UnderConstructionController page if RFM access is disabled" in {
+    "redirect to error page not found if RFM access is disabled" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
@@ -98,7 +98,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
 
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
     }
 

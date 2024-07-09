@@ -17,6 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
+import controllers.actions.FeatureFlagActionFactory
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,19 +27,15 @@ import scala.concurrent.Future
 import views.html.rfm.StartPageView
 
 class StartPageController @Inject() (
+  featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageView
 )(implicit val appConfig:   FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Future.successful(Ok(view()))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
+  def onPageLoad: Action[AnyContent] = featureAction.rfmAccessAction.async { implicit request =>
+    Future.successful(Ok(view()))
   }
 
 }

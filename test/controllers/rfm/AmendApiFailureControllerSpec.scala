@@ -47,7 +47,7 @@ class AmendApiFailureControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to UnderConstruction page when rfm feature false" in {
+    "must redirect to error page not found when rfm feature false" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(
@@ -63,7 +63,7 @@ class AmendApiFailureControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
 
     }

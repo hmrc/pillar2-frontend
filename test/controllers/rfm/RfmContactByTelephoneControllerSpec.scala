@@ -90,7 +90,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual "/report-pillar2-top-up-taxes/error/page-not-found"
       }
     }
     "return OK and the correct view for a GET if previous data is found" in {
