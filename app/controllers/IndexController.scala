@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import pages.AgentClientPillar2ReferencePage
+import pages.RedirectToASAHome
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -60,10 +60,9 @@ class IndexController @Inject() (
         case Some(_) ~ Some(Organisation) ~ _                          => Future.successful(Redirect(routes.TaskListController.onPageLoad))
         case Some(internalId) ~ Some(Agent) ~ _ =>
           sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
-            if (maybeUserAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)).isDefined) {
-              Future.successful(Redirect(routes.DashboardController.onPageLoad))
-            } else {
-              Future.successful(Redirect(appConfig.asaHomePageUrl))
+            maybeUserAnswers.flatMap(_.get(RedirectToASAHome)) match {
+              case Some(true) => Future.successful(Redirect(appConfig.asaHomePageUrl))
+              case _          => Future.successful(Redirect(routes.DashboardController.onPageLoad))
             }
           }
         case Some(_) ~ Some(Individual) ~ _ => Future.successful(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad))

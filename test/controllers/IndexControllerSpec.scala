@@ -20,7 +20,7 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -128,7 +128,7 @@ class IndexControllerSpec extends SpecBase {
   }
 
   "redirect Agent to ASA Homepage if have an enrolment with no pillar2 client is confirmed" in {
-    val userAnswer = emptyUserAnswers
+    val userAnswer = emptyUserAnswers.setOrException(RedirectToASAHome, true)
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolment.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()

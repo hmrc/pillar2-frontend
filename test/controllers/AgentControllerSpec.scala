@@ -100,6 +100,7 @@ class AgentControllerSpec extends SpecBase {
           )
         )
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)

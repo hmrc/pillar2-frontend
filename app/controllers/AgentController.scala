@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{ASAEnrolmentIdentifierAction, EnrolmentIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, RedirectToASAHome}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -68,12 +68,16 @@ class AgentController @Inject() (
 
   def onPageLoadClientPillarId: Action[AnyContent] =
     (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
-      val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield {
+        val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(clientPillarIdView(preparedForm))
       }
-
-      Future.successful(Ok(clientPillarIdView(preparedForm)))
     }
 
   def onSubmitClientPillarId: Action[AnyContent] =
@@ -102,11 +106,14 @@ class AgentController @Inject() (
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
     (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
-      (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
         .mapN { (clientPillar2Id, clientUpeName) =>
-          Future successful Ok(clientConfirmView(clientUpeName, clientPillar2Id))
+          Ok(clientConfirmView(clientUpeName, clientPillar2Id))
         }
-        .getOrElse(Future successful Redirect(routes.AgentController.onPageLoadError))
+        .getOrElse(Redirect(routes.AgentController.onPageLoadError))
     }
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =

@@ -24,7 +24,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.InternalIssueError
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -55,9 +55,13 @@ class DashboardController @Inject() (
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
       (for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        dataToSave  <- OptionT.fromOption[Future](userAnswers.map(_.set(RedirectToASAHome, false)))
+        _           <- OptionT.liftF(sessionRepository.set(dataToSave.get))
         referenceNumber <- if (request.isAgent) {
                              OptionT.fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                           } else { OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)) }
+                           } else {
+                             OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments))
+                           }
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(
@@ -75,5 +79,4 @@ class DashboardController @Inject() (
       }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
     }
-
 }
