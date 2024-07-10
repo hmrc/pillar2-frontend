@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentAccountNameConfirmationForm
-import models.NormalMode
+import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.data.Form
@@ -56,6 +56,7 @@ class RepaymentErrorController @Inject() (
     featureAction.repaymentsAccessAction { implicit request =>
       Ok(couldNotConfirmDetailsView(clientPillar2Id, NormalMode))
     }
+
   def onPageLoadError(clientPillar2Id: Option[String]): Action[AnyContent] = featureAction.repaymentsAccessAction { implicit request =>
     Ok(errorView(clientPillar2Id))
   }
@@ -65,7 +66,7 @@ class RepaymentErrorController @Inject() (
       Ok(bankDetailsErrorView(clientPillar2Id, NormalMode))
     }
 
-  def onPageLoadPartialNameError(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onPageLoadPartialNameError(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -78,11 +79,11 @@ class RepaymentErrorController @Inject() (
 
       request.userAnswers
         .get(BarsAccountNamePartialPage)
-        .map(name => Future successful Ok(accountNameConfirmationView(preparedForm, clientPillar2Id, name)))
+        .map(name => Future successful Ok(accountNameConfirmationView(preparedForm, clientPillar2Id, name, mode)))
         .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError(clientPillar2Id)))
     }
 
-  def onSubmitPartialNameError(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onSubmitPartialNameError(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identifierAction(
       clientPillar2Id,
       agentIdentifierAction,
@@ -94,12 +95,12 @@ class RepaymentErrorController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(accountNameConfirmationView(formWithErrors, clientPillar2Id, accountName))),
+              formWithErrors => Future.successful(BadRequest(accountNameConfirmationView(formWithErrors, clientPillar2Id, accountName, mode))),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentAccountNameConfirmationPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(RepaymentAccountNameConfirmationPage, clientPillar2Id, NormalMode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(RepaymentAccountNameConfirmationPage, clientPillar2Id, mode, updatedAnswers))
             )
         }
         .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError(clientPillar2Id)))

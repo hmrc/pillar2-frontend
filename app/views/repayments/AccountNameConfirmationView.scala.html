@@ -31,11 +31,11 @@
         span: Span
 )
 
-@(form: Form[_], clientPillar2Id: Option[String], accountNamePartial: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], clientPillar2Id: Option[String], accountNamePartial: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("repayments.accountNameConfirm.title"))) {
 
-    @formHelper(action = controllers.repayments.routes.RepaymentErrorController.onSubmitPartialNameError(clientPillar2Id)) {
+    @formHelper(action = controllers.repayments.routes.RepaymentErrorController.onSubmitPartialNameError(clientPillar2Id, mode)) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmRepaymentAccountName" -> "confirmRepaymentAccountName_0")))
         }

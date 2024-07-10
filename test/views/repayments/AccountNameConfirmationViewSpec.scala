@@ -18,6 +18,7 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentAccountNameConfirmationForm
+import models.NormalMode
 import org.jsoup.Jsoup
 import views.html.repayments.AccountNameConfirmationView
 
@@ -26,7 +27,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
   val page         = inject[AccountNameConfirmationView]
   val formProvider = new RepaymentAccountNameConfirmationForm
 
-  val view = Jsoup.parse(page(formProvider(), None, "James")(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page(formProvider(), None, "James", NormalMode)(request, appConfig, messages).toString())
 
   "Account Name Confirmation View" should {
 
