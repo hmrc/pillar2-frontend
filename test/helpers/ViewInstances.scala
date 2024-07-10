@@ -85,6 +85,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val govukWarningText         = new GovukWarningText
   val formWithCSRF             = new FormWithCSRF
   val heading                  = new heading
+  val warningText              = new warningText(govukWarningText)
   val h2                       = new HeadingH2
   val paragraphBody            = new paragraphBody
   val paragraphBodyLink        = new paragraphBodyLink
@@ -175,9 +176,29 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val viewUpeContactEmail: UpeContactEmailView =
     new UpeContactEmailView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewUpeRegisteredAddress: UpeRegisteredAddressView =
-    new UpeRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new UpeRegisteredAddressView(
+      pillar2layout,
+      formWithCSRF,
+      sectionHeader,
+      heading,
+      warningText,
+      govukErrorSummary,
+      govukInput,
+      govukButton,
+      govukSelect
+    )
   val viewNfmRegisteredAddress: NfmRegisteredAddressView =
-    new NfmRegisteredAddressView(pillar2layout, formWithCSRF, sectionHeader, heading, govukErrorSummary, govukInput, govukButton, govukSelect)
+    new NfmRegisteredAddressView(
+      pillar2layout,
+      formWithCSRF,
+      sectionHeader,
+      heading,
+      warningText,
+      govukErrorSummary,
+      govukInput,
+      govukButton,
+      govukSelect
+    )
 
   val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
     new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)

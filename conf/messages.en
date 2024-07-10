@@ -627,7 +627,7 @@ nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 nfmCaptureTelephoneDetails.hint = For international numbers include the country code
 nfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
-nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
+nfmCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
 contactNfmByTelephone.checkYourAnswersLabel.hidden =  your response to whether we can make contact by telephone
