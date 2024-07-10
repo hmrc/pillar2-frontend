@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RepaymentsConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayments"
+  val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment"
 
   def subscribe(repaymentsRequestParameters: RepaymentsRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
     http

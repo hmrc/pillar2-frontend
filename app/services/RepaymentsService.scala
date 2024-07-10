@@ -31,7 +31,7 @@ class RepaymentsService @Inject() (
 )(implicit ec:         ExecutionContext)
     extends Logging {
 
-  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  def createRepaymentRequest(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     for {
       plrRef <- repaymentsConnector.subscribe(RepaymentsRequestParameters(userAnswers.id))
     } yield plrRef

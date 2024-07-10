@@ -70,7 +70,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
-      plr <- repaymentService.createSubscription(request.userAnswers)
+      plr <- repaymentService.createRepaymentRequest(request.userAnswers)
       dataToSave = UserAnswers(request.userAnswers.id).setOrException(PlrReferencePage, plr)
       _ <- sessionRepository.set(dataToSave)
       _ <- sessionRepository.clear(request.userId)
