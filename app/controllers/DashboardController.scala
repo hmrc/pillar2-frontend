@@ -53,10 +53,17 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+      hc.sessionId.map(_.value).map { sessionID =>
+        sessionRepository.get(sessionID).map { optionalUserAnswer =>
+          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
+          for {
+            updatedAnswers <- Future.fromTry(userAnswer.set(RedirectToASAHome, false))
+            _              <- sessionRepository.set(updatedAnswers)
+          } yield true
+        }
+      }
       (for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        dataToSave  <- OptionT.fromOption[Future](userAnswers.map(_.set(RedirectToASAHome, false)))
-        _           <- OptionT.liftF(sessionRepository.set(dataToSave.getOrElse(UserAnswers(request.userId))))
         referenceNumber <- if (request.isAgent) {
                              OptionT.fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            } else {
