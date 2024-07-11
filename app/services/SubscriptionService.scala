@@ -19,6 +19,7 @@ package services
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
+import models.repayments.RepaymentRequestDetailData
 import models.rfm.{CorporatePosition, RegistrationDate}
 import models.subscription._
 import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
@@ -36,6 +37,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SubscriptionService @Inject() (
   registrationConnector:        RegistrationConnector,
   subscriptionConnector:        SubscriptionConnector,
+  repaymentConnector:           RepaymentConnector,
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
@@ -96,6 +98,13 @@ class SubscriptionService @Inject() (
       currentSubscriptionData <- readSubscription(plrReference)
       amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
+    } yield result
+
+  def sendPaymentDetails(userId: String, plrReference: String, repaymentRequestDetailData: RepaymentRequestDetailData)(implicit
+    hc:                          HeaderCarrier
+  ): Future[Done] =
+    for {
+      result <- repaymentConnector.sendRepaymentDetails(userId, repaymentRequestDetailData)
     } yield result
 
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
