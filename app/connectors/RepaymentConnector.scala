@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.UnexpectedResponse
-import models.repayments.{ReadRepaymentRequestParameters, RepaymentRequestDetail, RepaymentRequestDetailData}
+import models.repayments.{ReadRepaymentRequestParameters, RepaymentRequestDetailData}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._

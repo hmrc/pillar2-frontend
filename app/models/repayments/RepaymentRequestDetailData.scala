@@ -23,8 +23,34 @@ import queries.{Gettable, Settable}
 
 import scala.util.{Failure, Success, Try}
 
-object RepaymentRequestDetailData {
-  implicit val format: OFormat[RepaymentRequestDetailData] = Json.format[RepaymentRequestDetailData]
+final case class RepaymentDetails(
+  plrReference:       String,
+  name:               String,
+  reasonForRepayment: String,
+  refundAmount:       String
+)
+
+final case class BankDetails(
+  nameOnBankAccount: String,
+  bankName:          String,
+  sortCode:          Option[String],
+  accountNumber:     String,
+  countryCode:       Option[String]
+)
+
+object BankDetails {
+  implicit val format: OFormat[BankDetails] = Json.format[BankDetails]
+}
+
+final case class ContactDetails(
+  contactDetails: String
+)
+
+object ContactDetails {
+  implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
+}
+object RepaymentDetails {
+  implicit val format: OFormat[RepaymentDetails] = Json.format[RepaymentDetails]
 }
 
 case class RepaymentRequestDetailData(
@@ -64,29 +90,6 @@ case class RepaymentRequestDetailData(
 
 }
 
-final case class RepaymentDetails(
-  plrReference:       String,
-  name:               String,
-  reasonForRepayment: String,
-  refundAmount:       String
-)
-
-final case class BankDetails(
-  nameOnBankAccount: String,
-  bankName:          String,
-  sortCode:          Option[String],
-  accountNumber:     String,
-  countryCode:       Option[String]
-)
-
-object BankDetails {
-  implicit val format: OFormat[BankDetails] = Json.format[BankDetails]
-}
-
-final case class ContactDetails(
-  contactDetails: String
-)
-
-object ContactDetails {
-  implicit val format: OFormat[ContactDetails] = Json.format[ContactDetails]
+object RepaymentRequestDetailData {
+  implicit val format: OFormat[RepaymentRequestDetailData] = Json.format[RepaymentRequestDetailData]
 }
