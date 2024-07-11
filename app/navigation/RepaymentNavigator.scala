@@ -34,16 +34,18 @@ class RepaymentNavigator @Inject() {
   }
 
   private val normalRoutes: Page => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage       => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode)
-    case ReasonForRequestingRefundPage    => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
-    case UkOrAbroadBankAccountPage        => data => ukOrAbroadBankAccountLogic(data)
-    case BankAccountDetailsPage           => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
-    case NonUKBankPage                    => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
-    case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
-    case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode)
-    case RepaymentsContactByTelephonePage => data => telephonePreferenceNormalMode(data)
-    case RepaymentsTelephoneDetailsPage   => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case _                                => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+    case RepaymentsRefundAmountPage           => _ => controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode)
+    case ReasonForRequestingRefundPage        => _ => controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode)
+    case UkOrAbroadBankAccountPage            => data => ukOrAbroadBankAccountLogic(data)
+    case BankAccountDetailsPage               => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
+    case NonUKBankPage                        => _ => controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
+    case RepaymentsContactNamePage            => _ => controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
+    case RepaymentsContactEmailPage           => _ => controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode)
+    case RepaymentsContactByTelephonePage     => data => telephonePreferenceNormalMode(data)
+    case RepaymentsTelephoneDetailsPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentAccountNameConfirmationPage => data => accountNamePartialRoute(data, NormalMode)
+    case BarsAccountNamePartialPage           => _ => controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode)
+    case _                                    => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogic(userAnswers: UserAnswers): Call =
@@ -58,17 +60,33 @@ class RepaymentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
+  private def accountNamePartialRoute(userAnswers: UserAnswers, mode: Mode): Call =
+    userAnswers
+      .get(RepaymentAccountNameConfirmationPage)
+      .map { isCorrectAccountName =>
+        if (isCorrectAccountName) {
+          if (mode == NormalMode) {
+            controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode)
+          } else { controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad }
+        } else {
+          controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode)
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case RepaymentsRefundAmountPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case ReasonForRequestingRefundPage    => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case UkOrAbroadBankAccountPage        => data => ukOrAbroadBankAccountLogicCheckMode(data)
-    case NonUKBankPage                    => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case BankAccountDetailsPage           => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case RepaymentsContactNamePage        => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case RepaymentsContactEmailPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case RepaymentsContactByTelephonePage => data => telephonePreferenceCheckMode(data)
-    case RepaymentsTelephoneDetailsPage   => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
-    case _                                => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+    case RepaymentsRefundAmountPage           => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case ReasonForRequestingRefundPage        => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case UkOrAbroadBankAccountPage            => data => ukOrAbroadBankAccountLogicCheckMode(data)
+    case NonUKBankPage                        => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case BankAccountDetailsPage               => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactNamePage            => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactEmailPage           => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentsContactByTelephonePage     => data => telephonePreferenceCheckMode(data)
+    case RepaymentsTelephoneDetailsPage       => _ => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+    case RepaymentAccountNameConfirmationPage => data => accountNamePartialRoute(data, CheckMode)
+    case BarsAccountNamePartialPage           => _ => controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(CheckMode)
+    case _                                    => _ => controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
   }
 
   private def ukOrAbroadBankAccountLogicCheckMode(userAnswers: UserAnswers): Call =

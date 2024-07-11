@@ -152,6 +152,29 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
+      "go to contact name page from partial account name page if user selects Yes" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, true)
+        ) mustBe controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)
+      }
+
+      "go to bank account details from partial account name page if user selects No" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, false)
+        ) mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode)
+      }
+
+      "go to partial name page if bars returns a successful account verification with partial name given" in {
+        navigator.nextPage(
+          BarsAccountNamePartialPage,
+          NormalMode,
+          emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "Partial Name")
+        ) mustBe controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode)
+      }
     }
 
     "in Check mode" must {
@@ -302,6 +325,29 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(RepaymentsContactByTelephonePage, CheckMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
+      "go to contact name page from partial account name page if user selects Yes" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, true)
+        ) mustBe controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+      }
+
+      "go to bank account details from partial account name page if user selects No" in {
+        navigator.nextPage(
+          RepaymentAccountNameConfirmationPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, false)
+        ) mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(CheckMode)
+      }
+
+      "go to partial name page if bars returns a successful account verification with partial name given" in {
+        navigator.nextPage(
+          BarsAccountNamePartialPage,
+          CheckMode,
+          emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "Partial Name")
+        ) mustBe controllers.repayments.routes.RepaymentErrorController.onPageLoadPartialNameError(CheckMode)
+      }
     }
   }
 }

@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.BankAccountDetailsPage
+import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -32,7 +32,9 @@ object UKBankNameOnAccountSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.nameOnBankAccount)),
+          value = answers
+            .get(BarsAccountNamePartialPage)
+            .fold(ValueViewModel(HtmlContent(answer.nameOnBankAccount)))(nameOnAccount => ValueViewModel(HtmlContent(nameOnAccount))),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden"))

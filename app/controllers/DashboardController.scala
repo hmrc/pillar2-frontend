@@ -21,7 +21,7 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.InternalIssueError
+import models.{InternalIssueError, UserAnswers}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
 import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
@@ -56,7 +56,7 @@ class DashboardController @Inject() (
       (for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         dataToSave  <- OptionT.fromOption[Future](userAnswers.map(_.set(RedirectToASAHome, false)))
-        _           <- OptionT.liftF(sessionRepository.set(dataToSave.get))
+        _           <- OptionT.liftF(sessionRepository.set(dataToSave.getOrElse(UserAnswers(request.userId))))
         referenceNumber <- if (request.isAgent) {
                              OptionT.fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            } else {

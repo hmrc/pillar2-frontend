@@ -22,11 +22,14 @@ import models.NormalMode
 import models.repayments.BankAccountDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.BankAccountDetailsPage
+import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.inject
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.BarsService
+import services.BarsServiceSpec.bankAccountDetails
 import views.html.repayments.BankAccountDetailsView
 
 import scala.concurrent.Future
@@ -65,8 +68,9 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[BankAccountDetailsView]
         val result  = route(application, request).value
@@ -81,10 +85,22 @@ class BankAccountDetailsControllerSpec extends SpecBase {
     }
 
     "must redirect to Repayments Contact Name page when valid data is submitted" in {
-      val application = applicationBuilder(None)
-        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
-        .build()
+      val application = applicationBuilder(userAnswers =
+        Some(
+          emptyUserAnswers
+            .setOrException(BarsAccountNamePartialPage, "James")
+            .setOrException(RepaymentAccountNameConfirmationPage, false)
+            .setOrException(BankAccountDetailsPage, bankAccountDetails)
+        )
+      ).overrides(
+        bind[BarsService].toInstance(mockBarsService)
+      ).build()
+
       running(application) {
+
+        when(mockBarsService.verifyBusinessAccount(any(), any(), any(), any())(any(), any(), any()))
+          .thenReturn(Future successful Redirect(controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)))
+
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)

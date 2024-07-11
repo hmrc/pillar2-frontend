@@ -22,13 +22,13 @@ import controllers.actions._
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
-import navigation.RepaymentNavigator
-import pages.BankAccountDetailsPage
+import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.BarsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.BankAccountDetailsView
 
@@ -41,9 +41,9 @@ class BankAccountDetailsController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
+  barsService:                            BarsService,
   formProvider:                           BankAccountDetailsFormProvider,
   featureAction:                          FeatureFlagActionFactory,
-  navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BankAccountDetailsView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -54,12 +54,17 @@ class BankAccountDetailsController @Inject() (
   val form: Form[BankAccountDetails] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       val preparedForm = request.userAnswers.get(BankAccountDetailsPage) match {
         case None              => form
         case Some(userAnswers) => form.fill(userAnswers)
       }
-      Ok(view(preparedForm, mode))
+
+      for {
+        updatedUserAnswer  <- Future.fromTry(request.userAnswers.remove(BarsAccountNamePartialPage))
+        updatedUserAnswer1 <- Future.fromTry(updatedUserAnswer.remove(RepaymentAccountNameConfirmationPage))
+        _                  <- sessionRepository.set(updatedUserAnswer1)
+      } yield Ok(view(preparedForm, mode))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -68,11 +73,14 @@ class BankAccountDetailsController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-          value =>
+          bankAccountDetails =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, value))
+              updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, bankAccountDetails))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(BankAccountDetailsPage, mode, updatedAnswers))
+              result <-
+                barsService
+                  .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, mode)
+            } yield result
         )
     }
 }

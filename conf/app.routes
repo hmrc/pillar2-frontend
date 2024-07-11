@@ -519,3 +519,10 @@ POST       /repayment/change-method                                             
 GET        /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad
 POST       /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit
 
+GET        /repayment/error/could-not-confirm                                                       controllers.repayments.RepaymentErrorController.onPageLoadNotConfirmedDetails
+GET        /repayment/error/view                                                                    controllers.repayments.RepaymentErrorController.onPageLoadError
+GET        /repayment/error/bank-details                                                            controllers.repayments.RepaymentErrorController.onPageLoadBankDetailsError
+GET        /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = NormalMode)
+POST       /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = NormalMode)
+GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
+POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
