@@ -69,21 +69,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-    (for {
-      plr <- repaymentService.createRepaymentRequest(request.userAnswers)
-      dataToSave = UserAnswers(request.userAnswers.id).setOrException(PlrReferencePage, plr)
-      _ <- sessionRepository.set(dataToSave)
-      _ <- sessionRepository.clear(request.userId)
-    } yield Redirect(routes.UnderConstructionController.onPageLoad))
-      .recover {
-        case InternalIssueError =>
-          logger.error("Repayment failed due to failed call to the backend")
-          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad) // change it
-
-        case DuplicateSubmissionError =>
-          logger.error("Repayment failed due to a Duplicate Submission")
-          Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
-      }
     Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
   }
 

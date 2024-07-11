@@ -17,8 +17,8 @@
 package services
 
 import connectors._
-import models.UserAnswers
-import models.repayments.RepaymentsRequestParameters
+import models.repayments.RepaymentRequestDetailData
+import org.apache.pekko.Done
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -27,12 +27,15 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RepaymentsService @Inject() (
-  repaymentsConnector: RepaymentsConnector
-)(implicit ec:         ExecutionContext)
+  repaymentConnector: RepaymentConnector
+)(implicit ec:        ExecutionContext)
     extends Logging {
 
-  def createRepaymentRequest(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  def sendPaymentDetails(userId: String, repaymentRequestDetailData: RepaymentRequestDetailData)(implicit
+    hc:                          HeaderCarrier
+  ): Future[Done] =
     for {
-      plrRef <- repaymentsConnector.subscribe(RepaymentsRequestParameters(userAnswers.id))
-    } yield plrRef
+      result <- repaymentConnector.sendRepaymentDetails(userId, repaymentRequestDetailData)
+    } yield result
+
 }
