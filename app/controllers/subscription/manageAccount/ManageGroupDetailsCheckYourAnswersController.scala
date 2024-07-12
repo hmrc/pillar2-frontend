@@ -24,9 +24,11 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.manageAccount._
@@ -41,6 +43,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   requireData:                            SubscriptionDataRequiredAction,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageGroupDetailsCheckYourAnswersView,
+  sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService,
   val userAnswersConnectors:              UserAnswersConnectors
@@ -63,9 +66,12 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) async { implicit request =>
+    (identify andThen getData andThen requireData).async { implicit request =>
       (for {
-        referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
       } yield Redirect(controllers.routes.DashboardController.onPageLoad))
         .recover { case UnexpectedResponse =>

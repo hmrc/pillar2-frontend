@@ -21,7 +21,7 @@ import controllers.actions.TestAuthRetrievals.Ops
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.PlrReferencePage
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage}
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -78,7 +78,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
     }
 
     "return OK and the correct view for a GET for Agents" in {
-      val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
+      val application = applicationBuilder(userAnswers = None, enrolments = pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
           bind[AuthConnector].toInstance(mockAuthConnector)
@@ -109,15 +109,16 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
     "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
       val sessionUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "12345678")
       val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
         .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionUserAnswers)))
+
       running(application) {
-
-        val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
-
-        val result = route(application, request).value
-        val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
-
+        val request = FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("12345678")(
           request,

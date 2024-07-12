@@ -23,9 +23,11 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
@@ -42,6 +44,7 @@ class ManageContactCheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageContactCheckYourAnswersView,
   countryOptions:                         CountryOptions,
+  sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -78,9 +81,12 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) async { implicit request =>
+    (identify andThen getData andThen requireData).async { implicit request =>
       (for {
-        referenceNumber <- OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments)))
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
       } yield Redirect(controllers.routes.DashboardController.onPageLoad))
         .recover { case UnexpectedResponse =>

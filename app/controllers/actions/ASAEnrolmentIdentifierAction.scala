@@ -31,10 +31,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
+@Named("ASAEnrolmentIdentifier")
 class ASAEnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,

@@ -35,10 +35,11 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
+@Named("EnrolmentIdentifier")
 class EnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   sessionRepository:          SessionRepository,
@@ -115,6 +116,7 @@ class EnrolmentIdentifierAction @Inject() (
                       internalId,
                       enrolments = enrolments.enrolments,
                       isAgent = true,
+                      clientPillar2Id = Some(backEndClientPillar2Id),
                       userIdForEnrolment = credentials.providerId
                     )
                   )

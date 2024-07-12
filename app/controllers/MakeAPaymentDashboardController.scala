@@ -16,35 +16,39 @@
 
 package controllers
 
+import cats.data.OptionT
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.PlrReferencePage
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.requests.OptionalDataRequest
+import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.ReferenceNumberService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
 
 import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
 
 class MakeAPaymentDashboardController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   val controllerComponents:               MessagesControllerComponents,
+  referenceNumberService:                 ReferenceNumberService,
+  sessionRepository:                      SessionRepository,
   view:                                   MakeAPaymentDashboardView,
-  getData:                                DataRetrievalAction,
-  requireData:                            DataRequiredAction
-)(implicit appConfig:                     FrontendAppConfig)
+  getData:                                DataRetrievalAction
+)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
-      Pillar2Reference
-        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-        .orElse(request.userAnswers.get(PlrReferencePage))
-        .map { pillar2Id =>
-          Ok(view(pillar2Id))
-        }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+      (for {
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
+      } yield Ok(view(referenceNumber))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 }

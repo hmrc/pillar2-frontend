@@ -53,22 +53,18 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
-      hc.sessionId.map(_.value).map { sessionID =>
-        sessionRepository.get(sessionID).map { optionalUserAnswer =>
-          val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(sessionID))
-          for {
-            updatedAnswers <- Future.fromTry(userAnswer.set(RedirectToASAHome, false))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield true
-        }
+      sessionRepository.get(request.userId).map { optionalUserAnswer =>
+        val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(request.userId))
+        for {
+          updatedAnswers <- Future.fromTry(userAnswer.set(RedirectToASAHome, false))
+          _              <- sessionRepository.set(updatedAnswers)
+        } yield true
       }
       (for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- if (request.isAgent) {
-                             OptionT.fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                           } else {
-                             OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments))
-                           }
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(

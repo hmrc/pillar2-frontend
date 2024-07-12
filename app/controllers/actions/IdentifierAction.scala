@@ -34,7 +34,6 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
-@Named("RfmIdentifier")
 trait IdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]
     with ActionBuilder[IdentifierRequest, AnyContent]
