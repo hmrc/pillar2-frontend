@@ -528,3 +528,6 @@ GET        /repayment/error/partial-name                                        
 POST       /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+
+GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad(clientPillar2Id: Option[String] ?= None)

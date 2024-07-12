@@ -1369,6 +1369,19 @@ repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
 
+repayments.incompleteDataView.title = Refund request has missing information
+repayments.incompleteDataView.heading = Refund request has missing information
+repayments.incompleteDataView.paragraphStart = You need to
+repayments.incompleteDataView.link.text = go back and complete all the required answers
+repayments.incompleteDataView.paragraphStop = before submitting your refund request.
+
+repayments.journeyRecovery.title = Sorry, there is a problem with the service
+repayments.journeyRecovery.heading = Sorry, there is a problem with the service
+repayments.journeyRecovery.p1 = Your answers were not saved.
+repayments.journeyRecovery.p2 = Please try again later when the service is available.
+repayments.journeyRecovery.link = Return to account homepage
+
+
 ###################
 
 rfmConfirmation.title = Replace filing member successful
