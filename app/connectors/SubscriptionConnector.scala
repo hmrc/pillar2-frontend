@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
+import models.{ApiError, DuplicateSubmissionError, InternalIssueError, ReadSubscriptionError, UnexpectedResponse}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
@@ -71,17 +71,18 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscription(
     plrReference: String
-  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Either[ApiError, SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
       .GET[HttpResponse](subscriptionUrl)
       .map {
-        case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionData])
+        case response if response.status == OK =>
+          Right(Json.parse(response.body).as[SubscriptionData])
+        case response if response.status == NOT_FOUND => Left(UnexpectedResponse)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          None
+          Left(ReadSubscriptionError)
       }
   }
 

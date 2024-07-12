@@ -72,12 +72,12 @@ class SubscriptionService @Inject() (
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
-      case Some(readSubscriptionResponse) =>
+      case Right(readSubscriptionResponse) =>
         logger.info(s"readSubscription success: - $readSubscriptionResponse")
         Future.successful(readSubscriptionResponse)
-      case error =>
+      case Left(error) =>
         logger.warn(s"readSubscription error: - $error")
-        Future.failed(ReadSubscriptionError)
+        Future.failed(error)
     }
 
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit

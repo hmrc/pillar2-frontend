@@ -16,12 +16,12 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
-import models.UnexpectedResponse
 import models.subscription._
+import models.{ApiError, ReadSubscriptionError, UnexpectedResponse}
+import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -90,23 +90,32 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
     "readSubscription" should {
 
-      "return Some(json) when the backend has returned 200 OK with data" in {
+      "return json when the backend has returned 200 OK with data" in {
         stubGet(s"$readSubscriptionPath/$plrReference", OK, successfulResponseJson)
-        val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
+        val result: Either[ApiError, SubscriptionData] = connector.readSubscription(plrReference).futureValue
 
-        result mustBe defined
-        result mustBe Some(subscriptionDataJson)
+        result mustBe Right(subscriptionDataJson)
 
       }
 
-      "return None when the backend has returned a non-success status code" in {
+      "return ReadSubscriptionError when the backend has returned a non-success status code" in {
         server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+          get(urlEqualTo(s"$readSubscriptionPath/$plrReference"))
             .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
         )
 
         val result = connector.readSubscription(plrReference).futureValue
-        result mustBe None
+        result mustBe Left(ReadSubscriptionError)
+      }
+
+      "return UnexpectedResponse when the backend has returned a 404 status code" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$plrReference"))
+            .willReturn(aResponse().withStatus(404).withBody(unsuccessfulResponseJson))
+        )
+
+        val result = connector.readSubscription(plrReference).futureValue
+        result mustBe Left(UnexpectedResponse)
       }
     }
 

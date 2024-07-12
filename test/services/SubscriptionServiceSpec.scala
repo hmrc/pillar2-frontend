@@ -22,7 +22,7 @@ import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameter
 import models.registration.RegistrationInfo
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
+import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, ReadSubscriptionError, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -355,7 +355,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(subscriptionData)))
+            .thenReturn(Future.successful(Right(subscriptionData)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").futureValue
 
@@ -363,7 +363,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return InternalIssueError when the connector returns None" in {
+      "return ReadSubscriptionError when the connector returns ReadSubscriptionError" in {
         implicit val hc: HeaderCarrier = HeaderCarrier()
         val application = applicationBuilder()
           .overrides(
@@ -372,7 +372,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(None))
+            .thenReturn(Future.successful(Left(ReadSubscriptionError)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").failed.futureValue
 
@@ -408,7 +408,7 @@ class SubscriptionServiceSpec extends SpecBase {
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockSubscriptionConnector.readSubscription(any())(any(), any())).thenReturn(Future.successful(Right(subscriptionData)))
           when(mockSubscriptionConnector.amendSubscription(any(), any[AmendSubscription])(any[HeaderCarrier]))
             .thenReturn(Future.successful(Done))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]

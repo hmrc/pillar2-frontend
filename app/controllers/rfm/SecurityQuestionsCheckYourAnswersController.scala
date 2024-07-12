@@ -22,7 +22,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{FeatureFlagActionFactory, RfmIdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
-import models.{Mode, ReadSubscriptionError}
+import models.{Mode, ReadSubscriptionError, UnexpectedResponse}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -79,8 +79,9 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
-      .recover { case ReadSubscriptionError =>
-        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      .recover {
+        case ReadSubscriptionError => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        case UnexpectedResponse    => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 

@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{NormalMode, ReadSubscriptionError}
+import models.{NormalMode, ReadSubscriptionError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -146,7 +146,8 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
         }
       }
-      "redirect to error page if read subscription fails" in {
+
+      "redirect to journey recovery page if read subscription fails" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -163,6 +164,25 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
         }
       }
+
+      "redirect to error page if read subscription fails" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(UnexpectedResponse))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
+        }
+      }
+
       "redirect to journey recovery if no input pillar 2 id is found" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
