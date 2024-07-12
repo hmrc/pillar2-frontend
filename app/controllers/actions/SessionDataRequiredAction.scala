@@ -30,6 +30,7 @@ class SessionDataRequiredActionImpl @Inject() (implicit val executionContext: Ex
       case None =>
         Future.successful(Right(SessionDataRequest(request.request, request.userId, UserAnswers(request.userId))))
       case Some(data) =>
+        println(".........................................................!!!!!!!!!!!!!!!!!!!!!" + data)
         Future.successful(Right(SessionDataRequest(request.request, request.userId, data)))
     }
 }

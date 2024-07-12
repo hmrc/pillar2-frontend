@@ -21,8 +21,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
+import models.repayments.{ContactDetails, RepaymentDetails, RepaymentRequestDetailData}
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
+import pages.{BankAccountDetailsPage, PlrReferencePage, ReasonForRequestingRefundPage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsTelephoneDetailsPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -69,9 +70,26 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
-  }
+    for {
+      a <- repaymentService.sendPaymentDetails(request.userId, createRepaymentsData(request.userAnswers))
 
+    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id))
+
+  }
+  private def createRepaymentsData(userAnswers: UserAnswers)(implicit messages: Messages): RepaymentRequestDetailData = {
+    val amount       = userAnswers.get(RepaymentsRefundAmountPage)
+    val reason       = userAnswers.get(ReasonForRequestingRefundPage)
+    val contactName  = userAnswers.get(RepaymentsContactNamePage)
+    val telephone    = userAnswers.get(RepaymentsTelephoneDetailsPage)
+    val email        = userAnswers.get(RepaymentsContactEmailPage)
+    val bankDetailUk = userAnswers.get(BankAccountDetailsPage)
+    val plrRef       = userAnswers.get(PlrReferencePage)
+    RepaymentRequestDetailData(
+      repaymentDetails = RepaymentDetails(name = contactName, plrReference = plrRef, refundAmount = amount.toString(), reasonForRepayment = reason),
+      bankDetails = bankDetailUk,
+      contactDetails = ContactDetails(contactName + "," + telephone + "," + email)
+    )
+  }
   private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(

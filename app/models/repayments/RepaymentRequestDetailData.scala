@@ -24,9 +24,9 @@ import queries.{Gettable, Settable}
 import scala.util.{Failure, Success, Try}
 
 final case class RepaymentDetails(
-  plrReference:       String,
-  name:               String,
-  reasonForRepayment: String,
+  plrReference:       Option[String],
+  name:               Option[String],
+  reasonForRepayment: Option[String],
   refundAmount:       String
 )
 
@@ -55,7 +55,7 @@ object RepaymentDetails {
 
 case class RepaymentRequestDetailData(
   repaymentDetails: RepaymentDetails,
-  bankDetails:      BankDetails,
+  bankDetails:      Option[BankAccountDetails],
   contactDetails:   ContactDetails
 ) {
 
