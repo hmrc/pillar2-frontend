@@ -100,13 +100,6 @@ class SubscriptionService @Inject() (
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
 
-  def sendPaymentDetails(userId: String, plrReference: String, repaymentRequestDetailData: RepaymentRequestDetailData)(implicit
-    hc:                          HeaderCarrier
-  ): Future[Done] =
-    for {
-      result <- repaymentConnector.sendRepaymentDetails(userId, repaymentRequestDetailData)
-    } yield result
-
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)

@@ -54,6 +54,7 @@ object RepaymentDetails {
 }
 
 case class RepaymentRequestDetailData(
+  userId:           String,
   repaymentDetails: RepaymentDetails,
   bankDetails:      Option[BankAccountDetails],
   contactDetails:   ContactDetails

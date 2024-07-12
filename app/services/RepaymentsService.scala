@@ -31,11 +31,11 @@ class RepaymentsService @Inject() (
 )(implicit ec:        ExecutionContext)
     extends Logging {
 
-  def sendPaymentDetails(userId: String, repaymentRequestDetailData: RepaymentRequestDetailData)(implicit
-    hc:                          HeaderCarrier
+  def sendPaymentDetails(repaymentRequestDetailData: RepaymentRequestDetailData)(implicit
+    hc:                                              HeaderCarrier
   ): Future[Done] =
     for {
-      result <- repaymentConnector.sendRepaymentDetails(userId, repaymentRequestDetailData)
+      result <- repaymentConnector.sendRepaymentDetails(repaymentRequestDetailData)
     } yield result
 
 }

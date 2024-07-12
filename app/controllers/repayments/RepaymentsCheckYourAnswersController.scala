@@ -71,12 +71,13 @@ class RepaymentsCheckYourAnswersController @Inject() (
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
     for {
-      a <- repaymentService.sendPaymentDetails(request.userId, createRepaymentsData(request.userAnswers))
+      a <- repaymentService.sendPaymentDetails(createRepaymentsData(request.userAnswers))
 
     } yield Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id))
 
   }
   private def createRepaymentsData(userAnswers: UserAnswers)(implicit messages: Messages): RepaymentRequestDetailData = {
+    val userId       = userAnswers.id
     val amount       = userAnswers.get(RepaymentsRefundAmountPage)
     val reason       = userAnswers.get(ReasonForRequestingRefundPage)
     val contactName  = userAnswers.get(RepaymentsContactNamePage)
@@ -84,7 +85,16 @@ class RepaymentsCheckYourAnswersController @Inject() (
     val email        = userAnswers.get(RepaymentsContactEmailPage)
     val bankDetailUk = userAnswers.get(BankAccountDetailsPage)
     val plrRef       = userAnswers.get(PlrReferencePage)
+    println(
+      "*************************************" + RepaymentRequestDetailData(
+        userId,
+        repaymentDetails = RepaymentDetails(name = contactName, plrReference = plrRef, refundAmount = amount.toString(), reasonForRepayment = reason),
+        bankDetails = bankDetailUk,
+        contactDetails = ContactDetails(contactName + "," + telephone + "," + email)
+      )
+    )
     RepaymentRequestDetailData(
+      userId,
       repaymentDetails = RepaymentDetails(name = contactName, plrReference = plrRef, refundAmount = amount.toString(), reasonForRepayment = reason),
       bankDetails = bankDetailUk,
       contactDetails = ContactDetails(contactName + "," + telephone + "," + email)
