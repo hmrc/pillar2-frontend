@@ -31,12 +31,10 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  // val repaymentUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment"
-
   def sendRepaymentDetails(repaymentData: RepaymentRequestDetailData)(implicit hc: HeaderCarrier): Future[Done] = {
-    println(s".........info....${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment")
+    println(s"..................${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment and .. data is ......" + RepaymentRequestDetailData)
     http
-      .PUT[RepaymentRequestDetailData, HttpResponse](
+      .POST[RepaymentRequestDetailData, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment",
         repaymentData
       )

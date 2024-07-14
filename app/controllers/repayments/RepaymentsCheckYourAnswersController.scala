@@ -85,14 +85,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
     val email        = userAnswers.get(RepaymentsContactEmailPage)
     val bankDetailUk = userAnswers.get(BankAccountDetailsPage)
     val plrRef       = userAnswers.get(PlrReferencePage)
-    println(
-      "*************************************" + RepaymentRequestDetailData(
-        userId,
-        repaymentDetails = RepaymentDetails(name = contactName, plrReference = plrRef, refundAmount = amount.toString(), reasonForRepayment = reason),
-        bankDetails = bankDetailUk,
-        contactDetails = ContactDetails(contactName + "," + telephone + "," + email)
-      )
-    )
     RepaymentRequestDetailData(
       userId,
       repaymentDetails = RepaymentDetails(name = contactName, plrReference = plrRef, refundAmount = amount.toString(), reasonForRepayment = reason),
