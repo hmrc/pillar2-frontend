@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{ASAEnrolmentIdentifierAction, EnrolmentIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, RedirectToASAHome}
+import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, RedirectToASAHome, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -72,7 +72,7 @@ class AgentController @Inject() (
         updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
         _              <- sessionRepository.set(updatedAnswers)
       } yield {
-        val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
+        val preparedForm = request.userAnswers.get(UnauthorisedClientPillar2ReferencePage) match {
           case Some(value) => form.fill(value)
           case None        => form
         }
@@ -88,7 +88,7 @@ class AgentController @Inject() (
           formWithErrors => Future.successful(BadRequest(clientPillarIdView(formWithErrors))),
           value => {
             val result = for {
-              updatedAnswers     <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, value))
+              updatedAnswers     <- Future.fromTry(request.userAnswers.set(UnauthorisedClientPillar2ReferencePage, value))
               _                  <- sessionRepository.set(updatedAnswers)
               subscriptionData   <- subscriptionService.readSubscription(value)
               answersWithOrgName <- Future.fromTry(updatedAnswers.set(AgentClientOrganisationNamePage, subscriptionData.upeDetails.organisationName))
@@ -109,7 +109,7 @@ class AgentController @Inject() (
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
         _              <- sessionRepository.set(updatedAnswers)
-      } yield (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
+      } yield (request.userAnswers.get(UnauthorisedClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
         .mapN { (clientPillar2Id, clientUpeName) =>
           Ok(clientConfirmView(clientUpeName, clientPillar2Id))
         }
@@ -117,8 +117,17 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async {
-      Future successful Redirect(routes.DashboardController.onPageLoad)
+    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async { implicit request =>
+      request.userAnswers
+        .get(UnauthorisedClientPillar2ReferencePage)
+        .map { clientPillar2Reference =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
+            dataToSave <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
+            _ <- sessionRepository.set(dataToSave)
+          } yield Redirect(routes.DashboardController.onPageLoad)
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =

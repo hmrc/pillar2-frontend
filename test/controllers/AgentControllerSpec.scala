@@ -23,7 +23,7 @@ import models.InternalIssueError
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,6 +34,7 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import views.html.rfm.AgentView
 import views.html._
 import controllers.actions.TestAuthRetrievals.Ops
+import org.apache.pekko.Done
 import repositories.SessionRepository
 
 import java.util.UUID
@@ -113,7 +114,7 @@ class AgentControllerSpec extends SpecBase {
 
     "must return the correct view if user answer is present" in {
       val userAnswer = emptyUserAnswers
-        .set(AgentClientPillar2ReferencePage, "XMPLR0123456789")
+        .set(UnauthorisedClientPillar2ReferencePage, "XMPLR0123456789")
         .success
         .value
 
@@ -255,7 +256,7 @@ class AgentControllerSpec extends SpecBase {
 
     "return the correct view if client pillar 2 id and organisation name is in user answers" in {
       val userAnswer = emptyUserAnswers
-        .set(AgentClientPillar2ReferencePage, "XMPLR0123456789")
+        .set(UnauthorisedClientPillar2ReferencePage, "XMPLR0123456789")
         .success
         .value
         .set(AgentClientOrganisationNamePage, "Some Org")
@@ -304,23 +305,19 @@ class AgentControllerSpec extends SpecBase {
 
     "return to agent dashboard view if agent organisation enrolment is present" in {
       val userAnswer = emptyUserAnswers
-        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+        .setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
 
-      val application = applicationBuilder(userAnswers = None)
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          ),
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolmentWithDelegatedAuth ~ Some(Agent) ~ Some(User) ~ Some(
-              Credentials(providerId, providerType)
-            )
           )
         )
 
@@ -335,12 +332,14 @@ class AgentControllerSpec extends SpecBase {
 
     "return error page if enrolments are found for agent but there is no organisation enrolment for that pillar 2 id" in {
       val userAnswer = emptyUserAnswers
-        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+        .setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
         .thenReturn(

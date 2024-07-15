@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -98,7 +98,9 @@ class EnrolmentIdentifierAction @Inject() (
   ): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
-      maybeUserAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)) match {
+      maybeUserAnswers
+        .flatMap(_.get(AgentClientPillar2ReferencePage))
+        .orElse(maybeUserAnswers.flatMap(_.get(UnauthorisedClientPillar2ReferencePage))) match {
         case Some(backEndClientPillar2Id) =>
           authorised(VerifyAgentClientPredicate(backEndClientPillar2Id))
             .retrieve(
