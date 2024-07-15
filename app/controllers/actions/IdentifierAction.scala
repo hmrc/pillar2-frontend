@@ -31,7 +31,6 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
-import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction
