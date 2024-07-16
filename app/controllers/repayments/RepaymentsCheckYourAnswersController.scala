@@ -16,20 +16,24 @@
 
 package controllers.repayments
 
+import cats.data.OptionT
+import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
-import models.UserAnswers
+import models.{UnexpectedResponse, UserAnswers}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.RepaymentService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.ExecutionContext
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -39,7 +43,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
   agentIdentifierAction:    AgentIdentifierAction,
   featureAction:            FeatureFlagActionFactory,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsCheckYourAnswersView
+  view:                     RepaymentsCheckYourAnswersView,
+  repaymentService:         RepaymentService
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -63,7 +68,17 @@ class RepaymentsCheckYourAnswersController @Inject() (
     agentIdentifierAction,
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
-    Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
+    (for {
+//      referenceNumber <- OptionT
+//                           .fromOption[Future](clientPillar2Id)
+//       .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.userAnswers))))
+      _ <- OptionT.liftF(repaymentService.repayment(request.userAnswers))
+    } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+      .recover { case UnexpectedResponse =>
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+      }
+      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+  //Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
   }
 
   private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
