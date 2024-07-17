@@ -24,16 +24,16 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(clientPillar2Id: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = titleNoForm(messages("repayments.couldNotConfirm.title")), maybeClientPillar2Id = clientPillar2Id) {
+    @layout(pageTitle = titleNoForm(messages("repayments.couldNotConfirm.title"))) {
 
         @h(messages("repayments.couldNotConfirm.heading"), classes = "govuk-heading-l")
         @p(messages("repayments.couldNotConfirm.p1"))
         @paragraphMessageWithLink(
             message1 = Some(messages("repayments.couldNotConfirm.p2")),
             linkMessage = messages("repayments.couldNotConfirm.p2.link"),
-            linkUrl = controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id, mode).url,
+            linkUrl = controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode).url,
             linkFullStop = true)
 
     }

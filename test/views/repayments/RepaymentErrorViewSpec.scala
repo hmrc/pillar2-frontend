@@ -19,13 +19,14 @@ package views.repayments
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.repayments.RepaymentErrorView
 
 class RepaymentErrorViewSpec extends ViewSpecBase {
 
-  val page = inject[RepaymentErrorView]
+  val page: RepaymentErrorView = inject[RepaymentErrorView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Bank Details Error View" should {
 
@@ -46,7 +47,7 @@ class RepaymentErrorViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
+      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
     }
 
   }

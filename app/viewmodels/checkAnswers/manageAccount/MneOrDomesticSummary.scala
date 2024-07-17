@@ -27,7 +27,7 @@ import viewmodels.implicits._
 
 object MneOrDomesticSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubMneOrDomesticPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(
@@ -40,7 +40,7 @@ object MneOrDomesticSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
         )

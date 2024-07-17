@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object GroupAccountingPeriodSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
@@ -34,7 +34,7 @@ object GroupAccountingPeriodSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )

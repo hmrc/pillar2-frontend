@@ -14,16 +14,13 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package pages
 
-import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
-import controllers.actions.{AgentIdentifierAction, IdentifierAction}
+import play.api.libs.json.JsPath
 
-package object manageAccount {
+case object UnauthorisedClientPillar2ReferencePage extends QuestionPage[String] {
 
-  def identifierAction(clientPillar2Id: Option[String], agentIdentifierAction: AgentIdentifierAction, identify: IdentifierAction): IdentifierAction =
-    clientPillar2Id
-      .map(id => agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id)))
-      .getOrElse(identify)
+  override def path: JsPath = JsPath \ toString
 
+  override def toString: String = "unauthorisedClientPillar2Reference"
 }

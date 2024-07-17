@@ -30,7 +30,7 @@
 
 @layout(pageTitle = titleNoForm(messages("agent.clientConfirm.title"))) {
 
-    @formHelper(action = routes.AgentController.onSubmitConfirmClientDetails(clientPillar2Id)) {
+    @formHelper(action = routes.AgentController.onSubmitConfirmClientDetails) {
 
         @heading(messages("agent.clientConfirm.heading"), classes = "govuk-heading-l")
         @heading(messages("agent.clientConfirm.h2.upe"), classes = "govuk-heading-m", "h2")

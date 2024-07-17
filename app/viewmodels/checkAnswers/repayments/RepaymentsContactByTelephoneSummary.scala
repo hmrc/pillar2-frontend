@@ -25,7 +25,7 @@ import viewmodels.implicits._
 
 object RepaymentsContactByTelephoneSummary {
 
-  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsContactByTelephonePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
@@ -34,7 +34,7 @@ object RepaymentsContactByTelephoneSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id, CheckMode).url
+            controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(CheckMode).url
           )
             .withVisuallyHiddenText(messages("repaymentsContactByTelephone.change.hidden"))
             .withCssClass("govuk-!-display-none-print")

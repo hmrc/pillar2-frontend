@@ -18,8 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.registration._
-import models.{UKAddress, UserAnswers}
+import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -30,24 +29,11 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
-  private val plrReference = "XE1111123456789"
-
-  private val date = LocalDate.now()
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
-
-  val amount = BigDecimal(9.99)
+  val amount: BigDecimal = BigDecimal(9.99)
   private val subData = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "The reason for refund")
@@ -67,7 +53,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -100,7 +86,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         running(application) {
           when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
         }

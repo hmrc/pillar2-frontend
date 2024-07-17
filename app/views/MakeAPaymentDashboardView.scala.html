@@ -30,11 +30,10 @@
    govukSummaryList: GovukSummaryList,
 )
 
-@(plrID: String, clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle    = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true,
-    maybeClientPillar2Id = clientPillar2Id
+    showBackLink = true
 ) {
             @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
             @h2(messages("payment.dashboard.header2"), size = "m")

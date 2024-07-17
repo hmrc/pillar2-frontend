@@ -25,10 +25,10 @@
 )
 
 
-@(clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false,  maybeClientPillar2Id = clientPillar2Id) {
+    pageTitle = titleNoForm(messages("index.title")), showSignOut = false, timeout = false) {
 
     @heading(messages("under_construction.heading"))
 

@@ -28,7 +28,7 @@ class NonUKBankViewSpec extends ViewSpecBase {
   val formProvider = new NonUKBankFormProvider
   val page: NonUKBankView = inject[NonUKBankView]
 
-  val view: Document = Jsoup.parse(page(formProvider(), None, NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Non UK Bank View" should {
 

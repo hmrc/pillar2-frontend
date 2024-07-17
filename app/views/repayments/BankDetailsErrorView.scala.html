@@ -24,16 +24,16 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(clientPillar2Id: Option[String] = None, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repayments.bankDetails.title")), maybeClientPillar2Id = clientPillar2Id) {
+@layout(pageTitle = titleNoForm(messages("repayments.bankDetails.title"))) {
 
     @h(messages("repayments.bankDetails.heading"), classes = "govuk-heading-l")
     @p(messages("repayments.bankDetails.p1"))
     @paragraphMessageWithLink(
         message1 = Some(messages("repayments.bankDetails.p2")),
         linkMessage = messages("repayments.bankDetails.p2.link"),
-        linkUrl = controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id, mode).url,
+        linkUrl = controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode).url,
         linkFullStop = true)
 
 }

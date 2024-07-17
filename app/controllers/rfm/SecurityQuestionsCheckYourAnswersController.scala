@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{RfmIdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.{InternalIssueError, Mode}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.i18n.I18nSupport
@@ -33,21 +33,22 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
-  rfmIdentify:               RfmIdentifierAction,
-  val userAnswersConnectors: UserAnswersConnectors,
-  getSessionData:            SessionDataRetrievalAction,
-  requireSessionData:        SessionDataRequiredAction,
-  subscriptionService:       SubscriptionService,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecurityQuestionsCheckYourAnswersView
-)(implicit appConfig:        FrontendAppConfig, ec: ExecutionContext)
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  val userAnswersConnectors:        UserAnswersConnectors,
+  getSessionData:                   SessionDataRetrievalAction,
+  requireSessionData:               SessionDataRequiredAction,
+  subscriptionService:              SubscriptionService,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             SecurityQuestionsCheckYourAnswersView
+)(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmEnabled = appConfig.rfmAccessEnabled
     if (rfmEnabled) {
       val list = SummaryListViewModel(
@@ -66,7 +67,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit: Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
       inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
       inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))

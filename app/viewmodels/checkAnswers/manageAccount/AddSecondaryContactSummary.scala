@@ -25,7 +25,7 @@ import viewmodels.implicits._
 
 object AddSecondaryContactSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubAddSecondaryContactPage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
@@ -34,7 +34,7 @@ object AddSecondaryContactSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
         )

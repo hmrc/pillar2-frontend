@@ -17,7 +17,7 @@
 package viewmodels.checkAnswers.repayments
 
 import models.{CheckMode, UserAnswers}
-import pages.{RepaymentsContactEmailPage, RepaymentsRefundAmountPage}
+import pages.RepaymentsContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object RepaymentsContactEmailSummary {
 
-  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsContactEmailPage).map { answer =>
       SummaryListRowViewModel(
         key = "repaymentsContactEmail.checkYourAnswersLabel",
@@ -34,7 +34,7 @@ object RepaymentsContactEmailSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(clientPillar2Id, CheckMode).url
+            controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(CheckMode).url
           )
             .withVisuallyHiddenText(messages("repaymentsContactEmail.change.hidden"))
             .withCssClass("govuk-!-display-none-print")

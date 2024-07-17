@@ -19,7 +19,6 @@ package controllers.repayments
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
@@ -33,33 +32,29 @@ import services.BarsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.BankAccountDetailsView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
 class BankAccountDetailsController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify:                 IdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  sessionRepository:        SessionRepository,
-  barsService:              BarsService,
-  formProvider:             BankAccountDetailsFormProvider,
-  featureAction:            FeatureFlagActionFactory,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     BankAccountDetailsView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:               MessagesApi,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  barsService:                            BarsService,
+  formProvider:                           BankAccountDetailsFormProvider,
+  featureAction:                          FeatureFlagActionFactory,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   BankAccountDetailsView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   val form: Form[BankAccountDetails] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       val preparedForm = request.userAnswers.get(BankAccountDetailsPage) match {
         case None              => form
         case Some(userAnswers) => form.fill(userAnswers)
@@ -69,26 +64,22 @@ class BankAccountDetailsController @Inject() (
         updatedUserAnswer  <- Future.fromTry(request.userAnswers.remove(BarsAccountNamePartialPage))
         updatedUserAnswer1 <- Future.fromTry(updatedUserAnswer.remove(RepaymentAccountNameConfirmationPage))
         _                  <- sessionRepository.set(updatedUserAnswer1)
-      } yield Ok(view(preparedForm, clientPillar2Id, mode))
+      } yield Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
-    (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           bankAccountDetails =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, bankAccountDetails))
               _              <- sessionRepository.set(updatedAnswers)
               result <-
                 barsService
-                  .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, clientPillar2Id, mode)
+                  .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, mode)
             } yield result
         )
     }

@@ -36,8 +36,8 @@ class UnderConstructionController @Inject() (
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
     Ok(view())
   }
-  def onPageLoadAgent(clientPillar2Id: Option[String] = None): Action[AnyContent] = Action { implicit request =>
-    Ok(viewAgent(clientPillar2Id))
+  def onPageLoadAgent(): Action[AnyContent] = Action { implicit request =>
+    Ok(viewAgent())
   }
 
   def onPageLoadError: Action[AnyContent] = Action { implicit request =>

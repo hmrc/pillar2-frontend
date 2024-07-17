@@ -24,18 +24,15 @@
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukInsetText: GovukInsetText,
         para: paragraphBody,
-        h1: heading,
-        h2: HeadingH2,
-        span: Span
+        h1: heading
 )
 
-@(form: Form[_], clientPillar2Id: Option[String], accountNamePartial: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], accountNamePartial: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("repayments.accountNameConfirm.title"))) {
 
-    @formHelper(action = controllers.repayments.routes.RepaymentErrorController.onSubmitPartialNameError(clientPillar2Id, mode)) {
+    @formHelper(action = controllers.repayments.routes.RepaymentErrorController.onSubmitPartialNameError(mode)) {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmRepaymentAccountName" -> "confirmRepaymentAccountName_0")))
         }

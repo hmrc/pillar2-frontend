@@ -43,7 +43,8 @@ class DataRetrievalActionImpl @Inject() (
         request.groupId,
         Some(UserAnswers(id = request.userId, data = data.getOrElse(Json.obj()).as[JsObject])),
         Some(request.enrolments),
-        request.userIdForEnrolment
+        request.userIdForEnrolment,
+        request.isAgent
       )
     }
   }

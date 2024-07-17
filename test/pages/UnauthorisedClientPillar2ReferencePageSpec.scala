@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,25 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@import config.FrontendAppConfig
-@this(
-layout: templates.Layout
-)
+package pages
 
+import pages.behaviours.PageBehaviours
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+class UnauthorisedClientPillar2ReferencePageSpec extends PageBehaviours {
 
-@layout(pageTitle = titleNoForm(messages("viewAmendSubscriptionFailed.title")), showBackLink = false) {
-<h1 class="govuk-heading-xl">@messages("viewAmendSubscriptionFailed.heading")</h1>
+  "unauthorisedClientPillar2Reference" - {
 
-<p class="govuk-body">@messages("viewAmendSubscriptionFailed.message1")</p>
+    beRetrievable[String](UnauthorisedClientPillar2ReferencePage)
 
-<div class="govuk-body">
- <a class="govuk-link" href=@controllers.routes.DashboardController.onPageLoad>
-  @messages("viewAmendSubscriptionFailed.link")
- </a>
-</div>
+    beSettable[String](UnauthorisedClientPillar2ReferencePage)
 
+    beRemovable[String](UnauthorisedClientPillar2ReferencePage)
+  }
 }
