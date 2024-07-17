@@ -64,7 +64,7 @@ class RepaymentsContactEmailController @Inject() (
           }
           Ok(view(preparedForm, clientPillar2Id, mode, username))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id)))
     }
 
   def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
@@ -87,6 +87,6 @@ class RepaymentsContactEmailController @Inject() (
                 } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, clientPillar2Id, mode, updatedAnswers))
             )
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id))))
     }
 }

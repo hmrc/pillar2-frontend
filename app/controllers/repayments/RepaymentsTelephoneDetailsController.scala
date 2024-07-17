@@ -66,7 +66,7 @@ class RepaymentsTelephoneDetailsController @Inject() (
 
         Ok(view(preparedForm, clientPillar2Id, mode, contactName))
       })
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id)))
     }
 
   def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
@@ -89,6 +89,6 @@ class RepaymentsTelephoneDetailsController @Inject() (
                 } yield Redirect(navigator.nextPage(RepaymentsTelephoneDetailsPage, clientPillar2Id, mode, updatedAnswers))
             )
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id))))
     }
 }
