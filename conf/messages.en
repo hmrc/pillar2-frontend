@@ -892,7 +892,8 @@ unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
 unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
-unauthorised.org.standard.hyperlink = Find out more about who can use this service
+unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 top-up taxes
+
 unauthorised.agent.heading = Sorry, you’re unable to use this service
 unauthorised.agent.message = You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service.
 unauthorised.agent.message2 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
@@ -905,7 +906,8 @@ unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
-unauthorised.individual.hyper2 = Find out more about who can use this service
+unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
+
 
 manageFurtherGroupDetails.checkYourAnswers.heading = Group details
 manageFurtherGroupDetails.checkYourAnswers.title = Group details
