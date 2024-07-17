@@ -23,6 +23,7 @@
         h: heading,
         h2: HeadingH2,
         p: paragraphBody,
+        bulletList: bulletList,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         sectionBreak: SectionBreak,
         inactiveStatusBanner: InactiveStatusBanner
@@ -72,9 +73,14 @@
 
         @sectionBreak()
 
+        @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
+        @bulletList(items = List(
+            Html(messages("dashboard.whentoSubmitReturn.p1")),
+            Html(messages("dashboard.whentoSubmitReturn.p2"))
+        ), additionalListClasses = Some("govuk-list--spaced"))
+        @sectionBreak()
+
         @p(messages("dashboard.p1"))
-        @p(messages("dashboard.p2", "</strong>", "<strong>"))
-        @p(messages("dashboard.p3"))
-        @paragraphMessageWithLink(message1 = Some(messages("dashboard.p4")), linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank")
+        @paragraphMessageWithLink( linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
 
     }

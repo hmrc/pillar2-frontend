@@ -130,20 +130,19 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element = organisationDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
 
-      element.get(10).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      element.get(0).text() must include(
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
       )
-      element.get(11).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
+      element.get(1).text() must include(
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
       )
-      element.get(12).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
+      pargraph.get(10).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(13).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
-      )
+
     }
 
   }
@@ -252,20 +251,19 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element = agentDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
 
-      element.get(12).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      element.get(0).text() must include(
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
       )
-      element.get(13).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
+      element.get(1).text() must include(
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
       )
-      element.get(14).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
+      pargraph.get(10).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(15).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
-      )
+
     }
   }
 }
