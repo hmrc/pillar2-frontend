@@ -32,7 +32,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(page(formProvider(), None, NormalMode)(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("What type of account will the refund be sent to?")
@@ -54,7 +54,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
     "nothing selected and page submitted" should {
 
-      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), None, NormalMode)(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")

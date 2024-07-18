@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object SecondaryContactNameSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryContactNamePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactName.checkYourAnswersLabel",
@@ -34,7 +34,7 @@ object SecondaryContactNameSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )

@@ -1271,14 +1271,16 @@ repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
 repayments.bankAccountDetails.sortCodeError = Enter the sort code
 repayments.bankAccountDetails.accountNumberError = Enter the account number
-
 repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
 repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
-
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
 repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
+
+repayments.bankAccountDetails.error.accountNumber = Enter the account number as it appears on your bank statement
+repayments.bankAccountDetails.error.accountName = Enter the name on the account as it appears on your bank statement
+repayments.bankAccountDetails.error.sortCode = Enter the sort code as it appears on your bank statement
 
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
@@ -1333,6 +1335,30 @@ repayments.contactEmail.error.contactEmail.required = Enter an email address for
 repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
 repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
 
+repayments.couldNotConfirm.title = We could not confirm your bank details
+repayments.couldNotConfirm.heading = We could not confirm your bank details
+repayments.couldNotConfirm.p1 = We are unable to proceed with the account details you entered.
+repayments.couldNotConfirm.p2 = Please
+repayments.couldNotConfirm.p2.link = return to your bank details and try again
+
+repayments.error.title = Sorry, there is a problem with the service
+repayments.error.heading = Sorry, there is a problem with the service
+repayments.error.p1 = You can try again later when the service is available.
+repayments.error.p2.link = Return to your account homepage
+
+repayments.bankDetails.title = We could not confirm your bank details
+repayments.bankDetails.heading = We could not confirm your bank details
+repayments.bankDetails.p1 = We are unable to proceed with the account details you entered.
+repayments.bankDetails.p2 = Please
+repayments.bankDetails.p2.link = try again with a different business bank account
+
+repayments.accountNameConfirm.title = Do you want to continue with these bank details?
+repayments.accountNameConfirm.heading = Do you want to continue with these bank details?
+repayments.accountNameConfirm.subheading = This account belongs to {0}
+repayments.accountNameConfirm.p1 = Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again.
+repayments.accountNameConfirm.p2 = We may not be able to recover your money if it goes to the wrong account.
+repayments.accountNameConfirm.error.required = Enter if you want to continue with these bank details?
+
 repayments.contactByTelephone.title = Can we contact by telephone?
 repayments.contactByTelephone.heading = Can we contact {0} by telephone?
 repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
@@ -1344,6 +1370,8 @@ repayments.telephoneDetails.hint = For international numbers include the country
 repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
+
+###################
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful

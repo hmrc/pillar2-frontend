@@ -53,7 +53,7 @@
 
     @paragraphBody(messages("registrationConfirmation.now", link(
         text = messages("registrationConfirmation.link-home"),
-        call = Call("GET", controllers.routes.DashboardController.onPageLoad().url),
+        call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
         fullStop = true
     )))
 

@@ -3,7 +3,7 @@
 ->          /hmrc-frontend                                                                           hmrcfrontend.Routes
 
 GET         /                                                                                        controllers.IndexController.onPageLoad
-GET         /banner                                                                                  controllers.IndexController.onPageLoadBanner(clientPillar2Id: Option[String] ?= None)
+GET         /banner                                                                                  controllers.IndexController.onPageLoadBanner
 GET         /check-progress/register-your-group                                                      controllers.TaskListController.onPageLoad
 
 
@@ -106,7 +106,7 @@ GET         /eligibility/service-not-suitable/not-active-in-uk                  
 GET         /eligibility/service-not-suitable/under-750-million                                      controllers.eligibility.Kb750IneligibleController.onPageLoad
 
 GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
-GET         /under-construction-repaymets                                                             controllers.UnderConstructionController.onPageLoadAgent(clientPillar2Id: Option[String] ?= None)
+GET         /under-construction-repayments                                                           controllers.UnderConstructionController.onPageLoadAgent
 GET         /account/sign-out-survey                                                                 controllers.auth.AuthController.signOut
 GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad
@@ -120,7 +120,7 @@ GET         /errors/eis                                                         
 GET         /error/incomplete                                                                        controllers.subscription.InprogressTaskListController.onPageLoad
 GET         /error/page-not-found                                                                    controllers.ErrorController.pageNotFoundLoad
 
-GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
 GET         /error/group-registered                                                                  controllers.AlreadyRegisteredController.onPageLoad
 
@@ -182,10 +182,10 @@ GET         /further-details/change-group-status                                
 POST        /further-details/change-group-status                                                     controllers.subscription.MneOrDomesticController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit(clientPillar2Id: Option[String] ?= None)
-GET         /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad
+POST        /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit
+GET         /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad
+POST        /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit
 
 
 GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
@@ -206,31 +206,31 @@ POST        /contact-details/input-name                                         
 GET         /contact-details/change-input-name                                                       controllers.subscription.ContactNameComplianceController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-input-name                                                       controllers.subscription.ContactNameComplianceController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onPageLoad
+POST        /manage-account/contact-details/change-input-name                                        controllers.subscription.manageAccount.ContactNameComplianceController.onSubmit
 
 GET         /contact-details/second-contact                                                          controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details/second-contact                                                          controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = NormalMode)
 GET         /contact-details/change-second-contact                                                   controllers.subscription.AddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-contact                                                   controllers.subscription.AddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onPageLoad
+POST        /manage-account/contact-details/change-second-contact                                    controllers.subscription.manageAccount.AddSecondaryContactController.onSubmit
 
 
 
 GET         /further-details/check-answers                                                           controllers.subscription.GroupDetailCheckYourAnswersController.onPageLoad
 
-GET         /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+POST        /manage-account/account-details/summary                                                  controllers.subscription.manageAccount.ManageGroupDetailsCheckYourAnswersController.onSubmit
 
 
 
 GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
-GET         /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
+POST        /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onSubmit
 
 
 GET         /contact-details/input-email                                                             controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = NormalMode)
@@ -238,16 +238,16 @@ POST        /contact-details/input-email                                        
 GET         /contact-details/change-input-email                                                      controllers.subscription.ContactEmailAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-input-email                                                      controllers.subscription.ContactEmailAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad
+POST        /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit
 
 GET         /contact-details/telephone                                                               controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details/telephone                                                               controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET         /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad
+POST        /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit
 
 
 GET         /contact-details/input-telephone                                                         controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
@@ -255,8 +255,8 @@ POST        /contact-details/input-telephone                                    
 GET         /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad
+POST        /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit
 
 
 GET         /contact-details/second-input-name                                                       controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
@@ -264,8 +264,8 @@ POST        /contact-details/second-input-name                                  
 GET         /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST       /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET        /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad
+POST       /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit
 
 
 GET         /contact-details/second-input-email                                                      controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
@@ -273,8 +273,8 @@ POST        /contact-details/second-input-email                                 
 GET         /contact-details/change-second-input-email                                               controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-input-email                                               controllers.subscription.SecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST        /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET         /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onPageLoad
+POST        /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit
 
 
 GET         /contact-details/second-telephone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
@@ -282,8 +282,8 @@ POST        /contact-details/second-telephone                                   
 GET         /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST       /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET        /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad
+POST       /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit
 
 
 GET         /contact-details/second-input-telephone                                                  controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
@@ -291,8 +291,8 @@ POST        /contact-details/second-input-telephone                             
 GET         /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST       /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET        /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad
+POST       /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit
 
 
 
@@ -304,11 +304,11 @@ GET         /contact-details/change-input-address                               
 POST        /contact-details/change-input-address                                                    controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST       /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id: Option[String] ?= None)
+GET        /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad
+POST       /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit
 
 
-GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None, agentView: Boolean ?= false)
+GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad
 
 GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm
@@ -403,7 +403,7 @@ POST        /replace-filing-member/contact-details/address/input                
 GET         /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/address/change-input               controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = CheckMode)
 
-GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad
 GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
 GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
@@ -459,7 +459,7 @@ GET         /replace-filing-member/error/cannot-return                          
 GET         /asa/input-pillar-2-id                                                                   controllers.AgentController.onPageLoadClientPillarId
 POST        /asa/input-pillar-2-id                                                                   controllers.AgentController.onSubmitClientPillarId
 GET         /asa/confirm                                                                             controllers.AgentController.onPageLoadConfirmClientDetails
-POST        /asa/confirm                                                                             controllers.AgentController.onSubmitConfirmClientDetails(pillar2Id: String)
+POST        /asa/confirm                                                                             controllers.AgentController.onSubmitConfirmClientDetails
 GET         /asa/error/no-match                                                                      controllers.AgentController.onPageLoadNoClientMatch
 GET         /asa/error/system                                                                        controllers.AgentController.onPageLoadError
 GET         /asa/error/not-authorised                                                                controllers.AgentController.onPageLoadUnauthorised
@@ -469,60 +469,60 @@ GET         /asa/error/organisation                                             
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
 
-GET        /replace-filing-member/review-submit/confirmation                                     controllers.rfm.RfmConfirmationController.onPageLoad
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad
 
-GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id: Option[String] ?= None)
+GET        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET          /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode,clientPillar2Id: Option[String] ?= None)
-POST         /repayment/amount                                                                       controllers.repayments.RequestRefundAmountController.onSubmit( mode: Mode = NormalMode, clientPillar2Id: Option[String] ?= None)
-GET          /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onPageLoad( mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
-POST         /repayment/change-amount                                                                controllers.repayments.RequestRefundAmountController.onSubmit( mode: Mode = CheckMode, clientPillar2Id: Option[String] ?= None)
+GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/reason                         controllers.repayments.ReasonForRequestingRefundController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-reason                  controllers.repayments.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-reason                  controllers.repayments.ReasonForRequestingRefundController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/method                         controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/method                         controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-method                  controllers.repayments.UkOrAbroadBankAccountController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
+GET        /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad
+POST       /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit
 
-GET        /repayment/check-answers                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad(clientPillar2Id: Option[String] ?= None)
-POST       /repayment/check-answers                                                          controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit(clientPillar2Id: Option[String] ?= None)
-
-GET        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-POST       /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = NormalMode)
-GET        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-POST       /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(clientPillar2Id: Option[String] ?= None, mode: Mode = CheckMode)
-
+GET        /repayment/error/could-not-confirm                                                       controllers.repayments.RepaymentErrorController.onPageLoadNotConfirmedDetails
+GET        /repayment/error/view                                                                    controllers.repayments.RepaymentErrorController.onPageLoadError
+GET        /repayment/error/bank-details                                                            controllers.repayments.RepaymentErrorController.onPageLoadBankDetailsError
+GET        /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = NormalMode)
+POST       /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = NormalMode)
+GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
+POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)

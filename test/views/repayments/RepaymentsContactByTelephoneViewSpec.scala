@@ -34,7 +34,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
     "page loaded" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider("John Doe"), Some("XMPLR0123456789"), mode, "John Doe")(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider("John Doe"), mode, "John Doe")(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("Can we contact by telephone?")
@@ -63,7 +63,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider("John Doe").bind(Map("value" -> "")), Some("XMPLR0123456789"), mode, "John Doe")(request, appConfig, messages).toString()
+        page(formProvider("John Doe").bind(Map("value" -> "")), mode, "John Doe")(request, appConfig, messages).toString()
       )
 
     "have an error summary" in {

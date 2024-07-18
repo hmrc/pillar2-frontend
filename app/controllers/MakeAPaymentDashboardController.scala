@@ -16,40 +16,39 @@
 
 package controllers
 
+import cats.data.OptionT
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import controllers.subscription.manageAccount.identifierAction
-import pages.PlrReferencePage
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.requests.OptionalDataRequest
+import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.ReferenceNumberService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
 import views.html.MakeAPaymentDashboardView
-import javax.inject.Inject
+
+import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
 
 class MakeAPaymentDashboardController @Inject() (
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     MakeAPaymentDashboardView,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction
-)(implicit appConfig:       FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  val controllerComponents:               MessagesControllerComponents,
+  referenceNumberService:                 ReferenceNumberService,
+  sessionRepository:                      SessionRepository,
+  view:                                   MakeAPaymentDashboardView,
+  getData:                                DataRetrievalAction
+)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
-      clientPillar2Id
-        .orElse(
-          Pillar2Reference
-            .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-        )
-        .orElse(request.userAnswers.get(PlrReferencePage))
-        .map { pillar2Id =>
-          Ok(view(pillar2Id, clientPillar2Id))
-        }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+      (for {
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
+      } yield Ok(view(referenceNumber))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 }

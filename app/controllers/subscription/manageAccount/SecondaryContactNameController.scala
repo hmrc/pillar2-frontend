@@ -29,45 +29,44 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactNameController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              SecondaryContactNameFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      SecondaryContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  navigator:                              AmendSubscriptionNavigator,
+  formProvider:                           SecondaryContactNameFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   SecondaryContactNameView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
       val preparedForm = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm, clientPillar2Id))
+      Ok(view(preparedForm))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryContactNamePage, value))
               _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, clientPillar2Id, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SubSecondaryContactNamePage, updatedAnswers))
         )
     }
 
