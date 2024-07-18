@@ -94,6 +94,9 @@ class TaskListControllerSpec extends SpecBase {
         contentAsString(result) should include(
           "Check your answers"
         )
+        contentAsString(result) should include(
+          "At the ‘Review and submit’ section of this registration, you can amend your answers and print or save them for your own records."
+        )
       }
     }
 

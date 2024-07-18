@@ -121,6 +121,7 @@ upe-input-business-name.checkYourAnswersLabel = Contact name
 task-list.title = Register your group
 task-list.heading = Register your group
 taskList.paragraph = The information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
+taskList.paragraph-review =  At the ‘Review and submit’ section of this registration, you can amend your answers and print or save them for your own records.
 taskList.subheading.complete = Registration incomplete
 taskList.completedSections = You have completed {0} of 5 sections.
 taskList.task.business.heading = Group details
@@ -411,7 +412,7 @@ contactUPEByTelephone.change.hidden =  your response to whether we make contact 
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
-captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
+captureTelephoneDetails.hint = For international numbers include the country code.
 captureTelephoneDetails.error.required = You need to enter the telephone for {0}
 captureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
@@ -422,7 +423,7 @@ NominateFilingMemberYesNo.title = Nominate a filing member
 NominateFilingMemberYesNo.heading = Nominate a filing member
 NominateFilingMemberYesNo.heading.caption = Group details
 NominateFilingMemberYesNo.subheading = Are you registering as the nominated filing member to report for this group?
-NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group
+NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group.
 NominateFilingMemberYesNo.p2 = If you are nominated to report as the filing member, you must have written permission from your UPE (such as an email). We won’t collect this during registration, but we may request it during compliance checks.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
@@ -866,6 +867,7 @@ dashboard.whentoSubmitReturn = When to submit your returns
 dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
 dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
+dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no late than:
 dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.p2 = for more details.
 
@@ -892,7 +894,7 @@ unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
 unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
-unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.org.standard.hyperlink = Find out more about who can use this service
 
 unauthorised.agent.heading = Sorry, you’re unable to use this service
 unauthorised.agent.message = You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service.
@@ -906,7 +908,7 @@ unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
-unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.individual.hyper2 = Find out more about who can use this service
 
 
 manageFurtherGroupDetails.checkYourAnswers.heading = Group details
