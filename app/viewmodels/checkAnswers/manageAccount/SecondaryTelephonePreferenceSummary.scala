@@ -25,7 +25,7 @@ import viewmodels.implicits._
 
 object SecondaryTelephonePreferenceSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryPhonePreferencePage).map { answer =>
       val value = if (answer) "site.yes" else "site.no"
       SummaryListRowViewModel(
@@ -34,7 +34,7 @@ object SecondaryTelephonePreferenceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("secondaryTelephonePreference.change.hidden"))
         )

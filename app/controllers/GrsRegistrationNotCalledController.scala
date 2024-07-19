@@ -17,22 +17,22 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, RfmIdentifierAction}
+import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledRfmView, RegistrationNotCalledUpeView}
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 class GrsRegistrationNotCalledController @Inject() (
-  identify:                 IdentifierAction,
-  rfmIdentify:              RfmIdentifierAction,
-  val controllerComponents: MessagesControllerComponents,
-  upeView:                  RegistrationNotCalledUpeView,
-  nfmView:                  RegistrationNotCalledNfmView,
-  rfmView:                  RegistrationNotCalledRfmView
-)(implicit appConfig:       FrontendAppConfig)
+  identify:                            IdentifierAction,
+  @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
+  val controllerComponents:            MessagesControllerComponents,
+  upeView:                             RegistrationNotCalledUpeView,
+  nfmView:                             RegistrationNotCalledNfmView,
+  rfmView:                             RegistrationNotCalledRfmView
+)(implicit appConfig:                  FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

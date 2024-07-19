@@ -55,7 +55,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -84,7 +84,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         running(application) {
           when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.successful(true))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
@@ -100,10 +100,10 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         running(application) {
           when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed().url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url
         }
       }
       "redirect to a placeholder page (to be changed in the future) if data is partially completed" in {
@@ -115,7 +115,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         running(application) {
           when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(None)
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url

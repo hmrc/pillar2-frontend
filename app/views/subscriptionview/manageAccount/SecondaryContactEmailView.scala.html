@@ -28,12 +28,12 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], clientPillar2Id: Option[String], secondaryContactName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], secondaryContactName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryContactEmail.title")), maybeClientPillar2Id = clientPillar2Id) {
+@layout(pageTitle = title(form, messages("secondaryContactEmail.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit(clientPillar2Id)) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

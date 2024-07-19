@@ -24,16 +24,16 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(clientPillar2Id: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repayments.submission.error.title")), maybeClientPillar2Id = clientPillar2Id) {
+@layout(pageTitle = titleNoForm(messages("repayments.submission.error.title"))) {
 
     @h(messages("repayments.submission.error.heading"), classes = "govuk-heading-l")
     @p(messages("repayments.submission.error.p2"))
     @paragraphMessageWithLink(
         message1 = None,
         linkMessage = messages("repayments.submission.error.p2.link"),
-        linkUrl = routes.DashboardController.onPageLoad(clientPillar2Id).url,
+        linkUrl = routes.DashboardController.onPageLoad.url,
         linkFullStop = false)
 
 }

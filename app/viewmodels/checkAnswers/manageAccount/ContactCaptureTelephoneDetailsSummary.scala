@@ -43,7 +43,7 @@ import viewmodels.implicits._
 
 object ContactCaptureTelephoneDetailsSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     if (request.subscriptionLocalData.subPrimaryPhonePreference) {
       request.subscriptionLocalData.get(SubPrimaryCapturePhonePage).map { answer =>
         val value = ValueViewModel(
@@ -57,7 +57,7 @@ object ContactCaptureTelephoneDetailsSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad(maybeClientPillar2Id).url
+              controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
             )
               .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
           )

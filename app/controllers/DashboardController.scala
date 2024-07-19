@@ -20,50 +20,58 @@ import cats.data.OptionT
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
-import controllers.actions.{AgentIdentifierAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
-import models.{InternalIssueError, UserAnswers}
-import models.requests.IdentifierRequest
+import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
-import pages.PlrReferencePage
+import models.{InternalIssueError, UserAnswers}
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
 
 import java.time.format.DateTimeFormatter
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  featureAction:             FeatureFlagActionFactory,
-  getData:                   DataRetrievalAction,
-  val subscriptionService:   SubscriptionService,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      DashboardView,
-  referenceNumberService:    ReferenceNumberService,
-  sessionRepository:         SessionRepository
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:              UserAnswersConnectors,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                DataRetrievalAction,
+  val subscriptionService:                SubscriptionService,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   DashboardView,
+  referenceNumberService:                 ReferenceNumberService,
+  sessionRepository:                      SessionRepository
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, agentView: Boolean = false): Action[AnyContent] =
-    (identifierAction(agentView, clientPillar2Id) andThen getData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+      sessionRepository.get(request.userId).map { optionalUserAnswer =>
+        val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(request.userId))
+        for {
+          updatedAnswers <- Future.fromTry(userAnswer.set(RedirectToASAHome, false))
+          _              <- sessionRepository.set(updatedAnswers)
+        } yield true
+      }
       (for {
-        userAnswers <-
-          if (agentView) OptionT.fromOption[Future](Option(request.userAnswers)) else OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- if (agentView) { OptionT.fromOption[Future](clientPillar2Id) }
-                           else { OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)) }
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
         dataToSave = userAnswers.getOrElse(UserAnswers(id = request.userId, data = Json.obj())).setOrException(PlrReferencePage, referenceNumber)
-        _         <- OptionT.liftF(sessionRepository.set(dataToSave))
+        _           <- OptionT.liftF(sessionRepository.set(dataToSave))
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(
@@ -71,22 +79,14 @@ class DashboardController @Inject() (
           dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           referenceNumber,
           inactiveStatus = dashboard.accountStatus.exists(_.inactive),
-          agentView
+          agentView = request.isAgent
         )
       )).recover { case InternalIssueError =>
         logger.error(
-          "read subscription failed as no valid Json was returned from the controller"
+          "DashboardController - read subscription failed as no valid Json was returned from the controller"
         )
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
     }
-
-  private def identifierAction(agentView: Boolean, clientPillar2Id: Option[String]): ActionBuilder[IdentifierRequest, AnyContent] =
-    clientPillar2Id
-      .map { id =>
-        if (agentView) { featureAction.asaAccessAction andThen agentIdentifierAction.agentIdentify(VerifyAgentClientPredicate(id)) }
-        else { identify }
-      }
-      .getOrElse(identify)
 }

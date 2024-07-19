@@ -19,44 +19,44 @@ package models.repayments
 import play.api.libs.json.{Json, OFormat}
 
 final case class RepaymentDetails(
-                                   plrReference:       String,
-                                   name:               String,
-                                   utr:                Option[String],
-                                   reasonForRepayment: String,
-                                   refundAmount:       BigDecimal
-                                 )
+  plrReference:       String,
+  name:               String,
+  utr:                Option[String],
+  reasonForRepayment: String,
+  refundAmount:       BigDecimal
+)
 
 object RepaymentDetails {
   implicit val format: OFormat[RepaymentDetails] = Json.format[RepaymentDetails]
 }
 
 final case class BankDetails(
-                              nameOnBankAccount: String,
-                              bankName:          String,
-                              sortCode:          Option[String],
-                              accountNumber:     Option[String],
-                              iban:              Option[String],
-                              bic:               Option[String],
-                              countryCode:       Option[String]
-                            )
+  nameOnBankAccount: String,
+  bankName:          String,
+  sortCode:          Option[String],
+  accountNumber:     Option[String],
+  iban:              Option[String],
+  bic:               Option[String],
+  countryCode:       Option[String]
+)
 
 object BankDetails {
   implicit val format: OFormat[BankDetails] = Json.format[BankDetails]
 }
 
 final case class RepaymentContactDetails(
-                                          contactDetails: String
-                                        )
+  contactDetails: String
+)
 
 object RepaymentContactDetails {
   implicit val format: OFormat[RepaymentContactDetails] = Json.format[RepaymentContactDetails]
 }
 
 final case class SendRepaymentDetails(
-                                       repaymentDetails: RepaymentDetails,
-                                       bankDetails: BankDetails,
-                                       contactDetails: RepaymentContactDetails,
-                                     )
+  repaymentDetails: RepaymentDetails,
+  bankDetails:      BankDetails,
+  contactDetails:   RepaymentContactDetails
+)
 
 object SendRepaymentDetails {
   implicit val format: OFormat[SendRepaymentDetails] = Json.format[SendRepaymentDetails]

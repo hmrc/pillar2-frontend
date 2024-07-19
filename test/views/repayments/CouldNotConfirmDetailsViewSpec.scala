@@ -19,13 +19,14 @@ package views.repayments
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.repayments.CouldNotConfirmDetailsView
 
 class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
 
-  val page = inject[CouldNotConfirmDetailsView]
+  val page: CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
 
-  val view = Jsoup.parse(page(clientPillar2Id = None, NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
 
   "Could Not Confirm Details View" should {
 

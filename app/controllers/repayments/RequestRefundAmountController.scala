@@ -18,7 +18,6 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
@@ -31,54 +30,44 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundAmountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRefundAmountController @Inject() (
-  identify:                 IdentifierAction,
-  formProvider:             RequestRefundAmountFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RequestRefundAmountView,
-  navigator:                RepaymentNavigator,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  featureAction:            FeatureFlagActionFactory,
-  agentIdentifierAction:    AgentIdentifierAction
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  formProvider:                           RequestRefundAmountFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RequestRefundAmountView,
+  navigator:                              RepaymentNavigator,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  featureAction:                          FeatureFlagActionFactory,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[BigDecimal] = formProvider()
-
-  def onPageLoad(mode: Mode = NormalMode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData)) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
         case Some(value) => form.fill(value.setScale(2))
       }
-      Ok(view(preparedForm, mode, clientPillar2Id))
+      Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(mode: Mode, clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData)).async { implicit request =>
+  def onSubmit(mode: Mode = NormalMode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, clientPillar2Id))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsRefundAmountPage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, clientPillar2Id, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(RepaymentsRefundAmountPage, mode, updatedAnswers))
         )
     }
 

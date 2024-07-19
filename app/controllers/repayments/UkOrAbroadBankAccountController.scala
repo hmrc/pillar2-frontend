@@ -18,7 +18,6 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.UkOrAbroadBankAccountFormProvider
 import models.{Mode, UkOrAbroadBankAccount}
 import navigation.RepaymentNavigator
@@ -31,51 +30,42 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.UkOrAbroadBankAccountView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class UkOrAbroadBankAccountController @Inject() (
-  val sessionRepository:    SessionRepository,
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  getData:                  SessionDataRetrievalAction,
-  featureAction:            FeatureFlagActionFactory,
-  requireData:              SessionDataRequiredAction,
-  navigator:                RepaymentNavigator,
-  formProvider:             UkOrAbroadBankAccountFormProvider,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     UkOrAbroadBankAccountView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  val sessionRepository:                  SessionRepository,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SessionDataRetrievalAction,
+  featureAction:                          FeatureFlagActionFactory,
+  requireData:                            SessionDataRequiredAction,
+  navigator:                              RepaymentNavigator,
+  formProvider:                           UkOrAbroadBankAccountFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   UkOrAbroadBankAccountView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
+  def onPageLoad(mode: Mode): Action[AnyContent] =
     (featureAction.repaymentsAccessAction
-      andThen identifierAction(
-        clientPillar2Id,
-        agentIdentifierAction,
-        identify
-      ) andThen getData andThen requireData) { implicit request =>
+      andThen identify andThen getData andThen requireData) { implicit request =>
       val preparedForm = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, clientPillar2Id, mode))
+      Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] = (identifierAction(
-    clientPillar2Id,
-    agentIdentifierAction,
-    identify
-  ) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(
-        formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+        formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
         value =>
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(UkOrAbroadBankAccountPage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, clientPillar2Id, mode, updatedAnswers))
+          } yield Redirect(navigator.nextPage(UkOrAbroadBankAccountPage, mode, updatedAnswers))
       )
   }
 }

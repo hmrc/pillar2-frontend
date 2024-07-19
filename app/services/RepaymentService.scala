@@ -17,11 +17,9 @@
 package services
 
 import connectors._
-import models.{UkOrAbroadBankAccount, UserAnswers}
 import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
-import models.subscription.ContactDetailsType
-import org.apache.pekko.Done
-import pages.{BankAccountDetailsPage, NonUKBankPage, PlrReferencePage, ReasonForRequestingRefundPage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsTelephoneDetailsPage, UkOrAbroadBankAccountPage}
+import models.{UkOrAbroadBankAccount, UserAnswers}
+import pages._
 import play.api.Logging
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier

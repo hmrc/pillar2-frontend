@@ -34,22 +34,36 @@ class RepaymentConnectorSpec extends SpecBase {
   lazy val connector: RepaymentConnector = app.injector.instanceOf[RepaymentConnector]
 
   private val errorCodes: Gen[Int] =
-    Gen.oneOf(Seq(BAD_REQUEST, FORBIDDEN, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_GATEWAY, GATEWAY_TIMEOUT,
-      SERVICE_UNAVAILABLE, OK, ACCEPTED, NON_AUTHORITATIVE_INFORMATION, NO_CONTENT, RESET_CONTENT))
+    Gen.oneOf(
+      Seq(
+        BAD_REQUEST,
+        FORBIDDEN,
+        NOT_FOUND,
+        INTERNAL_SERVER_ERROR,
+        BAD_GATEWAY,
+        GATEWAY_TIMEOUT,
+        SERVICE_UNAVAILABLE,
+        OK,
+        ACCEPTED,
+        NON_AUTHORITATIVE_INFORMATION,
+        NO_CONTENT,
+        RESET_CONTENT
+      )
+    )
   "RepaymentConnector" when {
 
-      "Create repayment must return Done for successful submission to ETMP" in {
-        stubResponse("/report-pillar2-top-up-taxes/repayment", CREATED, "")
-        val result = connector.repayment(validRepaymentPayloadUkBank)
-        result.futureValue mustBe Done
-      }
-
-      "must return a failed result for any non 201 response received from ETMP" in {
-        stubResponse("/report-pillar2-top-up-taxes/repayment", errorCodes.sample.value, "")
-        val result = connector.repayment(validRepaymentPayloadUkBank)
-        result.failed.futureValue mustBe UnexpectedResponse
-      }
-
+    "Create repayment must return Done for successful submission to ETMP" in {
+      stubResponse("/report-pillar2-top-up-taxes/repayment", CREATED, "")
+      val result = connector.repayment(validRepaymentPayloadUkBank)
+      result.futureValue mustBe Done
     }
+
+    "must return a failed result for any non 201 response received from ETMP" in {
+      stubResponse("/report-pillar2-top-up-taxes/repayment", errorCodes.sample.value, "")
+      val result = connector.repayment(validRepaymentPayloadUkBank)
+      result.failed.futureValue mustBe UnexpectedResponse
+    }
+
+  }
 
 }

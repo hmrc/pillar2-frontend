@@ -32,54 +32,53 @@ class RepaymentServiceSpec extends SpecBase {
 
   "ReferenceNumberService" when {
 
-
     "getRepaymentData" should {
-    "Successfully create SendRepaymentObject from userAnswers if an answer has been provided for uk bank account" in {
+      "Successfully create SendRepaymentObject from userAnswers if an answer has been provided for uk bank account" in {
 
-      val service = app.injector.instanceOf[RepaymentService]
-      val result = service.getRepaymentData(completeRepaymentDataUkBankAccount)
-      result mustBe Some(validRepaymentPayloadUkBank)
-    }
+        val service = app.injector.instanceOf[RepaymentService]
+        val result  = service.getRepaymentData(completeRepaymentDataUkBankAccount)
+        result mustBe Some(validRepaymentPayloadUkBank)
+      }
 
       "Successfully create SendRepaymentObject from userAnswers if an answer has been provided for a non-uk bank account" in {
 
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(completeRepaymentDataNonUkBankAccount)
+        val result  = service.getRepaymentData(completeRepaymentDataNonUkBankAccount)
         result mustBe Some(validRepaymentPayloadNonUkBank)
       }
       "return None if referenceNumber is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoReferenceNumber)
+        val result  = service.getRepaymentData(repaymentNoReferenceNumber)
         result mustBe None
       }
       "return None if contact name is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoContactName)
+        val result  = service.getRepaymentData(repaymentNoContactName)
         result mustBe None
       }
       "return None if amount is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoAmount)
+        val result  = service.getRepaymentData(repaymentNoAmount)
         result mustBe None
       }
       "return None if bank account type is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoBankAccountType)
+        val result  = service.getRepaymentData(repaymentNoBankAccountType)
         result mustBe None
       }
       "return None if bank account detail for foreign account type is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoBankAccountDetailForeign)
+        val result  = service.getRepaymentData(repaymentNoBankAccountDetailForeign)
         result mustBe None
       }
       "return None if bank account detail for a uk account is missing" in {
         val service = app.injector.instanceOf[RepaymentService]
-        val result = service.getRepaymentData(repaymentNoUKBankAccountDetail)
+        val result  = service.getRepaymentData(repaymentNoUKBankAccountDetail)
         result mustBe None
       }
     }
 
-    "sendRepaymentDetails" should{
+    "sendRepaymentDetails" should {
       "return true and delete frontend database if successful" in {
         val application = applicationBuilder().overrides(
           inject.bind[RepaymentConnector].toInstance(mockRepaymentConnector),

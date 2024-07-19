@@ -50,11 +50,10 @@ class BarsService @Inject() (
 ) extends Logging {
 
   def verifyBusinessAccount(
-    details:         BankAccountDetails,
-    userAnswers:     UserAnswers,
-    form:            Form[BankAccountDetails],
-    clientPillar2Id: Option[String],
-    mode:            Mode
+    details:     BankAccountDetails,
+    userAnswers: UserAnswers,
+    form:        Form[BankAccountDetails],
+    mode:        Mode
   )(implicit
     hc:       HeaderCarrier,
     request:  Request[_],
@@ -65,7 +64,7 @@ class BarsService @Inject() (
     for {
       barsResponse <- barsConnector.verify(Business(details.nameOnBankAccount), Account(details.sortCode, details.accountNumber), trackingId)
       _ = logger.info(s"Request has been sent to BARS with trackingId=$trackingId")
-      result <- handleBarsResponse(barsResponse, userAnswers, mode, form, clientPillar2Id)
+      result <- handleBarsResponse(barsResponse, userAnswers, mode, form)
     } yield result
   }
 
@@ -73,8 +72,7 @@ class BarsService @Inject() (
     barsAccountResponse: BarsAccountResponse,
     userAnswers:         UserAnswers,
     mode:                Mode,
-    form:                Form[BankAccountDetails],
-    clientPillar2Id:     Option[String]
+    form:                Form[BankAccountDetails]
   )(implicit request:    Request[_], messages: Messages): Future[Result] = {
     import barsAccountResponse._
     (
@@ -94,7 +92,7 @@ class BarsService @Inject() (
             sortCodeSupportsDirectCredit
           ) if isValidAccountDetails(accountNumberIsWellFormatted, sortCodeSupportsDirectCredit, nonStandardAccountDetailsRequiredForBacs) =>
         Future successful Redirect(
-          navigator.nextPage(BankAccountDetailsPage, clientPillar2Id, mode, userAnswers)
+          navigator.nextPage(BankAccountDetailsPage, mode, userAnswers)
         )
       case (
             accountNumberIsWellFormatted,
@@ -104,7 +102,7 @@ class BarsService @Inject() (
             nonStandardAccountDetailsRequiredForBacs,
             sortCodeSupportsDirectCredit
           ) if isValidAccountDetails(accountNumberIsWellFormatted, sortCodeSupportsDirectCredit, nonStandardAccountDetailsRequiredForBacs) =>
-        handlePartialNameMatch(barsAccountResponse.accountName, userAnswers, clientPillar2Id, mode)
+        handlePartialNameMatch(barsAccountResponse.accountName, userAnswers, mode)
 
       case (_, accountExists, _, _, _, _) if accountExists != AccountExists.Yes =>
         Future successful handleAccountExists(
@@ -113,7 +111,6 @@ class BarsService @Inject() (
           nameMatches,
           sortCodeIsPresentOnEISCD,
           userAnswers,
-          clientPillar2Id,
           mode,
           form
         )
@@ -125,17 +122,16 @@ class BarsService @Inject() (
           nameMatches,
           sortCodeIsPresentOnEISCD,
           userAnswers,
-          clientPillar2Id,
           mode,
           form
         )
 
       case (_, _, _, SortCodeIsPresentOnEISCD.Error, _, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id))
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
       case (_, _, _, _, NonStandardAccountDetailsRequiredForBacs.Yes, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError(clientPillar2Id))
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
       case (_, _, _, _, _, SortCodeSupportsDirectCredit.Error) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id))
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
       case (accountNumberIsWellFormatted, accountExists, nameMatches, sortCodeIsPresentOnEISCD, _, _) =>
         Future successful handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -144,11 +140,10 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
-          form,
-          clientPillar2Id
+          form
         )
 
-      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id))
+      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
     }
   }
 
@@ -167,13 +162,12 @@ class BarsService @Inject() (
     nameMatches:                  NameMatches,
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
-    clientPillar2Id:              Option[String],
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
   )(implicit request:             Request[_], messages: Messages): Result =
     accountExists match {
-      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError(clientPillar2Id))
-      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails(clientPillar2Id))
+      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
+      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
       case AccountExists.No =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -182,10 +176,9 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
-          form,
-          clientPillar2Id
+          form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id))
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
     }
 
   private def handleNameMatches(
@@ -194,13 +187,12 @@ class BarsService @Inject() (
     nameMatches:                  NameMatches,
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
-    clientPillar2Id:              Option[String],
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
   )(implicit request:             Request[_], messages: Messages): Result =
     nameMatches match {
-      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails(clientPillar2Id))
-      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails(clientPillar2Id))
+      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
+      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
       case NameMatches.No =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -209,24 +201,22 @@ class BarsService @Inject() (
           sortCodeIsPresentOnEISCD,
           userAnswers,
           mode,
-          form,
-          clientPillar2Id
+          form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id))
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
     }
 
   private def handlePartialNameMatch(
-    partialName:     Option[String],
-    userAnswers:     UserAnswers,
-    clientPillar2Id: Option[String],
-    mode:            Mode
+    partialName: Option[String],
+    userAnswers: UserAnswers,
+    mode:        Mode
   ): Future[Result] = {
     for {
       accountName    <- OptionT.fromOption[Future](partialName)
       updatedAnswers <- OptionT.fromOption[Future](userAnswers.set(BarsAccountNamePartialPage, accountName).toOption)
       _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-    } yield Redirect(navigator.nextPage(BarsAccountNamePartialPage, clientPillar2Id, mode, userAnswers))
-  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError(clientPillar2Id)))
+    } yield Redirect(navigator.nextPage(BarsAccountNamePartialPage, mode, userAnswers))
+  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError))
 
   private def handleAndDisplayErrors(
     accountNumberIsWellFormatted: AccountNumberIsWellFormatted,
@@ -235,8 +225,7 @@ class BarsService @Inject() (
     sortCodeIsPresentOnEISCD:     SortCodeIsPresentOnEISCD,
     userAnswers:                  UserAnswers,
     mode:                         Mode,
-    form:                         Form[BankAccountDetails],
-    clientPillar2Id:              Option[String]
+    form:                         Form[BankAccountDetails]
   )(implicit request:             Request[_], messages: Messages): Result = {
     val preparedForm = userAnswers.get(BankAccountDetailsPage).map(ua => form.fill(ua)).getOrElse(form)
 
@@ -258,6 +247,6 @@ class BarsService @Inject() (
       }
     }
 
-    BadRequest(view(bankAccountFormWithErrors, clientPillar2Id, mode))
+    BadRequest(view(bankAccountFormWithErrors, mode))
   }
 }

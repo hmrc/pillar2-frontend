@@ -17,21 +17,28 @@
 package controllers.repayments
 
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject
 import play.api.inject.bind
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import views.html.repayments.RequestRefundBeforeStartView
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class RequestRefundBeforeStartControllerSpec extends SpecBase {
+
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "Rfm Save Progress inform Controller" when {
 
@@ -39,22 +46,24 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some(PlrReference)).url)
-
-        val result = route(application, request).value
-        val view   = application.injector.instanceOf[RequestRefundBeforeStartView]
-
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[RequestRefundBeforeStartView]
         status(result) mustEqual OK
         contentAsString(result) must include("Request a refund")
-        contentAsString(result) mustEqual view(Some(PlrReference))(
+        contentAsString(result) mustEqual view()(
           request,
           appConfig(application),
           messages(application)
@@ -66,7 +75,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
         .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some(PlrReference)).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
