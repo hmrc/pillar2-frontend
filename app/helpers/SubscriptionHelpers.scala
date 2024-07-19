@@ -24,7 +24,21 @@ trait SubscriptionHelpers {
 
   self: UserAnswers =>
 
-  private def upeStatusChecker: Boolean =
+  private def upeStatusChecker: Boolean = {
+    println(
+      "................................." + (
+        get(UpeRegisteredInUKPage),
+        get(UpeNameRegistrationPage).isDefined,
+        get(UpeRegisteredAddressPage).isDefined,
+        get(UpeContactNamePage).isDefined,
+        get(UpeContactEmailPage).isDefined,
+        get(UpePhonePreferencePage),
+        get(UpeCapturePhonePage).isDefined,
+        get(UpeEntityTypePage).isDefined,
+        get(UpeGRSResponsePage).isDefined,
+        get(GrsUpeStatusPage).isDefined
+      )
+    )
     (
       get(UpeRegisteredInUKPage),
       get(UpeNameRegistrationPage).isDefined,
@@ -37,10 +51,12 @@ trait SubscriptionHelpers {
       get(UpeGRSResponsePage).isDefined,
       get(GrsUpeStatusPage).isDefined
     ) match {
-      case (Some(false), true, true, true, true, Some(_), _, _, _, _) => true
-      case (Some(true), _, _, _, _, _, _, true, true, true)           => true
-      case _                                                          => false
+      case (Some(false), true, true, true, true, Some(true), true, _, _, _) => true
+      case (Some(false), true, true, true, true, Some(false), _, _, _, _)   => true
+      case (Some(true), _, _, _, _, _, _, true, true, true)                 => true
+      case _                                                                => false
     }
+  }
 
   def upeStatus: RowStatus =
     (get(UpeRegisteredInUKPage), get(CheckYourAnswersLogicPage)) match {
@@ -118,10 +134,11 @@ trait SubscriptionHelpers {
       get(FmGRSResponsePage).isDefined,
       get(GrsFilingMemberStatusPage).isDefined
     ) match {
-      case (Some(true), Some(false), true, true, true, true, Some(_), _, _, _, _) => true
-      case (Some(true), Some(true), _, _, _, _, _, _, true, true, true)           => true
-      case (Some(false), _, _, _, _, _, _, _, _, _, _)                            => true
-      case _                                                                      => false
+      case (Some(true), Some(false), true, true, true, true, Some(true), true, _, _, _)   => true
+      case (Some(true), Some(false), true, true, true, true, Some(false), false, _, _, _) => true
+      case (Some(true), Some(true), _, _, _, _, _, _, true, true, true)                   => true
+      case (Some(false), _, _, _, _, _, _, _, _, _, _)                                    => true
+      case _                                                                              => false
     }
 
   def fmStatus: RowStatus =
