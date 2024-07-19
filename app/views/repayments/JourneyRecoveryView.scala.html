@@ -28,12 +28,12 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("repayments.journeyRecoveryView.title")),
+    pageTitle = titleNoForm(messages("repayments.journeyRecovery.title")),
     showSignOut = true,
     authorised = true,
     showBackLink = false
 ) {
-    @heading(messages("rfm.journeyRecoveryView.heading"), "govuk-heading-l")
+    @heading(messages("repayments.journeyRecovery.heading"), "govuk-heading-l")
     @paragraphBody(messages("repayments.journeyRecovery.p1"))
     @paragraphBody(messages("repayments.journeyRecovery.p2"))
     @paragraphBodyLink(messages("repayments.journeyRecovery.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
