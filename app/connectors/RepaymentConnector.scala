@@ -17,16 +17,13 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.SubscriptionConnector.constructUrl
-import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse, UserAnswers}
+import models.UnexpectedResponse
+import models.repayments.SendRepaymentDetails
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
-import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
@@ -34,28 +31,20 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  def repayment(repaymentData: UserAnswers)(implicit hc: HeaderCarrier): Future[Done] = {
-    println("back end ...............................................................................................recived call")
+  def repayment(repaymentData: SendRepaymentDetails)(implicit hc: HeaderCarrier): Future[Done] =
     http
-      .POST[UserAnswers, HttpResponse](
+      .POST[SendRepaymentDetails, HttpResponse](
         s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment",
         repaymentData
       )
       .flatMap { response =>
         response.status match {
-          case OK =>
-            logger.info(s"repayments - success")
+          case CREATED =>
+            logger.info("Successful repayment submission ")
             Done.toFuture
-          case error =>
-            logger.warn(s"repayments - $error")
+          case _ =>
+            logger.info("Repayment submission failed")
             Future.failed(UnexpectedResponse)
         }
       }
-  }
-}
-
-object RepaymentConnector {
-  private def constructUrl(config: FrontendAppConfig): String =
-    s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment"
-
 }

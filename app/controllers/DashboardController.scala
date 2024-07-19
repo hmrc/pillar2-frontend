@@ -22,11 +22,13 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
 import controllers.actions.{AgentIdentifierAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
-import models.InternalIssueError
+import models.{InternalIssueError, UserAnswers}
 import models.requests.IdentifierRequest
 import models.subscription.ReadSubscriptionRequestParameters
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, ActionBuilder, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
@@ -60,6 +62,8 @@ class DashboardController @Inject() (
           if (agentView) OptionT.fromOption[Future](Option(request.userAnswers)) else OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- if (agentView) { OptionT.fromOption[Future](clientPillar2Id) }
                            else { OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)) }
+        dataToSave = userAnswers.getOrElse(UserAnswers(id = request.userId, data = Json.obj())).setOrException(PlrReferencePage, referenceNumber)
+        _         <- OptionT.liftF(sessionRepository.set(dataToSave))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(

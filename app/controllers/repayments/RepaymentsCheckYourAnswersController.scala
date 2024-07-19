@@ -24,16 +24,17 @@ import controllers.actions._
 import controllers.routes
 import controllers.subscription.manageAccount.identifierAction
 import models.{UnexpectedResponse, UserAnswers}
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.RepaymentService
+import services.{ReferenceNumberService, RepaymentService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -69,16 +70,14 @@ class RepaymentsCheckYourAnswersController @Inject() (
     identify
   ) andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
-//      referenceNumber <- OptionT
-//                           .fromOption[Future](clientPillar2Id)
-//       .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.userAnswers))))
-      _ <- OptionT.liftF(repaymentService.repayment(request.userAnswers))
-    } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+      repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+      _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(request.userId, repaymentData))
+    } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad))
       .recover { case UnexpectedResponse =>
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+        Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed(clientPillar2Id))
       }
-      .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-  //Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoadAgent(clientPillar2Id)))
+      .getOrElse(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
+
   }
 
   private def contactDetailsList(clientPillar2Id: Option[String] = None)(implicit messages: Messages, userAnswers: UserAnswers) =
