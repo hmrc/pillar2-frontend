@@ -24,21 +24,7 @@ trait SubscriptionHelpers {
 
   self: UserAnswers =>
 
-  private def upeStatusChecker: Boolean = {
-    println(
-      "................................." + (
-        get(UpeRegisteredInUKPage),
-        get(UpeNameRegistrationPage).isDefined,
-        get(UpeRegisteredAddressPage).isDefined,
-        get(UpeContactNamePage).isDefined,
-        get(UpeContactEmailPage).isDefined,
-        get(UpePhonePreferencePage),
-        get(UpeCapturePhonePage).isDefined,
-        get(UpeEntityTypePage).isDefined,
-        get(UpeGRSResponsePage).isDefined,
-        get(GrsUpeStatusPage).isDefined
-      )
-    )
+  private def upeStatusChecker: Boolean =
     (
       get(UpeRegisteredInUKPage),
       get(UpeNameRegistrationPage).isDefined,
@@ -56,7 +42,6 @@ trait SubscriptionHelpers {
       case (Some(true), _, _, _, _, _, _, true, true, true)                 => true
       case _                                                                => false
     }
-  }
 
   def upeStatus: RowStatus =
     (get(UpeRegisteredInUKPage), get(CheckYourAnswersLogicPage)) match {
