@@ -154,7 +154,8 @@ trait Formatters extends Transforms with Constraints {
     }
 
   private[mappings] def mandatoryPostcodeFormatter(
-    requiredKey:      String,
+    requiredKeyGB:    String,
+    requiredKeyOther: String,
     invalidKey:       String,
     nonUkLengthKey:   String,
     countryFieldName: String
@@ -165,14 +166,15 @@ trait Formatters extends Transforms with Constraints {
       val country                = countryDataTransform(data.get(countryFieldName))
       val maxLengthNonUKPostcode = 10
 
-      (postCode, country, requiredKey) match {
-        case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp)       => Right(postCodeValidTransform(zip))
-        case (Some(_), Some("GB"), _)                                        => Left(Seq(FormError(key, invalidKey)))
-        case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode => Right(zip)
-        case (Some(_), Some(_), _)                                           => Left(Seq(FormError(key, nonUkLengthKey)))
-        case (Some(zip), None, _)                                            => Right(zip)
-        case (None, _, rk)                                                   => Left(Seq(FormError(key, rk)))
-        case _                                                               => Right("")
+      (postCode, country) match {
+        case (Some(zip), Some("GB")) if zip.matches(postcodeRegexp)       => Right(postCodeValidTransform(zip))
+        case (Some(_), Some("GB"))                                        => Left(Seq(FormError(key, invalidKey)))
+        case (Some(zip), Some(_)) if zip.length <= maxLengthNonUKPostcode => Right(zip)
+        case (Some(_), Some(_))                                           => Left(Seq(FormError(key, nonUkLengthKey)))
+        case (Some(zip), None)                                            => Right(zip)
+        case (None, Some("GB"))                                           => Left(Seq(FormError(key, requiredKeyGB)))
+        case (None, _)                                                    => Left(Seq(FormError(key, requiredKeyOther)))
+        case _                                                            => Right("")
       }
     }
     override def unbind(key: String, value: String): Map[String, String] =
