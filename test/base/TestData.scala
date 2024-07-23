@@ -16,8 +16,6 @@
 
 package base
 
-import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
-
 trait TestData {
 
   val validRegistrationWithIdResponseForLLP: String =
@@ -285,31 +283,5 @@ trait TestData {
       |    ]
       |}
       |""".stripMargin
-
-  val validRepaymentPayloadUkBank: SendRepaymentDetails = SendRepaymentDetails(
-    repaymentDetails = RepaymentDetails(plrReference = "plrReference", name = "name", utr = None, reasonForRepayment = "???", refundAmount = 10000.1),
-    bankDetails = BankDetails(
-      nameOnBankAccount = "Paddington",
-      bankName = "Bank of Bears",
-      sortCode = Some("666666"),
-      accountNumber = Some("00000000"),
-      iban = None,
-      bic = None,
-      countryCode = None
-    ),
-    contactDetails = RepaymentContactDetails(contactDetails = "name, paddington@peru.com, marmalade sandwich")
-  )
-
-  val validRepaymentPayloadNonUkBank: SendRepaymentDetails = validRepaymentPayloadUkBank.copy(bankDetails =
-    BankDetails(
-      nameOnBankAccount = "Paddington",
-      bankName = "Bank of Bears",
-      sortCode = None,
-      accountNumber = None,
-      iban = Some("123132"),
-      bic = Some("11111111"),
-      countryCode = None
-    )
-  )
 
 }

@@ -21,13 +21,12 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.{InternalIssueError, UserAnswers}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{InternalIssueError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome}
+import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
@@ -62,12 +61,6 @@ class DashboardController @Inject() (
         } yield true
       }
       (for {
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
-        dataToSave = userAnswers.getOrElse(UserAnswers(id = request.userId, data = Json.obj())).setOrException(PlrReferencePage, referenceNumber)
-        _           <- OptionT.liftF(sessionRepository.set(dataToSave))
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
