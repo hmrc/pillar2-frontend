@@ -26,7 +26,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repayments.submission.error.title"))) {
+@layout(pageTitle = titleNoForm(messages("repayments.submission.error.title")), showBackLink = false) {
 
     @h(messages("repayments.submission.error.heading"), classes = "govuk-heading-l")
     @p(messages("repayments.submission.error.p2"))
