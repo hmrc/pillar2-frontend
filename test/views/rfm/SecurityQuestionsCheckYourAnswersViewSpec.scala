@@ -17,10 +17,11 @@
 package views.rfm
 
 import base.ViewSpecBase
-import models.NormalMode
-import models.rfm.RegistrationDate
+import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.RfmRegistrationDateSummary.dateHelper
 import viewmodels.checkAnswers.{RfmRegistrationDateSummary, RfmSecurityCheckSummary}
 import viewmodels.govuk.summarylist._
@@ -29,20 +30,20 @@ import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
   val plrReference = "XE1111123456789"
 
-  val userAnswer = emptyUserAnswers
+  val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmPillar2ReferencePage, plrReference)
-    .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+    .setOrException(RfmRegistrationDatePage, registrationDate)
 
-  val list = SummaryListViewModel(
+  val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmSecurityCheckSummary.row(userAnswer)(messages),
       RfmRegistrationDateSummary.row(userAnswer)(messages)
     ).flatten
   )
 
-  val page = inject[SecurityQuestionsCheckYourAnswersView]
+  val page: SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
 
-  val view = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
 
   "Security Questions Check Your Answers View" should {
 

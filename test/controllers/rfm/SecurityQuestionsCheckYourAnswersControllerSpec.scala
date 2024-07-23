@@ -18,9 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.rfm.RegistrationDate
-import models.rfm.RegistrationDate._
-import models.{InternalIssueError, NormalMode}
+import models.{InternalIssueError, NoResultFound, NormalMode}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -43,7 +41,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+          .setOrException(RfmRegistrationDatePage, registrationDate)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .build()
@@ -81,7 +79,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+          redirectLocation(result) mustBe Some(controllers.routes.ErrorController.pageNotFoundLoad.url)
         }
       }
     }
@@ -89,7 +87,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       "redirect to corporate position group page if registration date and Pillar 2 ID match our records with the same pillar2 ID" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+          .setOrException(RfmRegistrationDatePage, registrationDate)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -110,7 +108,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       "redirect to corporate position group page if registration date match our records with new pillar2 ID with no prepopulated data" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(registrationDate))
+          .setOrException(RfmRegistrationDatePage, registrationDate)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -133,7 +131,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       "redirect to error page if registration dates do not match" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
@@ -151,7 +149,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       "redirect to error page if read subscription fails" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
@@ -165,9 +163,27 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
         }
       }
+
+      "redirect to journey recovery page if read subscription fails with a 404 response" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(RfmPillar2ReferencePage, plrReference)
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .build()
+        running(application) {
+          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(NoResultFound))
+          val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+        }
+      }
       "redirect to journey recovery if no input pillar 2 id is found" in {
         val userAnswer = emptyUserAnswers
-          .setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .build()
         running(application) {
