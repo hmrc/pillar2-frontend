@@ -33,6 +33,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
@@ -183,7 +184,7 @@ object UseContactPrimaryController {
   ): SummaryList =
     SummaryListViewModel(
       rows = Seq(
-        SummaryListRowViewModel(key = "useContactPrimary.name", value = ValueViewModel(HtmlFormat.escape(contactName).toString)).some,
+        SummaryListRowViewModel(key = "useContactPrimary.name", value = ValueViewModel(HtmlContent(HtmlFormat.escape(contactName)))).some,
         SummaryListRowViewModel(key = "useContactPrimary.email", value = ValueViewModel(HtmlFormat.escape(contactEmail).toString)).some,
         contactTel.map(tel => SummaryListRowViewModel(key = "useContactPrimary.telephone", value = ValueViewModel(HtmlFormat.escape(tel).toString)))
       ).flatten
