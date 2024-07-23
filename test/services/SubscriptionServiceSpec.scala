@@ -22,7 +22,7 @@ import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameter
 import models.registration.RegistrationInfo
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
+import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, NoResultFound, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -363,7 +363,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return NoResultFound when the connector returns None" in {
+      "return NoResultFound when the connector returns a 404 response" in {
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -371,7 +371,7 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
         running(application) {
           when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(None))
+            .thenReturn(Future.failed(NoResultFound))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").failed.futureValue
 

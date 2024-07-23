@@ -72,13 +72,8 @@ class SubscriptionService @Inject() (
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
-      case Some(readSubscriptionResponse) =>
-        logger.info(s"readSubscription success: - $readSubscriptionResponse")
-        Future.successful(readSubscriptionResponse)
-      case None => Future.failed(NoResultFound)
-      case error =>
-        logger.warn(s"readSubscription error: - $error")
-        Future.failed(InternalIssueError)
+      case Some(subData) => Future.successful(subData)
+      case None          => Future.failed(InternalIssueError)
     }
 
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit

@@ -16,16 +16,16 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
-import models.UnexpectedResponse
 import models.subscription._
+import models.{InternalIssueError, NoResultFound, UnexpectedResponse}
+import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpException
 
 import java.time.LocalDate
@@ -40,6 +40,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
   lazy val connector: SubscriptionConnector = app.injector.instanceOf[SubscriptionConnector]
   private val subscriptionDataJson = Json.parse(successfulResponseJson).as[SubscriptionData]
+  val subscriptionSuccess: JsValue = Json.toJson(SubscriptionSuccess(subscriptionDataJson))
   "SubscriptionConnector" must {
     "subscribe" should {
 
@@ -91,7 +92,7 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
     "readSubscription" should {
 
       "return Some(json) when the backend has returned 200 OK with data" in {
-        stubGet(s"$readSubscriptionPath/$plrReference", OK, successfulResponseJson)
+        stubGet(s"$readSubscriptionPath/$plrReference", OK, subscriptionSuccess.toString)
         val result: Option[SubscriptionData] = connector.readSubscription(plrReference).futureValue
 
         result mustBe defined
@@ -99,10 +100,20 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       }
 
-      "return None when the backend has returned a non-success status code" in {
+      "return NoResult error when the backend has returned a 404 status" in {
         server.stubFor(
           get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
+            .willReturn(aResponse().withStatus(NOT_FOUND).withBody(unsuccessfulNotFoundJson))
+        )
+
+        val result = connector.readSubscription(plrReference)
+        result.failed.futureValue mustBe NoResultFound
+      }
+
+      "return None when the backend has returned a response else than 200 or 404 status" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(MULTI_STATUS).withBody(unsuccessfulResponseJson))
         )
 
         val result = connector.readSubscription(plrReference).futureValue
@@ -310,4 +321,7 @@ object SubscriptionConnectorSpec {
       |""".stripMargin
 
   private val unsuccessfulResponseJson = """{ "status": "error" }"""
+  private val unsuccessfulNotFoundJson =
+    """{ "status": "404",
+      | "error": "there is nothing here" }""".stripMargin
 }

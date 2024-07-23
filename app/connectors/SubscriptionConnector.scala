@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
+import models.{DuplicateSubmissionError, InternalIssueError, NoResultFound, UnexpectedResponse}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
@@ -76,13 +76,13 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
     http
       .GET[HttpResponse](subscriptionUrl)
-      .map {
+      .flatMap {
         case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionData])
-        case response if response.status == 404 => None
+          Some(Json.parse(response.body).as[SubscriptionSuccess].success).toFuture
+        case notFoundResponse if notFoundResponse.status == 404 => Future.failed(NoResultFound)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          None
+          None.toFuture
       }
   }
 

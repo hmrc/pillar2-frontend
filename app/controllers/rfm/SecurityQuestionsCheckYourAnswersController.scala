@@ -24,6 +24,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.{InternalIssueError, Mode, NoResultFound}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
@@ -47,7 +48,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   view:                             SecurityQuestionsCheckYourAnswersView
 )(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
@@ -81,9 +83,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
       .recover {
-        case InternalIssueError =>
-          Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
-        case NoResultFound => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        case InternalIssueError => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
+        case NoResultFound      => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 
