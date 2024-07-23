@@ -31,25 +31,25 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.GroupRegistrationDateReportView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class GroupRegistrationDateReportController @Inject() (
-  sessionRepository:        SessionRepository,
-  rfmIdentify:              RfmIdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  formProvider:             GroupRegistrationDateReportFormProvider,
-  navigator:                ReplaceFilingMemberNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     GroupRegistrationDateReportView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  sessionRepository:                SessionRepository,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getSessionData:                   SessionDataRetrievalAction,
+  requireSessionData:               SessionDataRequiredAction,
+  formProvider:                     GroupRegistrationDateReportFormProvider,
+  navigator:                        ReplaceFilingMemberNavigator,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             GroupRegistrationDateReportView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def form: Form[RegistrationDate] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(RfmRegistrationDatePage).map(form.fill).getOrElse(form)
@@ -59,7 +59,7 @@ class GroupRegistrationDateReportController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

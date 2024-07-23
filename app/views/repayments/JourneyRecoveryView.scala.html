@@ -25,7 +25,7 @@ paragraphBody: paragraphBody,
 paragraphBodyLink: paragraphBodyLink,
 )
 
-@(clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
 pageTitle = titleNoForm(messages("repayments.journeyRecovery.title")),
@@ -36,5 +36,5 @@ showBackLink = false
 @heading(messages("repayments.journeyRecovery.heading"), "govuk-heading-l")
 @paragraphBody(messages("repayments.journeyRecovery.p1"))
 @paragraphBody(messages("repayments.journeyRecovery.p2"))
-@paragraphBodyLink(messages("repayments.journeyRecovery.link"), linkUrl = controllers.routes.DashboardController.onPageLoad(clientPillar2Id, false).url)
+@paragraphBodyLink(messages("repayments.journeyRecovery.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
 }

@@ -53,7 +53,7 @@ class BarsServiceSpec extends SpecBase {
       running(application) {
         when(mockBarsConnector.verify(any(), any(), any())(any())).thenReturn(Future successful barsAccountResponse())
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/contact-details/input-name")
@@ -75,7 +75,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Partial, accountName = Some("Epic Adv")))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/partial-name")
@@ -105,7 +105,6 @@ class BarsServiceSpec extends SpecBase {
           bankAccountDetails,
           userAnswer,
           formProvider().fill(bankAccountDetails),
-          clientPillar2Id = None,
           NormalMode
         )(hc, request, messages(application))
 
@@ -113,7 +112,6 @@ class BarsServiceSpec extends SpecBase {
         contentAsString(result) mustBe
           view(
             formWithError,
-            None,
             NormalMode
           )(
             request,
@@ -146,7 +144,6 @@ class BarsServiceSpec extends SpecBase {
           bankAccountDetails,
           userAnswer,
           formProvider().fill(bankAccountDetails),
-          clientPillar2Id = None,
           NormalMode
         )(hc, request, messages(application))
 
@@ -154,7 +151,6 @@ class BarsServiceSpec extends SpecBase {
         contentAsString(result) mustBe
           view(
             formWithError,
-            None,
             NormalMode
           )(
             request,
@@ -179,7 +175,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Inapplicable))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/bank-details")
@@ -201,7 +197,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Indeterminate))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/could-not-confirm")
@@ -223,7 +219,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Error))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -253,7 +249,6 @@ class BarsServiceSpec extends SpecBase {
           bankAccountDetails,
           userAnswer,
           formProvider().fill(bankAccountDetails),
-          clientPillar2Id = None,
           NormalMode
         )(hc, request, messages(application))
 
@@ -261,7 +256,6 @@ class BarsServiceSpec extends SpecBase {
         contentAsString(result) mustBe
           view(
             formWithError,
-            None,
             NormalMode
           )(
             request,
@@ -286,7 +280,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Inapplicable))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/could-not-confirm")
@@ -308,7 +302,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Indeterminate))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/could-not-confirm")
@@ -330,7 +324,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Error))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -360,7 +354,6 @@ class BarsServiceSpec extends SpecBase {
           bankAccountDetails,
           userAnswer,
           formProvider().fill(bankAccountDetails),
-          clientPillar2Id = None,
           NormalMode
         )(hc, request, messages(application))
 
@@ -368,7 +361,6 @@ class BarsServiceSpec extends SpecBase {
         contentAsString(result) mustBe
           view(
             formWithError,
-            None,
             NormalMode
           )(
             request,
@@ -393,7 +385,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(sortCodeIsPresentOnEISCD = SortCodeIsPresentOnEISCD.Error))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -415,7 +407,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nonStandardAccountDetailsRequiredForBacs = NonStandardAccountDetailsRequiredForBacs.Yes))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/bank-details")
@@ -437,7 +429,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(sortCodeSupportsDirectCredit = SortCodeSupportsDirectCredit.Error))
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -459,7 +451,7 @@ class BarsServiceSpec extends SpecBase {
         when(mockBarsConnector.verify(any(), any(), any())(any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Partial))
 
-        val result: Future[Result] = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result: Future[Result] = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -499,7 +491,6 @@ class BarsServiceSpec extends SpecBase {
           bankAccountDetails,
           userAnswer,
           formProvider().fill(bankAccountDetails),
-          clientPillar2Id = None,
           NormalMode
         )(hc, request, messages(application))
 
@@ -507,7 +498,6 @@ class BarsServiceSpec extends SpecBase {
         contentAsString(result) mustBe
           view(
             formWithError,
-            None,
             NormalMode
           )(
             request,
@@ -538,7 +528,7 @@ class BarsServiceSpec extends SpecBase {
             )
           )
 
-        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), clientPillar2Id = None, NormalMode)
+        val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
         status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/view")
@@ -554,7 +544,7 @@ object BarsServiceSpec {
   val formProvider: BankAccountDetailsFormProvider = new BankAccountDetailsFormProvider()
 
   implicit val request: Request[AnyContentAsFormUrlEncoded] =
-    FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(None, NormalMode).url)
+    FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)
       .withFormUrlEncodedBody(
         "bankName"          -> bankAccountDetails.bankName,
         "accountHolderName" -> bankAccountDetails.nameOnBankAccount,

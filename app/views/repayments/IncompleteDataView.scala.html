@@ -24,7 +24,7 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("repayments.incompleteDataView.title")),
@@ -32,5 +32,5 @@
     showBackLink = false
 ) {
     @heading(messages("repayments.incompleteDataView.heading"), "govuk-heading-l")
-    @paragraphMessageWithLink(Some(messages("repayments.incompleteDataView.paragraphStart")), messages("repayments.incompleteDataView.link.text"), Some(messages("repayments.incompleteDataView.paragraphStop")), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(clientPillar2Id).url, linkFullStop= false)
+    @paragraphMessageWithLink(Some(messages("repayments.incompleteDataView.paragraphStart")), messages("repayments.incompleteDataView.link.text"), Some(messages("repayments.incompleteDataView.paragraphStop")), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url, linkFullStop= false)
 }

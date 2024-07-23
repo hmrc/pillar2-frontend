@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -67,15 +67,18 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockFilingMember:                               FilingMember                               = mock[FilingMember]
   val mockAuditService:                               AuditService                               = mock[AuditService]
   val mockEnrolmentConnector:                         TaxEnrolmentConnector                      = mock[TaxEnrolmentConnector]
-  val mockAgentIdentifierAction:                      AgentIdentifierAction                      = mock[AgentIdentifierAction]
   val mockBarsConnector:                              BarsConnector                              = mock[BarsConnector]
   val mockBarsService:                                BarsService                                = mock[BarsService]
+  val mockRepaymentConnector:                         RepaymentConnector                         = mock[RepaymentConnector]
+  val mockRepaymentService:                           RepaymentService                           = mock[RepaymentService]
 
   override protected def beforeEach(): Unit =
     Seq(
       mockAuditConnector,
+      mockRepaymentConnector,
       mockAuthConnector,
       mockFrontendAppConfig,
+      mockRepaymentService,
       mockUserAnswersConnectors,
       mockCountryOptions,
       mockNavigator,
@@ -90,7 +93,6 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockSubscriptionConnector,
       mockEnrolmentStoreProxyConnector,
       mockAuditService,
-      mockEnrolmentConnector,
-      mockAgentIdentifierAction
+      mockEnrolmentConnector
     ).foreach(Mockito.reset(_))
 }

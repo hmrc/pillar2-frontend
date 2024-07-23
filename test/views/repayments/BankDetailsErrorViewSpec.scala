@@ -19,13 +19,14 @@ package views.repayments
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.repayments.BankDetailsErrorView
 
 class BankDetailsErrorViewSpec extends ViewSpecBase {
 
-  val page = inject[BankDetailsErrorView]
+  val page: BankDetailsErrorView = inject[BankDetailsErrorView]
 
-  val view = Jsoup.parse(page(clientPillar2Id = None, NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
 
   "Bank Details Error View" should {
 

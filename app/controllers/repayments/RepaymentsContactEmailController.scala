@@ -18,7 +18,6 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
@@ -30,30 +29,25 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsContactEmailView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactEmailController @Inject() (
-  identify:                 IdentifierAction,
-  formProvider:             RepaymentsContactEmailFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  sessionRepository:        SessionRepository,
-  navigator:                RepaymentNavigator,
-  featureAction:            FeatureFlagActionFactory,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactEmailView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  formProvider:                           RepaymentsContactEmailFormProvider,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  navigator:                              RepaymentNavigator,
+  featureAction:                          FeatureFlagActionFactory,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RepaymentsContactEmailView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>
@@ -62,31 +56,27 @@ class RepaymentsContactEmailController @Inject() (
             case Some(value) => form.fill(value)
             case None        => form
           }
-          Ok(view(preparedForm, clientPillar2Id, mode, username))
+          Ok(view(preparedForm, mode, username))
         }
-        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id)))
+        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode): Action[AnyContent] =
-    (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { name =>
           formProvider(name)
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode, name))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name))),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactEmailPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, clientPillar2Id, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(RepaymentsContactEmailPage, mode, updatedAnswers))
             )
         }
-        .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id))))
+        .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad)))
     }
 }

@@ -26,7 +26,7 @@ import viewmodels.implicits._
 
 object UKBankNameOnAccountSummary {
 
-  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(BankAccountDetailsPage)
       .map { answer =>
@@ -36,7 +36,7 @@ object UKBankNameOnAccountSummary {
             .get(BarsAccountNamePartialPage)
             .fold(ValueViewModel(HtmlContent(answer.nameOnBankAccount)))(nameOnAccount => ValueViewModel(HtmlContent(nameOnAccount))),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(clientPillar2Id, CheckMode).url)
+            ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )

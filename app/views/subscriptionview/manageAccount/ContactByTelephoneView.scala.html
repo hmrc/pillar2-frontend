@@ -29,12 +29,12 @@
 )
 
 
-@(form: Form[_], userName: String, clientPillar2Id: Option[String] = None)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactByTelephone.title")), maybeClientPillar2Id = clientPillar2Id) {
+@layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit(clientPillar2Id), 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit, 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

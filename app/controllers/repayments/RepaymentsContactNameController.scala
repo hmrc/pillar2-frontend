@@ -18,9 +18,8 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import controllers.subscription.manageAccount.identifierAction
 import forms.RepaymentsContactNameFormProvider
-import models.{Mode, NormalMode}
+import models.Mode
 import navigation.RepaymentNavigator
 import pages.RepaymentsContactNamePage
 import play.api.data.Form
@@ -31,54 +30,45 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsContactNameView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactNameController @Inject() (
-  identify:                 IdentifierAction,
-  formProvider:             RepaymentsContactNameFormProvider,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  sessionRepository:        SessionRepository,
-  featureAction:            FeatureFlagActionFactory,
-  navigator:                RepaymentNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsContactNameView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  formProvider:                           RepaymentsContactNameFormProvider,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  featureAction:                          FeatureFlagActionFactory,
+  navigator:                              RepaymentNavigator,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RepaymentsContactNameView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
-      Ok(view(preparedForm, clientPillar2Id, mode))
+      Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None, mode: Mode = NormalMode): Action[AnyContent] =
-    (identifierAction(
-      clientPillar2Id,
-      agentIdentifierAction,
-      identify
-    ) andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id, mode))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsContactNamePage, value))
               _              <- sessionRepository.set(updatedAnswers)
-            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, clientPillar2Id, mode, updatedAnswers))
+            } yield Redirect(navigator.nextPage(RepaymentsContactNamePage, mode, updatedAnswers))
         )
     }
 }

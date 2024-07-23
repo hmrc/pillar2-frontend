@@ -30,8 +30,8 @@ class RepaymentsJourneyRecoveryController @Inject() (val controllerComponents: M
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(view(clientPillar2Id)))
+  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+    Future.successful(Ok(view()))
   }
 
 }

@@ -1381,6 +1381,10 @@ repayments.journeyRecovery.p1 = Your answers were not saved.
 repayments.journeyRecovery.p2 = Please try again later when the service is available.
 repayments.journeyRecovery.link = Return to account homepage
 
+repayments.submission.error.heading = Sorry, there is a problem with the service
+repayments.submission.error.title = Sorry, there is a problem with the service
+repayments.submission.error.p2 = You can try again later when the service is available.
+repayments.submission.error.p2.link = Return to your account homepage
 
 ###################
 

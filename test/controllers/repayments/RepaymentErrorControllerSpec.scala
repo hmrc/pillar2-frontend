@@ -34,7 +34,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails.url)
 
         val result = route(application, request).value
 
@@ -48,14 +48,14 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[CouldNotConfirmDetailsView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
   }
@@ -66,7 +66,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError.url)
 
         val result = route(application, request).value
 
@@ -80,7 +80,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError.url)
 
         val result = route(application, request).value
 
@@ -98,7 +98,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError.url)
 
         val result = route(application, request).value
 
@@ -112,14 +112,14 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError().url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[BankDetailsErrorView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
   }
@@ -130,7 +130,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -144,14 +144,14 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode).url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[AccountNameConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), None, "James", NormalMode)(
+        contentAsString(result) mustEqual view(formProvider(), "James", NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -164,7 +164,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -180,7 +180,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, routes.RepaymentErrorController.onPageLoadPartialNameError(None, NormalMode).url)
+          FakeRequest(POST, routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode).url)
             .withFormUrlEncodedBody(("", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -190,7 +190,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, None, "James", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "James", NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -204,7 +204,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(NormalMode).url)
           .withFormUrlEncodedBody(("confirmRepaymentAccountName", "true"))
 
         val result = route(application, request).value
@@ -225,7 +225,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(NormalMode).url)
           .withFormUrlEncodedBody(("confirmRepaymentAccountName", "false"))
 
         val result = route(application, request).value
@@ -240,7 +240,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(None, NormalMode).url)
+        val request = FakeRequest(POST, routes.RepaymentErrorController.onSubmitPartialNameError(NormalMode).url)
 
         val result = route(application, request).value
 

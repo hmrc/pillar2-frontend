@@ -19,20 +19,19 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.AgentIdentifierAction.VerifyAgentClientPredicate
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions._
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage}
+import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, RedirectToASAHome, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.AgentView
 import views.html._
+import views.html.rfm.AgentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,6 +39,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class AgentController @Inject() (
   val controllerComponents:    MessagesControllerComponents,
   val userAnswersConnectors:   UserAnswersConnectors,
+  sessionRepository:           SessionRepository,
   subscriptionService:         SubscriptionService,
   view:                        AgentView,
   clientPillarIdView:          AgentClientPillarIdView,
@@ -49,17 +49,16 @@ class AgentController @Inject() (
   agentClientUnauthorisedView: AgentClientUnauthorisedView,
   agentIndividualErrorView:    AgentIndividualErrorView,
   agentOrganisationErrorView:  AgentOrganisationErrorView,
-  identify:                    AgentIdentifierAction,
+  identify:                    EnrolmentIdentifierAction,
+  asaIdentify:                 ASAEnrolmentIdentifierAction,
   featureAction:               FeatureFlagActionFactory,
-  getData:                     DataRetrievalAction,
-  requireData:                 DataRequiredAction,
+  getData:                     SessionDataRetrievalAction,
+  requireData:                 SessionDataRequiredAction,
   formProvider:                AgentClientPillar2ReferenceFormProvider
 )(implicit appConfig:          FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-
-  import identify._
 
   val form: Form[String] = formProvider()
 
@@ -68,28 +67,32 @@ class AgentController @Inject() (
   }
 
   def onPageLoadClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
-      val preparedForm = request.userAnswers.get(AgentClientPillar2ReferencePage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield {
+        val preparedForm = request.userAnswers.get(UnauthorisedClientPillar2ReferencePage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
+        }
+        Ok(clientPillarIdView(preparedForm))
       }
-
-      Future.successful(Ok(clientPillarIdView(preparedForm)))
     }
 
-  def onSubmitClientPillarId: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async {
-    implicit request =>
+  def onSubmitClientPillarId: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
           formWithErrors => Future.successful(BadRequest(clientPillarIdView(formWithErrors))),
           value => {
             val result = for {
-              updatedAnswers     <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, value))
-              _                  <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              updatedAnswers     <- Future.fromTry(request.userAnswers.set(UnauthorisedClientPillar2ReferencePage, value))
+              _                  <- sessionRepository.set(updatedAnswers)
               subscriptionData   <- subscriptionService.readSubscription(value)
               answersWithOrgName <- Future.fromTry(updatedAnswers.set(AgentClientOrganisationNamePage, subscriptionData.upeDetails.organisationName))
-              _                  <- userAnswersConnectors.save(answersWithOrgName.id, Json.toJson(answersWithOrgName.data))
+              _                  <- sessionRepository.set(answersWithOrgName)
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)
 
             result.recover { case InternalIssueError =>
@@ -99,36 +102,48 @@ class AgentController @Inject() (
             }
           }
         )
-  }
+    }
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData).async { implicit request =>
-      (request.userAnswers.get(AgentClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield (request.userAnswers.get(UnauthorisedClientPillar2ReferencePage), request.userAnswers.get(AgentClientOrganisationNamePage))
         .mapN { (clientPillar2Id, clientUpeName) =>
-          Future successful Ok(clientConfirmView(clientUpeName, clientPillar2Id))
+          Ok(clientConfirmView(clientUpeName, clientPillar2Id))
         }
-        .getOrElse(Future successful Redirect(routes.AgentController.onPageLoadError))
+        .getOrElse(Redirect(routes.AgentController.onPageLoadError))
     }
 
-  def onSubmitConfirmClientDetails(pillar2Id: String): Action[AnyContent] =
-    (featureAction.asaAccessAction andThen agentIdentify(VerifyAgentClientPredicate(pillar2Id)) andThen getData andThen requireData).async {
-      Future successful Redirect(routes.DashboardController.onPageLoad(Some(pillar2Id), agentView = true))
+  def onSubmitConfirmClientDetails: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async { implicit request =>
+      request.userAnswers
+        .get(UnauthorisedClientPillar2ReferencePage)
+        .map { clientPillar2Reference =>
+          for {
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
+            dataToSave     <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
+            _              <- sessionRepository.set(dataToSave)
+          } yield Redirect(routes.DashboardController.onPageLoad)
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     }
 
-  def onPageLoadNoClientMatch: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoadNoClientMatch: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(clientNoMatchView())
-  }
+    }
 
   def onPageLoadError: Action[AnyContent] =
     featureAction.asaAccessAction { implicit request =>
       Ok(agentErrorView())
     }
 
-  def onPageLoadUnauthorised: Action[AnyContent] = (featureAction.asaAccessAction andThen agentIdentify() andThen getData andThen requireData) {
-    implicit request =>
+  def onPageLoadUnauthorised: Action[AnyContent] =
+    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(agentClientUnauthorisedView())
-  }
+    }
 
   def onPageLoadIndividualError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
     Ok(agentIndividualErrorView())
