@@ -1081,8 +1081,8 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
-rfm.journeyRecoveryView.paragraphStart = You can go back to
-rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.journeyRecoveryView.paragraphStart = You can go back
+rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 top-up taxes account to try again
 
 rfm.incompleteDataView.title = You have an incomplete task
 rfm.incompleteDataView.heading = You have an incomplete task
