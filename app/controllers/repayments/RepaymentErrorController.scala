@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments._
+import views.html.repayments.{AccountNameConfirmationView, BankDetailsErrorView, CouldNotConfirmDetailsView, RepaymentErrorView}
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -44,7 +44,6 @@ class RepaymentErrorController @Inject() (
   couldNotConfirmDetailsView:             CouldNotConfirmDetailsView,
   errorView:                              RepaymentErrorView,
   bankDetailsErrorView:                   BankDetailsErrorView,
-  submissionErrorView:                    RepaymentSubmissionErrorView,
   accountNameConfirmationView:            AccountNameConfirmationView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -59,11 +58,6 @@ class RepaymentErrorController @Inject() (
   def onPageLoadError(): Action[AnyContent] = featureAction.repaymentsAccessAction { implicit request =>
     Ok(errorView())
   }
-
-  def onPageLoadRepaymentSubmissionFailed(): Action[AnyContent] =
-    featureAction.repaymentsAccessAction { implicit request =>
-      Ok(submissionErrorView())
-    }
 
   def onPageLoadBankDetailsError(): Action[AnyContent] =
     featureAction.repaymentsAccessAction { implicit request =>
