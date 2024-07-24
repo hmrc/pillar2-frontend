@@ -27,7 +27,6 @@ import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
@@ -54,24 +53,15 @@ class DashboardController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
-      sessionRepository.get(request.userId).map { optionalUserAnswer =>
-        val userAnswer = optionalUserAnswer.getOrElse(UserAnswers(request.userId))
-        for {
-          updatedAnswers <- Future.fromTry(userAnswer.set(RedirectToASAHome, false))
-          _              <- sessionRepository.set(updatedAnswers)
-        } yield true
-      }
       (for {
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+        mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
+        userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
         referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
-        dataToSave = userAnswers.getOrElse(UserAnswers(id = request.userId, data = Json.obj())).setOrException(PlrReferencePage, referenceNumber)
-        _           <- OptionT.liftF(sessionRepository.set(dataToSave))
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
+                             .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+        updatedAnswers  <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, referenceNumber)))
+        updatedAnswers1 <- OptionT.liftF(Future.fromTry(updatedAnswers.set(RedirectToASAHome, false)))
+        _               <- OptionT.liftF(sessionRepository.set(updatedAnswers1))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(
