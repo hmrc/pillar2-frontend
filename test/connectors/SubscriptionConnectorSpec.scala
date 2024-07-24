@@ -20,7 +20,7 @@ import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
 import models.subscription._
-import models.{InternalIssueError, NoResultFound, UnexpectedResponse}
+import models.{InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
@@ -101,23 +101,15 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       }
 
       "return NoResult error when the backend has returned a 404 status" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(NOT_FOUND).withBody(unsuccessfulNotFoundJson))
-        )
-
-        val result = connector.readSubscription(plrReference)
-        result.failed.futureValue mustBe NoResultFound
+        stubGet(s"$readSubscriptionPath/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
+        val result = connector.readSubscription(plrReference).futureValue
+        result mustBe None
       }
 
       "return None when the backend has returned a response else than 200 or 404 status" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(MULTI_STATUS).withBody(unsuccessfulResponseJson))
-        )
-
-        val result = connector.readSubscription(plrReference).futureValue
-        result mustBe None
+        stubGet(s"$readSubscriptionPath/$plrReference", errorCodes.sample.value, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference)
+        result.failed.futureValue mustBe InternalIssueError
       }
     }
 

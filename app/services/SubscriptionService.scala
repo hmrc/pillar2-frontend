@@ -73,7 +73,7 @@ class SubscriptionService @Inject() (
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(subData) => Future.successful(subData)
-      case None          => Future.failed(InternalIssueError)
+      case None          => Future.failed(NoResultFound)
     }
 
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit

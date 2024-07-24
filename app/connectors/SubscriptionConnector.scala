@@ -78,11 +78,11 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .GET[HttpResponse](subscriptionUrl)
       .flatMap {
         case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionSuccess].success).toFuture
-        case notFoundResponse if notFoundResponse.status == 404 => Future.failed(NoResultFound)
+          Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
+        case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          None.toFuture
+          Future.failed(InternalIssueError)
       }
   }
 
