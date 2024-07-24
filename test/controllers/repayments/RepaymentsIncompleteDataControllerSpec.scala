@@ -31,14 +31,14 @@ class RepaymentsIncompleteDataControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentsIncompleteDataController.onPageLoad(clientPillar2Id = None).url)
+        val request = FakeRequest(GET, routes.RepaymentsIncompleteDataController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[IncompleteDataView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }

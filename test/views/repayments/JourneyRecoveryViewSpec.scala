@@ -25,7 +25,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
 
   val page: JourneyRecoveryView = inject[JourneyRecoveryView]
 
-  val view: Document = Jsoup.parse(page(None)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Repayments journey recovery view" should {
 

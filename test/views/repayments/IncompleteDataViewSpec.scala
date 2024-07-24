@@ -25,7 +25,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   val page: IncompleteDataView = inject[IncompleteDataView]
 
-  val view: Document = Jsoup.parse(page(None)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Repayments incomplete data view" should {
     "have a title" in {

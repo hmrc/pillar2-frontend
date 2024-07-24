@@ -173,7 +173,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id = None).url)
+        redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
       }
     }
 
@@ -188,7 +188,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
             .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id = None).url)
+        redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
       }
     }
 

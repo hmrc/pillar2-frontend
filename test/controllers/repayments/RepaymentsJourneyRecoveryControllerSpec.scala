@@ -36,14 +36,14 @@ class RepaymentsJourneyRecoveryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad(clientPillar2Id = None).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[JourneyRecoveryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
