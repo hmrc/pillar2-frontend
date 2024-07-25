@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.{ParagraphMessageWithLink, heading, paragraphBody}
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
@@ -25,7 +25,7 @@
         paragraphBody: paragraphBody
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("refundErrorConfirmation.title")),
@@ -33,17 +33,15 @@
     showSignOut = false,
     timeout = false,
     authorised = false,
-    bannerUrl = Some("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+    bannerUrl = Some(routes.DashboardController.onPageLoad(clientPillar2Id).url)
 ) {
-    @formHelper(action = eligibility.routes.EligibilityConfirmationController.onSubmit) {
 
         @heading(messages("refundErrorConfirmation.heading"))
         @paragraphBody(messages("refundErrorConfirmation.paragraphOne"))
         @paragraphMessageWithLink(message1 = Some(messages("refundErrorConfirmation.paragraphTwo")),
             linkMessage = messages("refundErrorConfirmation.paragraphTwo.link"),
-            linkUrl = routes.DashboardController.onPageLoad().url,
+            linkUrl = routes.DashboardController.onPageLoad(clientPillar2Id).url,
             message2 = Some(".")
         )
-    }
 
 }

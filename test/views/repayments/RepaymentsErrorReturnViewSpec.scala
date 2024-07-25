@@ -24,12 +24,13 @@ import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
 
-  val page = inject[RepaymentsErrorReturnView]
+  val page           = inject[RepaymentsErrorReturnView]
+  val testPillar2Ref = "XMPLR0012345674"
 
   "Repayments error return view" should {
 
     val view: Document =
-      Jsoup.parse(page()(request, appConfig, messages).toString())
+      Jsoup.parse(page(Some(testPillar2Ref))(request, appConfig, messages).toString())
 
     "have a title" in {
       view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 top-up taxes - GOV.UK")
@@ -51,5 +52,12 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
       link.attr("href") must include(routes.DashboardController.onPageLoad().url)
       link.text         must include("manage your Pillar 2 top-up taxes")
     }
+
+    "have the correct banner link" in {
+      val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
+      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
+      link.text         must include("Report Pillar 2 top-up taxes")
+    }
+
   }
 }

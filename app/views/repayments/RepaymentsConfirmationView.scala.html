@@ -28,7 +28,7 @@
         heading: heading
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("refundConfirmation.title")),
@@ -36,7 +36,7 @@
     showSignOut = false,
     timeout = false,
     authorised = false,
-    bannerUrl = Some("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+    bannerUrl = Some(routes.DashboardController.onPageLoad(clientPillar2Id).url)
 ) {
 
     @govukPanel(Panel(
@@ -53,7 +53,7 @@
 
     @paragraphMessageWithLink(message1 = Some(messages("refundConfirmation.paragraphText.four")),
         linkMessage = messages("refundConfirmation.paragraphText.returnLink"),
-        linkUrl = routes.DashboardController.onPageLoad().url,
+        linkUrl = routes.DashboardController.onPageLoad(clientPillar2Id).url,
         message2 = Some(".")
     )
 

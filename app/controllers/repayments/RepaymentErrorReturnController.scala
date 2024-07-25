@@ -38,7 +38,7 @@ class RepaymentErrorReturnController @Inject() (
 
   def onPageLoad(clientPillar2Id: Option[String]): Action[AnyContent] = (featureAction.repaymentsAccessAction andThen
     identifierAction(clientPillar2Id, agentIdentifierAction, identify)) { implicit request =>
-    Ok(view())
+    Ok(view(clientPillar2Id))
   }
 
 }

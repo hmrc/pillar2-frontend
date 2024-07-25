@@ -25,11 +25,12 @@ import views.ViewUtils.formattedCurrentDate
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  val page = inject[RepaymentsConfirmationView]
+  val page           = inject[RepaymentsConfirmationView]
+  val testPillar2Ref = "XMPLR0012345674"
 
   "Repayments confirmation view" should {
     val view: Document =
-      Jsoup.parse(page()(request, appConfig, messages).toString())
+      Jsoup.parse(page(Some(testPillar2Ref))(request, appConfig, messages).toString())
 
     "have a panel" in {
       view.getElementsByClass("govuk-panel__title").text must include("Refund request submitted")
@@ -60,6 +61,12 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad().url)
       link.text         must include("manage your Pillar 2 top-up taxes")
+    }
+
+    "have the correct banner link" in {
+      val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
+      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
+      link.text         must include("Report Pillar 2 top-up taxes")
     }
 
   }
