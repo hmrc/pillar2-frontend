@@ -1369,6 +1369,11 @@ repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
 
+repayments.submission.error.heading = Sorry, there is a problem with the service
+repayments.submission.error.title = Sorry, there is a problem with the service
+repayments.submission.error.p2 = You can try again later when the service is available.
+repayments.submission.error.p2.link = Return to your account homepage
+
 ###################
 
 rfmConfirmation.title = Replace filing member successful

@@ -21,7 +21,7 @@ import controllers.actions.TestAuthRetrievals.Ops
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{AgentClientPillar2ReferencePage, PlrReferencePage}
+import pages.PlrReferencePage
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
