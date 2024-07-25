@@ -23,31 +23,30 @@ import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
 import play.api.i18n.I18nSupport
-import play.api.libs.json.Format.GenericFormat
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.SecurityCheckView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityCheckController @Inject() (
-  sessionRepository:        SessionRepository,
-  rfmIdentify:              RfmIdentifierAction,
-  getSessionData:           SessionDataRetrievalAction,
-  requireSessionData:       SessionDataRequiredAction,
-  formProvider:             RfmSecurityCheckFormProvider,
-  navigator:                ReplaceFilingMemberNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     SecurityCheckView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  sessionRepository:                SessionRepository,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getSessionData:                   SessionDataRetrievalAction,
+  requireSessionData:               SessionDataRequiredAction,
+  formProvider:                     RfmSecurityCheckFormProvider,
+  navigator:                        ReplaceFilingMemberNavigator,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             SecurityCheckView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData) { implicit request =>
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData) { implicit request =>
     val rfmAccessEnabled = appConfig.rfmAccessEnabled
     if (rfmAccessEnabled) {
       val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
@@ -57,7 +56,7 @@ class SecurityCheckController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

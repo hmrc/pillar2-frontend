@@ -30,47 +30,46 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class MneOrDomesticController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              MneOrDomesticFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      MneOrDomesticView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  navigator:                              AmendSubscriptionNavigator,
+  formProvider:                           MneOrDomesticFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   MneOrDomesticView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[MneOrDomestic] = formProvider()
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData) { implicit request =>
       val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubMneOrDomesticPage)) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
-      Ok(view(preparedForm, clientPillar2Id))
+      Ok(view(preparedForm))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, clientPillar2Id))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
           value =>
             for {
               updatedAnswers <-
                 Future
                   .fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, value))
               _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, clientPillar2Id, updatedAnswers))
+            } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
         )
     }
 

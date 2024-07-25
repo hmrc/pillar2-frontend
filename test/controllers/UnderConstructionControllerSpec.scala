@@ -46,14 +46,14 @@ class UnderConstructionControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.UnderConstructionController.onPageLoadAgent(Some("123")).url)
+        val request = FakeRequest(GET, controllers.routes.UnderConstructionController.onPageLoadAgent.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[UnderConstructionAgent]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Some("123"))(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }

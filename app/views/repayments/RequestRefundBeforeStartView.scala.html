@@ -30,11 +30,10 @@
     bulletList: bulletList,
 )
 
-@( clientPillar2Id: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title")),
-    maybeClientPillar2Id = clientPillar2Id
+    pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title"))
 ) {
     @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
     @p(messages("repayment.requestRefundBeforeStart.p1"))
@@ -50,6 +49,6 @@
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode, clientPillar2Id).url)
+        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
     )
 }

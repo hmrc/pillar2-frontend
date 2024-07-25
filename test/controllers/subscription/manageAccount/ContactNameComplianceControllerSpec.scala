@@ -17,20 +17,28 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.ContactNameComplianceFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubPrimaryContactNamePage
 import play.api.inject.bind
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import views.html.subscriptionview.manageAccount.ContactNameComplianceView
+
+import java.util.UUID
+import scala.concurrent.Future
 
 class ContactNameComplianceControllerSpec extends SpecBase {
 
   val formProvider = new ContactNameComplianceFormProvider()
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "ContactNameCompliance Controller for Organisation View Contact details" when {
 
@@ -39,14 +47,14 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -60,14 +68,14 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), clientPillar2Id = None)(
+        contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
           appConfig(application),
           messages(application)
@@ -82,7 +90,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       running(application) {
         val stringInput = randomStringGenerator(161)
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", stringInput))
 
         val boundForm = formProvider().bind(Map("value" -> stringInput))
@@ -92,7 +100,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -103,22 +111,22 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder()
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(Some(PlrReference)).url)
-
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ContactNameComplianceView]
-
+        val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider())(
           request,
           appConfig(application),
           messages(application)
@@ -130,22 +138,22 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       val ua = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(Some(PlrReference)).url)
-
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[ContactNameComplianceView]
-
+        val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"), Some(PlrReference))(
+        contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
           appConfig(application),
           messages(application)
@@ -156,26 +164,25 @@ class ContactNameComplianceControllerSpec extends SpecBase {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(Some(PlrReference)).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", stringInput))
-
         val boundForm = formProvider().bind(Map("value" -> stringInput))
-
-        val view = application.injector.instanceOf[ContactNameComplianceView]
-
-        val result = route(application, request).value
-
+        val view      = application.injector.instanceOf[ContactNameComplianceView]
+        val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, Some(PlrReference))(
+        contentAsString(result) mustEqual view(boundForm)(
           request,
           appConfig(application),
           messages(application)

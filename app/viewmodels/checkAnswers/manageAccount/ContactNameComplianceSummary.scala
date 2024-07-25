@@ -27,7 +27,7 @@ import viewmodels.implicits._
 
 object ContactNameComplianceSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubPrimaryContactNamePage).map { answer =>
       val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
       SummaryListRowViewModel(
@@ -36,7 +36,7 @@ object ContactNameComplianceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
         )

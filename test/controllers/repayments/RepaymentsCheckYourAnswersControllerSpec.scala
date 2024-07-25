@@ -18,7 +18,8 @@ package controllers.repayments
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.UserAnswers
+import models.{UnexpectedResponse, UserAnswers}
+import models.repayments.SendRepaymentDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -27,6 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.RepaymentService
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -53,7 +55,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -70,26 +72,53 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
         }
       }
-
     }
-    "on submit method" should {
-      "redirect to confirmation page in case of a success response" in {
 
-        val userAnswer = UserAnswers("id")
-          .setOrException(RepaymentsRefundAmountPage, amount)
-          .setOrException(ReasonForRequestingRefundPage, "The reason for refund")
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
+    "on submit method" should {
+      "redirect to the confirmation page in case of a success response" in {
+        val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[RepaymentService].toInstance(mockRepaymentService)
           )
           .build()
         running(application) {
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
+          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.successful(true))
+          when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation")
+        }
+      }
+
+      "redirect to payment failed error page in case of an unsuccessful response" in {
+        val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
+          .overrides(
+              bind[RepaymentService].toInstance(mockRepaymentService)
+          )
+          .build()
+        running(application) {
+          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+          when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url
+        }
+      }
+      "redirect to a placeholder page (to be changed in the future) if data is partially completed" in {
+        val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
+          .overrides(
+              bind[RepaymentService].toInstance(mockRepaymentService)
+          )
+          .build()
+        running(application) {
+          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+          when(mockRepaymentService.getRepaymentData(any())).thenReturn(None)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
         }
       }
 

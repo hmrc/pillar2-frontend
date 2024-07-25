@@ -28,13 +28,13 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
         val view    = application.injector.instanceOf[ViewAmendSubscriptionFailedView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -43,13 +43,13 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad(Some(PlrReference)).url)
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
         val view    = application.injector.instanceOf[ViewAmendSubscriptionFailedView]
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(Some(PlrReference))(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
 
       }
     }
