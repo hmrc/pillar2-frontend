@@ -83,8 +83,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
       .recover {
-        case InternalIssueError => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
-        case NoResultFound      => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        case InternalIssueError => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        case NoResultFound      => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 

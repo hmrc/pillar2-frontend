@@ -146,7 +146,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
         }
       }
-      "redirect to error page if read subscription fails" in {
+      "redirect to error page if read subscription fails with a status else than 404" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -160,11 +160,11 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
         }
       }
 
-      "redirect to journey recovery page if read subscription fails with a 404 response" in {
+      "redirect to error page if read subscription fails with a 404 response" in {
         val userAnswer = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, plrReference)
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -178,7 +178,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad.url
         }
       }
       "redirect to journey recovery if no input pillar 2 id is found" in {
