@@ -37,6 +37,7 @@ class RfmSecondaryContactEmailController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
+  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmSecondaryContactEmailFormProvider,
@@ -46,9 +47,8 @@ class RfmSecondaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmSecondaryContactNamePage)
         .map { contactName =>
@@ -60,9 +60,6 @@ class RfmSecondaryContactEmailController @Inject() (
           Ok(view(preparedForm, mode, contactName))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -39,6 +39,7 @@ class RfmRegisteredAddressController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  featureAction:                    FeatureFlagActionFactory,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmRegisteredAddressFormProvider,
   val countryOptions:               CountryOptions,
@@ -50,9 +51,8 @@ class RfmRegisteredAddressController @Inject() (
 
   val form: Form[NonUKAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmNameRegistrationPage)
         .map { name =>
@@ -63,9 +63,6 @@ class RfmRegisteredAddressController @Inject() (
           Ok(view(preparedForm, mode, name, countryOptions.options()))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

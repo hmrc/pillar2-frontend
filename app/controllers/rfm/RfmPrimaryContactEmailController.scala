@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -36,6 +36,7 @@ class RfmPrimaryContactEmailController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
+  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmPrimaryContactEmailFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -45,9 +46,8 @@ class RfmPrimaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmPrimaryContactNamePage)
         .map { username =>
@@ -59,9 +59,6 @@ class RfmPrimaryContactEmailController @Inject() (
           Ok(view(preparedForm, mode, username))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
