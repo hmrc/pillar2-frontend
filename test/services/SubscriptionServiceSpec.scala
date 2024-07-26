@@ -471,14 +471,12 @@ class SubscriptionServiceSpec extends SpecBase {
 
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
         when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails("id", amendData).futureValue mustEqual Done
-        verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())
       }
 
       "return failure if amend subscription fails" in {
@@ -489,21 +487,6 @@ class SubscriptionServiceSpec extends SpecBase {
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails("id", amendData).failed.futureValue mustEqual InternalIssueError
-      }
-
-      "return failure if removing data fails" in {
-
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.failed(new RuntimeException("Connection error")))
-
-        val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-
-        service.amendFilingMemberDetails("id", amendData).failed.futureValue mustBe a[RuntimeException]
       }
     }
     "deallocateEnrolment" when {

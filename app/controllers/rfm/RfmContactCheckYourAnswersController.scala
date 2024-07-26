@@ -18,6 +18,7 @@ package controllers.rfm
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.requests.DataRequest
 import models.{InternalIssueError, UnexpectedResponse}
@@ -44,6 +45,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   Identify:                            IdentifierAction,
   requireData:                         DataRequiredAction,
   val controllerComponents:            MessagesControllerComponents,
+  userAnswersConnectors:               UserAnswersConnectors,
   subscriptionService:                 SubscriptionService,
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
@@ -94,7 +96,11 @@ class RfmContactCheckYourAnswersController @Inject() (
     (for {
       newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
       subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-      _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+      amendData <- OptionT.liftF(
+                     subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+                   )
+      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+      _ <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
       upeEnrolmentInfo <- OptionT.liftF(
                             subscriptionService.getUltimateParentEnrolmentInformation(
                               subscriptionData = subscriptionData,
@@ -106,10 +112,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       _ <- OptionT.liftF(
              subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
            )
-      amendData <- OptionT.liftF(
-                     subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-                   )
-      _          <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+      _          <- OptionT.liftF(userAnswersConnectors.remove(request.userId))
       dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
       _          <- OptionT.liftF(sessionRepository.set(dataToSave))
     } yield {
