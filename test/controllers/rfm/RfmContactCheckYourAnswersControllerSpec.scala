@@ -54,7 +54,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {

@@ -19,9 +19,9 @@ package services
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
+import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
 import play.api.Logging
@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -71,23 +72,19 @@ class SubscriptionService @Inject() (
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
-      case Some(readSubscriptionResponse) =>
-        logger.info(s"readSubscription success: - $readSubscriptionResponse")
-        Future.successful(readSubscriptionResponse)
-      case error =>
-        logger.warn(s"readSubscription error: - $error")
-        Future.failed(InternalIssueError)
+      case Some(subData) => Future.successful(subData)
+      case None          => Future.failed(NoResultFound)
     }
 
-  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: RegistrationDate)(implicit
+  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit
     hc:                          HeaderCarrier
   ): Future[Boolean] =
     userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
       (for {
         backendPillar2Id        <- maybeUserAnswers.flatMap(_.get(RfmPillar2ReferencePage))
         backendRegistrationDate <- maybeUserAnswers.flatMap(_.get(RfmRegistrationDatePage))
-      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate
-        .isEqual(sessionRegistrationDate.rfmRegistrationDate)).getOrElse(false)
+      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate
+        .isEqual(sessionRegistrationDate)).getOrElse(false)
     }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier

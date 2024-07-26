@@ -19,7 +19,7 @@ import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.requests.DataRequest
 import models.{InternalIssueError, UnexpectedResponse}
 import pages.PlrReferencePage
@@ -44,6 +44,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
   Identify:                            IdentifierAction,
   requireData:                         DataRequiredAction,
+  featureAction:                       FeatureFlagActionFactory,
   val controllerComponents:            MessagesControllerComponents,
   userAnswersConnectors:               UserAnswersConnectors,
   subscriptionService:                 SubscriptionService,
@@ -55,10 +56,8 @@ class RfmContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
-
+  def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen Identify andThen getData andThen requireData).async {
+    implicit request =>
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
@@ -78,9 +77,6 @@ class RfmContactCheckYourAnswersController @Inject() (
             )
           )
       }
-    } else {
-      Future(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>

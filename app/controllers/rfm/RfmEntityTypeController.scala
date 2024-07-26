@@ -40,6 +40,7 @@ class RfmEntityTypeController @Inject() (
   @Named("RfmIdentifier") identify:                  IdentifierAction,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
+  featureAction:                                     FeatureFlagActionFactory,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
   formProvider:                                      RfmEntityTypeFormProvider,
@@ -51,10 +52,8 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
+    implicit request =>
       request.userAnswers
         .get(RfmUkBasedPage)
         .map { ukBased =>
@@ -73,9 +72,6 @@ class RfmEntityTypeController @Inject() (
             .getOrElse(Future.successful(Ok(view(form, mode))))
         }
         .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

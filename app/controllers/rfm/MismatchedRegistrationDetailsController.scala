@@ -17,6 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
+import controllers.actions.FeatureFlagActionFactory
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,18 +27,14 @@ import javax.inject.Inject
 
 class MismatchedRegistrationDetailsController @Inject() (
   val controllerComponents: MessagesControllerComponents,
+  featureAction:            FeatureFlagActionFactory,
   view:                     MismatchedRegistrationDateView
 )(implicit
   appConfig: FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Ok(view())
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad: Action[AnyContent] = featureAction.rfmAccessAction { implicit request =>
+    Ok(view())
   }
 }
