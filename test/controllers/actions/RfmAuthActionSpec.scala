@@ -51,8 +51,8 @@ class RfmAuthActionSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  class Harness(rfmAuthAction: RfmIdentifierAction) {
-    def onPageLoad(): Action[AnyContent] = rfmAuthAction(_ => Results.Ok)
+  class Harness(authAction: IdentifierAction) {
+    def onPageLoad(): Action[AnyContent] = authAction(_ => Results.Ok)
   }
 
   "RfmAuthAction" when {
@@ -74,7 +74,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -100,7 +100,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -125,7 +125,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -149,7 +149,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -173,7 +173,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -197,7 +197,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
+          val authAction = new RfmIdentifierAction(mockAuthConnector, appConfig, bodyParsers)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -218,7 +218,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)(ec)
+          val authAction = new RfmIdentifierAction(new FakeFailingAuthConnector(new MissingBearerToken), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -238,7 +238,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)(ec)
+          val authAction = new RfmIdentifierAction(new FakeFailingAuthConnector(new BearerTokenExpired), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -258,7 +258,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)(ec)
+          val authAction = new RfmIdentifierAction(new FakeFailingAuthConnector(new InsufficientEnrolments), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -279,7 +279,7 @@ class RfmAuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction =
-            new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers)(ec)
+            new RfmIdentifierAction(new FakeFailingAuthConnector(new InsufficientConfidenceLevel), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -299,7 +299,7 @@ class RfmAuthActionSpec extends SpecBase {
           val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
-          val authAction = new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers)(ec)
+          val authAction = new RfmIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAuthProvider), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -320,7 +320,7 @@ class RfmAuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction =
-            new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers)(ec)
+            new RfmIdentifierAction(new FakeFailingAuthConnector(new UnsupportedAffinityGroup), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 
@@ -341,7 +341,7 @@ class RfmAuthActionSpec extends SpecBase {
           val appConfig   = application.injector.instanceOf[FrontendAppConfig]
 
           val authAction =
-            new RfmAuthenticatedIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers)(ec)
+            new RfmIdentifierAction(new FakeFailingAuthConnector(new UnsupportedCredentialRole), appConfig, bodyParsers)(ec)
           val controller = new Harness(authAction)
           val result     = controller.onPageLoad()(FakeRequest())
 

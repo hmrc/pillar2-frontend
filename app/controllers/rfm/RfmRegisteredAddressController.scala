@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import navigation.ReplaceFilingMemberNavigator
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -31,28 +31,28 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.rfm.RfmRegisteredAddressView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmRegisteredAddressController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 ReplaceFilingMemberNavigator,
-  formProvider:              RfmRegisteredAddressFormProvider,
-  val countryOptions:        CountryOptions,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmRegisteredAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:        UserAnswersConnectors,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  featureAction:                    FeatureFlagActionFactory,
+  navigator:                        ReplaceFilingMemberNavigator,
+  formProvider:                     RfmRegisteredAddressFormProvider,
+  val countryOptions:               CountryOptions,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             RfmRegisteredAddressView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[NonUKAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmNameRegistrationPage)
         .map { name =>
@@ -63,12 +63,9 @@ class RfmRegisteredAddressController @Inject() (
           Ok(view(preparedForm, mode, name, countryOptions.options()))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(RfmNameRegistrationPage)
       .map { name =>

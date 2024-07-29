@@ -18,27 +18,35 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.SecondaryContactEmailFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{Call, PlayBodyParsers}
+import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryContactEmailView
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class SecondaryContactEmailControllerSpec extends SpecBase {
 
-  val form         = new SecondaryContactEmailFormProvider()
-  val formProvider = form("name")
+  val form = new SecondaryContactEmailFormProvider()
+  val formProvider: Form[String] = form("name")
+  val id:           String       = UUID.randomUUID().toString
+  val providerId:   String       = UUID.randomUUID().toString
+  val providerType: String       = UUID.randomUUID().toString
 
   "SecondaryContactEmail Controller for Organisation View Contact details" should {
 
@@ -47,14 +55,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -74,14 +82,14 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
         val result = route(application, request).value
 
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -98,7 +106,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
 
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
@@ -106,7 +114,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = None, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -118,7 +126,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
           .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {
@@ -133,7 +141,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request =
-        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = None).url)
+        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
       running(application) {
         val result = route(application, request).value
@@ -148,7 +156,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers =
@@ -165,7 +173,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit(clientPillar2Id = None).url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
 
         val result = route(application, request).value
@@ -173,7 +181,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryEmailPage, clientPillar2Id = None, expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryEmailPage, expectedUserAnswers)
       }
     }
 
@@ -184,25 +192,25 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET when no data is found" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
-
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
-
+        val view   = application.injector.instanceOf[SecondaryContactEmailView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -220,25 +228,25 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         .success
         .value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
-
         val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SecondaryContactEmailView]
-
+        val view   = application.injector.instanceOf[SecondaryContactEmailView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -250,27 +258,28 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
           )
             .withFormUrlEncodedBody(("emailAddress", "12345"))
-
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
         val boundForm = formProvider.bind(Map("emailAddress" -> "12345"))
         val result    = route(application, request).value
-
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, clientPillar2Id = Some(PlrReference), "name")(
+        contentAsString(result) mustEqual view(boundForm, "name")(
           request,
           appConfig(application),
           messages(application)
@@ -281,22 +290,23 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-      val request =
-        FakeRequest(
-          POST,
-          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
         )
-          .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
+        val request =
+          FakeRequest(
+            POST,
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+          )
+            .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -305,21 +315,22 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "redirect to bookmark page if no data is found for primary contact name page" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
-
-      val request =
-        FakeRequest(
-          GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
         )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
+        val request =
+          FakeRequest(
+            GET,
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+          )
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
@@ -327,42 +338,39 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
     "must update subscription data and redirect to the next page" in {
       import play.api.inject.bind
-
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
       when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-
       val userAnswers =
         emptySubscriptionLocalData.setOrException(SubSecondaryContactNamePage, "Keith")
-
       val expectedUserAnswers = userAnswers.setOrException(SubSecondaryEmailPage, "keith@google.com")
-
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction)
+          bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url
           )
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
-
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
-        verify(mockNavigator).nextPage(SubSecondaryEmailPage, clientPillar2Id = Some(PlrReference), expectedUserAnswers)
+        verify(mockNavigator).nextPage(SubSecondaryEmailPage, expectedUserAnswers)
       }
     }
 

@@ -20,12 +20,14 @@ import cats.data.OptionT
 import com.google.inject.Inject
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
@@ -33,60 +35,62 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     ManageContactCheckYourAnswersView,
-  countryOptions:           CountryOptions,
-  subscriptionService:      SubscriptionService,
-  referenceNumberService:   ReferenceNumberService
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ManageContactCheckYourAnswersView,
+  countryOptions:                         CountryOptions,
+  sessionRepository:                      SessionRepository,
+  subscriptionService:                    SubscriptionService,
+  referenceNumberService:                 ReferenceNumberService
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
       val primaryContactList = SummaryListViewModel(
         rows = Seq(
-          ContactNameComplianceSummary.row(clientPillar2Id),
-          ContactEmailAddressSummary.row(clientPillar2Id),
-          ContactByTelephoneSummary.row(clientPillar2Id),
-          ContactCaptureTelephoneDetailsSummary.row(clientPillar2Id)
+          ContactNameComplianceSummary.row(),
+          ContactEmailAddressSummary.row(),
+          ContactByTelephoneSummary.row(),
+          ContactCaptureTelephoneDetailsSummary.row()
         ).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
       val secondaryContactList = SummaryListViewModel(
         rows = Seq(
-          AddSecondaryContactSummary.row(clientPillar2Id),
-          SecondaryContactNameSummary.row(clientPillar2Id),
-          SecondaryContactEmailSummary.row(clientPillar2Id),
-          SecondaryTelephonePreferenceSummary.row(clientPillar2Id),
-          SecondaryTelephoneSummary.row(clientPillar2Id)
+          AddSecondaryContactSummary.row(),
+          SecondaryContactNameSummary.row(),
+          SecondaryContactEmailSummary.row(),
+          SecondaryTelephonePreferenceSummary.row(),
+          SecondaryTelephoneSummary.row()
         ).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
       val address = SummaryListViewModel(
-        rows = Seq(ContactCorrespondenceAddressSummary.row(clientPillar2Id, countryOptions)).flatten
+        rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
       ).withCssClass("govuk-!-margin-bottom-9")
 
-      Ok(view(primaryContactList, secondaryContactList, address, clientPillar2Id))
+      Ok(view(primaryContactList, secondaryContactList, address))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       (for {
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- OptionT
-                             .fromOption[Future](clientPillar2Id)
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
         .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

@@ -26,8 +26,8 @@ import views.html.repayments.RepaymentsContactEmailView
 class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
   val formProvider = new RepaymentsContactEmailFormProvider
-  val mode: Mode = NormalMode
-  val page        = inject[RepaymentsContactEmailView]
+  val mode: Mode                       = NormalMode
+  val page: RepaymentsContactEmailView = inject[RepaymentsContactEmailView]
   val contactName = "ABC Limited"
 
   "Repayments Contact Email View" should {
@@ -35,7 +35,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
     "page loaded" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider(contactName), Some("XMPLR0123456789"), mode, contactName)(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("What is the email address?")
@@ -61,7 +61,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
       val view: Document =
         Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> "")), Some("XMPLR0123456789"), mode, contactName)(request, appConfig, messages)
+          page(formProvider(contactName).bind(Map("contactEmail" -> "")), mode, contactName)(request, appConfig, messages)
             .toString()
         )
 
@@ -84,7 +84,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
       val view: Document =
         Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), Some("XMPLR0123456789"), mode, contactName)(
+          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), mode, contactName)(
             request,
             appConfig,
             messages
@@ -110,7 +110,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
       val view: Document =
         Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), Some("XMPLR0123456789"), mode, contactName)(
+          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), mode, contactName)(
             request,
             appConfig,
             messages

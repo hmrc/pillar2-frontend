@@ -31,19 +31,16 @@ import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
-trait RfmIdentifierAction
-    extends ActionRefiner[Request, IdentifierRequest]
-    with ActionBuilder[IdentifierRequest, AnyContent]
-    with ActionFunction[Request, IdentifierRequest]
-
-class RfmAuthenticatedIdentifierAction @Inject() (
+@Named("RfmIdentifier")
+class RfmIdentifierAction @Inject() (
   override val authConnector:    AuthConnector,
   config:                        FrontendAppConfig,
   val parser:                    BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
-    extends RfmIdentifierAction
+    extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
 

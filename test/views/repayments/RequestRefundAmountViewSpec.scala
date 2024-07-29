@@ -33,7 +33,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(page(formProvider(), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("Enter your requested refund amount in pounds")
@@ -52,7 +52,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
     "nothing selected and page submitted" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "")), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider().bind(Map("value" -> "")), mode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
@@ -68,7 +68,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
     "value submitted it less than minimum allowed" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "£-1.0")), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider().bind(Map("value" -> "£-1.0")), mode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
@@ -85,7 +85,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
       val view: Document =
         Jsoup.parse(
-          page(formProvider().bind(Map("value" -> "£100,000,000,000.00")), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString()
+          page(formProvider().bind(Map("value" -> "£100,000,000,000.00")), mode)(request, appConfig, messages).toString()
         )
 
       "have a error summary" in {
@@ -104,7 +104,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
     "value submitted contains invalid characters" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "$100.00")), mode, Some("XMPLR0123456789"))(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider().bind(Map("value" -> "$100.00")), mode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")

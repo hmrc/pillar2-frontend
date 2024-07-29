@@ -43,7 +43,7 @@ import viewmodels.implicits._
 
 object ContactEmailAddressSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubPrimaryEmailPage).map { _ =>
       val value = ValueViewModel(
         HtmlContent(
@@ -56,7 +56,7 @@ object ContactEmailAddressSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("contactEmailAddress.change.hidden"))
         )

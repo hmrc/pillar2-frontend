@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import forms.RfmContactAddressFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -30,37 +30,34 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.rfm.RfmContactAddressView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactAddressController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  formProvider:              RfmContactAddressFormProvider,
-  val countryOptions:        CountryOptions,
-  navigator:                 ReplaceFilingMemberNavigator,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmContactAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:        UserAnswersConnectors,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  formProvider:                     RfmContactAddressFormProvider,
+  featureAction:                    FeatureFlagActionFactory,
+  val countryOptions:               CountryOptions,
+  navigator:                        ReplaceFilingMemberNavigator,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             RfmContactAddressView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form = formProvider()
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       val preparedForm = request.userAnswers.get(RfmContactAddressPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
       Ok(view(preparedForm, mode, countryOptions.options()))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     form
       .bindFromRequest()
       .fold(

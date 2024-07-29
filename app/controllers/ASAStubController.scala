@@ -18,29 +18,29 @@ package controllers
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ASAStubView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.Future
 
 class ASAStubController @Inject() (
-  val controllerComponents:  MessagesControllerComponents,
-  val userAnswersConnectors: UserAnswersConnectors,
-  view:                      ASAStubView,
-  identify:                  AgentIdentifierAction,
-  featureAction:             FeatureFlagActionFactory,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction
-)(implicit appConfig:        FrontendAppConfig)
+  val controllerComponents:                  MessagesControllerComponents,
+  val userAnswersConnectors:                 UserAnswersConnectors,
+  view:                                      ASAStubView,
+  @Named("ASAEnrolmentIdentifier") identify: IdentifierAction,
+  featureAction:                             FeatureFlagActionFactory,
+  getData:                                   DataRetrievalAction,
+  requireData:                               DataRequiredAction
+)(implicit appConfig:                        FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen identify.agentIdentify() andThen getData andThen requireData).async { implicit request =>
+    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async { implicit request =>
       Future.successful(Ok(view()))
     }
 }

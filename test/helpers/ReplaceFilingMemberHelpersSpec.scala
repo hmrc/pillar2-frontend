@@ -19,7 +19,7 @@ package helpers
 import base.SpecBase
 import models.NonUKAddress
 import models.grs.GrsRegistrationData
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import pages._
 import utils.RowStatus
@@ -36,7 +36,7 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .set(RfmPillar2ReferencePage, "12323212")
         .success
         .value
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
+        .set(RfmRegistrationDatePage, date)
         .success
         .value
 

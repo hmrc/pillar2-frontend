@@ -18,7 +18,7 @@ package controllers.rfm
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.requests.DataRequest
 import models.{InternalIssueError, UnexpectedResponse}
 import pages.PlrReferencePage
@@ -34,29 +34,28 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
-  override val messagesApi: MessagesApi,
-  getData:                  DataRetrievalAction,
-  rfmIdentify:              RfmIdentifierAction,
-  Identify:                 IdentifierAction,
-  requireData:              DataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  subscriptionService:      SubscriptionService,
-  sessionRepository:        SessionRepository,
-  view:                     RfmContactCheckYourAnswersView,
-  countryOptions:           CountryOptions
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:            MessagesApi,
+  getData:                             DataRetrievalAction,
+  @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
+  Identify:                            IdentifierAction,
+  requireData:                         DataRequiredAction,
+  featureAction:                       FeatureFlagActionFactory,
+  val controllerComponents:            MessagesControllerComponents,
+  subscriptionService:                 SubscriptionService,
+  sessionRepository:                   SessionRepository,
+  view:                                RfmContactCheckYourAnswersView,
+  countryOptions:                      CountryOptions
+)(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
-
+  def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen Identify andThen getData andThen requireData).async {
+    implicit request =>
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
@@ -76,9 +75,6 @@ class RfmContactCheckYourAnswersController @Inject() (
             )
           )
       }
-    } else {
-      Future(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>

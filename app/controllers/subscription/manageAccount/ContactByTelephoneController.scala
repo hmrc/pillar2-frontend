@@ -28,25 +28,24 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ContactByTelephoneView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ContactByTelephoneController @Inject() (
-  val subscriptionConnector: SubscriptionConnector,
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  navigator:                 AmendSubscriptionNavigator,
-  formProvider:              ContactByTelephoneFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactByTelephoneView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:              SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  navigator:                              AmendSubscriptionNavigator,
+  formProvider:                           ContactByTelephoneFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ContactByTelephoneView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>
@@ -55,15 +54,15 @@ class ContactByTelephoneController @Inject() (
             case Some(v) => form.fill(v)
             case None    => form
           }
-          Ok(view(preparedForm, contactName, clientPillar2Id))
+          Ok(view(preparedForm, contactName))
 
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>
@@ -71,19 +70,19 @@ class ContactByTelephoneController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, clientPillar2Id))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
               {
                 case nominatePrimaryContactNumber @ true =>
                   for {
                     updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
                     _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-                  } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, clientPillar2Id, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, updatedAnswers))
                 case nominatePrimaryContactNumber @ false =>
                   for {
                     updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
                     updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubPrimaryCapturePhonePage))
                     _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers1))
-                  } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, clientPillar2Id, updatedAnswers))
+                  } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, updatedAnswers))
               }
             )
         }

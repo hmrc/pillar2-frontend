@@ -26,7 +26,8 @@ case class OptionalDataRequest[A](
   groupId:            Option[String],
   userAnswers:        Option[UserAnswers],
   enrolments:         Option[Set[Enrolment]] = None,
-  userIdForEnrolment: String
+  userIdForEnrolment: String,
+  isAgent:            Boolean = false
 ) extends WrappedRequest[A](request)
 
 case class DataRequest[A](
@@ -35,7 +36,8 @@ case class DataRequest[A](
   groupId:            Option[String],
   userAnswers:        UserAnswers,
   enrolments:         Option[Set[Enrolment]] = None,
-  userIdForEnrolment: String
+  userIdForEnrolment: String,
+  isAgent:            Boolean = false
 ) extends WrappedRequest[A](request)
 
 final case class OptionalSubscriptionDataRequest[A](

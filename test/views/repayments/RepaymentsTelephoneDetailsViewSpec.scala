@@ -26,8 +26,8 @@ import views.html.repayments.RepaymentsTelephoneDetailsView
 class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
   val formProvider = new RepaymentsTelephoneDetailsFormProvider
-  val page         = inject[RepaymentsTelephoneDetailsView]
-  val mode: Mode = NormalMode
+  val page: RepaymentsTelephoneDetailsView = inject[RepaymentsTelephoneDetailsView]
+  val mode: Mode                           = NormalMode
   val contactName = "ABC Limited"
 
   "Repayments Telephone Details View" should {
@@ -35,7 +35,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     "page loaded" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider(contactName), Some("XMPLR0123456789"), mode, contactName)(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("What is the telephone number?")
@@ -59,7 +59,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> "")), Some("XMPLR0123456789"), mode, contactName)(request, appConfig, messages)
+        page(formProvider(contactName).bind(Map("telephoneNumber" -> "")), mode, contactName)(request, appConfig, messages)
           .toString()
       )
 
@@ -79,11 +79,9 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
   "value entered exceeds character limit" should {
 
     val telephoneNumber = "+".padTo(51, '1')
-    println(telephoneNumber)
-
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), Some("XMPLR0123456789"), mode, contactName)(
+        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), mode, contactName)(
           request,
           appConfig,
           messages
@@ -109,7 +107,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), Some("XMPLR0123456789"), mode, contactName)(
+        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), mode, contactName)(
           request,
           appConfig,
           messages

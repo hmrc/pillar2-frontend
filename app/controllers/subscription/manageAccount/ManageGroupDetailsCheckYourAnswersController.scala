@@ -21,57 +21,61 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{AgentIdentifierAction, IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.UnexpectedResponse
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
-  identify:                  IdentifierAction,
-  agentIdentifierAction:     AgentIdentifierAction,
-  getData:                   SubscriptionDataRetrievalAction,
-  requireData:               SubscriptionDataRequiredAction,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      ManageGroupDetailsCheckYourAnswersView,
-  subscriptionService:       SubscriptionService,
-  referenceNumberService:    ReferenceNumberService,
-  val userAnswersConnectors: UserAnswersConnectors
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ManageGroupDetailsCheckYourAnswersView,
+  sessionRepository:                      SessionRepository,
+  subscriptionService:                    SubscriptionService,
+  referenceNumberService:                 ReferenceNumberService,
+  val userAnswersConnectors:              UserAnswersConnectors
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] =
+    (identify andThen getData andThen requireData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
-          MneOrDomesticSummary.row(clientPillar2Id),
-          GroupAccountingPeriodSummary.row(clientPillar2Id),
+          MneOrDomesticSummary.row(),
+          GroupAccountingPeriodSummary.row(),
           GroupAccountingPeriodStartDateSummary.row(),
           GroupAccountingPeriodEndDateSummary.row()
         ).flatten
       )
-      Ok(view(list, clientPillar2Id))
+      Ok(view(list))
     }
 
-  def onSubmit(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (identifierAction(clientPillar2Id, agentIdentifierAction, identify) andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] =
+    (identify andThen getData andThen requireData).async { implicit request =>
       (for {
+        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- OptionT
-                             .fromOption[Future](clientPillar2Id)
+                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad(clientPillar2Id, agentView = clientPillar2Id.isDefined)))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
         .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad(clientPillar2Id))
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

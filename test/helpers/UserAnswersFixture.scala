@@ -17,10 +17,11 @@
 package helpers
 
 import models.grs.{EntityType, GrsRegistrationData, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
+import models.registration._
+import models.repayments.{BankAccountDetails, NonUKBank}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.{MneOrDomestic, NonUKAddress, UKAddress, UkOrAbroadBankAccount, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import utils.RowStatus
@@ -643,5 +644,91 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, false)
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+  private val ukBankAccount = BankAccountDetails(
+    nameOnBankAccount = "Paddington",
+    bankName = "Bank of Bears",
+    sortCode = "666666",
+    accountNumber = "00000000"
+  )
+  private val nonUkBankAccount = NonUKBank(
+    nameOnBankAccount = "Paddington",
+    bankName = "Bank of Bears",
+    iban = "123132",
+    bic = "11111111"
+  )
+  private val refundAmount: BigDecimal = 10000.1
+  val completeRepaymentDataUkBankAccount: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+    .setOrException(BankAccountDetailsPage, ukBankAccount)
+
+  val completeRepaymentDataNonUkBankAccount: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+    .setOrException(NonUKBankPage, nonUkBankAccount)
+
+  val repaymentNoReferenceNumber: UserAnswers = emptyUserAnswers
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+    .setOrException(BankAccountDetailsPage, ukBankAccount)
+
+  val repaymentNoContactName: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+    .setOrException(BankAccountDetailsPage, ukBankAccount)
+
+  val repaymentNoAmount: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+    .setOrException(BankAccountDetailsPage, ukBankAccount)
+
+  val repaymentNoBankAccountType: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(NonUKBankPage, nonUkBankAccount)
+
+  val repaymentNoBankAccountDetailForeign: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+
+  val repaymentNoUKBankAccountDetail: UserAnswers = emptyUserAnswers
+    .setOrException(PlrReferencePage, "plrReference")
+    .setOrException(RepaymentsContactNamePage, "name")
+    .setOrException(ReasonForRequestingRefundPage, "???")
+    .setOrException(RepaymentsRefundAmountPage, refundAmount)
+    .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
+    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
 
 }

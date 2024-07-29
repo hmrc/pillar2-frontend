@@ -17,26 +17,22 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.RfmIdentifierAction
+import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
 import models.NormalMode
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 class AuthenticateController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  rfmIdentify:              RfmIdentifierAction
-)(implicit val appConfig:   FrontendAppConfig)
+  val controllerComponents:         MessagesControllerComponents,
+  featureAction:                    FeatureFlagActionFactory,
+  @Named("RfmIdentifier") identify: IdentifierAction
+)(implicit val appConfig:           FrontendAppConfig)
     extends FrontendBaseController {
 
-  def rfmAuthenticate: Action[AnyContent] = rfmIdentify { _ =>
-    val rfmAccessEnabled: Boolean = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def rfmAuthenticate: Action[AnyContent] = (featureAction.rfmAccessAction andThen identify) { _ =>
+    Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode))
   }
 
 }

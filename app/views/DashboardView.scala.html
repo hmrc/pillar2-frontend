@@ -54,13 +54,13 @@
         @if(appConfig.showPaymentsSection) {
             @h2(messages("dashboard.payments"), size = "m")
             @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad(if(agentView) Some(plrReference) else None).url)
+            @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         <!--
         @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
         -->
 
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(if(agentView) Some(plrReference) else None).url)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
 
             @sectionBreak()
@@ -68,8 +68,8 @@
 
         <!--MANAGE YOUR TUT SECTION-->
         @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(if(agentView) Some(plrReference) else None).url)
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(if(agentView) Some(plrReference) else None).url)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
 
         @sectionBreak()
 

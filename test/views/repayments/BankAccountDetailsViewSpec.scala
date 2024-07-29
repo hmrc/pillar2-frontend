@@ -31,7 +31,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
   "Non UK Bank View" should {
     val view: Document = Jsoup.parse(
-      page(formProvider(), None, NormalMode)(
+      page(formProvider(), NormalMode)(
         request,
         appConfig,
         messages
@@ -68,7 +68,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider().bind(Map("bankName" -> "", "accountHolderName" -> "", "sortCode" -> "", "accountNumber" -> "")), None, NormalMode)(
+        page(formProvider().bind(Map("bankName" -> "", "accountHolderName" -> "", "sortCode" -> "", "accountNumber" -> "")), NormalMode)(
           request,
           appConfig,
           messages
@@ -114,7 +114,6 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
               "accountNumber"     -> testAccountNumber
             )
           ),
-          None,
           NormalMode
         )(
           request,

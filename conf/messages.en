@@ -1088,8 +1088,8 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
-rfm.journeyRecoveryView.paragraphStart = You can go back to
-rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.journeyRecoveryView.paragraphStart = You can go back
+rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 top-up taxes account to try again
 
 rfm.incompleteDataView.title = You have an incomplete task
 rfm.incompleteDataView.heading = You have an incomplete task
@@ -1256,22 +1256,6 @@ rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up tax
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
-rfmConfirmation.title = Replace filing member successful
-rfmConfirmation.rfmComplete = Replace filing member successful
-rfmConfirmation.reg-date =  Your group’s filing member was replaced on
-rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
-rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
-rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
-rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
-rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
-rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
-rfmConfirmation.next = What happens next
-rfmConfirmation.now = You can now {0} {1}
-rfmConfirmation.now.group = on behalf of your group.
-rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
-rfmConfirmation.whatDidYouThink = What did you think of this service
-rfmConfirmation.print = Print this page
-
 ###################
 
 # - Repayments
@@ -1292,14 +1276,16 @@ repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
 repayments.bankAccountDetails.sortCodeError = Enter the sort code
 repayments.bankAccountDetails.accountNumberError = Enter the account number
-
 repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
 repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
-
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
 repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
+
+repayments.bankAccountDetails.error.accountNumber = Enter the account number as it appears on your bank statement
+repayments.bankAccountDetails.error.accountName = Enter the name on the account as it appears on your bank statement
+repayments.bankAccountDetails.error.sortCode = Enter the sort code as it appears on your bank statement
 
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
@@ -1321,6 +1307,7 @@ repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
+
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
@@ -1329,6 +1316,15 @@ repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel.hidden =  the BIC or SWIFT code
 repayments.nonUKBank.summary.iban.checkYourAnswersLabel = IBAN
 repayments.nonUKBank.summary.iban.checkYourAnswersLabel.hidden = the IBAN
+
+repayments.UKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
+repayments.UKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
+repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
+repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on bank account
+repayments.UKBank.summary.sortCode.checkYourAnswersLabel = Sort code
+repayments.UKBank.summary.sortCode.checkYourAnswersLabel.hidden =  the sort code
+repayments.UKBank.summary.accNumber.checkYourAnswersLabel = Account number
+repayments.UKBank.summary.accNumber.checkYourAnswersLabel.hidden = the account number
 
 
 repayments.contactName.title = What is the name of the person or team we should contact about the refund request?
@@ -1344,6 +1340,30 @@ repayments.contactEmail.error.contactEmail.required = Enter an email address for
 repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
 repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
 
+repayments.couldNotConfirm.title = We could not confirm your bank details
+repayments.couldNotConfirm.heading = We could not confirm your bank details
+repayments.couldNotConfirm.p1 = We are unable to proceed with the account details you entered.
+repayments.couldNotConfirm.p2 = Please
+repayments.couldNotConfirm.p2.link = return to your bank details and try again
+
+repayments.error.title = Sorry, there is a problem with the service
+repayments.error.heading = Sorry, there is a problem with the service
+repayments.error.p1 = You can try again later when the service is available.
+repayments.error.p2.link = Return to your account homepage
+
+repayments.bankDetails.title = We could not confirm your bank details
+repayments.bankDetails.heading = We could not confirm your bank details
+repayments.bankDetails.p1 = We are unable to proceed with the account details you entered.
+repayments.bankDetails.p2 = Please
+repayments.bankDetails.p2.link = try again with a different business bank account
+
+repayments.accountNameConfirm.title = Do you want to continue with these bank details?
+repayments.accountNameConfirm.heading = Do you want to continue with these bank details?
+repayments.accountNameConfirm.subheading = This account belongs to {0}
+repayments.accountNameConfirm.p1 = Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again.
+repayments.accountNameConfirm.p2 = We may not be able to recover your money if it goes to the wrong account.
+repayments.accountNameConfirm.error.required = Enter if you want to continue with these bank details?
+
 repayments.contactByTelephone.title = Can we contact by telephone?
 repayments.contactByTelephone.heading = Can we contact {0} by telephone?
 repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
@@ -1355,6 +1375,13 @@ repayments.telephoneDetails.hint = For international numbers include the country
 repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
+
+repayments.submission.error.heading = Sorry, there is a problem with the service
+repayments.submission.error.title = Sorry, there is a problem with the service
+repayments.submission.error.p2 = You can try again later when the service is available.
+repayments.submission.error.p2.link = Return to your account homepage
+
+###################
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
@@ -1371,9 +1398,6 @@ rfmConfirmation.now.group = on behalf of your group.
 rfmConfirmation.link-home =  report and manage your group''s Pillar 2 top-up taxes
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
-
-ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
-ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?
 
 reasonForRequestingRefund.title = Why are you requesting a refund?
 reasonForRequestingRefund.heading = Why are you requesting a refund?
@@ -1410,3 +1434,26 @@ repaymentsContactByTelephone.checkYourAnswersLabel = Can we contact by telephone
 repaymentsContactByTelephone.change.hidden = can we contact by telephone?
 repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
 repaymentsTelephoneDetails.change.hidden = the telephone number
+
+repayments.bank-account-details.title = Bank account details
+repayments.bank-account-details.heading = Bank account details
+repayments.bank-account-details.bankName = Name of the bank
+repayments.bank-account-details.accountName = Name on the account
+repayments.bank-account-details.accountName.hintText = Must be a UK business account.
+repayments.bank-account-details.sortCode = Sort Code
+repayments.bank-account-details.sortCode.hintText = Must be 6 digits.
+repayments.bank-account-details.accountNumber = Account number
+repayments.bank-account-details.accountNumber.hintText = Must be between 6 and 8 digits.
+
+repayments.bank-account-details.bankError = Enter the name of the bank
+repayments.bank-account-details.accountError = Enter the name on the account.
+repayments.bank-account-details.sortCodeError = Enter the sort code.
+repayments.bank-account-details.accountNumberError = Enter the account number
+
+repayments.bank-account-details.sortCodeFormatError = Enter a valid sort code like 309430
+repayments.bank-account-details.accountNumberFormatError = Enter a valid account number like 00733445
+
+repayments.bank-account-details.bankNameFormatError = The name of the bank must be 40 characters or less
+repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
+repayments.bank-account-details.lengthError = Sort code must be 6 digits
+repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
