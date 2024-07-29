@@ -34,6 +34,8 @@ class DashboardViewSpec extends ViewSpecBase {
 
   val agentDashboardView =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
+  val inActiveOrganisationDashboardView =
+    Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {
 
@@ -140,6 +142,20 @@ class DashboardViewSpec extends ViewSpecBase {
         "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
       )
       pargraph.get(11).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
+      )
+
+    }
+
+    "have pillar 2 information with inActive status false" in {
+      val element  = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val pargraph = inActiveOrganisationDashboardView.getElementsByTag("p")
+
+      element.get(0).text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.get(1).text() must not include
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+      pargraph.get(9).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
 
