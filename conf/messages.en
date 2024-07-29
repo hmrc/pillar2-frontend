@@ -80,7 +80,7 @@ alreadyRegistered.message2= If you need to request access to this account, your 
 
 upeRegisteredAddress.title=What is the registered office address?
 upeRegisteredAddress.heading=What is the registered office address of {0}?
-address.warning=   You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
+address.warning =   You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
 upeRegisteredAddress.addressLine1 = Address line 1
