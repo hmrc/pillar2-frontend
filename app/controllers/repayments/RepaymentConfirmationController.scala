@@ -17,29 +17,48 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction}
-import controllers.subscription.manageAccount.identifierAction
+import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import models.UserAnswers
+import pages._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsConfirmationView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
+import scala.util.{Failure, Success, Try}
 
 class RepaymentConfirmationController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  agentIdentifierAction:    AgentIdentifierAction,
-  identify:                 IdentifierAction,
-  view:                     RepaymentsConfirmationView,
-  featureAction:            FeatureFlagActionFactory
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:               MessagesControllerComponents,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  view:                                   RepaymentsConfirmationView,
+  featureAction:                          FeatureFlagActionFactory,
+  getSessionData:                         SessionDataRetrievalAction,
+  requireSessionData:                     SessionDataRequiredAction
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen
-      identifierAction(clientPillar2Id, agentIdentifierAction, identify)) { implicit request =>
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
+      clearRepaymentsData(userAnswers)
       Ok(view(clientPillar2Id))
+      clearRepaymentsData(userAnswers) match {
+        case Success(_) =>
+          Ok(view(clientPillar2Id))
+        case Failure(_) =>
+          //TODO - Change under construction to the journey recovery page in PIL-1007
+          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
+      }
     }
 
+  def clearRepaymentsData(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers
+      .remove(RepaymentAccountNameConfirmationPage)
+      .flatMap(_.remove(RepaymentsContactByTelephonePage))
+      .flatMap(_.remove(RepaymentsContactEmailPage))
+      .flatMap(_.remove(RepaymentsContactNamePage))
+      .flatMap(_.remove(RepaymentsRefundAmountPage))
+      .flatMap(_.remove(RepaymentsTelephoneDetailsPage))
 }

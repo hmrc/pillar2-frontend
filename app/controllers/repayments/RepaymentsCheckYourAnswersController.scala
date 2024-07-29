@@ -21,6 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions._
 import models.{UnexpectedResponse, UserAnswers}
+import pages.{ReasonForRequestingRefundPage, RepaymentsRefundAmountPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,10 +51,10 @@ class RepaymentsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
-      Ok(
-        view(listRefund(), listBankAccountDetails(), contactDetailsList())
-      )
-
+      (userAnswers.get(RepaymentsRefundAmountPage), userAnswers.get(ReasonForRequestingRefundPage)) match {
+        case (Some(_), Some(_)) => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
+        case _                  => Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
+      }
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -61,12 +62,11 @@ class RepaymentsCheckYourAnswersController @Inject() (
       (for {
         repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
         _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(request.userId, repaymentData))
-      } yield Redirect(controllers.routes.UnderConstructionController.onPageLoad))
+      } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
         .recover { case UnexpectedResponse =>
           Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
-
     }
 
   private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =

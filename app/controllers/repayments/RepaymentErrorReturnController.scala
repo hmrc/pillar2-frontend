@@ -17,27 +17,24 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions.{AgentIdentifierAction, FeatureFlagActionFactory, IdentifierAction}
-import controllers.subscription.manageAccount.identifierAction
+import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsErrorReturnView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 
 class RepaymentErrorReturnController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  agentIdentifierAction:    AgentIdentifierAction,
-  featureAction:            FeatureFlagActionFactory,
-  view:                     RepaymentsErrorReturnView
-)(implicit appConfig:       FrontendAppConfig)
+  val controllerComponents:               MessagesControllerComponents,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  featureAction:                          FeatureFlagActionFactory,
+  view:                                   RepaymentsErrorReturnView
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String]): Action[AnyContent] = (featureAction.repaymentsAccessAction andThen
-    identifierAction(clientPillar2Id, agentIdentifierAction, identify)) { implicit request =>
+  def onPageLoad(clientPillar2Id: Option[String]): Action[AnyContent] = (featureAction.repaymentsAccessAction andThen identify) { implicit request =>
     Ok(view(clientPillar2Id))
   }
 

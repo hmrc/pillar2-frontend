@@ -18,6 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import controllers.routes
+import pages.{ReasonForRequestingRefundPage, RepaymentsRefundAmountPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.repayments.RepaymentsConfirmationView
@@ -30,8 +31,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
 
         val result = route(application, request).value
 

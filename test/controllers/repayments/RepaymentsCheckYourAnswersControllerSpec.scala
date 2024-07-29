@@ -18,8 +18,8 @@ package controllers.repayments
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{UnexpectedResponse, UserAnswers}
 import models.repayments.SendRepaymentDetails
+import models.{UnexpectedResponse, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -42,6 +42,44 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
   " Repayments Check Your Answers Controller" must {
     "on page load method " should {
+      "redirect to the error view if the user has no repayment data saved in the session cache" in {
+        val userAnswer          = UserAnswers("id")
+        val emptyRepaymentsData = emptyUserAnswers
+        val application = applicationBuilder(userAnswers = Some(emptyRepaymentsData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        running(application) {
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).get mustEqual controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad().url
+        }
+      }
+      "redirect to the incomplete data view if the user does not have the correct data in the session cache" in {
+        val userAnswer                 = UserAnswers("id")
+        val inconsistentRepaymentsData = subData.remove(ReasonForRequestingRefundPage).success.value
+        val application = applicationBuilder(userAnswers = Some(inconsistentRepaymentsData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        running(application) {
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).get mustEqual controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad().url
+        }
+      }
 
       "return OK and the correct view if an answer is provided to every contact detail question" in {
         val userAnswer = UserAnswers("id")
@@ -94,7 +132,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       "redirect to payment failed error page in case of an unsuccessful response" in {
         val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
           .overrides(
-              bind[RepaymentService].toInstance(mockRepaymentService)
+            bind[RepaymentService].toInstance(mockRepaymentService)
           )
           .build()
         running(application) {
@@ -109,7 +147,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       "redirect to a placeholder page (to be changed in the future) if data is partially completed" in {
         val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
           .overrides(
-              bind[RepaymentService].toInstance(mockRepaymentService)
+            bind[RepaymentService].toInstance(mockRepaymentService)
           )
           .build()
         running(application) {

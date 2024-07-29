@@ -49,13 +49,13 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
+      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
       link.text         must include("manage your Pillar 2 top-up taxes")
     }
 
     "have the correct banner link" in {
       val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
+      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
       link.text         must include("Report Pillar 2 top-up taxes")
     }
 
