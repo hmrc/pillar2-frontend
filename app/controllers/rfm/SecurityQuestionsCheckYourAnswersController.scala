@@ -21,9 +21,10 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
-import models.{InternalIssueError, Mode}
+import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import models.{InternalIssueError, Mode, NoResultFound}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
+import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
@@ -39,6 +40,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecurityQuestionsCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val userAnswersConnectors:        UserAnswersConnectors,
+  featureAction:                    FeatureFlagActionFactory,
   getSessionData:                   SessionDataRetrievalAction,
   requireSessionData:               SessionDataRequiredAction,
   subscriptionService:              SubscriptionService,
@@ -46,11 +48,11 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   view:                             SecurityQuestionsCheckYourAnswersView
 )(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
           RfmSecurityCheckSummary.row(request.userAnswers),
@@ -62,10 +64,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       } else {
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
     }
-  }
 
   def onSubmit: Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
@@ -77,14 +76,15 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     } yield
       if (matchingPillar2Records) {
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
-      } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate.rfmRegistrationDate)) {
+      } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate)) {
         userAnswersConnectors.remove(request.userId)
         Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })
-      .recover { case InternalIssueError =>
-        Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
+      .recover {
+        case InternalIssueError => Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+        case NoResultFound      => Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       }
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 

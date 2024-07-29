@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -27,6 +27,7 @@ import javax.inject.{Inject, Named}
 
 class AmendApiFailureController @Inject() (
   getData:                          DataRetrievalAction,
+  featureAction:                    FeatureFlagActionFactory,
   @Named("RfmIdentifier") identify: IdentifierAction,
   requireData:                      DataRequiredAction,
   val controllerComponents:         MessagesControllerComponents,
@@ -35,12 +36,7 @@ class AmendApiFailureController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
-      Ok(view())
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
+  def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) { implicit request =>
+    Ok(view())
   }
 }

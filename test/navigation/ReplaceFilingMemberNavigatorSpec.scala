@@ -18,7 +18,7 @@ package navigation
 
 import base.SpecBase
 import models._
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import pages._
 
 import java.time.LocalDate
@@ -66,7 +66,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(
           RfmRegistrationDatePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          emptyUserAnswers.setOrException(RfmRegistrationDatePage, LocalDate.now())
         ) mustBe
           controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
       }
@@ -251,7 +251,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(
           RfmRegistrationDatePage,
           CheckMode,
-          emptyUserAnswers.setOrException(RfmRegistrationDatePage, RegistrationDate(LocalDate.now()))
+          emptyUserAnswers.setOrException(RfmRegistrationDatePage, LocalDate.now())
         ) mustBe
           securityQuestionsCYA
       }

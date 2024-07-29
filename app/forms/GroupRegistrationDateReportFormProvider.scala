@@ -17,33 +17,28 @@
 package forms
 
 import forms.mappings.Mappings
-import models.rfm.RegistrationDate
+import play.api.data._
 
 import javax.inject.Inject
 
 class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
 
-  import play.api.data.Forms._
-  import play.api.data._
-
   import java.time.LocalDate
 
-  def apply(): Form[RegistrationDate] = Form(
-    mapping(
-      "rfmRegistrationDate" -> localDate(
-        invalidKey = "groupRegistrationDateReport.error.startDate.format",
-        allRequiredKey = "groupRegistrationDateReport.error.startDate.required.all",
-        twoRequiredKey = "groupRegistrationDateReport.error.startDate.required.two",
-        requiredKey = "groupRegistrationDateReport.error.startDate.required",
-        invalidDay = "groupRegistrationDateReport.error.startDate.day.nan",
-        invalidDayLength = "groupRegistrationDateReport.error.startDate.day.length",
-        invalidMonth = "groupRegistrationDateReport.error.startDate.month.nan",
-        invalidMonthLength = "groupRegistrationDateReport.error.startDate.month.length",
-        invalidYear = "groupRegistrationDateReport.error.startDate.year.nan",
-        invalidYearLength = "groupRegistrationDateReport.error.startDate.year.length",
-        messageKeyPart = "groupRegistrationDateReport"
-      ).verifying(maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum"))
-        .verifying(minDate(LocalDate.of(2023, 12, 31), "groupRegistrationDateReport.error.startDate.dayMonthYear.minimum"))
-    )(RegistrationDate.apply)(RegistrationDate.unapply)
+  def apply(): Form[LocalDate] = Form(
+    "rfmRegistrationDate" -> localDate(
+      invalidKey = "groupRegistrationDateReport.error.startDate.format",
+      allRequiredKey = "groupRegistrationDateReport.error.startDate.required.all",
+      twoRequiredKey = "groupRegistrationDateReport.error.startDate.required.two",
+      requiredKey = "groupRegistrationDateReport.error.startDate.required",
+      invalidDay = "groupRegistrationDateReport.error.startDate.day.nan",
+      invalidDayLength = "groupRegistrationDateReport.error.startDate.day.length",
+      invalidMonth = "groupRegistrationDateReport.error.startDate.month.nan",
+      invalidMonthLength = "groupRegistrationDateReport.error.startDate.month.length",
+      invalidYear = "groupRegistrationDateReport.error.startDate.year.nan",
+      invalidYearLength = "groupRegistrationDateReport.error.startDate.year.length",
+      messageKeyPart = "groupRegistrationDateReport"
+    ).verifying(maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum"))
+      .verifying(minDate(LocalDate.of(2023, 12, 31), "groupRegistrationDateReport.error.startDate.dayMonthYear.minimum"))
   )
 }
