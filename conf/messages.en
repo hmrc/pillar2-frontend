@@ -901,7 +901,7 @@ unauthorised.agent.message = You’ve signed in using an agent Government Gatewa
 unauthorised.agent.message2 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
 unauthorised.agent.hyper1 = sign in via agent services
 unauthorised.agent.message3 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
-unauthorised.agent.hyper2 = request authorisation via Agent services
+unauthorised.agent.hyper2 = request authorisation via agent services
 unauthorised.agent.hyper3 = Find out more about who can use this service
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
