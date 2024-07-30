@@ -20,8 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.SubscriptionStatus
+import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage}
+import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage, SubscriptionStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -72,27 +74,32 @@ class CheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    if (request.userAnswers.finalStatusCheck) {
-      request.userAnswers
-        .get(SubMneOrDomesticPage)
-        .map { mneOrDom =>
-          (for {
-            plr <- subscriptionService.createSubscription(request.userAnswers)
-            dataToSave = UserAnswers(request.userAnswers.id).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
-            _ <- sessionRepository.set(dataToSave)
-            _ <- userAnswersConnectors.remove(request.userId)
-          } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
-            .recover {
-              case InternalIssueError =>
-                logger.error("Subscription failed due to failed call to the backend")
-                Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+    val subscriptionStatus = request.userAnswers
+      .get(SubMneOrDomesticPage)
+      .map { mneOrDom =>
+        (for {
+          plr <- subscriptionService.createSubscription(request.userAnswers)
+          dataToSave = UserAnswers(request.userId).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
+          _ <- sessionRepository.set(dataToSave)
+//          _ <- userAnswersConnectors.remove(request.userId)
+        } yield SuccessfullyCompletedSubscription)
+          .recover {
+            case InternalIssueError =>
+              logger.error("Subscription failed due to failed call to the backend")
+              FailedWithInternalIssueError: SubscriptionStatus
+            case DuplicateSubmissionError =>
+              logger.error("Subscription failed due to a Duplicate Submission")
+              FailedWithDuplicatedSubmission: SubscriptionStatus
+          }
+      }
+      .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
 
-              case DuplicateSubmissionError =>
-                logger.error("Subscription failed due to a Duplicate Submission")
-                Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
-            }
-        }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+    if (request.userAnswers.finalStatusCheck) {
+      for {
+        updatedSubscriptionStatus <- subscriptionStatus
+        updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(SubscriptionStatusPage, updatedSubscriptionStatus))
+        _                         <- userAnswersConnectors.save(request.userId, Json.toJson(updatedAnswers))
+      } yield Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
     } else {
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }

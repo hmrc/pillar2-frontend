@@ -16,25 +16,37 @@
 
 package controllers
 
-import javax.inject.Inject
+import config.FrontendAppConfig
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
+import pages.SubscriptionStatusPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationWaitingRoomView
-import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+
+import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
-class RegistrationWaitingRoomController @Inject()(
-                                       getData: DataRetrievalAction,
-                                       identify: IdentifierAction,
-                                       requireData: DataRequiredAction,
-                                       val controllerComponents: MessagesControllerComponents,
-                                       view: RegistrationWaitingRoomView
-                                     )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+class RegistrationWaitingRoomController @Inject() (
+  getData:                  DataRetrievalAction,
+  identify:                 IdentifierAction,
+  requireData:              DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RegistrationWaitingRoomView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) {
-    implicit request =>
-      Ok(view())
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(SubscriptionStatusPage) match {
+      case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      case Some(FailedWithDuplicatedSubmission)           => Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
+      case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+      case Some(FailedWithNoMneOrDomesticValueFoundError) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      case s                                              => Ok(view(s))
+    }
+
   }
 }

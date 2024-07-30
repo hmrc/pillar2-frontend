@@ -15,15 +15,20 @@
  *@
 
 @import config.FrontendAppConfig
-
+@import models.subscription.SubscriptionStatus
 @this(
         layout: templates.Layout,
         govukButton: GovukButton
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title"))) {
+@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, bannerUrl =None, showBackLink = false) {
+
+
+@if(subscriptionStatus.isEmpty) {
+<meta http-equiv="refresh" content="2" />
+}
 <div class="hods-loading-spinner">
  <div
          class="hods-loading-spinner__spinner"
@@ -37,12 +42,6 @@
   <h2 class="govuk-body-s">
    @messages("registrationWaitingRoom.h2")
   </h2>
-
-  <script>
-   setTimeout(() => {
-     location.replace("next-question")
-   }, 3000)
-  </script>
 
  </div>
 </div>
