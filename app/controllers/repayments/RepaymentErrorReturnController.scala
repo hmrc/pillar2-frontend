@@ -34,8 +34,8 @@ class RepaymentErrorReturnController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String]): Action[AnyContent] = (featureAction.repaymentsAccessAction andThen identify) { implicit request =>
-    Ok(view(clientPillar2Id))
+  def onPageLoad(): Action[AnyContent] = (featureAction.repaymentsAccessAction andThen identify) { implicit request =>
+    Ok(view())
   }
 
 }

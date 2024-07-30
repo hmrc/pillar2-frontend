@@ -54,10 +54,8 @@ object ViewUtils {
   }
 
   def formattedCurrentDate: String = {
-    val now:           LocalDate         = LocalDate.now()
-    val formatter:     DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    val formattedDate: String            = now.format(formatter)
-    formattedDate
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    LocalDate.now().format(formatter)
   }
 
   def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =

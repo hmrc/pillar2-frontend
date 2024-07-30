@@ -30,7 +30,7 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
   "Repayments error return view" should {
 
     val view: Document =
-      Jsoup.parse(page(Some(testPillar2Ref))(request, appConfig, messages).toString())
+      Jsoup.parse(page()(request, appConfig, messages).toString())
 
     "have a title" in {
       view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 top-up taxes - GOV.UK")

@@ -38,7 +38,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -50,7 +50,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(None).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

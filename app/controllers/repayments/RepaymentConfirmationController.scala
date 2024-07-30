@@ -39,14 +39,14 @@ class RepaymentConfirmationController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(clientPillar2Id: Option[String] = None): Action[AnyContent] =
+  def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       clearRepaymentsData(userAnswers)
-      Ok(view(clientPillar2Id))
+      Ok(view())
       clearRepaymentsData(userAnswers) match {
         case Success(_) =>
-          Ok(view(clientPillar2Id))
+          Ok(view())
         case Failure(_) =>
           //TODO - Change under construction to the journey recovery page in PIL-1007
           Redirect(controllers.routes.UnderConstructionController.onPageLoad)
@@ -61,4 +61,8 @@ class RepaymentConfirmationController @Inject() (
       .flatMap(_.remove(RepaymentsContactNamePage))
       .flatMap(_.remove(RepaymentsRefundAmountPage))
       .flatMap(_.remove(RepaymentsTelephoneDetailsPage))
+      .flatMap(_.remove(UkOrAbroadBankAccountPage))
+      .flatMap(_.remove(ReasonForRequestingRefundPage))
+      .flatMap(_.remove(NonUKBankPage))
+      .flatMap(_.remove(BankAccountDetailsPage))
 }

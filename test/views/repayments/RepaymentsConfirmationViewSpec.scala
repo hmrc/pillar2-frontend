@@ -30,7 +30,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   "Repayments confirmation view" should {
     val view: Document =
-      Jsoup.parse(page(Some(testPillar2Ref))(request, appConfig, messages).toString())
+      Jsoup.parse(page()(request, appConfig, messages).toString())
 
     "have a panel" in {
       view.getElementsByClass("govuk-panel__title").text must include("Refund request submitted")

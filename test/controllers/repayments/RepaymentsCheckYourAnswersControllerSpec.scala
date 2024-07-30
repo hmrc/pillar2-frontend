@@ -61,7 +61,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).get mustEqual controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad().url
         }
       }
-      "redirect to the incomplete data view if the user does not have the correct data in the session cache" in {
+      "redirect to the error view if the user does not have repayments data in the session cache" in {
         val userAnswer                 = UserAnswers("id")
         val inconsistentRepaymentsData = subData.remove(ReasonForRequestingRefundPage).success.value
         val application = applicationBuilder(userAnswers = Some(inconsistentRepaymentsData))
