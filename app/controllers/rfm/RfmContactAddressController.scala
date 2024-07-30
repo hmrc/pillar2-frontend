@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import forms.RfmContactAddressFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -39,6 +39,7 @@ class RfmContactAddressController @Inject() (
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmContactAddressFormProvider,
+  featureAction:                    FeatureFlagActionFactory,
   val countryOptions:               CountryOptions,
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
@@ -47,17 +48,13 @@ class RfmContactAddressController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
   val form = formProvider()
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       val preparedForm = request.userAnswers.get(RfmContactAddressPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
       Ok(view(preparedForm, mode, countryOptions.options()))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

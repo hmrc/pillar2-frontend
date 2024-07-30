@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import org.mockito.ArgumentMatchers
@@ -27,15 +28,13 @@ import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, 
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import views.html.rfm.AgentView
 import views.html._
-import controllers.actions.TestAuthRetrievals.Ops
-import org.apache.pekko.Done
-import repositories.SessionRepository
+import views.html.rfm.AgentView
 
 import java.util.UUID
 import scala.concurrent.Future

@@ -19,9 +19,9 @@ package controllers
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{ASAEnrolmentIdentifierAction, EnrolmentIdentifierAction, FeatureFlagActionFactory, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions._
 import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
+import models.ApiError
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, RedirectToASAHome, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.data.Form
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.AgentView
 import views.html._
+import views.html.rfm.AgentView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -95,7 +95,7 @@ class AgentController @Inject() (
               _                  <- sessionRepository.set(answersWithOrgName)
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)
 
-            result.recover { case InternalIssueError =>
+            result.recover { case _: ApiError =>
               Redirect(
                 routes.AgentController.onPageLoadNoClientMatch
               )

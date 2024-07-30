@@ -16,9 +16,8 @@
 
 package controllers.registration
 
-import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -43,12 +42,13 @@ class GrsReturnController @Inject() (
   identify:                                          IdentifierAction,
   @Named("RfmIdentifier") rfmIdentify:               IdentifierAction,
   getData:                                           DataRetrievalAction,
+  featureAction:                                     FeatureFlagActionFactory,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   auditService:                                      AuditService
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController
     with Logging {
 
@@ -229,9 +229,8 @@ class GrsReturnController @Inject() (
 
   }
 
-  def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def continueRfm(journeyId: String): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers
         .get(RfmEntityTypePage)
         .map {
@@ -327,11 +326,8 @@ class GrsReturnController @Inject() (
               }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
 
-  }
+    }
 
   private def handleGrsAndBvResult(
     identifiersMatch: Boolean,

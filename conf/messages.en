@@ -1084,8 +1084,8 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
-rfm.journeyRecoveryView.paragraphStart = You can go back to
-rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.journeyRecoveryView.paragraphStart = You can go back
+rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 top-up taxes account to try again
 
 rfm.incompleteDataView.title = You have an incomplete task
 rfm.incompleteDataView.heading = You have an incomplete task
@@ -1371,6 +1371,11 @@ repayments.telephoneDetails.hint = For international numbers include the country
 repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 50 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
+
+repayments.submission.error.heading = Sorry, there is a problem with the service
+repayments.submission.error.title = Sorry, there is a problem with the service
+repayments.submission.error.p2 = You can try again later when the service is available.
+repayments.submission.error.p2.link = Return to your account homepage
 
 ###################
 

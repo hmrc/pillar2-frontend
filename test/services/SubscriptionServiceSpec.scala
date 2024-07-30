@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.registration.RegistrationInfo
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import models.subscription._
 import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
 import org.apache.pekko.Done
@@ -363,8 +363,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return InternalIssueError when the connector returns None" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier()
+      "return NoResultFound when the connector returns a 404 response" in {
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -376,7 +375,7 @@ class SubscriptionServiceSpec extends SpecBase {
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").failed.futureValue
 
-          result mustBe models.InternalIssueError
+          result mustBe models.NoResultFound
         }
       }
 
@@ -733,7 +732,7 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "matchingPillar2Records" when {
-      val registrationDate = RegistrationDate(LocalDate.now())
+      val registrationDate = LocalDate.now()
       "return true if the pillar2 and reg date records in FE and BE database match" in {
         val userAnswers = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, "matchingPillar2Id")

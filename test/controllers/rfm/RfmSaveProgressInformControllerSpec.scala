@@ -18,7 +18,6 @@ package controllers.rfm
 
 import base.SpecBase
 import models.UserAnswers
-import models.rfm.RegistrationDate
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Configuration
 import play.api.test.FakeRequest
@@ -39,7 +38,7 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         .set(RfmPillar2ReferencePage, plrReference)
         .success
         .value
-        .set(RfmRegistrationDatePage, RegistrationDate(date))
+        .set(RfmRegistrationDatePage, date)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
@@ -85,7 +84,7 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.UnderConstructionController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.pageNotFoundLoad.url)
       }
     }
   }
