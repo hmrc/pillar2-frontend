@@ -125,7 +125,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url
         }
       }
-      "redirect to a placeholder page (to be changed in the future) if data is partially completed" in {
+      "redirect to Repayments Incomplete Data page if data is partially completed" in {
         val application = applicationBuilder(userAnswers = Some(completeRepaymentDataUkBankAccount))
           .overrides(
             bind[RepaymentService].toInstance(mockRepaymentService)
@@ -137,7 +137,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad.url
         }
       }
 

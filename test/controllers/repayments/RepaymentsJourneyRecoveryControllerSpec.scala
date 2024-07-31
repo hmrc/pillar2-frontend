@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 
-package controllers.rfm
+package controllers.repayments
 
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.AlreadyEnrolledView
+import views.html.repayments.JourneyRecoveryView
 
-class AlreadyEnrolledControllerSpec extends SpecBase {
+class RepaymentsJourneyRecoveryControllerSpec extends SpecBase {
 
-  "AlreadyEnrolled Controller" must {
+  "Rfm Journey Recovery Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -36,35 +36,16 @@ class AlreadyEnrolledControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.AlreadyEnrolledController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[AlreadyEnrolledView]
+        val view = application.injector.instanceOf[JourneyRecoveryView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
 
-    "must redirect to correct view when rfm feature false" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.AlreadyEnrolledController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
   }
 }

@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -37,6 +37,7 @@ class UkBasedFilingMemberController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
+  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     NFMRegisteredInUKConfirmationFormProvider,
@@ -48,17 +49,13 @@ class UkBasedFilingMemberController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
       Ok(view(preparedForm, mode))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

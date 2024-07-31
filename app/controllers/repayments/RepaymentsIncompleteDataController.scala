@@ -14,26 +14,27 @@
  * limitations under the License.
  */
 
-package controllers.rfm
+package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.FeatureFlagActionFactory
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.StartPageView
+import views.html.repayments.IncompleteDataView
 
 import javax.inject.Inject
 
-class StartPageController @Inject() (
+class RepaymentsIncompleteDataController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   featureAction:            FeatureFlagActionFactory,
-  view:                     StartPageView
-)(implicit val appConfig:   FrontendAppConfig)
-    extends FrontendBaseController
+  view:                     IncompleteDataView
+)(implicit
+  val appConfig: FrontendAppConfig
+) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = featureAction.rfmAccessAction { implicit request =>
+  def onPageLoad: Action[AnyContent] = (featureAction.repaymentsAccessAction) { implicit request =>
     Ok(view())
   }
 

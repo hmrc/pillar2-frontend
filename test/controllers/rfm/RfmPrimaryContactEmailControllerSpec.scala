@@ -179,7 +179,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
     "redirect to Recovery page if previous page not answered" in {

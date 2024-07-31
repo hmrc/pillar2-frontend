@@ -30,7 +30,7 @@ object RfmRegistrationDateSummary {
   val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RfmRegistrationDatePage).map { answer =>
-      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.rfmRegistrationDate))
+      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer))
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(startDate)),
