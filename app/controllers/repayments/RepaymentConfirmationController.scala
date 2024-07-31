@@ -18,14 +18,15 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
-import models.UserAnswers
 import pages._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsConfirmationView
 
 import javax.inject.{Inject, Named}
+import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -33,26 +34,20 @@ class RepaymentConfirmationController @Inject() (
   view:                                   RepaymentsConfirmationView,
   featureAction:                          FeatureFlagActionFactory,
   getSessionData:                         SessionDataRetrievalAction,
-  requireSessionData:                     SessionDataRequiredAction
-)(implicit appConfig:                     FrontendAppConfig)
+  requireSessionData:                     SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
+  def onPageLoad(completionStatus: Boolean): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       (for {
-        updatedUserAnswers1  <- userAnswers.remove(RepaymentAccountNameConfirmationPage)
-        updatedUserAnswers2  <- updatedUserAnswers1.remove(RepaymentsContactByTelephonePage)
-        updatedUserAnswers3  <- updatedUserAnswers2.remove(RepaymentsContactEmailPage)
-        updatedUserAnswers4  <- updatedUserAnswers3.remove(RepaymentsContactNamePage)
-        updatedUserAnswers5  <- updatedUserAnswers4.remove(RepaymentsRefundAmountPage)
-        updatedUserAnswers6  <- updatedUserAnswers5.remove(RepaymentsTelephoneDetailsPage)
-        updatedUserAnswers7  <- updatedUserAnswers6.remove(UkOrAbroadBankAccountPage)
-        updatedUserAnswers8  <- updatedUserAnswers7.remove(ReasonForRequestingRefundPage)
-        updatedUserAnswers9  <- updatedUserAnswers8.remove(NonUKBankPage)
-        updatedUserAnswers10 <- updatedUserAnswers9.remove(BankAccountDetailsPage)
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, completionStatus))
+        _              <- sessionRepository.set(updatedAnswers)
       } yield Ok(view()))
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .recover { case _: Exception =>
+          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
     }
 }

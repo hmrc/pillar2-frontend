@@ -42,28 +42,9 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
   " Repayments Check Your Answers Controller" must {
     "on page load method " should {
-      "redirect to the error view if the user has no repayment data saved in the session cache" in {
-        val userAnswer          = UserAnswers("id")
-        val emptyRepaymentsData = emptyUserAnswers
-        val application = applicationBuilder(userAnswers = Some(emptyRepaymentsData))
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
-          )
-          .build()
-
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-        running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
-          val result  = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).get mustEqual controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad().url
-        }
-      }
-      "redirect to the error view if the user does not have repayments data in the session cache" in {
+      "redirect to the error return page when the repayments completion status flag is set to true" in {
         val userAnswer                 = UserAnswers("id")
-        val inconsistentRepaymentsData = subData.remove(ReasonForRequestingRefundPage).success.value
+        val inconsistentRepaymentsData = emptyUserAnswers.setOrException(RepaymentCompletionStatus, true)
         val application = applicationBuilder(userAnswers = Some(inconsistentRepaymentsData))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -125,7 +106,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation")
+          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation?completionStatus=true")
         }
       }
 

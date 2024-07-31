@@ -26,11 +26,11 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
   "Repayment confirmation controller" when {
 
-    "must return OK and the correct view for  a GET" in {
+    "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(true).url)
 
         val result = route(application, request).value
 
@@ -49,7 +49,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(true).url)
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
