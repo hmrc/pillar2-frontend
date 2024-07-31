@@ -23,12 +23,13 @@
 
 @(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, bannerUrl =None, showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, bannerUrl =Some(controllers.routes.RegistrationWaitingRoomController.onPageLoad.url), showBackLink = false) {
 
 
 @if(subscriptionStatus.isEmpty) {
 <meta http-equiv="refresh" content="2" />
 }
+
 <div class="hods-loading-spinner">
  <div
          class="hods-loading-spinner__spinner"

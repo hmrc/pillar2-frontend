@@ -16,16 +16,16 @@
 
 package models.subscription
 
-import models.Enumerable
+import models.{Enumerable, WithName}
 
 sealed trait SubscriptionStatus
 
 object SubscriptionStatus extends Enumerable.Implicits {
 
-  case object SuccessfullyCompletedSubscription extends SubscriptionStatus
-  case object FailedWithDuplicatedSubmission extends SubscriptionStatus
-  case object FailedWithInternalIssueError extends SubscriptionStatus
-  case object FailedWithNoMneOrDomesticValueFoundError extends SubscriptionStatus
+  case object SuccessfullyCompletedSubscription extends WithName("successfullyCompletedSubscription") with SubscriptionStatus
+  case object FailedWithDuplicatedSubmission extends WithName("failedWithDuplicatedSubmission") with SubscriptionStatus
+  case object FailedWithInternalIssueError extends WithName("failedWithInternalIssueError") with SubscriptionStatus
+  case object FailedWithNoMneOrDomesticValueFoundError extends WithName("failedWithNoMneOrDomesticValueFoundError") with SubscriptionStatus
 
   val values: Seq[SubscriptionStatus] = Seq(
     SuccessfullyCompletedSubscription,

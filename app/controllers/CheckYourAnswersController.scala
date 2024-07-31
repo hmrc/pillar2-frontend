@@ -73,35 +73,35 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
-    val subscriptionStatus = request.userAnswers
-      .get(SubMneOrDomesticPage)
-      .map { mneOrDom =>
-        (for {
-          plr <- subscriptionService.createSubscription(request.userAnswers)
-          dataToSave = UserAnswers(request.userId).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
-          _ <- sessionRepository.set(dataToSave)
-//          _ <- userAnswersConnectors.remove(request.userId)
-        } yield SuccessfullyCompletedSubscription)
-          .recover {
-            case InternalIssueError =>
-              logger.error("Subscription failed due to failed call to the backend")
-              FailedWithInternalIssueError: SubscriptionStatus
-            case DuplicateSubmissionError =>
-              logger.error("Subscription failed due to a Duplicate Submission")
-              FailedWithDuplicatedSubmission: SubscriptionStatus
-          }
-      }
-      .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
-
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
+      val subscriptionStatus = request.userAnswers
+        .get(SubMneOrDomesticPage)
+        .map { mneOrDom =>
+          (for {
+            plr <- subscriptionService.createSubscription(request.userAnswers)
+            dataToSave = UserAnswers(request.userId).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
+            _ <- sessionRepository.set(dataToSave)
+            _ <- userAnswersConnectors.remove(request.userId)
+          } yield SuccessfullyCompletedSubscription)
+            .recover {
+              case InternalIssueError =>
+                logger.error("Subscription failed due to failed call to the backend")
+                FailedWithInternalIssueError
+              case DuplicateSubmissionError =>
+                logger.error("Subscription failed due to a Duplicate Submission")
+                FailedWithDuplicatedSubmission
+            }
+        }
+        .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
       for {
         updatedSubscriptionStatus <- subscriptionStatus
         updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(SubscriptionStatusPage, updatedSubscriptionStatus))
-        _                         <- userAnswersConnectors.save(request.userId, Json.toJson(updatedAnswers))
-      } yield Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+        _                         <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
+      } yield (): Unit
+      Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
     } else {
-      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
 
