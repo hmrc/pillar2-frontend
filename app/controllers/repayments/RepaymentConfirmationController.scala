@@ -18,15 +18,14 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import models.UserAnswers
 import pages._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsConfirmationView
 
 import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -34,20 +33,17 @@ class RepaymentConfirmationController @Inject() (
   view:                                   RepaymentsConfirmationView,
   featureAction:                          FeatureFlagActionFactory,
   getSessionData:                         SessionDataRetrievalAction,
-  requireSessionData:                     SessionDataRequiredAction,
-  sessionRepository:                      SessionRepository
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  requireSessionData:                     SessionDataRequiredAction
+)(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(completionStatus: Boolean): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
-      (for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, completionStatus))
-        _              <- sessionRepository.set(updatedAnswers)
-      } yield Ok(view()))
-        .recover { case _: Exception =>
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-        }
+  def onPageLoad(): Action[AnyContent] =
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
+      userAnswers.get(RepaymentCompletionStatus) match {
+        case Some(true) => Ok(view())
+        case _          => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      }
     }
 }

@@ -21,10 +21,11 @@ import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions._
 import models.{UnexpectedResponse, UserAnswers}
-import pages.{ReasonForRequestingRefundPage, RepaymentCompletionStatus, RepaymentsRefundAmountPage}
+import pages.RepaymentCompletionStatus
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import services.RepaymentService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
@@ -40,6 +41,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   featureAction:                          FeatureFlagActionFactory,
+  sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsCheckYourAnswersView,
   repaymentService:                       RepaymentService
@@ -60,9 +62,11 @@ class RepaymentsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       (for {
-        repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-        _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(request.userId, repaymentData))
-      } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(completionStatus = true)))
+        repaymentData  <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+        _              <- OptionT.liftF(repaymentService.sendRepaymentDetails(request.userId, repaymentData))
+        updatedAnswers <- OptionT.liftF(Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true)))
+        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+      } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
         .recover { case UnexpectedResponse =>
           Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
         }

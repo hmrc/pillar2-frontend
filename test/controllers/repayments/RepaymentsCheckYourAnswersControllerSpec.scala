@@ -40,12 +40,12 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "The reason for refund")
 
-  " Repayments Check Your Answers Controller" must {
+  "Repayments Check Your Answers Controller" must {
     "on page load method " should {
       "redirect to the error return page when the repayments completion status flag is set to true" in {
-        val userAnswer                 = UserAnswers("id")
-        val inconsistentRepaymentsData = emptyUserAnswers.setOrException(RepaymentCompletionStatus, true)
-        val application = applicationBuilder(userAnswers = Some(inconsistentRepaymentsData))
+        val userAnswer                = UserAnswers("id")
+        val postCompletionUserAnswers = emptyUserAnswers.setOrException(RepaymentCompletionStatus, true)
+        val application = applicationBuilder(userAnswers = Some(postCompletionUserAnswers))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
@@ -106,7 +106,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation?completionStatus=true")
+          redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/confirmation")
         }
       }
 
