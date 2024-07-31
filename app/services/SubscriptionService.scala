@@ -21,7 +21,7 @@ import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFa
 import models.registration.{CRN, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
 import play.api.Logging
@@ -49,6 +49,7 @@ class SubscriptionService @Inject() (
       latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
       updatedAnswers = latestAnswers.getOrElse(userAnswers)
       nfmSafeId       <- registerNfm(updatedAnswers)
+      _               <- if (upeSafeId != nfmSafeId.getOrElse("")) Future.unit else Future.failed(DuplicateSafeIdError)
       plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
       enrolmentExists <- enrolmentExists(plrRef)
       _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)

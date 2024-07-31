@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package models
+package forms
 
-sealed trait ApiError extends Throwable
-case object InternalIssueError extends ApiError
-case object NoResultFound extends ApiError
-case object UnexpectedResponse extends ApiError
-case object UnexpectedJsResult extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object DuplicateSafeIdError extends ApiError
+import forms.mappings.Mappings
+import play.api.data.Form
+
+import javax.inject.Inject
+
+class DuplicateSafeIdFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Boolean] =
+    Form(
+      "nominateFilingMember" -> boolean("duplicateSafeId.error.required")
+    )
+}

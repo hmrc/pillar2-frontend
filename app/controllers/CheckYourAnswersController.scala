@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -90,6 +90,10 @@ class CheckYourAnswersController @Inject() (
               case DuplicateSubmissionError =>
                 logger.error("Subscription failed due to a Duplicate Submission")
                 Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
+
+              case DuplicateSafeIdError =>
+                logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+                Redirect(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad)
             }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

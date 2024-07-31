@@ -415,18 +415,29 @@ captureTelephoneDetails.messages.error.format = Enter a telephone number in the 
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Nominate a filing member
-NominateFilingMemberYesNo.heading = Nominate a filing member
+NominateFilingMemberYesNo.title = Nominated filing member
+NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-NominateFilingMemberYesNo.subheading = Do you want to register a nominated filing member to report for this group?
-NominateFilingMemberYesNo.p1 = A nominated filing member must be nominated by the UPE and must have access to information required to report Pillar 2 top-up taxes.
-NominateFilingMemberYesNo.p2 = If you select ‘No’, we will use the ultimate parent entity (UPE) as the filing member.
+NominateFilingMemberYesNo.subheading = Do you want to register a different entity as your nominated filing member?
+NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group.
+NominateFilingMemberYesNo.p2 = If the UPE has nominated a filing member, they must have written permission for this (such as an email). We won’t collect this during registration, but we may request it during compliance checks.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
+
+duplicateSafeId.title = There is a problem with your registration
+duplicateSafeId.heading = There is a problem with your registration
+duplicateSafeId.p1 = The details you provided for the nominated filing member are the same as those for the ultimate parent entity.
+duplicateSafeId.p2 = To complete your registration you must either:
+duplicateSafeId.l1 = provide the details for the entity that has been nominated to act as your nominated filing member
+duplicateSafeId.l2 = keep your ultimate parent entity as the default filing member
+duplicateSafeId.subheading = Has a different entity in your group been nominated to act as your filing member?
+duplicateSafeId.error.required = Select yes if a different entity in your group been nominated to act as your filing member
+duplicateSafeId.yes = Yes
+duplicateSafeId.no= No
 
 entityType.caption = Group details
 entityType.title = What entity type is the ultimate parent?
