@@ -17,8 +17,7 @@
 @import config.FrontendAppConfig
 @import models.subscription.SubscriptionStatus
 @this(
-        layout: templates.Layout,
-        govukButton: GovukButton
+        layout: templates.Layout
 )
 
 @(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
