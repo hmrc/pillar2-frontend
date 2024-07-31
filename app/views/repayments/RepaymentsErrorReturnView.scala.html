@@ -28,17 +28,17 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("refundErrorConfirmation.title")),
+    pageTitle = titleNoForm(messages("repayments.refundErrorConfirmation.title")),
     showBackLink = false,
     showSignOut = false,
     timeout = false,
     authorised = false,
     bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
-        @heading(messages("refundErrorConfirmation.heading"))
-        @paragraphBody(messages("refundErrorConfirmation.paragraphOne"))
-        @paragraphMessageWithLink(message1 = Some(messages("refundErrorConfirmation.paragraphTwo")),
-            linkMessage = messages("refundErrorConfirmation.paragraphTwo.link"),
+        @heading(messages("repayments.refundErrorConfirmation.heading"))
+        @paragraphBody(messages("repayments.refundErrorConfirmation.paragraphOne"))
+        @paragraphMessageWithLink(message1 = Some(messages("repayments.refundErrorConfirmation.paragraphTwo")),
+            linkMessage = messages("repayments.refundErrorConfirmation.paragraphTwo.link"),
             linkUrl = routes.DashboardController.onPageLoad.url,
             message2 = Some(".")
         )

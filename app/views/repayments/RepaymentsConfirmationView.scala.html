@@ -31,7 +31,7 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("refundConfirmation.title")),
+    pageTitle = titleNoForm(messages("repayments.refundConfirmation.title")),
     showBackLink = false,
     showSignOut = false,
     timeout = false,
@@ -40,19 +40,19 @@
 ) {
 
     @govukPanel(Panel(
-        title = Text(messages("refundConfirmation.panelText"))
+        title = Text(messages("repayments.refundConfirmation.panelText"))
     ))
 
-    @paragraph(messages("refundConfirmation.paragraphText.one", formattedCurrentDate))
+    @paragraph(messages("repayments.refundConfirmation.paragraphText.one", formattedCurrentDate))
     @bulletList(items = List(
-        printLink(messages("refundConfirmation.printLink.text"))
+        printLink(messages("repayments.refundConfirmation.printLink.text"))
 
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
-    @paragraph(messages("refundConfirmation.paragraphText.two"), isBold = true)
-    @paragraph(messages("refundConfirmation.paragraphText.three"))
+    @paragraph(messages("repayments.refundConfirmation.paragraphText.two"), isBold = true)
+    @paragraph(messages("repayments.refundConfirmation.paragraphText.three"))
 
-    @paragraphMessageWithLink(message1 = Some(messages("refundConfirmation.paragraphText.four")),
-        linkMessage = messages("refundConfirmation.paragraphText.returnLink"),
+    @paragraphMessageWithLink(message1 = Some(messages("repayments.refundConfirmation.paragraphText.four")),
+        linkMessage = messages("repayments.refundConfirmation.paragraphText.returnLink"),
         linkUrl = routes.DashboardController.onPageLoad.url,
         message2 = Some(".")
     )
