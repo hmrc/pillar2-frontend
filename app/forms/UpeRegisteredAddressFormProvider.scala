@@ -43,7 +43,8 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
         ),
       "postalCode" ->
         mandatoryPostcode(
-          "upeRegisteredAddress.messages.error.postcode.required",
+          "upeRegisteredAddress.messages.error.postcode.required.GB",
+          "upeRegisteredAddress.messages.error.postcode.required.Other",
           "upeRegisteredAddress.postcode.error.invalid",
           "upeRegisteredAddress.postcode.error.length",
           "countryCode"
