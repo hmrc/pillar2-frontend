@@ -18,7 +18,6 @@ package controllers.repayments
 
 import base.SpecBase
 import controllers.routes
-import pages.{ReasonForRequestingRefundPage, RepaymentsRefundAmountPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.repayments.RepaymentsConfirmationView
@@ -27,7 +26,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
   "Repayment confirmation controller" when {
 
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for  a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {

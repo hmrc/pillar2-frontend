@@ -26,7 +26,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsConfirmationView
 
 import javax.inject.{Inject, Named}
-import scala.util.{Failure, Success, Try}
 
 class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -42,27 +41,18 @@ class RepaymentConfirmationController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
-      clearRepaymentsData(userAnswers)
-      Ok(view())
-      clearRepaymentsData(userAnswers) match {
-        case Success(_) =>
-          Ok(view())
-        case Failure(_) =>
-          //TODO - Change under construction to the journey recovery page in PIL-1007
-          Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-      }
+      (for {
+        updatedUserAnswers1  <- userAnswers.remove(RepaymentAccountNameConfirmationPage)
+        updatedUserAnswers2  <- updatedUserAnswers1.remove(RepaymentsContactByTelephonePage)
+        updatedUserAnswers3  <- updatedUserAnswers2.remove(RepaymentsContactEmailPage)
+        updatedUserAnswers4  <- updatedUserAnswers3.remove(RepaymentsContactNamePage)
+        updatedUserAnswers5  <- updatedUserAnswers4.remove(RepaymentsRefundAmountPage)
+        updatedUserAnswers6  <- updatedUserAnswers5.remove(RepaymentsTelephoneDetailsPage)
+        updatedUserAnswers7  <- updatedUserAnswers6.remove(UkOrAbroadBankAccountPage)
+        updatedUserAnswers8  <- updatedUserAnswers7.remove(ReasonForRequestingRefundPage)
+        updatedUserAnswers9  <- updatedUserAnswers8.remove(NonUKBankPage)
+        updatedUserAnswers10 <- updatedUserAnswers9.remove(BankAccountDetailsPage)
+      } yield Ok(view()))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
-
-  def clearRepaymentsData(userAnswers: UserAnswers): Try[UserAnswers] =
-    userAnswers
-      .remove(RepaymentAccountNameConfirmationPage)
-      .flatMap(_.remove(RepaymentsContactByTelephonePage))
-      .flatMap(_.remove(RepaymentsContactEmailPage))
-      .flatMap(_.remove(RepaymentsContactNamePage))
-      .flatMap(_.remove(RepaymentsRefundAmountPage))
-      .flatMap(_.remove(RepaymentsTelephoneDetailsPage))
-      .flatMap(_.remove(UkOrAbroadBankAccountPage))
-      .flatMap(_.remove(ReasonForRequestingRefundPage))
-      .flatMap(_.remove(NonUKBankPage))
-      .flatMap(_.remove(BankAccountDetailsPage))
 }
