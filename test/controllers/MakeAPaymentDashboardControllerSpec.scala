@@ -130,17 +130,19 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
     }
 
     "redirect to journey recovery for a GET if pillar 2 reference is missing" in {
-      val application = applicationBuilder(userAnswers = None, Set.empty)
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
         .build()
-      running(application) {
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
+      running(application) {
         val request =
           FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
-
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-
       }
     }
   }
