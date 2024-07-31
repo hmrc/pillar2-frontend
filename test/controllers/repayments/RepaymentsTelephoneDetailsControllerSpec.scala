@@ -164,7 +164,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
           FakeRequest(GET, controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
       }
     }
 
@@ -180,7 +180,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url
       }
     }
 
