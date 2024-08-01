@@ -14,45 +14,49 @@
  * limitations under the License.
  */
 
-package views.subscriptionview
+package views.fm
 
 import base.ViewSpecBase
-import forms.DuplicateSafeIdFormProvider
+import forms.NominateFilingMemberYesNoFormProvider
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.subscriptionview.DuplicateSafeIdView
+import views.html.fmview.NominateFilingMemberYesNoView
 
-class DuplicateSafeIdViewSpec extends ViewSpecBase {
+class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
-  val formProvider = new DuplicateSafeIdFormProvider
-  val page: DuplicateSafeIdView = inject[DuplicateSafeIdView]
+  val formProvider = new NominateFilingMemberYesNoFormProvider
+  val page: NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
 
-  val view: Document = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
-  "Duplicate SafeId View" should {
+  "Nominate Filing Member Yes No View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("There is a problem with your registration")
+      view.getElementsByTag("title").text must include("Nominated filing member")
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("There is a problem with your registration")
+      view.getElementsByTag("h1").text must include("Nominated filing member")
     }
 
     "have a paragraph body" in {
       view.getElementsByClass("govuk-body").first().text must include(
-        "The details you provided for the nominated filing member are the same as those for the ultimate parent entity."
+        "The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group."
       )
-      view.getElementsByClass("govuk-body").get(1).text must include("To complete your registration you must either:")
-      view.getElementsByTag("li").get(0).text must include(
-        "provide the details for the entity that has been nominated to act as your nominated filing member"
+      view.getElementsByClass("govuk-body").get(1).text must include(
+        "If the UPE has nominated a filing member, they must have written permission for this (such as an email)." +
+          " We won’t collect this during registration, but we may request it during compliance checks."
       )
-      view.getElementsByTag("li").get(1).text must include("keep your ultimate parent entity as the default filing member")
     }
 
     "has legend" in {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
-        "Has a different entity in your group been nominated to act as your filing member?"
+        "Do you want to register a different entity as your nominated filing member?"
       )
     }
 
