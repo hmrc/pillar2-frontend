@@ -25,5 +25,7 @@ class RepaymentCompletionStatusSpec extends PageBehaviours {
     beRetrievable[Boolean](RepaymentCompletionStatus)
 
     beSettable[Boolean](RepaymentCompletionStatus)
+
+    beRemovable[Boolean](RepaymentCompletionStatus)
   }
 }
