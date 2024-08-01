@@ -527,3 +527,6 @@ POST       /repayment/error/partial-name                                        
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
 GET       /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
+
+
+GET        /replace-filing-member/review-submit/processing                        controllers.RfmWaitingRoomController.onPageLoad()
