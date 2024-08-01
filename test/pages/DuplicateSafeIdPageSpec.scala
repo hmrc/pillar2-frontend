@@ -44,15 +44,33 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
 
     forAll { userAnswers: UserAnswers =>
       val result = userAnswers
-        .set(NominateFilingMemberPage, true).success.value
-        .set(FmRegisteredInUKPage, false).success.value
-        .set(FmNameRegistrationPage, "name").success.value
-        .set(FmRegisteredAddressPage, nonUkAddress).success.value
-        .set(FmContactNamePage, "contactName").success.value
-        .set(FmContactEmailPage, "some@email.com").success.value
-        .set(FmPhonePreferencePage, true).success.value
-        .set(FmCapturePhonePage, "12312321").success.value
-        .set(DuplicateSafeIdPage, true).success.value
+        .set(NominateFilingMemberPage, true)
+        .success
+        .value
+        .set(FmRegisteredInUKPage, false)
+        .success
+        .value
+        .set(FmNameRegistrationPage, "name")
+        .success
+        .value
+        .set(FmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+        .set(FmContactNamePage, "contactName")
+        .success
+        .value
+        .set(FmContactEmailPage, "some@email.com")
+        .success
+        .value
+        .set(FmPhonePreferencePage, true)
+        .success
+        .value
+        .set(FmCapturePhonePage, "12312321")
+        .success
+        .value
+        .set(DuplicateSafeIdPage, true)
+        .success
+        .value
 
       result.get(FmRegisteredInUKPage) mustNot be(defined)
       result.get(FmNameRegistrationPage) mustNot be(defined)
@@ -69,19 +87,35 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
 
   "must remove FM data and set NominateFilingMemberPage false when DuplicateSafeIdPage is false" in {
 
-
-
     forAll { userAnswers: UserAnswers =>
       val result = userAnswers
-        .set(NominateFilingMemberPage, true).success.value
-        .set(FmRegisteredInUKPage, false).success.value
-        .set(FmNameRegistrationPage, "name").success.value
-        .set(FmRegisteredAddressPage, nonUkAddress).success.value
-        .set(FmContactNamePage, "contactName").success.value
-        .set(FmContactEmailPage, "some@email.com").success.value
-        .set(FmPhonePreferencePage, true).success.value
-        .set(FmCapturePhonePage, "12312321").success.value
-        .set(DuplicateSafeIdPage, false).success.value
+        .set(NominateFilingMemberPage, true)
+        .success
+        .value
+        .set(FmRegisteredInUKPage, false)
+        .success
+        .value
+        .set(FmNameRegistrationPage, "name")
+        .success
+        .value
+        .set(FmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+        .set(FmContactNamePage, "contactName")
+        .success
+        .value
+        .set(FmContactEmailPage, "some@email.com")
+        .success
+        .value
+        .set(FmPhonePreferencePage, true)
+        .success
+        .value
+        .set(FmCapturePhonePage, "12312321")
+        .success
+        .value
+        .set(DuplicateSafeIdPage, false)
+        .success
+        .value
 
       result.get(FmRegisteredInUKPage) mustNot be(defined)
       result.get(FmNameRegistrationPage) mustNot be(defined)

@@ -36,8 +36,10 @@ case object DuplicateSafeIdPage extends QuestionPage[Boolean] {
       super.cleanup(value, userAnswers)
     }
 
-  private def cleanNfmData(userAnswers: UserAnswers): Try[UserAnswers] = {
-    userAnswers.remove(FmRegisteredInUKPage).flatMap(
+  private def cleanNfmData(userAnswers: UserAnswers): Try[UserAnswers] =
+    userAnswers
+      .remove(FmRegisteredInUKPage)
+      .flatMap(
         _.remove(FmNameRegistrationPage).flatMap(
           _.remove(FmRegisteredAddressPage).flatMap(
             _.remove(FmContactNamePage).flatMap(
@@ -56,7 +58,5 @@ case object DuplicateSafeIdPage extends QuestionPage[Boolean] {
           )
         )
       )
-  }
-
 
 }

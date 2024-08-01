@@ -44,8 +44,10 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-body").first().text must include(
         "The details you provided for the nominated filing member are the same as those for the ultimate parent entity."
       )
-      view.getElementsByClass("govuk-body").get(1).text  must include("To complete your registration you must either:")
-      view.getElementsByTag("li").get(0).text must include("provide the details for the entity that has been nominated to act as your nominated filing member")
+      view.getElementsByClass("govuk-body").get(1).text must include("To complete your registration you must either:")
+      view.getElementsByTag("li").get(0).text must include(
+        "provide the details for the entity that has been nominated to act as your nominated filing member"
+      )
       view.getElementsByTag("li").get(1).text must include("keep your ultimate parent entity as the default filing member")
     }
 

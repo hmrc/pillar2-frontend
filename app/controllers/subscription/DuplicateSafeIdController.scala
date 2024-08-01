@@ -34,17 +34,17 @@ import views.html.subscriptionview.DuplicateSafeIdView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class DuplicateSafeIdController @Inject()(
-                                           val userAnswersConnectors: UserAnswersConnectors,
-                                           identify:                  IdentifierAction,
-                                           getData:                   DataRetrievalAction,
-                                           requireData:               DataRequiredAction,
-                                           navigator:                 NominatedFilingMemberNavigator,
-                                           formProvider:              DuplicateSafeIdFormProvider,
-                                           val controllerComponents:  MessagesControllerComponents,
-                                           view:                      DuplicateSafeIdView
-                                         )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+class DuplicateSafeIdController @Inject() (
+  val userAnswersConnectors: UserAnswersConnectors,
+  identify:                  IdentifierAction,
+  getData:                   DataRetrievalAction,
+  requireData:               DataRequiredAction,
+  navigator:                 NominatedFilingMemberNavigator,
+  formProvider:              DuplicateSafeIdFormProvider,
+  val controllerComponents:  MessagesControllerComponents,
+  view:                      DuplicateSafeIdView
+)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
