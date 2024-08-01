@@ -126,7 +126,6 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-
     }
 
     "redirect to journey recovery for a GET if pillar 2 reference is missing" in {
