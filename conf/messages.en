@@ -1450,3 +1450,7 @@ repayments.bank-account-details.bankNameFormatError = The name of the bank must 
 repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
+
+rfmWaitingRoom.title =  Submitting...
+rfmWaitingRoom.h1 =  Submitting...
+rfmWaitingRoom.h2 =  Do not leave this page.

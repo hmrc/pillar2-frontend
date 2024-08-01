@@ -19,8 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{InternalIssueError, UnexpectedResponse}
-import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
-import pages.SubscriptionStatusPage
+import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,24 +30,23 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class RfmWaitingRoomController @Inject() (
-                                                    getData:                  DataRetrievalAction,
-                                                    identify:                 IdentifierAction,
-                                                    requireData:              DataRequiredAction,
-                                                    val controllerComponents: MessagesControllerComponents,
-                                                    view:                     RfmWaitingRoomView
-                                                  )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  getData:                  DataRetrievalAction,
+  identify:                 IdentifierAction,
+  requireData:              DataRequiredAction,
+  val controllerComponents: MessagesControllerComponents,
+  view:                     RfmWaitingRoomView
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(SubscriptionStatusPage) match {
-      case Some(InternalIssueError) | Some(UnexpectedResponse)   => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
-      case _: Exception           =>
+      .get(PlrReferencePage) match {
+      case _: Exception =>
         logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
-      case s                                              => Ok(view(s))
+      case s => Ok(view(s))
     }
 
   }
