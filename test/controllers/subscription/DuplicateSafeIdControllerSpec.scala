@@ -44,7 +44,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
     .setOrException(UpeContactEmailPage, "email@email.com")
     .setOrException(UpePhonePreferencePage, false)
 
-  "Nominate filing member Controller" must {
+  "Duplicate SafeId Controller" must {
 
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(completeUpeJourney)).build()
