@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
