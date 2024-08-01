@@ -28,6 +28,6 @@ class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
     "value" ->
       text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
         .verifying(maxLength(phoneNumberLength, "nfmCaptureTelephoneDetails.error.length"))
-        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format"))
+        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format", Seq(userName)))
   )
 }

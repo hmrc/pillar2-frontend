@@ -31,12 +31,13 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
   ): FieldMapping[Option[String]] =
     of(optionalPostcodeFormatter(requiredKey, invalidKey, nonUkLengthKey, countryFieldName))
   protected def mandatoryPostcode(
-    requiredKey:      String,
+    requiredKeyGB:    String,
+    requiredKeyOther: String,
     invalidKey:       String,
     nonUkLengthKey:   String,
     countryFieldName: String
   ): FieldMapping[String] =
-    of(mandatoryPostcodeFormatter(requiredKey, invalidKey, nonUkLengthKey, countryFieldName))
+    of(mandatoryPostcodeFormatter(requiredKeyGB, requiredKeyOther, invalidKey, nonUkLengthKey, countryFieldName))
 
   def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String)(implicit messages: Messages): Mapping[String] =
     text(keyRequired)

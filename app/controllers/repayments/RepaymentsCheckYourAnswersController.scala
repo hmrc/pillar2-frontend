@@ -65,7 +65,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
         .recover { case UnexpectedResponse =>
           Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
         }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
+        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
 
     }
 
