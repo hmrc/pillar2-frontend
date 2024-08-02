@@ -25,6 +25,7 @@ object RfmStatus extends Enumerable.Implicits {
   case object SuccessfullyCompletedRfm extends WithName("SsccessfullyCompletedRfm") with RfmStatus
   case object FailedInternalIssueError extends WithName("failedInternalIssueError") with RfmStatus
   case object FailedUnexpectedResponse extends WithName("failedUnexpectedResponse") with RfmStatus
+  case object FailException extends WithName("failException") with RfmStatus
 
   val values: Seq[RfmStatus] = Seq(
     SuccessfullyCompletedRfm,

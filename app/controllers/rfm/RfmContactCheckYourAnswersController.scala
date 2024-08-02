@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.requests.DataRequest
-import models.rfm.RfmStatus.{FailedInternalIssueError, SuccessfullyCompletedRfm}
+import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompletedRfm}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmStatusPage, SubscriptionStatusPage}
 import play.api.Logging
@@ -115,8 +115,9 @@ class RfmContactCheckYourAnswersController @Inject() (
             FailedInternalIssueError
             //Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
           case _: Exception =>
-            logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-            Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+            FailException
+//            logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
+//            Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
 
