@@ -22,7 +22,7 @@
 )
 
 
-@(rfmStatus: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, bannerUrl =Some(controllers.routes.RfmWaitingRoomController.onPageLoad.url), showBackLink = false) {
 

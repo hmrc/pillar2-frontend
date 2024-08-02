@@ -18,10 +18,12 @@ package controllers.rfm
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.requests.DataRequest
+import models.rfm.RfmStatus.{FailedInternalIssueError, SuccessfullyCompletedRfm}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{PlrReferencePage, SubscriptionStatusPage}
+import pages.{PlrReferencePage, RfmStatusPage, SubscriptionStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
@@ -38,19 +40,20 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
-                                                       override val messagesApi:            MessagesApi,
-                                                       getData:                             DataRetrievalAction,
-                                                       @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
-                                                       Identify:                            IdentifierAction,
-                                                       requireData:                         DataRequiredAction,
-                                                       featureAction:                       FeatureFlagActionFactory,
-                                                       val controllerComponents:            MessagesControllerComponents,
-                                                       subscriptionService:                 SubscriptionService,
-                                                       sessionRepository:                   SessionRepository,
-                                                       view:                                RfmContactCheckYourAnswersView,
-                                                       countryOptions:                      CountryOptions
-                                                     )(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
-  extends FrontendBaseController
+  override val messagesApi:            MessagesApi,
+  getData:                             DataRetrievalAction,
+  @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
+  Identify:                            IdentifierAction,
+  requireData:                         DataRequiredAction,
+  featureAction:                       FeatureFlagActionFactory,
+  val controllerComponents:            MessagesControllerComponents,
+  subscriptionService:                 SubscriptionService,
+  sessionRepository:                   SessionRepository,
+  view:                                RfmContactCheckYourAnswersView,
+  countryOptions:                      CountryOptions,
+  userAnswersConnectors:    UserAnswersConnectors,
+)(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
+    extends FrontendBaseController
     with I18nSupport
     with Logging {
 
@@ -79,45 +82,50 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      (for {
+      val rfmStatus =   (for {
         newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
         _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
         upeEnrolmentInfo <- OptionT.liftF(
-          subscriptionService.getUltimateParentEnrolmentInformation(
-            subscriptionData = subscriptionData,
-            pillar2Reference = newFilingMemberInformation.plrReference,
-            request.userIdForEnrolment
-          )
-        )
+                              subscriptionService.getUltimateParentEnrolmentInformation(
+                                subscriptionData = subscriptionData,
+                                pillar2Reference = newFilingMemberInformation.plrReference,
+                                request.userIdForEnrolment
+                              )
+                            )
         groupId <- OptionT.fromOption[Future](request.groupId)
         _ <- OptionT.liftF(
-          subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
-        )
-        amendData <- OptionT.liftF(
-          subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-        )
+               subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
+             )
+        amendData <-
+          OptionT.liftF(
+            subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+          )
         _          <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
         dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
         _          <- OptionT.liftF(sessionRepository.set(dataToSave))
-      } yield {
-        logger.info(s"successfully replaced filing member for group with id : $groupId ")
-        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
-      })
+      } yield SuccessfullyCompletedRfm)
+
+//      {
+//        logger.info(s"successfully replaced filing member for group with id : $groupId ")
+//        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
+//      })
         .recover {
-          case InternalIssueError | UnexpectedResponse =>
-            Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
+          case InternalIssueError  =>
+            FailedInternalIssueError
+            //Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
           case _: Exception =>
             logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
             Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+
       for {
-        updatedSubscriptionStatus <- subscriptionStatus
-        updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(SubscriptionStatusPage, updatedSubscriptionStatus))
+        updatedRfmStatus <- rfmStatus
+        updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(RfmStatusPage, updatedRfmStatus))
         _                         <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
       } yield (): Unit
-      Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+      Future.successful( Redirect(controllers.routes.RfmWaitingRoomController.onPageLoad()))
     } else {
       Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }

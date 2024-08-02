@@ -19,7 +19,7 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.{InternalIssueError, UnexpectedResponse}
-import pages.PlrReferencePage
+import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,7 +42,7 @@ class RfmWaitingRoomController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(PlrReferencePage) match {
+      .get(RfmStatusPage) match {
       case _: Exception =>
         logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)

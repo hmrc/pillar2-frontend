@@ -22,13 +22,14 @@ sealed trait RfmStatus
 
 object RfmStatus extends Enumerable.Implicits {
 
-  case object SuccessfullyCompletedRfm extends WithName("successfullyCompletedRfm") with RfmStatus
-  case object FailedWithInternalIssueError extends WithName("failedWithInternalIssueError") with RfmStatus
-  case object RfmUkBasedError extends WithName("rfmUkBasedError") with RfmStatus
+  case object SuccessfullyCompletedRfm extends WithName("SsccessfullyCompletedRfm") with RfmStatus
+  case object FailedInternalIssueError extends WithName("failedInternalIssueError") with RfmStatus
+  case object FailedUnexpectedResponse extends WithName("failedUnexpectedResponse") with RfmStatus
 
   val values: Seq[RfmStatus] = Seq(
     SuccessfullyCompletedRfm,
-    FailedWithInternalIssueError
+    FailedInternalIssueError,
+    FailedUnexpectedResponse
   )
 
   implicit val enumerable: Enumerable[RfmStatus] =
