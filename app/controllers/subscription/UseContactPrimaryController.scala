@@ -185,7 +185,7 @@ object UseContactPrimaryController {
     SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel(key = "useContactPrimary.name", value = ValueViewModel(HtmlContent(HtmlFormat.escape(contactName)))).some,
-        SummaryListRowViewModel(key = "useContactPrimary.email", value = ValueViewModel(HtmlFormat.escape(contactEmail).toString)).some,
+        SummaryListRowViewModel(key = "useContactPrimary.email", value = ValueViewModel(HtmlContent(HtmlFormat.escape(contactEmail).toString))).some,
         contactTel.map(tel => SummaryListRowViewModel(key = "useContactPrimary.telephone", value = ValueViewModel(HtmlFormat.escape(tel).toString)))
       ).flatten
     )
