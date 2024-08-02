@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
+import models.subscription.SubscriptionStatus._
 import pages.SubscriptionStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationWaitingRoomView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class RegistrationWaitingRoomController @Inject() (
   getData:                  DataRetrievalAction,
@@ -35,7 +34,7 @@ class RegistrationWaitingRoomController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationWaitingRoomView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

@@ -20,8 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.subscription.SubscriptionStatus
-import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
+import models.subscription.SubscriptionStatus._
 import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage, SubscriptionStatusPage}
 import play.api.Logging
