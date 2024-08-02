@@ -48,7 +48,9 @@ case object DuplicateSafeIdPage extends QuestionPage[Boolean] {
                   _.remove(FmCapturePhonePage).flatMap(
                     _.remove(GrsFilingMemberStatusPage).flatMap(
                       _.remove(FmEntityTypePage).flatMap(
-                        _.remove(FmGRSResponsePage)
+                        _.remove(FmGRSResponsePage).flatMap(
+                          _.remove(FmSafeIDPage)
+                        )
                       )
                     )
                   )

@@ -16,10 +16,46 @@
 
 package pages
 
+import models.grs.EntityType.UkLimitedCompany
+import models.grs.{GrsRegistrationResult, RegistrationStatus}
+import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.{NonUKAddress, UserAnswers}
 import pages.behaviours.PageBehaviours
+import utils.RowStatus
+
+import java.time.LocalDate
 
 class DuplicateSafeIdPageSpec extends PageBehaviours {
+
+  val grsResponse: GrsResponse = GrsResponse(
+    Some(
+      IncorporatedEntityRegistrationData(
+        companyProfile = CompanyProfile(
+          companyName = "ABC Limited",
+          companyNumber = "1234",
+          dateOfIncorporation = LocalDate.now(),
+          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
+        ),
+        ctutr = "1234567890",
+        identifiersMatch = true,
+        businessVerification = None,
+        registration = GrsRegistrationResult(
+          registrationStatus = RegistrationStatus.Registered,
+          registeredBusinessPartnerId = Some("XB0000000000001"),
+          failures = None
+        )
+      )
+    )
+  )
+
+  val nonUkAddress: NonUKAddress = NonUKAddress(
+    addressLine1 = "1 drive",
+    addressLine2 = None,
+    addressLine3 = "la la land",
+    addressLine4 = None,
+    postalCode = None,
+    countryCode = "US"
+  )
 
   "DuplicateSafeIdPage" - {
 
@@ -30,15 +66,6 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
     beRemovable[Boolean](DuplicateSafeIdPage)
 
   }
-
-  val nonUkAddress: NonUKAddress = NonUKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = None,
-    countryCode = "US"
-  )
 
   "must remove FM data when DuplicateSafeIdPage is true" in {
 
@@ -68,6 +95,18 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
         .set(FmCapturePhonePage, "12312321")
         .success
         .value
+        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
+        .success
+        .value
+        .set(FmEntityTypePage, UkLimitedCompany)
+        .success
+        .value
+        .set(FmGRSResponsePage, grsResponse)
+        .success
+        .value
+        .set(FmSafeIDPage, "XB0000000000001")
+        .success
+        .value
         .set(DuplicateSafeIdPage, true)
         .success
         .value
@@ -82,6 +121,8 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
       result.get(GrsFilingMemberStatusPage) mustNot be(defined)
       result.get(FmEntityTypePage) mustNot be(defined)
       result.get(FmGRSResponsePage) mustNot be(defined)
+      result.get(FmSafeIDPage) mustNot be(defined)
+      result.get(DuplicateSafeIdPage) mustBe Some(true)
     }
   }
 
@@ -113,6 +154,18 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
         .set(FmCapturePhonePage, "12312321")
         .success
         .value
+        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
+        .success
+        .value
+        .set(FmEntityTypePage, UkLimitedCompany)
+        .success
+        .value
+        .set(FmGRSResponsePage, grsResponse)
+        .success
+        .value
+        .set(FmSafeIDPage, "XB0000000000001")
+        .success
+        .value
         .set(DuplicateSafeIdPage, false)
         .success
         .value
@@ -127,6 +180,8 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
       result.get(GrsFilingMemberStatusPage) mustNot be(defined)
       result.get(FmEntityTypePage) mustNot be(defined)
       result.get(FmGRSResponsePage) mustNot be(defined)
+      result.get(FmSafeIDPage) mustNot be(defined)
+      result.get(DuplicateSafeIdPage) mustBe Some(false)
       result.get(NominateFilingMemberPage) mustBe Some(false)
     }
   }
