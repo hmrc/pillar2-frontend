@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.repayments.SendRepaymentDetails
 import models.{UnexpectedResponse, UserAnswers}
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -101,7 +102,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         running(application) {
-          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.successful(true))
+          when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
@@ -117,7 +118,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         running(application) {
-          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+          when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
@@ -132,7 +133,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         running(application) {
-          when(mockRepaymentService.sendRepaymentDetails(any(), any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+          when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
           when(mockRepaymentService.getRepaymentData(any())).thenReturn(None)
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value

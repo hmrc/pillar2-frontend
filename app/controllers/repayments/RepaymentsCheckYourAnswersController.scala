@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions._
 import models.{UnexpectedResponse, UserAnswers}
-import pages.RepaymentCompletionStatus
+import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,6 +34,7 @@ import views.html.repayments.RepaymentsCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi:               MessagesApi,
@@ -63,7 +64,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       (for {
         repaymentData  <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-        _              <- OptionT.liftF(repaymentService.sendRepaymentDetails(request.userId, repaymentData))
+        _              <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+        _              <- OptionT.liftF(Future.fromTry(clearRepaymentDetails(request.userAnswers)))
         updatedAnswers <- OptionT.liftF(Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true)))
         _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
       } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
@@ -72,6 +74,20 @@ class RepaymentsCheckYourAnswersController @Inject() (
         }
         .getOrElse(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
     }
+
+  private def clearRepaymentDetails(userAnswers: UserAnswers): Try[UserAnswers] =
+    for {
+      updatedUserAnswers1  <- userAnswers.remove(RepaymentAccountNameConfirmationPage)
+      updatedUserAnswers2  <- updatedUserAnswers1.remove(RepaymentsContactByTelephonePage)
+      updatedUserAnswers3  <- updatedUserAnswers2.remove(RepaymentsContactEmailPage)
+      updatedUserAnswers4  <- updatedUserAnswers3.remove(RepaymentsContactNamePage)
+      updatedUserAnswers5  <- updatedUserAnswers4.remove(RepaymentsRefundAmountPage)
+      updatedUserAnswers6  <- updatedUserAnswers5.remove(RepaymentsTelephoneDetailsPage)
+      updatedUserAnswers7  <- updatedUserAnswers6.remove(UkOrAbroadBankAccountPage)
+      updatedUserAnswers8  <- updatedUserAnswers7.remove(ReasonForRequestingRefundPage)
+      updatedUserAnswers9  <- updatedUserAnswers8.remove(NonUKBankPage)
+      updatedUserAnswers10 <- updatedUserAnswers9.remove(BankAccountDetailsPage)
+    } yield updatedUserAnswers10
 
   private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(

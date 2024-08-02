@@ -21,7 +21,7 @@ import controllers.routes
 import pages.RepaymentCompletionStatus
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.repayments.RepaymentsConfirmationView
+import views.html.repayments.{JourneyRecoveryView, RepaymentsConfirmationView}
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
@@ -40,6 +40,20 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to recovery page when the user attempts to access the page before completing journey" in {
+      val testUserAnswers = emptyUserAnswers.setOrException(RepaymentCompletionStatus, false)
+      val application     = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustEqual Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
