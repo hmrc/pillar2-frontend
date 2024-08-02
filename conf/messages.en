@@ -430,8 +430,8 @@ NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
-duplicateSafeId.title = There is a problem with your registration
-duplicateSafeId.heading = There is a problem with your registration
+duplicateSafeId.title = You have provided duplicate filing member details
+duplicateSafeId.heading = You have provided duplicate filing member details
 duplicateSafeId.p1 = The details you provided for the nominated filing member are the same as those for the ultimate parent entity.
 duplicateSafeId.p2 = To complete your registration you must either:
 duplicateSafeId.l1 = provide the details for the entity that has been nominated to act as your nominated filing member

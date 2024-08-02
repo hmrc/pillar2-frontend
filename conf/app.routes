@@ -118,8 +118,8 @@ GET         /unauthorised/agent                                                 
 GET         /display-error                                                                           controllers.ErrorController.onPageLoad
 GET         /errors/eis                                                                              controllers.subscription.SubscriptionFailedController.onPageLoad
 GET         /error/incomplete                                                                        controllers.subscription.InprogressTaskListController.onPageLoad
-GET         /error/duplicate-error                                                                   controllers.subscription.DuplicateSafeIdController.onPageLoad
-POST        /error/duplicate-error                                                                   controllers.subscription.DuplicateSafeIdController.onSubmit
+GET         /review-submit/error/duplicate-details                                                   controllers.subscription.DuplicateSafeIdController.onPageLoad
+POST        /review-submit/error/duplicate-details                                                   controllers.subscription.DuplicateSafeIdController.onSubmit
 GET         /error/page-not-found                                                                    controllers.ErrorController.pageNotFoundLoad
 
 GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad
