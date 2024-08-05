@@ -1454,6 +1454,22 @@ repaymentsContactByTelephone.change.hidden = can we contact by telephone?
 repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
 repaymentsTelephoneDetails.change.hidden = the telephone number
 
+repayments.refundConfirmation.title = Refund request submitted
+repayments.refundConfirmation.panelText = Refund request submitted
+repayments.refundConfirmation.paragraphText.one = You have successfully submitted your refund request on {0}.
+repayments.refundConfirmation.printLink.text = Print this page
+repayments.refundConfirmation.saveLink.text = Save as PDF
+repayments.refundConfirmation.paragraphText.two = What happens next
+repayments.refundConfirmation.paragraphText.three = If we require more information relating to your refund request, we will get in touch.
+repayments.refundConfirmation.paragraphText.four = You can return to
+repayments.refundConfirmation.paragraphText.returnLink = manage your Pillar 2 top-up taxes
+
+repayments.refundErrorConfirmation.title = You cannot return, your refund request is complete
+repayments.refundErrorConfirmation.heading = You cannot return, your refund request is complete
+repayments.refundErrorConfirmation.paragraphOne = You have successfully submitted your refund request.
+repayments.refundErrorConfirmation.paragraphTwo = You can return to
+repayments.refundErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 top-up taxes
+
 repayments.bank-account-details.title = Bank account details
 repayments.bank-account-details.heading = Bank account details
 repayments.bank-account-details.bankName = Name of the bank
