@@ -63,11 +63,11 @@ class RepaymentsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       (for {
-        repaymentData  <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-        _              <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
-        _              <- OptionT.liftF(Future.fromTry(clearRepaymentDetails(request.userAnswers)))
-        updatedAnswers <- OptionT.liftF(Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true)))
-        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        repaymentData        <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+        _                    <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+        updatedAnswers       <- OptionT.liftF(Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true)))
+        clearedRepaymentData <- OptionT.liftF(Future.fromTry(clearRepaymentDetails(updatedAnswers)))
+        _                    <- OptionT.liftF(sessionRepository.set(clearedRepaymentData))
       } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
         .recover { case UnexpectedResponse =>
           Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
