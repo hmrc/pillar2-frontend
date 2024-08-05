@@ -14,20 +14,13 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import javax.inject.Inject
+import play.api.libs.json.JsPath
 
-import forms.mappings.Mappings
-import play.api.data.Form
+case object RepaymentCompletionStatus extends QuestionPage[Boolean] {
 
-class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
-  private val phoneNumberLength = 24
-  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
-  def apply(userName: String): Form[String] = Form(
-    "value" ->
-      text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
-        .verifying(maxLength(phoneNumberLength, "nfmCaptureTelephoneDetails.error.length"))
-        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format", Seq(userName)))
-  )
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "RepaymentCompletionStatus"
 }

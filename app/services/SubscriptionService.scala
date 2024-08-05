@@ -238,7 +238,6 @@ class SubscriptionService @Inject() (
   def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
     for {
       result <- subscriptionConnector.amendSubscription(userId, amendData)
-      _      <- userAnswersConnectors.remove(userId)
     } yield result
 
   private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
@@ -252,7 +251,6 @@ class SubscriptionService @Inject() (
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
       case Some(groupIds) =>
         logger.info(s"deallocateEnrolment groupIds: - $groupIds")
-        // There should be only one principle group Ids. As per requirement.
         enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds.head, plrReference = plrReference)
       case error =>
         logger.warn(s"deallocateEnrolment error: - $error")

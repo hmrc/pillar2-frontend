@@ -14,20 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package pages
 
-import javax.inject.Inject
+import pages.behaviours.PageBehaviours
 
-import forms.mappings.Mappings
-import play.api.data.Form
+class RepaymentCompletionStatusSpec extends PageBehaviours {
 
-class NfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
-  private val phoneNumberLength = 24
-  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
-  def apply(userName: String): Form[String] = Form(
-    "value" ->
-      text("nfmCaptureTelephoneDetails.error.required", Seq(userName))
-        .verifying(maxLength(phoneNumberLength, "nfmCaptureTelephoneDetails.error.length"))
-        .verifying(regexp(phoneRegex, "nfmCaptureTelephoneDetails.error.format", Seq(userName)))
-  )
+  "Repayment completion flag" - {
+
+    beRetrievable[Boolean](RepaymentCompletionStatus)
+
+    beSettable[Boolean](RepaymentCompletionStatus)
+
+    beRemovable[Boolean](RepaymentCompletionStatus)
+  }
 }
