@@ -73,7 +73,7 @@
 
         @sectionBreak()
 
-        @if(inactiveStatus) {
+        @if(!inactiveStatus) {
             @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
             @p(messages("dashboard.p3"))
             @bulletList(items = List(

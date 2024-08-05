@@ -124,7 +124,7 @@ task-list.heading = Register your group
 taskList.paragraph = The information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
 taskList.paragraph-review =  At the ‘Review and submit’ section of this registration, you can amend your answers and print or save them for your own records.
 taskList.subheading.complete = Registration incomplete
-taskList.completedSections = You have completed {0} of 5 sections.
+taskList.completedSections = You have completed {0} of 5 tasks.
 taskList.task.business.heading = Group details
 
 taskList.task.business.ultimate.add = Add ultimate parent entity details
@@ -414,7 +414,7 @@ captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = For international numbers include the country code.
-captureTelephoneDetails.error.required = You need to enter the telephone for {0}
+captureTelephoneDetails.error.required = Enter the telephone number for {0}
 captureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
 captureTelephoneDetails.change.hidden =  the contact telephone number
@@ -560,7 +560,7 @@ nfmEmailAddress.heading = What is the email address for {0}?
 nfmEmailAddress.hint = We will use this to confirm your records.
 nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = Enter the email address for {0}
-nfmEmailAddress.error.length = Email address should be 132 characters or less
+nfmEmailAddress.error.length = Email address must be 132 characters or less
 nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
@@ -858,7 +858,7 @@ dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID: {0}
 dashboard.registrationDate = Registration date: {0}
 dashboard.upe = Ultimate parent entity: {0}
 dashboard.payments = Payments
-dashboard.noPayment = You have no payments due
+dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
 dashboard.paymentHistory = View your payment history
 dashboard.requestRefund = Request a refund
@@ -869,7 +869,7 @@ dashboard.whentoSubmitReturn = When to submit your returns
 dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
 dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
-dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no late than:
+dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no later than:
 dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.p2 = for more details.
 
