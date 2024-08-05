@@ -20,6 +20,9 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 object ViewUtils {
 
   def title(form: Form[_], title: String, section: Option[String] = None)(implicit messages: Messages): String =
@@ -48,6 +51,11 @@ object ViewUtils {
       }
 
     extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
+  }
+
+  def formattedCurrentDate: String = {
+    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+    LocalDate.now().format(formatter)
   }
 
   def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =
