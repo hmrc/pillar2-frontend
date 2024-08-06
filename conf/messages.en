@@ -416,7 +416,7 @@ captureTelephoneDetails.heading = What is the telephone number for {0}?
 captureTelephoneDetails.hint = For international numbers include the country code.
 captureTelephoneDetails.error.required = Enter the telephone number for {0}
 captureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
-captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
+captureTelephoneDetails.messages.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
