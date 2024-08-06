@@ -420,8 +420,8 @@ captureTelephoneDetails.messages.error.format = Enter a telephone number in the 
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Nominate a filing member
-NominateFilingMemberYesNo.heading = Nominate a filing member
+NominateFilingMemberYesNo.title = Nominated filing member
+NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
 NominateFilingMemberYesNo.subheading = Are you registering as the nominated filing member to report for this group?
 NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group.
