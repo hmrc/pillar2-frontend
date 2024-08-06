@@ -35,6 +35,8 @@ class DashboardViewSpec extends ViewSpecBase {
 
   val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
+  val inActiveOrganisationDashboardView =
+    Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {
 
@@ -131,20 +133,34 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element = organisationDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
+      element.text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.text() must not include
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
 
-      element.get(10).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      pargraph.get(10).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(11).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
+
+    }
+
+    "have pillar 2 information with inActive status false" in {
+      val element  = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val pargraph = inActiveOrganisationDashboardView.getElementsByTag("p")
+
+      element.get(0).text() must include
+      "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.get(1).text() must include
+      "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+      pargraph.get(9).text() must include(
+        "Your group must submit your Pillar 2 top-up tax returns no later than:"
       )
-      element.get(12).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
+      pargraph.get(10).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(13).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
-      )
+
     }
 
   }
@@ -253,20 +269,17 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element = agentDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
 
-      element.get(12).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      element.text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.text() must not include
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+      pargraph.get(10).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(13).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
-      )
-      element.get(14).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
-      )
-      element.get(15).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
-      )
+
     }
   }
 }

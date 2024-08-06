@@ -20,6 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.UpeContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -32,7 +33,7 @@ object UpeContactEmailSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "upe-input-business-email.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlFormat.escape(answer).toString),
+          value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer))),
           actions = Seq(
             ActionItemViewModel("site.change", controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("upe-input-business-email.change.hidden"))

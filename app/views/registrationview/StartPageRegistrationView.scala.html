@@ -34,6 +34,7 @@
     @sectionHeader(messages("startPageRegistration.heading.caption"))
     @heading(messages("startPageRegistration.heading"), "govuk-heading-l")
     @paragraphBody(messages("startPageRegistration.p1"))
+    @paragraphBody(messages("startPageRegistration.p2"))
 
     @govukButton(
         ButtonViewModel(messages("site.continue")).asLink(controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(mode).url)
