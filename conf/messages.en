@@ -303,7 +303,7 @@ rfmCaptureTelephoneDetails.title = What is the telephone number?
 rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 rfmCaptureTelephoneDetails.hint = For international numbers include the country code.
 rfmCaptureTelephoneDetails.error.required = Enter a telephone number
-rfmCaptureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
+rfmCaptureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number, like 01632 960 001 or +44 808 157 0192
 rfmCaptureTelephoneDetails.change.hidden =  the telephone number for the first contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
@@ -630,7 +630,7 @@ nfmCaptureTelephoneDetails.title = What is the telephone number?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 nfmCaptureTelephoneDetails.hint = For international numbers include the country code
 nfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
-nfmCaptureTelephoneDetails.error.length = Telephone number should be 24 characters or less
+nfmCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
@@ -711,7 +711,7 @@ contactCaptureTelephoneDetails.title = What is the telephone number?
 contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 contactCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
 contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
-contactCaptureTelephoneDetails.error.length = Telephone number should be 24 characters or less
+contactCaptureTelephoneDetails.error.length = The telephone number should be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
 
