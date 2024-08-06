@@ -264,8 +264,8 @@ POST        /contact-details/second-input-name                                  
 GET         /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-input-name                                                controllers.subscription.SecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad
-POST       /manage-account/contact-details/change-second-input-name                                  controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit
+GET         /manage-account/contact-details/change-second-input-name                                 controllers.subscription.manageAccount.SecondaryContactNameController.onPageLoad
+POST        /manage-account/contact-details/change-second-input-name                                 controllers.subscription.manageAccount.SecondaryContactNameController.onSubmit
 
 
 GET         /contact-details/second-input-email                                                      controllers.subscription.SecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
@@ -291,8 +291,8 @@ POST        /contact-details/second-input-telephone                             
 GET         /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad
-POST       /manage-account/contact-details/change-second-input-telephone                             controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit
+GET         /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad
+POST        /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit
 
 
 
@@ -304,8 +304,8 @@ GET         /contact-details/change-input-address                               
 POST        /contact-details/change-input-address                                                    controllers.subscription.CaptureSubscriptionAddressController.onSubmit(mode: Mode = CheckMode)
 
 
-GET        /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad
-POST       /manage-account/contact-details/address/change-input                                      controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit
+GET         /manage-account/contact-details/address/change-input                                     controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onPageLoad
+POST        /manage-account/contact-details/address/change-input                                     controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit
 
 
 GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad
@@ -469,52 +469,53 @@ GET         /asa/error/organisation                                             
 GET         /replace-filing-member/security/saving-progress                                          controllers.rfm.RfmSaveProgressInformController.onPageLoad
 GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
 
+
 GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad
 
-GET        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/contact-details/change-input-name                                             controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/contact-details/input-email                                                   controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
+GET         /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
 POST       /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
 GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/input-telephone                                                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/contact-details/input-telephone                                                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/contact-details/change-input-telephone                                                                 controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/contact-details/change-input-telephone                                                                 controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-non-uk-details                                                         controllers.repayments.NonUKBankController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/uk-details                                                                    controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = CheckMode)
 
-GET        /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-method                                                                 controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = CheckMode)
 
 GET        /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onPageLoad
 POST       /repayment/check-answers                                                                 controllers.repayments.RepaymentsCheckYourAnswersController.onSubmit
@@ -526,7 +527,11 @@ GET        /repayment/error/partial-name                                        
 POST       /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = NormalMode)
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
-GET         /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
+GET        /error/repayment-request-unsuccessful                                                     controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
 
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
 GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
+
+GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
+
+GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()

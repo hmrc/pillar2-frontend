@@ -19,20 +19,18 @@ package services
 import connectors._
 import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
 import models.{UkOrAbroadBankAccount, UserAnswers}
+import org.apache.pekko.Done
 import pages._
 import play.api.Logging
-import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 
 import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 @Singleton
 class RepaymentService @Inject() (
-  repaymentConnector: RepaymentConnector,
-  sessionRepository:  SessionRepository
-)(implicit ec:        ExecutionContext)
-    extends Logging {
+  repaymentConnector: RepaymentConnector
+) extends Logging {
 
   def getRepaymentData(userAnswers: UserAnswers): Option[SendRepaymentDetails] =
     for {
@@ -85,7 +83,7 @@ class RepaymentService @Inject() (
       }
     }
 
-  def sendRepaymentDetails(id: String, data: SendRepaymentDetails)(implicit headerCarrier: HeaderCarrier): Future[Boolean] =
-    repaymentConnector.repayment(data).flatMap(_ => sessionRepository.clear(id))
+  def sendRepaymentDetails(data: SendRepaymentDetails)(implicit headerCarrier: HeaderCarrier): Future[Done] =
+    repaymentConnector.repayment(data)
 
 }
