@@ -43,7 +43,7 @@
     @para(messages("taskList.completedSections", counter), classes = "govuk-body govuk-!-margin-bottom-7")
 
 
-    <ol class="app-task-list">
+    <ol class="app-task-list pillar2-task-list">
         <li> <!-- Group details -->
             <h2 class="app-task-list__section">
                 @messages("taskList.task.business.heading")
@@ -63,15 +63,14 @@
                 @taskListSection(contactSection, contactSection.status.tag, "contact-details")
             </ul>
         </li>
-
         <li> <!-- Review and Submit Section -->
             <h2 class="app-task-list__section">
                 @messages("taskList.task.review.heading")
             </h2>
-            <ul class="app-task-list__items">
+            <ul class="app-task-list__items govuk-!-static-margin-bottom-5">
                 @taskListSection(reviewSection, reviewSection.status.tag, "check-your-answers")
             </ul>
         </li>
-
     </ol>
+    @para(messages("taskList.paragraph-review"))
 }

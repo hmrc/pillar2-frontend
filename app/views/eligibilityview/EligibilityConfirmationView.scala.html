@@ -18,7 +18,8 @@
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukInsetText : GovukInsetText
 )
 
 
@@ -36,7 +37,9 @@
 
             <h1 class="govuk-heading-l">@messages("eligibilityconfirmation.heading")</h1>
             <p class="govuk-body">@messages("eligibilityconfirmation.p1")</p>
-
+            @govukInsetText(InsetText(
+            content = Text(messages("eligibilityconfirmation.inset"))
+            ))
             @govukButton(
                 ButtonViewModel(messages("index.continue")).withAttribute("id", "submit")
             )

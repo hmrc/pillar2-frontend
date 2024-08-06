@@ -94,6 +94,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
   val sectionHeader            = new sectionHeader
   val sectionBreak             = new SectionBreak
   val inactiveStatusBanner     = new InactiveStatusBanner
+  val bulletList               = new bulletList
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -144,7 +145,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new Kb750IneligibleView(pillar2layout, formWithCSRF, heading, paragraphBody, paragraphBodyLink, govukButton)
 
   val viewEligibilityConfirmation: EligibilityConfirmationView =
-    new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton)
+    new EligibilityConfirmationView(pillar2layout, formWithCSRF, govukButton, govUkInsetText)
 
   val viewUPERegisteredInUKConfirmation: UPERegisteredInUKConfirmationView =
     new UPERegisteredInUKConfirmationView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
@@ -180,8 +181,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
       pillar2layout,
       formWithCSRF,
       sectionHeader,
+      govukWarningText,
       heading,
-      warningText,
       govukErrorSummary,
       govukInput,
       govukButton,
@@ -193,7 +194,7 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
       formWithCSRF,
       sectionHeader,
       heading,
-      warningText,
+      govukWarningText,
       govukErrorSummary,
       govukInput,
       govukButton,
@@ -215,7 +216,17 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
   val viewDashboardView: DashboardView =
-    new DashboardView(pillar2layout, govukButton, heading, h2, paragraphBody, paragraphMessageWithLink, sectionBreak, inactiveStatusBanner)
+    new DashboardView(
+      pillar2layout,
+      govukButton,
+      heading,
+      h2,
+      paragraphBody,
+      bulletList,
+      paragraphMessageWithLink,
+      sectionBreak,
+      inactiveStatusBanner
+    )
 
   val viewRequestRefundAmount: RequestRefundAmountView =
     new RequestRefundAmountView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
