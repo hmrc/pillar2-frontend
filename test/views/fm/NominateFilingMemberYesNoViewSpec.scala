@@ -49,14 +49,14 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
         "The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group."
       )
       view.getElementsByClass("govuk-body").get(1).text must include(
-        "If the UPE has nominated a filing member, they must have written permission for this (such as an email)." +
+        "If you are nominated to report as the filing member, you must have written permission from your UPE (such as an email)." +
           " We won’t collect this during registration, but we may request it during compliance checks."
       )
     }
 
     "has legend" in {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
-        "Do you want to register a different entity as your nominated filing member?"
+        "Are you registering as the nominated filing member to report for this group?"
       )
     }
 
