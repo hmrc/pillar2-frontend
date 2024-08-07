@@ -58,7 +58,7 @@ class RepaymentsContactByTelephoneController @Inject() (
           }
           Ok(view(preparedForm, mode, contactName))
         }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad))
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
@@ -77,6 +77,6 @@ class RepaymentsContactByTelephoneController @Inject() (
                 } yield Redirect(navigator.nextPage(RepaymentsContactByTelephonePage, mode, updatedAnswers))
             )
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        .getOrElse(Future.successful(Redirect(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad)))
     }
 }

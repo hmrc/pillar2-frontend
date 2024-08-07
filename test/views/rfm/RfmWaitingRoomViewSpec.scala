@@ -25,7 +25,7 @@ import views.html.rfm.RfmWaitingRoomView
 class RfmWaitingRoomViewSpec extends ViewSpecBase {
 
   val page: RfmWaitingRoomView = inject[RfmWaitingRoomView]
-  val view: Document = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  val view: Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
 
   "Rfm Waiting Room View" should {
 

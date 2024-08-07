@@ -45,11 +45,11 @@ class RfmContactCheckYourAnswersController @Inject() (
   requireData:                         DataRequiredAction,
   featureAction:                       FeatureFlagActionFactory,
   val controllerComponents:            MessagesControllerComponents,
+  userAnswersConnectors:               UserAnswersConnectors,
   subscriptionService:                 SubscriptionService,
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
-  countryOptions:                      CountryOptions,
-  userAnswersConnectors:               UserAnswersConnectors
+  countryOptions:                      CountryOptions
 )(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -83,7 +83,12 @@ class RfmContactCheckYourAnswersController @Inject() (
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-        _                          <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+        amendData <-
+          liftF(
+            subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+          )
+        _ <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+        _ <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
         upeEnrolmentInfo <- liftF(
                               subscriptionService.getUltimateParentEnrolmentInformation(
                                 subscriptionData = subscriptionData,
@@ -95,11 +100,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         _ <- liftF(
                subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
              )
-        amendData <-
-          liftF(
-            subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-          )
-        _          <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+        _          <- liftF(userAnswersConnectors.remove(request.userId))
         dataToSave <- liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
         _          <- liftF(sessionRepository.set(dataToSave))
       } yield SuccessfullyCompleted).value

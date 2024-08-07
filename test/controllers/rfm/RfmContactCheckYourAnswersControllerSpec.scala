@@ -58,6 +58,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
+
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
       val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
@@ -280,23 +281,22 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-          .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
             any()
           )
         ).thenReturn(Future.successful(amendData))
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
           verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswer.id), eqTo(expectedUserAnswer.data))(any())
@@ -323,10 +323,15 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
           .thenReturn(allocateEnrolmentParameters)
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
@@ -343,14 +348,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
             any()
           )
         ).thenReturn(Future.failed(new Exception("no rfm uk based")))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
@@ -395,6 +397,12 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
 
         running(application) {
@@ -412,6 +420,12 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
           .thenReturn(allocateEnrolmentParameters)
@@ -436,10 +450,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-          .thenReturn(allocateEnrolmentParameters)
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
             any()
@@ -478,10 +488,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-          .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
             any()
@@ -510,4 +516,5 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     }
   }
+
 }
