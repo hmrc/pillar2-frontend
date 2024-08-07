@@ -57,6 +57,20 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(NominateFilingMemberPage, NormalMode, emptyUserAnswers) mustBe
           jr
       }
+
+      "go to FmUkBased page from duplicate safeId page if they choose yes" in {
+        navigator.nextPage(DuplicateSafeIdPage, NormalMode, emptyUserAnswers.setOrException(DuplicateSafeIdPage, true)) mustBe
+          controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
+      }
+      "go to CYA page from duplicate safeId page if they choose no" in {
+        navigator.nextPage(DuplicateSafeIdPage, NormalMode, emptyUserAnswers.setOrException(DuplicateSafeIdPage, false)) mustBe
+          controllers.routes.CheckYourAnswersController.onPageLoad
+      }
+      "go to journey recovery if no answer for duplicate safeId page can be found" in {
+        navigator.nextPage(DuplicateSafeIdPage, NormalMode, emptyUserAnswers) mustBe
+          jr
+      }
+
       "go to entity type page if they are a uk based entity" in {
         navigator.nextPage(FmRegisteredInUKPage, NormalMode, emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)) mustBe
           controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode)

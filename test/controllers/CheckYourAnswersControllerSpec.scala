@@ -22,7 +22,7 @@ import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -123,6 +123,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
   "Check Your Answers Controller" must {
+
     "on page load method " should {
 
       "return OK and the correct view if an answer is provided to every contact detail question" in {
@@ -268,7 +269,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
     }
+
     "on submit method" should {
+
       "redirect to confirmation page in case of a success response" in {
 
         val userAnswer = defaultUserAnswer
@@ -359,6 +362,28 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url)
+        }
+      }
+
+      "redirect to duplicate safeId error page in case of a failed subscription with DuplicateSafeIdError exception" in {
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
+
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url)
         }
       }
 
