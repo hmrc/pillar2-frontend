@@ -282,8 +282,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription)
 
-        val expectedUserAnswer = emptyUserAnswers.setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription)
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -292,16 +292,17 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        running(application) {
-          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+
+        running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
+          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
-          verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswer.id), eqTo(expectedUserAnswer.data))(any())
         }
       }
 
@@ -323,6 +324,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
+
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -331,16 +334,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        val expectedUserAnswer = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
-        running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
+
+        running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswer.id), eqTo(expectedUserAnswer.data))(any())
+          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
@@ -352,6 +355,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
+
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -360,16 +365,16 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        running(application) {
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
-          val expectedUserAnswer = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
 
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+
+        running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswer.id), eqTo(expectedUserAnswer.data))(any())
+          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
@@ -381,21 +386,22 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubscriptionStatusPage, FailedWithDuplicatedSafeIdError)
+
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
-        val expectedUserAnswer = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSafeIdError)
+
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
 
         running(application) {
-          when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
-
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswer.id), eqTo(expectedUserAnswer.data))(any())
+          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }

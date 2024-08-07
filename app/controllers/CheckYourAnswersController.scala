@@ -98,8 +98,8 @@ class CheckYourAnswersController @Inject() (
         .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
       for {
         updatedSubscriptionStatus <- subscriptionStatus
-        updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(SubscriptionStatusPage, updatedSubscriptionStatus))
-        _                         <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
+        updatedAnswers            <- Future.fromTry(request.userAnswers.set(SubscriptionStatusPage, updatedSubscriptionStatus))
+        _                         <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
       } yield (): Unit
       Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
     } else {
@@ -108,11 +108,11 @@ class CheckYourAnswersController @Inject() (
   }
 
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
-    Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true)).flatMap { ua =>
-      userAnswersConnectors.save(ua.id, Json.toJson(ua.data)).map { _ =>
-        ua
-      }
-    }
+    for {
+      updatedAnswers  <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
+      updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubscriptionStatusPage))
+      _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+    } yield updatedAnswers1
 
   private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
