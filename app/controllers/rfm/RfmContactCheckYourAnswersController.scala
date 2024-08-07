@@ -25,9 +25,11 @@ import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -57,25 +59,31 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen Identify andThen getData andThen requireData).async {
     implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
+
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-      sessionRepository.get(request.userId).map { optionalUserAnswer =>
-        (for {
-          userAnswer <- optionalUserAnswer
-          _          <- userAnswer.get(PlrReferencePage)
-        } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
-          .getOrElse(
-            Ok(
-              view(
-                request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-                request.userAnswers.rfmPrimaryContactList,
-                request.userAnswers.rfmSecondaryContactList,
-                address
+
+      removeRfmStatus(userAnswers).flatMap { _ =>
+        sessionRepository.get(request.userId).map { optionalUserAnswer =>
+          (for {
+            userAnswer <- optionalUserAnswer
+            _          <- userAnswer.get(PlrReferencePage)
+          } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+            .getOrElse(
+              Ok(
+                view(
+                  request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                  request.userAnswers.rfmPrimaryContactList,
+                  request.userAnswers.rfmSecondaryContactList,
+                  address
+                )
               )
             )
-          )
+        }
       }
+
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
@@ -118,8 +126,8 @@ class RfmContactCheckYourAnswersController @Inject() (
         }
       for {
         updatedRfmStatus <- rfmStatus
-        updatedAnswers   <- Future.fromTry(UserAnswers(request.userId).set(RfmStatusPage, updatedRfmStatus))
-        _                <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
+        updatedAnswers   <- Future.fromTry(request.userAnswers.set(RfmStatusPage, updatedRfmStatus))
+        _                <- userAnswersConnectors.save(updatedAnswers.id, updatedAnswers.data)
       } yield (): Unit
       Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
     } else {
@@ -127,5 +135,11 @@ class RfmContactCheckYourAnswersController @Inject() (
     }
 
   }
+
+  private def removeRfmStatus(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
+    for {
+      updatedAnswers <- Future.fromTry(userAnswers.remove(RfmStatusPage))
+      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+    } yield updatedAnswers
 
 }
