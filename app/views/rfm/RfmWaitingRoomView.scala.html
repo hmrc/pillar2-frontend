@@ -27,7 +27,7 @@
 
 @(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, bannerUrl =Some(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad.url), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
 
 
     @if(rfmStatus.isEmpty) {
