@@ -21,7 +21,7 @@ import controllers.routes
 import pages.RepaymentCompletionStatus
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.repayments.{JourneyRecoveryView, RepaymentsConfirmationView}
+import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 

@@ -433,6 +433,17 @@ NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
+duplicateSafeId.title = You have provided duplicate filing member details
+duplicateSafeId.heading = You have provided duplicate filing member details
+duplicateSafeId.p1 = The details you provided for the nominated filing member are the same as those for the ultimate parent entity.
+duplicateSafeId.p2 = To complete your registration you must either:
+duplicateSafeId.l1 = provide the details for the entity that has been nominated to act as your nominated filing member
+duplicateSafeId.l2 = keep your ultimate parent entity as the default filing member
+duplicateSafeId.subheading = Has a different entity in your group been nominated to act as your filing member?
+duplicateSafeId.error.required = Select yes if a different entity in your group been nominated to act as your filing member
+duplicateSafeId.yes = Yes
+duplicateSafeId.no= No
+
 entityType.caption = Group details
 entityType.title = What entity type is the ultimate parent?
 entityType.heading = What entity type is the ultimate parent?
