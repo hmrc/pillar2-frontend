@@ -16,15 +16,18 @@
 
 @import config.FrontendAppConfig
 @import models.rfm.RfmStatus
+@import views.html.components.gds._
+
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        heading: heading
 )
 
 
 @(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, bannerUrl =Some(controllers.routes.RfmWaitingRoomController.onPageLoad.url), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, bannerUrl =Some(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad.url), showBackLink = false) {
 
 
     @if(rfmStatus.isEmpty) {
@@ -38,13 +41,8 @@
         role="status"
         ></div>
         <div class="hods-loading-spinner__content">
-            <h1 class="govuk-heading-m">
-            @messages("rfmWaitingRoom.h1")
-            </h1>
-            <h2 class="govuk-body-s">
-            @messages("rfmWaitingRoom.h2")
-            </h2>
-
+            @heading(messages("rfmWaitingRoom.h1"), "govuk-heading-m")
+            @heading(messages("rfmWaitingRoom.h2"), "govuk-body-s", "h2")
         </div>
     </div>
 }

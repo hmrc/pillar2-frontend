@@ -18,8 +18,8 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.{InternalIssueError, UnexpectedResponse}
-import pages.{PlrReferencePage, RfmStatusPage}
+import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
+import pages.RfmStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmWaitingRoomView
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class RfmWaitingRoomController @Inject() (
   getData:                  DataRetrievalAction,
@@ -35,7 +34,7 @@ class RfmWaitingRoomController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmWaitingRoomView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -43,7 +42,11 @@ class RfmWaitingRoomController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(RfmStatusPage) match {
-      case _: Exception =>
+      case Some(SuccessfullyCompleted) =>
+        logger.info("successfully replaced filing member")
+        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
+      case Some(FailedInternalIssueError) => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
+      case Some(FailException) =>
         logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       case s => Ok(view(s))

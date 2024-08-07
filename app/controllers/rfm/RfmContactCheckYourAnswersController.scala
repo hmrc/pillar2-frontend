@@ -15,21 +15,19 @@
  */
 
 package controllers.rfm
-import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
+import cats.data.OptionT.{fromOption, liftF}
+import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
-import models.requests.DataRequest
-import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompletedRfm}
+import models.rfm.RfmStatus._
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{PlrReferencePage, RfmStatusPage, SubscriptionStatusPage}
+import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -51,7 +49,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
   countryOptions:                      CountryOptions,
-  userAnswersConnectors:    UserAnswersConnectors,
+  userAnswersConnectors:               UserAnswersConnectors
 )(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -80,55 +78,51 @@ class RfmContactCheckYourAnswersController @Inject() (
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      val rfmStatus =   (for {
-        newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-        subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-        _                          <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
-        upeEnrolmentInfo <- OptionT.liftF(
+      val rfmStatus = (for {
+        newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+        subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
+        _                          <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+        upeEnrolmentInfo <- liftF(
                               subscriptionService.getUltimateParentEnrolmentInformation(
                                 subscriptionData = subscriptionData,
                                 pillar2Reference = newFilingMemberInformation.plrReference,
                                 request.userIdForEnrolment
                               )
                             )
-        groupId <- OptionT.fromOption[Future](request.groupId)
-        _ <- OptionT.liftF(
+        groupId <- fromOption[Future](request.groupId)
+        _ <- liftF(
                subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
              )
         amendData <-
-          OptionT.liftF(
+          liftF(
             subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
           )
-        _          <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-        dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-        _          <- OptionT.liftF(sessionRepository.set(dataToSave))
-      } yield SuccessfullyCompletedRfm)
-
-//      {
-//        logger.info(s"successfully replaced filing member for group with id : $groupId ")
-//        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
-//      })
+        _          <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+        dataToSave <- liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
+        _          <- liftF(sessionRepository.set(dataToSave))
+      } yield SuccessfullyCompleted).value
+        .flatMap {
+          case Some(result) =>
+            Future.successful(result)
+          case _ =>
+            Future.successful(FailException)
+        }
         .recover {
-          case InternalIssueError  =>
+          case InternalIssueError | UnexpectedResponse =>
             FailedInternalIssueError
-            //Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
           case _: Exception =>
             FailException
-//            logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-//            Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
         }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-
       for {
         updatedRfmStatus <- rfmStatus
-        updatedAnswers            <- Future.fromTry(UserAnswers(request.userId).set(RfmStatusPage, updatedRfmStatus))
-        _                         <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
+        updatedAnswers   <- Future.fromTry(UserAnswers(request.userId).set(RfmStatusPage, updatedRfmStatus))
+        _                <- userAnswersConnectors.save(request.userId, updatedAnswers.data)
       } yield (): Unit
-      Future.successful( Redirect(controllers.routes.RfmWaitingRoomController.onPageLoad()))
+      Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
     } else {
-      Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
+      Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad)
     }
 
   }
