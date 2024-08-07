@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.subscription.SubscriptionStatus._
-import models.{DuplicateSubmissionError, InternalIssueError, UserAnswers}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers}
 import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage, SubscriptionStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -90,6 +90,9 @@ class CheckYourAnswersController @Inject() (
               case DuplicateSubmissionError =>
                 logger.error("Subscription failed due to a Duplicate Submission")
                 FailedWithDuplicatedSubmission
+              case DuplicateSafeIdError =>
+                logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+                FailedWithDuplicatedSafeIdError
             }
         }
         .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))

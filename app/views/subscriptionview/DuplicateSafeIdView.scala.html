@@ -21,38 +21,38 @@
 @this(
         layout: templates.Layout,
         formHelper: FormWithCSRF,
-        sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
         govukButton: GovukButton,
-        govukInsetText: GovukInsetText,
+        bulletList: bulletList,
         para: paragraphBody,
-        h1: heading,
-        h2: HeadingH2,
-        span: Span
+        h1: heading
 )
 
-@(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("NominateFilingMemberYesNo.title"))) {
+@layout(pageTitle = title(form, messages("duplicateSafeId.title"))) {
 
 
-    @formHelper(action = controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.routes.DuplicateSafeIdController.onSubmit, 'autoComplete -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }
 
-        @sectionHeader(messages("NominateFilingMemberYesNo.heading.caption"))
+        @h1(messages("duplicateSafeId.heading"), classes = "govuk-heading-l")
 
-        @h1(messages("NominateFilingMemberYesNo.heading"), classes = "govuk-heading-l")
+        @para(messages("duplicateSafeId.p1"))
+        @para(messages("duplicateSafeId.p2"))
 
-        @para(messages("NominateFilingMemberYesNo.p1"))
-        @para(messages("NominateFilingMemberYesNo.p2"))
+        @bulletList(items = List(
+            Html(messages("duplicateSafeId.l1")),
+            Html(messages("duplicateSafeId.l2"))
+        ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("nominateFilingMember"),
-                legend = LegendViewModel(messages("NominateFilingMemberYesNo.subheading")).withCssClass("govuk-label--m")
+                legend = LegendViewModel(messages("duplicateSafeId.subheading")).withCssClass("govuk-label--m")
             )
         )
 

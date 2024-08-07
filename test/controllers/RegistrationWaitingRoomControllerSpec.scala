@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.SubscriptionStatus.{FailedWithDuplicatedSubmission, FailedWithInternalIssueError, FailedWithNoMneOrDomesticValueFoundError, SuccessfullyCompletedSubscription}
+import models.subscription.SubscriptionStatus._
 import pages.SubscriptionStatusPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -91,5 +91,18 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+    " redirect to duplicate safe id page in case of failed with duplicate safe id responses" in {
+      val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSafeIdError)
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url
+      }
+    }
+
   }
 }

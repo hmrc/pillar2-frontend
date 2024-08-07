@@ -20,6 +20,7 @@ import models.requests.SubscriptionDataRequest
 import pages.SubSecondaryEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -30,7 +31,7 @@ object SecondaryContactEmailSummary {
     request.subscriptionLocalData.get(SubSecondaryEmailPage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactEmail.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer))),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
