@@ -16,18 +16,18 @@
 
 @import config.FrontendAppConfig
 @this(
-layout: templates.Layout
+        layout: templates.Layout
 )
 
 
-@()(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("error.eis.title")), showBackLink = false) {
-<h1 class="govuk-heading-xl">@messages("error.eis.heading")</h1>
+    @layout(pageTitle = titleNoForm(messages("error.eis.title")), showBackLink = false) {
+        <h1 class="govuk-heading-xl">@messages("error.eis.heading")</h1>
 
-<p class="govuk-body">@messages("error.eis.message1")</p>
-<p class="govuk-body">@messages("error.eis.message2")</p>
+        <p class="govuk-body">@messages("error.eis.message1")</p>
+        <p class="govuk-body">@messages("error.eis.message2")</p>
 
-<p class="govuk-body"><a class="govuk-link" href="@routes.TaskListController.onPageLoad.url">
- @messages("error.eis.link")</a></p>
-}
+        <p class="govuk-body"><a class="govuk-link" href="@routes.TaskListController.onPageLoad.url">
+        @messages("error.eis.link")</a></p>
+    }
