@@ -26,12 +26,20 @@
 
 @(table: Table, pagination: Option[Pagination])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = titleNoForm(messages("transactionHistory.title"))) {
+@pageLayout(contentBlock: Html) = {
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+        @contentBlock
+        </div>
+    </div>
+}
 
-        @heading(messages("transactionHistory.heading"))
-        @govukTable(table)
+@layout(pageTitle = titleNoForm(messages("transactionHistory.title")), pageLayout = pageLayout) {
 
-        @pagination.map { pag =>
-            @govukPagination(pag)
-        }
+    @heading(messages("transactionHistory.heading"))
+    @govukTable(table)
+
+    @pagination.map { pag =>
+        @govukPagination(pag)
     }
+}
