@@ -1499,7 +1499,7 @@ repayments.bank-account-details.accountNameFormatError = The name on the account
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
 
-registrationWaitingRoom.title = registrationWaitingRoom
-registrationWaitingRoom.heading = registrationWaitingRoom
+registrationWaitingRoom.title = Submitting your registration
+registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration
 registrationWaitingRoom.h2 = Do not leave this page.

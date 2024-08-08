@@ -16,33 +16,30 @@
 
 @import config.FrontendAppConfig
 @import models.subscription.SubscriptionStatus
+@import views.html.components.gds._
+
 @this(
-        layout: templates.Layout
+        layout: templates.Layout,
+        heading: heading
 )
 
 @(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
 
+  @if(subscriptionStatus.isEmpty) {
+    <meta http-equiv="refresh" content="2" />
+  }
 
-@if(subscriptionStatus.isEmpty) {
-<meta http-equiv="refresh" content="2" />
-}
-
-<div class="hods-loading-spinner">
- <div
-         class="hods-loading-spinner__spinner"
-         aria-live="polite"
-         role="status"
- ></div>
- <div class="hods-loading-spinner__content">
-  <h1 class="govuk-heading-m">
-   @messages("registrationWaitingRoom.h1")
-  </h1>
-  <h2 class="govuk-body-s">
-   @messages("registrationWaitingRoom.h2")
-  </h2>
-
- </div>
-</div>
+  <div class="hods-loading-spinner">
+    <div
+            class="hods-loading-spinner__spinner"
+            aria-live="polite"
+            role="status"
+    ></div>
+    <div class="hods-loading-spinner__content">
+      @heading(messages("registrationWaitingRoom.h1"), "govuk-heading-m")
+      @heading(messages("registrationWaitingRoom.h2"), "govuk-body-s", "h2")
+    </div>
+  </div>
 }
