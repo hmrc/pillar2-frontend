@@ -529,7 +529,9 @@ GET        /repayment/error/partial-name                                        
 POST       /repayment/error/partial-name                                                            controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = NormalMode)
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
-GET        /error/repayment-request-unsuccessful                                                     controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
+GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
+
+GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
 GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad

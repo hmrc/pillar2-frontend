@@ -28,7 +28,6 @@ import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.subscriptionview.MneOrDomesticView
@@ -41,7 +40,6 @@ class MneOrDomesticController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  sessionRepository:         SessionRepository,
   navigator:                 SubscriptionNavigator,
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
@@ -75,7 +73,6 @@ class MneOrDomesticController @Inject() (
               Future
                 .fromTry(request.userAnswers.set(SubMneOrDomesticPage, value))
             _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-            _ <- sessionRepository.set(updatedAnswers)
           } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, mode, updatedAnswers))
       )
   }

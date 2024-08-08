@@ -20,8 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.SubscriptionStatus._
 import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage}
+import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage, SubscriptionStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -71,43 +72,47 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
-      request.userAnswers
+      val subscriptionStatus = request.userAnswers
         .get(SubMneOrDomesticPage)
         .map { mneOrDom =>
           (for {
             plr <- subscriptionService.createSubscription(request.userAnswers)
-            dataToSave = UserAnswers(request.userAnswers.id).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
+            dataToSave = UserAnswers(request.userId).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
             _ <- sessionRepository.set(dataToSave)
             _ <- userAnswersConnectors.remove(request.userId)
-          } yield Redirect(routes.RegistrationConfirmationController.onPageLoad))
+          } yield SuccessfullyCompletedSubscription)
             .recover {
               case InternalIssueError =>
                 logger.error("Subscription failed due to failed call to the backend")
-                Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
-
+                FailedWithInternalIssueError
               case DuplicateSubmissionError =>
                 logger.error("Subscription failed due to a Duplicate Submission")
-                Redirect(controllers.routes.AlreadyRegisteredController.onPageLoad)
-
+                FailedWithDuplicatedSubmission
               case DuplicateSafeIdError =>
                 logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
-                Redirect(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad)
+                FailedWithDuplicatedSafeIdError
             }
         }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
+      for {
+        updatedSubscriptionStatus <- subscriptionStatus
+        updatedAnswers            <- Future.fromTry(request.userAnswers.set(SubscriptionStatusPage, updatedSubscriptionStatus))
+        _                         <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+      } yield (): Unit
+      Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
     } else {
-      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
+      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
 
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
-    Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true)).flatMap { ua =>
-      userAnswersConnectors.save(ua.id, Json.toJson(ua.data)).map { _ =>
-        ua
-      }
-    }
+    for {
+      updatedAnswers  <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
+      updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubscriptionStatusPage))
+      _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+    } yield updatedAnswers1
 
   private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
