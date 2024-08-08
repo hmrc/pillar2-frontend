@@ -1502,3 +1502,8 @@ repayments.bank-account-details.accountNumberLengthError = Account number must b
 rfmWaitingRoom.title =  Submitting...
 rfmWaitingRoom.h1 =  Submitting...
 rfmWaitingRoom.h2 =  Do not leave this page.
+
+registrationWaitingRoom.title = Submitting your registration
+registrationWaitingRoom.heading = Submitting your registration
+registrationWaitingRoom.h1 = Submitting your registration
+registrationWaitingRoom.h2 = Do not leave this page.

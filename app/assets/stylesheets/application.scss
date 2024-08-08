@@ -49,3 +49,5 @@ label[for="confirmation_0"] {
 .pillar2-task-list  ul.app-task-list__items {
   padding-left: 0;
 }
+
+div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} }
