@@ -871,7 +871,7 @@ dashboard.upe = Ultimate parent entity: {0}
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
-dashboard.paymentHistory = View your payment history
+dashboard.paymentHistory = View your transaction history
 dashboard.requestRefund = Request a refund
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
@@ -895,7 +895,7 @@ dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
-dashboard.agent.paymentHistory = View your client’s payment history
+dashboard.agent.paymentHistory = View your client’s transaction history
 dashboard.agent.manageAccount = Manage your client’s account
 ###############################################
 
@@ -1508,3 +1508,28 @@ repaymentsWaitingRoom.title = Submitting your refund request
 repaymentsWaitingRoom.heading = Submitting your refund request
 repaymentsWaitingRoom.h1 = Submitting your refund request
 repaymentsWaitingRoom.h2 = Do not leave this page.
+
+###################
+
+# - Transaction History
+
+###################
+transactionHistory.title = Transaction history
+transactionHistory.heading = Transaction history
+transactionHistory.date = Date
+transactionHistory.description = Transaction description
+transactionHistory.amountPaid = You paid HMRC
+transactionHistory.amountRefunded = HMRC paid you
+transactionHistory.pagination.next = Next
+transactionHistory.pagination.previous = Previous
+
+transactionHistory.error.title = Sorry, there is a problem with the service
+transactionHistory.error.heading = Sorry, there is a problem with the service
+transactionHistory.error.p1 = We cannot retrieve your details at this time.
+transactionHistory.error.p2 = Please try again later.
+transactionHistory.error.p3 = Return to your account homepage
+
+transactionHistory.none.title = Transaction history
+transactionHistory.none.heading = Transaction history
+transactionHistory.none.p1 = You have no payments to show
+transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.

@@ -123,7 +123,8 @@ trait ViewInstances extends Configs with StubMessageControllerComponents {
     new HmrcAccessibleAutocompleteJavascript(assetsConfig),
     hmrcScripts,
     new StandardBetaBanner,
-    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig))
+    new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig)),
+    new TwoThirdsMainContent()
   )
 
   val viewGroupTerritories: GroupTerritoriesView =

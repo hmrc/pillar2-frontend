@@ -541,3 +541,7 @@ GET        /repayment/confirmation                                              
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
 GET        /repayment/processing-refund                                                             controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
+
+GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
+GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
+GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
