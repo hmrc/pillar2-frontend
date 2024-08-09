@@ -25,7 +25,7 @@ import views.html.repayments.RepaymentsWaitingRoomView
 class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
 
   val page: RepaymentsWaitingRoomView = inject[RepaymentsWaitingRoomView]
-  val view: Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  val view: Document                  = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
 
   "Repayments Waiting Room View" should {
 

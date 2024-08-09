@@ -32,14 +32,14 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
-class RepaymentsWaitingRoomController @Inject()(
+class RepaymentsWaitingRoomController @Inject() (
   identify:                 IdentifierAction,
   getData:                  SessionDataRetrievalAction,
   requireData:              SessionDataRequiredAction,
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RepaymentsWaitingRoomView
-)(implicit ec:                            ExecutionContext, appConfig:       FrontendAppConfig)
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -47,16 +47,16 @@ class RepaymentsWaitingRoomController @Inject()(
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(RepaymentsStatusPage) match {
-      case Some(SuccessfullyCompleted)    =>
+      case Some(SuccessfullyCompleted) =>
         for {
           updatedAnswers       <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true))
           clearedRepaymentData <- Future.fromTry(clearRepaymentDetails(updatedAnswers))
           _                    <- sessionRepository.set(clearedRepaymentData)
         } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad())
-      case Some(UnexpectedResponseError)  =>
+      case Some(UnexpectedResponseError) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
-      case Some(IncompleteDataError)      => Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
-      case s                              => Future.successful(Ok(view(s)))
+      case Some(IncompleteDataError) => Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
+      case s                         => Future.successful(Ok(view(s)))
     }
 
   }
