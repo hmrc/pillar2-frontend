@@ -1503,3 +1503,8 @@ registrationWaitingRoom.title = Submitting your registration
 registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration
 registrationWaitingRoom.h2 = Do not leave this page.
+
+repaymentsWaitingRoom.title = Submitting your refund request
+repaymentsWaitingRoom.heading = Submitting your refund request
+repaymentsWaitingRoom.h1 = Submitting your refund request
+repaymentsWaitingRoom.h2 = Do not leave this page.
