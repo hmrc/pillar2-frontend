@@ -31,11 +31,13 @@
     autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
     hmrcScripts: HmrcScripts,
     betaBanner: StandardBetaBanner,
-    stylesheets: Stylesheets
+    stylesheets: Stylesheets,
+    twoThirdsContent: TwoThirdsMainContent
+
 )
 
 
-@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None, serviceBannerClickable: Boolean = true)(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None, serviceBannerClickable: Boolean = true, pageLayout: Html => Html = twoThirdsContent(_))(contentBlock: Html)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 
 @scripts = {
@@ -102,5 +104,6 @@
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
-    scriptsBlock = Some(scripts)
+    scriptsBlock = Some(scripts),
+    mainContentLayout = Some(pageLayout)
 )(content)

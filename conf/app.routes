@@ -537,3 +537,7 @@ GET        /repayment/error/return                                              
 
 GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
 GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
+
+GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
+GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
+GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
