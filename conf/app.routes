@@ -539,3 +539,8 @@ GET        /repayment/error/incomplete-refund-request                           
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
 
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
+
+
+GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
+GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
+GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
