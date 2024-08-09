@@ -530,16 +530,13 @@ POST       /repayment/error/partial-name                                        
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
 GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
-
-GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
-
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
 GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
-
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
-
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
+GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
+GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
