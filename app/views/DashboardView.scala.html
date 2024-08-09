@@ -33,28 +33,28 @@
 
     @layout(pageTitle = titleNoForm(if(agentView) messages("dashboard.agent.title") else messages("dashboard.title")), showBackLink = false, maybeClientPillar2Id = if(agentView) Some(plrReference) else None) {
 
-        @if(inactiveStatus) {
-            @inactiveStatusBanner()
-        }
+    @if(inactiveStatus) {
+        @inactiveStatusBanner()
+    }
 
-        @if(agentView) {
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.accountLink"), linkUrl = appConfig.asaHomePageUrl)
-        }
+    @if(agentView) {
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.accountLink"), linkUrl = appConfig.asaHomePageUrl)
+    }
 
-        @h(if(agentView) messages("dashboard.agent.heading") else messages("dashboard.heading"), "govuk-heading-l govuk-!-margin-bottom-7")
+    @h(if(agentView) messages("dashboard.agent.heading") else messages("dashboard.heading"), "govuk-heading-l govuk-!-margin-bottom-7")
 
-        @p(messages("dashboard.topTaxes", plrReference))
-        @p(messages("dashboard.registrationDate", registrationDate))
-        @p(messages("dashboard.upe", organisationName), classes = "govuk-body govuk-!-margin-bottom-7")
+    @p(messages("dashboard.topTaxes", plrReference))
+    @p(messages("dashboard.registrationDate", registrationDate))
+    @p(messages("dashboard.upe", organisationName), classes = "govuk-body govuk-!-margin-bottom-7")
 
-        @if(agentView) {
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
-        }
-        <!--PAY YOUR TUT SECTION-->
-        @if(appConfig.showPaymentsSection) {
-            @h2(messages("dashboard.payments"), size = "m")
-            @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+    @if(agentView) {
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
+    }
+    <!--PAY YOUR TUT SECTION-->
+    @if(appConfig.showPaymentsSection) {
+        @h2(messages("dashboard.payments"), size = "m")
+        @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         <!--
         @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.UnderConstructionController.onPageLoad.url)
@@ -62,17 +62,27 @@
 
         @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
+        @sectionBreak()
+    }
 
+    <!--MANAGE YOUR TUT SECTION-->
+    @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+
+    @sectionBreak()
+
+    @if(agentView) {
+        @if(!inactiveStatus) {
+            @h2(messages("dashboard.whentoSubmitReturn.agent.h2"), size = "m")
+            @p(messages("dashboard.agent.p1"))
             @sectionBreak()
         }
+        @p(messages("dashboard.agent.p2"))
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
 
-        <!--MANAGE YOUR TUT SECTION-->
-        @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
 
-        @sectionBreak()
-
+    } else {
         @if(!inactiveStatus) {
             @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
             @p(messages("dashboard.p3"))
@@ -82,6 +92,7 @@
             ), additionalListClasses = Some("govuk-list--spaced"))
             @sectionBreak()
         }
-            @p(messages("dashboard.p1"))
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
+        @p(messages("dashboard.p1"))
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
     }
+}

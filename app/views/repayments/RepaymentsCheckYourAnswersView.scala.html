@@ -25,7 +25,8 @@
         formHelper: FormWithCSRF,
         heading: heading,
         h2: HeadingH2,
-        para: paragraphBody
+        para: paragraphBody,
+        bulletList: bulletList
 )
 
 @(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -46,7 +47,10 @@
         @h2(messages("repaymentsCheckYourAnswers.bank.contact-details.h2"), size = "m")
         @govukSummaryList(contactDetailsList)
 
-        @printLink(messages("site.print"))
+        @bulletList(items = List(
+            printLink(messages("site.print")),
+            printLink(messages("repayment.pdfDownload"))
+        ), additionalListClasses = Some("govuk-list--spaced"))
 
         @h2(messages("repaymentsCheckYourAnswers.bank.submit-details.h2"), size = "s", extraClasses = Seq("govuk-!-margin-top-6"))
         @para(messages("repaymentsCheckYourAnswers.bank.submit-p1"))
