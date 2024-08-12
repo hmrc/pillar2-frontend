@@ -85,6 +85,10 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-summary-list__key").get(4).text  must include("Name on account")
       view.getElementsByClass("govuk-summary-list__key").get(5).text  must include("BIC or SWIFT code")
       view.getElementsByClass("govuk-summary-list__key").get(6).text  must include("IBAN")
+
+
+
+
       view.getElementsByClass("govuk-summary-list__key").get(7).text  must include("Contact name")
       view.getElementsByClass("govuk-summary-list__key").get(8).text  must include("Email address")
       view.getElementsByClass("govuk-summary-list__key").get(9).text  must include("Can we contact by telephone?")
