@@ -87,6 +87,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-summary-list__key").get(3).text  must include("Name of the bank")
 
 
+
       view.getElementsByClass("govuk-summary-list__key").get(4).text  must include("Name on account")
 
 
