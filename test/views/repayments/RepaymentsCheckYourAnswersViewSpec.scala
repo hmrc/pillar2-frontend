@@ -86,6 +86,10 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-summary-list__key").get(2).text  must include("What type of account will the refund be sent to?")
       view.getElementsByClass("govuk-summary-list__key").get(3).text  must include("Name of the bank")
       view.getElementsByClass("govuk-summary-list__key").get(4).text  must include("Name on account")
+
+
+
+
       view.getElementsByClass("govuk-summary-list__key").get(5).text  must include("BIC or SWIFT code")
       view.getElementsByClass("govuk-summary-list__key").get(6).text  must include("IBAN")
 
