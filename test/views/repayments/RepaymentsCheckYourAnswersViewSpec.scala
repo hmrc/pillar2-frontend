@@ -80,6 +80,9 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a summary list keys" in {
       view.getElementsByClass("govuk-summary-list__key").get(0).text  must include("Refund amount")
       view.getElementsByClass("govuk-summary-list__key").get(1).text  must include("Reason for refund request")
+
+
+
       view.getElementsByClass("govuk-summary-list__key").get(2).text  must include("What type of account will the refund be sent to?")
       view.getElementsByClass("govuk-summary-list__key").get(3).text  must include("Name of the bank")
       view.getElementsByClass("govuk-summary-list__key").get(4).text  must include("Name on account")
