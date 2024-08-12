@@ -89,6 +89,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-summary-list__key").get(8).text  must include("Email address")
       view.getElementsByClass("govuk-summary-list__key").get(9).text  must include("Can we contact by telephone?")
       view.getElementsByClass("govuk-summary-list__key").get(10).text must include("Telephone number")
+      view.getElementsByClass("govuk-summary-list__key").get(10).text must include("Telephone number")
+      view.getElementsByClass("govuk-summary-list__key").get(10).text must include("Telephone number")
     }
 
     "have a summary list items" in {
