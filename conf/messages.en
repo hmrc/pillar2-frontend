@@ -207,7 +207,7 @@ payment.dashboard.table2.caption= HMRC’s overseas bank details
 
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
-repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you think you paid too much Pillar 2 top-up tax.
+repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you have funds in your Pillar 2 account available for repayment.
 repayment.requestRefundBeforeStart.header3 = Before you start
 repayment.requestRefundBeforeStart.p3 = You will need the following details:
 repayment.requestRefundBeforeStart.li1 = refund amount
@@ -1501,7 +1501,8 @@ repayments.bank-account-details.bankNameFormatError = The name of the bank must 
 repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
-
+repaymentsCheckYourAnswers.download = Do you need to keep a record of your answers?
+repaymentsCheckYourAnswers.bank.submit-p2 = If you need to keep a record of your answers, you can:
 registrationWaitingRoom.title = Submitting your registration
 registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration

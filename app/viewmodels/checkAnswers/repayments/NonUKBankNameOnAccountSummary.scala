@@ -32,12 +32,7 @@ object NonUKBankNameOnAccountSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.nameOnBankAccount)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden"))
-              .withCssClass("govuk-!-display-none-print")
-          )
+          value = ValueViewModel(HtmlContent(answer.nameOnBankAccount))
         )
       }
 

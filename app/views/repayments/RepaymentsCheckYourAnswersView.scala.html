@@ -42,11 +42,13 @@
         @govukSummaryList(listRefund)
 
         @h2(messages("repaymentsCheckYourAnswers.bank.account-details.h2"), size = "m")
+        <div class="bankDetails">
         @govukSummaryList(listBankAccountDetails)
-
+        </div>
         @h2(messages("repaymentsCheckYourAnswers.bank.contact-details.h2"), size = "m")
         @govukSummaryList(contactDetailsList)
-
+        @h2(messages("repaymentsCheckYourAnswers.download"), size = "m")
+        @para(messages("repaymentsCheckYourAnswers.bank.submit-p2"))
         @bulletList(items = List(
             printLink(messages("site.print")),
             printLink(messages("repayment.pdfDownload"))
