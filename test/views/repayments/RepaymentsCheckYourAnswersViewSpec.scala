@@ -89,6 +89,31 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
       view.getElementsByClass("govuk-summary-list__key").get(7).text  must include("Contact name")
       view.getElementsByClass("govuk-summary-list__key").get(8).text  must include("Email address")
       view.getElementsByClass("govuk-summary-list__key").get(9).text  must include("Can we contact by telephone?")
