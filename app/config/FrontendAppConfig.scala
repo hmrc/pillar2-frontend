@@ -74,6 +74,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val pillar2BaseUrl:                                  String = servicesConfig.baseUrl("pillar2")
   val incorporatedEntityIdentificationFrontendBaseUrl: String = servicesConfig.baseUrl("incorporated-entity-identification-frontend")
   val partnershipEntityIdentificationFrontendBaseUrl:  String = servicesConfig.baseUrl("partnership-identification-frontend")
+  val barsBaseUrl:                                     String = servicesConfig.baseUrl("bank-account-reputation")
 
   val grsContinueUrl:              String  = configuration.get[String]("urls.grsContinue")
   val incorporatedEntityBvEnabled: Boolean = configuration.get[Boolean]("features.incorporatedEntityBvEnabled")
@@ -104,12 +105,12 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val showDoYouHaveP2TopUpTaxId:    Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
+  val showTransactionHistory:       Boolean = configuration.get[Boolean]("features.showTransactionHistory")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
   val asaHomePageUrl:               String  = configuration.get[String]("urls.asaHomePage")
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
 
-  val rfmAccessEnabled:    Boolean     = configuration.get[Boolean]("features.rfmAccessEnabled")
   def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
   lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")

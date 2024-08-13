@@ -30,25 +30,25 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmSecondaryTelephonePreferenceController @Inject() (
-  val userAnswersConnectors: UserAnswersConnectors,
-  rfmIdentify:               RfmIdentifierAction,
-  getData:                   DataRetrievalAction,
-  requireData:               DataRequiredAction,
-  navigator:                 ReplaceFilingMemberNavigator,
-  formProvider:              RfmSecondaryTelephonePreferenceFormProvider,
-  val controllerComponents:  MessagesControllerComponents,
-  view:                      RfmSecondaryTelephonePreferenceView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+  val userAnswersConnectors:        UserAnswersConnectors,
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  featureAction:                    FeatureFlagActionFactory,
+  navigator:                        ReplaceFilingMemberNavigator,
+  formProvider:                     RfmSecondaryTelephonePreferenceFormProvider,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             RfmSecondaryTelephonePreferenceView
+)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       request.userAnswers
         .get(RfmSecondaryContactNamePage)
         .map { contactName =>
@@ -57,12 +57,9 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
           Ok(view(preparedForm, mode, contactName))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
       .get(RfmSecondaryContactNamePage)
       .map { contactName =>

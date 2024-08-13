@@ -18,7 +18,7 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmCheckYourAnswersPage
@@ -30,23 +30,25 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
+
+import javax.inject.Named
 import scala.concurrent.Future
 
 class RfmCheckYourAnswersController @Inject() (
-  rfmIdentify:              RfmIdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  navigator:                ReplaceFilingMemberNavigator,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RfmCheckYourAnswersView,
-  countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig)
+  @Named("RfmIdentifier") identify: IdentifierAction,
+  getData:                          DataRetrievalAction,
+  requireData:                      DataRequiredAction,
+  featureAction:                    FeatureFlagActionFactory,
+  navigator:                        ReplaceFilingMemberNavigator,
+  val controllerComponents:         MessagesControllerComponents,
+  view:                             RfmCheckYourAnswersView,
+  countryOptions:                   CountryOptions
+)(implicit appConfig:               FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
-    val rfmEnabled = appConfig.rfmAccessEnabled
-    if (rfmEnabled) {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
+    implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
           RfmNameRegistrationSummary.row(request.userAnswers),
@@ -58,12 +60,9 @@ class RfmCheckYourAnswersController @Inject() (
       } else {
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
       }
-    } else {
-      Redirect(controllers.routes.UnderConstructionController.onPageLoad)
-    }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     Future.successful(Redirect(navigator.nextPage(RfmCheckYourAnswersPage, mode, request.userAnswers)))
   }
 

@@ -14,10 +14,8 @@
  * limitations under the License.
  */
 
-package models.rfm
-
 /*
- * Copyright 2023 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -32,14 +30,32 @@ package models.rfm
  * limitations under the License.
  */
 
-import play.api.libs.json.{Json, OFormat}
+package models
 
-import java.time.LocalDate
+import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.Aliases.Text
+import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
 
-case class RegistrationDate(
-  rfmRegistrationDate: LocalDate
-)
+sealed trait MneOrDomestic
 
-object RegistrationDate {
-  implicit val format: OFormat[RegistrationDate] = Json.format[RegistrationDate]
+object MneOrDomestic extends Enumerable.Implicits {
+
+  case object UkAndOther extends WithName("ukAndOther") with MneOrDomestic
+  case object Uk extends WithName("uk") with MneOrDomestic
+
+  val values: Seq[MneOrDomestic] = Seq(
+    Uk,
+    UkAndOther
+  )
+
+  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+    RadioItem(
+      content = Text(messages(s"mneOrDomestic.${value.toString}")),
+      value = Some(value.toString),
+      id = Some(s"value_$index")
+    )
+  }
+
+  implicit val enumerable: Enumerable[MneOrDomestic] =
+    Enumerable(values.map(v => v.toString -> v): _*)
 }

@@ -1,4 +1,5 @@
 @import "autocomplete";
+@import "hods-loading-spinner";
 
 .js-visible {
   display: none !important;
@@ -45,4 +46,8 @@ label[for="confirmation_0"] {
 .govuk-character-count__message.govuk-character-count__status.govuk-error-message {
     font-weight: 700 !important;
 }
+.pillar2-task-list  ul.app-task-list__items {
+  padding-left: 0;
+}
 
+div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} }

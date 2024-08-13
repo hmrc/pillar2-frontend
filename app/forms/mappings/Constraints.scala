@@ -85,12 +85,12 @@ trait Constraints {
       }
     }
 
-  protected def regexp(regex: String, errorKey: String): Constraint[String] =
+  protected def regexp(regex: String, errorKey: String, args: Seq[String] = Seq.empty): Constraint[String] =
     Constraint {
       case str if str.matches(regex) =>
         Valid
       case _ =>
-        Invalid(errorKey, regex)
+        Invalid(errorKey, args: _*)
     }
 
   protected def regexp(regex: String, errorKey: String, data: String): Constraint[String] =

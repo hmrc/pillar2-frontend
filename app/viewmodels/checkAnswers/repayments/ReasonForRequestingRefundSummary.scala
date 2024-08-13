@@ -27,7 +27,7 @@ import viewmodels.implicits._
 
 object ReasonForRequestingRefundSummary {
 
-  def row(answers: UserAnswers, clientPillar2Id: Option[String] = None)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(ReasonForRequestingRefundPage).map { answer =>
       val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
       SummaryListRowViewModel(
@@ -36,7 +36,7 @@ object ReasonForRequestingRefundSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(clientPillar2Id, CheckMode).url
+            controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(CheckMode).url
           )
             .withVisuallyHiddenText(messages("reasonForRequestingRefund.change.hidden"))
             .withCssClass("govuk-!-display-none-print")

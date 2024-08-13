@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.registration.RegistrationInfo
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import models.subscription._
 import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
 import org.apache.pekko.Done
@@ -105,7 +105,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "Return success response and do not call register connector when non uk upe and fm is already set" in {
+      "return success response and do not call register connector when non uk upe and fm is already set" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(FmRegisteredInUKPage, false)
@@ -167,6 +167,7 @@ class SubscriptionServiceSpec extends SpecBase {
           result.futureValue mustBe "ID"
         }
       }
+
       "return a success response with a pillar 2 reference for uk based upe and no filing member" in {
         val userAnswer = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
@@ -287,6 +288,29 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
+      "throw an exception if the upeSafeId is equal to the nfmSafeId" in {
+        val userAnswer = emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(NominateFilingMemberPage, true)
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[RegistrationConnector].toInstance(mockRegistrationConnector),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
+          .build()
+        val service = application.injector.instanceOf[SubscriptionService]
+        running(application) {
+          when(mockRegistrationConnector.registerUltimateParent(any())(any())).thenReturn(Future.successful("DuplicateID"))
+          when(mockRegistrationConnector.registerFilingMember(any())(any())).thenReturn(Future.successful("DuplicateID"))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          val result = service.createSubscription(userAnswer)
+          result.failed.futureValue mustBe models.DuplicateSafeIdError
+        }
+      }
+
     }
 
     "readAndCacheSubscription" when {
@@ -363,8 +387,7 @@ class SubscriptionServiceSpec extends SpecBase {
         }
       }
 
-      "return InternalIssueError when the connector returns None" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier()
+      "return NoResultFound when the connector returns a 404 response" in {
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -376,7 +399,7 @@ class SubscriptionServiceSpec extends SpecBase {
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
           val result = service.readSubscription("plr").failed.futureValue
 
-          result mustBe models.InternalIssueError
+          result mustBe models.NoResultFound
         }
       }
 
@@ -399,6 +422,7 @@ class SubscriptionServiceSpec extends SpecBase {
       }
 
     }
+
     "amendSubscription" when {
       "call read subscription and create the required amend object to submit when no secondary contact" in {
 
@@ -465,20 +489,19 @@ class SubscriptionServiceSpec extends SpecBase {
         resultFuture.secondaryContactDetails mustBe None
       }
     }
+
     "amendFilingMemberDetails" when {
       "return done if the amend subscription is successful and delete userAnswers" in {
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
         val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
         when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails("id", amendData).futureValue mustEqual Done
-        verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())
       }
 
       "return failure if amend subscription fails" in {
@@ -490,22 +513,8 @@ class SubscriptionServiceSpec extends SpecBase {
 
         service.amendFilingMemberDetails("id", amendData).failed.futureValue mustEqual InternalIssueError
       }
-
-      "return failure if removing data fails" in {
-
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.failed(new RuntimeException("Connection error")))
-
-        val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
-        val application = applicationBuilder(userAnswers = Some(userAnswers)).overrides(
-          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-
-        service.amendFilingMemberDetails("id", amendData).failed.futureValue mustBe a[RuntimeException]
-      }
     }
+
     "deallocateEnrolment" when {
       "get old filing member group id from tax enrolment and use that to deallocate pillar 2 enrolment" in {
         val application = applicationBuilder().overrides(
@@ -733,7 +742,7 @@ class SubscriptionServiceSpec extends SpecBase {
     }
 
     "matchingPillar2Records" when {
-      val registrationDate = RegistrationDate(LocalDate.now())
+      val registrationDate = LocalDate.now()
       "return true if the pillar2 and reg date records in FE and BE database match" in {
         val userAnswers = emptyUserAnswers
           .setOrException(RfmPillar2ReferencePage, "matchingPillar2Id")

@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import config.FrontendAppConfig
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import play.api.Configuration
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.DashboardView
@@ -29,11 +30,13 @@ class DashboardViewSpec extends ViewSpecBase {
   private val plrRef           = "XMPLR0012345678"
   private val date             = "1 June 2020"
 
-  val organisationDashboardView =
+  val organisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
 
-  val agentDashboardView =
+  val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
+  val inActiveOrganisationDashboardView =
+    Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {
 
@@ -90,7 +93,11 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(5).text                               must include("You have no payments due")
       elements.get(6).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
+      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(7).getElementsByTag("a").text()       must include("View your transaction history")
+      elements.get(7).getElementsByTag("a").attr("href") must include(
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+      )
       organisationDashboardView
         .getElementsByTag("hr")
         .first()
@@ -99,7 +106,8 @@ class DashboardViewSpec extends ViewSpecBase {
 
     "not have payment information if flag is false" in {
       val config = new FrontendAppConfig(inject[Configuration], inject[ServicesConfig]) {
-        override val showPaymentsSection: Boolean = false
+        override val showPaymentsSection:    Boolean = false
+        override val showTransactionHistory: Boolean = false
       }
 
       val organisationDashboardView =
@@ -110,6 +118,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text mustNot include("Payments")
       elements.text mustNot include("You have no payments due")
+      elements.text mustNot include("View your transaction history")
     }
 
     "have manage your account heading and links" in {
@@ -118,32 +127,48 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text must include("Manage your account")
       h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(8).text() must include("View and amend contact details")
-      elements.get(8).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
-      )
-      elements.get(9).text() must include("View and amend group details")
+      elements.get(9).text() must include("View and amend contact details")
       elements.get(9).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      )
+      elements.get(10).text() must include("View and amend group details")
+      elements.get(10).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       )
 
     }
 
     "have pillar 2 information" in {
-      val element = organisationDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
+      element.text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.text() must not include
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
 
-      element.get(10).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      pargraph.get(11).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(11).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
+
+    }
+
+    "have pillar 2 information with inActive status false" in {
+      val element  = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val pargraph = inActiveOrganisationDashboardView.getElementsByTag("p")
+
+      element.get(0).text() must include(
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
       )
-      element.get(12).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
+      element.get(1).text() must include(
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
       )
-      element.get(13).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
+      pargraph.get(10).text() must include(
+        "Your group must submit your Pillar 2 top-up tax returns no later than:"
       )
+      pargraph.get(11).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
+      )
+
     }
 
   }
@@ -207,17 +232,17 @@ class DashboardViewSpec extends ViewSpecBase {
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
 
-      elements.get(9).text() must include("Request a refund")
-      elements.get(9).attr("href") must include(
-        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad(Some("XMPLR0012345678")).url
-      )
-      elements.get(10).text() must include("View and amend contact details")
+      elements.get(10).text() must include("Request a refund")
       elements.get(10).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad(Some(plrRef)).url
+        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
       )
-      elements.get(11).text() must include("View and amend group details")
+      elements.get(11).text() must include("View and amend contact details")
       elements.get(11).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad(Some(plrRef)).url
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      )
+      elements.get(12).text() must include("View and amend group details")
+      elements.get(12).attr("href") must include(
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       )
     }
 
@@ -229,7 +254,11 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(7).text                               must include("Your client has no payments due.")
       elements.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad(Some(plrRef)).url)
+      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(9).getElementsByTag("a").text()       must include("View your client’s transaction history")
+      elements.get(9).getElementsByTag("a").attr("href") must include(
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+      )
       agentDashboardView
         .getElementsByTag("hr")
         .first()
@@ -238,7 +267,8 @@ class DashboardViewSpec extends ViewSpecBase {
 
     "not have payment information if flag is false" in {
       val config = new FrontendAppConfig(inject[Configuration], inject[ServicesConfig]) {
-        override val showPaymentsSection: Boolean = false
+        override val showPaymentsSection:    Boolean = false
+        override val showTransactionHistory: Boolean = false
       }
 
       val agentDashboardView =
@@ -249,23 +279,21 @@ class DashboardViewSpec extends ViewSpecBase {
 
       h2.text mustNot include("Payments")
       elements.text mustNot include("Your client has no payments due.")
+      elements.text mustNot include("View your client’s transaction history")
     }
 
     "have pillar 2 information" in {
-      val element = agentDashboardView.getElementsByTag("p")
+      val element  = organisationDashboardView.getElementsByTag("li")
+      val pargraph = organisationDashboardView.getElementsByTag("p")
 
-      element.get(12).text() must include(
-        "This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution."
+      element.text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+      element.text() must not include
+        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+      pargraph.get(11).text() must include(
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
-      element.get(13).text() must include(
-        "The first deadline to submit a return is 18 months after the last day of the group’s accounting period that started on or after 31 December 2023."
-      )
-      element.get(14).text() must include(
-        "This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline."
-      )
-      element.get(15).text() must include(
-        "For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the"
-      )
+
     }
   }
 }

@@ -18,21 +18,27 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.{AgentIdentifierAction, FakeIdentifierAction}
+import controllers.actions.TestAuthRetrievals.Ops
 import forms.CaptureSubscriptionAddressFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubAddSecondaryContactPage
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.PlayBodyParsers
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
+import uk.gov.hmrc.auth.core.retrieve.Credentials
 
+import java.util.UUID
 import scala.concurrent.Future
 
 class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   val formProvider = new CaptureSubscriptionAddressFormProvider()
+  val id:           String = UUID.randomUUID().toString
+  val providerId:   String = UUID.randomUUID().toString
+  val providerType: String = UUID.randomUUID().toString
 
   "CaptureSubscriptionAddressController for Organisations" should {
 
@@ -43,7 +49,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
             ("addressLine2", "Drive"),
@@ -54,9 +60,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
           )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
-          .onPageLoad()
-          .url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
@@ -68,7 +72,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
       }
@@ -82,7 +86,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
               ("addressLine2", "Drive"),
@@ -107,7 +111,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
             .withFormUrlEncodedBody(
               (
                 "addressLine1",
@@ -134,18 +138,20 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
         )
           .withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -156,11 +162,8 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
             ("countryCode", "GB")
           )
         val result = route(application, request).value
-
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
-          .onPageLoad(Some(PlrReference))
-          .url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
@@ -168,18 +171,20 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad(clientPillar2Id = Some(PlrReference)).url
+          controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
         )
         val result = route(application, request).value
         status(result) mustEqual OK
@@ -189,19 +194,21 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
           )
             .withFormUrlEncodedBody(
               ("addressLine1", "27 house"),
@@ -211,9 +218,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
               ("postalCode", "hhhhhhhhhhhh"),
               ("countryCode", "GB")
             )
-
         val result = route(application, request).value
-
         status(result) mustEqual BAD_REQUEST
       }
     }
@@ -221,20 +226,22 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[SubscriptionConnector].toInstance(mockSubscriptionConnector))
-        .overrides(bind[AgentIdentifierAction].toInstance(mockAgentIdentifierAction))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-
-      val bodyParsers = application.injector.instanceOf[PlayBodyParsers]
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockAgentIdentifierAction.agentIdentify(any())).thenReturn(new FakeIdentifierAction(bodyParsers, pillar2AgentEnrolmentWithDelegatedAuth))
-
         val badHouse = "27 house" * 120
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(clientPillar2Id = Some(PlrReference)).url
+            controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url
           )
             .withFormUrlEncodedBody(
               (
@@ -247,9 +254,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
               ("postalCode", "ne5 2th"),
               ("countryCode", "GB")
             )
-
         val result = route(application, request).value
-
         status(result) mustEqual BAD_REQUEST
       }
     }

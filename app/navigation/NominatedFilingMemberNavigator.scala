@@ -38,6 +38,7 @@ class NominatedFilingMemberNavigator @Inject() {
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case NominateFilingMemberPage => nfmLogic
+    case DuplicateSafeIdPage      => duplicateSafeIdLogic
     case FmRegisteredInUKPage     => domesticOrNotRoute
     case FmNameRegistrationPage   => _ => controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode)
     case FmRegisteredAddressPage  => _ => controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode)
@@ -59,6 +60,19 @@ class NominatedFilingMemberNavigator @Inject() {
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
+  private def duplicateSafeIdLogic(userAnswers: UserAnswers): Call =
+    userAnswers
+      .get(DuplicateSafeIdPage)
+      .map { fmNominated =>
+        if (fmNominated) {
+          controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
+        } else {
+          controllers.routes.CheckYourAnswersController.onPageLoad
+        }
+      }
+      .getOrElse(routes.JourneyRecoveryController.onPageLoad())
+
   private def domesticOrNotRoute(userAnswers: UserAnswers): Call =
     userAnswers
       .get(FmRegisteredInUKPage)

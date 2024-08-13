@@ -40,13 +40,13 @@
         }
 
         @sectionHeader(messages("businessActivityUK.check.liable.text"))
-        @h(messages("businessActivityUK.heading"), classes = "govuk-heading-l")
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("businessActivityUK.p1"))
+                legend = LegendViewModel(messages("businessActivityUK.heading")).asPageHeading(Large)
             )
+            .withHint(Hint(content=Messages("businessActivityUK.hint")))
         )
 
         @govukButton(

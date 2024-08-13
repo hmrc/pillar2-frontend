@@ -80,39 +80,41 @@ alreadyRegistered.message2= If you need to request access to this account, your 
 
 upeRegisteredAddress.title=What is the registered office address?
 upeRegisteredAddress.heading=What is the registered office address of {0}?
+address.warning =   You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
 upeRegisteredAddress.checkYourAnswersLabel = Address
 upeRegisteredAddress.change.hidden = The registered office address of the ultimate parent entity
 upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or city
 upeRegisteredAddress.region = Region (optional)
-upeRegisteredAddress.postcode = Postal code
+upeRegisteredAddress.postcode = Postcode
 upeRegisteredAddress.country = Country
 upeRegisteredAddress.country.hint = Enter text and then choose from the list.
 upeRegisteredAddress.addressLine1.error.required = Enter the first line of the address
 upeRegisteredAddress.town_city.error.required = Enter the town or city
-upeRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
-upeRegisteredAddress.region.error.length = The region must be 35 characters or less
-upeRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
-upeRegisteredAddress.country.error.required =Select a country
+upeRegisteredAddress.town_city.error.length = Town or city must be 35 characters or less
+upeRegisteredAddress.region.error.length = Region must be 35 characters or less
+upeRegisteredAddress.postcode.error.length = Postcode must be 10 characters or less
+upeRegisteredAddress.country.error.required = Enter the country
 upeRegisteredAddress.country.error.length = The country cannot be more than 200 characters
 upeRegisteredAddress.heading.caption = Group details
 upeRegisteredAddress.messages.error.addressLine1.required = Enter the first line of the address
-upeRegisteredAddress.messages.error.addressLine1.length =The first line of the address must be 35 characters or less
+upeRegisteredAddress.messages.error.addressLine1.length = First line of the address must be 35 characters or less
 upeRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
-upeRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+upeRegisteredAddress.messages.error.addressLine2.length = Second line of the address must be 35 characters or less
 upeRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
-upeRegisteredAddress.messages.error.postcode.required = Enter the postal code
+upeRegisteredAddress.messages.error.postcode.required.GB = Enter a full UK postcode
+upeRegisteredAddress.messages.error.postcode.required.Other = Enter the postcode
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 upeRegisteredAddress.error.format = Enter the post code in the correct format
 upeRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
 
-upe-input-business-name.title=What is the name of the person or team we should contact from the ultimate parent entity?
+upe-input-business-name.title= What is the name of the person or team from the ultimate parent entity to keep on record?
 upe-input-business-name.caption = Group details
-upe-input-business-name.heading = What is the name of the person or team we should contact from the ultimate parent entity?
+upe-input-business-name.heading = What is the name of the person or team from the ultimate parent entity to keep on record?
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-upe-input-business-name.error.required = You need to enter the name of the person or team we should contact from the ultimate parent entity
-upe-input-business-name.error.length = Name cannot be more than 200 characters
+upe-input-business-name.error.required = Enter the name of the person or team from the ultimate parent entity to keep on record
+upe-input-business-name.error.length = The name of the person or team must be 200 characters or less
 upe-input-business-name.error.invalid = The name of the person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 upe-input-business-name.change.hidden= the name of the person or team we should contact at the ultimate parent entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
@@ -120,16 +122,17 @@ upe-input-business-name.checkYourAnswersLabel = Contact name
 task-list.title = Register your group
 task-list.heading = Register your group
 taskList.paragraph = The information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
+taskList.paragraph-review =  At the ‘Review and submit’ section of this registration, you can amend your answers and print or save them for your own records.
 taskList.subheading.complete = Registration incomplete
-taskList.completedSections = You have completed {0} of 5 sections.
+taskList.completedSections = You have completed {0} of 5 tasks.
 taskList.task.business.heading = Group details
 
-taskList.task.business.ultimate.add = Add ultimate parent’s details
-taskList.task.business.ultimate.edit = Edit ultimate parent’s details
+taskList.task.business.ultimate.add = Add ultimate parent entity details
+taskList.task.business.ultimate.edit = Edit ultimate parent entity details
 
-taskList.task.business.filingMember = Filing member’s details
-taskList.task.business.filingMember.add = Add filing member’s details
-taskList.task.business.filingMember.edit = Edit filing member’s details
+taskList.task.business.filingMember = Filing member details
+taskList.task.business.filingMember.add = Add filing member details
+taskList.task.business.filingMember.edit = Edit filing member details
 
 taskList.task.business.more = Further group details
 taskList.task.business.more.add = Add further business details
@@ -142,8 +145,8 @@ taskList.task.contact = Contact details
 taskList.task.contact.add = Add contact details
 taskList.task.contact.edit = Edit contact details
 taskList.task.review.heading = Review and submit
-taskList.task.review = Check your answers
-taskList.task.review.add = Check your answers
+taskList.task.review = Check your answers before submitting your registration
+taskList.task.review.add = Check your answers before submitting your registration
 
 task.status.NotStarted = Not started
 task.status.Completed = Completed
@@ -247,13 +250,14 @@ index.continue = Continue
 
 startPageRegistration.title = We need to match the details of the ultimate parent entity to HMRC records
 startPageRegistration.heading = We need to match the details of the ultimate parent entity to HMRC records
-startPageRegistration.p1 = We will ask you for several pieces of identifying information about the ultimate parent so we can match it with our records.
+startPageRegistration.p1 = If the ultimate parent entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records.
+startPageRegistration.p2 = If the ultimate parent entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record.
 startPageRegistration.heading.caption = Group details
 upeNameRegistration.heading.caption = Group details
 upeNameRegistration.title = What is the name of the ultimate parent entity?
 upeNameRegistration.heading = What is the name of the ultimate parent entity?
 upeNameRegistration.error.required = You need to enter the name of the ultimate parent entity
-upeNameRegistration.error.length = The name of the ultimate parent entity must be 105 characters or less
+upeNameRegistration.error.length = Name of the ultimate parent entity must be 105 characters or less
 upeNameRegistration.error.invalid = The name of the ultimate parent entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 upeNameRegistration.checkYourAnswersLabel= Name
@@ -269,8 +273,8 @@ upe-input-business-email.title=What is the email address?
 upe-input-business-email.heading=What is the email address for {0}?
 upe-input-business-email.hint=We will use this to confirm your records.
 upe-input-business-email.caption = Group details
-upe-input-business-contact.email.error.required = You need to enter the email address for {0}
-upe-input-business-contact.email.error.length = The email address should be 132 characters or less
+upe-input-business-contact.email.error.required = Enter the email address for {0}
+upe-input-business-contact.email.error.length = Email address must be 132 characters or less
 upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 upe-input-business-email.change.hidden=  the contact email address
 upe-input-business-email.checkYourAnswersLabel = Email address
@@ -281,7 +285,7 @@ rfm-input-business-email.heading=What is the email address for {0}?
 rfm-input-business-email.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter email address for {0}
-rfm-input-business-contact.email.error.length = The email address should be 132 characters or less
+rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 rfm-input-business-email.change.hidden=  the first contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
@@ -310,28 +314,28 @@ under_construction.heading = Under Construction
 under_construction.error.heading = Under Construction Error
 businessActivityUK.title = Does the group have an entity located in the UK?
 businessActivityUK.heading = Does the group have an entity located in the UK?
-businessActivityUK.check.liable.text = Check if the group needs to report
+businessActivityUK.check.liable.text = Check if you need to report Pillar 2 top-up taxes
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.p1 = Pillar 2 top-up taxes may be collected when your group has an entity located in the UK.
-businessActivityUK.error.required = Select yes if the group has business operations in the UK
+businessActivityUK.hint = Pillar 2 top-up taxes may be collected if you have an entity located in the UK.
+businessActivityUK.error.required = Select yes if the group has an entity located in the UK
 
-turnOverEligibility.title = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-turnOverEligibility.heading = Has the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-turnOverEligibility.check.liable.text = Check if the group needs to report
+turnOverEligibility.title = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+turnOverEligibility.heading = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
+turnOverEligibility.check.liable.text = Check if you need to report Pillar 2 top-up taxes
 turnOverEligibility.yes = Yes
 turnOverEligibility.no = No
-turnOverEligibility.hint = If the group accounting period is not 365 days, you can calculate the threshold by multiplying €750 million by the number of days in your accounting period and dividing it by 365.
+turnOverEligibility.hint = If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million by the number of days in your accounting period and dividing it by 365.
 turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
-turnOverEligibility.error.required = Select yes if the group had consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+turnOverEligibility.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
 turnOverEligibility.change.hidden = Change
-groupTerritories.caption = Check if the group needs to report
-groupTerritories.title = Are you registering as the ultimate parent of this group?
-groupTerritories.heading = Are you registering as the ultimate parent of this group?
+groupTerritories.caption = Check if you need to report Pillar 2 top-up taxes
+groupTerritories.title = Are you registering as the group’s ultimate parent entity?
+groupTerritories.heading = Are you registering as the group’s ultimate parent entity?
 groupTerritories.yes = Yes
 groupTerritories.no = No
-groupTerritories.hint = An ultimate parent is not a subsidiary of any other company and has a controlling interest in one or more other entities.
-GroupTerritories.error.required = Select yes if you are registering as the ultimate parent of this group
+groupTerritories.hint = An ultimate parent entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one ultimate parent entity needs to register.
+GroupTerritories.error.required = Select yes if you are registering as the group’s ultimate parent
 KBMnIneligible.title = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
 KBMnIneligible.heading = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
 KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 top-up taxes.
@@ -352,6 +356,7 @@ Kb750Ineligible.link = Find out more about who is eligible for Pillar 2 top-up t
 
 eligibilityconfirmation.title = You need to register this group to report Pillar 2 top-up taxes
 eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
+eligibilityconfirmation.inset = You cannot use an individual or agent Government Gateway user ID to register.
 eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filing member.
 
 furtherGroupCheckYourAnswers.title = Check your answers for further group details
@@ -408,25 +413,36 @@ contactUPEByTelephone.change.hidden =  your response to whether we make contact 
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
-captureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
-captureTelephoneDetails.error.required = You need to enter the telephone for {0}
-captureTelephoneDetails.messages.error.length = The telephone number should be 24 characters or less
-captureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format
+captureTelephoneDetails.hint = For international numbers include the country code.
+captureTelephoneDetails.error.required = Enter the telephone number for {0}
+captureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
+captureTelephoneDetails.messages.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 captureTelephoneDetails.change.hidden =  the contact telephone number
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
-NominateFilingMemberYesNo.title = Nominate a filing member
-NominateFilingMemberYesNo.heading = Nominate a filing member
+NominateFilingMemberYesNo.title = Nominated filing member
+NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-NominateFilingMemberYesNo.subheading = Do you want to register a nominated filing member to report for this group?
-NominateFilingMemberYesNo.p1 = A nominated filing member must be nominated by the UPE and must have access to information required to report Pillar 2 top-up taxes.
-NominateFilingMemberYesNo.p2 = If you select ‘No’, we will use the ultimate parent entity (UPE) as the filing member.
+NominateFilingMemberYesNo.subheading = Are you registering as the nominated filing member to report for this group?
+NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group.
+NominateFilingMemberYesNo.p2 = If you are nominated to report as the filing member, you must have written permission from your UPE (such as an email). We won’t collect this during registration, but we may request it during compliance checks.
 NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
+
+duplicateSafeId.title = You have provided duplicate filing member details
+duplicateSafeId.heading = You have provided duplicate filing member details
+duplicateSafeId.p1 = The details you provided for the nominated filing member are the same as those for the ultimate parent entity.
+duplicateSafeId.p2 = To complete your registration you must either:
+duplicateSafeId.l1 = provide the details for the entity that has been nominated to act as your nominated filing member
+duplicateSafeId.l2 = keep your ultimate parent entity as the default filing member
+duplicateSafeId.subheading = Has a different entity in your group been nominated to act as your filing member?
+duplicateSafeId.error.required = Select yes if a different entity in your group been nominated to act as your filing member
+duplicateSafeId.yes = Yes
+duplicateSafeId.no= No
 
 entityType.caption = Group details
 entityType.title = What entity type is the ultimate parent?
@@ -437,15 +453,15 @@ entityType.limitedLiabilityPartnership = Limited liability partnership
 entityType.companyTypeNotListed = Entity type not listed
 entityType.hint.companyTypeNotListed = Select to create a HMRC record.
 entityType.checkYourAnswersLabel = Org Type
-entityType.error.required = Select what type of company the ultimate parent entity is
+entityType.error.required = Select the entity type of the ultimate parent
 
-registeringNfmForThisGroup.title = Are you registering to report Pillar 2 top-up taxes as the nominated filing member for this group?
-registeringNfmForThisGroup.heading = Are you registering to report Pillar 2 top-up taxes as the nominated filing member for this group?
+registeringNfmForThisGroup.title = Are you registering as the group’s nominated filing member?
+registeringNfmForThisGroup.heading = Are you registering as the group’s nominated filing member?
 registeringNfmForThisGroup.yes = Yes
 registeringNfmForThisGroup.no = No
-registeringNfmForThisGroup.error.required = Select yes if you are registering as the nominated filing member for this group
-registeringNfmForThisGroup.caption = Check if the group needs to report
-registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s tax returns and keeping business records.
+registeringNfmForThisGroup.error.required = Select yes if you are registering as the group’s nominated filing member
+registeringNfmForThisGroup.caption = Check if you need to report Pillar 2 top-up taxes
+registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s Pillar 2 top-up tax returns and keeping business records.
 
 isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
@@ -458,8 +474,8 @@ nfmNameRegistration.title = What is the name of the nominated filing member?
 nfmNameRegistration.heading.caption = Group details
 nfmNameRegistration.heading = What is the name of the nominated filing member?
 nfmNameRegistration.checkYourAnswersLabel = Name
-nfmNameRegistration.error.required =  You need to enter the name of the nominated filing member
-nfmNameRegistration.error.length = The name of the nominated filing member must be 105 characters or less
+nfmNameRegistration.error.required =  Enter the name of the nominated filing member
+nfmNameRegistration.error.length = Name of the nominated filing member must be 105 characters or less
 nfmNameRegistration.change.hidden = What is the name of the nominated filing member?
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
@@ -505,26 +521,27 @@ rfmContactAddress.error.format = Enter the post code in the correct format
 nfmRegisteredAddress.title = What is the registered office address?
 nfmRegisteredAddress.heading = What is the registered office address of {0}?
 nfmRegisteredAddress.checkYourAnswersLabel = Address
+nfmRegisteredAddress.warningText = You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
 nfmRegisteredAddress.addressLine1 = Address line 1
 nfmRegisteredAddress.addressLine2 = Address line 2 (optional)
 nfmRegisteredAddress.town_city = Town or city
 nfmRegisteredAddress.region = Region (optional)
-nfmRegisteredAddress.postcode = Postal code (if applicable)
+nfmRegisteredAddress.postcode = Postcode (if applicable)
 nfmRegisteredAddress.country = Country
 nfmRegisteredAddress.country.hint = Enter text and then choose from the list.
 nfmRegisteredAddress.addressLine1.error.required = Enter the first line of the address
 nfmRegisteredAddress.town_city.error.required = Enter the town or city
-nfmRegisteredAddress.town_city.error.length = The town or city must be 35 characters or less
-nfmRegisteredAddress.region.error.length = The region must be 35 characters or less
-nfmRegisteredAddress.postcode.error.length = The postal code must be 10 characters or less
-nfmRegisteredAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
-nfmRegisteredAddress.country.error.required = Select a country
+nfmRegisteredAddress.town_city.error.length = Town or city must be 35 characters or less
+nfmRegisteredAddress.region.error.length = Region must be 35 characters or less
+nfmRegisteredAddress.postcode.error.length = Postcode must be 10 characters or less
+nfmRegisteredAddress.postcode.error.invalid = Enter a full UK postcode
+nfmRegisteredAddress.country.error.required = Enter the country
 nfmRegisteredAddress.country.error.length = The country cannot be more than 35 characters
 nfmRegisteredAddress.heading.caption = Group details
 nfmRegisteredAddress.messages.error.addressLine1.required=Enter the first line of the address
-nfmRegisteredAddress.messages.error.addressLine1.length = The first line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.addressLine1.length = First line of the address must be 35 characters or less
 nfmRegisteredAddress.messages.error.addressLine1.invalid = The first line of the address contains invalid characters
-nfmRegisteredAddress.messages.error.addressLine2.length = The second line of the address must be 35 characters or less
+nfmRegisteredAddress.messages.error.addressLine2.length = Second line of the address must be 35 characters or less
 nfmRegisteredAddress.messages.error.addressLine2.invalid = The second line of the address contains invalid characters
 nfmRegisteredAddress.change.hidden =  the registered office address of the nominated filing member
 
@@ -534,27 +551,27 @@ nfmEntityType.ukLimitedCompany = UK limited company
 nfmEntityType.limitedLiabilityPartnership = Limited liability partnership
 nfmEntityType.checkYourAnswersLabel = Org Type
 nfmEntityType.companyTypeNotListed = Entity type not listed
-nfmEntityType.error.required = Select what type of company the nominated filing member is
+nfmEntityType.error.required = Select the entity type of the nominated filing member
 nfmEntityType.change.hidden =  What type of company is the nominated filing member
 nfmEntityType.caption = Group details
 
 nfmContactName.heading.caption = Group details
-nfmContactName.title = What is the name of the person or team we should contact from the nominated filing member?
-nfmContactName.heading = What is the name of the person or team we should contact from the nominated filing member?
+nfmContactName.title = What is the name of the person or team from the nominated filing member to keep on record?
+nfmContactName.heading = What is the name of the person or team from the nominated filing member to keep on record?
 nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nfmContactName.checkYourAnswersLabel = Contact name
-nfmContactName.error.required = You need to enter the name of the person or team we should contact from the nominated filing member
-nfmContactName.error.length = The name of the contact person or team should be 105 characters or less
+nfmContactName.error.required = Enter the name of the person or team from the nominated filing member to keep on record
+nfmContactName.error.length = Name of the contact person or team should be 105 characters or less
 nfmContactName.change.hidden =  filing member contact name
-nfmContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+nfmContactName.error.invalid = Name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 nfmEmailAddress.heading.caption = Group details
 nfmEmailAddress.title = What is the email address?
 nfmEmailAddress.heading = What is the email address for {0}?
 nfmEmailAddress.hint = We will use this to confirm your records.
 nfmEmailAddress.checkYourAnswersLabel = Email address
-nfmEmailAddress.error.required = You need to enter the email address for {0}
-nfmEmailAddress.error.length = The email address should be 132 characters or less
+nfmEmailAddress.error.required = Enter the email address for {0}
+nfmEmailAddress.error.length = Email address must be 132 characters or less
 nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = Changing filing member contact email
 
@@ -622,10 +639,10 @@ contactNfmByTelephone.error.required = Select yes if we can contact {0} by telep
 nfmCaptureTelephoneDetails.heading.caption = Group details
 nfmCaptureTelephoneDetails.title = What is the telephone number?
 nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-nfmCaptureTelephoneDetails.hint = Enter a telephone number, like 01632 960 001, 07700 900 982. For international numbers include the country code, like +44 808 157 0192 or 0044 808 157 0192.
-nfmCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
+nfmCaptureTelephoneDetails.hint = For international numbers include the country code
+nfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number must be 24 characters or less
-nfmCaptureTelephoneDetails.error.format = Enter a telephone number in the correct format
+nfmCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
 contactNfmByTelephone.checkYourAnswersLabel.hidden =  your response to whether we can make contact by telephone
@@ -823,15 +840,15 @@ subscriptionAddress.addressLine1 = Address line 1
 subscriptionAddress.addressLine2 = Address line 2 (optional)
 subscriptionAddress.town_city = Town or city
 subscriptionAddress.region = Region (optional)
-subscriptionAddress.postcode = Postal code (if applicable)
+subscriptionAddress.postcode = Postcode (if applicable)
 subscriptionAddress.country = Country
 subscriptionAddress.country.hint = Enter text and then choose from the list.
 subscriptionAddress.addressLine1.error.required = Enter the first line of the address
 subscriptionAddress.town_city.error.required = Enter the town or city
 subscriptionAddress.town_city.error.length = The town or city must be 35 characters or less
 subscriptionAddress.region.error.length = The region must be 35 characters or less
-subscriptionAddress.postcode.error.length = The postal code must be 10 characters or less
-subscriptionAddress.postcode.error.invalid = Enter a valid UK postal code or change the country you selected
+subscriptionAddress.postcode.error.length = The postcode must be 10 characters or less
+subscriptionAddress.postcode.error.invalid = Enter a full UK postcode
 subscriptionAddress.country.error.required = Enter a country
 subscriptionAddress.country.error.length = The country cannot be more than 35 characters
 subscriptionAddress.heading.caption = Contact details
@@ -853,20 +870,22 @@ dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID: {0}
 dashboard.registrationDate = Registration date: {0}
 dashboard.upe = Ultimate parent entity: {0}
 dashboard.payments = Payments
-dashboard.noPayment = You have no payments due
+dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
-dashboard.paymentHistory = View your payment history
+dashboard.paymentHistory = View your transaction history
 dashboard.requestRefund = Request a refund
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
+dashboard.whentoSubmitReturn = When to submit your returns
+dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
+dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
-dashboard.p1 = This service is being developed as the UK’s implementation of Pillar 2, part of the G20 and the Organisation for Economic Cooperation and Development’s (OECD) two-pillar solution.
-dashboard.p2 = The first deadline to submit a return is {1}18 months after the last day of the group’s accounting period that started on or after 31 December 2023{0}.
-dashboard.p3 = This service will allow groups to access other features such as the submission of UK tax returns (UKTR), ahead of this deadline.
-dashboard.p4 = For more information about the UK’s implementation of Pillar 2 top-up taxes, please refer to the
+dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no later than:
+dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
+dashboard.p2 = for more details.
 
-dashboard.link = draft guidance (opens in new tab).
+dashboard.link = Refer to the Pillar 2 top-up taxes manual (opens in new tab)
 dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
 dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
 dashboard.inactive.message2 = if your circumstances change.
@@ -877,7 +896,7 @@ dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
-dashboard.agent.paymentHistory = View your client’s payment history
+dashboard.agent.paymentHistory = View your client’s transaction history
 dashboard.agent.manageAccount = Manage your client’s account
 ###############################################
 
@@ -889,21 +908,22 @@ unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
 unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
-unauthorised.org.standard.hyperlink = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.org.standard.hyperlink = Find out more about who can use this service
 
 unauthorised.agent.heading = Sorry, you’re unable to use this service
-unauthorised.agent.message = You’ve signed in using an agent’s Government Gateway user ID. Only groups can register to use this service.
-unauthorised.agent.message2 = If you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
-unauthorised.agent.hyper1 = sign in via Agent Services.
-unauthorised.agent.message3 = If you need to request authorisation to report Pillar 2 top-up taxes, you must
-unauthorised.agent.hyper2 = request authorisation via Agent services.
-unauthorised.agent.hyper3 = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.agent.message = You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service.
+unauthorised.agent.message2 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+unauthorised.agent.hyper1 = sign in via agent services
+unauthorised.agent.message3 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.hyper2 = request authorisation via agent services
+unauthorised.agent.hyper3 = Find out more about who can use this service
 
 unauthorised.individual.heading = Sorry, you’re unable to use this service
 unauthorised.individual.message = You’ve signed in with an individual account. Only users with an organisation account can register to use this service.
 unauthorised.individual.message2 = If the group still needs to register,
 unauthorised.individual.hyper1 = sign in to Government Gateway with an organisation account.
-unauthorised.individual.hyper2 = Find out more about who can report for Pillar 2 top-up taxes
+unauthorised.individual.hyper2 = Find out more about who can use this service
+
 
 manageFurtherGroupDetails.checkYourAnswers.heading = Group details
 manageFurtherGroupDetails.checkYourAnswers.title = Group details
@@ -1082,8 +1102,8 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
-rfm.journeyRecoveryView.paragraphStart = You can go back to
-rfm.journeyRecoveryView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.journeyRecoveryView.paragraphStart = You can go back
+rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 top-up taxes account to try again
 
 rfm.incompleteDataView.title = You have an incomplete task
 rfm.incompleteDataView.heading = You have an incomplete task
@@ -1270,14 +1290,16 @@ repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
 repayments.bankAccountDetails.sortCodeError = Enter the sort code
 repayments.bankAccountDetails.accountNumberError = Enter the account number
-
 repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
 repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
-
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
 repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
+
+repayments.bankAccountDetails.error.accountNumber = Enter the account number as it appears on your bank statement
+repayments.bankAccountDetails.error.accountName = Enter the name on the account as it appears on your bank statement
+repayments.bankAccountDetails.error.sortCode = Enter the sort code as it appears on your bank statement
 
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
@@ -1332,6 +1354,30 @@ repayments.contactEmail.error.contactEmail.required = Enter an email address for
 repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
 repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
 
+repayments.couldNotConfirm.title = We could not confirm your bank details
+repayments.couldNotConfirm.heading = We could not confirm your bank details
+repayments.couldNotConfirm.p1 = We are unable to proceed with the account details you entered.
+repayments.couldNotConfirm.p2 = Please
+repayments.couldNotConfirm.p2.link = return to your bank details and try again
+
+repayments.error.title = Sorry, there is a problem with the service
+repayments.error.heading = Sorry, there is a problem with the service
+repayments.error.p1 = You can try again later when the service is available.
+repayments.error.p2.link = Return to your account homepage
+
+repayments.bankDetails.title = We could not confirm your bank details
+repayments.bankDetails.heading = We could not confirm your bank details
+repayments.bankDetails.p1 = We are unable to proceed with the account details you entered.
+repayments.bankDetails.p2 = Please
+repayments.bankDetails.p2.link = try again with a different business bank account
+
+repayments.accountNameConfirm.title = Do you want to continue with these bank details?
+repayments.accountNameConfirm.heading = Do you want to continue with these bank details?
+repayments.accountNameConfirm.subheading = This account belongs to {0}
+repayments.accountNameConfirm.p1 = Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again.
+repayments.accountNameConfirm.p2 = We may not be able to recover your money if it goes to the wrong account.
+repayments.accountNameConfirm.error.required = Enter if you want to continue with these bank details?
+
 repayments.contactByTelephone.title = Can we contact by telephone?
 repayments.contactByTelephone.heading = Can we contact {0} by telephone?
 repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
@@ -1343,6 +1389,25 @@ repayments.telephoneDetails.hint = For international numbers include the country
 repayments.telephoneDetails.error.required= Enter a telephone number for {0}
 repayments.telephoneDetails.error.length= Telephone number must be 24 characters or less
 repayments.telephoneDetails.error.format= Enter a telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
+
+repayments.incompleteDataView.title = Refund request has missing information
+repayments.incompleteDataView.heading = Refund request has missing information
+repayments.incompleteDataView.paragraphStart = You need to
+repayments.incompleteDataView.link.text = go back and complete all the required answers
+repayments.incompleteDataView.paragraphStop = before submitting your refund request.
+
+repayments.journeyRecovery.title = Sorry, there is a problem with the service
+repayments.journeyRecovery.heading = Sorry, there is a problem with the service
+repayments.journeyRecovery.p1 = Your answers were not saved.
+repayments.journeyRecovery.p2 = Please try again later when the service is available.
+repayments.journeyRecovery.link = Return to account homepage
+
+repayments.submission.error.heading = Sorry, there is a problem with the service
+repayments.submission.error.title = Sorry, there is a problem with the service
+repayments.submission.error.p2 = You can try again later when the service is available.
+repayments.submission.error.p2.link = Return to your account homepage
+
+###################
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
@@ -1396,6 +1461,22 @@ repaymentsContactByTelephone.change.hidden = can we contact by telephone?
 repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
 repaymentsTelephoneDetails.change.hidden = the telephone number
 
+repayments.refundConfirmation.title = Refund request submitted
+repayments.refundConfirmation.panelText = Refund request submitted
+repayments.refundConfirmation.paragraphText.one = You have successfully submitted your refund request on {0}.
+repayments.refundConfirmation.printLink.text = Print this page
+repayments.refundConfirmation.saveLink.text = Save as PDF
+repayments.refundConfirmation.paragraphText.two = What happens next
+repayments.refundConfirmation.paragraphText.three = If we require more information relating to your refund request, we will get in touch.
+repayments.refundConfirmation.paragraphText.four = You can return to
+repayments.refundConfirmation.paragraphText.returnLink = manage your Pillar 2 top-up taxes
+
+repayments.refundErrorConfirmation.title = You cannot return, your refund request is complete
+repayments.refundErrorConfirmation.heading = You cannot return, your refund request is complete
+repayments.refundErrorConfirmation.paragraphOne = You have successfully submitted your refund request.
+repayments.refundErrorConfirmation.paragraphTwo = You can return to
+repayments.refundErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 top-up taxes
+
 repayments.bank-account-details.title = Bank account details
 repayments.bank-account-details.heading = Bank account details
 repayments.bank-account-details.bankName = Name of the bank
@@ -1418,3 +1499,34 @@ repayments.bank-account-details.bankNameFormatError = The name of the bank must 
 repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
+
+registrationWaitingRoom.title = Submitting your registration
+registrationWaitingRoom.heading = Submitting your registration
+registrationWaitingRoom.h1 = Submitting your registration
+registrationWaitingRoom.h2 = Do not leave this page.
+
+
+###################
+
+# - Transaction History
+
+###################
+transactionHistory.title = Transaction history
+transactionHistory.heading = Transaction history
+transactionHistory.date = Date
+transactionHistory.description = Transaction description
+transactionHistory.amountPaid = You paid HMRC
+transactionHistory.amountRefunded = HMRC paid you
+transactionHistory.pagination.next = Next
+transactionHistory.pagination.previous = Previous
+
+transactionHistory.error.title = Sorry, there is a problem with the service
+transactionHistory.error.heading = Sorry, there is a problem with the service
+transactionHistory.error.p1 = We cannot retrieve your details at this time.
+transactionHistory.error.p2 = Please try again later.
+transactionHistory.error.p3 = Return to your account homepage
+
+transactionHistory.none.title = Transaction history
+transactionHistory.none.heading = Transaction history
+transactionHistory.none.p1 = You have no payments to show
+transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.

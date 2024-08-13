@@ -43,7 +43,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
@@ -54,11 +54,11 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, None, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 
@@ -76,12 +76,12 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
             )
           )
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill("ABC Limited"), None, NormalMode)(
+          view(formProvider().fill("ABC Limited"), NormalMode)(
             request,
             appConfig(application),
             messages(application)
@@ -98,13 +98,13 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.repayments.routes.RepaymentsContactNameController.onSubmit(clientPillar2Id = None, NormalMode).url
+            controllers.repayments.routes.RepaymentsContactNameController.onSubmit(NormalMode).url
           )
             .withFormUrlEncodedBody("contactName" -> "ABC Limited")
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(None, NormalMode).url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode).url
       }
     }
 
@@ -112,13 +112,13 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(clientPillar2Id = None, NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("contactName", ""))
         val boundForm = formProvider().bind(Map("value" -> ""))
         val view      = application.injector.instanceOf[RepaymentsContactNameView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, None, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
       }
     }
 

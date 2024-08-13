@@ -18,17 +18,14 @@ package views.repayments
 
 import base.ViewSpecBase
 import models.repayments.NonUKBank
-import models.{NormalMode, UkOrAbroadBankAccount, UserAnswers}
+import models.{UkOrAbroadBankAccount, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.mockito.Mockito.when
-import pages.{NonUKBankPage, ReasonForRequestingRefundPage, RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsTelephoneDetailsPage, RfmNameRegistrationPage, RfmRegisteredAddressPage, UkOrAbroadBankAccountPage}
+import pages._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers.repayments.{NonUKBankBicOrSwiftCodeSummary, NonUKBankIbanSummary, NonUKBankNameOnAccountSummary, NonUKBankNameSummary, ReasonForRequestingRefundSummary, RepaymentsContactByTelephoneSummary, RepaymentsContactEmailSummary, RepaymentsContactNameSummary, RepaymentsTelephoneDetailsSummary, RequestRefundAmountSummary, UkOrAbroadBankAccountSummary}
-import viewmodels.checkAnswers.{RfmNameRegistrationSummary, RfmRegisteredAddressSummary}
+import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
-import views.html.rfm.RfmCheckYourAnswersView
 
 class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
   val amount: BigDecimal = BigDecimal(9.99)
@@ -70,7 +67,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
 
   val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
   val view: Document =
-    Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList, Some("1234"))(request, appConfig, messages).toString())
+    Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
   "Repayments Check Your Answers View" should {
     "have a title" in {
       view.getElementsByTag("title").text must include("Check your answers before submitting your refund request")

@@ -38,6 +38,7 @@ import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsValue
 import play.api.mvc._
+import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
@@ -76,6 +77,7 @@ trait SpecBase
   implicit lazy val appConfig:    FrontendAppConfig = new FrontendAppConfig(configuration, servicesConfig)
   implicit lazy val system:       ActorSystem       = ActorSystem()
   implicit lazy val materializer: Materializer      = Materializer(system)
+  def injectedParsers:            PlayBodyParsers   = injector.instanceOf[PlayBodyParsers]
 
   val PlrReference = "XMPLR0123456789"
 
@@ -139,7 +141,9 @@ trait SpecBase
         bind[Enrolments].toInstance(Enrolments(enrolments)),
         bind[DataRequiredAction].to[DataRequiredActionImpl],
         bind[IdentifierAction].to[FakeIdentifierAction],
-        bind[RfmIdentifierAction].to[FakeRfmIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("RfmIdentifier").to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
+        bind[IdentifierAction].qualifiedWith("ASAEnrolmentIdentifier").to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
         bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
         bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(userAnswers))

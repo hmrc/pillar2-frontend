@@ -42,6 +42,12 @@ class StartPageRegistrationControllerSpec extends SpecBase {
       contentAsString(result) should include(
         "We need to match the details of the ultimate parent entity to HMRC records"
       )
+      contentAsString(result) should include(
+        "If the ultimate parent entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records."
+      )
+      contentAsString(result) should include(
+        "If the ultimate parent entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record."
+      )
     }
 
   }

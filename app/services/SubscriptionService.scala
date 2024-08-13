@@ -19,9 +19,9 @@ package services
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.{CRN, Pillar2Identifier, UTR}
-import models.rfm.{CorporatePosition, RegistrationDate}
+import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers, Verifier}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
 import play.api.Logging
@@ -29,6 +29,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
 
+import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -48,6 +49,7 @@ class SubscriptionService @Inject() (
       latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
       updatedAnswers = latestAnswers.getOrElse(userAnswers)
       nfmSafeId       <- registerNfm(updatedAnswers)
+      _               <- if (upeSafeId != nfmSafeId.getOrElse("")) Future.unit else Future.failed(DuplicateSafeIdError)
       plrRef          <- subscriptionConnector.subscribe(SubscriptionRequestParameters(userAnswers.id, upeSafeId, nfmSafeId))
       enrolmentExists <- enrolmentExists(plrRef)
       _               <- if (!enrolmentExists) Future.unit else Future.failed(DuplicateSubmissionError)
@@ -71,23 +73,19 @@ class SubscriptionService @Inject() (
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
-      case Some(readSubscriptionResponse) =>
-        logger.info(s"readSubscription success: - $readSubscriptionResponse")
-        Future.successful(readSubscriptionResponse)
-      case error =>
-        logger.warn(s"readSubscription error: - $error")
-        Future.failed(InternalIssueError)
+      case Some(subData) => Future.successful(subData)
+      case None          => Future.failed(NoResultFound)
     }
 
-  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: RegistrationDate)(implicit
+  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit
     hc:                          HeaderCarrier
   ): Future[Boolean] =
     userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
       (for {
         backendPillar2Id        <- maybeUserAnswers.flatMap(_.get(RfmPillar2ReferencePage))
         backendRegistrationDate <- maybeUserAnswers.flatMap(_.get(RfmRegistrationDatePage))
-      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate.rfmRegistrationDate
-        .isEqual(sessionRegistrationDate.rfmRegistrationDate)).getOrElse(false)
+      } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate
+        .isEqual(sessionRegistrationDate)).getOrElse(false)
     }
   def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
     hc:                                  HeaderCarrier
@@ -97,7 +95,6 @@ class SubscriptionService @Inject() (
       amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
-
   private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
@@ -242,7 +239,6 @@ class SubscriptionService @Inject() (
   def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
     for {
       result <- subscriptionConnector.amendSubscription(userId, amendData)
-      _      <- userAnswersConnectors.remove(userId)
     } yield result
 
   private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
@@ -256,7 +252,6 @@ class SubscriptionService @Inject() (
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
       case Some(groupIds) =>
         logger.info(s"deallocateEnrolment groupIds: - $groupIds")
-        // There should be only one principle group Ids. As per requirement.
         enrolmentConnector.revokeEnrolment(groupId = groupIds.principalGroupIds.head, plrReference = plrReference)
       case error =>
         logger.warn(s"deallocateEnrolment error: - $error")

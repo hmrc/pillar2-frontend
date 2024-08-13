@@ -20,21 +20,22 @@ import models.requests.SubscriptionDataRequest
 import pages.SubSecondaryContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SecondaryContactNameSummary {
 
-  def row(maybeClientPillar2Id: Option[String])(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryContactNamePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryContactName.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer))),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad(maybeClientPillar2Id).url
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
           )
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )

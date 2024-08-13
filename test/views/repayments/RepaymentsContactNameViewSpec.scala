@@ -26,14 +26,14 @@ import views.html.repayments.RepaymentsContactNameView
 class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider
-  val mode: Mode = NormalMode
-  val page = inject[RepaymentsContactNameView]
+  val mode: Mode                      = NormalMode
+  val page: RepaymentsContactNameView = inject[RepaymentsContactNameView]
 
   "Repayments Contact Name View" should {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(page(formProvider(), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include(
@@ -62,7 +62,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
     "nothing entered and page submitted" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("contactName" -> "")), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider().bind(Map("contactName" -> "")), mode)(request, appConfig, messages).toString())
 
       "have an error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
@@ -83,7 +83,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
       val view: Document =
         Jsoup.parse(
-          page(formProvider().bind(Map("contactName" -> contactName)), Some("XMPLR0123456789"), mode)(request, appConfig, messages).toString()
+          page(formProvider().bind(Map("contactName" -> contactName)), mode)(request, appConfig, messages).toString()
         )
 
       "have an error summary" in {

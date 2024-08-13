@@ -33,7 +33,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(page(formProvider(), None, NormalMode)(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
         view.getElementsByTag("title").text must include("Why are you requesting a refund?")
@@ -60,7 +60,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
     "nothing selected and page submitted" should {
 
-      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), None, NormalMode)(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
@@ -75,7 +75,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
     "too many characters entered and page submitted" should {
 
       val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), None, NormalMode)(request, appConfig, messages).toString())
+        Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")

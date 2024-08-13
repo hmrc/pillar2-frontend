@@ -16,9 +16,8 @@
 
 package controllers.registration
 
-import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction, RfmIdentifierAction}
+import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.fm.JourneyType
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
@@ -34,21 +33,22 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,
   identify:                                          IdentifierAction,
-  rfmIdentify:                                       RfmIdentifierAction,
+  @Named("RfmIdentifier") rfmIdentify:               IdentifierAction,
   getData:                                           DataRetrievalAction,
+  featureAction:                                     FeatureFlagActionFactory,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   auditService:                                      AuditService
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec:                                       ExecutionContext)
     extends FrontendBaseController
     with Logging {
 
@@ -229,9 +229,8 @@ class GrsReturnController @Inject() (
 
   }
 
-  def continueRfm(journeyId: String): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    val rfmAccessEnabled = appConfig.rfmAccessEnabled
-    if (rfmAccessEnabled) {
+  def continueRfm(journeyId: String): Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers
         .get(RfmEntityTypePage)
         .map {
@@ -327,11 +326,8 @@ class GrsReturnController @Inject() (
               }
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-    } else {
-      Future.successful(Redirect(controllers.routes.UnderConstructionController.onPageLoad))
-    }
 
-  }
+    }
 
   private def handleGrsAndBvResult(
     identifiersMatch: Boolean,
@@ -340,7 +336,7 @@ class GrsReturnController @Inject() (
     journeyType:      JourneyType,
     journeyId:        String,
     entityType:       EntityType
-  )(implicit hc:      HeaderCarrier): Result =
+  ): Result =
     (identifiersMatch, bvResult, grsResult.registrationStatus, grsResult.registeredBusinessPartnerId) match {
       case (false, _, _, _) | (_, Some(BusinessVerificationResult(Fail)), _, _) if journeyType == JourneyType.FilingMember =>
         logger.info(

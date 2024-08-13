@@ -18,6 +18,8 @@ package models
 
 sealed trait ApiError extends Throwable
 case object InternalIssueError extends ApiError
+case object NoResultFound extends ApiError
 case object UnexpectedResponse extends ApiError
 case object UnexpectedJsResult extends ApiError
 case object DuplicateSubmissionError extends ApiError
+case object DuplicateSafeIdError extends ApiError

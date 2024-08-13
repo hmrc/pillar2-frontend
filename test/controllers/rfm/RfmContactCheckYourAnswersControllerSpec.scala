@@ -24,7 +24,8 @@ import models.subscription.{AmendSubscription, NewFilingMemberDetail, Subscripti
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.Mockito.{verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -53,7 +54,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
@@ -249,14 +250,15 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
       lazy val amendApiFailure        = controllers.rfm.routes.AmendApiFailureController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
-      "redirect to under construction page in case of a successful replace filing member" in {
+      "redirect to the confirmation page in case of a successful replace filing member and data is removed" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
           when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
           when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
             .thenReturn(allocateEnrolmentParameters)
@@ -268,8 +270,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           ).thenReturn(Future.successful(amendData))
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
+
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
+          verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())
         }
       }
       "redirect to incomplete task error page if no contact detail is found for the new filing member" in {
@@ -479,4 +483,5 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     }
   }
+
 }
