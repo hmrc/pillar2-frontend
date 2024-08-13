@@ -32,12 +32,7 @@ object NonUKBankBicOrSwiftCodeSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.bic)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel.hidden"))
-              .withCssClass("govuk-!-display-none-print")
-          )
+          value = ValueViewModel(HtmlContent(answer.bic))
         )
       }
 

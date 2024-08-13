@@ -77,6 +77,14 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByTag("h1").text must include("Check your answers before submitting your refund request")
     }
 
+    "have a sub heading" in {
+      view.getElementsByTag("h2").get(0).text must include("Request details")
+      view.getElementsByTag("h2").get(1).text must include("Bank account details")
+      view.getElementsByTag("h2").get(2).text must include("Contact details")
+      view.getElementsByTag("h2").get(3).text must include("Do you need to keep a record of your answers?")
+      view.getElementsByTag("h2").get(4).text must include("Now submit your details to request for a refund")
+    }
+
     "have a summary list keys" in {
       view.getElementsByClass("govuk-summary-list__key").get(0).text  must include("Refund amount")
       view.getElementsByClass("govuk-summary-list__key").get(1).text  must include("Reason for refund request")

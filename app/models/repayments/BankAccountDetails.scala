@@ -17,8 +17,16 @@
 package models.repayments
 
 import play.api.libs.json.{Json, OFormat}
+import play.twirl.api.HtmlFormat
 
-final case class BankAccountDetails(bankName: String, nameOnBankAccount: String, sortCode: String, accountNumber: String)
+final case class BankAccountDetails(bankName: String, nameOnBankAccount: String, sortCode: String, accountNumber: String) {
+
+  val field1 = HtmlFormat.escape(bankName).toString + "<br>"
+  val field2 = HtmlFormat.escape(nameOnBankAccount.mkString("")) + "<br>"
+  val field3 = HtmlFormat.escape(sortCode).toString + "<br>"
+  val field4 = HtmlFormat.escape(accountNumber.mkString("")) + "<br>"
+  val fullDetails: String = field1 + field2 + field3 + field4
+}
 
 object BankAccountDetails {
   implicit val format: OFormat[BankAccountDetails] = Json.format[BankAccountDetails]

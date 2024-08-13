@@ -32,12 +32,7 @@ object NonUKBankIbanSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.nonUKBank.summary.iban.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.iban)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.NonUKBankController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("repayments.nonUKBank.summary.iban.checkYourAnswersLabel.hidden"))
-              .withCssClass("govuk-!-display-none-print")
-          )
+          value = ValueViewModel(HtmlContent(answer.iban))
         )
       }
 
