@@ -897,8 +897,8 @@ dashboard.inactive.message2 = if your circumstances change.
 
 ### Agent Dashboard
 dashboard.agent.accountLink = Agent Services Account
-dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
-dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
+dashboard.agent.title = Your Pillar 2 top-up taxes account
+dashboard.agent.heading = Your Pillar 2 top-up taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
 dashboard.agent.paymentHistory = View your client’s transaction history
