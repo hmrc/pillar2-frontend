@@ -25,11 +25,13 @@ object RfmStatus extends Enumerable.Implicits {
   case object SuccessfullyCompleted extends WithName("successfullyCompleted") with RfmStatus
   case object FailedInternalIssueError extends WithName("failedInternalIssueError") with RfmStatus
   case object FailException extends WithName("failException") with RfmStatus
+  case object InProgress extends WithName("inProgress") with RfmStatus
 
   val values: Seq[RfmStatus] = Seq(
     SuccessfullyCompleted,
     FailedInternalIssueError,
-    FailException
+    FailException,
+    InProgress
   )
 
   implicit val enumerable: Enumerable[RfmStatus] =

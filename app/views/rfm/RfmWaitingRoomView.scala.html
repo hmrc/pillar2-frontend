@@ -28,12 +28,7 @@
 @(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
-
-
-    @if(rfmStatus.isEmpty) {
-        <meta http-equiv="refresh" content="2" />
-    }
-
+    <meta http-equiv="refresh" content="2" />
     <div class="hods-loading-spinner">
         <div
         class="hods-loading-spinner__spinner"

@@ -17,12 +17,22 @@
 package controllers.rfm
 
 import base.SpecBase
-import models.UserAnswers
+import connectors.UserAnswersConnectors
+import models.{NonUKAddress, UserAnswers}
+import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
-import pages.RfmStatusPage
+import org.apache.pekko.Done
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{RfmContactAddressPage, RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmStatusPage}
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
+import services.SubscriptionService
 import views.html.rfm.RfmWaitingRoomView
+
+import scala.concurrent.Future
 
 class RfmWaitingRoomControllerSpec extends SpecBase {
 
@@ -41,8 +51,23 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
     }
 
     " redirect to registration confirmation page if database state is updated successfully" in {
-      val ua: UserAnswers = emptyUserAnswers.setOrException(RfmStatusPage, SuccessfullyCompleted)
-      val application = applicationBuilder(Some(ua)).build()
+      val contactAddress = NonUKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), Some("ne5 2dh"), "AT")
+      val ua: UserAnswers = emptyUserAnswers
+        .setOrException(RfmStatusPage, SuccessfullyCompleted)
+        .setOrException(RfmPillar2ReferencePage, "plrReference")
+        .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        .setOrException(RfmPrimaryContactNamePage, "name")
+        .setOrException(RfmPrimaryContactEmailPage, "name@email.com")
+        .setOrException(RfmContactAddressPage, contactAddress)
+
+      val application = applicationBuilder(Some(ua))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url)

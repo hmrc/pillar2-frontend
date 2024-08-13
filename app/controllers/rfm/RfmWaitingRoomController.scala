@@ -16,25 +16,32 @@
 
 package controllers.rfm
 
+import cats.data.OptionT.{fromOption, liftF}
+import cats.implicits._
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
-import pages.RfmStatusPage
+import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmWaitingRoomView
 
 import javax.inject.Inject
+import scala.concurrent.{ExecutionContext, Future}
 
 class RfmWaitingRoomController @Inject() (
   getData:                  DataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
+  userAnswersConnectors:    UserAnswersConnectors,
+  sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmWaitingRoomView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -43,6 +50,12 @@ class RfmWaitingRoomController @Inject() (
     request.userAnswers
       .get(RfmStatusPage) match {
       case Some(SuccessfullyCompleted) =>
+        for {
+          newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+          dataToSave                 <- liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
+          _                          <- liftF(sessionRepository.set(dataToSave))
+          _                          <- liftF(userAnswersConnectors.remove(request.userId))
+        } yield ()
         logger.info("successfully replaced filing member")
         Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
       case Some(FailedInternalIssueError) => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)

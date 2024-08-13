@@ -64,30 +64,36 @@ class RfmContactCheckYourAnswersController @Inject() (
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-
-      removeRfmStatus(userAnswers).flatMap { _ =>
-        sessionRepository.get(request.userId).map { optionalUserAnswer =>
-          (for {
-            userAnswer <- optionalUserAnswer
-            _          <- userAnswer.get(PlrReferencePage)
-          } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
-            .getOrElse(
-              Ok(
-                view(
-                  request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-                  request.userAnswers.rfmPrimaryContactList,
-                  request.userAnswers.rfmSecondaryContactList,
-                  address
+      userAnswers.get(RfmStatusPage) match {
+        case Some(InProgress) => Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
+        case _ =>
+          removeRfmStatus(userAnswers).flatMap { _ =>
+            sessionRepository.get(request.userId).map { optionalUserAnswer =>
+              (for {
+                userAnswer <- optionalUserAnswer
+                _          <- userAnswer.get(PlrReferencePage)
+              } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+                .getOrElse(
+                  Ok(
+                    view(
+                      request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                      request.userAnswers.rfmPrimaryContactList,
+                      request.userAnswers.rfmSecondaryContactList,
+                      address
+                    )
+                  )
                 )
-              )
-            )
-        }
+            }
+          }
       }
 
   }
 
-  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
+      request.userAnswers.set(RfmStatusPage, InProgress).map { someUserAnswers =>
+        userAnswersConnectors.save(someUserAnswers.id, Json.toJson(someUserAnswers.data))
+      }
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
@@ -108,9 +114,6 @@ class RfmContactCheckYourAnswersController @Inject() (
         _ <- liftF(
                subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
              )
-        _          <- liftF(userAnswersConnectors.remove(request.userId))
-        dataToSave <- liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-        _          <- liftF(sessionRepository.set(dataToSave))
       } yield SuccessfullyCompleted).value
         .flatMap {
           case Some(result) =>
@@ -129,9 +132,9 @@ class RfmContactCheckYourAnswersController @Inject() (
         updatedAnswers   <- Future.fromTry(request.userAnswers.set(RfmStatusPage, updatedRfmStatus))
         _                <- userAnswersConnectors.save(updatedAnswers.id, updatedAnswers.data)
       } yield (): Unit
-      Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+      Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
     } else {
-      Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad)
+      Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }
 
   }
