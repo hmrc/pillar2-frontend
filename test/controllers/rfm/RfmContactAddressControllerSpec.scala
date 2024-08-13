@@ -193,10 +193,10 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include(
-          "First line of the address must be 35 characters or less"
+          "The first line of the address must be 35 characters or less"
         )
         contentAsString(result) must include(
-          "Second line of the address must be 35 characters or less"
+          "The second line of the address must be 35 characters or less"
         )
       }
     }
