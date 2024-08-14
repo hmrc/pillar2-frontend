@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.UserAnswers
 import models.repayments.RepaymentsStatus._
+import models.requests.SessionDataRequest
 import pages.{BankAccountDetailsPage, NonUKBankPage, ReasonForRequestingRefundPage, RepaymentAccountNameConfirmationPage, RepaymentCompletionStatus, RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsStatusPage, RepaymentsTelephoneDetailsPage, UkOrAbroadBankAccountPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -44,22 +45,36 @@ class RepaymentsWaitingRoomController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  private var waitingRoomViews: Int = 0
+
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(RepaymentsStatusPage) match {
+      case s if waitingRoomViews == 0 =>
+        waitingRoomViews += 1
+        if (s.contains(SuccessfullyCompleted)) completionStatusAndDataClean(request)
+        Ok(view(s))
       case Some(SuccessfullyCompleted) =>
-        for {
-          updatedAnswers       <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true))
-          clearedRepaymentData <- Future.fromTry(clearRepaymentDetails(updatedAnswers))
-          _                    <- sessionRepository.set(clearedRepaymentData)
-        } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad())
+        completionStatusAndDataClean(request)
+        waitingRoomViews = 0
+        Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad())
       case Some(UnexpectedResponseError) =>
-        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
-      case Some(IncompleteDataError) => Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
-      case s                         => Future.successful(Ok(view(s)))
+        waitingRoomViews = 0
+        Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
+      case Some(IncompleteDataError) =>
+        waitingRoomViews = 0
+        Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
+      case s => Ok(view(s))
     }
 
   }
+
+  private def completionStatusAndDataClean(request: SessionDataRequest[AnyContent]): Future[Unit] =
+    for {
+      updatedAnswers       <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true))
+      clearedRepaymentData <- Future.fromTry(clearRepaymentDetails(updatedAnswers))
+      _                    <- sessionRepository.set(clearedRepaymentData)
+    } yield (): Unit
 
   private def clearRepaymentDetails(userAnswers: UserAnswers): Try[UserAnswers] =
     for {

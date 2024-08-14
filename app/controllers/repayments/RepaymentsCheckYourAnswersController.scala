@@ -19,7 +19,7 @@ package controllers.repayments
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
-import models.repayments.RepaymentsStatus.{IncompleteDataError, SuccessfullyCompleted, UnexpectedResponseError}
+import models.repayments.RepaymentsStatus._
 import models.{UnexpectedResponse, UserAnswers}
 import pages._
 import play.api.Logging
@@ -53,18 +53,28 @@ class RepaymentsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
-      userAnswers.get(RepaymentCompletionStatus) match {
-        case Some(true) => Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad()))
+
+      userAnswers.get(RepaymentsStatusPage) match {
+        case Some(InProgress) =>
+          Future.successful(Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad()))
         case _ =>
-          for {
-            updatedAnswers <- Future.fromTry(userAnswers.remove(RepaymentsStatusPage))
-            _              <- sessionRepository.set(updatedAnswers)
-          } yield Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
+          userAnswers.get(RepaymentCompletionStatus) match {
+            case Some(true) => Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad()))
+            case _ =>
+              for {
+                updatedAnswers <- Future.fromTry(userAnswers.remove(RepaymentsStatusPage))
+                _              <- sessionRepository.set(updatedAnswers)
+              } yield Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
+          }
       }
     }
 
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      for {
+        updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsStatusPage, InProgress))
+        _              <- sessionRepository.set(updatedAnswers)
+      } yield (): Unit
       val repaymentsStatus = (for {
         repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
         _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))

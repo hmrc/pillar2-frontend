@@ -25,11 +25,13 @@ object RepaymentsStatus extends Enumerable.Implicits {
   case object SuccessfullyCompleted extends WithName("successfullyCompleted") with RepaymentsStatus
   case object UnexpectedResponseError extends WithName("unexpectedResponseError") with RepaymentsStatus
   case object IncompleteDataError extends WithName("incompleteDataError") with RepaymentsStatus
+  case object InProgress extends WithName("inProgress") with RepaymentsStatus
 
   val values: Seq[RepaymentsStatus] = Seq(
     SuccessfullyCompleted,
     UnexpectedResponseError,
-    IncompleteDataError
+    IncompleteDataError,
+    InProgress
   )
 
   implicit val enumerable: Enumerable[RepaymentsStatus] =
