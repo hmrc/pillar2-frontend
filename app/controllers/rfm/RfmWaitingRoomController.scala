@@ -16,11 +16,13 @@
 
 package controllers.rfm
 
+import cats.data.OptionT
 import cats.data.OptionT.{fromOption, liftF}
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.UserAnswers
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
@@ -52,9 +54,11 @@ class RfmWaitingRoomController @Inject() (
       case Some(SuccessfullyCompleted) =>
         for {
           newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-          dataToSave                 <- liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-          _                          <- liftF(sessionRepository.set(dataToSave))
-          _                          <- liftF(userAnswersConnectors.remove(request.userId))
+          optionalSessionData        <- OptionT.liftF(sessionRepository.get(request.userAnswers.id))
+          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+          updatedSessionData <- liftF(Future.fromTry(sessionData.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
+          _                  <- liftF(sessionRepository.set(updatedSessionData))
+          _                  <- liftF(userAnswersConnectors.remove(request.userId))
         } yield ()
         logger.info("successfully replaced filing member")
         Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
