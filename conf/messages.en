@@ -1014,7 +1014,7 @@ rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
 rfm.nameRegistration.heading = What is the name of the new nominated filing member?
 rfm.nameRegistration.error.required = Enter the name of the new nominated filing member
-rfm.nameRegistration.error.length = The name of the new nominated filing must be 105 characters or less
+rfm.nameRegistration.error.length = Name of the new nominated filing must be 105 characters or less
 
 rfm.registeredAddress.title = What is the registered office address?
 rfm.registeredAddress.heading = What is the registered office address of {0}?
