@@ -15,70 +15,25 @@
  *@
 
 @import config.FrontendAppConfig
-@import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
+
 @this(
-    layout: templates.Layout,
-    govukButton: GovukButton,
-    govukWarningText: GovukWarningText,
-    govukInsetText : GovukInsetText,
-    govukTable : GovukTable,
-    govukDetails : GovukDetails,
-    h2: HeadingH2,
-    p: paragraphBody,
-    heading: heading,
-   govukSummaryList: GovukSummaryList,
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        p: paragraphBody,
+        heading: heading,
+        govukSummaryList: GovukSummaryList,
 )
 
 @(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle    = titleNoForm(messages("payment.dashboard.title")),
+    pageTitle = titleNoForm(messages("payment.dashboard.title")),
     showBackLink = true
 ) {
-            @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-            @h2(messages("payment.dashboard.header2"), size = "m")
-            @p(messages("payment.dashboard.message1"))
-            @p(messages("payment.dashboard.message2"))
-            @h2(messages("payment.dashboard.header3"), size = "m")
-            @p(messages("payment.dashboard.message3"))
-            @p(messages("payment.dashboard.message4"))
-            @p(messages("payment.dashboard.message5"))
+    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
+    @p(messages("payment.dashboard.message1", plrID))
+    @p(messages("payment.dashboard.message2"))
+    @paragraphMessageWithLink(Some(messages("payment.dashboard.message3")), linkMessage = messages("payment.dashboard.message4"), linkUrl = "")
 
-        @govukWarningText(WarningText(
-        iconFallbackText = Some(messages("site.warning")),
-        content = HtmlContent(messages("payment.dashboard.warning.message", plrID))
-        ))
-
-        @h2(messages("payment.dashboard.table.caption"), size = "s")
-        @govukSummaryList(
-            SummaryListViewModel(
-                rows = Seq(
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table.row_12",
-                        value = ValueViewModel(messages("payment.dashboard.table.row_11"))),
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table.row_22",
-                        value = ValueViewModel(messages("payment.dashboard.table.row_21"))),
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table.row_32",
-                        value = ValueViewModel(messages("payment.dashboard.table.row_31")))
-                )
-            )
-        )
-        @h2(messages("payment.dashboard.table.outsideUK.caption"), size = "s")
-        @govukSummaryList(
-            SummaryListViewModel(
-                rows = Seq(
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table2.row_11",
-                        value = ValueViewModel(messages("payment.dashboard.table2.row_12"))),
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table2.row_21",
-                        value = ValueViewModel(messages("payment.dashboard.table2.row_22"))),
-                    SummaryListRowViewModel(
-                        key = "payment.dashboard.table2.row_31",
-                        value = ValueViewModel(messages("payment.dashboard.table2.row_32")))
-                )
-            )
-        )
 }
