@@ -1107,6 +1107,12 @@ rfm.amendAPIFailure.p1 = Please try again later
 rfm.amendAPIFailure.p2 = You can go back {0}
 rfm.amendAPIFailure.p2.link = to replace the filing member for a Pillar 2 top-up taxes account to try again
 
+rfm.securityError.title = You cannot replace the current filing member for this group
+rfm.securityError.heading = You cannot replace the current filing member for this group
+rfm.securityError.p1 = This service is for new nominated filing members to takeover the responsibilities from the current filing member.
+rfm.securityError.p2 = If you need to manage who can access your Pillar 2 top-up tax returns,
+rfm.securityError.p2.link = go to your business tax account
+
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
