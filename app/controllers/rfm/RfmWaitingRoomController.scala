@@ -16,34 +16,25 @@
 
 package controllers.rfm
 
-import cats.data.OptionT
-import cats.data.OptionT.{fromOption, liftF}
-import cats.implicits._
 import config.FrontendAppConfig
-import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
+import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
-import pages.{PlrReferencePage, RfmStatusPage}
+import pages.RfmStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmWaitingRoomView
 
 import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class RfmWaitingRoomController @Inject() (
-  getData:                  DataRetrievalAction,
+  getData:                  SessionDataRetrievalAction,
   identify:                 IdentifierAction,
-  requireData:              DataRequiredAction,
-  userAnswersConnectors:    UserAnswersConnectors,
-  sessionRepository:        SessionRepository,
+  requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmWaitingRoomView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -52,14 +43,6 @@ class RfmWaitingRoomController @Inject() (
     request.userAnswers
       .get(RfmStatusPage) match {
       case Some(SuccessfullyCompleted) =>
-        for {
-          newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-          optionalSessionData        <- OptionT.liftF(sessionRepository.get(request.userAnswers.id))
-          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-          updatedSessionData <- liftF(Future.fromTry(sessionData.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-          _                  <- liftF(sessionRepository.set(updatedSessionData))
-          _                  <- liftF(userAnswersConnectors.remove(request.userId))
-        } yield ()
         logger.info("successfully replaced filing member")
         Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
       case Some(FailedInternalIssueError) => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
