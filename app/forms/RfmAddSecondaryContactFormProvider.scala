@@ -23,8 +23,8 @@ import javax.inject.Inject
 
 class RfmAddSecondaryContactFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(userName: String): Form[Boolean] =
     Form(
-      "value" -> boolean("rfm.addSecondaryContact.error.required")
+      "value" -> boolean("rfm.addSecondaryContact.error.required", args = Seq(userName))
     )
 }

@@ -77,7 +77,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("First contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Telephone contact")
+        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Second contact")
         contentAsString(result) must include("Second contact name")
@@ -90,12 +90,15 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the first contact email address")
         contentAsString(result) must include("can we contact the first contact by telephone")
         contentAsString(result) must include("the telephone number for the first contact")
-        contentAsString(result) must include("the telephone number for the first contact")
         contentAsString(result) must include("do you have a second contact")
         contentAsString(result) must include("the second contact name")
         contentAsString(result) must include("the second contact email address")
         contentAsString(result) must include("can we contact the second contact by telephone")
         contentAsString(result) must include("the telephone number for the second contact")
+        contentAsString(result) must include("Do you need to keep a record of your answers?")
+        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Save as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
@@ -126,7 +129,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("First contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Telephone contact")
+        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Second contact")
         contentAsString(result) must include("Second contact name")
@@ -145,6 +148,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the second contact email address")
         contentAsString(result) must include("can we contact the second contact by telephone")
         contentAsString(result) must include("the telephone number for the second contact")
+        contentAsString(result) must include("Do you need to keep a record of your answers?")
+        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Save as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
@@ -184,7 +191,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("First contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Telephone contact")
+        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Second contact")
         contentAsString(result) must include("Second contact name")
@@ -203,6 +210,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("the second contact email address")
         contentAsString(result) must include("can we contact the second contact by telephone")
         contentAsString(result) must include("the telephone number for the second contact")
+        contentAsString(result) must include("Do you need to keep a record of your answers?")
+        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Save as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
@@ -232,7 +243,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("First contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Telephone contact")
+        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Second contact")
         contentAsString(result) must include("Second contact name")
@@ -241,6 +252,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
+        contentAsString(result) must include("Do you need to keep a record of your answers?")
+        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Save as PDF")
+        contentAsString(result) must include("Now submit your details to replace the current filing member")
+        contentAsString(result) must include(
+          "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
+        )
       }
     }
 
