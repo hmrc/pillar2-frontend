@@ -15,7 +15,7 @@ site.confirm.submit = Confirm and submit
 site.manage.save-and-continue =  Save and return to homepage
 site.address.country.select = Select a country
 site.print = Print this page
-site.pdf = Save as PDF
+site.pdf = Download as PDF
 site.warning = Warning
 
 date.day = Day
@@ -285,7 +285,7 @@ rfm-input-business-email.title=What is the email address?
 rfm-input-business-email.heading=What is the email address for {0}?
 rfm-input-business-email.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfm-input-business-email.caption = Contact details
-rfm-input-business-contact.email.error.required = Enter email address for {0}
+rfm-input-business-contact.email.error.required = Enter the email address for {0}
 rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
 rfm-input-business-email.change.hidden=  the first contact email address
@@ -986,7 +986,7 @@ rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account.
 rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
 rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
-rfm.securityCheck.error.format = Enter a Pillar 2 top-up taxes ID in the correct format
+rfm.securityCheck.error.format = Enter the group’s Pillar 2 top-up taxes ID in the correct format
 
 rfm.corporatePosition.title = What is your position in the corporate structure of the group?
 rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
@@ -1007,7 +1007,7 @@ rfm.rfmPrimaryContactName.title = What is the name of the person or team we shou
 rfm.rfmPrimaryContactName.heading = What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?
 rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
-rfm.rfmPrimaryContactName.error.length = Name of the contact person or team should be 160 characters or less
+rfm.rfmPrimaryContactName.error.length = Name of the contact person or team must be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
 rfm.rfmPrimaryContactName.change.hidden = the first contact name
 
