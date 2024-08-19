@@ -23,75 +23,39 @@ import views.html.MakeAPaymentDashboardView
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
+  val testPlr2Id = "12345678"
 
   val makePaymentDashboardView: Document =
-    Jsoup.parse(page("12345678")(request, appConfig, messages).toString())
+    Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
-      makePaymentDashboardView.getElementsByTag("title").text must include("Pay your Pillar 2 top-up taxes")
+      makePaymentDashboardView.getElementsByTag("title").text must include("Make a payment")
     }
 
     "have a heading" in {
       val h1 = makePaymentDashboardView.getElementsByTag("h1")
-      h1.text must include("Pay your Pillar 2 top-up taxes")
+      h1.text must include("Make a payment")
       h1.hasClass("govuk-heading-l") mustBe true
     }
-    "have sub headings" in {
-      val h2 = makePaymentDashboardView.getElementsByTag("h2")
-      h2.get(0).text() must include("How to make a payment")
-      h2.get(1).text() must include("How long it takes to receive payments")
-      h2.get(2).text() must include("HMRC’s bank details for UK payments")
-      h2.get(3).text() must include("HMRC’s bank details for payments outside the UK")
 
-    }
-
-    "have warning text" in {
-      val wText = makePaymentDashboardView.getElementsByClass("govuk-warning-text__text")
-      wText.text must include("You must use 12345678 as your payment reference. We need this to match your payment.")
-    }
-    "have warning fallback text" in {
-      val wText = makePaymentDashboardView.getElementsByClass("govuk-warning-text__assistive")
-      wText.text must include("Warning")
-    }
-
-    "have account label" in {
-      val accountText = makePaymentDashboardView.getElementsByTag("dt")
-      accountText.get(0).text() must include("Sort code")
-      accountText.get(1).text() must include("Account number")
-      accountText.get(2).text() must include("Account name")
-      accountText.get(3).text() must include("Bank identifier code (BIC)")
-      accountText.get(4).text() must include("Account number (IBAN)")
-      accountText.get(5).text() must include("Account name")
-    }
-
-    "have account information" in {
-      val accountText = makePaymentDashboardView.getElementsByTag("dd")
-      accountText.get(0).text() must include("08 32 10")
-      accountText.get(1).text() must include("12001020")
-      accountText.get(2).text() must include("HMRC Shipley")
-      accountText.get(3).text() must include("BARCGB22")
-      accountText.get(4).text() must include("GB03BARC 20114783977692")
-      accountText.get(5).text() must include("HMRC Shipley")
-    }
-
-    "have pillar 2 information" in {
+    "have the correct paragraphs" in {
       val element = makePaymentDashboardView.getElementsByTag("p")
       element.get(1).text() must include(
-        "Payments can only be made by bank transfer."
+        s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 top-up tax payments."""
       )
       element.get(2).text() must include(
-        "To make a bank transfer, you can visit your bank’s website, use their mobile app, call the number at the back of your card or go to a branch. You will need to provide your bank with HMRC’s bank details."
+        "Submit your return before making a payment. Your payment is due on the same date as your return."
       )
       element.get(3).text() must include(
-        "Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays."
+        "You can read the guidance to find the methods you can use to make a payment."
       )
-      element.get(4).text() must include(
-        "CHAPS payments usually reach HMRC the same working day if you pay within your bank’s processing times."
-      )
-      element.get(5).text() must include(
-        "Bacs payments usually take 3 working days."
-      )
+    }
+
+    "have the correct link" in {
+      pending //TODO - Change link as a part
+      val element = makePaymentDashboardView.getElementsByClass("govuk-link")
+      element.get(2).attr("href") must include("/guidance-for-payment")
     }
   }
 }
