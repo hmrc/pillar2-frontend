@@ -29,18 +29,18 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsWaitingRoomView
 
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.Try
 
 class RepaymentsWaitingRoomController @Inject() (
-  identify:                 IdentifierAction,
-  getData:                  SessionDataRetrievalAction,
-  requireData:              SessionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  val controllerComponents: MessagesControllerComponents,
-  view:                     RepaymentsWaitingRoomView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SessionDataRetrievalAction,
+  requireData:                            SessionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   RepaymentsWaitingRoomView
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
