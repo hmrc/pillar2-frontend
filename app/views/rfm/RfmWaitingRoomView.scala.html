@@ -15,25 +15,29 @@
  *@
 
 @import config.FrontendAppConfig
+@import models.rfm.RfmStatus
 @import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        p: paragraphBody,
-        heading: heading,
-        govukSummaryList: GovukSummaryList,
+        heading: heading
 )
 
-@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-@layout(
-    pageTitle = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true
-) {
-    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-    @p(messages("payment.dashboard.message1", plrID))
-    @p(messages("payment.dashboard.message2"))
-    @paragraphMessageWithLink(Some(messages("payment.dashboard.message3")), linkMessage = messages("payment.dashboard.message4"), linkUrl = "")
 
+@(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
+    <meta http-equiv="refresh" content="2" />
+    <div class="hods-loading-spinner">
+        <div
+        class="hods-loading-spinner__spinner"
+        aria-live="polite"
+        role="status"
+        ></div>
+        <div class="hods-loading-spinner__content">
+            @heading(messages("rfmWaitingRoom.h1"), "govuk-heading-m")
+            @heading(messages("rfmWaitingRoom.h2"), "govuk-body-s", "h2")
+        </div>
+    </div>
 }

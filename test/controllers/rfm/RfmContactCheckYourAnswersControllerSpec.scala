@@ -20,12 +20,13 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
+import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{times, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -57,6 +58,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
+
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
       val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmUpe))
@@ -244,38 +246,66 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
+    "redirect to 'cannot return after confirmation' page once nfm submitted successfully and user attempts to go back" in {
+      val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
+      val application = applicationBuilder(None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad.url
+      }
+    }
+
     "onSubmit" should {
+
       val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
-      lazy val journeyRecovery        = controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
       lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
-      lazy val amendApiFailure        = controllers.rfm.routes.AmendApiFailureController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
-      "redirect to the confirmation page in case of a successful replace filing member and data is removed" in {
-        val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+
+      "redirect to waiting page in case of a successful replace filing member and save the api response in the backend" in {
+        val completeUserAnswers =
+          defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, SuccessfullyCompleted)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-            .thenReturn(allocateEnrolmentParameters)
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
-
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
-          verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
+
       "redirect to incomplete task error page if no contact detail is found for the new filing member" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
         running(application) {
@@ -285,192 +315,247 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           redirectLocation(result).value mustEqual incompleteData
         }
       }
-      "redirect to Journey recovery if no group ID is found for the new filing member" in {
+
+      "redirect to waiting page in case of a FailException, when no group ID is found for the new filing member, and save the api response in the backend" in {
         val ua = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailException)
         val application = applicationBuilder(userAnswers = Some(ua), groupID = None)
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual journeyRecovery
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
-      "redirect to journey recovery page if new filing member uk basedpage value cannot be found" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+
+      "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" in {
+        val ua = rfmNoID
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailException)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.failed(new Exception("no rfm uk based")))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.failed(new Exception("no rfm uk based")))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual journeyRecovery
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(2)).set(eqTo(sessionData))
         }
       }
-      "redirect to under construction page if registering new filing member fails" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")), groupID = Some("id"))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+
+      "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" in {
+        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua), groupID = Some("id"))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-            .thenReturn(allocateEnrolmentParameters)
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.failed(InternalIssueError))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
-      "redirect to under construction page if deallocating old filing member fails" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+
+      "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" in {
+        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(2)).set(eqTo(sessionData))
         }
       }
-      "redirect to under construction page if allocating an enrolment to the new filing member fails" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+
+      "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" in {
+        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
+          .thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
-            .thenReturn(Future.failed(InternalIssueError))
-          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-            .thenReturn(allocateEnrolmentParameters)
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(3)).set(eqTo(sessionData))
         }
       }
-      "redirect to amend api failure page if amend filing details fails" in {
+
+      "redirect to waiting page in case of a FailException, if amend filing details fails with UnexpectedResponse, and save the api response in the backend" in {
         val completeUserAnswers = defaultRfmData
           .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
           .setOrException(RfmPillar2ReferencePage, "id")
-
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
-          .build()
-        running(application) {
-          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-            .thenReturn(allocateEnrolmentParameters)
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(UnexpectedResponse))
-          val result = route(application, request).value
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
-        }
-      }
-
-      "redirect to 'cannot return after confirmation' page once nfm submitted successfully and user attempts to go back" in {
-        val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
-        val application = applicationBuilder(None)
           .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-          val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(4)).set(eqTo(sessionData))
         }
       }
 
-      "redirect to under construction page if read subscription fails" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+      "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" in {
+        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(5)).set(eqTo(sessionData))
         }
       }
 
-      "redirect to under construction page if amend subscription fails" in {
-        val application = applicationBuilder(userAnswers = Some(rfmNoID.setOrException(RfmPillar2ReferencePage, "id")))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+      "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" in {
+        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, FailedInternalIssueError)
+        val application = applicationBuilder(userAnswers = Some(ua))
+          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-          when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
-            .thenReturn(allocateEnrolmentParameters)
-          when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-          when(
-            mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
-              any()
-            )
-          ).thenReturn(Future.successful(amendData))
-          when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(InternalIssueError))
-          val result = route(application, request).value
+          val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual amendApiFailure
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, times(5)).set(eqTo(sessionData))
         }
       }
+
       "redirect to incomplete data page if they have only partially completed their application" in {
         val application = applicationBuilder(userAnswers = None).build()
         running(application) {
