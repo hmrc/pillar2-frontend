@@ -24,7 +24,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
 import models.{InternalIssueError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome, RepaymentCompletionStatus, RepaymentsStatusPage, RfmStatusPage}
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome, RepaymentCompletionStatus, RepaymentsStatusPage, RepaymentsWaitingRoomVisited, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -64,7 +64,8 @@ class DashboardController @Inject() (
         updatedAnswers2 <- OptionT.liftF(Future.fromTry(updatedAnswers1.remove(RepaymentsStatusPage)))
         updatedAnswers3 <- OptionT.liftF(Future.fromTry(updatedAnswers2.remove(RepaymentCompletionStatus)))
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
-        _               <- OptionT.liftF(sessionRepository.set(updatedAnswers4))
+        updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
+        _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
         view(

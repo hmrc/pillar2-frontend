@@ -19,7 +19,7 @@ package controllers.repayments
 import base.SpecBase
 import models.UserAnswers
 import models.repayments.RepaymentsStatus._
-import pages.RepaymentsStatusPage
+import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.repayments.RepaymentsWaitingRoomView
@@ -43,29 +43,29 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
     }
 
     " redirect to registration confirmation page if database state is updated successfully after page refresh" in {
-      val ua: UserAnswers = emptyUserAnswers.setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
+      val ua: UserAnswers = emptyUserAnswers
+        .setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
+        .setOrException(RepaymentsWaitingRoomVisited, true)
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        route(application, request).value
-        val request2 = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        val result2  = route(application, request2).value
+        val result  = route(application, request).value
 
-        status(result2) mustEqual SEE_OTHER
-        redirectLocation(result2).value mustEqual routes.RepaymentConfirmationController.onPageLoad().url
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.RepaymentConfirmationController.onPageLoad().url
       }
     }
 
     " redirect to repayment error page in case of a unexpected error response after page refresh" in {
-      val ua: UserAnswers = emptyUserAnswers.setOrException(RepaymentsStatusPage, UnexpectedResponseError)
+      val ua: UserAnswers = emptyUserAnswers
+        .setOrException(RepaymentsStatusPage, UnexpectedResponseError)
+        .setOrException(RepaymentsWaitingRoomVisited, true)
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        route(application, request).value
-        val request2 = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        val result   = route(application, request2).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url
@@ -73,14 +73,14 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
     }
 
     " redirect to repayments incomplete data page in case of incomplete data error responses after page refresh" in {
-      val ua: UserAnswers = emptyUserAnswers.setOrException(RepaymentsStatusPage, IncompleteDataError)
+      val ua: UserAnswers = emptyUserAnswers
+        .setOrException(RepaymentsStatusPage, IncompleteDataError)
+        .setOrException(RepaymentsWaitingRoomVisited, true)
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        route(application, request).value
-        val request2 = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
-        val result   = route(application, request2).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.RepaymentsIncompleteDataController.onPageLoad.url

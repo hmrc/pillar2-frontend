@@ -51,28 +51,24 @@ class RepaymentsCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
-          Future.successful(Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad()))
-        case _ =>
-          userAnswers.get(RepaymentCompletionStatus) match {
-            case Some(true) => Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad()))
-            case _ =>
-              for {
-                updatedAnswers <- Future.fromTry(userAnswers.remove(RepaymentsStatusPage))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
-          }
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+        case Some(SuccessfullyCompleted) =>
+          Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
+        case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
       }
     }
 
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       for {
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsStatusPage, InProgress))
+        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsStatusPage, InProgress))
         _              <- sessionRepository.set(updatedAnswers)
       } yield (): Unit
       val repaymentsStatus = (for {
@@ -88,9 +84,25 @@ class RepaymentsCheckYourAnswersController @Inject() (
           case _: Exception => IncompleteDataError
         }
       for {
-        updatedStatus  <- repaymentsStatus
-        updatedAnswers <- Future.fromTry(request.userAnswers.set(RepaymentsStatusPage, updatedStatus))
-        _              <- sessionRepository.set(updatedAnswers)
+        updatedStatus <- repaymentsStatus
+        success = (updatedStatus == SuccessfullyCompleted)
+        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedAnswers  <- Future.fromTry(sessionData.set(RepaymentsStatusPage, updatedStatus))
+        updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
+        updatedAnswers1 <-
+          if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
+        updatedAnswers2 <-
+          if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByTelephonePage)) else Future.successful(updatedAnswers1)
+        updatedAnswers3 <- if (success) Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
+        updatedAnswers4 <- if (success) Future.fromTry(updatedAnswers3.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers3)
+        updatedAnswers5 <- if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
+        updatedAnswers6 <- if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsTelephoneDetailsPage)) else Future.successful(updatedAnswers5)
+        updatedAnswers7 <- if (success) Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
+        updatedAnswers8 <- if (success) Future.fromTry(updatedAnswers7.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers7)
+        updatedAnswers9 <- if (success) Future.fromTry(updatedAnswers8.remove(NonUKBankPage)) else Future.successful(updatedAnswers8)
+        updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
+        _                <- sessionRepository.set(updatedAnswers10)
       } yield (): Unit
       Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
     }

@@ -20,8 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.UserAnswers
 import models.repayments.RepaymentsStatus._
-import models.requests.SessionDataRequest
-import pages.{BankAccountDetailsPage, NonUKBankPage, ReasonForRequestingRefundPage, RepaymentAccountNameConfirmationPage, RepaymentCompletionStatus, RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsStatusPage, RepaymentsTelephoneDetailsPage, UkOrAbroadBankAccountPage}
+import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,7 +30,6 @@ import views.html.repayments.RepaymentsWaitingRoomView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class RepaymentsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
@@ -45,49 +43,27 @@ class RepaymentsWaitingRoomController @Inject() (
     with I18nSupport
     with Logging {
 
-  private var waitingRoomViews: Int = 0
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val repaymentStatusPage          = request.userAnswers.get(RepaymentsStatusPage)
+    val repaymentsWaitingRoomVisited = request.userAnswers.get(RepaymentsWaitingRoomVisited)
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(RepaymentsStatusPage) match {
-      case s if waitingRoomViews == 0 =>
-        waitingRoomViews += 1
-        if (s.contains(SuccessfullyCompleted)) completionStatusAndDataClean(request)
-        Ok(view(s))
-      case Some(SuccessfullyCompleted) =>
-        completionStatusAndDataClean(request)
-        waitingRoomViews = 0
-        Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad())
-      case Some(UnexpectedResponseError) =>
-        waitingRoomViews = 0
-        Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
-      case Some(IncompleteDataError) =>
-        waitingRoomViews = 0
-        Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
-      case s => Ok(view(s))
+    (repaymentStatusPage, repaymentsWaitingRoomVisited) match {
+      case (s, None) =>
+        for {
+          optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+          updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsWaitingRoomVisited, true))
+          _              <- sessionRepository.set(updatedAnswers)
+        } yield Ok(view(s))
+      case (Some(SuccessfullyCompleted), Some(true)) =>
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
+      case (Some(UnexpectedResponseError), Some(true)) =>
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
+      case (Some(IncompleteDataError), Some(true)) =>
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
+      case (s, _) => Future.successful(Ok(view(s)))
     }
 
   }
-
-  private def completionStatusAndDataClean(request: SessionDataRequest[AnyContent]): Future[Unit] =
-    for {
-      updatedAnswers       <- Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true))
-      clearedRepaymentData <- Future.fromTry(clearRepaymentDetails(updatedAnswers))
-      _                    <- sessionRepository.set(clearedRepaymentData)
-    } yield (): Unit
-
-  private def clearRepaymentDetails(userAnswers: UserAnswers): Try[UserAnswers] =
-    for {
-      updatedUserAnswers1  <- userAnswers.remove(RepaymentAccountNameConfirmationPage)
-      updatedUserAnswers2  <- updatedUserAnswers1.remove(RepaymentsContactByTelephonePage)
-      updatedUserAnswers3  <- updatedUserAnswers2.remove(RepaymentsContactEmailPage)
-      updatedUserAnswers4  <- updatedUserAnswers3.remove(RepaymentsContactNamePage)
-      updatedUserAnswers5  <- updatedUserAnswers4.remove(RepaymentsRefundAmountPage)
-      updatedUserAnswers6  <- updatedUserAnswers5.remove(RepaymentsTelephoneDetailsPage)
-      updatedUserAnswers7  <- updatedUserAnswers6.remove(UkOrAbroadBankAccountPage)
-      updatedUserAnswers8  <- updatedUserAnswers7.remove(ReasonForRequestingRefundPage)
-      updatedUserAnswers9  <- updatedUserAnswers8.remove(NonUKBankPage)
-      updatedUserAnswers10 <- updatedUserAnswers9.remove(BankAccountDetailsPage)
-    } yield updatedUserAnswers10
 
 }
