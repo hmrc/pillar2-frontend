@@ -108,6 +108,35 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
+    "populate view with entity type not listed and set fm as a non uk based entity to delete all no ID data" in {
+      val ua =
+        emptyUserAnswers
+          .setOrException(FmRegisteredInUKPage, false)
+          .setOrException(FmEntityTypePage, EntityType.Other)
+      val jsUserAnswers: JsValue = Json.toJson(ua)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode).url)
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+
+        val view = application.injector.instanceOf[NfmEntityTypeView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider().fill(EntityType.Other), NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
