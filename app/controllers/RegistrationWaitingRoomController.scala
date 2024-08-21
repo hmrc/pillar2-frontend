@@ -17,7 +17,7 @@
 package controllers
 
 import config.FrontendAppConfig
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.subscription.SubscriptionStatus._
 import pages.SubscriptionStatusPage
 import play.api.Logging
@@ -29,9 +29,9 @@ import views.html.RegistrationWaitingRoomView
 import javax.inject.Inject
 
 class RegistrationWaitingRoomController @Inject() (
-  getData:                  DataRetrievalAction,
+  getData:                  SessionDataRetrievalAction,
   identify:                 IdentifierAction,
-  requireData:              DataRequiredAction,
+  requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationWaitingRoomView
 )(implicit appConfig:       FrontendAppConfig)
