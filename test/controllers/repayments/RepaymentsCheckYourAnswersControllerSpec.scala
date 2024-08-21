@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import base.SpecBase
-import models.repayments.RepaymentsStatus.{IncompleteDataError, SuccessfullyCompleted, UnexpectedResponseError}
+import models.repayments.RepaymentsStatus.{SuccessfullyCompleted, UnexpectedResponseError}
 import models.repayments.SendRepaymentDetails
 import models.{UnexpectedResponse, UserAnswers}
 import org.apache.pekko.Done
@@ -100,7 +100,18 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     "on submit method" should {
 
-      "redirect to the confirmation page in case of a success response" in {
+      "redirect to incomplete data page if isRepaymentsJourneyCompleted returns false" in {
+        val userAnswer  = completeRepaymentDataUkBankAccount.remove(RepaymentsRefundAmountPage).success.value
+        val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
+        running(application) {
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad.url
+        }
+      }
+
+      "redirect to waiting room page and save SuccessfullyCompleted status in case of a success response" in {
         val userAnswer = completeRepaymentDataUkBankAccount.setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
@@ -122,7 +133,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to payment failed error page in case of an unsuccessful response" in {
+      "redirect to waiting room page and save UnexpectedResponseError status in case of an unsuccessful response" in {
         val userAnswer = completeRepaymentDataUkBankAccount.setOrException(RepaymentsStatusPage, UnexpectedResponseError)
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
@@ -133,25 +144,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-
-        running(application) {
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
-          val result  = route(application, request).value
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository).set(eqTo(userAnswer))
-        }
-      }
-
-      "redirect to Repayments Incomplete Data page if data is partially completed" in {
-        val userAnswer = completeRepaymentDataUkBankAccount.setOrException(RepaymentsStatusPage, IncompleteDataError)
-        val application = applicationBuilder(userAnswers = Some(userAnswer))
-          .overrides(
-            bind[RepaymentService].toInstance(mockRepaymentService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-        when(mockRepaymentService.getRepaymentData(any())).thenReturn(None)
 
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
