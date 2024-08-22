@@ -56,19 +56,17 @@ class CheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     implicit val userAnswers: UserAnswers = request.userAnswers
-
-    setCheckYourAnswersLogic(userAnswers).flatMap { _ =>
-      sessionRepository.get(request.userId).map { optionalUserAnswer =>
-        (for {
-          userAnswer <- optionalUserAnswer
-          _          <- userAnswer.get(PlrReferencePage)
-        } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
-          .getOrElse(
-            Ok(
-              view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
-            )
+    sessionRepository.get(request.userId).map { optionalUserAnswer =>
+      (for {
+        userAnswer <- optionalUserAnswer
+        _          <- userAnswer.get(PlrReferencePage)
+      } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
+        .getOrElse {
+          setCheckYourAnswersLogic(userAnswers)
+          Ok(
+            view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
           )
-      }
+        }
     }
   }
 
@@ -98,8 +96,10 @@ class CheckYourAnswersController @Inject() (
         .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
       for {
         updatedSubscriptionStatus <- subscriptionStatus
-        updatedAnswers            <- Future.fromTry(request.userAnswers.set(SubscriptionStatusPage, updatedSubscriptionStatus))
-        _                         <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+        optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
+        _                  <- sessionRepository.set(updatedSessionData)
       } yield (): Unit
       Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
     } else {
@@ -107,12 +107,15 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
+  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
-      updatedAnswers  <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
-      updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubscriptionStatusPage))
-      _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
-    } yield updatedAnswers1
+      updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
+      _                   <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+      optionalSessionData <- sessionRepository.get(updatedAnswers.id)
+      sessionData = optionalSessionData.getOrElse(UserAnswers(updatedAnswers.id))
+      updatedSessionData <- Future.fromTry(sessionData.remove(SubscriptionStatusPage))
+      _                  <- sessionRepository.set(updatedSessionData)
+    } yield (): Unit
 
   private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(

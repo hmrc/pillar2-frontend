@@ -19,21 +19,15 @@
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        p: paragraphBody,
         heading: heading,
-        govukSummaryList: GovukSummaryList,
+        govukInsetText: GovukInsetText
 )
 
-@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-@layout(
-    pageTitle = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true
-) {
-    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-    @p(messages("payment.dashboard.message1", plrID))
-    @p(messages("payment.dashboard.message2"))
-    @paragraphMessageWithLink(Some(messages("payment.dashboard.message3")), linkMessage = messages("payment.dashboard.message4"), linkUrl = "")
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-}
+    @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
+
+        @heading(messages("transactionHistory.none.heading"))
+        @heading(messages("transactionHistory.none.p1"), classes = "govuk-heading-m", tier = "h2")
+        @govukInsetText(InsetText(content = Text(messages("transactionHistory.none.p2"))))
+    }

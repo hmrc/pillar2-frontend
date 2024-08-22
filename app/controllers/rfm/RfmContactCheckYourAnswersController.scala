@@ -15,20 +15,19 @@
  */
 
 package controllers.rfm
-import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
+import cats.data.OptionT.{fromOption, liftF}
+import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
-import models.requests.DataRequest
-import models.{InternalIssueError, UnexpectedResponse}
-import pages.PlrReferencePage
+import models.rfm.RfmStatus._
+import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
+import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -58,70 +57,100 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen Identify andThen getData andThen requireData).async {
     implicit request =>
+      implicit val userAnswers: UserAnswers = request.userAnswers
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
+
       sessionRepository.get(request.userId).map { optionalUserAnswer =>
         (for {
           userAnswer <- optionalUserAnswer
-          _          <- userAnswer.get(PlrReferencePage)
-        } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
-          .getOrElse(
-            Ok(
-              view(
-                request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-                request.userAnswers.rfmPrimaryContactList,
-                request.userAnswers.rfmSecondaryContactList,
-                address
-              )
-            )
-          )
+          rfm        <- userAnswer.get(RfmStatusPage)
+        } yield rfm) match {
+          case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+          case _ =>
+            (for {
+              userAnswer <- optionalUserAnswer
+              _          <- userAnswer.get(PlrReferencePage)
+            } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+              .getOrElse {
+                removeRfmStatus(userAnswers)
+                Ok(
+                  view(
+                    request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                    request.userAnswers.rfmPrimaryContactList,
+                    request.userAnswers.rfmSecondaryContactList,
+                    address
+                  )
+                )
+              }
+        }
+
       }
   }
 
-  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData) async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      replaceFilingMemberDetails(request)
+      for {
+        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, InProgress))
+        _                  <- sessionRepository.set(updatedSessionData)
+      } yield (): Unit
+      val rfmStatus = (for {
+        newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+        subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
+        amendData <-
+          liftF(
+            subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+          )
+        _ <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+        _ <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+        upeEnrolmentInfo <- liftF(
+                              subscriptionService.getUltimateParentEnrolmentInformation(
+                                subscriptionData = subscriptionData,
+                                pillar2Reference = newFilingMemberInformation.plrReference,
+                                request.userIdForEnrolment
+                              )
+                            )
+        groupId <- fromOption[Future](request.groupId)
+        _ <- liftF(
+               subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
+             )
+        _                   <- liftF(userAnswersConnectors.remove(request.userId))
+        optionalSessionData <- liftF(sessionRepository.get(request.userAnswers.id))
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedSessionData <- liftF(Future.fromTry(sessionData.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
+        _                  <- liftF(sessionRepository.set(updatedSessionData))
+      } yield SuccessfullyCompleted).value
+        .flatMap {
+          case Some(result) => Future.successful(result)
+          case _            => Future.successful(FailException)
+        }
+        .recover {
+          case InternalIssueError | UnexpectedResponse => FailedInternalIssueError
+          case _: Exception => FailException
+        }
+      for {
+        updatedRfmStatus    <- rfmStatus
+        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, updatedRfmStatus))
+        _                  <- sessionRepository.set(updatedSessionData)
+      } yield (): Unit
+      Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
     } else {
       Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }
 
   }
 
-  private def replaceFilingMemberDetails(request: DataRequest[AnyContent])(implicit hc: HeaderCarrier): Future[Result] =
-    (for {
-      newFilingMemberInformation <- OptionT.fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-      subscriptionData           <- OptionT.liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-      amendData <- OptionT.liftF(
-                     subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-                   )
-      _ <- OptionT.liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-      _ <- OptionT.liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
-      upeEnrolmentInfo <- OptionT.liftF(
-                            subscriptionService.getUltimateParentEnrolmentInformation(
-                              subscriptionData = subscriptionData,
-                              pillar2Reference = newFilingMemberInformation.plrReference,
-                              request.userIdForEnrolment
-                            )
-                          )
-      groupId <- OptionT.fromOption[Future](request.groupId)
-      _ <- OptionT.liftF(
-             subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
-           )
-      _          <- OptionT.liftF(userAnswersConnectors.remove(request.userId))
-      dataToSave <- OptionT.liftF(Future.fromTry(request.userAnswers.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-      _          <- OptionT.liftF(sessionRepository.set(dataToSave))
-    } yield {
-      logger.info(s"successfully replaced filing member for group with id : $groupId ")
-      Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
-    })
-      .recover {
-        case InternalIssueError | UnexpectedResponse =>
-          Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
-        case _: Exception =>
-          logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
-          Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
-      }
-      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+  private def removeRfmStatus(userAnswers: UserAnswers): Future[Unit] =
+    for {
+      optionalSessionData <- sessionRepository.get(userAnswers.id)
+      sessionData = optionalSessionData.getOrElse(UserAnswers(userAnswers.id))
+      updatedSessionData <- Future.fromTry(sessionData.remove(RfmStatusPage))
+      _                  <- sessionRepository.set(updatedSessionData)
+    } yield (): Unit
 
 }

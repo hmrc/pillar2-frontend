@@ -19,21 +19,17 @@
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
-        p: paragraphBody,
         heading: heading,
-        govukSummaryList: GovukSummaryList,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-@layout(
-    pageTitle = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true
-) {
-    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-    @p(messages("payment.dashboard.message1", plrID))
-    @p(messages("payment.dashboard.message2"))
-    @paragraphMessageWithLink(Some(messages("payment.dashboard.message3")), linkMessage = messages("payment.dashboard.message4"), linkUrl = "")
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
+@layout(pageTitle = titleNoForm(messages("transactionHistory.error.title"))) {
+
+  @heading(messages("transactionHistory.error.heading"))
+  @p(messages("transactionHistory.error.p1"))
+  @p(messages("transactionHistory.error.p2"))
+  @paragraphMessageWithLink(linkMessage = messages("transactionHistory.error.p3"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
 }

@@ -175,35 +175,12 @@ grs.registration.error.b31 =  You can
 grs.registration.error.b32 =  go back to select the entity type
 grs.registration.error.b33 =  and try again using different details if you think you made an error when entering them.
 
-payment.dashboard.title= Pay your Pillar 2 top-up taxes
-payment.dashboard.header= Pay your Pillar 2 top-up taxes
-payment.dashboard.insetText= You have no payments due.
-payment.dashboard.message1= Payments can only be made by bank transfer.
-payment.dashboard.header2= How to make a payment
-payment.dashboard.message2= To make a bank transfer, you can visit your bank’s website, use their mobile app, call the number at the back of your card or go to a branch. You will need to provide your bank with HMRC’s bank details.
-payment.dashboard.header3= How long it takes to receive payments
-payment.dashboard.message3= Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays.
-payment.dashboard.message4= CHAPS payments usually reach HMRC the same working day if you pay within your bank’s processing times.
-payment.dashboard.message5= Bacs payments usually take 3 working days.
-payment.dashboard.timeline-summary= How long it takes
-payment.dashboard.timeline-content1= Faster Payments will usually reach HMRC the same or next day, including weekends and bank holidays.
-payment.dashboard.warning.message = You must use {0} as your payment reference. We need this to match your payment.
-payment.dashboard.outsideUK-summary= Make a payment from outside the UK
-payment.dashboard.table.row_11= 08 32 10
-payment.dashboard.table.row_21= 12001020
-payment.dashboard.table.row_31= HMRC Shipley
-payment.dashboard.table.row_12= Sort code
-payment.dashboard.table.row_22= Account number
-payment.dashboard.table.row_32= Account name
-payment.dashboard.table.caption= HMRC’s bank details for UK payments
-payment.dashboard.table.outsideUK.caption= HMRC’s bank details for payments outside the UK
-payment.dashboard.table2.row_12= BARCGB22
-payment.dashboard.table2.row_11= Bank identifier code (BIC)
-payment.dashboard.table2.row_22= GB03BARC 20114783977692
-payment.dashboard.table2.row_21= Account number (IBAN)
-payment.dashboard.table2.row_32= HMRC Shipley
-payment.dashboard.table2.row_31= Account name
-payment.dashboard.table2.caption= HMRC’s overseas bank details
+payment.dashboard.title= Make a payment
+payment.dashboard.header= Make a payment
+payment.dashboard.message1= Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 top-up tax payments.
+payment.dashboard.message2= Submit your return before making a payment. Your payment is due on the same date as your return.
+payment.dashboard.message3= You can
+payment.dashboard.message4= read the guidance to find the methods you can use to make a payment.
 
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
@@ -587,17 +564,17 @@ groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = What are the start and end dates of the group’s consolidated accounting period?
 groupAccountingPeriod.amend.title = What are the start and end dates of the group’s current consolidated accounting period?
 groupAccountingPeriod.title.desc = This will be the first accounting period the group uses for their consolidated financial statements following the implementation of Pillar 2 top-up taxes in the UK, on 31 December 2023.
-groupAccountingPeriod.startDate.heading = Enter start date
-groupAccountingPeriod.startDate.hint = For example, 27 3 2026
-groupAccountingPeriod.endDate.heading = Enter end date
-groupAccountingPeriod.endDate.hint = For example, 28 3 2027
+groupAccountingPeriod.startDate.heading = Start date
+groupAccountingPeriod.startDate.hint = For example 27 3 2026
+groupAccountingPeriod.endDate.heading = End date
+groupAccountingPeriod.endDate.hint = For example 28 3 2027
 groupAccountingPeriod.checkYourAnswersLabel = Group’s consolidated accounting period
 groupAccountingPeriod.amend.checkYourAnswersLabel = Group’s current consolidated accounting period
 groupAccountingPeriod.error.startDate.dayMonthYear.minimum = Start date must be on or after 31 December 2023
-groupAccountingPeriod.error.endDate.before.startDate = The end date must be after the start date
+groupAccountingPeriod.error.endDate.before.startDate = End date must be after the start date
 groupAccountingPeriod.error.startDate.format = Enter a date in the correct format
 groupAccountingPeriod.error.startDate.required.all = Enter the start date of the group’s consolidated accounting period
-groupAccountingPeriod.amend.error.startDate.required.all = Enter the start date of the group’s current consolidated accounting period
+groupAccountingPeriod.amend.error.startDate.required.all = Enter the start date of the group’s accounting period
 groupAccountingPeriod.error.startDate.required.two = Start date must include a {0} and {1}
 groupAccountingPeriod.error.startDate.required = Start date must include a {0}
 groupAccountingPeriod.error.startDate.day.nan = Start date must be a real date
@@ -613,7 +590,7 @@ groupAccountingPeriod.error.startDate.year.length = Start date must be a real da
 
 groupAccountingPeriod.error.endDate.format = Enter a date in the correct format
 groupAccountingPeriod.error.endDate.required.all = Enter the end date of the group’s consolidated accounting period
-groupAccountingPeriod.amend.error.endDate.required.all = Enter the end date of the group’s current consolidated accounting period
+groupAccountingPeriod.amend.error.endDate.required.all = Enter the end date of the group’s accounting period
 groupAccountingPeriod.error.endDate.required.two = End date must include a {0} and {1}
 groupAccountingPeriod.error.endDate.required = End date must include a {0}
 groupAccountingPeriod.error.endDate.day.nan = End date must be a real date
@@ -658,16 +635,16 @@ mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
 mneOrDomestic.group-operate = Where are the entities in your group located?
 mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
-mneOrDomestic.error.required = Select where the group operates
+mneOrDomestic.error.required = Select if the group has entities located only in the UK or in the UK and outside the UK
 mneOrDomestic.change.hidden =  your response to where the group operates
-mneOrDomestic.ukAndOther = In the UK and other countries
+mneOrDomestic.ukAndOther = In the UK and outside the UK
 mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
 mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
 mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
 mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
 mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
-mneOrDomestic.p5 = Groups with entities that are located in the UK and other jurisdictions will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
+mneOrDomestic.p5 = Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
 mneOrDomestic.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
@@ -870,7 +847,7 @@ dashboard.upe = Ultimate parent entity: {0}
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
-dashboard.paymentHistory = View your payment history
+dashboard.paymentHistory = View your transaction history
 dashboard.requestRefund = Request a refund
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
@@ -898,7 +875,7 @@ dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
-dashboard.agent.paymentHistory = View your client’s payment history
+dashboard.agent.paymentHistory = View your client’s transaction history
 dashboard.agent.manageAccount = Manage your client’s account
 ###############################################
 
@@ -1132,6 +1109,12 @@ rfm.amendAPIFailure.heading = Sorry, there is a problem with the service
 rfm.amendAPIFailure.p1 = Please try again later
 rfm.amendAPIFailure.p2 = You can go back {0}
 rfm.amendAPIFailure.p2.link = to replace the filing member for a Pillar 2 top-up taxes account to try again
+
+rfm.securityError.title = You cannot replace the current filing member for this group
+rfm.securityError.heading = You cannot replace the current filing member for this group
+rfm.securityError.p1 = This service is for new nominated filing members to takeover the responsibilities from the current filing member.
+rfm.securityError.p2 = If you need to manage who can access your Pillar 2 top-up tax returns,
+rfm.securityError.p2.link = go to your business tax account
 
 bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
 bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
@@ -1503,7 +1486,42 @@ repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
 repaymentsCheckYourAnswers.download = Do you need to keep a record of your answers?
 repaymentsCheckYourAnswers.bank.submit-p2 = If you need to keep a record of your answers, you can:
+
+rfmWaitingRoom.title =  Submitting...
+rfmWaitingRoom.h1 =  Submitting...
+rfmWaitingRoom.h2 =  Do not leave this page.
+
 registrationWaitingRoom.title = Submitting your registration
 registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration
 registrationWaitingRoom.h2 = Do not leave this page.
+
+repaymentsWaitingRoom.title = Submitting your refund request
+repaymentsWaitingRoom.heading = Submitting your refund request
+repaymentsWaitingRoom.h1 = Submitting your refund request
+repaymentsWaitingRoom.h2 = Do not leave this page.
+
+###################
+
+# - Transaction History
+
+###################
+transactionHistory.title = Transaction history
+transactionHistory.heading = Transaction history
+transactionHistory.date = Date
+transactionHistory.description = Transaction description
+transactionHistory.amountPaid = You paid HMRC
+transactionHistory.amountRefunded = HMRC paid you
+transactionHistory.pagination.next = Next
+transactionHistory.pagination.previous = Previous
+
+transactionHistory.error.title = Sorry, there is a problem with the service
+transactionHistory.error.heading = Sorry, there is a problem with the service
+transactionHistory.error.p1 = We cannot retrieve your details at this time.
+transactionHistory.error.p2 = Please try again later.
+transactionHistory.error.p3 = Return to your account homepage
+
+transactionHistory.none.title = Transaction history
+transactionHistory.none.heading = Transaction history
+transactionHistory.none.p1 = You have no payments to show
+transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.

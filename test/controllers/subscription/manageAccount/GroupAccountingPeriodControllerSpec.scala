@@ -103,7 +103,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
@@ -236,7 +236,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
             controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url
           )
             .withFormUrlEncodedBody(("value", "invalid value"))
-        val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+        val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
         val view      = application.injector.instanceOf[GroupAccountingPeriodView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
