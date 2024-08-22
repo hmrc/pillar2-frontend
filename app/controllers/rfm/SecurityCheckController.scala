@@ -17,17 +17,19 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
+import connectors.EnrolmentStoreProxyConnector
 import controllers.actions._
 import forms.RfmSecurityCheckFormProvider
-import models.{Mode, NormalMode}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.{SecurityCheckErrorView, SecurityCheckView}
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,8 +42,10 @@ class SecurityCheckController @Inject() (
   requireSessionData:               SessionDataRequiredAction,
   formProvider:                     RfmSecurityCheckFormProvider,
   navigator:                        ReplaceFilingMemberNavigator,
+  enrolmentStoreProxyConnector:     EnrolmentStoreProxyConnector,
   val controllerComponents:         MessagesControllerComponents,
-  view:                             SecurityCheckView
+  view:                             SecurityCheckView,
+  errorView:                        SecurityCheckErrorView
 )(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
@@ -63,8 +67,22 @@ class SecurityCheckController @Inject() (
           for {
             updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
             _              <- sessionRepository.set(updatedAnswers)
-          } yield Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
+            result         <- redirectSecurityCheck(value, mode, updatedAnswers)
+          } yield result
       )
   }
 
+  def onPageLoadNotAllowed: Action[AnyContent] =
+    (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      Ok(errorView())
+    }
+
+  private def redirectSecurityCheck(userEnteredGroupIdentifier: String, mode: Mode, updatedAnswers: UserAnswers)(implicit
+    hc:                                                         HeaderCarrier
+  ): Future[Result] =
+    enrolmentStoreProxyConnector.getGroupIds(userEnteredGroupIdentifier).map {
+      case Some(value) if value.principalGroupIds.contains(userEnteredGroupIdentifier) =>
+        Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
+      case _ => Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed())
+    }
 }
