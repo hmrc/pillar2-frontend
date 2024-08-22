@@ -16,13 +16,22 @@
 
 package controllers.contactdetails
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import models.NormalMode
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.SubPrimaryContactNamePage
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContentView
+
+import scala.concurrent.Future
 class ContentControllerSpec extends SpecBase {
 
   "StartPageRegistrationController" when {
+
     "must return OK and the correct view for a GET " in {
       val application = applicationBuilder().build()
       running(application) {
@@ -36,6 +45,19 @@ class ContentControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must redirect to next page accounting period when valid data is submitted" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.ContentController.onSubmit(NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url
       }
     }
   }
