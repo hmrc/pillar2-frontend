@@ -31,8 +31,8 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
@@ -177,6 +177,27 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual expectedNextPage.url
         verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubAddSecondaryContactPage, expectedUserAnswers)
+      }
+    }
+
+    "must update subscription data and redirect to the next page when the user answers yes" in {
+
+      val userAnswers = emptySubscriptionLocalData
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubSecondaryContactNamePage, "name")
+
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+      running(application) {
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+          .withFormUrlEncodedBody("value" -> "true")
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
