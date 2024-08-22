@@ -20,12 +20,11 @@ import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
 import models.UserAnswers
 import pages._
 
-
 trait RepaymentHelpers {
 
   self: UserAnswers =>
 
-  def isRepaymentsJourneyCompleted: Boolean = {
+  def isRepaymentsJourneyCompleted: Boolean =
     (
       get(RepaymentsRefundAmountPage).isDefined,
       get(ReasonForRequestingRefundPage).isDefined,
@@ -35,14 +34,13 @@ trait RepaymentHelpers {
       get(RepaymentsContactNamePage).isDefined,
       get(RepaymentsContactEmailPage).isDefined,
       get(RepaymentsContactByTelephonePage),
-      get(RepaymentsTelephoneDetailsPage).isDefined,
+      get(RepaymentsTelephoneDetailsPage).isDefined
     ) match {
-      case (true, true, Some(UkBankAccount),      true, false, true, true, Some(true), true) => true
-      case (true, true, Some(UkBankAccount),      true, false, true, true, Some(false), false) => true
-      case (true, true, Some(ForeignBankAccount), false, true, true, true, Some(true), true) => true
+      case (true, true, Some(UkBankAccount), true, false, true, true, Some(true), true)        => true
+      case (true, true, Some(UkBankAccount), true, false, true, true, Some(false), false)      => true
+      case (true, true, Some(ForeignBankAccount), false, true, true, true, Some(true), true)   => true
       case (true, true, Some(ForeignBankAccount), false, true, true, true, Some(false), false) => true
-      case _ => false
+      case _                                                                                   => false
     }
-  }
 
 }
