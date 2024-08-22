@@ -17,18 +17,18 @@
 package controllers.rfm
 
 import base.SpecBase
-import connectors.UserAnswersConnectors
+import connectors.{EnrolmentStoreProxyConnector, UserAnswersConnectors}
 import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, NormalMode, UserAnswers}
+import models.{CheckMode, GroupIds, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmPillar2ReferencePage
-import play.api.inject
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.{SecurityCheckErrorView, SecurityCheckView}
 
 import scala.concurrent.Future
 
@@ -95,17 +95,21 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to the group registration date report page when valid data is submitted" in {
+    "redirect to the group registration date report page when enrolment returns associated group id" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
         .build()
 
       running(application) {
         when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
+          .withFormUrlEncodedBody("value" -> PlrReference)
 
         val result = route(application, request).value
 
@@ -114,15 +118,43 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
+    "redirect to the error page when enrolment returns associated wrong group id" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any()))
+          .thenReturn(Future.successful(Some(GroupIds(Seq("incorrect ref"), Seq.empty))))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> PlrReference)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed().url
+      }
+    }
+
     "allow the user to enter valid IDs which contain white space and lower case characters" in {
       val testPillar2Id = "     xmp lR0   123456789    "
 
       val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> testPillar2Id)
@@ -189,7 +221,10 @@ class SecurityCheckControllerSpec extends SpecBase {
 
     "redirect to the Security Questions Check Your Answers page when valid data is submitted in CheckMode" in {
       val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
         .configure(
           Seq(
             "features.rfmAccessEnabled" -> true
@@ -199,9 +234,10 @@ class SecurityCheckControllerSpec extends SpecBase {
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(CheckMode).url)
-          .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
+          .withFormUrlEncodedBody("value" -> PlrReference)
 
         val result = route(application, request).value
 
@@ -212,14 +248,18 @@ class SecurityCheckControllerSpec extends SpecBase {
 
     "redirect to the Group Registration Date Report page when valid data is submitted in modes other than CheckMode" in {
       val application = applicationBuilder(userAnswers = None)
-        .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .overrides(
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> "XMPLR0123456789")
+          .withFormUrlEncodedBody("value" -> PlrReference)
 
         val result = route(application, request).value
 
@@ -228,5 +268,19 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
+    "return OK and the correct view for a GET for error page" in {
+      val application = applicationBuilder().build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed().url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[SecurityCheckErrorView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+      }
+    }
   }
 }

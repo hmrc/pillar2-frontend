@@ -348,8 +348,11 @@ GET         /bta/change-pillar2-id                                              
 POST        /bta/change-pillar2-id                                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET         /bta/eacd                                                                                controllers.bta.EACDStubController.onPageLoad
 GET         /asa/home                                                                                controllers.ASAStubController.onPageLoad
+
 GET         /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/error/existing-member                                             controllers.rfm.SecurityCheckController.onPageLoadNotAllowed()
+
 
 GET         /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
@@ -364,6 +367,7 @@ GET         /replace-filing-member/security/registration-date                   
 POST        /replace-filing-member/security/registration-date                                        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/error/existing-member                                             controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/content                                           controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
 
