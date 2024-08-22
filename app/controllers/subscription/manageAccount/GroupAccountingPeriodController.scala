@@ -46,7 +46,7 @@ class GroupAccountingPeriodController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def form: Form[AccountingPeriod] = formProvider()
+  def form: Form[AccountingPeriod] = formProvider(true)
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData) { implicit request =>

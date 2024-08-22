@@ -16,12 +16,18 @@
 
 package pages
 
-import models.rfm.RfmStatus
-import play.api.libs.json.JsPath
+import models.repayments.RepaymentsStatus
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-case object RfmStatusPage extends QuestionPage[RfmStatus] {
+class RepaymentsStatusPageSpec extends PageBehaviours {
 
-  override def path: JsPath = JsPath \ toString
+  "RepaymentsStatusPage" - {
 
-  override def toString: String = "rfmStatus"
+    beRetrievable[RepaymentsStatus](RepaymentsStatusPage)
+
+    beSettable[RepaymentsStatus](RepaymentsStatusPage)
+
+    beRemovable[RepaymentsStatus](RepaymentsStatusPage)
+  }
 }
