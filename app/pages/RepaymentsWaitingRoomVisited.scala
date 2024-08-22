@@ -16,12 +16,12 @@
 
 package pages
 
-import models.rfm.RfmStatus
 import play.api.libs.json.JsPath
 
-case object RfmStatusPage extends QuestionPage[RfmStatus] {
+case object RepaymentsWaitingRoomVisited extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "rfmStatus"
+  override def toString: String = "repaymentsWaitingRoomVisited"
+
 }
