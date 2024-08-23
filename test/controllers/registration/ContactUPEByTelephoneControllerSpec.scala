@@ -17,13 +17,20 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
-import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpePhonePreferencePage}
 import play.api.data.Form
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.ContactUPEByTelephoneView
+
+import scala.concurrent.Future
 
 class ContactUPEByTelephoneControllerSpec extends SpecBase {
 
@@ -86,6 +93,56 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeNameRegistrationPage, "test")
+        .setOrException(UpeContactEmailPage, "email")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "true")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+      }
+    }
+    "must return a Bad Request and errors when invalid data is submitted" in {
+      val ua = emptyUserAnswers
+        .setOrException(UpeContactNamePage, "sad")
+        .setOrException(UpeNameRegistrationPage, "test")
+        .setOrException(UpeContactEmailPage, "email")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "")
+            )
+        val view      = application.injector.instanceOf[ContactUPEByTelephoneView]
+        val boundForm = formProvider.bind(Map("value" -> ""))
+        val result    = route(application, request).value
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "sad")(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
     "redirect to journey recovery when no contact name is found for POST" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {

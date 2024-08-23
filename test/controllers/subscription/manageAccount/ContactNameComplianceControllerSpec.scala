@@ -17,17 +17,19 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import forms.ContactNameComplianceFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubPrimaryContactNamePage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import views.html.subscriptionview.manageAccount.ContactNameComplianceView
 
 import java.util.UUID
@@ -101,6 +103,24 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "redirect to the next page when save and continue if valid data is provided" in {
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      val answers = emptySubscriptionLocalData
+
+      val application = applicationBuilder(subscriptionLocalData = Some(answers))
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onSubmit.url)
+          .withFormUrlEncodedBody("value" -> "name")
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
 
