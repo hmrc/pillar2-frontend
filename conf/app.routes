@@ -544,3 +544,5 @@ GET        /repayment/error/return                                              
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
+
+GET        /replace-filing-member/download-pdf                                                      controllers.pdf.PrintPdfController.onDownloadRfm

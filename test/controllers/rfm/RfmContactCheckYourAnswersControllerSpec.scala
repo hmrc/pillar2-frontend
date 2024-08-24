@@ -27,6 +27,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages._
+import play.api.Logger
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -272,7 +273,10 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       "redirect to the confirmation page in case of a successful replace filing member and data is removed" in {
         val completeUserAnswers = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+          )
           .build()
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
@@ -289,7 +293,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           ).thenReturn(Future.successful(amendData))
           when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
           val result = route(application, request).value
-
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
           verify(mockUserAnswersConnectors).remove(eqTo(emptyUserAnswers.id))(any())

@@ -1,0 +1,306 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.rfm.RfmJourneyModel
+
+@this()
+
+@(model: RfmJourneyModel)(implicit request: RequestHeader, messages: Messages)
+
+<fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="main" page-height="297mm" page-width="210mm" margin="2cm">
+            <fo:region-body region-name="xsl-region-body" margin-top="3cm"/>
+            <fo:region-before region-name="xsl-region-before"/>
+            <fo:region-after region-name="xsl-region-after"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:declarations>
+        <pdf:catalog xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+            <pdf:dictionary type="normal" key="ViewerPreferences">
+                <pdf:boolean key="DisplayDocTitle">true</pdf:boolean>
+            </pdf:dictionary>
+        </pdf:catalog>
+    </fo:declarations>
+
+    <fo:bookmark-tree>
+        <fo:bookmark internal-destination="title">
+            <fo:bookmark-title>@messages("rmf.pdf.title")</fo:bookmark-title>
+
+            <fo:bookmark internal-destination="filing-member-details">
+                <fo:bookmark-title>@messages("rfm.contactCheckYourAnswers.filingmember")</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="primary-contact-details">
+                <fo:bookmark-title>@messages("rfm.contactCheckYourAnswers.first")</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="secondary-contact-details">
+                <fo:bookmark-title>@messages("rfm.contactCheckYourAnswers.second")</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="contact-address-details">
+                <fo:bookmark-title>@messages("rfm.contactCheckYourAnswers.address")</fo:bookmark-title>
+            </fo:bookmark>
+
+        </fo:bookmark>
+    </fo:bookmark-tree>
+
+    <fo:page-sequence master-reference="main">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block>
+                <fo:external-graphic content-width="5cm"  src="url(conf/resources/gov-uk-logo-black.png)" padding-right="1cm" fox:alt-text="GOV.UK" />
+                <fo:block role="H1" margin-left="6cm" margin-top="-1.38cm" text-align="right" font-size="16pt" font-weight="bold">@messages("rfm.pdf.title")</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Body -->
+        <fo:flow flow-name="xsl-region-body">
+
+            <fo:block-container margin-bottom="10mm">
+
+                <!-- Filing Member Details -->
+                <fo:block role="H2" id="filing-member-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">@messages("rfm.contactCheckYourAnswers.filingmember")</fo:block>
+
+                <fo:block-container>
+
+                    <!-- CorporatePosition -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.corporatePositionCya.heading")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@messages(s"rfm.corporatePosition.${model.corporateStructurePosition}")</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+
+                    @model.ukRegistered.map { ukRegistered =>
+                        @if(ukRegistered) {
+                            @model.grsUkLimited.map { grsUkLimited =>
+
+                            <!-- Company Name -->
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@grsUkLimited.companyName</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+
+                            <!-- Company CRN -->
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyReg.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@grsUkLimited.crn</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+
+                            <!-- Company UTR -->
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyUtr.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@grsUkLimited.utr</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+
+                            }
+                        } else {
+
+                            <!-- Name -->
+                            @model.name.map { name =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.nameRegistration.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@name</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                            }
+
+                            <!-- RegisteredOfficeAddress -->
+                            @model.registeredOfficeAddress.map { registeredOfficeAddress =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.registeredAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        @registeredOfficeAddress.getAddressList.map { line =>
+                                        <fo:block>@line</fo:block>
+                                        }
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                            }
+                        }
+                    }
+
+                </fo:block-container>
+
+                <!-- Primary Contact Details -->
+                <fo:block role="H2" id="primary-contact-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">@messages("rfm.contactCheckYourAnswers.first")</fo:block>
+
+                <fo:block-container margin-bottom="10mm">
+
+                    <!-- Primary contact name -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.rfmPrimaryContactName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@model.primaryContactName</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Primary contact email -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm-input-business-email.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@model.primaryContactEmail</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Contact by telephone ? -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmContactByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@if(model.primaryContactByTelephone){Yes}else{No}</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Telephone number -->
+                    @model.primaryContactTelephone.map { primaryContactTelephone =>
+                        <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                            <fo:list-item  margin-bottom="3mm">
+                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                <fo:list-item-body start-indent="body-start()">
+                                    <fo:block>@model.primaryContactTelephone</fo:block>
+                                </fo:list-item-body>
+                            </fo:list-item>
+                        </fo:list-block>
+                    }
+
+                </fo:block-container>
+
+                <!-- Secondary Contact Details -->
+                <fo:block role="H2" id="secondary-contact-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">@messages("rfm.contactCheckYourAnswers.second")</fo:block>
+
+                <fo:block-container margin-bottom="10mm">
+
+                    <!-- Secondary contact ? -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.addSecondaryContact.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@if(model.secondaryContact){Yes}else{No}</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+
+                    @if(model.secondaryContact) {
+
+                        <!-- Secondary contact name -->
+                        @model.secondaryContactName.map { secondaryContactName =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryContactName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@secondaryContactName</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+
+                        <!-- Secondary contact email -->
+                        @model.secondaryContactEmail.map { secondaryContactEmail =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryContactEmail.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@secondaryContactEmail</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+
+                        <!-- Secondary contact by telephone ? -->
+                        @model.secondaryContactByTelephone.map { secondaryContactByTelephone =>
+                        <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryTelephonePreference.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@if(secondaryContactByTelephone){Yes}else{No}</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+
+                        @model.secondaryContactTelephone.map { secondaryContactTelephone =>
+                            <!-- Secondary contact telephone number -->
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@secondaryContactTelephone</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+
+                    }
+
+                </fo:block-container>
+
+                <!-- Contact address details -->
+                <fo:block role="H2" id="contact-address-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">@messages("rfm.contactCheckYourAnswers.address")</fo:block>
+
+                <fo:block-container margin-bottom="10mm">
+
+                    <!-- Contact Address -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmContactAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                @model.contactAddress.getAddressList.map { line =>
+                                <fo:block>@line</fo:block>
+                                }
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                </fo:block-container>
+
+
+            </fo:block-container>
+        </fo:flow>
+
+    </fo:page-sequence>
+
+</fo:root>
