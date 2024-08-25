@@ -37,8 +37,8 @@ class FopService @Inject() (
     foUserAgent.setAuthor("HMRC forms service")
     foUserAgent.setProducer("HMRC forms services")
     foUserAgent.setCreator("HMRC forms services")
-    foUserAgent.setSubject("Pillar 2 Registration Confirmation Form")
-    foUserAgent.setTitle("Pillar 2 Registration Confirmation Form")
+    foUserAgent.setSubject("Report Pillar 2 top-up taxes")
+    foUserAgent.setTitle("Report Pillar 2 top-up taxes")
   }
 
   def render(input: String): Future[Array[Byte]] = Future {

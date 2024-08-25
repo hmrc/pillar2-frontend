@@ -40,7 +40,7 @@
 
     <fo:bookmark-tree>
         <fo:bookmark internal-destination="title">
-            <fo:bookmark-title>@messages("rmf.pdf.title")</fo:bookmark-title>
+            <fo:bookmark-title>@messages("service.name")</fo:bookmark-title>
 
             <fo:bookmark internal-destination="filing-member-details">
                 <fo:bookmark-title>@messages("rfm.contactCheckYourAnswers.filingmember")</fo:bookmark-title>
@@ -65,9 +65,9 @@
 
         <!-- Header -->
         <fo:static-content flow-name="xsl-region-before">
-            <fo:block>
+            <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">
                 <fo:external-graphic content-width="5cm"  src="url(conf/resources/gov-uk-logo-black.png)" padding-right="1cm" fox:alt-text="GOV.UK" />
-                <fo:block role="H1" margin-left="6cm" margin-top="-1.38cm" text-align="right" font-size="16pt" font-weight="bold">@messages("rfm.pdf.title")</fo:block>
+                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")</fo:block>
             </fo:block>
         </fo:static-content>
 
@@ -75,6 +75,10 @@
         <fo:flow flow-name="xsl-region-body">
 
             <fo:block-container margin-bottom="10mm">
+
+                <!-- Primary Contact Details -->
+                <fo:block role="H2" id="replace-filing-member-caption" color="#505a5f" font-size="18pt" margin-top="2mm">@messages("rfm.contactCheckYourAnswers.caption")</fo:block>
+                <fo:block role="H1" id="replace-filing-member-title" font-size="24pt" font-weight="bold" margin-bottom="5mm">@messages("rfm.contactCheckYourAnswers.heading")</fo:block>
 
                 <!-- Filing Member Details -->
                 <fo:block role="H2" id="filing-member-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">@messages("rfm.contactCheckYourAnswers.filingmember")</fo:block>

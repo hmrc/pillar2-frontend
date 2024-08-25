@@ -1179,8 +1179,6 @@ rfm.security.errorPage.p2= If you think you made an error when entering them you
 rfm.security.errorPage.p2.link= go back to try again using different details.
 rfm.site.confirm.submit = Confirm and submit
 
-rfm.pdf.title = Replace the filing member for a Pillar 2 top-up taxes account
-
 ###############################################
 #
 # Agent Services
