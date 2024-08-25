@@ -14,15 +14,18 @@
  * limitations under the License.
  */
 
-package controllers.contactdetails
+package controllers
+
 import base.SpecBase
 import models.NormalMode
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContentView
+
 class ContentControllerSpec extends SpecBase {
 
   "StartPageRegistrationController" when {
+
     "must return OK and the correct view for a GET " in {
       val application = applicationBuilder().build()
       running(application) {
@@ -36,6 +39,19 @@ class ContentControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "must redirect to next page accounting period when valid data is submitted" in {
+      val ua = emptyUserAnswers
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.ContentController.onSubmit(NormalMode).url)
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url
       }
     }
   }

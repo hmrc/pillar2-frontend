@@ -21,33 +21,30 @@ import cats.implicits.catsSyntaxTuple15Parallel
 import models.grs.GrsRegistrationData
 import models.rfm.CorporatePosition.{NewNfm, Upe}
 import models.{NonUKAddress, UserAnswers}
-import pages.{RfmAddSecondaryContactPage, RfmCapturePrimaryTelephonePage, RfmContactAddressPage, RfmContactByTelephonePage,
-  RfmCorporatePositionPage, RfmGrsDataPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage,
-  RfmRegisteredAddressPage, RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryEmailPage,
-  RfmSecondaryPhonePreferencePage, RfmUkBasedPage}
+import pages.{RfmAddSecondaryContactPage, RfmCapturePrimaryTelephonePage, RfmContactAddressPage, RfmContactByTelephonePage, RfmCorporatePositionPage, RfmGrsDataPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmRegisteredAddressPage, RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage, RfmUkBasedPage}
 import queries.Query
 
 final case class RfmJourneyModel(
-                                  corporateStructurePosition: CorporatePosition,
-                                  ukRegistered: Option[Boolean],
-                                  grsUkLimited: Option[GrsRegistrationData],
-                                  name: Option[String],
-                                  registeredOfficeAddress: Option[NonUKAddress],
-                                  primaryContactName: String,
-                                  primaryContactEmail: String,
-                                  primaryContactByTelephone: Boolean,
-                                  primaryContactTelephone: Option[String],
-                                  secondaryContact: Boolean,
-                                  secondaryContactName: Option[String],
-                                  secondaryContactEmail: Option[String],
-                                  secondaryContactByTelephone: Option[Boolean],
-                                  secondaryContactTelephone: Option[String],
-                                  contactAddress: NonUKAddress
-                             )
+  corporateStructurePosition:  CorporatePosition,
+  ukRegistered:                Option[Boolean],
+  grsUkLimited:                Option[GrsRegistrationData],
+  name:                        Option[String],
+  registeredOfficeAddress:     Option[NonUKAddress],
+  primaryContactName:          String,
+  primaryContactEmail:         String,
+  primaryContactByTelephone:   Boolean,
+  primaryContactTelephone:     Option[String],
+  secondaryContact:            Boolean,
+  secondaryContactName:        Option[String],
+  secondaryContactEmail:       Option[String],
+  secondaryContactByTelephone: Option[Boolean],
+  secondaryContactTelephone:   Option[String],
+  contactAddress:              NonUKAddress
+)
 
 object RfmJourneyModel {
 
-  def from(answers: UserAnswers): EitherNec[Query, RfmJourneyModel] = {
+  def from(answers: UserAnswers): EitherNec[Query, RfmJourneyModel] =
     (
       answers.getEither(RfmCorporatePositionPage),
       getUkRegistered(answers),
@@ -64,10 +61,8 @@ object RfmJourneyModel {
       getSecondaryPhonePreference(answers),
       getSecondaryTelephone(answers),
       answers.getEither(RfmContactAddressPage)
-    ).parMapN { (corpPosition, ukBased, grsUkLimited, regName, regAddress, primaryName, primaryEmail, primaryContactByPhone,
-                 primaryPhone,
-                 addSecondaryContact, secondaryName, secondaryEmail, secondaryContactByPhone, secondaryPhone, contactAddress) =>
-      RfmJourneyModel(
+    ).parMapN {
+      (
         corpPosition,
         ukBased,
         grsUkLimited,
@@ -83,23 +78,37 @@ object RfmJourneyModel {
         secondaryContactByPhone,
         secondaryPhone,
         contactAddress
-      )
+      ) =>
+        RfmJourneyModel(
+          corpPosition,
+          ukBased,
+          grsUkLimited,
+          regName,
+          regAddress,
+          primaryName,
+          primaryEmail,
+          primaryContactByPhone,
+          primaryPhone,
+          addSecondaryContact,
+          secondaryName,
+          secondaryEmail,
+          secondaryContactByPhone,
+          secondaryPhone,
+          contactAddress
+        )
     }
-  }
-
 
   private def getUkRegistered(answers: UserAnswers): EitherNec[Query, Option[Boolean]] =
     answers.getEither(RfmCorporatePositionPage).flatMap {
-      case NewNfm  => answers.getEither(RfmUkBasedPage).map(Some(_))
-      case Upe => Right(None)
+      case NewNfm => answers.getEither(RfmUkBasedPage).map(Some(_))
+      case Upe    => Right(None)
     }
-
 
   private def getGrsUkLimited(answers: UserAnswers): EitherNec[Query, Option[GrsRegistrationData]] =
     answers.getEither(RfmCorporatePositionPage).flatMap {
       case NewNfm =>
         answers.getEither(RfmUkBasedPage).flatMap {
-          case true => answers.getEither(RfmGrsDataPage).map(Some(_))
+          case true  => answers.getEither(RfmGrsDataPage).map(Some(_))
           case false => Right(None)
         }
       case Upe => Right(None)
@@ -109,7 +118,7 @@ object RfmJourneyModel {
     answers.getEither(RfmCorporatePositionPage).flatMap {
       case NewNfm =>
         answers.getEither(RfmUkBasedPage).flatMap {
-          case true => Right(None)
+          case true  => Right(None)
           case false => answers.getEither(RfmNameRegistrationPage).map(Some(_))
         }
       case Upe => Right(None)
@@ -119,7 +128,7 @@ object RfmJourneyModel {
     answers.getEither(RfmCorporatePositionPage).flatMap {
       case NewNfm =>
         answers.getEither(RfmUkBasedPage).flatMap {
-          case true => Right(None)
+          case true  => Right(None)
           case false => answers.getEither(RfmRegisteredAddressPage).map(Some(_))
         }
       case Upe => Right(None)
@@ -152,10 +161,10 @@ object RfmJourneyModel {
   private def getSecondaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(RfmAddSecondaryContactPage).flatMap {
       case true =>
-      answers.getEither(RfmSecondaryPhonePreferencePage).flatMap {
-        case true => answers.getEither(RfmSecondaryCapturePhonePage).map(Some(_))
-        case false => Right(None)
-      }
+        answers.getEither(RfmSecondaryPhonePreferencePage).flatMap {
+          case true  => answers.getEither(RfmSecondaryCapturePhonePage).map(Some(_))
+          case false => Right(None)
+        }
       case false => Right(None)
     }
 

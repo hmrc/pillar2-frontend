@@ -100,6 +100,30 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(SubPrimaryContactNamePage, "TestName")
+        .success
+        .value
+        .set(SubPrimaryPhonePreferencePage, true)
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "123456")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
+      }
+    }
     "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()

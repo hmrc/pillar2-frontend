@@ -34,20 +34,48 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has all answers for a non uk based company" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm).success.value
-          .set(RfmUkBasedPage, false).success.value
-          .set(RfmNameRegistrationPage, "first last").success.value
-          .set(RfmRegisteredAddressPage, nonUkAddress).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, true).success.value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789").success.value
-          .set(RfmAddSecondaryContactPage, true).success.value
-          .set(RfmSecondaryContactNamePage, "secondary name").success.value
-          .set(RfmSecondaryEmailPage, "secondary@test.com").success.value
-          .set(RfmSecondaryPhonePreferencePage, true).success.value
-          .set(RfmSecondaryCapturePhonePage, "0191 987654321").success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+          .success
+          .value
+          .set(RfmUkBasedPage, false)
+          .success
+          .value
+          .set(RfmNameRegistrationPage, "first last")
+          .success
+          .value
+          .set(RfmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, true)
+          .success
+          .value
+          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, true)
+          .success
+          .value
+          .set(RfmSecondaryContactNamePage, "secondary name")
+          .success
+          .value
+          .set(RfmSecondaryEmailPage, "secondary@test.com")
+          .success
+          .value
+          .set(RfmSecondaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(RfmSecondaryCapturePhonePage, "0191 987654321")
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.NewNfm,
           ukRegistered = Some(false),
@@ -70,15 +98,33 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has minimum answers for a non uk based company" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm).success.value
-          .set(RfmUkBasedPage, false).success.value
-          .set(RfmNameRegistrationPage, "first last").success.value
-          .set(RfmRegisteredAddressPage, nonUkAddress).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, false).success.value
-          .set(RfmAddSecondaryContactPage, false).success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+          .success
+          .value
+          .set(RfmUkBasedPage, false)
+          .success
+          .value
+          .set(RfmNameRegistrationPage, "first last")
+          .success
+          .value
+          .set(RfmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, false)
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.NewNfm,
           ukRegistered = Some(false),
@@ -101,19 +147,45 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has all answers for a uk limited company" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm).success.value
-          .set(RfmUkBasedPage, true).success.value
-          .set(RfmGrsDataPage, grsData).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, true).success.value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789").success.value
-          .set(RfmAddSecondaryContactPage, true).success.value
-          .set(RfmSecondaryContactNamePage, "secondary name").success.value
-          .set(RfmSecondaryEmailPage, "secondary@test.com").success.value
-          .set(RfmSecondaryPhonePreferencePage, true).success.value
-          .set(RfmSecondaryCapturePhonePage, "0191 987654321").success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+          .success
+          .value
+          .set(RfmUkBasedPage, true)
+          .success
+          .value
+          .set(RfmGrsDataPage, grsData)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, true)
+          .success
+          .value
+          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, true)
+          .success
+          .value
+          .set(RfmSecondaryContactNamePage, "secondary name")
+          .success
+          .value
+          .set(RfmSecondaryEmailPage, "secondary@test.com")
+          .success
+          .value
+          .set(RfmSecondaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(RfmSecondaryCapturePhonePage, "0191 987654321")
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.NewNfm,
           ukRegistered = Some(true),
@@ -136,14 +208,30 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has minimum answers for a uk based company" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm).success.value
-          .set(RfmUkBasedPage, true).success.value
-          .set(RfmGrsDataPage, grsData).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, false).success.value
-          .set(RfmAddSecondaryContactPage, false).success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+          .success
+          .value
+          .set(RfmUkBasedPage, true)
+          .success
+          .value
+          .set(RfmGrsDataPage, grsData)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, false)
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.NewNfm,
           ukRegistered = Some(true),
@@ -164,10 +252,9 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
       }
 
-
       "must return all the pages which failed" in {
         val errors = RfmJourneyModel.from(UserAnswers("id")).left.value.toChain.toList
-        errors must contain only(
+        errors must contain only (
           RfmCorporatePositionPage,
           RfmPrimaryContactNamePage,
           RfmPrimaryContactEmailPage,
@@ -183,17 +270,39 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has all answers for a upe" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.Upe).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, true).success.value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789").success.value
-          .set(RfmAddSecondaryContactPage, true).success.value
-          .set(RfmSecondaryContactNamePage, "secondary name").success.value
-          .set(RfmSecondaryEmailPage, "secondary@test.com").success.value
-          .set(RfmSecondaryPhonePreferencePage, true).success.value
-          .set(RfmSecondaryCapturePhonePage, "0191 987654321").success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, true)
+          .success
+          .value
+          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, true)
+          .success
+          .value
+          .set(RfmSecondaryContactNamePage, "secondary name")
+          .success
+          .value
+          .set(RfmSecondaryEmailPage, "secondary@test.com")
+          .success
+          .value
+          .set(RfmSecondaryPhonePreferencePage, true)
+          .success
+          .value
+          .set(RfmSecondaryCapturePhonePage, "0191 987654321")
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.Upe,
           ukRegistered = None,
@@ -216,12 +325,24 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
 
       "must return a completed journey model when the user has minimum answers for a upe" in {
         val answers: UserAnswers = UserAnswers("id")
-          .set(RfmCorporatePositionPage, CorporatePosition.Upe).success.value
-          .set(RfmPrimaryContactNamePage, "primary name").success.value
-          .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-          .set(RfmContactByTelephonePage, false).success.value
-          .set(RfmAddSecondaryContactPage, false).success.value
-          .set(RfmContactAddressPage, nonUkAddress).success.value
+          .set(RfmCorporatePositionPage, CorporatePosition.Upe)
+          .success
+          .value
+          .set(RfmPrimaryContactNamePage, "primary name")
+          .success
+          .value
+          .set(RfmPrimaryContactEmailPage, "primary@test.com")
+          .success
+          .value
+          .set(RfmContactByTelephonePage, false)
+          .success
+          .value
+          .set(RfmAddSecondaryContactPage, false)
+          .success
+          .value
+          .set(RfmContactAddressPage, nonUkAddress)
+          .success
+          .value
         val expected = RfmJourneyModel(
           corporateStructurePosition = CorporatePosition.Upe,
           ukRegistered = None,
@@ -241,7 +362,6 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
       }
-
 
     }
 

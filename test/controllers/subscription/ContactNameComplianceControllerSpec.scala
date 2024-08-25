@@ -17,15 +17,21 @@
 package controllers.subscription
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.ContactNameComplianceFormProvider
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, NormalMode}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage, SubPrimaryContactNamePage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContactNameComplianceView
 
 import java.time.LocalDate
+import scala.concurrent.Future
 
 class ContactNameComplianceControllerSpec extends SpecBase {
 
@@ -86,7 +92,27 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(SubPrimaryContactNamePage, "TestName")
+        .success
+        .value
 
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url
+      }
+    }
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None).build()

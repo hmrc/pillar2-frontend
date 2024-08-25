@@ -29,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class PrintPdfController @Inject()(
+class PrintPdfController @Inject() (
   override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
@@ -42,15 +42,17 @@ class PrintPdfController @Inject()(
     with I18nSupport
     with Logging {
 
-  def onDownloadRfm: Action[AnyContent] = (identify andThen getData andThen requireData).async {
-    implicit request =>
-      RfmJourneyModel.from(request.userAnswers).map { model =>
+  def onDownloadRfm: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    RfmJourneyModel
+      .from(request.userAnswers)
+      .map { model =>
         fopService.render(rfmPdfView.render(model, implicitly, implicitly).body).map { pdf =>
           Ok(pdf)
             .as("application/octet-stream")
             .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-check-your-answers.pdf")
         }
-      }.getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+      }
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 
 }

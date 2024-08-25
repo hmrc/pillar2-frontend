@@ -19,21 +19,17 @@
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton,
-        paragraphMessageWithLink: ParagraphMessageWithLink,
+        h: heading,
         p: paragraphBody,
-        heading: heading,
-        govukSummaryList: GovukSummaryList,
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-@layout(
-    pageTitle = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true
-) {
-    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-    @p(messages("payment.dashboard.message1", plrID))
-    @p(messages("payment.dashboard.message2"))
-    @paragraphMessageWithLink(Some(messages("payment.dashboard.message3")), linkMessage = messages("payment.dashboard.message4"), linkUrl = "")
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("rfm.securityError.title")), serviceBannerClickable = false) {
+
+    @h(messages("rfm.securityError.heading"), classes = "govuk-heading-l")
+    @p(messages("rfm.securityError.p1"))
+    @paragraphMessageWithLink(message1 = Some(messages("rfm.securityError.p2")), linkMessage = messages("rfm.securityError.p2.link"), linkUrl = "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account", linkFullStop = true)
 
 }

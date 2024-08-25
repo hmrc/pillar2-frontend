@@ -24,18 +24,18 @@ import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{SubAddSecondaryContactPage, SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPhonePreferencePage}
+import pages._
 import play.api.data.Form
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryTelephonePreferenceView
-import play.api.inject.bind
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AuthConnector, User}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -146,6 +146,42 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must update subscription data and redirect to the next page when the user answers yes" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[AmendSubscriptionNavigator]
+      when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
+      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptySubscriptionLocalData
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubSecondaryContactNamePage, "name")
+        .setOrException(SubSecondaryEmailPage, "name")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "123123")
+
+      val expectedUserAnswers = userAnswers
+      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+        .overrides(
+          bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onSubmit.url)
+          .withFormUrlEncodedBody("value" -> "true")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockNavigator).nextPage(SubSecondaryPhonePreferencePage, expectedUserAnswers)
       }
     }
 

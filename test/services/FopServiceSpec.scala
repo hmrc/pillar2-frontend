@@ -26,13 +26,13 @@ import scala.io.Source
 
 class FopServiceSpec extends AnyFreeSpec with Matchers with ScalaFutures with IntegrationPatience {
 
-  private val app = GuiceApplicationBuilder().build()
+  private val app        = GuiceApplicationBuilder().build()
   private val fopService = app.injector.instanceOf[FopService]
 
   "render" - {
 
     "must render some fop content as a pdf" in {
-      val input = Source.fromResource("fop/simpleRfm.fo").mkString
+      val input  = Source.fromResource("fop/simpleRfm.fo").mkString
       val result = fopService.render(input).futureValue
       PDDocument.load(result)
     }

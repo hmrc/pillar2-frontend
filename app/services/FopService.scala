@@ -27,9 +27,9 @@ import javax.xml.transform.stream.StreamSource
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class FopService @Inject()(
-                            fopFactory: FopFactory
-                          )(implicit ec: ExecutionContext) {
+class FopService @Inject() (
+  fopFactory:  FopFactory
+)(implicit ec: ExecutionContext) {
 
   private val userAgentBlock: FOUserAgent => Unit = { foUserAgent =>
     foUserAgent.setAccessibility(true)

@@ -14,26 +14,26 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
-import models.subscription.SubscriptionStatus._
-import pages.SubscriptionStatusPage
+import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
+import pages.RfmStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationWaitingRoomView
+import views.html.rfm.RfmWaitingRoomView
 
 import javax.inject.Inject
 
-class RegistrationWaitingRoomController @Inject() (
+class RfmWaitingRoomController @Inject() (
   getData:                  SessionDataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     RegistrationWaitingRoomView
+  view:                     RfmWaitingRoomView
 )(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -41,13 +41,15 @@ class RegistrationWaitingRoomController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
-      .get(SubscriptionStatusPage) match {
-      case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad)
-      case Some(FailedWithDuplicatedSubmission)           => Redirect(routes.AlreadyRegisteredController.onPageLoad)
-      case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
-      case Some(FailedWithNoMneOrDomesticValueFoundError) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
-      case Some(FailedWithDuplicatedSafeIdError)          => Redirect(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad)
-      case s                                              => Ok(view(s))
+      .get(RfmStatusPage) match {
+      case Some(SuccessfullyCompleted) =>
+        logger.info("successfully replaced filing member")
+        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
+      case Some(FailedInternalIssueError) => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
+      case Some(FailException) =>
+        logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      case s => Ok(view(s))
     }
 
   }

@@ -22,11 +22,10 @@ import play.api.Environment
 import javax.inject.{Inject, Provider, Singleton}
 
 @Singleton
-class FopFactoryProvider @Inject()(
-                                    environment: Environment
-                                  ) extends Provider[FopFactory] {
-  override def get(): FopFactory = {
+class FopFactoryProvider @Inject() (
+  environment: Environment
+) extends Provider[FopFactory] {
+  override def get(): FopFactory =
     new FopFactoryBuilder(environment.rootPath.toURI)
       .build()
-  }
 }

@@ -35,23 +35,50 @@ import scala.concurrent.Future
 class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSugar {
 
   val answers: UserAnswers = emptyUserAnswers
-    .set(RfmCorporatePositionPage, CorporatePosition.NewNfm).success.value
-    .set(RfmUkBasedPage, false).success.value
-    .set(RfmNameRegistrationPage, "first last").success.value
-    .set(RfmRegisteredAddressPage, nonUkAddress).success.value
-    .set(RfmPrimaryContactNamePage, "primary name").success.value
-    .set(RfmPrimaryContactEmailPage, "primary@test.com").success.value
-    .set(RfmContactByTelephonePage, true).success.value
-    .set(RfmCapturePrimaryTelephonePage, "0191 123456789").success.value
-    .set(RfmAddSecondaryContactPage, true).success.value
-    .set(RfmSecondaryContactNamePage, "secondary name").success.value
-    .set(RfmSecondaryEmailPage, "secondary@test.com").success.value
-    .set(RfmSecondaryPhonePreferencePage, true).success.value
-    .set(RfmSecondaryCapturePhonePage, "0191 987654321").success.value
-    .set(RfmContactAddressPage, nonUkAddress).success.value
+    .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+    .success
+    .value
+    .set(RfmUkBasedPage, false)
+    .success
+    .value
+    .set(RfmNameRegistrationPage, "first last")
+    .success
+    .value
+    .set(RfmRegisteredAddressPage, nonUkAddress)
+    .success
+    .value
+    .set(RfmPrimaryContactNamePage, "primary name")
+    .success
+    .value
+    .set(RfmPrimaryContactEmailPage, "primary@test.com")
+    .success
+    .value
+    .set(RfmContactByTelephonePage, true)
+    .success
+    .value
+    .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+    .success
+    .value
+    .set(RfmAddSecondaryContactPage, true)
+    .success
+    .value
+    .set(RfmSecondaryContactNamePage, "secondary name")
+    .success
+    .value
+    .set(RfmSecondaryEmailPage, "secondary@test.com")
+    .success
+    .value
+    .set(RfmSecondaryPhonePreferencePage, true)
+    .success
+    .value
+    .set(RfmSecondaryCapturePhonePage, "0191 987654321")
+    .success
+    .value
+    .set(RfmContactAddressPage, nonUkAddress)
+    .success
+    .value
 
   val model: RfmJourneyModel = RfmJourneyModel.from(answers).right.value
-
 
   "onDownloadRfm" must {
 
@@ -65,7 +92,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
       running(application) {
         val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfm.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual "hello"
         header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=replace-filing-member-check-your-answers.pdf"
@@ -76,7 +103,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfm.url)
-        val result = route(application, request).value
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
       }
