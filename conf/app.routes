@@ -542,4 +542,5 @@ GET        /payment/history                                                     
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 
-GET        /replace-filing-member/download-pdf                                                      controllers.pdf.PrintPdfController.onDownloadRfm
+GET        /replace-filing-member/download-answers-pdf                                              controllers.pdf.PrintPdfController.onDownloadRfmAnswers
+GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
