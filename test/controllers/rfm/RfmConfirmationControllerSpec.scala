@@ -103,6 +103,14 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "You can now"
         )
         contentAsString(result) must include(
+          "report and manage your group's Pillar 2 top-up taxes"
+        )
+        contentAsString(result) must include(
+          "on behalf of your group."
+        )
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Download as PDF")
+        contentAsString(result) must include(
           currentDate.toString()
         )
 

@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package controllers.contactdetails
+package controllers
+
 import base.SpecBase
-import connectors.UserAnswersConnectors
 import models.NormalMode
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.SubPrimaryContactNamePage
-import play.api.inject.bind
-import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.subscriptionview.ContentView
 
-import scala.concurrent.Future
 class ContentControllerSpec extends SpecBase {
 
   "StartPageRegistrationController" when {

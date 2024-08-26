@@ -1,4 +1,4 @@
-/*
+@*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,19 +12,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- */
+ *@
 
-package forms
+@this()
 
-import forms.mappings.Mappings
-import play.api.data.Form
+@(message: String, url: String)
 
-import javax.inject.Inject
-
-class RfmAddSecondaryContactFormProvider @Inject() extends Mappings {
-
-  def apply(userName: String): Form[Boolean] =
-    Form(
-      "value" -> boolean("rfm.addSecondaryContact.error.required", args = Seq(userName))
-    )
-}
+<p id="download" class="govuk-list govuk-link print-link hmrc-!-js-visible govuk-!-display-none-print">
+ <a href="@url" role="button" class="class=govuk-button hmrc-!-js-visible" data-module="govuk-button">
+  @message
+ </a>
+</p>

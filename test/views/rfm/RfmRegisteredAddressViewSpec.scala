@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmRegisteredAddressFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmRegisteredAddressView
 
 class RfmRegisteredAddressViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmRegisteredAddressFormProvider
-  val page         = inject[RfmRegisteredAddressView]
+  val page: RfmRegisteredAddressView = inject[RfmRegisteredAddressView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode, "John Doe", Seq.empty)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode, "John Doe", Seq.empty)(request, appConfig, messages).toString())
 
   "Rfm Registered Address View" should {
 
@@ -41,6 +42,14 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByTag("h1").text must include("What is the registered office address of John Doe?")
+    }
+
+    "have warning text" in {
+      val wText = view.getElementsByClass("govuk-warning-text__text")
+      wText.text must include(
+        "You must provide the registered office address for HMRC to keep on record. " +
+          "If you’re uncertain, verify the registered address before proceeding."
+      )
     }
 
     "have an address line 1 label" in {

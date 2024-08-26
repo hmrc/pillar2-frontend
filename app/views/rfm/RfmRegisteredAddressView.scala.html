@@ -30,7 +30,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukSelect: GovukSelect,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    govukWarningText: GovukWarningText
 )
 
 @(form: Form[_], mode: Mode, UserName:String ="", countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -46,6 +47,11 @@
         @sectionHeader(messages("rfm.registration.heading.caption"))
 
         @heading(messages("rfm.registeredAddress.heading", UserName), "govuk-heading-l long-word")
+
+        @govukWarningText(WarningText(
+            iconFallbackText = Some(messages("site.warning")),
+            content = HtmlContent(messages("rfm.registeredAddress.warning.message"))
+        ))
 
         @govukInput(
             InputViewModel(
