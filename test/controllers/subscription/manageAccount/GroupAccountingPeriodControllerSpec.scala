@@ -33,8 +33,8 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
@@ -53,7 +53,23 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   "GroupAccountingPeriod Controller for Organisation View Contact details" when {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
+    "must return OK and the correct view for a GET if no previous filled data is found" in {
+      val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(formProvider(true))(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return OK and the correct view for a GET if previous data is found" in {
       val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()

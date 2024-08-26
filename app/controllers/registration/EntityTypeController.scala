@@ -60,7 +60,7 @@ class EntityTypeController @Inject() (
         request.userAnswers
           .get(UpeEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType == EntityType.Other) {
+            if (!ukBased & entityType.toString == EntityType.Other.toString) {
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
