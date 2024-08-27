@@ -1,0 +1,72 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.ViewUtils.formattedCurrentDate
+
+@this()
+
+@()(implicit request: RequestHeader, messages: Messages)
+
+<fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="main" page-height="297mm" page-width="210mm" margin="2cm">
+            <fo:region-body region-name="xsl-region-body" margin-top="3cm"/>
+            <fo:region-before region-name="xsl-region-before"/>
+            <fo:region-after region-name="xsl-region-after"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:declarations>
+        <pdf:catalog xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+            <pdf:dictionary type="normal" key="ViewerPreferences">
+                <pdf:boolean key="DisplayDocTitle">true</pdf:boolean>
+            </pdf:dictionary>
+        </pdf:catalog>
+    </fo:declarations>
+
+    <fo:page-sequence master-reference="main">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">
+                <fo:external-graphic content-width="5cm"  src="url(conf/resources/gov-uk-logo-black.png)" padding-right="1cm" fox:alt-text="GOV.UK" />
+                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Body -->
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block-container margin-bottom="10mm">
+
+                <!-- Confirmation Banner -->
+                <fo:block-container border-color="#000000" border-style="solid" border-width="4pt" margin-bottom="10mm" text-align="center">
+                    <fo:block role="H1" id="repayment-submission-title" font-size="24pt" font-weight="bold" margin-bottom="5mm" margin-top="5mm">@messages("repayments.refundConfirmation.panelText")</fo:block>
+                </fo:block-container>
+
+                <!-- submission date -->
+                <fo:block id="repayment-submission-date" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.one", formattedCurrentDate) </fo:block>
+
+                <fo:block role="H2"  id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.two")</fo:block>
+                <fo:block id="more-info" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.three")</fo:block>
+                <fo:block id="next-step" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.four") @messages("repayments.refundConfirmation.paragraphText.returnLink")</fo:block>
+
+            </fo:block-container>
+        </fo:flow>
+
+    </fo:page-sequence>
+
+</fo:root>

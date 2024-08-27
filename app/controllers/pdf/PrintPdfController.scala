@@ -20,6 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
+import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import pages.PlrReferencePage
 import play.api.Logging
@@ -32,21 +33,26 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PrintPdfController @Inject() (
-  override val messagesApi: MessagesApi,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  rfmAnswersPdfView:        RfmAnswersPdf,
-  rfmConfirmationPdfView:   RfmConfirmationPdf,
-  fopService:               FopService,
-  sessionRepository:        SessionRepository,
-  val controllerComponents: MessagesControllerComponents
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  override val messagesApi:                        MessagesApi,
+  @Named("EnrolmentIdentifier") identifyRepayment: IdentifierAction,
+  getSessionData:                                  SessionDataRetrievalAction,
+  requireSessionData:                              SessionDataRequiredAction,
+  identify:                                        IdentifierAction,
+  getData:                                         DataRetrievalAction,
+  requireData:                                     DataRequiredAction,
+  rfmAnswersPdfView:                               RfmAnswersPdf,
+  rfmConfirmationPdfView:                          RfmConfirmationPdf,
+  repaymentAnswersPdfView:                         RepaymentAnswersPdf,
+  repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
+  fopService:                                      FopService,
+  sessionRepository:                               SessionRepository,
+  val controllerComponents:                        MessagesControllerComponents
+)(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -82,6 +88,29 @@ class PrintPdfController @Inject() (
       .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-confirmation.pdf"))
       .getOrElse {
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
+  }
+
+  def onDownloadRepaymentAnswers: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
+    implicit request =>
+      RepaymentJourneyModel
+        .from(request.userAnswers)
+        .map { model =>
+          fopService.render(repaymentAnswersPdfView.render(model, implicitly, implicitly).body).map { pdf =>
+            Ok(pdf)
+              .as("application/octet-stream")
+              .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-answers.pdf")
+          }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+  }
+
+  def onDownloadRepaymentConfirmation: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
+    implicit request =>
+      fopService.render(repaymentConfirmationPdfView.render(implicitly, implicitly).body).map { pdf =>
+        Ok(pdf)
+          .as("application/octet-stream")
+          .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")
       }
   }
 

@@ -22,6 +22,7 @@
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
         printLink: printLink,
+        pdfLink: pdfLink,
         formHelper: FormWithCSRF,
         heading: heading,
         h2: HeadingH2,
@@ -51,7 +52,7 @@
         @para(messages("repaymentsCheckYourAnswers.bank.submit-p2"))
         @bulletList(items = List(
             printLink(messages("site.print")),
-            printLink(messages("repayment.pdfDownload"))
+            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentAnswers.url)
         ), additionalListClasses = Some("govuk-list--spaced"))
 
         @h2(messages("repaymentsCheckYourAnswers.bank.submit-details.h2"), size = "s", extraClasses = Seq("govuk-!-margin-top-6"))

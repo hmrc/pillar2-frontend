@@ -24,6 +24,7 @@
         paragraph: paragraphBody,
         bulletList: bulletList,
         printLink: printLink,
+        pdfLink: pdfLink,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         heading: heading
 )
@@ -45,9 +46,8 @@
 
     @paragraph(messages("repayments.refundConfirmation.paragraphText.one", formattedCurrentDate))
     @bulletList(items = List(
-        printLink(messages("repayments.refundConfirmation.printLink.text")),
-        printLink(messages("repayment.pdfDownload"))
-
+        printLink(messages("site.print")),
+        pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
     @paragraph(messages("repayments.refundConfirmation.paragraphText.two"), isBold = true)
     @paragraph(messages("repayments.refundConfirmation.paragraphText.three"))

@@ -1,0 +1,239 @@
+@*
+ * Copyright 2022 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import models.repayments.RepaymentJourneyModel
+
+@this()
+
+@(model: RepaymentJourneyModel)(implicit request: RequestHeader, messages: Messages)
+
+<fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="main" page-height="297mm" page-width="210mm" margin="2cm">
+            <fo:region-body region-name="xsl-region-body" margin-top="3cm"/>
+            <fo:region-before region-name="xsl-region-before"/>
+            <fo:region-after region-name="xsl-region-after"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:declarations>
+        <pdf:catalog xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+            <pdf:dictionary type="normal" key="ViewerPreferences">
+                <pdf:boolean key="DisplayDocTitle">true</pdf:boolean>
+            </pdf:dictionary>
+        </pdf:catalog>
+    </fo:declarations>
+
+    <fo:bookmark-tree>
+        <fo:bookmark internal-destination="title">
+            <fo:bookmark-title>@messages("service.name")</fo:bookmark-title>
+
+            <fo:bookmark internal-destination="request-details">
+                <fo:bookmark-title>@messages("repaymentsCheckYourAnswers.request-details.h2")</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="bank-account-details">
+                <fo:bookmark-title>@messages("repaymentsCheckYourAnswers.bank.account-details.h2")</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="contact-details">
+                <fo:bookmark-title>@messages("repaymentsCheckYourAnswers.bank.contact-details.h2")</fo:bookmark-title>
+            </fo:bookmark>
+
+        </fo:bookmark>
+    </fo:bookmark-tree>
+
+    <fo:page-sequence master-reference="main">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">
+                <fo:external-graphic content-width="5cm"  src="url(conf/resources/gov-uk-logo-black.png)" padding-right="1cm" fox:alt-text="GOV.UK" />
+                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Body -->
+        <fo:flow flow-name="xsl-region-body">
+
+            <fo:block-container margin-bottom="10mm">
+
+                <fo:block role="H1" id="replace-filing-member-title" font-size="24pt" font-weight="bold" margin-bottom="5mm">@messages("repaymentsCheckYourAnswers.heading")</fo:block>
+
+                <!-- Request Details -->
+                <fo:block role="H2" id="request-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">@messages("repaymentsCheckYourAnswers.request-details.h2")</fo:block>
+
+                <fo:block-container>
+
+                    <!-- Refund Amount -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("requestRefundAmount.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>£@model.refundAmount</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Refund Reason -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("reasonForRequestingRefund.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@model.reasonForRequestingRefund</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+
+                </fo:block-container>
+
+                <!-- Bank Details -->
+                <fo:block role="H2" id="bank-account-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">@messages("repaymentsCheckYourAnswers.bank.account-details.h2")</fo:block>
+
+                <fo:block-container margin-bottom="10mm">
+
+                    <!-- Account Type -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("ukOrAbroadBankAccount.heading")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@messages(s"ukOrAbroadBankAccount.${model.ukOrAbroadBankAccount}")</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    @if(model.ukOrAbroadBankAccount == UkOrAbroadBankAccount.UkBankAccount) {
+                        <!-- UK Bank Account -->
+                        @model.bankAccountDetails.map { bankAccountDetails =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.UKBank.summary.bankName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@bankAccountDetails.bankName</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.UKBank.summary.nameOnAccount.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@bankAccountDetails.nameOnBankAccount</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.UKBank.summary.sortCode.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@bankAccountDetails.sortCode</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.UKBank.summary.accNumber.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@bankAccountDetails.accountNumber</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+                    } else {
+                        <!-- Non UK Bank Account -->
+                        @model.nonUKBank.map { nonUKBank =>
+                            <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.nonUKBank.summary.bankName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@nonUKBank.bankName</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@nonUKBank.nameOnBankAccount</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+                                        <fo:block>@nonUKBank.bic</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                                <fo:list-item  margin-bottom="3mm">
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repayments.nonUKBank.summary.iban.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-body start-indent="body-start()">
+
+                                        <fo:block>@nonUKBank.iban</fo:block>
+                                    </fo:list-item-body>
+                                </fo:list-item>
+                            </fo:list-block>
+                        }
+                    }
+
+                </fo:block-container>
+
+                <!-- Contact Details -->
+                <fo:block role="H2" id="contact-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">@messages("repaymentsCheckYourAnswers.bank.contact-details.h2")</fo:block>
+
+                <fo:block-container margin-bottom="10mm">
+
+                    <!-- Contact Name -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsContactName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@model.repaymentsContactName</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Contact Email -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsContactEmail.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@model.repaymentsContactEmail</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Contact by telephone ? -->
+                    <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                        <fo:list-item  margin-bottom="3mm">
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsContactByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-body start-indent="body-start()">
+                                <fo:block>@if(model.repaymentsContactByPhone){Yes}else{No}</fo:block>
+                            </fo:list-item-body>
+                        </fo:list-item>
+                    </fo:list-block>
+
+                    <!-- Contact telephone -->
+                    @model.repaymentsTelephoneDetails.map { repaymentsTelephoneDetails =>
+                        <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
+                            <fo:list-item  margin-bottom="3mm">
+                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                <fo:list-item-body start-indent="body-start()">
+                                    <fo:block>@repaymentsTelephoneDetails</fo:block>
+                                </fo:list-item-body>
+                            </fo:list-item>
+                        </fo:list-block>
+                    }
+
+                </fo:block-container>
+
+            </fo:block-container>
+        </fo:flow>
+
+    </fo:page-sequence>
+
+</fo:root>
