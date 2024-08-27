@@ -24,15 +24,15 @@ import pages._
 import queries.Query
 
 final case class RepaymentJourneyModel(
-  refundAmount:                BigDecimal,
-  reasonForRequestingRefund:   String,
-  ukOrAbroadBankAccount:       UkOrAbroadBankAccount,
-  bankAccountDetails:          Option[BankAccountDetails],
-  nonUKBank:                   Option[NonUKBank],
-  repaymentsContactName:       String,
-  repaymentsContactEmail:      String,
-  repaymentsContactByPhone:    Boolean,
-  repaymentsTelephoneDetails:  Option[String]
+  refundAmount:               BigDecimal,
+  reasonForRequestingRefund:  String,
+  ukOrAbroadBankAccount:      UkOrAbroadBankAccount,
+  bankAccountDetails:         Option[BankAccountDetails],
+  nonUKBank:                  Option[NonUKBank],
+  repaymentsContactName:      String,
+  repaymentsContactEmail:     String,
+  repaymentsContactByPhone:   Boolean,
+  repaymentsTelephoneDetails: Option[String]
 )
 
 object RepaymentJourneyModel {
@@ -76,13 +76,13 @@ object RepaymentJourneyModel {
   private def getUkBankAccountDetails(answers: UserAnswers): EitherNec[Query, Option[BankAccountDetails]] =
     answers.getEither(UkOrAbroadBankAccountPage).flatMap {
       case UkBankAccount => answers.getEither(BankAccountDetailsPage).map(Some(_))
-      case _ => Right(None)
+      case _             => Right(None)
     }
 
   private def getNonUkBankAccountDetails(answers: UserAnswers): EitherNec[Query, Option[NonUKBank]] =
     answers.getEither(UkOrAbroadBankAccountPage).flatMap {
       case ForeignBankAccount => answers.getEither(NonUKBankPage).map(Some(_))
-      case _ => Right(None)
+      case _                  => Right(None)
     }
 
   private def getContactTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
