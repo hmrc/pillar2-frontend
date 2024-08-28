@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
@@ -26,6 +26,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
+import views.ViewUtils.currentTimeGMT
 import views.html.RegistrationConfirmationView
 
 import javax.inject.Inject
@@ -50,9 +51,10 @@ class RegistrationConfirmationController @Inject() (
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-        mneOrDom <- userAnswer.get(SubMneOrDomesticPage)
-      } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        mneOrDom    <- userAnswer.get(SubMneOrDomesticPage)
+        companyName <- userAnswer.get(UpeNameRegistrationPage)
+      } yield Ok(view(pillar2Id, companyName, currentDate.toString(), currentTimeGMT, mneOrDom)))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
-
 }

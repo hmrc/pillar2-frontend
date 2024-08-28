@@ -14,20 +14,14 @@
  * limitations under the License.
  */
 
-package models.registration
+package pages.pdf
 
-import models.UKAddress
-import play.api.libs.json.{Json, OFormat}
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  UKAddress,
-  upeContactName:        String,
-  emailAddress:          String,
-  contactUpeByTelephone: Boolean,
-  telephoneNumber:       Option[String] = None
-)
+object PdfRegistrationDatePage extends QuestionPage[String] {
 
-object WithoutIdRegData {
-  implicit val format: OFormat[RegistrationPdfData] = Json.format[RegistrationPdfData]
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "registrationDate"
 }

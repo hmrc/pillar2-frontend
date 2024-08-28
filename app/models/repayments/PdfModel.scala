@@ -14,20 +14,11 @@
  * limitations under the License.
  */
 
-package models.registration
+package models.repayments
 
-import models.UKAddress
-import play.api.libs.json.{Json, OFormat}
-
-case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  UKAddress,
-  upeContactName:        String,
-  emailAddress:          String,
-  contactUpeByTelephone: Boolean,
-  telephoneNumber:       Option[String] = None
+case class PdfModel(
+  plr2ID:      String,
+  regDate:     String,
+  currentTime: String,
+  companyName: String
 )
-
-object WithoutIdRegData {
-  implicit val format: OFormat[RegistrationPdfData] = Json.format[RegistrationPdfData]
-}

@@ -1,0 +1,61 @@
+@import models.repayments.PdfModel
+
+@this()
+
+        @(model: PdfModel)(implicit request: RequestHeader, messages: Messages)
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
+         xml:lang="@messages.lang.locale.getLanguage"
+         font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="A4"
+                               page-height="29.7cm"
+                               page-width="21.0cm"
+                               margin-top="1cm"
+                               margin-bottom="1cm"
+                               margin-left="2cm"
+                               margin-right="2cm">
+            <fo:region-body margin-top="3cm" margin-bottom="2cm" />
+            <fo:region-before extent="3cm" />
+            <fo:region-after extent="2cm" />
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="A4">
+
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block>
+                <fo:external-graphic src="url('file:conf/resources/gov-uk-logo-black.png')" content-width="5cm" content-height="auto" />
+            </fo:block>
+            <fo:block space-after="15pt" font-weight="bold">
+                @messages("registrationConfirmation.pdf.title")
+            </fo:block>
+        </fo:static-content>
+
+
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block border="1pt solid black" padding="10pt" space-before="15pt" space-after="15pt">
+                <fo:block font-size="14pt" font-weight="bold" margin-bottom="5pt" text-align="center">
+                    @messages("registrationConfirmation.registrationComplete")
+                </fo:block>
+                <fo:block font-size="12pt" text-align="center">
+                    @messages("registrationConfirmation.topup")
+                </fo:block>
+                <fo:block font-size="12pt" text-align="center" font-weight="bold">
+                    @model.plr2ID
+                </fo:block>
+            </fo:block>
+
+            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt" font-weight="bold">
+                @messages("registrationConfirmation.reg-date", model.regDate)
+            </fo:block>
+
+            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
+                @messages("registrationConfirmation.p1", model.companyName, model.currentTime, model.regDate)
+            </fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+
+</fo:root>

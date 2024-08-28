@@ -25,7 +25,7 @@ case class Registration(
   isUPERegisteredInUK: Boolean,
   orgType:             Option[EntityType] = None,
   withIdRegData:       Option[GrsResponse] = None,
-  withoutIdRegData:    Option[WithoutIdRegData] = None,
+  withoutIdRegData:    Option[RegistrationPdfData] = None,
   registrationInfo:    Option[RegistrationInfo] = None
 )
 
