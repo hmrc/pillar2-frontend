@@ -27,7 +27,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.html.rfm.RfmConfirmationView
 
-import java.time.{ZoneId, ZoneOffset}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
