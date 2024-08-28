@@ -1310,7 +1310,7 @@ repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBU
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
 
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
-repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
+repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the bank account details
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on bank account
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT code
