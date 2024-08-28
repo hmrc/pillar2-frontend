@@ -27,6 +27,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.html.rfm.RfmConfirmationView
 
+import java.time.{ZoneId, ZoneOffset}
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -45,7 +46,7 @@ class RfmConfirmationController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
     implicit request =>
-      val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
       sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
         (for {
           userAnswer <- optionalUserAnswers
