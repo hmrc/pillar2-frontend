@@ -67,7 +67,7 @@ class PrintPdfController @Inject() (
   }
 
   def onDownloadRfmConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
     (for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userAnswers.id))
       userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
