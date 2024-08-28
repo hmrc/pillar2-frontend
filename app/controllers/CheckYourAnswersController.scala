@@ -27,7 +27,7 @@ import pages._
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -75,58 +75,60 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
-      val subscriptionStatus: Future[WithName with SubscriptionStatus] =
-        request.userAnswers
-          .get(SubMneOrDomesticPage)
-          .map { mneOrDom =>
-            val companyName: String = request.userAnswers.get(FmNameRegistrationPage) match {
-              case Some(x) => x
-              case None =>
-                request.userAnswers.get(UpeNameRegistrationPage) match {
-                  case Some(y) => y
-                  case None =>
-                    request.userAnswers.get(UpeGRSResponsePage) match {
-                      case Some(z) =>
-                        z.partnershipEntityRegistrationData match {
-                          case Some(a) => a.companyProfile.get.companyName
-                          case None    => z.incorporatedEntityRegistrationData.get.companyProfile.companyName
-                        }
-                      case None => "THROW exception"
-                    }
-                }
-            }
-            (for {
-              plr <- subscriptionService.createSubscription(request.userAnswers)
-              dataToSave = UserAnswers(request.userId)
-                             .setOrException(UpeNameRegistrationPage, companyName)
-                             .setOrException(SubMneOrDomesticPage, mneOrDom)
-                             .setOrException(PlrReferencePage, plr)
-              _ <- sessionRepository.set(dataToSave)
-              _ <- userAnswersConnectors.remove(request.userId)
-            } yield SuccessfullyCompletedSubscription)
-              .recover {
-                case InternalIssueError =>
-                  logger.error("Subscription failed due to failed call to the backend")
-                  FailedWithInternalIssueError
-                case DuplicateSubmissionError =>
-                  logger.error("Subscription failed due to a Duplicate Submission")
-                  FailedWithDuplicatedSubmission
-                case DuplicateSafeIdError =>
-                  logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
-                  FailedWithDuplicatedSafeIdError
+      getCompanyName(request.userAnswers) match {
+        case Left(errorRedirect) => errorRedirect
+        case Right(companyName) =>
+          val subscriptionStatus: Future[WithName with SubscriptionStatus] =
+            request.userAnswers
+              .get(SubMneOrDomesticPage)
+              .map { mneOrDom =>
+                (for {
+                  plr <- subscriptionService.createSubscription(request.userAnswers)
+                  dataToSave = UserAnswers(request.userId)
+                                 .setOrException(UpeNameRegistrationPage, companyName)
+                                 .setOrException(SubMneOrDomesticPage, mneOrDom)
+                                 .setOrException(PlrReferencePage, plr)
+                  _ <- sessionRepository.set(dataToSave)
+                  _ <- userAnswersConnectors.remove(request.userId)
+                } yield SuccessfullyCompletedSubscription)
+                  .recover {
+                    case InternalIssueError =>
+                      logger.error("Subscription failed due to failed call to the backend")
+                      FailedWithInternalIssueError
+                    case DuplicateSubmissionError =>
+                      logger.error("Subscription failed due to a Duplicate Submission")
+                      FailedWithDuplicatedSubmission
+                    case DuplicateSafeIdError =>
+                      logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+                      FailedWithDuplicatedSafeIdError
+                  }
+
               }
-          }
-          .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
-      for {
-        updatedSubscriptionStatus <- subscriptionStatus
-        updatedAnswers            <- Future.fromTry(request.userAnswers.set(SubscriptionStatusPage, updatedSubscriptionStatus))
-        _                         <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-      } yield (): Unit
-      Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+              .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
+          for {
+            updatedSubscriptionStatus <- subscriptionStatus
+            updatedAnswers            <- Future.fromTry(request.userAnswers.set(SubscriptionStatusPage, updatedSubscriptionStatus))
+            _                         <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+          } yield (): Unit
+          Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+      }
     } else {
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
+
+  private def getCompanyName(userAnswers: UserAnswers): Either[Result, String] =
+    userAnswers
+      .get(FmNameRegistrationPage)
+      .orElse(userAnswers.get(UpeNameRegistrationPage))
+      .orElse(userAnswers.get(UpeGRSResponsePage).flatMap { grsResponse =>
+        grsResponse.partnershipEntityRegistrationData
+          .map(_.companyProfile.get.companyName)
+          .orElse(grsResponse.incorporatedEntityRegistrationData.map(_.companyProfile.companyName))
+      }) match {
+      case Some(companyName) => Right(companyName)
+      case None              => Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[UserAnswers] =
     for {
       updatedAnswers  <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))

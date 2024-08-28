@@ -54,10 +54,10 @@ class PrintPdfController @Inject() (
 
     sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswers =>
       val pdfData: Option[PdfModel] = for {
-        userAnswer  <- optionalUserAnswers
-        pillar2Id   <- Pillar2Reference
-          .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-          .orElse(userAnswer.get(PlrReferencePage))
+        userAnswer <- optionalUserAnswers
+        pillar2Id <- Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswer.get(PlrReferencePage))
         companyName <- userAnswer.get(UpeNameRegistrationPage)
       } yield PdfModel(pillar2Id, regDate, currentTimeGMT, companyName)
 

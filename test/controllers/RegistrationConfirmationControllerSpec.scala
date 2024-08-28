@@ -20,6 +20,7 @@ import base.SpecBase
 import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -48,9 +49,10 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     )
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
-      val testPlr2Id         = "12345678"
-      val testCompanyName    = "Test Limited"
-      val testCurrentTimeGMT = currentTimeGMT
+      val testPlr2Id      = "12345678"
+      val testCompanyName = "Test Limited"
+      val testTimeStamp   = "11:45am (GMT)"
+      val testDate        = "17 January 2025"
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
@@ -62,16 +64,21 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(
             Future.successful(
-              Some(emptyUserAnswers.setOrException(UpeNameRegistrationPage, testCompanyName).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk))
+              Some(
+                emptyUserAnswers
+                  .setOrException(PdfRegistrationDatePage, testDate)
+                  .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
+                  .setOrException(UpeNameRegistrationPage, testCompanyName)
+                  .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+              )
             )
           )
 
-        val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
-        val view        = application.injector.instanceOf[RegistrationConfirmationView]
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(testPlr2Id, testCompanyName, currentDate.toString(), currentTimeGMT, MneOrDomestic.Uk)(
+        contentAsString(result) mustEqual view(testPlr2Id, testCompanyName, testDate, testTimeStamp, MneOrDomestic.Uk)(
           request,
           appConfig(application),
           messages(application)
@@ -87,6 +94,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
 
       val testCompanyName = "Test Limited"
       val testPlr2ID      = "12345678"
+      val testTimeStamp   = "11:45am (GMT)"
+      val testDate        = "17 January 2025"
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
@@ -96,18 +105,18 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
             Future.successful(
               Some(
                 emptyUserAnswers
+                  .setOrException(PdfRegistrationDatePage, testDate)
+                  .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
                   .setOrException(UpeNameRegistrationPage, testCompanyName)
                   .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
               )
             )
           )
-        val result             = route(application, request).value
-        val currentDate        = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
-        val testCurrentTimeGMT = currentTimeGMT
-        val view               = application.injector.instanceOf[RegistrationConfirmationView]
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(testPlr2ID, testCompanyName, currentDate.toString(), currentTimeGMT, MneOrDomestic.UkAndOther)(
+        contentAsString(result) mustEqual view(testPlr2ID, testCompanyName, testDate, testTimeStamp, MneOrDomestic.UkAndOther)(
           request,
           appConfig(application),
           messages(application)

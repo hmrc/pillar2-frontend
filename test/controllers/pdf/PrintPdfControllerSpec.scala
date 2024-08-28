@@ -20,25 +20,20 @@ import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
-import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.mvc.Http.RequestHeader
 import repositories.SessionRepository
 import services.FopService
-import utils.ViewHelpers
-import views.xml.pdf.ConfirmationPdf
 
-import java.time.LocalDate
 import scala.concurrent.Future
 
 class PrintPdfControllerSpec extends SpecBase {
   "Print Pdf Controller" should {
 
     "return OK and the correct PDF for a GET" in {
-      val testCompanyName    = "testName"
-      val testPlr2Reference  = "XMPLR0012345674"
+      val testCompanyName   = "testName"
+      val testPlr2Reference = "XMPLR0012345674"
       val ua = emptyUserAnswers
         .setOrException(UpeNameRegistrationPage, testCompanyName)
         .setOrException(PlrReferencePage, testPlr2Reference)
@@ -53,7 +48,7 @@ class PrintPdfControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
-          inject.bind[FopService].toInstance(mockFopService),
+          inject.bind[FopService].toInstance(mockFopService)
         )
         .build()
 
@@ -69,7 +64,7 @@ class PrintPdfControllerSpec extends SpecBase {
     }
 
     "redirect to the journey recovery page in the case of an error" in {
-      val ua = emptyUserAnswers
+      val ua                    = emptyUserAnswers
       val mockSessionRepository = mock[SessionRepository]
 
       val mockFopService = mock[FopService]
@@ -81,7 +76,7 @@ class PrintPdfControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
-          inject.bind[FopService].toInstance(mockFopService),
+          inject.bind[FopService].toInstance(mockFopService)
         )
         .build()
 

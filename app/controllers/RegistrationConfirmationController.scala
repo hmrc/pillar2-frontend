@@ -18,6 +18,8 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.UserAnswers
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -46,14 +48,19 @@ class RegistrationConfirmationController @Inject() (
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
+      UserAnswers(request.userId)
+        .setOrException(PdfRegistrationDatePage, currentDate.toString())
+        .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-        mneOrDom    <- userAnswer.get(SubMneOrDomesticPage)
-        companyName <- userAnswer.get(UpeNameRegistrationPage)
-      } yield Ok(view(pillar2Id, companyName, currentDate.toString(), currentTimeGMT, mneOrDom)))
+        mneOrDom              <- userAnswer.get(SubMneOrDomesticPage)
+        companyName           <- userAnswer.get(UpeNameRegistrationPage)
+        registrationDate      <- userAnswer.get(PdfRegistrationDatePage)
+        registrationTimeStamp <- userAnswer.get(PdfRegistrationTimeStampPage)
+      } yield Ok(view(pillar2Id, companyName, registrationDate, registrationTimeStamp, mneOrDom)))
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
