@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         paragraphBody: paragraphBody,
+        link: link,
         heading: heading
 )
 
@@ -33,6 +34,8 @@
 ) {
 
     @heading(messages("unauthorised.heading"))
-    @paragraphBody(messages("unauthorised.guidance"))
-
+    @paragraphBody(messages("unauthorised.guidance", link(
+        text = messages("unauthorised.guidance.link"),
+        call = Call("GET", appConfig.serviceStartLink)
+    )))
 }

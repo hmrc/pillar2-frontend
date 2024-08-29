@@ -59,7 +59,8 @@ class EnrolmentIdentifierAction @Inject() (
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
           authAsAgent(request, internalId)
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials
+            if enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).isDefined =>
           Future.successful(
             Right(
               IdentifierRequest(

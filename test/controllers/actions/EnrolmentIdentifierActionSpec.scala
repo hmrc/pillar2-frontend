@@ -384,7 +384,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
-                Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+                Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
 
