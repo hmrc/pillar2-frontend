@@ -199,7 +199,6 @@ repayment.requestRefundAmount.error.required = Enter your requested refund amoun
 repayment.requestRefundAmount.error.format =  Refund amount must only use numbers 0-9, commas and full stops
 repayment.requestRefundAmount.error.minValue = Value entered should not be less than £0.00
 repayment.requestRefundAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
-repayment.pdfDownload = Download as PDF
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -857,10 +856,6 @@ dashboard.whentoSubmitReturn = When to submit your returns
 dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
 dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
-dashboard.whentoSubmitReturn.agent.h2 = When to submit your client's first returns
-dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 top-up tax returns.
-dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
-
 dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no later than:
 dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.p2 = for more details.
@@ -1415,7 +1410,7 @@ rfmConfirmation.print = Print this page
 reasonForRequestingRefund.title = Why are you requesting a refund?
 reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
-reasonForRequestingRefund.error.hint = For example, you made a payment that was greater than your actual liability.
+reasonForRequestingRefund.error.hint = For example, you made a mistake on a Self Assessment tax return or your circumstances have changed.
 reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
 
 ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
