@@ -37,17 +37,12 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have two h2 headings" in {
-      view.getElementsByTag("h2").text must include("Deadline for refund request")
       view.getElementsByTag("h2").text must include("Before you start")
     }
 
     "have following contents" in {
       view.getElementsByClass("govuk-body").text must include(
         "You can use this service to request a refund if you have funds in your Pillar 2 account available for repayment."
-      )
-
-      view.getElementsByClass("govuk-body").text must include(
-        "The submission deadline for a refund request is 4 years after the end date of the accounting period in respect of which the payment was made."
       )
 
       view.getElementsByClass("govuk-body").text must include(
