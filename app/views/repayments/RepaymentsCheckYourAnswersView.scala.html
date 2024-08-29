@@ -22,6 +22,7 @@
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton,
         printLink: printLink,
+        pdfLink: pdfLink,
         formHelper: FormWithCSRF,
         heading: heading,
         h2: HeadingH2,
@@ -47,14 +48,14 @@
         </div>
         @h2(messages("repaymentsCheckYourAnswers.bank.contact-details.h2"), size = "m")
         @govukSummaryList(contactDetailsList)
-        @h2(messages("repaymentsCheckYourAnswers.download"), size = "m")
-        @para(messages("repaymentsCheckYourAnswers.bank.submit-p2"))
+        @h2(messages("repaymentsCheckYourAnswers.download"), size = "m", extraClasses = Seq("govuk-!-margin-top-6", "govuk-!-display-none-print"))
+        @para(messages("repaymentsCheckYourAnswers.bank.submit-p2"), classes = "govuk-body govuk-!-display-none-print")
         @bulletList(items = List(
             printLink(messages("site.print")),
-            printLink(messages("repayment.pdfDownload"))
-        ), additionalListClasses = Some("govuk-list--spaced"))
-        @h2(messages("repaymentsCheckYourAnswers.bank.submit-details.h2"), size = "s", extraClasses = Seq("govuk-!-margin-top-6"))
-        @para(messages("repaymentsCheckYourAnswers.bank.submit-p1"))
+            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentAnswers.url)
+        ), additionalListClasses = Some("govuk-list--spaced, govuk-!-display-none-print"))
+        @h2(messages("repaymentsCheckYourAnswers.bank.submit-details.h2"), size = "s", extraClasses = Seq("govuk-!-margin-top-6", "govuk-!-display-none-print"))
+        @para(messages("repaymentsCheckYourAnswers.bank.submit-p1"), classes = "govuk-body govuk-!-display-none-print")
 
         @govukButton(
             ButtonViewModel(messages("site.confirm.submit")).withAttribute("id", "submit").withCssClass("govuk-!-display-none-print")

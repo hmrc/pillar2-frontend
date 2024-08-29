@@ -185,10 +185,7 @@ payment.dashboard.message4= read the guidance to find the methods you can use to
 
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
-repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you think you paid too much Pillar 2 top-up tax.
 repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you have funds in your Pillar 2 account available for repayment.
-repayment.requestRefundBeforeStart.header2 = Deadline for refund request
-repayment.requestRefundBeforeStart.p2 = The submission deadline for a refund request is 4 years after the end date of the accounting period in respect of which the payment was made.
 repayment.requestRefundBeforeStart.header3 = Before you start
 repayment.requestRefundBeforeStart.p3 = You will need the following details:
 repayment.requestRefundBeforeStart.li1 = refund amount
@@ -202,7 +199,6 @@ repayment.requestRefundAmount.error.required = Enter your requested refund amoun
 repayment.requestRefundAmount.error.format =  Refund amount must only use numbers 0-9, commas and full stops
 repayment.requestRefundAmount.error.minValue = Value entered should not be less than £0.00
 repayment.requestRefundAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
-repayment.pdfDownload = Download as PDF
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -1313,7 +1309,7 @@ repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBU
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
 
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
-repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
+repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the bank account details
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on bank account
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT code

@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.repayments
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.NonUKBankPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent

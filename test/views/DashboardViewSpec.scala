@@ -35,7 +35,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
   val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
-  val inActiveOrganisationDashboardView =
+  val inActiveOrganisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {

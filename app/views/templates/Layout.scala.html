@@ -80,7 +80,7 @@
     }
 
     @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print"))
+        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
     }
 }
 
