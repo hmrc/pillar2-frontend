@@ -1,18 +1,18 @@
 @*
-* Copyright 2024 HM Revenue & Customs
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*@
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds._
@@ -63,6 +63,14 @@
         @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
         @sectionBreak()
+    }
+
+    <!--MANAGE YOUR TUT SECTION-->
+    @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+
+    @sectionBreak()
 
         @if(agentView) {
             @if(!inactiveStatus) {
@@ -87,24 +95,4 @@
             @p(messages("dashboard.p1"))
             @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
         }
-    }
-
-    <!--MANAGE YOUR TUT SECTION-->
-    @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
-    @paragraphMessageWithLink(linkMessage = messages("dashboard.contactDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
-    @paragraphMessageWithLink(linkMessage = messages("dashboard.groupDetails"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-
-    @sectionBreak()
-
-    @if(!inactiveStatus) {
-        @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
-        @p(messages("dashboard.p3"))
-        @bulletList(items = List(
-            Html(messages("dashboard.whentoSubmitReturn.p1")),
-            Html(messages("dashboard.whentoSubmitReturn.p2"))
-        ), additionalListClasses = Some("govuk-list--spaced"))
-        @sectionBreak()
-    }
-    @p(messages("dashboard.p1"))
-    @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
 }

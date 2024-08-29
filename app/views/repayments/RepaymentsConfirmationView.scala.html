@@ -48,7 +48,7 @@
     @bulletList(items = List(
         printLink(messages("site.print")),
         pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
     @paragraph(messages("repayments.refundConfirmation.paragraphText.two"), isBold = true)
     @paragraph(messages("repayments.refundConfirmation.paragraphText.three"))
 
