@@ -120,5 +120,41 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
+    "must update the user answers and redirect to the next page when the user answers No  and they have GRS progress" in {
+      import play.api.inject.bind
+
+      val expectedNextPage = Call(GET, "/")
+      val mockNavigator    = mock[UltimateParentNavigator]
+      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+
+      val userAnswers = emptyUserAnswers
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(GrsUpeStatusPage, RowStatus.Completed)
+
+      val expectedUserAnswers = userAnswers
+        .setOrException(UpeRegisteredInUKPage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(
+          bind[UltimateParentNavigator].toInstance(mockNavigator),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.UPERegisteredInUKConfirmationController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> "false")
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual expectedNextPage.url
+
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
+      }
+    }
+
   }
 }

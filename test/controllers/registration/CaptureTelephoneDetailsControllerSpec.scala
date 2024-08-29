@@ -17,12 +17,19 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
-import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeCapturePhonePage, UpeContactNamePage, UpeNameRegistrationPage, UpePhonePreferencePage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.CaptureTelephoneDetailsView
+
+import scala.concurrent.Future
 
 class CaptureTelephoneDetailsControllerSpec extends SpecBase {
 
@@ -92,6 +99,31 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+      }
+    }
+
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(UpeNameRegistrationPage, "TestName")
+        .success
+        .value
+        .set(UpeContactNamePage, "TestName")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("telephoneNumber", "1234567890")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
       }
     }
 

@@ -33,12 +33,19 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.UpeContactEmailFormProvider
 import models.NormalMode
-import pages.{UpeContactEmailPage, UpeContactNamePage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.UpeContactEmailView
+
+import scala.concurrent.Future
 
 class UpeContactEmailControllerSpec extends SpecBase {
 
@@ -101,6 +108,31 @@ class UpeContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(UpeNameRegistrationPage, "TestName")
+        .success
+        .value
+        .set(UpeContactNamePage, "TestName")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.UpeContactEmailController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("emailAddress", "test@test.com")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
       }
     }
 

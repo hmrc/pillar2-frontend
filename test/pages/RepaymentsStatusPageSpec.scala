@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package utils.countryOptions
+package pages
 
-import com.google.inject.Inject
-import config.FrontendAppConfig
-import mapping.Constants.UK_COUNTRY_CODE
-import play.api.Environment
-import play.api.i18n.Messages
-import utils.InputOption
+import models.repayments.RepaymentsStatus
+import org.scalacheck.ScalacheckShapeless.derivedArbitrary
+import pages.behaviours.PageBehaviours
 
-import javax.inject.Singleton
+class RepaymentsStatusPageSpec extends PageBehaviours {
 
-@Singleton
-class CountryOptionsNonUK @Inject() (
-  environment: Environment,
-  config:      FrontendAppConfig
-) extends CountryOptions(environment, config) {
-  override def options()(implicit messages: Messages): Seq[InputOption] =
-    CountryOptions.getCountries(environment, getFileName()).filterNot(x => x.value == UK_COUNTRY_CODE)
+  "RepaymentsStatusPage" - {
+
+    beRetrievable[RepaymentsStatus](RepaymentsStatusPage)
+
+    beSettable[RepaymentsStatus](RepaymentsStatusPage)
+
+    beRemovable[RepaymentsStatus](RepaymentsStatusPage)
+  }
 }

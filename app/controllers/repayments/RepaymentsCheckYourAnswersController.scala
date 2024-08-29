@@ -17,9 +17,9 @@
 package controllers.repayments
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
 import config.FrontendAppConfig
 import controllers.actions._
+import models.repayments.RepaymentsStatus._
 import models.{UnexpectedResponse, UserAnswers}
 import pages._
 import play.api.Logging
@@ -34,7 +34,6 @@ import views.html.repayments.RepaymentsCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Try
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi:               MessagesApi,
@@ -54,40 +53,66 @@ class RepaymentsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
-      userAnswers.get(RepaymentCompletionStatus) match {
-        case Some(true) => Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
-        case _          => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
+
+      userAnswers.get(RepaymentsStatusPage) match {
+        case Some(InProgress) =>
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+        case Some(SuccessfullyCompleted) =>
+          Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
+        case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
       }
     }
 
   def onSubmit(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
-      (for {
-        repaymentData        <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-        _                    <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
-        updatedAnswers       <- OptionT.liftF(Future.fromTry(request.userAnswers.set(RepaymentCompletionStatus, true)))
-        clearedRepaymentData <- OptionT.liftF(Future.fromTry(clearRepaymentDetails(updatedAnswers)))
-        _                    <- OptionT.liftF(sessionRepository.set(clearedRepaymentData))
-      } yield Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
-        .recover { case UnexpectedResponse =>
-          Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed)
-        }
-        .getOrElse(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
-    }
+    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+      if (request.userAnswers.isRepaymentsJourneyCompleted) {
+        for {
+          optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+          updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsStatusPage, InProgress))
+          _              <- sessionRepository.set(updatedAnswers)
+        } yield (): Unit
+        val repaymentsStatus = (for {
+          repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+          _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+        } yield SuccessfullyCompleted).value
+          .flatMap {
+            case Some(result) => Future.successful(result)
+            case _            => Future.successful(UnexpectedResponseError)
+          }
+          .recover {
+            case UnexpectedResponse => UnexpectedResponseError
+            case _: Exception => IncompleteDataError
+          }
+        for {
+          updatedStatus <- repaymentsStatus
+          success = (updatedStatus == SuccessfullyCompleted)
+          optionalSessionData <- sessionRepository.get(request.userAnswers.id)
+          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+          updatedAnswers  <- Future.fromTry(sessionData.set(RepaymentsStatusPage, updatedStatus))
+          updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
+          updatedAnswers1 <-
+            if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
+          updatedAnswers2 <-
+            if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByTelephonePage)) else Future.successful(updatedAnswers1)
+          updatedAnswers3 <- if (success) Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
+          updatedAnswers4 <- if (success) Future.fromTry(updatedAnswers3.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers3)
+          updatedAnswers5 <- if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
+          updatedAnswers6 <-
+            if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsTelephoneDetailsPage)) else Future.successful(updatedAnswers5)
+          updatedAnswers7 <- if (success) Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
+          updatedAnswers8 <-
+            if (success) Future.fromTry(updatedAnswers7.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers7)
+          updatedAnswers9  <- if (success) Future.fromTry(updatedAnswers8.remove(NonUKBankPage)) else Future.successful(updatedAnswers8)
+          updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
+          _                <- sessionRepository.set(updatedAnswers10)
+        } yield (): Unit
+        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+      } else {
+        Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
+      }
 
-  private def clearRepaymentDetails(userAnswers: UserAnswers): Try[UserAnswers] =
-    for {
-      updatedUserAnswers1  <- userAnswers.remove(RepaymentAccountNameConfirmationPage)
-      updatedUserAnswers2  <- updatedUserAnswers1.remove(RepaymentsContactByTelephonePage)
-      updatedUserAnswers3  <- updatedUserAnswers2.remove(RepaymentsContactEmailPage)
-      updatedUserAnswers4  <- updatedUserAnswers3.remove(RepaymentsContactNamePage)
-      updatedUserAnswers5  <- updatedUserAnswers4.remove(RepaymentsRefundAmountPage)
-      updatedUserAnswers6  <- updatedUserAnswers5.remove(RepaymentsTelephoneDetailsPage)
-      updatedUserAnswers7  <- updatedUserAnswers6.remove(UkOrAbroadBankAccountPage)
-      updatedUserAnswers8  <- updatedUserAnswers7.remove(ReasonForRequestingRefundPage)
-      updatedUserAnswers9  <- updatedUserAnswers8.remove(NonUKBankPage)
-      updatedUserAnswers10 <- updatedUserAnswers9.remove(BankAccountDetailsPage)
-    } yield updatedUserAnswers10
+    }
 
   private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(

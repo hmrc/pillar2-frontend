@@ -54,6 +54,26 @@ class TransactionHistoryControllerSpec extends SpecBase {
         FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
+  val transactionHistoryResponsePagination =
+    TransactionHistory(
+      PlrReference,
+      List(
+        FinancialHistory(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(2), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(3), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(4), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(5), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(6), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(7), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(8), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(9), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(10), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(11), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(12), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(13), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.now.plusDays(14), "Repayment", 0.0, 100.0)
+      )
+    )
 
   val dashboardInfo: DashboardInfo = DashboardInfo(organisationName = "name", registrationDate = LocalDate.now())
 
@@ -83,6 +103,39 @@ class TransactionHistoryControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
           generatePagination(transactionHistoryResponse.financialHistory, None)
+        )(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
+      }
+    }
+
+    "return OK and the correct view for a payment history with pagination" in {
+
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any())(any()))
+          .thenReturn(Future.successful(transactionHistoryResponsePagination))
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[TransactionHistoryView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
+          generatePagination(transactionHistoryResponsePagination.financialHistory, None)
         )(
           request,
           appConfig(application),
