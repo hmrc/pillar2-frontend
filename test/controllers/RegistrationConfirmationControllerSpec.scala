@@ -25,11 +25,8 @@ import pages.{SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.ViewUtils.currentTimeGMT
 import views.html.RegistrationConfirmationView
 
 import scala.concurrent.Future

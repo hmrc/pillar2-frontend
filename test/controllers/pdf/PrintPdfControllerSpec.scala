@@ -19,6 +19,7 @@ package controllers.pdf
 import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
 import play.api.inject
 import play.api.test.FakeRequest
@@ -34,7 +35,12 @@ class PrintPdfControllerSpec extends SpecBase {
     "return OK and the correct PDF for a GET" in {
       val testCompanyName   = "testName"
       val testPlr2Reference = "XMPLR0012345674"
+      val testTimeStamp     = "11:45am (GMT)"
+      val testDate          = "17 January 2025"
+
       val ua = emptyUserAnswers
+        .setOrException(PdfRegistrationDatePage, testDate)
+        .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
         .setOrException(UpeNameRegistrationPage, testCompanyName)
         .setOrException(PlrReferencePage, testPlr2Reference)
       val mockSessionRepository = mock[SessionRepository]

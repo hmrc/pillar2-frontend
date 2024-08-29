@@ -19,6 +19,7 @@ package controllers.pdf
 import config.FrontendAppConfig
 import controllers.actions._
 import models.repayments.PdfModel
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -59,8 +60,9 @@ class PrintPdfController @Inject() (
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
         companyName <- userAnswer.get(UpeNameRegistrationPage)
-      } yield PdfModel(pillar2Id, regDate, currentTimeGMT, companyName)
-
+        regDate     <- userAnswer.get(PdfRegistrationDatePage)
+        timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
+      } yield PdfModel(pillar2Id, regDate, timeStamp, companyName)
       pdfData match {
         case Some(data) =>
           fopService.render(pdfView.render(data, implicitly, implicitly).body).map { pdf =>
