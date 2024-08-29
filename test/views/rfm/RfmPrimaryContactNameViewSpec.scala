@@ -20,21 +20,21 @@ import base.ViewSpecBase
 import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmPrimaryContactNameView
 
 class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider
-  val page         = inject[RfmPrimaryContactNameView]
+  val page: RfmPrimaryContactNameView = inject[RfmPrimaryContactNameView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Rfm Primary Contact Name View" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact " +
-          "about Pillar 2 top-up taxes?"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
       )
     }
 
@@ -44,8 +44,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about " +
-          "Pillar 2 top-up taxes?"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
       )
     }
 
