@@ -856,7 +856,7 @@ dashboard.whentoSubmitReturn = When to submit your returns
 dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
 dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
-dashboard.whentoSubmitReturn.agent.h2 = When to submit your client's first returns
+dashboard.whentoSubmitReturn.agent.h2 = When to submit your client’s first returns
 dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 top-up tax returns.
 dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
 
