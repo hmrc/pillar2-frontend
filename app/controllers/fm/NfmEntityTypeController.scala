@@ -60,7 +60,7 @@ class NfmEntityTypeController @Inject() (
         request.userAnswers
           .get(FmEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType == EntityType.Other) { // TODO Check logic - would have to be registered in the UK to get to this page
+            if (!ukBased & entityType.toString == EntityType.Other.toString) { // TODO Check logic - would have to be registered in the UK to get to this page
               for {
                 updatedAnswers <- Future.fromTry(
                                     request.userAnswers.set(FmRegisteredInUKPage, true)

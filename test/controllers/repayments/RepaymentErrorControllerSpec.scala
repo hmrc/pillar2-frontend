@@ -22,7 +22,7 @@ import models.NormalMode
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.repayments.{AccountNameConfirmationView, BankDetailsErrorView, CouldNotConfirmDetailsView, RepaymentErrorView}
+import views.html.repayments.{AccountNameConfirmationView, BankDetailsErrorView, CouldNotConfirmDetailsView, RepaymentErrorView, RepaymentSubmissionErrorView}
 
 class RepaymentErrorControllerSpec extends SpecBase {
 
@@ -56,6 +56,22 @@ class RepaymentErrorControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(NormalMode)(request, appConfig(application), messages(application)).toString
+      }
+    }
+
+    "must return the correct error view if the feature flag is true  and submisstion error" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url)
+
+        val result = route(application, request).value
+
+        val view = application.injector.instanceOf[RepaymentSubmissionErrorView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
       }
     }
   }

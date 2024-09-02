@@ -52,7 +52,7 @@ class BusinessActivityUKControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to journey recovery if no session id is found for GET" in {
+    "redirect to journey recovery if no session id is found" in {
       val controller: BusinessActivityUKController = new BusinessActivityUKController(
         formProvider,
         mockSessionRepository,
@@ -60,7 +60,7 @@ class BusinessActivityUKControllerSpec extends SpecBase {
         viewBusinessActivityUK
       )
       val request = FakeRequest(GET, controllers.eligibility.routes.BusinessActivityUKController.onPageLoad.url)
-      val result  = controller.onSubmit()()(request)
+      val result  = controller.onPageLoad()()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }

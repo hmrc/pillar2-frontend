@@ -32,6 +32,7 @@ class StartPageRegistrationControllerSpec extends SpecBase {
     )
 
   "StartPageRegistrationController" when {
+
     "must return OK and the correct view for a GET" in {
 
       val request =
@@ -48,6 +49,14 @@ class StartPageRegistrationControllerSpec extends SpecBase {
       contentAsString(result) should include(
         "If the ultimate parent entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record."
       )
+    }
+
+    "submit and redirect to " in {
+      val request =
+        FakeRequest(POST, controllers.registration.routes.StartPageRegistrationController.onSubmit(NormalMode).url)
+      val result = controller.onSubmit(NormalMode)()(request)
+      status(result) shouldBe SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url
     }
 
   }

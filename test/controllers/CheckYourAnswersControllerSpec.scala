@@ -282,6 +282,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
           .setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
@@ -295,13 +297,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
+          verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
@@ -324,6 +327,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
           .setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
@@ -337,13 +342,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
+          verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
@@ -355,6 +361,8 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
           .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
@@ -368,13 +376,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
+          verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
@@ -386,22 +395,27 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
           .setOrException(SubscriptionStatusPage, FailedWithDuplicatedSafeIdError)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
 
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          verify(mockUserAnswersConnectors).save(eqTo(userAnswer.id), eqTo(userAnswer.data))(any())
+          verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }

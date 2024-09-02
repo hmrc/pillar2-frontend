@@ -119,6 +119,26 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .setOrException(SubSecondaryContactNamePage, "TestName")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("emailAddress", "test@test.com")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
+      }
+    }
+
     "redirect to bookmark page if no data is found for primary contact name page" in {
 
       val application = applicationBuilder(userAnswers = None).build()

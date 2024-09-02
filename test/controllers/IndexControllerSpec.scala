@@ -158,5 +158,19 @@ class IndexControllerSpec extends SpecBase {
       redirectLocation(result).value mustBe routes.UnauthorisedIndividualAffinityController.onPageLoad.url
     }
   }
+  "redirect  to Unauthorised error page" in {
+    val application = applicationBuilder(userAnswers = None)
+      .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+      .build()
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      .thenReturn(Future.successful(Some(id) ~ None ~ Enrolments(Set.empty)))
+
+    running(application) {
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val result  = route(application, request).value
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url
+    }
+  }
 
 }

@@ -348,8 +348,11 @@ GET         /bta/change-pillar2-id                                              
 POST        /bta/change-pillar2-id                                                                   controllers.bta.HavePillar2TopUpTaxIdController.onSubmit(mode: Mode = CheckMode)
 GET         /bta/eacd                                                                                controllers.bta.EACDStubController.onPageLoad
 GET         /asa/home                                                                                controllers.ASAStubController.onPageLoad
+
 GET         /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/enter-pillar2-id                                         controllers.rfm.SecurityCheckController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/error/existing-member                                             controllers.rfm.SecurityCheckController.onPageLoadNotAllowed()
+
 
 GET         /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/corporate-position                                                controllers.rfm.CorporatePositionController.onSubmit(mode: Mode = NormalMode)
@@ -364,6 +367,7 @@ GET         /replace-filing-member/security/registration-date                   
 POST        /replace-filing-member/security/registration-date                                        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/error/existing-member                                             controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/content                                           controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
 
@@ -489,10 +493,10 @@ POST       /repayment/contact-details/telephone                                 
 GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
 POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /repayment/contact-details/input-telephone                                                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /repayment/contact-details/input-telephone                                                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /repayment/contact-details/change-input-telephone                                                                 controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /repayment/contact-details/change-input-telephone                                                                 controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET         /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
 POST        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
@@ -525,16 +529,14 @@ POST       /repayment/error/partial-name                                        
 GET        /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onPageLoadPartialNameError(mode: Mode = CheckMode)
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
 GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
-
-GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
-
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
 GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
-
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
-
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
+GET        /repayment/processing-refund                                                             controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
+GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
+GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()

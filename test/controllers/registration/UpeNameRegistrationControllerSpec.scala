@@ -17,12 +17,19 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
-import pages.{UpeNameRegistrationPage, UpeRegisteredInUKPage}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import pages.{UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredInUKPage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.UpeNameRegistrationView
+
+import scala.concurrent.Future
 
 class UpeNameRegistrationControllerSpec extends SpecBase {
 
@@ -83,6 +90,30 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to next page when valid data is submitted" in {
+      val ua = emptyUserAnswers
+        .set(UpeNameRegistrationPage, "TestName")
+        .success
+        .value
+        .set(UpeContactNamePage, "TestName")
+        .success
+        .value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.registration.routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              ("value", "Test Name")
+            )
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url
+      }
+    }
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
