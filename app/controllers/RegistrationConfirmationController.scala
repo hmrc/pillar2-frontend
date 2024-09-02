@@ -28,7 +28,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.ViewUtils.currentTimeGMT
+import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.RegistrationConfirmationView
 
 import javax.inject.Inject
@@ -46,11 +46,7 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-      UserAnswers(request.userId)
-        .setOrException(PdfRegistrationDatePage, currentDate.toString())
-        .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference

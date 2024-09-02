@@ -24,6 +24,7 @@ import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus._
 import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers, WithName}
 import pages._
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -35,6 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
+import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -86,6 +88,8 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(UpeNameRegistrationPage, companyName)
                                  .setOrException(SubMneOrDomesticPage, mneOrDom)
                                  .setOrException(PlrReferencePage, plr)
+                                 .setOrException(PdfRegistrationDatePage, formattedCurrentDate)
+                                 .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield SuccessfullyCompletedSubscription)

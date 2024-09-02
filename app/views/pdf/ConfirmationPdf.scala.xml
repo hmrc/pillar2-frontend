@@ -53,7 +53,7 @@
             </fo:block>
 
             <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
-                @messages("registrationConfirmation.p1", model.companyName, model.currentTime, model.regDate)
+                @messages("registrationConfirmation.p1", model.companyName, model.regDate, model.currentTime)
             </fo:block>
         </fo:flow>
     </fo:page-sequence>
