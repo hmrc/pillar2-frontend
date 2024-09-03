@@ -107,7 +107,8 @@ class PrintPdfController @Inject() (
 
   def onDownloadRepaymentConfirmation: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
     implicit request =>
-      fopService.render(repaymentConfirmationPdfView.render(implicitly, implicitly).body).map { pdf =>
+      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+      fopService.render(repaymentConfirmationPdfView.render(currentDate.toString(), implicitly, implicitly).body).map { pdf =>
         Ok(pdf)
           .as("application/octet-stream")
           .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")

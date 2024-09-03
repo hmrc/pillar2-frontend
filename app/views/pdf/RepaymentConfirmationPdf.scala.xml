@@ -18,7 +18,7 @@
 
 @this()
 
-@()(implicit request: RequestHeader, messages: Messages)
+@(currentDate: String)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
 
@@ -72,11 +72,13 @@
                 </fo:block-container>
 
                 <!-- submission date -->
-                <fo:block id="repayment-submission-date" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.one", formattedCurrentDate) </fo:block>
+                <fo:block id="repayment-submission-date" margin-bottom="5mm">
+                    <fo:inline>@messages("repayments.refundConfirmation.paragraphText.one") </fo:inline>
+                    <fo:inline font-weight="bold">@currentDate</fo:inline>
+                </fo:block>
 
                 <fo:block role="H2"  id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.two")</fo:block>
                 <fo:block id="more-info" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.three")</fo:block>
-                <fo:block id="next-step" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.four") @messages("repayments.refundConfirmation.paragraphText.returnLink")</fo:block>
 
             </fo:block-container>
         </fo:flow>
