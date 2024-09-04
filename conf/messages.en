@@ -185,9 +185,7 @@ payment.dashboard.message4= read the guidance to find the methods you can use to
 
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
-repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you think you paid too much Pillar 2 top-up tax.
-repayment.requestRefundBeforeStart.header2 = Deadline for refund request
-repayment.requestRefundBeforeStart.p2 = The submission deadline for a refund request is 4 years after the end date of the accounting period in respect of which the payment was made.
+repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you have funds in your Pillar 2 account available for repayment.
 repayment.requestRefundBeforeStart.header3 = Before you start
 repayment.requestRefundBeforeStart.p3 = You will need the following details:
 repayment.requestRefundBeforeStart.li1 = refund amount
@@ -856,6 +854,10 @@ dashboard.whentoSubmitReturn = When to submit your returns
 dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
 dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
 
+dashboard.whentoSubmitReturn.agent.h2 = When to submit your client’s first returns
+dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 top-up tax returns.
+dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
+
 dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no later than:
 dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.p2 = for more details.
@@ -867,8 +869,8 @@ dashboard.inactive.message2 = if your circumstances change.
 
 ### Agent Dashboard
 dashboard.agent.accountLink = Agent Services Account
-dashboard.agent.title = Your client’s Pillar 2 top-up taxes account
-dashboard.agent.heading = Your client’s Pillar 2 top-up taxes account
+dashboard.agent.title = Your Pillar 2 top-up taxes account
+dashboard.agent.heading = Your Pillar 2 top-up taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
 dashboard.agent.paymentHistory = View your client’s transaction history
@@ -1305,7 +1307,7 @@ repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBU
 repayments.nonUKBank.error.iban.format = Enter a valid IBAN like GB29NWBK60161331926819
 
 repayments.nonUKBank.summary.bankName.checkYourAnswersLabel = Name of the bank
-repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the name of the bank
+repayments.nonUKBank.summary.bankName.checkYourAnswersLabel.hidden =  the bank account details
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel = Name on account
 repayments.nonUKBank.summary.nameOnAccount.checkYourAnswersLabel.hidden =  the name on bank account
 repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel = BIC or SWIFT code
@@ -1410,7 +1412,7 @@ rfmConfirmation.print = Print this page
 reasonForRequestingRefund.title = Why are you requesting a refund?
 reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
-reasonForRequestingRefund.error.hint = For example, you made a mistake on a Self Assessment tax return or your circumstances have changed.
+reasonForRequestingRefund.error.hint = For example, you made a payment that was greater than your actual liability.
 reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
 
 ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
@@ -1445,7 +1447,7 @@ repaymentsTelephoneDetails.change.hidden = the telephone number
 
 repayments.refundConfirmation.title = Refund request submitted
 repayments.refundConfirmation.panelText = Refund request submitted
-repayments.refundConfirmation.paragraphText.one = You have successfully submitted your refund request on {0}.
+repayments.refundConfirmation.paragraphText.one = You have successfully submitted your refund request on
 repayments.refundConfirmation.printLink.text = Print this page
 repayments.refundConfirmation.saveLink.text = Save as PDF
 repayments.refundConfirmation.paragraphText.two = What happens next
@@ -1481,6 +1483,8 @@ repayments.bank-account-details.bankNameFormatError = The name of the bank must 
 repayments.bank-account-details.accountNameFormatError = The name on the account must be 60 characters or less
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
+repaymentsCheckYourAnswers.download = Do you need to keep a record of your answers?
+repaymentsCheckYourAnswers.bank.submit-p2 = If you need to keep a record of your answers, you can:
 
 rfmWaitingRoom.title =  Submitting...
 rfmWaitingRoom.h1 =  Submitting...

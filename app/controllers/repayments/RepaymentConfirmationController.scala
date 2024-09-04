@@ -22,7 +22,9 @@ import models.UserAnswers
 import pages._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ViewHelpers
 import views.html.repayments.RepaymentsConfirmationView
 
 import javax.inject.{Inject, Named}
@@ -37,12 +39,14 @@ class RepaymentConfirmationController @Inject() (
 )(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
+  val dateHelper = new ViewHelpers()
 
   def onPageLoad(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
+      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
       userAnswers.get(RepaymentCompletionStatus) match {
-        case Some(true) => Ok(view())
+        case Some(true) => Ok(view(currentDate.toString()))
         case _          => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }

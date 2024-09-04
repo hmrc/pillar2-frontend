@@ -14,9 +14,11 @@
  * limitations under the License.
  *@
 
+@import views.ViewUtils.formattedCurrentDate
+
 @this()
 
-@(pil2Id: String, currentDate: String)(implicit request: RequestHeader, messages: Messages)
+@(currentDate: String)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
 
@@ -66,24 +68,17 @@
 
                 <!-- Confirmation Banner -->
                 <fo:block-container border-color="#000000" border-style="solid" border-width="4pt" margin-bottom="10mm" text-align="center">
-                    <fo:block role="H1" id="replace-filing-member-title" font-size="24pt" font-weight="bold" margin-bottom="5mm" margin-top="5mm">@messages("rfmConfirmation.title")</fo:block>
+                    <fo:block role="H1" id="repayment-submission-title" font-size="24pt" font-weight="bold" margin-bottom="5mm" margin-top="5mm">@messages("repayments.refundConfirmation.panelText")</fo:block>
                 </fo:block-container>
 
-                <!-- group's pillar2 id -->
-                <fo:block id="group-pillar2-id" margin-bottom="5mm">@messages("rfmConfirmation.topup", pil2Id)</fo:block>
-                <!-- submission date time -->
-                <fo:block id="filing-member-replacement-date" margin-bottom="5mm">
-                    <fo:inline>@messages("rfmConfirmation.reg-date")</fo:inline>
+                <!-- submission date -->
+                <fo:block id="repayment-submission-date" margin-bottom="5mm">
+                    <fo:inline>@messages("repayments.refundConfirmation.paragraphText.one")</fo:inline>
                     <fo:inline font-weight="bold">@currentDate</fo:inline>
                 </fo:block>
 
-                <fo:block role="H2" id="obligations-title" font-size="14pt" font-weight="bold" margin-bottom="5mm" margin-top="5mm">@messages("rfmConfirmation.h2")</fo:block>
-                <fo:block id="obligation-1" margin-bottom="5mm">\u2022  @messages("rfmConfirmation.li1")</fo:block>
-                <fo:block id="obligation-2" margin-bottom="5mm">\u2022  @messages("rfmConfirmation.li2")</fo:block>
-                <fo:block id="obligation-3" margin-bottom="5mm">\u2022  @messages("rfmConfirmation.li3")</fo:block>
-                <fo:block id="liability" margin-bottom="5mm">@messages("rfmConfirmation.p1")</fo:block>
-                <fo:block role="H2"  id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("rfmConfirmation.next")</fo:block>
-                <fo:block id="next-step" margin-bottom="5mm">@messages("rfmConfirmation.now", messages("rfmConfirmation.link-home"), messages("rfmConfirmation.now.group"))</fo:block>
+                <fo:block role="H2"  id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.two")</fo:block>
+                <fo:block id="more-info" margin-bottom="5mm">@messages("repayments.refundConfirmation.paragraphText.three")</fo:block>
 
             </fo:block-container>
         </fo:flow>

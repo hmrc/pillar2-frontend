@@ -35,7 +35,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
   val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
-  val inActiveOrganisationDashboardView =
+  val inActiveOrganisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
   "Dashboard View for Organisation" should {
@@ -175,12 +175,12 @@ class DashboardViewSpec extends ViewSpecBase {
 
   "Dashboard View for Agent" should {
     "have a title" in {
-      agentDashboardView.getElementsByTag("title").text must include("Your client’s Pillar 2 top-up taxes account")
+      agentDashboardView.getElementsByTag("title").text must include("Your Pillar 2 top-up taxes account")
     }
 
     "have a heading" in {
       val h1 = agentDashboardView.getElementsByTag("h1")
-      h1.text must include("Your client’s Pillar 2 top-up taxes account")
+      h1.text must include("Your Pillar 2 top-up taxes account")
       h1.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 

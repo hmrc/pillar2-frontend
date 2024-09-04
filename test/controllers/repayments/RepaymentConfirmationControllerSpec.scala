@@ -21,15 +21,20 @@ import controllers.routes
 import pages.RepaymentCompletionStatus
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.HtmlFormat
+import utils.ViewHelpers
 import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
+
+  val dateHelper = new ViewHelpers()
 
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
       val testUserAnswers = emptyUserAnswers.setOrException(RepaymentCompletionStatus, true)
       val application     = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+      val currentDate     = HtmlFormat.escape(dateHelper.getDateTimeGMT)
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
@@ -39,7 +44,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(currentDate.toString())(request, appConfig(application), messages(application)).toString
       }
     }
 

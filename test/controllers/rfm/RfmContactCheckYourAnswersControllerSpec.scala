@@ -294,6 +294,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, SuccessfullyCompleted)
+          .setOrException(RfmPillar2ReferencePage, "plrReference")
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
