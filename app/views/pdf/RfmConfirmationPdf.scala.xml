@@ -73,7 +73,7 @@
                 <fo:block id="group-pillar2-id" margin-bottom="5mm">@messages("rfmConfirmation.topup", pil2Id)</fo:block>
                 <!-- submission date time -->
                 <fo:block id="filing-member-replacement-date" margin-bottom="5mm">
-                    <fo:inline>@messages("rfmConfirmation.reg-date") </fo:inline>
+                    <fo:inline>@messages("rfmConfirmation.reg-date")</fo:inline>
                     <fo:inline font-weight="bold">@currentDate</fo:inline>
                 </fo:block>
 

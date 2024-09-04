@@ -73,7 +73,7 @@
 
                 <!-- submission date -->
                 <fo:block id="repayment-submission-date" margin-bottom="5mm">
-                    <fo:inline>@messages("repayments.refundConfirmation.paragraphText.one") </fo:inline>
+                    <fo:inline>@messages("repayments.refundConfirmation.paragraphText.one")</fo:inline>
                     <fo:inline font-weight="bold">@currentDate</fo:inline>
                 </fo:block>
 
