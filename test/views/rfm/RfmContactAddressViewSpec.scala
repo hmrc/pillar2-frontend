@@ -60,7 +60,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     }
 
     "have a postcode label" in {
-      view.getElementsByClass("govuk-label").get(4).text must include("Postal code (if applicable)")
+      view.getElementsByClass("govuk-label").get(4).text must include("Postcode (if applicable)")
     }
 
     "have a country label" in {

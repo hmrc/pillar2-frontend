@@ -178,7 +178,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) must include("Enter the first line of the address")
-        contentAsString(result) must include("Enter a full UK postal code")
+        contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
       }
     }
 
