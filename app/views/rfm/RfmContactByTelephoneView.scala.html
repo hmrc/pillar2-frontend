@@ -41,7 +41,7 @@
             RadiosViewModel.yesNo(
                 field  = form("value"),
                 legend = LegendViewModel(messages("rfmContactByTelephone.heading",UserName)).asPageHeading(Large)
-            )
+            ).withHint(Hint(content = Text(messages("rfmContactByTelephone.hint"))))
         )
 
         @govukButton(

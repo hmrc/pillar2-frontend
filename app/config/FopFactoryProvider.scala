@@ -14,17 +14,18 @@
  * limitations under the License.
  */
 
-package forms
+package config
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import org.apache.fop.apps.{FopFactory, FopFactoryBuilder}
+import play.api.Environment
 
-import javax.inject.Inject
+import javax.inject.{Inject, Provider, Singleton}
 
-class RfmAddSecondaryContactFormProvider @Inject() extends Mappings {
-
-  def apply(userName: String): Form[Boolean] =
-    Form(
-      "value" -> boolean("rfm.addSecondaryContact.error.required", args = Seq(userName))
-    )
+@Singleton
+class FopFactoryProvider @Inject() (
+  environment: Environment
+) extends Provider[FopFactory] {
+  override def get(): FopFactory =
+    new FopFactoryBuilder(environment.rootPath.toURI)
+      .build()
 }
