@@ -21,16 +21,19 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.repayments.RepaymentsConfirmationView
 import controllers.routes
-import views.ViewUtils.formattedCurrentDate
+import play.twirl.api.HtmlFormat
+import utils.ViewHelpers
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  val page           = inject[RepaymentsConfirmationView]
+  val page: RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   val testPillar2Ref = "XMPLR0012345674"
+  val dateHelper     = new ViewHelpers()
 
   "Repayments confirmation view" should {
+    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
     val view: Document =
-      Jsoup.parse(page()(request, appConfig, messages).toString())
+      Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 
     "have a panel" in {
       view.getElementsByClass("govuk-panel__title").text must include("Refund request submitted")
@@ -49,11 +52,15 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       )
     }
 
-    "have a paragraph" in {
+    "have a paragraphs" in {
       view.getElementsByClass("govuk-body").text must include(
-        s"You have successfully submitted your refund request on $formattedCurrentDate." +
-          " What happens next If we require more information relating to your refund request," +
-          " we will get in touch. You can return to manage your Pillar 2 top-up taxes ."
+        s"You have successfully submitted your refund request on ${currentDate.toString()}"
+      )
+      view.getElementsByClass("govuk-body").text must include(
+        "What happens next If we require more information relating to your refund request, we will get in touch."
+      )
+      view.getElementsByClass("govuk-body").text must include(
+        "You can return to manage your Pillar 2 top-up taxes ."
       )
     }
 

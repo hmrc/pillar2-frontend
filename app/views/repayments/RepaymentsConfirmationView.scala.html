@@ -24,11 +24,12 @@
         paragraph: paragraphBody,
         bulletList: bulletList,
         printLink: printLink,
+        pdfLink: pdfLink,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         heading: heading
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(currentDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle = titleNoForm(messages("repayments.refundConfirmation.title")),
@@ -43,11 +44,11 @@
         title = Text(messages("repayments.refundConfirmation.panelText"))
     ))
 
-    @paragraph(messages("repayments.refundConfirmation.paragraphText.one", formattedCurrentDate))
+    <p class="govuk-body">@messages("repayments.refundConfirmation.paragraphText.one") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span></p>
     @bulletList(items = List(
-        printLink(messages("repayments.refundConfirmation.printLink.text"))
-
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+        printLink(messages("site.print")),
+        pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
     @paragraph(messages("repayments.refundConfirmation.paragraphText.two"), isBold = true)
     @paragraph(messages("repayments.refundConfirmation.paragraphText.three"))
 

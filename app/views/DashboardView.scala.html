@@ -72,15 +72,27 @@
 
         @sectionBreak()
 
-        @if(!inactiveStatus) {
-            @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
-            @p(messages("dashboard.p3"))
-            @bulletList(items = List(
-                Html(messages("dashboard.whentoSubmitReturn.p1")),
-                Html(messages("dashboard.whentoSubmitReturn.p2"))
-            ), additionalListClasses = Some("govuk-list--spaced"))
-            @sectionBreak()
-        }
+        @if(agentView) {
+            @if(!inactiveStatus) {
+                @h2(messages("dashboard.whentoSubmitReturn.agent.h2"), size = "m")
+                @p(messages("dashboard.agent.p1"))
+                @sectionBreak()
+                @p(messages("dashboard.agent.p2"))
+                @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
+            }
+
+
+        } else {
+            @if(!inactiveStatus) {
+                @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
+                @p(messages("dashboard.p3"))
+                @bulletList(items = List(
+                    Html(messages("dashboard.whentoSubmitReturn.p1")),
+                    Html(messages("dashboard.whentoSubmitReturn.p2"))
+                ), additionalListClasses = Some("govuk-list--spaced"))
+                @sectionBreak()
+            }
             @p(messages("dashboard.p1"))
             @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
+        }
     }

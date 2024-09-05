@@ -65,7 +65,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+        val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
         val view        = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
@@ -102,6 +102,14 @@ class RfmConfirmationControllerSpec extends SpecBase {
         contentAsString(result) must include(
           "You can now"
         )
+        contentAsString(result) must include(
+          "report and manage your group's Pillar 2 top-up taxes"
+        )
+        contentAsString(result) must include(
+          "on behalf of your group."
+        )
+        contentAsString(result) must include("Print this page")
+        contentAsString(result) must include("Download as PDF")
         contentAsString(result) must include(
           currentDate.toString()
         )

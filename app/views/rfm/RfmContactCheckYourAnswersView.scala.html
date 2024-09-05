@@ -23,10 +23,12 @@
         sectionHeader: sectionHeader,
         govukButton: GovukButton,
         printLink: printLink,
+        pdfLink: pdfLink,
         formHelper: FormWithCSRF,
         heading: heading,
         h2: HeadingH2,
-        para: paragraphBody
+        para: paragraphBody,
+        bulletList: bulletList
 )
 
 @(listCorporatePosition: SummaryList, listPrimary:SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -35,6 +37,7 @@
 
     @formHelper(action = controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit) {
 
+        @sectionHeader(messages("rfm.contactCheckYourAnswers.caption"))
         @heading(messages("rfm.contactCheckYourAnswers.heading"), classes = "govuk-heading-l")
 
         @h2(messages("rfm.contactCheckYourAnswers.filingmember"), size = "m")
@@ -49,10 +52,15 @@
         @heading(messages("rfm.contactCheckYourAnswers.address"), "govuk-heading-m", "h2")
         @govukSummaryList(address)
 
-        @printLink(messages("site.print"))
+        @h2(messages("rfm.contactCheckYourAnswers.record.subheading"), size = "m", extraClasses = Seq("govuk-!-margin-top-6", "govuk-!-display-none-print"))
+        @para(messages("rfm.checkYourAnswers.submit.record.p"), classes = "govuk-body govuk-!-display-none-print")
+        @bulletList(items = List(
+            printLink(messages("site.print")),
+            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRfmAnswers.url)
+        ), additionalListClasses = Some("govuk-list--spaced, govuk-!-display-none-print"))
 
-        @h2(messages("rfm.contactCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
-        @para(messages("rfm.checkYourAnswers.submit.p"))
+        @h2(messages("rfm.contactCheckYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6", "govuk-!-display-none-print"))
+        @para(messages("rfm.checkYourAnswers.submit.p"), classes = "govuk-body govuk-!-display-none-print")
 
 
         @govukButton(

@@ -16,10 +16,12 @@
 
 package models
 
+import cats.data.EitherNec
+import cats.implicits.catsSyntaxOption
 import helpers.{BookmarkHelper, RepaymentHelpers, ReplaceFilingMemberHelpers, SubscriptionHelpers}
 import pages.QuestionPage
 import play.api.libs.json._
-import queries.{Gettable, Settable}
+import queries.{Gettable, Query, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
 import java.time.Instant
@@ -36,6 +38,9 @@ final case class UserAnswers(
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
     Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+
+  def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): EitherNec[Query, A] =
+    get(page).toRightNec(page)
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] =
     page.cleanupBeforeSettingValue(Some(value), this).flatMap { ua =>

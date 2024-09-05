@@ -177,8 +177,8 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Enter first line of the address")
-        contentAsString(result) must include("Enter a full UK postal code")
+        contentAsString(result) must include("Enter the first line of the address")
+        contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
       }
     }
 
