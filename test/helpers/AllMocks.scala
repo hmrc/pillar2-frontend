@@ -94,6 +94,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockSubscriptionConnector,
       mockEnrolmentStoreProxyConnector,
       mockAuditService,
-      mockEnrolmentConnector
+      mockEnrolmentConnector,
+      mockSessionRepository
     ).foreach(Mockito.reset(_))
 }

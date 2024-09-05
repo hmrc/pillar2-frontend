@@ -22,11 +22,11 @@ import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers, Verifier}
+import models.{InternalIssueError, NonUKAddress, UnexpectedResponse, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -34,9 +34,11 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
+import services.audit.AuditService
 import utils.FutureConverter.FutureOps
 import viewmodels.govuk.SummaryListFluency
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -266,7 +268,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     "onSubmit" should {
 
-      val defaultRfmData              = rfmPrimaryAndSecondaryContactData.setOrException(RfmPillar2ReferencePage, "plrReference")
+      val defaultRfmData = rfmPrimaryAndSecondaryContactData
+        .setOrException(RfmUkBasedPage, false)
+        .setOrException(RfmPillar2ReferencePage, "plrReference")
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
+        .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+        .setOrException(RfmNameRegistrationPage, "joe")
+        .setOrException(RfmRegisteredAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
+
       lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
 
@@ -275,6 +284,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, SuccessfullyCompleted)
+          .setOrException(PlrReferencePage, "plrReference")
         val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -302,7 +312,49 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository).set(eqTo(sessionData))
+          verify(mockSessionRepository, atLeastOnce()).set(eqTo(sessionData))
+        }
+      }
+
+      "redirect to waiting page in case of a successful replace filing member and save the api response in the backend - 2 ***" in {
+        val completeUserAnswers = defaultRfmData
+          .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+//          .setOrException(RfmUkBasedPage, true)
+        val sessionData = emptyUserAnswers
+          .setOrException(RfmStatusPage, SuccessfullyCompleted)
+          .setOrException(PlrReferencePage, "plrReference")
+        val application = applicationBuilder(userAnswers = Some(completeUserAnswers))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[AuditService].toInstance(mockAuditService)
+          )
+          .build()
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+            any()
+          )
+        ).thenReturn(Future.successful(amendData))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+          .thenReturn(allocateEnrolmentParameters)
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+//        when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+//          .thenReturn(Future.successful(AuditResult.Success))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository, atLeastOnce()).set(eqTo(sessionData))
+//          verify(mockAuditConnector.sendExtendedEvent, )
         }
       }
 
@@ -373,12 +425,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(2)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
       "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" in {
-        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val ua = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(ua), groupID = Some("id"))
@@ -410,7 +464,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
 
       "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" in {
-        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val ua = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(ua))
@@ -435,12 +491,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(2)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
       "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" in {
-        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val ua = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(ua))
@@ -470,7 +528,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(3)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
@@ -502,12 +560,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(4)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
       "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" in {
-        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val ua = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(ua))
@@ -526,16 +586,22 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(5)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 
       "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" in {
-        val ua = rfmNoID.setOrException(RfmPillar2ReferencePage, "id")
+        val ua = rfmNoID
+          .setOrException(RfmPillar2ReferencePage, "id")
+          .setOrException(RfmRegistrationDatePage, LocalDate.now())
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailedInternalIssueError)
         val application = applicationBuilder(userAnswers = Some(ua))
-          .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService), bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
           .build()
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(
@@ -552,7 +618,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, times(5)).set(eqTo(sessionData))
+          verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
 

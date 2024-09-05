@@ -143,6 +143,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {

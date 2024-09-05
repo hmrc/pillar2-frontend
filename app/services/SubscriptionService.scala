@@ -187,17 +187,17 @@ class SubscriptionService @Inject() (
       accountingPeriod =
         AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
-        requiredInfo.address.addressLine1,
-        requiredInfo.address.addressLine2,
-        Some(requiredInfo.address.addressLine3),
-        requiredInfo.address.addressLine4,
-        requiredInfo.address.postalCode,
-        requiredInfo.address.countryCode
+        requiredInfo.contactAddress.addressLine1,
+        requiredInfo.contactAddress.addressLine2,
+        Some(requiredInfo.contactAddress.addressLine3),
+        requiredInfo.contactAddress.addressLine4,
+        requiredInfo.contactAddress.postalCode,
+        requiredInfo.contactAddress.countryCode
       ),
       primaryContactDetails = ContactDetailsType(
-        name = requiredInfo.contactName,
-        telephone = requiredInfo.phoneNumber,
-        emailAddress = requiredInfo.contactEmail
+        name = requiredInfo.primaryContactName,
+        telephone = requiredInfo.primaryContactPhoneNumber,
+        emailAddress = requiredInfo.primaryContactEmail
       ),
       secondaryContactDetails = requiredInfo.secondaryContactInformation,
       filingMemberDetails = None
@@ -221,17 +221,17 @@ class SubscriptionService @Inject() (
       accountingPeriod =
         AccountingPeriodAmend(startDate = subscriptionData.accountingPeriod.startDate, endDate = subscriptionData.accountingPeriod.endDate),
       upeCorrespAddressDetails = UpeCorrespAddressDetails(
-        requiredInfo.address.addressLine1,
-        requiredInfo.address.addressLine2,
-        Some(requiredInfo.address.addressLine3),
-        requiredInfo.address.addressLine4,
-        requiredInfo.address.postalCode,
-        requiredInfo.address.countryCode
+        requiredInfo.contactAddress.addressLine1,
+        requiredInfo.contactAddress.addressLine2,
+        Some(requiredInfo.contactAddress.addressLine3),
+        requiredInfo.contactAddress.addressLine4,
+        requiredInfo.contactAddress.postalCode,
+        requiredInfo.contactAddress.countryCode
       ),
       primaryContactDetails = ContactDetailsType(
-        name = requiredInfo.contactName,
-        telephone = requiredInfo.phoneNumber,
-        emailAddress = requiredInfo.contactEmail
+        name = requiredInfo.primaryContactName,
+        telephone = requiredInfo.primaryContactPhoneNumber,
+        emailAddress = requiredInfo.primaryContactEmail
       ),
       secondaryContactDetails = requiredInfo.secondaryContactInformation,
       filingMemberDetails = Some(filingMember)

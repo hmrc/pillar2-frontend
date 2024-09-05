@@ -19,6 +19,7 @@ package services.audit
 import models.audit._
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -165,4 +166,33 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
   }
+
+  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(implicit hc: HeaderCarrier): Future[AuditResult] =
+    auditConnector.sendExtendedEvent(
+      RfmAuditEvent(
+        nfmDetail.plrReference,
+        nfmDetail.securityAnswerRegistrationDate,
+        nfmDetail.corporatePosition,
+        nfmDetail.ukBased match {
+          case Some(value) => Some(value)
+          case _           => None
+        },
+        nfmDetail.nameRegistration,
+        nfmDetail.registeredAddress,
+        nfmDetail.primaryContactName,
+        nfmDetail.primaryContactEmail,
+        nfmDetail.primaryContactPhonePreference,
+        nfmDetail.primaryContactPhoneNumber,
+        nfmDetail.addSecondaryContact,
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.name),
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.emailAddress),
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.telephone.isDefined),
+        nfmDetail.secondaryContactInformation match {
+          case Some(ContactDetailsType(_, Some(tel), _)) => Some(tel)
+          case _                                         => None
+        },
+        nfmDetail.contactAddress
+      ).extendedDataEvent
+    )
+
 }

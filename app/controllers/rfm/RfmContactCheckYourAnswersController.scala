@@ -20,6 +20,7 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
+import models.rfm.CorporatePosition
 import models.rfm.RfmStatus._
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmStatusPage}
@@ -28,6 +29,7 @@ import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
+import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -47,6 +49,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   val controllerComponents:            MessagesControllerComponents,
   userAnswersConnectors:               UserAnswersConnectors,
   subscriptionService:                 SubscriptionService,
+  auditService:                        AuditService,
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
   countryOptions:                      CountryOptions
@@ -61,7 +64,6 @@ class RfmContactCheckYourAnswersController @Inject() (
       val address = SummaryListViewModel(
         rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
       )
-
       sessionRepository.get(request.userId).map { optionalUserAnswer =>
         (for {
           userAnswer <- optionalUserAnswer
@@ -85,7 +87,6 @@ class RfmContactCheckYourAnswersController @Inject() (
                 )
               }
         }
-
       }
   }
 
@@ -114,14 +115,18 @@ class RfmContactCheckYourAnswersController @Inject() (
                               )
                             )
         groupId <- fromOption[Future](request.groupId)
-        _ <- liftF(
-               subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
-             )
-        _                   <- liftF(userAnswersConnectors.remove(request.userId))
+        _ <- liftF(subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo))
+        _ <- liftF(userAnswersConnectors.remove(request.userId))
         optionalSessionData <- liftF(sessionRepository.get(request.userAnswers.id))
         sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
         updatedSessionData <- liftF(Future.fromTry(sessionData.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
         _                  <- liftF(sessionRepository.set(updatedSessionData))
+        isNewNfmNonUkBased = (newFilingMemberInformation.corporatePosition, newFilingMemberInformation.ukBased) match {
+                               case (CorporatePosition.Upe, _)              => false
+                               case (CorporatePosition.NewNfm, Some(false)) => true
+                               case (_, _)                                  => false
+                             }
+        _ <- if (isNewNfmNonUkBased) liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) else liftF(Future.unit)
       } yield SuccessfullyCompleted).value
         .flatMap {
           case Some(result) => Future.successful(result)
