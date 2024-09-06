@@ -17,25 +17,27 @@
 package controllers.pdf
 
 import cats.data.OptionT
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
 import models.repayments.{PdfModel, RepaymentJourneyModel}
 import models.rfm.RfmJourneyModel
-import pages.{PlrReferencePage, UpeNameRegistrationPage}
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.{PlrReferencePage, UpeNameRegistrationPage}
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
-import views.xml.pdf.ConfirmationPdf
+import views.xml.pdf._
 
-import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class PrintPdfController @Inject() (
   override val messagesApi:                        MessagesApi,
   @Named("EnrolmentIdentifier") identifyRepayment: IdentifierAction,
@@ -48,19 +50,11 @@ class PrintPdfController @Inject() (
   rfmConfirmationPdfView:                          RfmConfirmationPdf,
   repaymentAnswersPdfView:                         RepaymentAnswersPdf,
   repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
+  registrationConfirmationPdfView:                 ConfirmationPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
   val controllerComponents:                        MessagesControllerComponents
 )(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
-  override val messagesApi: MessagesApi,
-  identify:                 IdentifierAction,
-  getData:                  DataRetrievalAction,
-  requireData:              DataRequiredAction,
-  pdfView:                  ConfirmationPdf,
-  sessionRepository:        SessionRepository,
-  fopService:               FopService,
-  val controllerComponents: MessagesControllerComponents
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -124,8 +118,6 @@ class PrintPdfController @Inject() (
   }
 
   def onDownload: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val regDate = dateHelper.formatDateGDS(java.time.LocalDate.now)
-
     sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswers =>
       val pdfData: Option[PdfModel] = for {
         userAnswer <- optionalUserAnswers
@@ -138,7 +130,7 @@ class PrintPdfController @Inject() (
       } yield PdfModel(pillar2Id, regDate, timeStamp, companyName)
       pdfData match {
         case Some(data) =>
-          fopService.render(pdfView.render(data, implicitly, implicitly).body).map { pdf =>
+          fopService.render(registrationConfirmationPdfView.render(data, implicitly, implicitly).body).map { pdf =>
             Ok(pdf)
               .as("application/octet-stream")
               .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")

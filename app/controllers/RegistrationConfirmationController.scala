@@ -18,17 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models.UserAnswers
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.RegistrationConfirmationView
 
 import javax.inject.Inject
