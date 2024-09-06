@@ -14,11 +14,6 @@
  * limitations under the License.
  */
 
-package models.repayments
+package models.registration
 
-case class PdfModel(
-  plr2ID:      String,
-  regDate:     String,
-  currentTime: String,
-  companyName: String
-)
+case class RegistrationCheckYourAnswersPdfModel()

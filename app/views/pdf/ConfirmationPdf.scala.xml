@@ -1,11 +1,10 @@
-@import models.repayments.PdfModel
+@import models.registration.ConfirmationPdfModel
 
-@this()
+        @this()
 
-        @(model: PdfModel)(implicit request: RequestHeader, messages: Messages)
+        @(model: ConfirmationPdfModel)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
-         xmlns:fox="http://xmlgraphics.apache.org/fop/extensions"
          xml:lang="@messages.lang.locale.getLanguage"
          font-family="sans-serif">
 
@@ -17,9 +16,9 @@
                                margin-bottom="1cm"
                                margin-left="2cm"
                                margin-right="2cm">
-            <fo:region-body margin-top="3cm" margin-bottom="2cm" />
-            <fo:region-before extent="3cm" />
-            <fo:region-after extent="2cm" />
+            <fo:region-body margin-top="3cm" margin-bottom="2cm"/>
+            <fo:region-before extent="3cm"/>
+            <fo:region-after extent="2cm"/>
         </fo:simple-page-master>
     </fo:layout-master-set>
 
@@ -27,7 +26,8 @@
 
         <fo:static-content flow-name="xsl-region-before">
             <fo:block>
-                <fo:external-graphic src="url('file:conf/resources/gov-uk-logo-black.png')" content-width="5cm" content-height="auto" />
+                <fo:external-graphic src="url('file:conf/resources/gov-uk-logo-black.png')" content-width="5cm"
+                                     content-height="auto"/>
             </fo:block>
             <fo:block space-after="15pt" font-weight="bold">
                 @messages("registrationConfirmation.pdf.title")
@@ -48,7 +48,8 @@
                 </fo:block>
             </fo:block>
 
-            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt" font-weight="bold">
+            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt"
+                      font-weight="bold">
                 @messages("registrationConfirmation.reg-date", model.regDate)
             </fo:block>
 

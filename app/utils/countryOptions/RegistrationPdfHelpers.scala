@@ -14,16 +14,6 @@
  * limitations under the License.
  */
 
-package models.registration
+package utils.countryOptions
 
-import play.api.libs.json.{Json, OFormat}
-
-case class RegistrationPdfData(
-  pillar2Id:   String,
-  timeStamp:   String,
-  companyName: String
-)
-
-object RegistrationPdfData {
-  implicit val format: OFormat[RegistrationPdfData] = Json.format[RegistrationPdfData]
-}
+object RegistrationPdfHelpers {}

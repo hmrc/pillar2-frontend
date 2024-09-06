@@ -215,5 +215,4 @@ class CheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
-
 }

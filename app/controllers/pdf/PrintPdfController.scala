@@ -20,9 +20,11 @@ import cats.data.OptionT
 import com.google.inject.Inject
 import com.google.inject.name.Named
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions._
 import models.UserAnswers
-import models.repayments.{PdfModel, RepaymentJourneyModel}
+import models.registration._
+import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
@@ -33,6 +35,7 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
@@ -51,6 +54,9 @@ class PrintPdfController @Inject() (
   repaymentAnswersPdfView:                         RepaymentAnswersPdf,
   repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
   registrationConfirmationPdfView:                 ConfirmationPdf,
+  countryOptions:                                  CountryOptions,
+  userAnswersConnector:                            UserAnswersConnectors,
+  registrationCheckYourAnswersView:                RegistrationCheckYourAnswersPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
   val controllerComponents:                        MessagesControllerComponents
@@ -117,17 +123,19 @@ class PrintPdfController @Inject() (
       }
   }
 
-  def onDownload: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def printRegistrationConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswers =>
-      val pdfData: Option[PdfModel] = for {
-        userAnswer <- optionalUserAnswers
-        pillar2Id <- Pillar2Reference
-                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                       .orElse(userAnswer.get(PlrReferencePage))
-        companyName <- userAnswer.get(UpeNameRegistrationPage)
-        regDate     <- userAnswer.get(PdfRegistrationDatePage)
-        timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
-      } yield PdfModel(pillar2Id, regDate, timeStamp, companyName)
+      val pdfData: Option[ConfirmationPdfModel] =
+        for {
+          userAnswer <- optionalUserAnswers
+          pillar2Id <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswer.get(PlrReferencePage))
+          companyName <- userAnswer.get(UpeNameRegistrationPage)
+          regDate     <- userAnswer.get(PdfRegistrationDatePage)
+          timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
+        } yield ConfirmationPdfModel(pillar2Id, regDate, timeStamp, companyName)
+
       pdfData match {
         case Some(data) =>
           fopService.render(registrationConfirmationPdfView.render(data, implicitly, implicitly).body).map { pdf =>
@@ -137,6 +145,33 @@ class PrintPdfController @Inject() (
           }
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+  }
+
+  def onDownload2: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswers: Option[UserAnswers] =>
+      println("++++++++++++++++++++")
+      println(s"""$optionalUserAnswers""")
+      println("++++++++++++++++++++")
+      val x = userAnswersConnector.getUserAnswer(request.userAnswers.id)
+      val data: Option[CheckYourAnswersPdfModel] =
+        for {
+          upe              <- Upe.populate(optionalUserAnswers.get)
+          nfm              <- Nfm.populate(optionalUserAnswers.get)
+          groupDetail      <- GroupDetails.populate(optionalUserAnswers.get)
+          primaryContact   <- PrimaryContact.populate(optionalUserAnswers.get)
+          secondaryContact <- SecondaryContact.populate(optionalUserAnswers.get)
+          address          <- Address.populate(optionalUserAnswers.get, countryOptions)
+        } yield CheckYourAnswersPdfModel(upe, nfm, groupDetail, primaryContact, secondaryContact, address)
+      data match {
+        case Some(data) =>
+          fopService.render(registrationCheckYourAnswersView.render(implicitly, implicitly).body).map { pdf =>
+            Ok(pdf)
+              .as("application/octet-stream")
+              .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Check Your Answers.pdf")
+          }
+        case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
   }

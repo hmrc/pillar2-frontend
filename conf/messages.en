@@ -787,6 +787,8 @@ secondaryTelephone.error.format = Enter a telephone number in the correct format
 checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
 checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+registrationCheckYourAnswers.pdf.title = Check your answers before submitting your registration
+checkYourAnswers.pdf.header = Report Pillar 2 top-up taxes
 site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
