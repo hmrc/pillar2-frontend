@@ -22,11 +22,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus._
+import models.subscription.NewFilingMemberDetail
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.libs.json.Writes
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import queries.Settable
 import repositories.SessionRepository
 import services.SubscriptionService
 import services.audit.AuditService
@@ -92,12 +95,7 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      for {
-        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
-        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, InProgress))
-        _                  <- sessionRepository.set(updatedSessionData)
-      } yield (): Unit
+      updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
@@ -117,16 +115,9 @@ class RfmContactCheckYourAnswersController @Inject() (
         groupId <- fromOption[Future](request.groupId)
         _ <- liftF(subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo))
         _ <- liftF(userAnswersConnectors.remove(request.userId))
-        optionalSessionData <- liftF(sessionRepository.get(request.userAnswers.id))
-        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- liftF(Future.fromTry(sessionData.set(PlrReferencePage, newFilingMemberInformation.plrReference)))
-        _                  <- liftF(sessionRepository.set(updatedSessionData))
-        isNewNfmNonUkBased = (newFilingMemberInformation.corporatePosition, newFilingMemberInformation.ukBased) match {
-                               case (CorporatePosition.Upe, _)              => false
-                               case (CorporatePosition.NewNfm, Some(false)) => true
-                               case (_, _)                                  => false
-                             }
-        _ <- if (isNewNfmNonUkBased) liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) else liftF(Future.unit)
+        _ <- liftF(updateSessionData(request.userAnswers, PlrReferencePage, newFilingMemberInformation.plrReference))
+        _ <- if (isNewNfmNonUkBased(newFilingMemberInformation)) { liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) }
+             else { liftF(Future.unit) }
       } yield SuccessfullyCompleted).value
         .flatMap {
           case Some(result) => Future.successful(result)
@@ -150,11 +141,25 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   }
 
+  private def isNewNfmNonUkBased(newFilingMemberInformation: NewFilingMemberDetail): Boolean =
+    (newFilingMemberInformation.corporatePosition, newFilingMemberInformation.ukBased) match {
+      case (CorporatePosition.NewNfm, Some(false)) => true
+      case (_, _)                                  => false
+    }
+
   private def removeRfmStatus(userAnswers: UserAnswers): Future[Unit] =
     for {
       optionalSessionData <- sessionRepository.get(userAnswers.id)
       sessionData = optionalSessionData.getOrElse(UserAnswers(userAnswers.id))
       updatedSessionData <- Future.fromTry(sessionData.remove(RfmStatusPage))
+      _                  <- sessionRepository.set(updatedSessionData)
+    } yield (): Unit
+
+  private def updateSessionData[A](userAnswers: UserAnswers, page: Settable[A], value: A)(implicit writes: Writes[A]): Future[Unit] =
+    for {
+      optionalSessionData <- sessionRepository.get(userAnswers.id)
+      sessionData = optionalSessionData.getOrElse(UserAnswers(userAnswers.id))
+      updatedSessionData <- Future.fromTry(sessionData.set(page, value))
       _                  <- sessionRepository.set(updatedSessionData)
     } yield (): Unit
 

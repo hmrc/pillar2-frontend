@@ -19,7 +19,7 @@ package services.audit
 import models.audit._
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
+import models.subscription.NewFilingMemberDetail
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -173,10 +173,7 @@ class AuditService @Inject() (
         nfmDetail.plrReference,
         nfmDetail.securityAnswerRegistrationDate,
         nfmDetail.corporatePosition,
-        nfmDetail.ukBased match {
-          case Some(value) => Some(value)
-          case _           => None
-        },
+        nfmDetail.ukBased,
         nfmDetail.nameRegistration,
         nfmDetail.registeredAddress,
         nfmDetail.primaryContactName,
@@ -187,10 +184,7 @@ class AuditService @Inject() (
         nfmDetail.secondaryContactInformation.map(scInfo => scInfo.name),
         nfmDetail.secondaryContactInformation.map(scInfo => scInfo.emailAddress),
         nfmDetail.secondaryContactInformation.map(scInfo => scInfo.telephone.isDefined),
-        nfmDetail.secondaryContactInformation match {
-          case Some(ContactDetailsType(_, Some(tel), _)) => Some(tel)
-          case _                                         => None
-        },
+        nfmDetail.secondaryContactInformation.flatMap(scInfo => scInfo.telephone.map(tel => tel)),
         nfmDetail.contactAddress
       ).extendedDataEvent
     )
