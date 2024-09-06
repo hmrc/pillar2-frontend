@@ -45,7 +45,7 @@ class RfmConfirmationController @Inject() (
 
   def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
     implicit request =>
-      val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
+      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
       sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
         (for {
           userAnswer <- optionalUserAnswers

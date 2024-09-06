@@ -22,12 +22,232 @@ import org.mockito.Mockito.when
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
 import play.api.inject
+import models.UkOrAbroadBankAccount.UkBankAccount
+import models.UserAnswers
+import models.repayments.BankAccountDetails
+import models.rfm.CorporatePosition
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
+import org.scalatest.EitherValues
+import org.scalatestplus.mockito.MockitoSugar
+import pages.{BankAccountDetailsPage, PlrReferencePage, ReasonForRequestingRefundPage, RepaymentsContactByTelephonePage, RepaymentsContactEmailPage, RepaymentsContactNamePage, RepaymentsRefundAmountPage, RepaymentsTelephoneDetailsPage, RfmAddSecondaryContactPage, RfmCapturePrimaryTelephonePage, RfmContactAddressPage, RfmContactByTelephonePage, RfmCorporatePositionPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmRegisteredAddressPage, RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage, RfmUkBasedPage, UkOrAbroadBankAccountPage}
+import play.api.http.HeaderNames
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.FopService
 
 import scala.concurrent.Future
+
+class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSugar {
+
+  "rfm" must {
+
+    val answers: UserAnswers = emptyUserAnswers
+      .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
+      .success
+      .value
+      .set(RfmUkBasedPage, false)
+      .success
+      .value
+      .set(RfmNameRegistrationPage, "first last")
+      .success
+      .value
+      .set(RfmRegisteredAddressPage, nonUkAddress)
+      .success
+      .value
+      .set(RfmPrimaryContactNamePage, "primary name")
+      .success
+      .value
+      .set(RfmPrimaryContactEmailPage, "primary@test.com")
+      .success
+      .value
+      .set(RfmContactByTelephonePage, true)
+      .success
+      .value
+      .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+      .success
+      .value
+      .set(RfmAddSecondaryContactPage, true)
+      .success
+      .value
+      .set(RfmSecondaryContactNamePage, "secondary name")
+      .success
+      .value
+      .set(RfmSecondaryEmailPage, "secondary@test.com")
+      .success
+      .value
+      .set(RfmSecondaryPhonePreferencePage, true)
+      .success
+      .value
+      .set(RfmSecondaryCapturePhonePage, "0191 987654321")
+      .success
+      .value
+      .set(RfmContactAddressPage, nonUkAddress)
+      .success
+      .value
+
+    val sessionRepositoryUserAnswers: UserAnswers = emptyUserAnswers
+      .set(PlrReferencePage, "someID")
+      .success
+      .value
+
+    "onDownloadRfmAnswers" should {
+
+      "return OK and the correct view" in {
+        val mockFopService = mock[FopService]
+        val application = applicationBuilder(userAnswers = Some(answers))
+          .overrides(
+            bind[FopService].toInstance(mockFopService)
+          )
+          .build()
+        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmAnswers.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "hello"
+          header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=replace-filing-member-answers.pdf"
+        }
+      }
+
+      "redirect to the journey recovery controller when the user answers are incomplete" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmAnswers.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+        }
+      }
+
+    }
+
+    "onDownloadRfmConfirmation" should {
+
+      "return OK and the correct view" in {
+        val mockFopService = mock[FopService]
+        val application = applicationBuilder(userAnswers = Some(sessionRepositoryUserAnswers))
+          .overrides(
+            bind[FopService].toInstance(mockFopService),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmConfirmation.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "hello"
+          header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=replace-filing-member-confirmation.pdf"
+        }
+      }
+
+      "redirect to the journey recovery controller when the user answers are incomplete" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmConfirmation.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
+        }
+      }
+
+    }
+
+  }
+
+  "repayment" must {
+
+    val amount: BigDecimal = BigDecimal(100.99)
+    val ukBankAccountDetails: BankAccountDetails = BankAccountDetails(
+      bankName = "Barclays",
+      nameOnBankAccount = "Epic Adventure Inc",
+      sortCode = "206705",
+      accountNumber = "86473611"
+    )
+
+    val answers: UserAnswers = UserAnswers("id")
+      .set(RepaymentsRefundAmountPage, amount)
+      .success
+      .value
+      .set(ReasonForRequestingRefundPage, "The reason for refund")
+      .success
+      .value
+      .set(UkOrAbroadBankAccountPage, UkBankAccount)
+      .success
+      .value
+      .set(BankAccountDetailsPage, ukBankAccountDetails)
+      .success
+      .value
+      .set(RepaymentsContactNamePage, "contact name")
+      .success
+      .value
+      .set(RepaymentsContactEmailPage, "contact@test.com")
+      .success
+      .value
+      .set(RepaymentsContactByTelephonePage, true)
+      .success
+      .value
+      .set(RepaymentsTelephoneDetailsPage, "0191 123456789")
+      .success
+      .value
+
+    "onDownloadRepaymentAnswers" should {
+
+      "return OK and the correct view" in {
+        val mockFopService = mock[FopService]
+        val application = applicationBuilder(userAnswers = Some(answers))
+          .overrides(
+            bind[FopService].toInstance(mockFopService)
+          )
+          .build()
+        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentAnswers.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "hello"
+          header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=repayment-answers.pdf"
+        }
+      }
+
+      "redirect to the journey recovery controller when the user answers are incomplete" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentAnswers.url)
+          val result  = route(application, request).value
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+    }
+
+    "onDownloadRepaymentConfirmation" should {
+
+      "return OK and the correct view" in {
+        val mockFopService = mock[FopService]
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .overrides(
+            bind[FopService].toInstance(mockFopService)
+          )
+          .build()
+        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        running(application) {
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual "hello"
+          header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=repayment-confirmation.pdf"
+        }
+      }
+
+    }
+
+  }
 
 class PrintPdfControllerSpec extends SpecBase {
   "Print Pdf Controller" should {

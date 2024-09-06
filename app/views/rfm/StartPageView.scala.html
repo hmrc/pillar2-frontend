@@ -47,34 +47,28 @@
 
     @heading(messages("rfm.startPage.subHeading2"), "govuk-heading-m", "h2")
     @paragraphBody(messages("rfm.startPage.p4"))
-    @bulletList(items = List(
-        Html(messages("rfm.startPage.b1")),
-        Html(messages("rfm.startPage.b2"))
-    ), additionalListClasses = Some("govuk-list--spaced"))
 
     @heading(messages("rfm.startPage.subHeading3"), "govuk-heading-m", "h2")
     @paragraphBody(messages("rfm.startPage.p5"))
     @bulletList(items = List(
-        Html(messages("rfm.startPage.b3")),
-        Html(messages("rfm.startPage.b4")),
-        Html(messages("rfm.startPage.b5"))
+        Html(messages("rfm.startPage.b1")),
+        Html(messages("rfm.startPage.b2")),
+        Html(messages("rfm.startPage.b3"))
     ), additionalListClasses = Some("govuk-list--spaced"))
     @paragraphBody(messages("rfm.startPage.p6"))
 
     @heading(messages("rfm.startPage.subHeading4"), "govuk-heading-m", "h2")
     @paragraphBody(messages("rfm.startPage.p7"))
     @paragraphBody(messages("rfm.startPage.p8"))
+    @paragraphBody(messages("rfm.startPage.p9"))
     @bulletList(items = List(
+            Html(messages("rfm.startPage.b4")),
+            Html(messages("rfm.startPage.b5")),
             Html(messages("rfm.startPage.b6")),
-            Html(messages("rfm.startPage.b7")),
-            Html(messages("rfm.startPage.b8")),
-            Html(messages("rfm.startPage.b9")),
-            Html(messages("rfm.startPage.b10")),
-            Html(messages("rfm.startPage.b11")),
-            Html(messages("rfm.startPage.b12"))
+            Html(messages("rfm.startPage.b7"))
     ), additionalListClasses = Some("govuk-list--spaced"))
 
-    @heading(messages("rfm.startPage.legend"), "govuk-heading-s", "h2")
+    @heading(messages("rfm.startPage.subHeading5"), "govuk-heading-s", "h2")
 
     @govukButton(Button(
         content = Text(messages("site.confirm-and-continue")),

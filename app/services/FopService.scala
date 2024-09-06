@@ -28,10 +28,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FopService @Inject() (
+  fopFactory:  FopFactory
 )(implicit ec: ExecutionContext) {
-
-  // Manually create the FopFactory instance
-  private val fopFactory: FopFactory = FopFactory.newInstance(new java.net.URI("."))
 
   private val userAgentBlock: FOUserAgent => Unit = { foUserAgent =>
     foUserAgent.setAccessibility(true)
@@ -39,8 +37,8 @@ class FopService @Inject() (
     foUserAgent.setAuthor("HMRC forms service")
     foUserAgent.setProducer("HMRC forms services")
     foUserAgent.setCreator("HMRC forms services")
-    foUserAgent.setSubject("Pillar 2 Registration Confirmation Form")
-    foUserAgent.setTitle("Pillar 2 Registration Confirmation Form")
+    foUserAgent.setSubject("Report Pillar 2 top-up taxes")
+    foUserAgent.setTitle("Report Pillar 2 top-up taxes")
   }
 
   def render(input: String): Future[Array[Byte]] = Future {

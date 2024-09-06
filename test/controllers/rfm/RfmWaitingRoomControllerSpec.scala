@@ -29,7 +29,6 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.SubscriptionService
 import views.html.rfm.RfmWaitingRoomView
 
 import scala.concurrent.Future

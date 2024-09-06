@@ -16,27 +16,42 @@
 
 package controllers.pdf
 
+import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
-import models.repayments.PdfModel
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import models.UserAnswers
+import models.repayments.{PdfModel, RepaymentJourneyModel}
+import models.rfm.RfmJourneyModel
 import pages.{PlrReferencePage, UpeNameRegistrationPage}
-import play.api.Logging
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
-import views.ViewUtils.currentTimeGMT
+import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf.ConfirmationPdf
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PrintPdfController @Inject() (
+  override val messagesApi:                        MessagesApi,
+  @Named("EnrolmentIdentifier") identifyRepayment: IdentifierAction,
+  getSessionData:                                  SessionDataRetrievalAction,
+  requireSessionData:                              SessionDataRequiredAction,
+  identify:                                        IdentifierAction,
+  getData:                                         DataRetrievalAction,
+  requireData:                                     DataRequiredAction,
+  rfmAnswersPdfView:                               RfmAnswersPdf,
+  rfmConfirmationPdfView:                          RfmConfirmationPdf,
+  repaymentAnswersPdfView:                         RepaymentAnswersPdf,
+  repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
+  fopService:                                      FopService,
+  sessionRepository:                               SessionRepository,
+  val controllerComponents:                        MessagesControllerComponents
+)(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
   override val messagesApi: MessagesApi,
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
@@ -49,6 +64,64 @@ class PrintPdfController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
+
+  val dateHelper = new ViewHelpers()
+
+  def onDownloadRfmAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    RfmJourneyModel
+      .from(request.userAnswers)
+      .map { model =>
+        fopService.render(rfmAnswersPdfView.render(model, implicitly, implicitly).body).map { pdf =>
+          Ok(pdf)
+            .as("application/octet-stream")
+            .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-answers.pdf")
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+  }
+
+  def onDownloadRfmConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+    (for {
+      mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userAnswers.id))
+      userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
+      pillar2Id <- OptionT.fromOption[Future](
+                     Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswers.get(PlrReferencePage))
+                   )
+      pdf <- OptionT.liftF(fopService.render(rfmConfirmationPdfView.render(pillar2Id, currentDate.toString(), implicitly, implicitly).body))
+    } yield Ok(pdf)
+      .as("application/octet-stream")
+      .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-confirmation.pdf"))
+      .getOrElse {
+        Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
+      }
+  }
+
+  def onDownloadRepaymentAnswers: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
+    implicit request =>
+      RepaymentJourneyModel
+        .from(request.userAnswers)
+        .map { model =>
+          fopService.render(repaymentAnswersPdfView.render(model, implicitly, implicitly).body).map { pdf =>
+            Ok(pdf)
+              .as("application/octet-stream")
+              .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-answers.pdf")
+          }
+        }
+        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+  }
+
+  def onDownloadRepaymentConfirmation: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
+    implicit request =>
+      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+      fopService.render(repaymentConfirmationPdfView.render(currentDate.toString(), implicitly, implicitly).body).map { pdf =>
+        Ok(pdf)
+          .as("application/octet-stream")
+          .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")
+      }
+  }
 
   def onDownload: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val regDate = dateHelper.formatDateGDS(java.time.LocalDate.now)

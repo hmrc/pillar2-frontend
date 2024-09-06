@@ -1,0 +1,224 @@
+<fo:root xml:lang="en" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="main" page-height="297mm" page-width="210mm" margin="2cm">
+            <fo:region-body region-name="xsl-region-body" margin-top="3cm"/>
+            <fo:region-before region-name="xsl-region-before"/>
+            <fo:region-after region-name="xsl-region-after"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:declarations>
+        <pdf:catalog xmlns:pdf="http://xmlgraphics.apache.org/fop/extensions/pdf">
+            <pdf:dictionary type="normal" key="ViewerPreferences">
+                <pdf:boolean key="DisplayDocTitle">true</pdf:boolean>
+            </pdf:dictionary>
+        </pdf:catalog>
+    </fo:declarations>
+
+    <fo:bookmark-tree>
+        <fo:bookmark internal-destination="title">
+            <fo:bookmark-title>Replace the filing member for a Pillar 2 top-up taxes account</fo:bookmark-title>
+
+            <fo:bookmark internal-destination="personal-details">
+                <fo:bookmark-title>section.personalDetails</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="sickness-details">
+                <fo:bookmark-title>section.sicknessDetails</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="employment-details">
+                <fo:bookmark-title>section.employmentDetails</fo:bookmark-title>
+            </fo:bookmark>
+
+            <fo:bookmark internal-destination="what-happens-next">
+                <fo:bookmark-title>print.whatHappensNext</fo:bookmark-title>
+            </fo:bookmark>
+
+        </fo:bookmark>
+    </fo:bookmark-tree>
+
+    <fo:page-sequence master-reference="main">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block>
+                <fo:external-graphic src="url(conf/resources/logo.jpg)" padding-right="1cm" fox:alt-text="HM Revenue and Customs logo" />
+                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 top-up taxes account</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Body -->
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block-container>
+
+                <!-- Personal Details -->
+                <fo:block role="H2" id="filing-member-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">Filing member details</fo:block>
+
+                <fo:block-container>
+
+                    <!-- CorporatePosition -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Position in the group’s corporate structure: </fo:inline>
+                            <fo:inline>newNfm</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Name -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Name: </fo:inline>
+                            <fo:inline>first last</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- RegisteredOfficeAddress -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Address: </fo:inline>
+                            <fo:inline>NonUKAddress(1 drive,None,la la land,None,None,US)</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                </fo:block-container>
+
+                <!-- Primary Contact Details -->
+                <fo:block role="H2" id="primary-contact-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">First contact</fo:block>
+
+                <fo:block-container>
+
+                    <!-- Primary contact name -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Contact name: </fo:inline>
+                            <fo:block margin-left="5mm">primary name</fo:block>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Primary contact email -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Email address: </fo:inline>
+                            <fo:inline>primary@test.com</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Contact by telephone ? -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Can we contact by telephone?: </fo:inline>
+                            <fo:inline>true</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Telephone number -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Telephone number: </fo:inline>
+                            <fo:inline>0191 123456789</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                </fo:block-container>
+
+                <!-- Secondary Contact Details -->
+                <fo:block role="H2" id="secondary-contact-details" font-size="18pt" font-weight="bold" margin-bottom="5mm" margin-top="7mm">Second contact</fo:block>
+
+                <fo:block-container>
+
+                    <!-- Secondary contact ? -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Do you have a second contact?: </fo:inline>
+                            <fo:inline>true</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Secondary contact name -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Second contact name: </fo:inline>
+                            <fo:inline>secondary name</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Secondary contact email -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Second contact email address: </fo:inline>
+                            <fo:inline>secondary@test.com</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Secondary contact by telephone ? -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Can we contact by telephone?: </fo:inline>
+                            <fo:inline>true</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                    <!-- Secondary contact telephone number -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Second contact telephone number: </fo:inline>
+                            <fo:inline>0191 987654321</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                </fo:block-container>
+
+
+
+                <!-- Contact address details -->
+                <fo:block role="H2" id="contact-address-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">Contact address</fo:block>
+
+                <fo:block-container>
+
+                    <!-- CorporatePosition -->
+                    <fo:block-container margin-bottom="3mm">
+                        <fo:block>
+                            <fo:inline font-weight="bold">Address: </fo:inline>
+                            <fo:inline>NonUKAddress(1 drive,None,la la land,None,None,US)</fo:inline>
+                        </fo:block>
+                    </fo:block-container>
+
+                </fo:block-container>
+
+
+
+            </fo:block-container>
+        </fo:flow>
+
+    </fo:page-sequence>
+
+    <fo:page-sequence master-reference="main">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block>
+                <fo:external-graphic src="url(conf/resources/logo.jpg)" padding-right="1cm" fox:alt-text="HM Revenue and Customs logo" />
+                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 top-up taxes account</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Instructions -->
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block role="H2" id="what-happens-next" font-size="18pt" font-weight="bold" margin-bottom="5mm">print.whatHappensNext</fo:block>
+
+
+
+            <fo:block margin-bottom="3mm">print.p4</fo:block>
+            <fo:block margin-bottom="3mm">print.p5</fo:block>
+            <fo:block margin-bottom="3mm">
+                <fo:inline>print.p6.pre</fo:inline>
+                <fo:basic-link external-destination="https://www.gov.uk/government/organisations/hm-revenue-customs/contact/statutory-payment-dispute-team" text-decoration="underline">print.p6.link</fo:basic-link>
+                <fo:inline>(https://www.gov.uk/government/organisations/hm-revenue-customs/contact/statutory-payment-dispute-team)</fo:inline><fo:inline>print.p6.post</fo:inline>
+            </fo:block>
+        </fo:flow>
+
+    </fo:page-sequence>
+
+</fo:root>

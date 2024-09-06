@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers.repayments
 
-import models.{CheckMode, UserAnswers}
+import models.UserAnswers
 import pages.BankAccountDetailsPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -32,12 +32,7 @@ object UKBankSortCodeSummary {
       .map { answer =>
         SummaryListRowViewModel(
           key = "repayments.UKBank.summary.sortCode.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.sortCode)),
-          actions = Seq(
-            ActionItemViewModel("site.change", controllers.repayments.routes.BankAccountDetailsController.onPageLoad(CheckMode).url)
-              .withVisuallyHiddenText(messages("repayments.UKBank.summary.sortCode.checkYourAnswersLabel.hidden"))
-              .withCssClass("govuk-!-display-none-print")
-          )
+          value = ValueViewModel(HtmlContent(answer.sortCode))
         )
       }
 

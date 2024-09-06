@@ -20,6 +20,7 @@ import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl, PartnershipIdentificationFrontendConnector, PartnershipIdentificationFrontendConnectorImpl}
 import controllers.actions._
+import org.apache.fop.apps.FopFactory
 import play.api.{Configuration, Environment}
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -44,6 +45,8 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("ASAEnrolmentIdentifier")).to(classOf[ASAEnrolmentIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
+    bind(classOf[FopFactory]).toProvider(classOf[FopFactoryProvider])
+
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
     if (grsStubEnabled) {
       bind(classOf[IncorporatedEntityIdentificationFrontendConnector])

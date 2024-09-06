@@ -543,3 +543,7 @@ GET        /payment/history-empty                                               
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 
 GET /print-form controllers.pdf.PrintPdfController.onDownload
+GET        /replace-filing-member/download-answers-pdf                                              controllers.pdf.PrintPdfController.onDownloadRfmAnswers
+GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
+GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
+GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
