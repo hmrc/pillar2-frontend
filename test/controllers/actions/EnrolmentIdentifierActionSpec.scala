@@ -23,7 +23,7 @@ import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage}
 import play.api.inject.bind
 import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
 import play.api.test.FakeRequest
@@ -377,9 +377,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
-      "has correct credentials" must {
+      "has pillar2 enrolment" must {
         "return the credentials we require" in {
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
@@ -387,6 +388,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
                 Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -395,6 +397,51 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
             val controller  = new Harness(authAction)
             val result      = controller.onPageLoad()(FakeRequest())
             status(result) mustBe OK
+          }
+        }
+      }
+
+      "has no pillar2 enrolment, has plrReference in session " must {
+        "return the credentials we require" in {
+          val userAnswer = emptyUserAnswers
+            .setOrException(PlrReferencePage, PlrReference)
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(
+              Future.successful(
+                Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+              )
+            )
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+          running(application) {
+            val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
+            status(result) mustBe OK
+          }
+        }
+      }
+
+      "has no pillar2 enrolment, has no plrReference in session " must {
+        "return the credentials we require" in {
+          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+            .thenReturn(
+              Future.successful(
+                Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+              )
+            )
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+          running(application) {
+            val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
+            val appConfig   = application.injector.instanceOf[FrontendAppConfig]
+            val authAction  = new EnrolmentIdentifierAction(mockAuthConnector, mockSessionRepository, appConfig, bodyParsers)
+            val controller  = new Harness(authAction)
+            val result      = controller.onPageLoad()(FakeRequest())
+            status(result) mustBe SEE_OTHER
+            redirectLocation(result) mustBe Some(routes.UnauthorisedController.onPageLoad.url)
           }
         }
       }

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
-import pages.{AgentClientPillar2ReferencePage, UnauthorisedClientPillar2ReferencePage}
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
 import play.api.mvc.Results._
 import play.api.mvc._
@@ -30,7 +30,7 @@ import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
@@ -59,18 +59,8 @@ class EnrolmentIdentifierAction @Inject() (
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
           authAsAgent(request, internalId)
-        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials
-            if enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY).isDefined =>
-          Future.successful(
-            Right(
-              IdentifierRequest(
-                request,
-                internalId,
-                enrolments = enrolments.enrolments,
-                userIdForEnrolment = credentials.get.providerId
-              )
-            )
-          )
+        case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
+          authAsOrg(request, internalId, enrolments, credentials)
         case Some(_) ~ _ ~ Some(Organisation) ~ Some(Assistant) ~ _ =>
           logger.info("EnrolmentAuthIdentifierAction - Organisation: Assistant login attempt")
           Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
@@ -92,6 +82,33 @@ class EnrolmentIdentifierAction @Inject() (
   }
   override def parser:                     BodyParser[AnyContent] = bodyParser
   override protected def executionContext: ExecutionContext       = ec
+
+  def authAsOrg[A](
+    request:     Request[A],
+    internalId:  String,
+    enrolments:  Enrolments,
+    credentials: Option[Credentials]
+  ): Future[Either[Result, IdentifierRequest[A]]] =
+    sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
+      maybeUserAnswers
+        .flatMap(_.get(PlrReferencePage))
+        .orElse(enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY)) match {
+        case Some(_) =>
+          Future.successful(
+            Right(
+              IdentifierRequest(
+                request,
+                internalId,
+                enrolments = enrolments.enrolments,
+                userIdForEnrolment = credentials.get.providerId
+              )
+            )
+          )
+        case _ =>
+          logger.warn("EnrolmentAuthIdentifierAction - Unable to retrieve plrReference from session or pillar2 enrolment key")
+          Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
+      }
+    }
 
   def authAsAgent[A](
     request:    Request[A],
