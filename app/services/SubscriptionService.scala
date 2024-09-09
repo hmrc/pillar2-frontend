@@ -135,6 +135,7 @@ class SubscriptionService @Inject() (
       countryCode = userData.subRegisteredAddress.countryCode
     )
     AmendSubscription(
+      replaceFilingMember = false,
       upeDetails = UpeDetailsAmend(
         plrReference,
         customerIdentification1 = currentData.upeDetails.customerIdentification1,
@@ -175,6 +176,7 @@ class SubscriptionService @Inject() (
     subscriptionData: SubscriptionData
   ): AmendSubscription =
     AmendSubscription(
+      replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
         customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,
@@ -209,6 +211,7 @@ class SubscriptionService @Inject() (
     filingMember:     FilingMemberAmendDetails
   ): AmendSubscription =
     AmendSubscription(
+      replaceFilingMember = true,
       upeDetails = UpeDetailsAmend(
         plrReference = requiredInfo.plrReference,
         customerIdentification1 = subscriptionData.upeDetails.customerIdentification1,

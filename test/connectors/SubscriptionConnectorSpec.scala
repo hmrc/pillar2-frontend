@@ -267,6 +267,7 @@ object SubscriptionConnectorSpec {
       |{
       |
       |      "formBundleNumber": "119000004320",
+      |      "replaceFilingMember": true,
       |      "upeDetails": {
       |          "domesticOnly": false,
       |          "plrReference": "PLRXLM123123123",
