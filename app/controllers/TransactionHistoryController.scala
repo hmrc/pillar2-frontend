@@ -22,12 +22,12 @@ import connectors.TransactionHistoryConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.{FinancialHistory, NoResultFound, UnexpectedResponse, UserAnswers}
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.ReferenceNumberService
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
@@ -39,11 +39,12 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val paymentHistoryConnector:            TransactionHistoryConnector,
+  val transactionHistoryConnector:        TransactionHistoryConnector,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   val controllerComponents:               MessagesControllerComponents,
   referenceNumberService:                 ReferenceNumberService,
+  subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   view:                                   TransactionHistoryView,
   noTransactionHistoryView:               NoTransactionHistoryView,
@@ -61,10 +62,21 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        paymentHistory <- OptionT.liftF(paymentHistoryConnector.retrieveTransactionHistory(referenceNumber))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), paymentHistory.financialHistory))
-        pagination = generatePagination(paymentHistory.financialHistory, page)
-      } yield Ok(view(table, pagination))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        transactionHistory <-
+          OptionT
+            .fromOption[Future](mayBeUserAnswer.flatMap(_.get(TransactionHistoryPage)))
+            .orElse(
+              OptionT.liftF(
+                transactionHistoryConnector
+                  .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+              )
+            )
+        updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
+        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+        pagination = generatePagination(transactionHistory.financialHistory, page)
+      } yield Ok(view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))

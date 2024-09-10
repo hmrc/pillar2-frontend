@@ -131,9 +131,10 @@ trait SpecBase
       .configure(
         Configuration.from(
           Map(
-            "metrics.enabled"         -> "false",
-            "auditing.enabled"        -> false,
-            "features.grsStubEnabled" -> true
+            "metrics.enabled"                    -> "false",
+            "auditing.enabled"                   -> false,
+            "features.grsStubEnabled"            -> true,
+            "features.transactionHistoryEnabled" -> "now"
           ) ++ additionalData
         )
       )

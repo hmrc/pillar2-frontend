@@ -24,6 +24,8 @@ import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
+import java.time.LocalDate
+
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
@@ -93,14 +95,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val registrationControllerDomestic: String = "Domestic Top-up Tax"
   val serviceStartLink:               String = servicesConfig.getString("urls.serviceStartLink")
 
-  def languageMap: Map[String, Lang] =
-    if (languageTranslationEnabled) {
-      Map(
-        "english" -> Lang(ENGLISH),
-        "cymraeg" -> Lang(WELSH)
-      )
-    } else { Map("english" -> Lang(ENGLISH)) }
-
   val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
   val showDoYouHaveP2TopUpTaxId:    Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
   val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
@@ -115,4 +109,20 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
   lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
   lazy val excludedPaths:  Seq[String] = configuration.get[Seq[String]]("filters.allowlist.excluded")
+
+  def languageMap: Map[String, Lang] =
+    if (languageTranslationEnabled) {
+      Map(
+        "english" -> Lang(ENGLISH),
+        "cymraeg" -> Lang(WELSH)
+      )
+    } else { Map("english" -> Lang(ENGLISH)) }
+
+  def transactionHistoryEndDate: LocalDate = {
+    val date = configuration.get[String]("features.transactionHistoryEndDate")
+
+    if (date == "now")
+      LocalDate.now()
+    else LocalDate.parse(date)
+  }
 }
