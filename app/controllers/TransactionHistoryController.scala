@@ -89,7 +89,19 @@ class TransactionHistoryController @Inject() (
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
-      Future successful Ok(noTransactionHistoryView())
+      val result = for {
+        mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
+        userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        registrationDate = subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      } yield Ok(noTransactionHistoryView(registrationDate))
+
+      result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
+        Redirect(routes.TransactionHistoryController.onPageLoadError())
+      }
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>

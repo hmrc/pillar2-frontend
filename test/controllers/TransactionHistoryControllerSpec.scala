@@ -232,7 +232,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -242,16 +243,42 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[NoTransactionHistoryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
           request,
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to error page if there is no retrievable data" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadNoTransactionHistory().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.failed(new Exception("")))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/payment-history")
       }
     }
 
