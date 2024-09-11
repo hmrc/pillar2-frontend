@@ -312,4 +312,22 @@ trait TestData {
     )
   )
 
+  val validRepaymentDetails: String =
+    s"""{
+       |        "nonUKBank": {
+       |            "bankName": "Bank of UAE",
+       |            "bic": "HBUKGB4B",
+       |            "iban": "GB29NWBK60161331926819",
+       |            "nameOnBankAccount": "Bank Account Name"
+       |        },
+       |        "reasonForRequestingRefund": "Reason for refund",
+       |        "refundAmount": 100.99,
+       |        "repaymentsContactByPhone": true,
+       |        "repaymentsContactEmail": "test@test.com",
+       |        "repaymentsContactName": "Contact name",
+       |        "repaymentsTelephoneDetails": "01234567890",
+       |        "ukOrAbroadBankAccount": "nonUkBankAccount"
+       |  }
+       """.stripMargin
+
 }

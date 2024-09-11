@@ -17,6 +17,7 @@
 package services.audit
 
 import base.SpecBase
+import models.audit.RepaymentsAuditEvent
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.{NormalMode, UserType}
@@ -33,6 +34,7 @@ class AuditServiceSpec extends SpecBase {
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val validRegisterWithIdResponse        = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
   val validRegisterWithIdResponseForLLP  = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
+  val validRepayment: RepaymentsAuditEvent = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
 
   val serviceName = ServiceName(
     OptServiceName("Report Pillar 2 top-up taxes"),
@@ -86,5 +88,15 @@ class AuditServiceSpec extends SpecBase {
       result mustBe AuditResult.Success
 
     }
+
+    "successful for auditRepayments" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditRepayments(validRepayment).futureValue
+      result mustBe AuditResult.Success
+
+    }
+
   }
 }
