@@ -16,14 +16,15 @@
 
 package connectors
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import models.InternalIssueError
 import models.bars.{Account, BarsAccountResponse, BarsBusinessAssessmentRequest, Business}
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BarsConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClient, ec: ExecutionContext) {

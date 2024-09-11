@@ -16,6 +16,8 @@
 
 package controllers.actions
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.routes
@@ -30,8 +32,6 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
-import scala.concurrent.{ExecutionContext, Future}
 
 trait IdentifierAction
     extends ActionRefiner[Request, IdentifierRequest]

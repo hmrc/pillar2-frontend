@@ -16,6 +16,10 @@
 
 package connectors
 
+import javax.inject.{Inject, Named, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import models.{InternalIssueError, UserAnswers}
 import org.apache.pekko.Done
 import play.api.Logging
@@ -24,9 +28,6 @@ import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
 import utils.FutureConverter.FutureOps
-
-import javax.inject.{Inject, Named, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class UserAnswersConnectors @Inject() (

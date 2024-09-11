@@ -15,6 +15,10 @@
  */
 
 package controllers.subscription.manageAccount
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
@@ -28,9 +32,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactNameController @Inject() (
   val subscriptionConnector:              SubscriptionConnector,

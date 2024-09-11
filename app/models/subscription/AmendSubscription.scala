@@ -16,9 +16,9 @@
 
 package models.subscription
 
-import play.api.libs.json.{Json, OFormat}
-
 import java.time.LocalDate
+
+import play.api.libs.json.{Json, OFormat}
 
 case class AmendSubscription(
   upeDetails:               UpeDetailsAmend,

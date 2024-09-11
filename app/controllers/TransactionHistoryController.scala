@@ -16,6 +16,11 @@
 
 package controllers
 
+import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.TransactionHistoryConnector
@@ -33,10 +38,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, Pagina
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
-
-import java.time.format.DateTimeFormatter
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
   val paymentHistoryConnector:            TransactionHistoryConnector,

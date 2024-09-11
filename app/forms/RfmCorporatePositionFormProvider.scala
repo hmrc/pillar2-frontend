@@ -16,11 +16,11 @@
 
 package forms
 
+import javax.inject.Inject
+
 import forms.mappings.Mappings
 import models.rfm.CorporatePosition
 import play.api.data.Form
-
-import javax.inject.Inject
 
 class RfmCorporatePositionFormProvider @Inject() extends Mappings {
 

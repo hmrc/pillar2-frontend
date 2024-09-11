@@ -16,6 +16,11 @@
 
 package controllers.subscription
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
+
 import cats.syntax.option._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -39,10 +44,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.subscriptionview.UseContactPrimaryView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
-import scala.util.Success
 
 class UseContactPrimaryController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,

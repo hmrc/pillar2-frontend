@@ -19,8 +19,8 @@ package forms
 import javax.inject.Inject
 
 import forms.mappings.Mappings
-import play.api.data.Form
 import models.UkOrAbroadBankAccount
+import play.api.data.Form
 
 class UkOrAbroadBankAccountFormProvider @Inject() extends Mappings {
 

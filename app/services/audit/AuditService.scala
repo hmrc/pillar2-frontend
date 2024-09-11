@@ -16,15 +16,16 @@
 
 package services.audit
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import models.audit._
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class AuditService @Inject() (
   auditConnector: AuditConnector

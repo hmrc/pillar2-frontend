@@ -16,6 +16,11 @@
 
 package services
 
+import java.util.UUID
+import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.BarsConnector
@@ -33,10 +38,6 @@ import play.api.mvc.{Request, Result}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.repayments.BankAccountDetailsView
-
-import java.util.UUID
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BarsService @Inject() (

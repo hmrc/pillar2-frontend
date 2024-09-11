@@ -16,6 +16,10 @@
 
 package controllers.subscription
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -30,9 +34,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class CaptureSubscriptionAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,

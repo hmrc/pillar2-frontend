@@ -16,6 +16,8 @@
 
 package stubsonly.controllers.actions
 
+import scala.concurrent.{ExecutionContext, Future}
+
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.eacd.Pillar2Enrolment
@@ -25,10 +27,7 @@ import stubsonly.models.requests.TestOnlyAuthorisedRequest
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
 import uk.gov.hmrc.auth.core.retrieve.~
-
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
-
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestOnlyAuthorisedAction @Inject() (

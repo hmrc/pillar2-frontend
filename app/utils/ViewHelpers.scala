@@ -15,15 +15,15 @@
  */
 
 package utils
-import com.ibm.icu.text.SimpleDateFormat
-import com.ibm.icu.util.{TimeZone, ULocale}
-import play.api.Logging
-import play.api.i18n.Messages
-
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.util.Date
 import javax.inject.{Inject, Singleton}
+
+import com.ibm.icu.text.SimpleDateFormat
+import com.ibm.icu.util.{TimeZone, ULocale}
+import play.api.Logging
+import play.api.i18n.Messages
 
 @Singleton
 class ViewHelpers @Inject() extends Logging {

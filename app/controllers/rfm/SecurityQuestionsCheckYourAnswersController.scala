@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.Named
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
@@ -33,9 +37,6 @@ import utils.RowStatus
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
-
-import javax.inject.Named
-import scala.concurrent.{ExecutionContext, Future}
 
 class SecurityQuestionsCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,

@@ -16,17 +16,18 @@
 
 package stubsonly.connectors.stubs
 
+import javax.inject.Inject
+
+import scala.concurrent.Future
+
 import connectors.IncorporatedEntityIdentificationFrontendConnector
 import models.grs.EntityType.UkLimitedCompany
-import models.{Mode, UserType}
 import models.grs.GrsCreateRegistrationResponse
 import models.registration.IncorporatedEntityRegistrationData
+import models.{Mode, UserType}
 import play.api.libs.json.Json
 import stubsonly.utils.Base64Utils
 import uk.gov.hmrc.http.HeaderCarrier
-
-import javax.inject.Inject
-import scala.concurrent.Future
 
 class StubIncorporatedEntityIdentificationFrontendConnector @Inject() () extends IncorporatedEntityIdentificationFrontendConnector {
 

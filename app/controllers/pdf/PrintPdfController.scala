@@ -16,6 +16,10 @@
 
 package controllers.pdf
 
+import javax.inject.{Inject, Named, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
@@ -32,9 +36,6 @@ import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
-
-import javax.inject.{Inject, Named, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class PrintPdfController @Inject() (

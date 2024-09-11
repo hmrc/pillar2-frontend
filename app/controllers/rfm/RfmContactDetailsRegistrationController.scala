@@ -16,14 +16,14 @@
 
 package controllers.rfm
 
+import javax.inject.{Inject, Named}
+
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmContactDetailsRegistrationView
-
-import javax.inject.{Inject, Named}
 
 class RfmContactDetailsRegistrationController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,

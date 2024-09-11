@@ -16,12 +16,12 @@
 
 package forms
 
+import javax.inject.Inject
+
 import forms.Validation.TELEPHONE_REGEX
 import forms.mappings.Mappings
 import mapping.Constants.TELEPHONE_NUMBER_MAX_LENGTH
 import play.api.data.Form
-
-import javax.inject.Inject
 
 class RfmCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] = Form(

@@ -16,6 +16,10 @@
 
 package models
 
+import java.time.Instant
+
+import scala.util.{Failure, Success, Try}
+
 import cats.data.EitherNec
 import cats.implicits.catsSyntaxOption
 import helpers.{BookmarkHelper, RepaymentHelpers, ReplaceFilingMemberHelpers, SubscriptionHelpers}
@@ -23,9 +27,6 @@ import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Query, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
-
-import java.time.Instant
-import scala.util.{Failure, Success, Try}
 
 final case class UserAnswers(
   id:          String,

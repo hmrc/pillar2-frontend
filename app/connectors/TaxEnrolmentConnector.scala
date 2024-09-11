@@ -16,6 +16,10 @@
 
 package connectors
 
+import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, EnrolmentRequest, InternalIssueError}
@@ -26,9 +30,6 @@ import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 import utils.FutureConverter.FutureOps
-
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {

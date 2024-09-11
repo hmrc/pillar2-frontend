@@ -16,10 +16,11 @@
 
 package pages
 
-import models.rfm.CorporatePosition
-import models.UserAnswers
-import play.api.libs.json.JsPath
 import scala.util.Try
+
+import models.UserAnswers
+import models.rfm.CorporatePosition
+import play.api.libs.json.JsPath
 
 case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
 

@@ -16,10 +16,11 @@
 
 package forms
 
-import forms.mappings.Mappings
-import play.api.data.Form
-import mapping.Constants
 import javax.inject.Inject
+
+import forms.mappings.Mappings
+import mapping.Constants
+import play.api.data.Form
 
 class NfmContactNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =

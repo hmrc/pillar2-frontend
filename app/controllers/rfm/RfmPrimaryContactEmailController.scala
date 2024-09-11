@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
@@ -28,9 +32,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmPrimaryContactEmailView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class RfmPrimaryContactEmailController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,

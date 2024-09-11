@@ -16,9 +16,9 @@
 
 package models.subscription
 
-import play.api.libs.json._
-
 import java.time.LocalDate
+
+import play.api.libs.json._
 
 final case class UpeDetails(
   safeId:                  Option[String],

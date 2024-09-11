@@ -16,6 +16,10 @@
 
 package controllers.eligibility
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import forms.TurnOverEligibilityFormProvider
 import models.UserAnswers
@@ -26,9 +30,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TurnOverEligibilityView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class TurnOverEligibilityController @Inject() (
   formProvider:             TurnOverEligibilityFormProvider,

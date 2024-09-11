@@ -16,6 +16,8 @@
 
 package utils.countryOptions
 
+import javax.inject.{Inject, Singleton}
+
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
 import mapping.Constants.WELSH

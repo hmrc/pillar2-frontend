@@ -16,6 +16,10 @@
 
 package controllers
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -32,9 +36,6 @@ import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html._
 import views.html.rfm.AgentView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class AgentController @Inject() (
   val controllerComponents:    MessagesControllerComponents,

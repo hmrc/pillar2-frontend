@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.Inject
+
+import scala.concurrent.ExecutionContext
+
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import pages.PlrReferencePage
@@ -26,9 +30,6 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.html.rfm.RfmConfirmationView
-
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class RfmConfirmationController @Inject() (
   getData:                  DataRetrievalAction,

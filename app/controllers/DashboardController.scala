@@ -16,6 +16,11 @@
 
 package controllers
 
+import java.time.format.DateTimeFormatter
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import cats.implicits._
 import config.FrontendAppConfig
@@ -24,7 +29,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
 import models.{InternalIssueError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome, RepaymentCompletionStatus, RepaymentsStatusPage, RepaymentsWaitingRoomVisited, RfmStatusPage}
+import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,10 +37,6 @@ import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.DashboardView
-
-import java.time.format.DateTimeFormatter
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class DashboardController @Inject() (
   val userAnswersConnectors:              UserAnswersConnectors,

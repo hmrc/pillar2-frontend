@@ -16,6 +16,10 @@
 
 package controllers.subscription
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
@@ -31,9 +35,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.subscriptionview.ContactNameComplianceView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class ContactNameComplianceController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,

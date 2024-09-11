@@ -16,6 +16,10 @@
 
 package controllers.repayments
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import controllers.actions._
 import forms.RepaymentsContactEmailFormProvider
@@ -28,9 +32,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsContactEmailView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsContactEmailController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,

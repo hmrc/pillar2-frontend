@@ -16,13 +16,13 @@
 
 package navigation
 
+import javax.inject.{Inject, Singleton}
+
 import controllers.routes
 import models._
 import pages._
 import play.api.mvc.Call
 import utils.RowStatus
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class NominatedFilingMemberNavigator @Inject() {

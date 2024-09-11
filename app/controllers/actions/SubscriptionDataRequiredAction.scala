@@ -16,12 +16,14 @@
 
 package controllers.actions
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import models.requests.{OptionalSubscriptionDataRequest, SubscriptionDataRequest}
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext)
     extends SubscriptionDataRequiredAction

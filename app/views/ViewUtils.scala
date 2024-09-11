@@ -16,12 +16,12 @@
 
 package views
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
-
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 object ViewUtils {
 

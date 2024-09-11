@@ -16,12 +16,12 @@
 
 package models.subscription
 
+import scala.util.{Failure, Success, Try}
+
 import models.{MneOrDomestic, NonUKAddress, RichJsObject}
 import pages.QuestionPage
 import play.api.libs.json._
 import queries.{Gettable, Settable}
-
-import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
   subMneOrDomestic:            MneOrDomestic,

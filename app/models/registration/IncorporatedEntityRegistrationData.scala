@@ -16,10 +16,10 @@
 
 package models.registration
 
+import java.time.LocalDate
+
 import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
 import play.api.libs.json.{Json, OFormat}
-
-import java.time.LocalDate
 
 final case class IncorporatedEntityRegistrationData(
   companyProfile:       CompanyProfile,

@@ -16,9 +16,13 @@
 
 package controllers.subscription.manageAccount
 
+import javax.inject.Named
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
-import com.google.inject.Inject
 import cats.implicits.catsSyntaxApplicativeError
+import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
@@ -34,9 +38,6 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
-
-import javax.inject.Named
-import scala.concurrent.{ExecutionContext, Future}
 class ManageContactCheckYourAnswersController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,

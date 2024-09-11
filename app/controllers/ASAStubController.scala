@@ -16,6 +16,10 @@
 
 package controllers
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.Future
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
@@ -23,9 +27,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ASAStubView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.Future
 
 class ASAStubController @Inject() (
   val controllerComponents:                  MessagesControllerComponents,

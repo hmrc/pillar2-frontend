@@ -16,6 +16,10 @@
 
 package controllers.repayments
 
+import javax.inject.Named
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
@@ -31,9 +35,6 @@ import repositories.SessionRepository
 import services.BarsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.BankAccountDetailsView
-
-import javax.inject.Named
-import scala.concurrent.{ExecutionContext, Future}
 
 class BankAccountDetailsController @Inject() (
   override val messagesApi:               MessagesApi,

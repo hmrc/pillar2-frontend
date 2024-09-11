@@ -16,15 +16,16 @@
 
 package controllers.actions
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import connectors.SubscriptionConnector
 import models.requests.{IdentifierRequest, OptionalSubscriptionDataRequest}
 import play.api.Logging
 import play.api.mvc.ActionTransformer
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionImpl @Inject() (
   val subscriptionConnector:     SubscriptionConnector

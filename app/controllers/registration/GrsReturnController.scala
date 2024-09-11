@@ -16,6 +16,10 @@
 
 package controllers.registration
 
+import javax.inject.{Inject, Named, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
 import models.fm.JourneyType
@@ -32,9 +36,6 @@ import services.audit.AuditService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-
-import javax.inject.{Inject, Named, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class GrsReturnController @Inject() (

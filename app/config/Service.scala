@@ -18,8 +18,6 @@ package config
 
 import play.api.{ConfigLoader, Configuration}
 
-import scala.language.implicitConversions
-
 final case class Service(host: String, port: String, protocol: String) {
 
   def baseUrl: String =

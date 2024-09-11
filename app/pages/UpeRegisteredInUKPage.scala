@@ -16,10 +16,10 @@
 
 package pages
 
+import scala.util.Try
+
 import models.UserAnswers
 import play.api.libs.json.JsPath
-
-import scala.util.Try
 
 case object UpeRegisteredInUKPage extends QuestionPage[Boolean] {
 

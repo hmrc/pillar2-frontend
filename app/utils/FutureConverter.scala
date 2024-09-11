@@ -20,7 +20,7 @@ import scala.concurrent.Future
 
 object FutureConverter {
 
-  implicit class FutureOps[A](val a: A) extends AnyVal {
+  implicit class FutureOps[A](private val a: A) extends AnyVal {
     def toFuture: Future[A] = Future.successful(a)
   }
 

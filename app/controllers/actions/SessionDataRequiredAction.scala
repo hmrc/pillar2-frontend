@@ -16,12 +16,14 @@
 
 package controllers.actions
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import models.UserAnswers
 import models.requests.{SessionDataRequest, SessionOptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends SessionDataRequiredAction with Logging {
 

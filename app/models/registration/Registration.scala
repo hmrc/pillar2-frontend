@@ -16,10 +16,10 @@
 
 package models.registration
 
+import java.time.LocalDate
+
 import models.grs.EntityType
 import play.api.libs.json.{Json, OFormat}
-
-import java.time.LocalDate
 
 case class Registration(
   isUPERegisteredInUK: Boolean,

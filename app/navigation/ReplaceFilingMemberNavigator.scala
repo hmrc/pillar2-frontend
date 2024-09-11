@@ -16,13 +16,13 @@
 
 package navigation
 
+import javax.inject.{Inject, Singleton}
+
 import controllers.routes
 import models._
+import models.rfm.CorporatePosition
 import pages._
 import play.api.mvc.Call
-import models.rfm.CorporatePosition
-
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class ReplaceFilingMemberNavigator @Inject() {
@@ -82,14 +82,14 @@ class ReplaceFilingMemberNavigator @Inject() {
 
   private def whichCheckYourAnswerPageRfmQuestions(userAnswers: UserAnswers): Call =
     userAnswers.get(RfmContactAddressPage) match {
-      case Some(value) => reviewAndSubmitCheckYourAnswers
-      case _           => rfmCheckYourAnswers
+      case Some(_) => reviewAndSubmitCheckYourAnswers
+      case _       => rfmCheckYourAnswers
     }
 
   private def rfmRegistrationDetailsCheckRoute(userAnswers: UserAnswers): Call =
     userAnswers.get(RfmContactAddressPage) match {
-      case Some(value) => reviewAndSubmitCheckYourAnswers
-      case _           => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+      case Some(_) => reviewAndSubmitCheckYourAnswers
+      case _       => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
     }
 
   private def telephonePreferenceLogicNormal(userAnswers: UserAnswers): Call =
@@ -165,7 +165,7 @@ class ReplaceFilingMemberNavigator @Inject() {
   private def rfmSecondaryEmailCheck(userAnswers: UserAnswers): Call =
     userAnswers
       .get(RfmSecondaryEmailPage) match {
-      case Some(value) if userAnswers.get(RfmSecondaryPhonePreferencePage).isEmpty =>
+      case Some(_) if userAnswers.get(RfmSecondaryPhonePreferencePage).isEmpty =>
         controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(CheckMode)
       case _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     }

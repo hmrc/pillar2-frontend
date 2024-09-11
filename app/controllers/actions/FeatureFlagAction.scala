@@ -16,12 +16,13 @@
 
 package controllers.actions
 
+import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import play.api.Configuration
 import play.api.mvc.Results.Redirect
 import play.api.mvc._
-
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FeatureFlagActionFactory @Inject() (configuration: Configuration, controllerComponents: MessagesControllerComponents)(implicit

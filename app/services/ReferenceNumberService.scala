@@ -16,13 +16,13 @@
 
 package services
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
 import models.UserAnswers
 import pages.PlrReferencePage
 import uk.gov.hmrc.auth.core.Enrolment
 import utils.Pillar2Reference
-
-import javax.inject.Inject
 
 class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
 

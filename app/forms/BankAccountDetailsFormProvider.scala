@@ -16,13 +16,13 @@
 
 package forms
 
+import javax.inject.Inject
+
 import _root_.mapping.Constants
 import forms.mappings.Mappings
 import models.repayments.BankAccountDetails
 import play.api.data.Form
 import play.api.data.Forms.mapping
-
-import javax.inject.Inject
 
 class BankAccountDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[BankAccountDetails] = Form(

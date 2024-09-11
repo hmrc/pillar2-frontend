@@ -16,12 +16,12 @@
 
 package forms
 
+import javax.inject.Inject
+
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
-
-import javax.inject.Inject
 
 class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
   private val textLength    = 35

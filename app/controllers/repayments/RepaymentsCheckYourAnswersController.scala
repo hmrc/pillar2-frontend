@@ -16,6 +16,10 @@
 
 package controllers.repayments
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
@@ -31,9 +35,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsCheckYourAnswersController @Inject() (
   override val messagesApi:               MessagesApi,

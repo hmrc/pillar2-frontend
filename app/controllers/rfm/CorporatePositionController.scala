@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
@@ -32,9 +36,6 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CorporatePositionView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class CorporatePositionController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,

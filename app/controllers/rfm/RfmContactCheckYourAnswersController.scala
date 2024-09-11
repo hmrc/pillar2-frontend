@@ -15,6 +15,10 @@
  */
 
 package controllers.rfm
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT.{fromOption, liftF}
 import cats.implicits._
 import config.FrontendAppConfig
@@ -33,9 +37,6 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi:            MessagesApi,

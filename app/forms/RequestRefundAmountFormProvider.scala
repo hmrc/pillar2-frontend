@@ -16,11 +16,11 @@
 
 package forms
 
+import javax.inject.Inject
+
 import forms.mappings.Mappings
 import mapping.Constants.{MAX_AMOUNT, MIN_AMOUNT}
 import play.api.data.Form
-
-import javax.inject.Inject
 
 class RequestRefundAmountFormProvider @Inject() extends Mappings {
   def apply(): Form[BigDecimal] =

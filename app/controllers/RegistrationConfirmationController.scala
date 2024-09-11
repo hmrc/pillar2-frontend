@@ -16,6 +16,10 @@
 
 package controllers
 
+import javax.inject.Inject
+
+import scala.concurrent.ExecutionContext
+
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.{PlrReferencePage, SubMneOrDomesticPage}
@@ -27,9 +31,6 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
-
-import javax.inject.Inject
-import scala.concurrent.ExecutionContext
 
 class RegistrationConfirmationController @Inject() (
   getData:                  DataRetrievalAction,

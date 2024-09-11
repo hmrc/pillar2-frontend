@@ -16,14 +16,14 @@
 
 package controllers.rfm
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
 import controllers.actions.FeatureFlagActionFactory
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.StartPageView
-
-import javax.inject.Inject
 
 class StartPageController @Inject() (
   val controllerComponents: MessagesControllerComponents,

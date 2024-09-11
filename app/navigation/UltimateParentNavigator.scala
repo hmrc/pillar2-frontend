@@ -16,12 +16,12 @@
 
 package navigation
 
-import controllers.routes
-
 import javax.inject.{Inject, Singleton}
-import play.api.mvc.Call
-import pages._
+
+import controllers.routes
 import models._
+import pages._
+import play.api.mvc.Call
 
 @Singleton
 class UltimateParentNavigator @Inject() {

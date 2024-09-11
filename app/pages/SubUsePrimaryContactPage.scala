@@ -16,10 +16,10 @@
 
 package pages
 
+import scala.util.{Success, Try}
+
 import models.UserAnswers
 import play.api.libs.json.JsPath
-
-import scala.util.{Success, Try}
 
 case object SubUsePrimaryContactPage extends QuestionPage[Boolean] {
 

@@ -16,14 +16,15 @@
 
 package stubsonly.connectors
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import play.api.Logger
 import play.api.libs.json.JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyConnector @Inject() (
   appConfig:  FrontendAppConfig,

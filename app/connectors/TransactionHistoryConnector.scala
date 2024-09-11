@@ -16,6 +16,10 @@
 
 package connectors
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import models.{NoResultFound, TransactionHistory, UnexpectedResponse}
 import play.api.Logging
@@ -23,9 +27,6 @@ import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClient, ec: ExecutionContext) extends Logging {
 

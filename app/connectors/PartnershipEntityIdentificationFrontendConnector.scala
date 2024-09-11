@@ -16,17 +16,17 @@
 
 package connectors
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
-import services.audit.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 trait PartnershipIdentificationFrontendConnector {
   def createPartnershipJourney(
@@ -39,9 +39,8 @@ trait PartnershipIdentificationFrontendConnector {
 }
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:    FrontendAppConfig,
-  httpClient:   HttpClient,
-  auditService: AuditService
+  appConfig:  FrontendAppConfig,
+  httpClient: HttpClient
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext

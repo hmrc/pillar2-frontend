@@ -16,13 +16,14 @@
 
 package controllers.actions
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import models.requests.{IdentifierRequest, SessionOptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.ActionTransformer
 import repositories.SessionRepository
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataRetrievalActionImpl @Inject() (
   val sessionRepository:         SessionRepository

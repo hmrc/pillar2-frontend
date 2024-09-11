@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.Future
+
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
 import models.Mode
@@ -23,9 +27,6 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.CheckNewFilingMemberView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.Future
 
 class CheckNewFilingMemberController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,

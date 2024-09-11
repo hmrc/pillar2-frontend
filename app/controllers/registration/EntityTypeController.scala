@@ -16,6 +16,10 @@
 
 package controllers.registration
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions._
@@ -32,9 +36,6 @@ import play.api.mvc.{Action, AnyContent, Call, MessagesControllerComponents}
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EntityTypeView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class EntityTypeController @Inject() (
   val userAnswersConnectors:                         UserAnswersConnectors,

@@ -16,10 +16,10 @@
 
 package config
 
+import javax.inject.{Inject, Provider, Singleton}
+
 import org.apache.fop.apps.{FopFactory, FopFactoryBuilder}
 import play.api.Environment
-
-import javax.inject.{Inject, Provider, Singleton}
 
 @Singleton
 class FopFactoryProvider @Inject() (

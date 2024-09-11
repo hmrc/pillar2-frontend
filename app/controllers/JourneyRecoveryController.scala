@@ -16,6 +16,8 @@
 
 package controllers
 
+import javax.inject.Inject
+
 import config.FrontendAppConfig
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -24,8 +26,6 @@ import uk.gov.hmrc.play.bootstrap.binders.RedirectUrl._
 import uk.gov.hmrc.play.bootstrap.binders._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.JourneyRecoveryView
-
-import javax.inject.Inject
 class JourneyRecoveryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   journeyRecoveryView:      JourneyRecoveryView

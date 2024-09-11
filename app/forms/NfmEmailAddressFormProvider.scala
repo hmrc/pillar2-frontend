@@ -17,9 +17,10 @@
 package forms
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
-import play.api.data.Form
 import mapping.Constants
+import play.api.data.Form
 
 class NfmEmailAddressFormProvider @Inject() extends Mappings {
   def apply(userName: String): Form[String] =

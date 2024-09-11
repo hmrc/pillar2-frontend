@@ -16,6 +16,8 @@
 
 package controllers.repayments
 
+import javax.inject.{Inject, Named}
+
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.UserAnswers
@@ -26,8 +28,6 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import views.html.repayments.RepaymentsConfirmationView
-
-import javax.inject.{Inject, Named}
 
 class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,

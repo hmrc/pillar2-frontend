@@ -17,9 +17,10 @@
 package forms
 
 import javax.inject.Inject
+
 import forms.mappings.Mappings
-import play.api.data.Form
 import models.grs.EntityType
+import play.api.data.Form
 
 class NfmEntityTypeFormProvider @Inject() extends Mappings {
 

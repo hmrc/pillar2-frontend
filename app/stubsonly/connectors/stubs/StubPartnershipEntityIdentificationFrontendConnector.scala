@@ -16,6 +16,10 @@
 
 package stubsonly.connectors.stubs
 
+import javax.inject.Inject
+
+import scala.concurrent.Future
+
 import connectors.PartnershipIdentificationFrontendConnector
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import models.registration.PartnershipEntityRegistrationData
@@ -23,9 +27,6 @@ import models.{Mode, UserType}
 import play.api.libs.json.Json
 import stubsonly.utils.Base64Utils
 import uk.gov.hmrc.http.HeaderCarrier
-
-import javax.inject.Inject
-import scala.concurrent.Future
 
 class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends PartnershipIdentificationFrontendConnector {
 

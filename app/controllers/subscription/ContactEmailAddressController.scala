@@ -16,6 +16,10 @@
 
 package controllers.subscription
 
+import javax.inject.Inject
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
@@ -28,9 +32,6 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.ContactEmailAddressView
-
-import javax.inject.Inject
-import scala.concurrent.{ExecutionContext, Future}
 
 class ContactEmailAddressController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,

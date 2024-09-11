@@ -16,11 +16,12 @@
 
 package navigation
 
+import javax.inject.{Inject, Singleton}
+
 import controllers.routes
 import models.subscription.SubscriptionLocalData
 import pages._
 import play.api.mvc.Call
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class AmendSubscriptionNavigator @Inject() {

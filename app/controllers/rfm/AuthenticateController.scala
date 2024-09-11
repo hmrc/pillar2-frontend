@@ -16,13 +16,13 @@
 
 package controllers.rfm
 
+import javax.inject.{Inject, Named}
+
 import config.FrontendAppConfig
 import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
 import models.NormalMode
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-
-import javax.inject.{Inject, Named}
 
 class AuthenticateController @Inject() (
   val controllerComponents:         MessagesControllerComponents,

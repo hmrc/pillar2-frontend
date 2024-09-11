@@ -16,6 +16,8 @@
 
 package stubsonly.controllers.stubs
 
+import javax.inject.{Inject, Singleton}
+
 import config.FrontendAppConfig
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.grs.EntityType
@@ -28,7 +30,6 @@ import stubsonly.models.GrsStubFormData
 import stubsonly.utils.Base64Utils
 import stubsonly.views.html.StubGrsRegistrationDataView
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import javax.inject.{Inject, Singleton}
 
 @Singleton
 class StubGrsJourneyDataController @Inject() (

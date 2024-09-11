@@ -16,6 +16,10 @@
 
 package controllers.rfm
 
+import javax.inject.Named
+
+import scala.concurrent.Future
+
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
@@ -30,9 +34,6 @@ import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
-
-import javax.inject.Named
-import scala.concurrent.Future
 
 class RfmCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,

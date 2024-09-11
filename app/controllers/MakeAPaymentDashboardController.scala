@@ -16,6 +16,10 @@
 
 package controllers
 
+import javax.inject.{Inject, Named}
+
+import scala.concurrent.{ExecutionContext, Future}
+
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
@@ -27,9 +31,6 @@ import repositories.SessionRepository
 import services.ReferenceNumberService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.MakeAPaymentDashboardView
-
-import javax.inject.{Inject, Named}
-import scala.concurrent.{ExecutionContext, Future}
 
 class MakeAPaymentDashboardController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,

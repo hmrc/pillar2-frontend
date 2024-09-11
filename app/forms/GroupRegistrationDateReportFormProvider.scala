@@ -16,10 +16,10 @@
 
 package forms
 
+import javax.inject.Inject
+
 import forms.mappings.Mappings
 import play.api.data._
-
-import javax.inject.Inject
 
 class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
 

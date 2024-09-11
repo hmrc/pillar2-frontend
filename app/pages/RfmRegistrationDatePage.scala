@@ -16,9 +16,9 @@
 
 package pages
 
-import play.api.libs.json.JsPath
-
 import java.time.LocalDate
+
+import play.api.libs.json.JsPath
 
 case object RfmRegistrationDatePage extends QuestionPage[LocalDate] {
 

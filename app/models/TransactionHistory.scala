@@ -16,9 +16,9 @@
 
 package models
 
-import play.api.libs.json.Json
-
 import java.time.LocalDate
+
+import play.api.libs.json.Json
 
 final case class FinancialHistory(date: LocalDate, paymentType: String, amountPaid: BigDecimal, amountRepaid: BigDecimal)
 

@@ -16,6 +16,10 @@
 
 package services
 
+import javax.inject.{Inject, Singleton}
+
+import scala.concurrent.Future
+
 import connectors._
 import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
 import models.{UkOrAbroadBankAccount, UserAnswers}
@@ -23,9 +27,6 @@ import org.apache.pekko.Done
 import pages._
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
-
-import javax.inject.{Inject, Singleton}
-import scala.concurrent.Future
 
 @Singleton
 class RepaymentService @Inject() (

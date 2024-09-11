@@ -16,14 +16,14 @@
 
 package controllers.repayments
 
+import javax.inject.{Inject, Named}
+
 import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundBeforeStartView
-
-import javax.inject.{Inject, Named}
 class RequestRefundBeforeStartController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RequestRefundBeforeStartView,
