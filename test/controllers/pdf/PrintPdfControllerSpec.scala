@@ -276,7 +276,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownload.url)
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
 
           val result = route(application, request).value
 
@@ -304,7 +304,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownload.url)
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
 
           val result = route(application, request).value
 
