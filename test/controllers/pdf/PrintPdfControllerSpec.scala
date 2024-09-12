@@ -25,8 +25,8 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.EitherValues
 import org.scalatestplus.mockito.MockitoSugar
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages._
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.http.HeaderNames
 import play.api.inject
 import play.api.inject.bind
@@ -39,7 +39,7 @@ import scala.concurrent.Future
 
 class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSugar {
 
-  "rfm" must {
+  "Print PDF Controller" must {
 
     val answers: UserAnswers = emptyUserAnswers
       .set(RfmCorporatePositionPage, CorporatePosition.NewNfm)
@@ -246,72 +246,67 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
 
   }
 
-  class PrintPdfControllerSpec extends SpecBase {
-    "Print Pdf Controller" should {
+  "return OK and the Registration Confirmation PDF for a GET" in {
+    val testCompanyName   = "testName"
+    val testPlr2Reference = "XMPLR0012345674"
+    val testTimeStamp     = "11:45am (GMT)"
+    val testDate          = "17 January 2025"
 
-      "return OK and the correct PDF for a GET" in {
-        val testCompanyName   = "testName"
-        val testPlr2Reference = "XMPLR0012345674"
-        val testTimeStamp     = "11:45am (GMT)"
-        val testDate          = "17 January 2025"
+    val ua = emptyUserAnswers
+      .setOrException(PdfRegistrationDatePage, testDate)
+      .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
+      .setOrException(UpeNameRegistrationPage, testCompanyName)
+      .setOrException(PlrReferencePage, testPlr2Reference)
+    val mockSessionRepository = mock[SessionRepository]
 
-        val ua = emptyUserAnswers
-          .setOrException(PdfRegistrationDatePage, testDate)
-          .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
-          .setOrException(UpeNameRegistrationPage, testCompanyName)
-          .setOrException(PlrReferencePage, testPlr2Reference)
-        val mockSessionRepository = mock[SessionRepository]
+    val mockFopService = mock[FopService]
+    val fakePdfContent = Array[Byte](1, 2, 3)
 
-        val mockFopService = mock[FopService]
-        val fakePdfContent = Array[Byte](1, 2, 3)
+    when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+    when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-        when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
+    val application = applicationBuilder(userAnswers = Some(ua))
+      .overrides(
+        inject.bind[SessionRepository].toInstance(mockSessionRepository),
+        inject.bind[FopService].toInstance(mockFopService)
+      )
+      .build()
 
-        val application = applicationBuilder(userAnswers = Some(ua))
-          .overrides(
-            inject.bind[SessionRepository].toInstance(mockSessionRepository),
-            inject.bind[FopService].toInstance(mockFopService)
-          )
-          .build()
+    running(application) {
+      val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
 
-        running(application) {
-          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
+      val result = route(application, request).value
 
-          val result = route(application, request).value
+      status(result) mustEqual OK
+      contentAsBytes(result) mustEqual fakePdfContent
+      headers(result).get(CONTENT_DISPOSITION) mustBe Some("attachment; filename=Pillar 2 Registration Confirmation.pdf")
+    }
+  }
 
-          status(result) mustEqual OK
-          contentAsBytes(result) mustEqual fakePdfContent
-          headers(result).get(CONTENT_DISPOSITION) mustBe Some("attachment; filename=Pillar 2 Registration Confirmation.pdf")
-        }
-      }
+  "redirect to the journey recovery page in the case of an error" in {
+    val ua                    = emptyUserAnswers
+    val mockSessionRepository = mock[SessionRepository]
 
-      "redirect to the journey recovery page in the case of an error" in {
-        val ua                    = emptyUserAnswers
-        val mockSessionRepository = mock[SessionRepository]
+    val mockFopService = mock[FopService]
+    val fakePdfContent = Array[Byte](1, 2, 3)
 
-        val mockFopService = mock[FopService]
-        val fakePdfContent = Array[Byte](1, 2, 3)
+    when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+    when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-        when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
+    val application = applicationBuilder(userAnswers = Some(ua))
+      .overrides(
+        inject.bind[SessionRepository].toInstance(mockSessionRepository),
+        inject.bind[FopService].toInstance(mockFopService)
+      )
+      .build()
 
-        val application = applicationBuilder(userAnswers = Some(ua))
-          .overrides(
-            inject.bind[SessionRepository].toInstance(mockSessionRepository),
-            inject.bind[FopService].toInstance(mockFopService)
-          )
-          .build()
+    running(application) {
+      val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
 
-        running(application) {
-          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url)
+      val result = route(application, request).value
 
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
-        }
-      }
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
   }
 }
