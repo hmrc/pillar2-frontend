@@ -402,24 +402,25 @@ captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 NominateFilingMemberYesNo.title = Nominated filing member
 NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-NominateFilingMemberYesNo.subheading = Are you registering as the nominated filing member to report for this group?
-NominateFilingMemberYesNo.p1 = The ultimate parent entity (UPE) is expected to report as the filing member. However, the UPE can nominate another company within your group.
-NominateFilingMemberYesNo.p2 = If you are nominated to report as the filing member, you must have written permission from your UPE (such as an email). We won’t collect this during registration, but we may request it during compliance checks.
-NominateFilingMemberYesNo.error.required = Select yes if you want to register a nominated filing member to report for this group
+NominateFilingMemberYesNo.subheading = Has the ultimate parent entity nominated another company within your group to act as the filing member?
+NominateFilingMemberYesNo.p1 = The default filing member for your group is the ultimate parent entity (UPE). However, the UPE can nominate another company in your group to act as the filing member.
+NominateFilingMemberYesNo.p2 = If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). You don’t need to submit this during registration, but we may ask for it during compliance checks.
+NominateFilingMemberYesNo.error.required = Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member
 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
 NominateFilingMemberYesNo.change.hidden = your response to whether there is a nominated filing member
 
-duplicateSafeId.title = You have provided duplicate filing member details
-duplicateSafeId.heading = You have provided duplicate filing member details
-duplicateSafeId.p1 = The details you provided for the nominated filing member are the same as those for the ultimate parent entity.
-duplicateSafeId.p2 = To complete your registration you must either:
-duplicateSafeId.l1 = provide the details for the entity that has been nominated to act as your nominated filing member
+duplicateSafeId.title = There is a problem with your registration
+duplicateSafeId.heading = There is a problem with your registration
+duplicateSafeId.p1 = You indicated that the ultimate parent entity has nominated a different company within your group to act as the filing member.
+duplicateSafeId.p2 = However, the details you provided for the nominated filing member are the same as those for the ultimate parent entity.
+duplicateSafeId.p3 = Before submitting your registration, you must either:
+duplicateSafeId.l1 = provide the details of the company that will act as your nominated filing member
 duplicateSafeId.l2 = keep your ultimate parent entity as the default filing member
-duplicateSafeId.subheading = Has a different entity in your group been nominated to act as your filing member?
-duplicateSafeId.error.required = Select yes if a different entity in your group been nominated to act as your filing member
+duplicateSafeId.subheading = Has a different company in your group been nominated to act as your filing member?
+duplicateSafeId.error.required = Select yes if a different company in your group has been nominated to act as your filing member
 duplicateSafeId.yes = Yes
 duplicateSafeId.no= No
 
