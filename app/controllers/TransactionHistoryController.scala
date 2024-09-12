@@ -34,6 +34,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableR
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
+import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -189,13 +190,18 @@ object TransactionHistoryController {
         Seq(
           HeadCell(Text(messages("transactionHistory.date"))),
           HeadCell(Text(messages("transactionHistory.description"))),
-          HeadCell(Text(messages("transactionHistory.amountPaid"))),
-          HeadCell(Text(messages("transactionHistory.amountRefunded")))
+          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric"),
+          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric")
         )
       )
     )
 
-  private def createTableRows(history: FinancialHistory): Seq[TableRow] =
+  private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
+    val df = new DecimalFormat("#,###.00")
+
+    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
+    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+
     Seq(
       TableRow(
         content = Text(history.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
@@ -204,10 +210,13 @@ object TransactionHistoryController {
         content = Text(history.paymentType)
       ),
       TableRow(
-        content = Text("£" + history.amountPaid.setScale(2))
+        content = Text(amountPaid),
+        classes = "govuk-table__cell--numeric"
       ),
       TableRow(
-        content = Text("£" + history.amountRepaid.setScale(2))
+        content = Text(amountRepaid),
+        classes = "govuk-table__cell--numeric"
       )
     )
+  }
 }
