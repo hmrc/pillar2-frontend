@@ -104,7 +104,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     "redirect to error page if no valid Js value is found from read subscription api" in {
       val application =
-        applicationBuilder(userAnswers = None, enrolments)
+        applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionService].toInstance(mockSubscriptionService)
@@ -112,6 +112,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))

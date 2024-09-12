@@ -338,6 +338,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))

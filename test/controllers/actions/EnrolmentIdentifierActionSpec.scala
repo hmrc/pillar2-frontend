@@ -278,6 +278,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "session has expired - no active session on 2nd authorised call" must {
         "redirect the user to log in " in {
           val application = applicationBuilder(userAnswers = None).build()
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
@@ -302,6 +303,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "no active session on 2nd authorised call" must {
         "redirect the user to log in " in {
           val application = applicationBuilder(userAnswers = None).build()
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
             .thenReturn(
               Future.successful(
