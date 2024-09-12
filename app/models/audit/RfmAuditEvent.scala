@@ -14,32 +14,36 @@
  * limitations under the License.
  */
 
-package models.subscription
+package models.audit
 
 import models.NonUKAddress
 import models.rfm.CorporatePosition
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json._
 
 import java.time.LocalDate
 
-case class SubscriptionContactDetails(contactName: String, ContactEmail: String, phonePref: Boolean, ContactTel: Option[String])
-case class NewFilingMemberDetail(
+case class RfmAuditEvent(
   securityAnswerUserReference:    String,
   securityAnswerRegistrationDate: LocalDate,
-  plrReference:                   String,
   corporatePosition:              CorporatePosition,
   ukBased:                        Option[Boolean],
   nameRegistration:               Option[String],
   registeredAddress:              Option[NonUKAddress],
   primaryContactName:             String,
   primaryContactEmail:            String,
-  primaryContactPhonePreference:  Boolean,
-  primaryContactPhoneNumber:      Option[String],
+  primaryPhonePreference:         Boolean,
+  primaryCapturePhone:            Option[String],
   addSecondaryContact:            Boolean,
-  secondaryContactInformation:    Option[ContactDetailsType],
+  secondaryContactName:           Option[String],
+  secondaryEmail:                 Option[String],
+  secondaryPhonePreference:       Option[Boolean],
+  secondaryCapturePhone:          Option[String],
   contactAddress:                 NonUKAddress
-)
+) extends AuditEvent {
+  override val auditType:  String  = "Pillar2ReplaceFilingMember"
+  override val detailJson: JsValue = Json.toJson(this)
+}
 
-object NewFilingMemberDetail {
-  implicit val format: OFormat[NewFilingMemberDetail] = Json.format[NewFilingMemberDetail]
+object RfmAuditEvent {
+  implicit val formats: Format[RfmAuditEvent] = Json.format[RfmAuditEvent]
 }

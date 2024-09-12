@@ -16,7 +16,7 @@
 
 package helpers
 
-import models.{GovUKMarginBottom9, UserAnswers}
+import models.{GovUKMarginBottom9, NonUKAddress, UserAnswers}
 import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import pages._
@@ -104,20 +104,47 @@ trait ReplaceFilingMemberHelpers {
 
   def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
     for {
-      referenceNumber   <- get(RfmPillar2ReferencePage)
-      corporatePosition <- get(RfmCorporatePositionPage)
-      primaryName       <- get(RfmPrimaryContactNamePage)
-      email             <- get(RfmPrimaryContactEmailPage)
-      address           <- get(RfmContactAddressPage)
+      securityAnswerUserReference    <- get(RfmPillar2ReferencePage)
+      securityAnswerRegistrationDate <- get(RfmRegistrationDatePage)
+      plrReference                   <- get(RfmPillar2ReferencePage)
+      corporatePosition              <- get(RfmCorporatePositionPage)
+      primaryContactPhonePreference  <- get(RfmContactByTelephonePage)
+      primaryContactName             <- get(RfmPrimaryContactNamePage)
+      primaryContactEmail            <- get(RfmPrimaryContactEmailPage)
+      contactAddress                 <- get(RfmContactAddressPage)
+      addSecondaryContact            <- get(RfmAddSecondaryContactPage)
     } yield NewFilingMemberDetail(
-      plrReference = referenceNumber,
+      securityAnswerUserReference = securityAnswerUserReference,
+      securityAnswerRegistrationDate = securityAnswerRegistrationDate,
+      plrReference = plrReference,
       corporatePosition = corporatePosition,
-      contactName = primaryName,
-      contactEmail = email,
-      phoneNumber = getPrimaryTelephone,
-      address = address,
-      secondaryContactInformation = getSecondaryContact
+      ukBased = getUkBased,
+      nameRegistration = getNameRegistration,
+      registeredAddress = getRegistrationAddress,
+      primaryContactName = primaryContactName,
+      primaryContactEmail = primaryContactEmail,
+      primaryContactPhonePreference = primaryContactPhonePreference,
+      primaryContactPhoneNumber = getPrimaryTelephone,
+      addSecondaryContact = addSecondaryContact,
+      secondaryContactInformation = getSecondaryContact,
+      contactAddress = contactAddress
     )
+
+  private def getUkBased: Option[Boolean] =
+    get(RfmCorporatePositionPage) match {
+      case Some(CorporatePosition.Upe)    => None
+      case Some(CorporatePosition.NewNfm) => get(RfmUkBasedPage)
+    }
+
+  private def getNameRegistration: Option[String] =
+    get(RfmUkBasedPage).flatMap { ukBased =>
+      if (ukBased) None else get(RfmNameRegistrationPage)
+    }
+
+  private def getRegistrationAddress: Option[NonUKAddress] =
+    get(RfmUkBasedPage).flatMap { ukBased =>
+      if (ukBased) None else get(RfmRegisteredAddressPage)
+    }
 
   private def getPrimaryTelephone: Option[String] =
     get(RfmContactByTelephonePage).flatMap { nominated =>
