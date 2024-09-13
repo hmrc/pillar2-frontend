@@ -91,6 +91,10 @@ trait SpecBase
     )
   )
 
+  val pillar2OrganisationEnrolment: Enrolments = Enrolments(
+    Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
+  )
+
   def countOccurrences(src: String, tgt: String): Int =
     src.sliding(tgt.length).count(window => window == tgt)
   def messages(app: Application): Messages = app.injector.instanceOf[MessagesApi].preferred(FakeRequest())

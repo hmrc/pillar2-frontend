@@ -28,8 +28,10 @@ import java.time.LocalDate
 
 class ReplaceFilingMemberHelpersSpec extends SpecBase {
 
+  val date = LocalDate.of(2024, 12, 31)
+
   "SubscriptionHelpers.securityQuestionStatus" should {
-    val date = LocalDate.of(2024, 12, 31)
+
     "return Completed when answers are provided to all security questions" in {
 
       val userAnswers = emptyUserAnswers
@@ -203,13 +205,20 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
 
     "return ContactDetail with primary phone detail if provided" in {
       val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
-        "plrReference",
-        CorporatePosition.Upe,
-        contactName = "pName",
-        contactEmail = "pEmail",
-        phoneNumber = Some("12312"),
-        address = nonUKAddress,
-        secondaryContactInformation = None
+        securityAnswerUserReference = "plrReference",
+        securityAnswerRegistrationDate = date,
+        plrReference = "plrReference",
+        corporatePosition = CorporatePosition.Upe,
+        ukBased = None,
+        nameRegistration = None,
+        registeredAddress = None,
+        primaryContactName = "pName",
+        primaryContactEmail = "pEmail",
+        primaryContactPhonePreference = true,
+        primaryContactPhoneNumber = Some("12312"),
+        addSecondaryContact = false,
+        secondaryContactInformation = None,
+        contactAddress = nonUKAddress
       )
 
       val ua = emptyUserAnswers
@@ -221,17 +230,26 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmAddSecondaryContactPage, false)
         .setOrException(RfmContactByTelephonePage, true)
         .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmRegistrationDatePage, date)
+
       ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
     }
     "return ContactDetail with no primary phone detail if they have answered no to phone preference page" in {
       val expectedAnswer: NewFilingMemberDetail = NewFilingMemberDetail(
-        "plrReference",
-        CorporatePosition.Upe,
-        contactName = "pName",
-        contactEmail = "pEmail",
-        phoneNumber = None,
-        address = nonUKAddress,
-        secondaryContactInformation = None
+        securityAnswerUserReference = "plrReference",
+        securityAnswerRegistrationDate = date,
+        plrReference = "plrReference",
+        corporatePosition = CorporatePosition.Upe,
+        ukBased = None,
+        nameRegistration = None,
+        registeredAddress = None,
+        primaryContactName = "pName",
+        primaryContactEmail = "pEmail",
+        primaryContactPhonePreference = false,
+        primaryContactPhoneNumber = None,
+        addSecondaryContact = false,
+        secondaryContactInformation = None,
+        contactAddress = nonUKAddress
       )
 
       val ua = emptyUserAnswers
@@ -243,6 +261,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmAddSecondaryContactPage, false)
         .setOrException(RfmContactByTelephonePage, false)
         .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmRegistrationDatePage, date)
+
       ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
     }
   }

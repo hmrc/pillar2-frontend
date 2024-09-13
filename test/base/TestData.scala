@@ -20,6 +20,40 @@ import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails
 
 trait TestData {
 
+  val validReplaceFilingMember: String =
+    s"""{
+       |        "addSecondaryContact": true,
+       |        "contactAddress": {
+       |            "addressLine1": "83 Wingrove Road",
+       |            "addressLine2": "Fenham",
+       |            "addressLine3": "Newcastle upon Tyne",
+       |            "addressLine4": "Tyne and Wear",
+       |            "countryCode": "GB",
+       |            "postalCode": "NE4 5BU"
+       |        },
+       |        "corporatePosition": "newNfm",
+       |        "nameRegistration": "Ashley Smith",
+       |        "plrReference": "XMPLR0123456789",
+       |        "primaryContactEmail": "test@test.com",
+       |        "primaryContactName": "Ashley Smith 2",
+       |        "primaryContactPhonePreference": false,
+       |        "registeredAddress": {
+       |            "addressLine1": "18 Winder Drive",
+       |            "addressLine2": "Hazelrigg",
+       |            "addressLine3": "Newcastle upon Tyne",
+       |            "addressLine4": "Tyne and Wear",
+       |            "countryCode": "GB",
+       |            "postalCode": "NE13 7FU"
+       |        },
+       |        "secondaryContactName": "Ashley Smith 3",
+       |        "secondaryEmail": "ola@abc.com",
+       |        "secondaryPhonePreference": false,
+       |        "securityAnswerRegistrationDate": "2024-01-31",
+       |        "securityAnswerUserReference": "XMPLR0123456789",
+       |        "ukBased": false
+       |  }
+       """.stripMargin
+
   val validRegistrationWithIdResponseForLLP: String =
     s"""{
        |  "companyProfile" : {
