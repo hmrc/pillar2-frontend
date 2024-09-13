@@ -167,6 +167,21 @@ class AuditService @Inject() (
     )
   }
 
+  def auditRepayments(repaymentAuditDetail: RepaymentsAuditEvent)(implicit hc: HeaderCarrier): Future[AuditResult] =
+    auditConnector.sendExtendedEvent(
+      RepaymentsAuditEvent(
+        repaymentAuditDetail.refundAmount,
+        repaymentAuditDetail.reasonForRequestingRefund,
+        repaymentAuditDetail.ukOrAbroadBankAccount,
+        repaymentAuditDetail.uKBankAccountDetails,
+        repaymentAuditDetail.nonUKBank,
+        repaymentAuditDetail.repaymentsContactName,
+        repaymentAuditDetail.repaymentsContactEmail,
+        repaymentAuditDetail.repaymentsContactByPhone,
+        repaymentAuditDetail.repaymentsTelephoneDetails
+      ).extendedDataEvent
+    )
+
   def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(implicit hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       RfmAuditEvent(

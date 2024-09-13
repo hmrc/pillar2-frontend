@@ -17,6 +17,7 @@
 package services.audit
 
 import base.SpecBase
+import models.audit.RepaymentsAuditEvent
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.subscription.NewFilingMemberDetail
@@ -37,6 +38,7 @@ class AuditServiceSpec extends SpecBase {
   val validRegisterWithIdResponseForLLP: PartnershipEntityRegistrationData =
     Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
   val validReplaceFilingMemberNoId: NewFilingMemberDetail = Json.parse(validReplaceFilingMember).as[NewFilingMemberDetail]
+  val validRepayment:               RepaymentsAuditEvent  = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
 
   val serviceName: ServiceName = ServiceName(
     OptServiceName("Report Pillar 2 top-up taxes"),
@@ -91,13 +93,20 @@ class AuditServiceSpec extends SpecBase {
 
     }
 
+    "successful for auditRepayments" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditRepayments(validRepayment).futureValue
+      result mustBe AuditResult.Success
+    }
+
     "successful for auditReplaceFilingMember" in {
       when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = service.auditReplaceFilingMember(validReplaceFilingMemberNoId).futureValue
       result mustBe AuditResult.Success
-
     }
 
   }
