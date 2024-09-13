@@ -26,6 +26,8 @@ import org.apache.pekko.Done
 import pages._
 import play.api.Logging
 import play.api.libs.json.Json
+import play.api.mvc.Result
+import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.FutureConverter.FutureOps
 
@@ -343,6 +345,19 @@ class SubscriptionService @Inject() (
           filingMember = newFilingMember
         )
       )
+    }
+
+  def getCompanyName(userAnswers: UserAnswers): Either[Result, String] =
+    userAnswers
+      .get(FmNameRegistrationPage)
+      .orElse(userAnswers.get(UpeNameRegistrationPage))
+      .orElse(userAnswers.get(UpeGRSResponsePage).flatMap { grsResponse =>
+        grsResponse.partnershipEntityRegistrationData
+          .map(_.companyProfile.get.companyName)
+          .orElse(grsResponse.incorporatedEntityRegistrationData.map(_.companyProfile.companyName))
+      }) match {
+      case Some(companyName) => Right(companyName)
+      case None              => Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
 }

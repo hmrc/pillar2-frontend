@@ -24,15 +24,6 @@
 
     <fo:page-sequence master-reference="A4">
 
-<!--        <fo:static-content flow-name="xsl-region-before">-->
-<!--            <fo:block>-->
-<!--                <fo:external-graphic src="url('file:conf/resources/gov-uk-logo-black.png')" content-width="5cm"-->
-<!--                                     content-height="auto"/>-->
-<!--            </fo:block>-->
-<!--            <fo:block space-after="15pt" font-weight="bold">-->
-<!--                @messages("registrationConfirmation.pdf.title")-->
-<!--            </fo:block>-->
-<!--        </fo:static-content>-->
         <!-- Header -->
         <fo:static-content flow-name="xsl-region-before">
             <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">

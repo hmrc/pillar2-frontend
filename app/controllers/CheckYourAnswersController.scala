@@ -28,7 +28,7 @@ import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -75,7 +75,7 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
-      getCompanyName(request.userAnswers) match {
+      subscriptionService.getCompanyName(request.userAnswers) match {
         case Left(errorRedirect) => errorRedirect
         case Right(companyName) =>
           val subscriptionStatus: Future[WithName with SubscriptionStatus] =
@@ -120,19 +120,6 @@ class CheckYourAnswersController @Inject() (
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
-
-  private def getCompanyName(userAnswers: UserAnswers): Either[Result, String] =
-    userAnswers
-      .get(FmNameRegistrationPage)
-      .orElse(userAnswers.get(UpeNameRegistrationPage))
-      .orElse(userAnswers.get(UpeGRSResponsePage).flatMap { grsResponse =>
-        grsResponse.partnershipEntityRegistrationData
-          .map(_.companyProfile.get.companyName)
-          .orElse(grsResponse.incorporatedEntityRegistrationData.map(_.companyProfile.companyName))
-      }) match {
-      case Some(companyName) => Right(companyName)
-      case None              => Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
