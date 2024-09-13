@@ -34,7 +34,7 @@ class RepaymentsTelephoneDetailsFormProvider @Inject() extends Mappings {
               Validation.REPAYMENTS_TELEPHONE_REGEX,
               "repayments.telephoneDetails.error.format",
               contactName
-            ) //TODO need to pass the name into this
+            )
           )
         )
     )

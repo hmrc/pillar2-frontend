@@ -20,11 +20,10 @@ import forms.mappings.Mappings
 import play.api.data.Form
 
 import javax.inject.Inject
-//TODO get name from session cache?
 class AddSecondaryContactFormProvider @Inject() extends Mappings {
 
   def apply(): Form[Boolean] =
     Form(
-      "value" -> boolean("addSecondaryContact.error.required") //I want to insert the name of the primary contact with this message.
+      "value" -> boolean("addSecondaryContact.error.required")
     )
 }

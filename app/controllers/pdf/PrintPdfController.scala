@@ -22,7 +22,6 @@ import com.google.inject.name.Named
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
-import models.registration._
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
@@ -119,28 +118,28 @@ class PrintPdfController @Inject() (
   }
 
   def printRegistrationConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    sessionRepository.get(request.userAnswers.id).flatMap { optionalUserAnswers =>
-      val pdfData: Option[ConfirmationPdfModel] =
+    sessionRepository.get(request.userAnswers.id).flatMap { userAnswers =>
+      userAnswers.flatMap { userAnswer =>
         for {
-          userAnswer <- optionalUserAnswers
           pillar2Id <- Pillar2Reference
                          .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                          .orElse(userAnswer.get(PlrReferencePage))
           companyName <- userAnswer.get(UpeNameRegistrationPage)
           regDate     <- userAnswer.get(PdfRegistrationDatePage)
           timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
-        } yield ConfirmationPdfModel(pillar2Id, regDate, timeStamp, companyName)
-
-      pdfData match {
-        case Some(data) =>
-          fopService.render(registrationConfirmationPdfView.render(data, implicitly, implicitly).body).map { pdf =>
-            Ok(pdf)
-              .as("application/octet-stream")
-              .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")
+        } yield (pillar2Id, regDate, timeStamp, companyName)
+      } match {
+        case Some((pillar2Id, regDate, timeStamp, companyName)) =>
+          fopService.render(registrationConfirmationPdfView.render(pillar2Id, regDate, timeStamp, companyName, implicitly, implicitly).body).map {
+            pdf =>
+              Ok(pdf)
+                .as("application/octet-stream")
+                .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")
           }
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
   }
+
 }
