@@ -741,6 +741,39 @@ class SubscriptionServiceSpec extends SpecBase {
       }
     }
 
+    "getCompanyName" when {
+      "return the company name if it is stored in the session" in {
+        val companyName = "TestCompany"
+        val userAnswers = emptyUserAnswers
+          .setOrException(FmNameRegistrationPage, companyName)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .build()
+
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getCompanyName(userAnswers)
+
+        result shouldEqual Right(companyName)
+      }
+      "return an error redirect if the retrieval of the company name fails" in {
+        val userAnswers = emptyUserAnswers
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .build()
+
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getCompanyName(userAnswers)
+
+        result shouldEqual Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+
     "matchingPillar2Records" when {
       val registrationDate = LocalDate.now()
       "return true if the pillar2 and reg date records in FE and BE database match" in {
@@ -783,6 +816,7 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.matchingPillar2Records("id", "pillar2Frontend", registrationDate)
         result.failed.futureValue mustEqual InternalIssueError
       }
+
     }
   }
 }

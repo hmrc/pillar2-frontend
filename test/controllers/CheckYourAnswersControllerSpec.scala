@@ -26,11 +26,10 @@ import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueErro
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{doReturn, spy, verify, when}
+import org.mockito.Mockito.{verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.Results.Redirect
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
@@ -128,7 +127,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   "Check Your Answers Controller" must {
     "on page load method " should {
       "return OK and the correct view if an answer is provided to every contact detail question" in {
-        pending
+
         val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(subData))
           .overrides(
@@ -153,7 +152,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided to every ultimate parent question" in {
-        pending
+
         val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upNoID))
           .overrides(
@@ -175,7 +174,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided to every Filing member question" in {
-        pending
+
         val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmNoID))
           .overrides(
@@ -198,7 +197,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided with limited company upe" in {
-        pending
+
         val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upId))
           .overrides(
@@ -228,7 +227,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "return OK and the correct view if an answer is provided with limited company nfm" in {
-        pending
+
         val userAnswer = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmId))
           .overrides(
@@ -258,7 +257,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
-        pending
+
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
         val application = applicationBuilder(None)
           .overrides(
@@ -279,7 +278,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
     "on submit method" should {
       "redirect to confirmation page in case of a success response, remove all data but save the success api state in mongo" in {
-        pending
+
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -300,6 +299,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
@@ -349,7 +349,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "redirect to inProgress error page if no user data is found" in {
-        pending
+
         val application = applicationBuilder(userAnswers = None).build()
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
@@ -360,7 +360,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "redirect to waiting page in case of a duplicated subscription and save the api response in the backend" in {
-        pending
+
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -381,6 +381,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("123"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
@@ -395,7 +396,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "redirect to waiting page and update the status of api in the backend database in case of a failed subscription" in {
-        pending
+
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -416,6 +417,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
@@ -430,7 +432,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       }
 
       "redirect to duplicate safeId error page in case of a failed subscription with DuplicateSafeIdError exception" in {
-        pending
+
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -450,6 +452,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
