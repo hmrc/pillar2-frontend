@@ -24,6 +24,8 @@ import views.html.paymenthistory.TransactionHistoryView
 
 class TransactionHistoryViewSpec extends ViewSpecBase {
 
+  private val date: String = "31 January 2024"
+
   val table = Table(
     List(
       List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
@@ -60,7 +62,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   val page = inject[TransactionHistoryView]
 
-  val view = Jsoup.parse(page(table, pagination)(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page(table, pagination, date)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 
@@ -71,6 +73,12 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByTag("h1").text must include("Transaction history")
+    }
+
+    "have a paragraph" in {
+      view.getElementsByClass("govuk-body").text must include(
+        "The transactions displayed cover the date range from your group’s registration on 31 January 2024 to today’s date."
+      )
     }
 
     "have a table" in {
