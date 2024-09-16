@@ -17,6 +17,9 @@
 package helpers
 
 import base.SpecBase
+import models.audit.RepaymentsAuditEvent
+import models.UkOrAbroadBankAccount
+import models.repayments.{BankAccountDetails, NonUKBank}
 import pages._
 
 class RepaymentsHelpersSpec extends SpecBase {
@@ -215,6 +218,140 @@ class RepaymentsHelpersSpec extends SpecBase {
         ua.isRfmJourneyCompleted mustEqual false
       }
 
+    }
+
+  }
+
+  "getRepaymentAuditDetail" should {
+
+    val ukBankAccountDetails: BankAccountDetails = BankAccountDetails(
+      bankName = "Barclays",
+      nameOnBankAccount = "Epic Adventure Inc",
+      sortCode = "206705",
+      accountNumber = "86473611"
+    )
+    val nonUkBankAccountDetails: NonUKBank = NonUKBank(
+      bankName = "BankName",
+      nameOnBankAccount = "Name",
+      bic = "HBUKGB4B",
+      iban = "GB29NWBK60161331926819"
+    )
+    val refundAmount: BigDecimal = 10000.1
+
+    val completeRepaymentUkBankAccount = emptyUserAnswers
+      .setOrException(RepaymentsRefundAmountPage, refundAmount)
+      .setOrException(ReasonForRequestingRefundPage, "Repayment reason UK bank")
+      .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
+      .setOrException(BankAccountDetailsPage, ukBankAccountDetails)
+      .setOrException(RepaymentsContactNamePage, "Contact name")
+      .setOrException(RepaymentsContactEmailPage, "test@test.com")
+      .setOrException(RepaymentsContactByTelephonePage, true)
+      .setOrException(RepaymentsTelephoneDetailsPage, "1234567890")
+
+    val completeRepaymentNonUkBankAccount = emptyUserAnswers
+      .setOrException(RepaymentsRefundAmountPage, refundAmount)
+      .setOrException(ReasonForRequestingRefundPage, "Repayment reason Non UK bank")
+      .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
+      .setOrException(NonUKBankPage, nonUkBankAccountDetails)
+      .setOrException(RepaymentsContactNamePage, "Contact name")
+      .setOrException(RepaymentsContactEmailPage, "test@test.com")
+      .setOrException(RepaymentsContactByTelephonePage, true)
+      .setOrException(RepaymentsTelephoneDetailsPage, "1234567890")
+
+    "return None if repayment amount not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(RepaymentsRefundAmountPage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return None if repayment reason not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(ReasonForRequestingRefundPage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return None if uk or abroad bank account not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(UkOrAbroadBankAccountPage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return None if contact name not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(RepaymentsContactNamePage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return None if contact email not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(RepaymentsContactEmailPage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return None if contact by telephone not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(RepaymentsContactByTelephonePage).success.value
+      ua.getRepaymentAuditDetail mustBe None
+    }
+
+    "return RepaymentsAuditEvent for UK bank when phone detail provided" in {
+      val expectedAnswer: RepaymentsAuditEvent = RepaymentsAuditEvent(
+        refundAmount = 10000.1,
+        reasonForRequestingRefund = "Repayment reason UK bank",
+        ukOrAbroadBankAccount = UkOrAbroadBankAccount.UkBankAccount,
+        uKBankAccountDetails = Some(ukBankAccountDetails),
+        nonUKBank = None,
+        repaymentsContactName = "Contact name",
+        repaymentsContactEmail = "test@test.com",
+        repaymentsContactByPhone = true,
+        repaymentsTelephoneDetails = Some("1234567890")
+      )
+      val ua = completeRepaymentUkBankAccount
+      ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
+    }
+
+    "return RepaymentsAuditEvent for UK bank when no phone detail provided" in {
+      val expectedAnswer: RepaymentsAuditEvent = RepaymentsAuditEvent(
+        refundAmount = 10000.1,
+        reasonForRequestingRefund = "Repayment reason UK bank",
+        ukOrAbroadBankAccount = UkOrAbroadBankAccount.UkBankAccount,
+        uKBankAccountDetails = Some(ukBankAccountDetails),
+        nonUKBank = None,
+        repaymentsContactName = "Contact name",
+        repaymentsContactEmail = "test@test.com",
+        repaymentsContactByPhone = false,
+        repaymentsTelephoneDetails = None
+      )
+      val ua = completeRepaymentUkBankAccount
+        .setOrException(RepaymentsContactByTelephonePage, false)
+      ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
+    }
+
+    "return RepaymentsAuditEvent for Non UK bank when phone detail provided" in {
+      val expectedAnswer: RepaymentsAuditEvent = RepaymentsAuditEvent(
+        refundAmount = 10000.1,
+        reasonForRequestingRefund = "Repayment reason Non UK bank",
+        ukOrAbroadBankAccount = UkOrAbroadBankAccount.ForeignBankAccount,
+        uKBankAccountDetails = None,
+        nonUKBank = Some(nonUkBankAccountDetails),
+        repaymentsContactName = "Contact name",
+        repaymentsContactEmail = "test@test.com",
+        repaymentsContactByPhone = true,
+        repaymentsTelephoneDetails = Some("1234567890")
+      )
+      val ua = completeRepaymentNonUkBankAccount
+      ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
+    }
+
+    "return RepaymentsAuditEvent for Non UK bank when no phone detail provided" in {
+      val expectedAnswer: RepaymentsAuditEvent = RepaymentsAuditEvent(
+        refundAmount = 10000.1,
+        reasonForRequestingRefund = "Repayment reason Non UK bank",
+        ukOrAbroadBankAccount = UkOrAbroadBankAccount.ForeignBankAccount,
+        uKBankAccountDetails = None,
+        nonUKBank = Some(nonUkBankAccountDetails),
+        repaymentsContactName = "Contact name",
+        repaymentsContactEmail = "test@test.com",
+        repaymentsContactByPhone = false,
+        repaymentsTelephoneDetails = None
+      )
+      val ua = completeRepaymentNonUkBankAccount
+        .setOrException(RepaymentsContactByTelephonePage, false)
+      ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
     }
 
   }

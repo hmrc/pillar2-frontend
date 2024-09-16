@@ -17,6 +17,7 @@
 package controllers.repayments
 
 import cats.data.OptionT
+import cats.data.OptionT.fromOption
 import config.FrontendAppConfig
 import controllers.actions._
 import models.repayments.RepaymentsStatus._
@@ -27,6 +28,7 @@ import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.RepaymentService
+import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
@@ -44,6 +46,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
   sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsCheckYourAnswersView,
+  auditService:                           AuditService,
   repaymentService:                       RepaymentService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -73,8 +76,10 @@ class RepaymentsCheckYourAnswersController @Inject() (
           _              <- sessionRepository.set(updatedAnswers)
         } yield (): Unit
         val repaymentsStatus = (for {
-          repaymentData <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-          _             <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+          repaymentData      <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+          _                  <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+          repaymentAuditData <- fromOption[Future](request.userAnswers.getRepaymentAuditDetail)
+          _                  <- OptionT.liftF(auditService.auditRepayments(repaymentAuditData))
         } yield SuccessfullyCompleted).value
           .flatMap {
             case Some(result) => Future.successful(result)

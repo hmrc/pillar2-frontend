@@ -22,9 +22,11 @@ import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
+  private val date: String = "31 January 2024"
+
   val page = inject[NoTransactionHistoryView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view = Jsoup.parse(page(date)(request, appConfig, messages).toString())
 
   "No Transaction History View" should {
 
@@ -35,7 +37,12 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByTag("h1").text must include("Transaction history")
-      view.getElementsByTag("h2").text must include("You have no payments to show")
+    }
+
+    "have a paragraph" in {
+      view.getElementsByClass("govuk-body").text must include(
+        s"No payments are available to display for the period starting from your group’s registration on $date to today’s date."
+      )
     }
 
     "have a inset" in {

@@ -16,9 +16,10 @@
 
 package generators
 
+import models.{FinancialHistory, TransactionHistory}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
-import org.scalacheck.{Gen, Shrink}
+import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
 
 import java.time.{Instant, LocalDate, ZoneOffset}
@@ -155,4 +156,23 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     Gen
       .chooseNum(Double.MinValue, Double.MaxValue)
       .map(d => BigDecimal(d).setScale(2, RoundingMode.HALF_UP))
+
+  implicit lazy val financialHistoryArbitrary: Arbitrary[FinancialHistory] =
+    Arbitrary {
+      for {
+        date         <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        paymentType  <- nonEmptyString
+        amountPaid   <- arbitrary[BigDecimal]
+        amountRepaid <- arbitrary[BigDecimal]
+      } yield FinancialHistory(date, paymentType, amountPaid, amountRepaid)
+    }
+
+  implicit lazy val transactionHistoryArbitrary: Arbitrary[TransactionHistory] =
+    Arbitrary {
+      for {
+        plrReference     <- nonEmptyString
+        financialHistory <- Gen.listOf(arbitrary[FinancialHistory])
+      } yield TransactionHistory(plrReference, financialHistory)
+    }
+
 }

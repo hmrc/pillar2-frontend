@@ -20,14 +20,15 @@
 @this(
         layout: templates.Layout,
         heading: heading,
+        p: paragraphBody,
         govukInsetText: GovukInsetText
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
+@layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
 
-        @heading(messages("transactionHistory.none.heading"))
-        @heading(messages("transactionHistory.none.p1"), classes = "govuk-heading-m", tier = "h2")
-        @govukInsetText(InsetText(content = Text(messages("transactionHistory.none.p2"))))
-    }
+    @heading(messages("transactionHistory.none.heading"))
+    @p(messages("transactionHistory.none.p1", registrationDate))
+    @govukInsetText(InsetText(content = Text(messages("transactionHistory.none.p2"))))
+}

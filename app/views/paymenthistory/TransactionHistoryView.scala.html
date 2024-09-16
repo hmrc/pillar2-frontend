@@ -15,16 +15,17 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.heading
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
         heading: heading,
+        p: paragraphBody,
         govukPagination: GovukPagination,
         govukTable: GovukTable
 )
 
-@(table: Table, pagination: Option[Pagination])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(table: Table, pagination: Option[Pagination], registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @pageLayout(contentBlock: Html) = {
     <div class="govuk-grid-row">
@@ -37,6 +38,8 @@
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), pageLayout = pageLayout) {
 
     @heading(messages("transactionHistory.heading"))
+    @p(messages("transactionHistory.p1", registrationDate))
+
     @govukTable(table)
 
     @pagination.map { pag =>
