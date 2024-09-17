@@ -46,14 +46,15 @@ class AddSecondaryContactController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData) { implicit request =>
       (for {
         subscriptionLocalData <- request.maybeSubscriptionLocalData
         contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
-      } yield Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName)))
+      } yield {
+        val form: Form[Boolean] = formProvider(contactName)
+        Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName))
+      })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
@@ -62,6 +63,7 @@ class AddSecondaryContactController @Inject() (
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>
+          val form: Form[Boolean] = formProvider(contactName)
           form
             .bindFromRequest()
             .fold(

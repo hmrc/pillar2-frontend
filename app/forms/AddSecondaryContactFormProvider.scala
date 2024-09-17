@@ -22,8 +22,8 @@ import play.api.data.Form
 import javax.inject.Inject
 class AddSecondaryContactFormProvider @Inject() extends Mappings {
 
-  def apply(): Form[Boolean] =
+  def apply(userName: String): Form[Boolean] =
     Form(
-      "value" -> boolean("addSecondaryContact.error.required")
+      "value" -> boolean("addSecondaryContact.error.required", args = Seq(userName))
     )
 }

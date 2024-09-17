@@ -58,6 +58,9 @@
         @h2(messages("contactCheckYourAnswers.address"), size = "m")
         @govukSummaryList(address)
 
+        @h2(messages("checkYourAnswers.save.h2"), size = "m")
+        @para(messages("checkYourAnswers.save.p"))
+
         @printLink(messages("site.print"))
 
         @h2(messages("checkYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
