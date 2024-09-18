@@ -681,8 +681,8 @@ contactEmailAddress.title = What is the email address?
 contactEmailAddress.heading = What is the email address for {0}?
 contactEmailAddress.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 contactEmailAddress.checkYourAnswersLabel = Email address
-contactEmailAddress.error.required = You need to enter the email address for {0}
-contactEmailAddress.error.length = Email address should be 132 characters or less
+contactEmailAddress.error.required = Enter the email address for {0}
+contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 contactEmailAddress.change.hidden = the first contact email address
 
@@ -698,8 +698,8 @@ contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number?
 contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
 contactCaptureTelephoneDetails.hint = For international numbers include the country code.
-contactCaptureTelephoneDetails.error.required = You need to enter the telephone for {0}
-contactCaptureTelephoneDetails.error.length = Telephone number should be 24 characters or less
+contactCaptureTelephoneDetails.error.required = Enter telephone number for {0}
+contactCaptureTelephoneDetails.error.length = Telephone number must be 24 characters or less
 contactCaptureTelephoneDetails.error.format = Enter a telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
 
@@ -760,7 +760,7 @@ secondaryContactName.heading = What is the name of the person or team we should 
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes
-secondaryContactName.error.length = The name of the contact person or team should be 160 characters or less
+secondaryContactName.error.length = Name of the contact person or team should be 160 characters or less
 secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 secondaryContactEmail.title =What is the email address?
@@ -768,8 +768,8 @@ secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption= Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-secondaryContactEmail.error.required = You need to enter the email address for {0}
-secondaryContactEmail.error.length = The email address should be 132 characters or less
+secondaryContactEmail.error.required = Enter the email address for {0}
+secondaryContactEmail.error.length = Email address must be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
 secondaryTelephonePreference.title = Can we contact {0} by telephone?
@@ -777,19 +777,19 @@ secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading.caption = Contact details
 secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
-secondaryTelephonePreference.error.required = You need to enter the telephone for {0}
+secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 secondaryTelephone.title = What is the telephone number?
 secondaryTelephone.heading = What is the telephone number for {0}?
 secondaryTelephone.hint = For international numbers include the country code.
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-secondaryTelephone.error.required = You need to enter the telephone for {0}
-secondaryTelephone.error.length = Telephone number should be 24 characters or less
+secondaryTelephone.error.required = Enter the telephone number for {0}
+secondaryTelephone.error.length = Telephone number must be 24 characters or less
 secondaryTelephone.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
 checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
-checkYourAnswers.submit.p = By sending these details, you are confirming that the information is correct and complete to the best of your knowledge.
+checkYourAnswers.submit.p = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
 checkYourAnswers.save.h2 = Do you need to keep a record of your answers?
 checkYourAnswers.save.p = If you need to keep a record of your answers, you can:
 site.confirm.send = Confirm and send

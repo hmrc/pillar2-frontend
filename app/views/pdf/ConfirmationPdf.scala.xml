@@ -49,23 +49,23 @@
         <!-- Body -->
         <fo:flow flow-name="xsl-region-body">
             <fo:block border="1pt solid black" padding="10pt" space-before="15pt" space-after="15pt">
-                <fo:block font-size="14pt" font-weight="bold" margin-bottom="5pt" text-align="center">
+                <fo:block font-size="24pt" font-weight="bold" margin-bottom="5pt" text-align="center">
                     @messages("registrationConfirmation.registrationComplete")
                 </fo:block>
-                <fo:block font-size="12pt" text-align="center">
+                <fo:block font-size="24pt" text-align="center">
                     @messages("registrationConfirmation.topup")
                 </fo:block>
-                <fo:block font-size="12pt" text-align="center" font-weight="bold">
+                <fo:block font-size="24pt" text-align="center" font-weight="bold">
                     @pillar2Id
                 </fo:block>
             </fo:block>
 
-            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt"
+            <fo:block font-size="16pt" font-family="sans-serif" space-before="15pt" space-after="15pt"
                       font-weight="bold">
                 @messages("registrationConfirmation.reg-date", regDate)
             </fo:block>
 
-            <fo:block font-size="12pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
+            <fo:block font-size="16pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
                 @messages("registrationConfirmation.p1", companyName, regDate, timeStamp)
             </fo:block>
         </fo:flow>
