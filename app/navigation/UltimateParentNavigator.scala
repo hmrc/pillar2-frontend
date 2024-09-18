@@ -35,7 +35,8 @@ class UltimateParentNavigator @Inject() {
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private val normalRoutes: Page => UserAnswers => Call = {
-    case UpeRegisteredInUKPage    => domesticOrNotRoute
+    case UpeRegisteredInUKPage    => _ => controllers.routes.PayAllTaxController.onPageLoad(NormalMode)
+    case PayAllTaxPage            => domesticOrNotRoute
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)

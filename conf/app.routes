@@ -546,3 +546,8 @@ GET        /replace-filing-member/download-answers-pdf                          
 GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
 GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
 GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
+
+GET        /payAllTax                        controllers.PayAllTaxController.onPageLoad(mode: Mode = NormalMode)
+POST       /payAllTax                        controllers.PayAllTaxController.onSubmit(mode: Mode = NormalMode)
+GET        /change-PayAllTax                  controllers.PayAllTaxController.onPageLoad(mode: Mode = CheckMode)
+POST       /change-PayAllTax                  controllers.PayAllTaxController.onSubmit(mode: Mode = CheckMode)

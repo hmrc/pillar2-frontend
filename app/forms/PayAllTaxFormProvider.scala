@@ -14,19 +14,19 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import javax.inject.Inject
 
-trait PageGenerators {
+import forms.mappings.Mappings
+import play.api.data.Form
+import play.api.data.Forms.set
+import models.PayAllTax
 
-  implicit lazy val arbitraryPayAllTaxPage: Arbitrary[PayAllTaxPage.type] =
-    Arbitrary(PayAllTaxPage)
+class PayAllTaxFormProvider @Inject() extends Mappings {
 
-  implicit lazy val arbitraryTurnOverEligibilityPage: Arbitrary[TurnOverEligibilityPage.type] =
-    Arbitrary(TurnOverEligibilityPage)
-
-  implicit lazy val arbitraryTradingBusinessConfirmationPage: Arbitrary[TradingBusinessConfirmationPage.type] =
-    Arbitrary(TradingBusinessConfirmationPage)
+  def apply(): Form[Set[PayAllTax]] =
+    Form(
+      "value" -> set(enumerable[PayAllTax]("payAllTax.error.required")).verifying(nonEmptySet("payAllTax.error.required"))
+    )
 }

@@ -14,19 +14,32 @@
  * limitations under the License.
  */
 
-package generators
+package forms
 
-import org.scalacheck.Arbitrary
-import pages._
+import forms.behaviours.CheckboxFieldBehaviours
+import models.PayAllTax
+import play.api.data.FormError
 
-trait PageGenerators {
+class PayAllTaxFormProviderSpec extends CheckboxFieldBehaviours {
 
-  implicit lazy val arbitraryPayAllTaxPage: Arbitrary[PayAllTaxPage.type] =
-    Arbitrary(PayAllTaxPage)
+  val form = new PayAllTaxFormProvider()()
 
-  implicit lazy val arbitraryTurnOverEligibilityPage: Arbitrary[TurnOverEligibilityPage.type] =
-    Arbitrary(TurnOverEligibilityPage)
+  ".value" - {
 
-  implicit lazy val arbitraryTradingBusinessConfirmationPage: Arbitrary[TradingBusinessConfirmationPage.type] =
-    Arbitrary(TradingBusinessConfirmationPage)
+    val fieldName = "value"
+    val requiredKey = "payAllTax.error.required"
+
+    behave like checkboxField[PayAllTax](
+      form,
+      fieldName,
+      validValues  = PayAllTax.values,
+      invalidError = FormError(s"$fieldName[0]", "error.invalid")
+    )
+
+    behave like mandatoryCheckboxField(
+      form,
+      fieldName,
+      requiredKey
+    )
+  }
 }

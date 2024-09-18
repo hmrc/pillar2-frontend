@@ -1527,3 +1527,11 @@ transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
 transactionHistory.none.p1 = You have no payments to show
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
+
+payAllTax.title = Pay Your Tax!
+payAllTax.heading = Do you pay all of your tax?
+payAllTax.yes = Yes, I'm good
+payAllTax.no = Hell No
+payAllTax.checkYourAnswersLabel = payAllTax
+payAllTax.error.required = Select payAllTax
+payAllTax.change.hidden = PayAllTax

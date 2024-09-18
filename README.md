@@ -6,16 +6,40 @@ The Pillar 2 Tax will ensure that global Multinational Enterprises (MNEs) with a
 
 ## Running the service
 
-You can use service manage to run all dependent microservices using the command below
+### Node
+We need node installed to run this service, specifically version 18. `nvm` is an easy way to do this:
+```shell
+brew install nvm
+nvm install 18
+nvm use 18
+```
 
-    sm2 --start PILLAR2_ALL
-    sm2 --stop PILLAR2_ALL
-Or you could run this microservice locally using
+To verify:
+```shell
+node -v
+v18.20.4
+```
 
-    sbt run
+### Service Manager
+You can use service manage to run all dependent microservices using the command below. You must then stop pillar2-frontend, 
+otherwise you will receive a port conflict when trying to run it locally
+
+```shell
+sm2 -start PILLAR2_ALL
+sm2 -stop PILLAR_2_FRONTEND
+```
+
+
+### SBT
+```shell
+sbt run
+```
 Test-only route:
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+```shell
+sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+```
+
 To run locally:
 
 Navigate to http://localhost:9949/auth-login-stub/gg-sign-in which redirects to auth-login-stub page.
@@ -26,9 +50,13 @@ We call [the verify business endpoint](https://github.com/hmrc/bank-account-repu
 because this is an external service in Local, Development and Staging we call directly call their stub. Information about handling BARS in different environments are detailed below
 - Local, Development and Staging uses the [bank-account-reputation-stub](https://github.com/hmrc/bank-account-reputation-stub). Refer to [the stub README for test data usage](https://github.com/hmrc/bank-account-reputation-stub?tab=readme-ov-file#personal-account-test-data)
 - QA environment, BARS is connected to their third parties test system. Any test data you use here will need to be aligned with the test data that the third party service holds
-- Producation calls the MDTP service
+- Production calls the MDTP service
 
 ***Redirect URL: http://localhost:10050/report-pillar2-top-up-taxes***
+
+```shell
+http://localhost:9949/auth-login-stub/gg-sign-in
+```
 
 ***Affinity Group: Organisation***
 ## Key Terminologies
@@ -41,14 +69,20 @@ The nominated filing member is responsible for managing the group's tax returns 
 
 To run the unit tests:
 
-    Run 'sbt test' from directory the project is stored in 
+```shell
+sbt test
+```
 
 To check code coverage:
 
-    sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport   
+```shell
+sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport 
+```
+      
 To run Integration tests:
-
-    sbt it/test
+```shell
+sbt it/test
+```
 
 ### Eligibility question
 
@@ -65,7 +99,9 @@ if all question asked in this journey answered with 'yes' then this mean you nee
 
 To use testonly route locally .
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+```shell
+sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+```
 
 
 ### License
