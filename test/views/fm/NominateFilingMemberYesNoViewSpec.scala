@@ -51,7 +51,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
       )
       view.getElementsByClass("govuk-body").get(1).text must include(
         "If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). " +
-          "You don’t need to submit this during registration, but we may ask for it during compliance checks."
+          "You do not need to submit this during registration, but we may ask for it during compliance checks."
       )
     }
 

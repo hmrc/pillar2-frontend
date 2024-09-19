@@ -404,7 +404,7 @@ NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
 NominateFilingMemberYesNo.subheading = Has the ultimate parent entity nominated another company within your group to act as the filing member?
 NominateFilingMemberYesNo.p1 = The default filing member for your group is the ultimate parent entity (UPE). However, the UPE can nominate another company in your group to act as the filing member.
-NominateFilingMemberYesNo.p2 = If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). You don’t need to submit this during registration, but we may ask for it during compliance checks.
+NominateFilingMemberYesNo.p2 = If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). You do not need to submit this during registration, but we may ask for it during compliance checks.
 NominateFilingMemberYesNo.error.required = Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member
 
 NominateFilingMemberYesNo.yes = Yes
