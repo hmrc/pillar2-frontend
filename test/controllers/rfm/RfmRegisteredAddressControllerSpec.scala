@@ -19,10 +19,11 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmRegisteredAddressFormProvider
+import models.grs.EntityType
 import models.{NonUKAddress, NormalMode}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import pages.{RfmEntityTypePage, RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage, UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredInUKPage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -49,6 +50,42 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) must include("Name")
+      }
+    }
+
+    "return OK and the correct view for a GET with no previous answer and entity type is other and RfmUkBasedPage is false" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmNameRegistrationPage, "Name")
+        .setOrException(RfmUkBasedPage, false)
+        .setOrException(RfmEntityTypePage, EntityType.Other)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "What is the registered office address of "
+        )
+        contentAsString(result) must include(
+          "Address line 1"
+        )
+        contentAsString(result) must include(
+          "Address line 2 (optional)"
+        )
+        contentAsString(result) must include(
+          "Town or city"
+        )
+        contentAsString(result) must include(
+          "Region (optional)"
+        )
+        contentAsString(result) must include(
+          "Region (optional)"
+        )
+        contentAsString(result) must include(
+          "Enter text and then choose from the list."
+        )
       }
     }
 
