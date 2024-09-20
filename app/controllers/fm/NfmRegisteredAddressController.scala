@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.NfmRegisteredAddressFormProvider
+import models.grs.EntityType
 import models.{Mode, NonUKAddress}
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmNameRegistrationPage, FmRegisteredAddressPage}
+import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -53,7 +54,14 @@ class NfmRegisteredAddressController @Inject() (
       .get(FmNameRegistrationPage)
       .map { name =>
         val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
-        Ok(view(preparedForm, mode, name, countryOptions.options()))
+
+        val first  = request.userAnswers.get(FmRegisteredInUKPage)
+        val second = request.userAnswers.get(FmEntityTypePage)
+        val excludeUk = (first, second) match {
+          case (Some(false), Some(EntityType.Other)) => false
+          case _                                     => true
+        }
+        Ok(view(preparedForm, mode, name, countryOptions.options(excludeUk)))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
