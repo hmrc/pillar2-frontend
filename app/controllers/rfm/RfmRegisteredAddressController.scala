@@ -20,9 +20,10 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
+import models.grs.EntityType
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import pages.{RfmEntityTypePage, RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -60,7 +61,13 @@ class RfmRegisteredAddressController @Inject() (
             case Some(value) => form.fill(value)
             case None        => form
           }
-          Ok(view(preparedForm, mode, name, countryOptions.options()))
+          val first  = request.userAnswers.get(RfmUkBasedPage)
+          val second = request.userAnswers.get(RfmEntityTypePage)
+          val ExcludeUK = (first, second) match {
+            case (Some(false), Some(EntityType.Other)) => false
+            case _                                     => true
+          }
+          Ok(view(preparedForm, mode, name, countryOptions.options(ExcludeUK)))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
