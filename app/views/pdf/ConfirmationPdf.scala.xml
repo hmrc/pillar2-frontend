@@ -2,7 +2,7 @@
 
         @this()
 
-        @(pillar2Id: String, regDate: String, timeStamp: String, companyName: String)(implicit request: RequestHeader, messages: Messages)
+        @(pillar2Id: String, mneOrDomestic: MneOrDomestic, regDate: String, timeStamp: String, companyName: String)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
          xml:lang="@messages.lang.locale.getLanguage"
@@ -66,7 +66,7 @@
             </fo:block>
 
             <fo:block font-size="16pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
-                @messages("registrationConfirmation.p1", companyName, regDate, timeStamp)
+                @messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), regDate , timeStamp)
             </fo:block>
         </fo:flow>
     </fo:page-sequence>

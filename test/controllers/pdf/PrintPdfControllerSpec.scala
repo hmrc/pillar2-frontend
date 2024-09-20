@@ -17,6 +17,7 @@
 package controllers.pdf
 
 import base.SpecBase
+import models.MneOrDomestic.Uk
 import models.UkOrAbroadBankAccount.UkBankAccount
 import models.UserAnswers
 import models.repayments.BankAccountDetails
@@ -250,9 +251,11 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       val testPlr2Reference = "XMPLR0012345674"
       val testTimeStamp     = "11:45am (GMT)"
       val testDate          = "17 January 2025"
+      val testMneOrDomestic = Uk
 
       val ua = emptyUserAnswers
         .setOrException(PdfRegistrationDatePage, testDate)
+        .setOrException(SubMneOrDomesticPage, testMneOrDomestic)
         .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
         .setOrException(UpeNameRegistrationPage, testCompanyName)
         .setOrException(PlrReferencePage, testPlr2Reference)

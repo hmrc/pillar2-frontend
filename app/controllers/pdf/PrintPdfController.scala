@@ -25,7 +25,7 @@ import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
-import pages.{PlrReferencePage, UpeNameRegistrationPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -124,18 +124,20 @@ class PrintPdfController @Inject() (
           pillar2Id <- Pillar2Reference
                          .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                          .orElse(userAnswer.get(PlrReferencePage))
+          mneOrDom    <- userAnswer.get(SubMneOrDomesticPage)
           companyName <- userAnswer.get(UpeNameRegistrationPage)
           regDate     <- userAnswer.get(PdfRegistrationDatePage)
           timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
-        } yield (pillar2Id, regDate, timeStamp, companyName)
+        } yield (pillar2Id, mneOrDom, regDate, timeStamp, companyName)
       } match {
-        case Some((pillar2Id, regDate, timeStamp, companyName)) =>
-          fopService.render(registrationConfirmationPdfView.render(pillar2Id, regDate, timeStamp, companyName, implicitly, implicitly).body).map {
-            pdf =>
+        case Some((pillar2Id, mneOrDom, regDate, timeStamp, companyName)) =>
+          fopService
+            .render(registrationConfirmationPdfView.render(pillar2Id, mneOrDom, regDate, timeStamp, companyName, implicitly, implicitly).body)
+            .map { pdf =>
               Ok(pdf)
                 .as("application/octet-stream")
                 .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")
-          }
+            }
         case None =>
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
