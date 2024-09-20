@@ -30,7 +30,8 @@ trait Constraints {
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
   protected def country(countryOptions: CountryOptions, errorKey: String)(implicit messages: Messages): Constraint[String] =
     Constraint { input =>
-      countryOptions.options
+      countryOptions
+        .options()
         .find(_.value == input)
         .map(_ => Valid)
         .getOrElse(Invalid(errorKey))

@@ -18,7 +18,7 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import mapping.Constants.WELSH
+import mapping.Constants.{UK_COUNTRY_CODE, WELSH}
 import play.api.Environment
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -28,10 +28,11 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
-  def options()(implicit messages: Messages): Seq[InputOption] = CountryOptions.getCountries(environment, getFileName())
+  def options(excludeUk: Boolean = false)(implicit messages: Messages): Seq[InputOption] =
+    CountryOptions.getCountries(environment, getFileName(), excludeUk)
 
   def getCountryNameFromCode(code: String)(implicit messages: Messages): String =
-    options
+    options()
       .find(_.value == code)
       .map(_.label)
       .getOrElse(code)
@@ -44,7 +45,7 @@ class CountryOptions @Inject() (environment: Environment, config: FrontendAppCon
 }
 object CountryOptions {
 
-  def getCountries(environment: Environment, fileName: String): Seq[InputOption] =
+  def getCountries(environment: Environment, fileName: String, excludeUk: Boolean = false): Seq[InputOption] =
     environment
       .resourceAsStream(fileName)
       .flatMap { in =>
@@ -52,7 +53,8 @@ object CountryOptions {
         Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
           _.map { countryList =>
             InputOption(countryList(1).replaceAll("country:", ""), countryList.head)
-          }.sortBy(x => x.label.toLowerCase)
+          }.filterNot(country => excludeUk && country.value == UK_COUNTRY_CODE)
+            .sortBy(x => x.label.toLowerCase)
         }
       }
       .getOrElse {
