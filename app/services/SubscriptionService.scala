@@ -18,7 +18,7 @@ package services
 
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
-import models.registration.{CRN, Pillar2Identifier, UTR}
+import models.registration.{CRN, GrsResponse, Pillar2Identifier, UTR}
 import models.rfm.CorporatePosition
 import models.subscription._
 import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
@@ -347,15 +347,17 @@ class SubscriptionService @Inject() (
       )
     }
 
+  def getCompanyNameFromGRS(grsResponse: GrsResponse): Option[String] =
+    grsResponse.partnershipEntityRegistrationData
+      .flatMap(_.companyProfile.map(_.companyName))
+      .orElse(grsResponse.incorporatedEntityRegistrationData.map(_.companyProfile.companyName))
+
   def getCompanyName(userAnswers: UserAnswers): Either[Result, String] =
     userAnswers
       .get(FmNameRegistrationPage)
+      .orElse(userAnswers.get(FmGRSResponsePage).flatMap(getCompanyNameFromGRS))
       .orElse(userAnswers.get(UpeNameRegistrationPage))
-      .orElse(userAnswers.get(UpeGRSResponsePage).flatMap { grsResponse =>
-        grsResponse.partnershipEntityRegistrationData
-          .map(_.companyProfile.get.companyName)
-          .orElse(grsResponse.incorporatedEntityRegistrationData.map(_.companyProfile.companyName))
-      }) match {
+      .orElse(userAnswers.get(UpeGRSResponsePage).flatMap(getCompanyNameFromGRS)) match {
       case Some(companyName) => Right(companyName)
       case None              => Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }

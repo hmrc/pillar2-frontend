@@ -48,7 +48,7 @@
 
         <!-- Body -->
         <fo:flow flow-name="xsl-region-body">
-            <fo:block border="1pt solid black" padding="10pt" space-before="15pt" space-after="15pt">
+            <fo:block border="4pt solid black" space-before="8pt" space-after="8pt">
                 <fo:block font-size="24pt" font-weight="bold" margin-bottom="5pt" text-align="center">
                     @messages("registrationConfirmation.registrationComplete")
                 </fo:block>

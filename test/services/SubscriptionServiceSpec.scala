@@ -19,7 +19,8 @@ package services
 import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
-import models.registration.RegistrationInfo
+import models.grs.{GrsRegistrationResult, RegistrationStatus}
+import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
 import models.rfm.CorporatePosition
 import models.subscription._
 import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
@@ -46,7 +47,6 @@ class SubscriptionServiceSpec extends SpecBase {
   val mockTaxEnrolmentConnector: TaxEnrolmentConnector = mock[TaxEnrolmentConnector]
 
   "SubscriptionService" must {
-
     "subscribe" when {
       "return a success response with a pillar 2 reference for non uk based upe and fm" in {
         val userAnswer = emptyUserAnswers
@@ -771,6 +771,63 @@ class SubscriptionServiceSpec extends SpecBase {
         val result = service.getCompanyName(userAnswers)
 
         result shouldEqual Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
+
+    "getCompanyNameFromGRS" when {
+      "return the company name if it is stored in the session" in {
+        val date = LocalDate.now()
+        val grsResponse = GrsResponse(
+          Some(
+            IncorporatedEntityRegistrationData(
+              companyProfile = CompanyProfile(
+                companyName = "ABC Limited",
+                companyNumber = "1234",
+                dateOfIncorporation = date,
+                unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
+              ),
+              ctutr = "1234567890",
+              identifiersMatch = true,
+              businessVerification = None,
+              registration = GrsRegistrationResult(
+                registrationStatus = RegistrationStatus.Registered,
+                registeredBusinessPartnerId = Some("XB0000000000001"),
+                failures = None
+              )
+            )
+          )
+        )
+        val userAnswers = emptyUserAnswers
+          .setOrException(FmGRSResponsePage, grsResponse)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .build()
+
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getCompanyNameFromGRS(grsResponse)
+
+        result shouldEqual Some("ABC Limited")
+      }
+      "return an error redirect if the retrieval of the company name fails" in {
+        val date        = LocalDate.now()
+        val grsResponse = GrsResponse(None, None)
+
+        val userAnswers = emptyUserAnswers
+          .setOrException(FmGRSResponsePage, grsResponse)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+          .build()
+
+        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val result = service.getCompanyNameFromGRS(grsResponse)
+
+        result shouldEqual None
       }
     }
 
