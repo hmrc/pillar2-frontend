@@ -59,11 +59,11 @@ class UpeRegisteredAddressController @Inject() (
         }
         val first  = request.userAnswers.get(UpeRegisteredInUKPage)
         val second = request.userAnswers.get(UpeEntityTypePage)
-        val ExcludeUK = (first, second) match {
+        val excludeUk = (first, second) match {
           case (Some(false), Some(EntityType.Other)) => false
           case _                                     => true
         }
-        Ok(view(preparedForm, mode, name, countryOptions.options(ExcludeUK)))
+        Ok(view(preparedForm, mode, name, countryOptions.options(excludeUk)))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }

@@ -63,11 +63,11 @@ class RfmRegisteredAddressController @Inject() (
           }
           val first  = request.userAnswers.get(RfmUkBasedPage)
           val second = request.userAnswers.get(RfmEntityTypePage)
-          val ExcludeUK = (first, second) match {
+          val excludeUK = (first, second) match {
             case (Some(false), Some(EntityType.Other)) => false
             case _                                     => true
           }
-          Ok(view(preparedForm, mode, name, countryOptions.options(ExcludeUK)))
+          Ok(view(preparedForm, mode, name, countryOptions.options(excludeUK)))
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
