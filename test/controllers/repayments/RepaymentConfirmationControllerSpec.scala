@@ -58,7 +58,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustEqual Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
 
@@ -77,6 +77,5 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
       }
     }
-
   }
 }

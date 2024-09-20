@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode, userName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
+@layout(pageTitle = title(form, messages("secondaryTelephonePreference.title", userName))) {
 
 
     @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
@@ -38,7 +38,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @sectionHeader(messages("secondaryContactEmail.heading.caption"))
+        @sectionHeader(messages("secondaryTelephonePreference.heading.caption", userName))
 
         @govukRadios(
             RadiosViewModel.yesNo(
