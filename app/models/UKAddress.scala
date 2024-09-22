@@ -50,6 +50,10 @@ case class UKAddress(
   val field4   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
   val postcode = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
+
+  val getAddressList: List[String] =
+    List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode, countryCode).filter(_.nonEmpty)
+
 }
 object UKAddress {
   implicit val format: OFormat[UKAddress] = Json.format[UKAddress]
