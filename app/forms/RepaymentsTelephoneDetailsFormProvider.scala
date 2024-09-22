@@ -29,8 +29,12 @@ class RepaymentsTelephoneDetailsFormProvider @Inject() extends Mappings {
       "telephoneNumber" -> text("repayments.telephoneDetails.error.required", Seq(contactName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_50, "repayments.telephoneDetails.error.length"),
-            regexp(Validation.REPAYMENTS_TELEPHONE_REGEX, "repayments.telephoneDetails.error.format")
+            maxLength(Constants.MAX_LENGTH_24, "repayments.telephoneDetails.error.length"),
+            regexp(
+              Validation.REPAYMENTS_TELEPHONE_REGEX,
+              "repayments.telephoneDetails.error.format",
+              contactName
+            )
           )
         )
     )

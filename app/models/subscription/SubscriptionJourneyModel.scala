@@ -17,7 +17,7 @@
 package models.subscription
 
 import cats.data.{EitherNec, NonEmptyChain}
-import cats.implicits.{catsSyntaxTuple3Parallel, catsSyntaxTuple10Parallel, catsSyntaxTuple14Parallel, catsSyntaxTuple15Parallel}
+import cats.implicits.{catsSyntaxTuple10Parallel, catsSyntaxTuple14Parallel, catsSyntaxTuple15Parallel, catsSyntaxTuple3Parallel}
 import models.grs.EntityType
 import models.registration.GrsResponse
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
@@ -26,45 +26,45 @@ import queries.Query
 
 import java.time.LocalDate
 
-final case class upeJourney (
-  upeRegisteredInUK: Boolean,
-  upeEntityType: Option[EntityType],
-  upeNameRegistration: Option[String],
-  upeRegisteredAddress: Option[UKAddress],
-  upeContactName: Option[String],
-  upeContactEmail: Option[String],
-  upePhonePreference: Option[Boolean],
-  upeCapturePhone: Option[String],
+final case class upeJourney(
+  upeRegisteredInUK:                 Boolean,
+  upeEntityType:                     Option[EntityType],
+  upeNameRegistration:               Option[String],
+  upeRegisteredAddress:              Option[UKAddress],
+  upeContactName:                    Option[String],
+  upeContactEmail:                   Option[String],
+  upePhonePreference:                Option[Boolean],
+  upeCapturePhone:                   Option[String],
   entityTypeIncorporatedCompanyName: Option[String],
-  entityTypeIncorporatedCompanyReg: Option[String],
-  entityTypeIncorporatedCompanyUtr: Option[String],
-  entityTypePartnershipCompanyName: Option[String],
-  entityTypePartnershipCompanyReg: Option[String],
-  entityTypePartnershipCompanyUtr: Option[String]
+  entityTypeIncorporatedCompanyReg:  Option[String],
+  entityTypeIncorporatedCompanyUtr:  Option[String],
+  entityTypePartnershipCompanyName:  Option[String],
+  entityTypePartnershipCompanyReg:   Option[String],
+  entityTypePartnershipCompanyUtr:   Option[String]
 )
 
-final case class fmJourney (
-  fmYesNo: Boolean,
-  fmRegisteredInUK: Option[Boolean],
-  fmEntityType: Option[EntityType],
-  fmNameRegistration: Option[String],
-  fmRegisteredAddress: Option[NonUKAddress],
-  fmContactName: Option[String],
-  fmEmailAddress: Option[String],
-  fmTelephonePreference: Option[Boolean],
-  fmContactTelephone: Option[String],
+final case class fmJourney(
+  fmYesNo:                             Boolean,
+  fmRegisteredInUK:                    Option[Boolean],
+  fmEntityType:                        Option[EntityType],
+  fmNameRegistration:                  Option[String],
+  fmRegisteredAddress:                 Option[NonUKAddress],
+  fmContactName:                       Option[String],
+  fmEmailAddress:                      Option[String],
+  fmTelephonePreference:               Option[Boolean],
+  fmContactTelephone:                  Option[String],
   fmEntityTypeIncorporatedCompanyName: Option[String],
-  fmEntityTypeIncorporatedCompanyReg: Option[String],
-  fmEntityTypeIncorporatedCompanyUtr: Option[String],
-  fmEntityTypePartnershipCompanyName: Option[String],
-  fmEntityTypePartnershipCompanyReg: Option[String],
-  fmEntityTypePartnershipCompanyUtr: Option[String]
+  fmEntityTypeIncorporatedCompanyReg:  Option[String],
+  fmEntityTypeIncorporatedCompanyUtr:  Option[String],
+  fmEntityTypePartnershipCompanyName:  Option[String],
+  fmEntityTypePartnershipCompanyReg:   Option[String],
+  fmEntityTypePartnershipCompanyUtr:   Option[String]
 )
 
-final case class groupJourney (
-  mneOrDomestic: MneOrDomestic,
+final case class groupJourney(
+  mneOrDomestic:                  MneOrDomestic,
   groupAccountingPeriodStartDate: LocalDate,
-  groupAccountingPeriodEndDate: LocalDate
+  groupAccountingPeriodEndDate:   LocalDate
 )
 
 final case class contactJourney(
@@ -82,7 +82,7 @@ final case class contactJourney(
 
 object upeJourney {
 
-  def from(answers: UserAnswers): EitherNec[Query, upeJourney] = {
+  def from(answers: UserAnswers): EitherNec[Query, upeJourney] =
     (
       answers.getEither(UpeRegisteredInUKPage),
       getUpeEntityType(answers),
@@ -97,7 +97,7 @@ object upeJourney {
       getEtiCompanyUtr(answers),
       getEtpCompanyName(answers),
       getEtpCompanyReg(answers),
-      getEtpCompanyUtr(answers),
+      getEtpCompanyUtr(answers)
     ).parMapN {
       (
         upeRegisteredInUK,
@@ -132,11 +132,10 @@ object upeJourney {
           etpCompanyUtr
         )
     }
-  }
 
   private def getUpeEntityType(answers: UserAnswers): EitherNec[Query, Option[EntityType]] =
     answers.getEither(UpeRegisteredInUKPage).flatMap {
-      case true => answers.getEither(UpeEntityTypePage).map(Some(_))
+      case true  => answers.getEither(UpeEntityTypePage).map(Some(_))
       case false => Right(None)
     }
 
@@ -156,52 +155,73 @@ object upeJourney {
     answers.getEither(UpePhonePreferencePage).map(Some(_)).orElse(Right(None))
 
   private def getUpePhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpePhonePreferencePage).map {
+    answers
+      .getEither(UpePhonePreferencePage)
+      .map {
         case true => answers.getEither(UpeCapturePhonePage).map(Some(_))
-        case _ => Right(None)
-      }.getOrElse(Right(None))
+        case _    => Right(None)
+      }
+      .getOrElse(Right(None))
 
   private def getEtiCompanyName(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyName))
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getEtiCompanyReg(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyNumber))
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getEtiCompanyUtr(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(Some(data), _) => Right(Some(data.ctutr))
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getEtpCompanyName(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyName))
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getEtpCompanyReg(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyNumber))
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getEtpCompanyUtr(answers: UserAnswers): EitherNec[Query, Option[String]] =
-      answers.getEither(UpeGRSResponsePage).flatMap {
+    answers
+      .getEither(UpeGRSResponsePage)
+      .flatMap {
         case GrsResponse(_, Some(data)) => Right(data.sautr)
-        case _ => Right(None)
-      }.orElse(Right(None))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
 }
 
 object fmJourney {
 
-  def from(answers: UserAnswers): EitherNec[Query, fmJourney] = {
+  def from(answers: UserAnswers): EitherNec[Query, fmJourney] =
     (
       answers.getEither(NominateFilingMemberPage),
       getFmRegisteredInUK(answers),
@@ -217,7 +237,7 @@ object fmJourney {
       getFmEtiCompanyUtr(answers),
       getFmEtpCompanyName(answers),
       getFmEtpCompanyReg(answers),
-      getFmEtpCompanyUtr(answers),
+      getFmEtpCompanyUtr(answers)
     ).parMapN {
       (
         nominatedFilingMember,
@@ -254,16 +274,18 @@ object fmJourney {
           fmEtpCompanyUtr
         )
     }
-  }
 
   private def getFmRegisteredInUK(answers: UserAnswers): EitherNec[Query, Option[Boolean]] =
     answers.getEither(FmRegisteredInUKPage).map(Some(_)).orElse(Right(None))
 
   private def getFmEntityType(answers: UserAnswers): EitherNec[Query, Option[EntityType]] =
-    answers.getEither(FmRegisteredInUKPage).map {
-      case true => answers.getEither(FmEntityTypePage).map(Some(_))
-      case false => Right(None)
-    }.getOrElse(Right(None))
+    answers
+      .getEither(FmRegisteredInUKPage)
+      .map {
+        case true  => answers.getEither(FmEntityTypePage).map(Some(_))
+        case false => Right(None)
+      }
+      .getOrElse(Right(None))
 
   private def getFmNameRegistration(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(FmNameRegistrationPage).map(Some(_)).orElse(Right(None))
@@ -281,51 +303,72 @@ object fmJourney {
     answers.getEither(FmPhonePreferencePage).map(Some(_)).orElse(Right(None))
 
   private def getFmPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmPhonePreferencePage).map {
-      case true => answers.getEither(FmCapturePhonePage).map(Some(_))
-      case _ => Right(None)
-    }.getOrElse(Right(None))
+    answers
+      .getEither(FmPhonePreferencePage)
+      .map {
+        case true => answers.getEither(FmCapturePhonePage).map(Some(_))
+        case _    => Right(None)
+      }
+      .getOrElse(Right(None))
 
   private def getFmEtiCompanyName(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyName))
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyName))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getFmEtiCompanyReg(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyNumber))
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(Some(data), _) => Right(Some(data.companyProfile.companyNumber))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getFmEtiCompanyUtr(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(Some(data), _) => Right(Some(data.ctutr))
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(Some(data), _) => Right(Some(data.ctutr))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getFmEtpCompanyName(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyName))
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyName))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getFmEtpCompanyReg(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyNumber))
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(_, Some(data)) => Right(data.companyProfile.map(t => t.companyNumber))
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
   private def getFmEtpCompanyUtr(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(FmGRSResponsePage).flatMap {
-      case GrsResponse(_, Some(data)) => Right(data.sautr)
-      case _ => Right(None)
-    }.orElse(Right(None))
+    answers
+      .getEither(FmGRSResponsePage)
+      .flatMap {
+        case GrsResponse(_, Some(data)) => Right(data.sautr)
+        case _                          => Right(None)
+      }
+      .orElse(Right(None))
 
 }
 
 object groupJourney {
-  def from(answers: UserAnswers): EitherNec[Query, groupJourney] = {
+  def from(answers: UserAnswers): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
       answers.getEither(SubAccountingPeriodPage).map(ap => ap.startDate),
@@ -342,12 +385,11 @@ object groupJourney {
           apEndDate
         )
     }
-  }
 }
 
 object contactJourney {
 
-  def from(answers: UserAnswers): EitherNec[Query, contactJourney] = {
+  def from(answers: UserAnswers): EitherNec[Query, contactJourney] =
     (
       answers.getEither(SubPrimaryContactNamePage),
       answers.getEither(SubPrimaryEmailPage),
@@ -359,7 +401,7 @@ object contactJourney {
       getSecondaryPhonePreference(answers),
       getSecondaryTelephone(answers),
       answers.getEither(SubRegisteredAddressPage)
-  ).parMapN {
+    ).parMapN {
       (
         primaryName,
         primaryEmail,
@@ -385,7 +427,6 @@ object contactJourney {
           contactAddress
         )
     }
-  }
 
   private def getPrimaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(SubPrimaryPhonePreferencePage).flatMap {
@@ -422,4 +463,3 @@ object contactJourney {
     }
 
 }
-

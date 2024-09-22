@@ -229,6 +229,7 @@ POST        /manage-account/account-details/summary                             
 
 
 GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad
+GET         /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onPageLoad
 POST        /contact-details/check-answers                                                           controllers.subscription.ContactCheckYourAnswersController.onSubmit
 
 GET         /manage-account/contact-details/summary                                                  controllers.subscription.manageAccount.ManageContactCheckYourAnswersController.onPageLoad
@@ -542,8 +543,10 @@ GET        /payment/history                                                     
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 
+GET        /review-submit/download-registration-answers.pdf                                         controllers.pdf.PrintPdfController.onDownloadRegistrationAnswers
+GET        /review-submit/download-registration-confirmation-pdf                                    controllers.pdf.PrintPdfController.printRegistrationConfirmation
 GET        /replace-filing-member/download-answers-pdf                                              controllers.pdf.PrintPdfController.onDownloadRfmAnswers
 GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
 GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
 GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
-GET        /subscription-answers.pdf                                                                controllers.pdf.PrintPdfController.onDownloadSubscriptionAnswers
+

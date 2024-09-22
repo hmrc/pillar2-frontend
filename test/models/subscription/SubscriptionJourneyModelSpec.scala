@@ -30,9 +30,9 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
 
   private val date = LocalDate.now()
   private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
-  private val UkAddress: UKAddress = UKAddress("addressLine1", None, "addressLine3", None, "M123BS", countryCode = "GB")
-  val startDate: LocalDate = LocalDate.of(2023, 12, 31)
-  val endDate:   LocalDate = LocalDate.of(2025, 12, 31)
+  private val UkAddress:    UKAddress    = UKAddress("addressLine1", None, "addressLine3", None, "M123BS", countryCode = "GB")
+  val startDate:            LocalDate    = LocalDate.of(2023, 12, 31)
+  val endDate:              LocalDate    = LocalDate.of(2025, 12, 31)
   private val accountingPeriod = AccountingPeriod(startDate, endDate, None)
   private val grsLCResponse = GrsResponse(
     Some(
@@ -59,12 +59,14 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
     None,
     Some(
       PartnershipEntityRegistrationData(
-        companyProfile = Some(CompanyProfile(
-          companyName = "ABC Limited",
-          companyNumber = "1234",
-          dateOfIncorporation = date,
-          unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-        )),
+        companyProfile = Some(
+          CompanyProfile(
+            companyName = "ABC Limited",
+            companyNumber = "1234",
+            dateOfIncorporation = date,
+            unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
+          )
+        ),
         sautr = Some("1234567890"),
         identifiersMatch = true,
         postcode = None,
@@ -82,29 +84,29 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
 
     "from" - {
 
-        "must return a completed journey model when the user has selected a uk based limited company" in {
-          val answers: UserAnswers = UserAnswers("id")
-            .setOrException(UpeRegisteredInUKPage, true)
-            .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
-            .setOrException(UpeGRSResponsePage, grsLCResponse)
-          val expected = upeJourney(
-            upeRegisteredInUK = true,
-            upeEntityType = Some(EntityType.UkLimitedCompany),
-            upeNameRegistration = None,
-            upeRegisteredAddress = None,
-            upeContactName = None,
-            upeContactEmail = None,
-            upePhonePreference = None,
-            upeCapturePhone = None,
-            entityTypeIncorporatedCompanyName = Some("ABC Limited"),
-            entityTypeIncorporatedCompanyReg = Some("1234"),
-            entityTypeIncorporatedCompanyUtr = Some("1234567890"),
-            entityTypePartnershipCompanyName = None,
-            entityTypePartnershipCompanyReg = None,
-            entityTypePartnershipCompanyUtr = None
-          )
-          upeJourney.from(answers).toOption.value mustEqual expected
-        }
+      "must return a completed journey model when the user has selected a uk based limited company" in {
+        val answers: UserAnswers = UserAnswers("id")
+          .setOrException(UpeRegisteredInUKPage, true)
+          .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
+          .setOrException(UpeGRSResponsePage, grsLCResponse)
+        val expected = upeJourney(
+          upeRegisteredInUK = true,
+          upeEntityType = Some(EntityType.UkLimitedCompany),
+          upeNameRegistration = None,
+          upeRegisteredAddress = None,
+          upeContactName = None,
+          upeContactEmail = None,
+          upePhonePreference = None,
+          upeCapturePhone = None,
+          entityTypeIncorporatedCompanyName = Some("ABC Limited"),
+          entityTypeIncorporatedCompanyReg = Some("1234"),
+          entityTypeIncorporatedCompanyUtr = Some("1234567890"),
+          entityTypePartnershipCompanyName = None,
+          entityTypePartnershipCompanyReg = None,
+          entityTypePartnershipCompanyUtr = None
+        )
+        upeJourney.from(answers).toOption.value mustEqual expected
+      }
 
       "must return a completed journey model when the user has selected a uk based limited liability partnership" in {
         val answers: UserAnswers = UserAnswers("id")
@@ -187,9 +189,8 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
 
       "must return all the pages which failed" in {
         val errors = upeJourney.from(UserAnswers("id")).left.value.toChain.toList
-        errors must contain only (
+        errors must contain only
           UpeRegisteredInUKPage
-        )
       }
 
     }
@@ -312,11 +313,9 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
 
       "must return all the pages which failed" in {
         val errors = fmJourney.from(UserAnswers("id")).left.value.toChain.toList
-        errors must contain only (
+        errors must contain only
           NominateFilingMemberPage
-        )
       }
-
 
     }
   }
@@ -429,7 +428,6 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
       )
       contactJourney.from(answers).toOption.value mustEqual expected
     }
-
 
     "must return all the pages which failed" in {
       val errors = contactJourney.from(UserAnswers("id")).left.value.toChain.toList

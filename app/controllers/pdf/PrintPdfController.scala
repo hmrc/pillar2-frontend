@@ -17,13 +17,16 @@
 package controllers.pdf
 
 import cats.data.OptionT
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import models.subscription.{contactJourney, fmJourney, groupJourney, upeJourney}
-import pages.PlrReferencePage
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -31,14 +34,11 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.countryOptions.CountryOptions
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
-import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class PrintPdfController @Inject() (
   override val messagesApi:                        MessagesApi,
   @Named("EnrolmentIdentifier") identifyRepayment: IdentifierAction,
@@ -51,10 +51,10 @@ class PrintPdfController @Inject() (
   rfmConfirmationPdfView:                          RfmConfirmationPdf,
   repaymentAnswersPdfView:                         RepaymentAnswersPdf,
   repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
-  subscriptionAnswersPdfView:                      SubscriptionAnswersPdf,
+  registrationAnswersPdfView:                      RegistrationAnswersPdf,
+  registrationConfirmationPdfView:                 ConfirmationPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
-  countryOptions:                                  CountryOptions,
   val controllerComponents:                        MessagesControllerComponents
 )(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -119,24 +119,51 @@ class PrintPdfController @Inject() (
       }
   }
 
-  def onDownloadSubscriptionAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onDownloadRegistrationAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     upeJourney
       .from(request.userAnswers)
       .flatMap { upeModel =>
         fmJourney.from(request.userAnswers).flatMap { fmModel =>
           groupJourney.from(request.userAnswers).flatMap { groupModel =>
             contactJourney.from(request.userAnswers).map { contactModel =>
-              fopService.render(subscriptionAnswersPdfView.render(upeModel, fmModel, groupModel, contactModel, implicitly, implicitly).body).map {
+              fopService.render(registrationAnswersPdfView.render(upeModel, fmModel, groupModel, contactModel, implicitly, implicitly).body).map {
                 pdf =>
                   Ok(pdf)
                     .as("application/octet-stream")
-                    .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=subscription-answers.pdf")
+                    .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=registration-answers.pdf")
               }
             }
           }
         }
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+  }
+
+  def printRegistrationConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.get(request.userAnswers.id).flatMap { userAnswers =>
+      userAnswers.flatMap { userAnswer =>
+        for {
+          pillar2Id <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswer.get(PlrReferencePage))
+          mneOrDom    <- userAnswer.get(SubMneOrDomesticPage)
+          companyName <- userAnswer.get(UpeNameRegistrationPage)
+          regDate     <- userAnswer.get(PdfRegistrationDatePage)
+          timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
+        } yield (pillar2Id, mneOrDom, regDate, timeStamp, companyName)
+      } match {
+        case Some((pillar2Id, mneOrDom, regDate, timeStamp, companyName)) =>
+          fopService
+            .render(registrationConfirmationPdfView.render(pillar2Id, mneOrDom, regDate, timeStamp, companyName, implicitly, implicitly).body)
+            .map { pdf =>
+              Ok(pdf)
+                .as("application/octet-stream")
+                .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")
+            }
+        case None =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
   }
 
 }

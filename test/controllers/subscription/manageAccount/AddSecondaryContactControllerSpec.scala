@@ -65,7 +65,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -85,7 +85,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider("name").bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
@@ -228,7 +228,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AddSecondaryContactView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
           request,
           appConfig(application),
           messages(application)
@@ -257,7 +257,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", ""))
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider("name").bind(Map("value" -> ""))
         val view      = application.injector.instanceOf[AddSecondaryContactView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST

@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.repayments
+package pages.pdf
 
-import play.api.libs.json._
+import pages.QuestionPage
+import play.api.libs.json.JsPath
 
-case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: String, iban: String)
-object NonUKBank {
-  implicit val format: OFormat[NonUKBank] = Json.format[NonUKBank]
+object PdfRegistrationDatePage extends QuestionPage[String] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "registrationDate"
 }

@@ -20,7 +20,7 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
 
 object ViewUtils {
@@ -56,6 +56,13 @@ object ViewUtils {
   def formattedCurrentDate: String = {
     val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
     LocalDate.now().format(formatter)
+  }
+
+  def currentTimeGMT: String = {
+    val zonedTime     = ZonedDateTime.now(ZoneId.of("GMT"))
+    val formatter     = DateTimeFormatter.ofPattern("hh:mma (zzz)")
+    val formattedTime = zonedTime.format(formatter)
+    formattedTime
   }
 
   def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =

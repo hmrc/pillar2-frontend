@@ -60,9 +60,12 @@
         @h2(messages("contactCheckYourAnswers.address"), size = "m")
         @govukSummaryList(address)
 
+        @h2(messages("checkYourAnswers.save.h2"), size = "m")
+        @para(messages("checkYourAnswers.save.p"))
+
         @bulletList(items = List(
             printLink(messages("site.print")),
-            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadSubscriptionAnswers.url)
+            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRegistrationAnswers.url)
         ), additionalListClasses = Some("govuk-list--spaced, govuk-!-display-none-print"))
 
         @h2(messages("checkYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
