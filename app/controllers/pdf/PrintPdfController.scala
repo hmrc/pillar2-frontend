@@ -34,6 +34,7 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
@@ -55,6 +56,7 @@ class PrintPdfController @Inject() (
   registrationConfirmationPdfView:                 ConfirmationPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
+  countryOptions:                                  CountryOptions,
   val controllerComponents:                        MessagesControllerComponents
 )(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -67,7 +69,7 @@ class PrintPdfController @Inject() (
     RfmJourneyModel
       .from(request.userAnswers)
       .map { model =>
-        fopService.render(rfmAnswersPdfView.render(model, implicitly, implicitly).body).map { pdf =>
+        fopService.render(rfmAnswersPdfView.render(model, countryOptions, implicitly, implicitly).body).map { pdf =>
           Ok(pdf)
             .as("application/octet-stream")
             .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-answers.pdf")
@@ -126,12 +128,13 @@ class PrintPdfController @Inject() (
         fmJourney.from(request.userAnswers).flatMap { fmModel =>
           groupJourney.from(request.userAnswers).flatMap { groupModel =>
             contactJourney.from(request.userAnswers).map { contactModel =>
-              fopService.render(registrationAnswersPdfView.render(upeModel, fmModel, groupModel, contactModel, implicitly, implicitly).body).map {
-                pdf =>
+              fopService
+                .render(registrationAnswersPdfView.render(upeModel, fmModel, groupModel, contactModel, countryOptions, implicitly, implicitly).body)
+                .map { pdf =>
                   Ok(pdf)
                     .as("application/octet-stream")
                     .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=registration-answers.pdf")
-              }
+                }
             }
           }
         }

@@ -16,23 +16,23 @@
 
 package models.subscription
 
+import base.SpecBase
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
 import pages._
 
 import java.time.LocalDate
 
-class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues with EitherValues with TryValues {
+class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionValues with EitherValues with TryValues {
 
   private val date = LocalDate.now()
-  private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
-  private val UkAddress:    UKAddress    = UKAddress("addressLine1", None, "addressLine3", None, "M123BS", countryCode = "GB")
-  val startDate:            LocalDate    = LocalDate.of(2023, 12, 31)
-  val endDate:              LocalDate    = LocalDate.of(2025, 12, 31)
+//  private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
+  private val UkAddress: UKAddress = UKAddress("addressLine1", None, "addressLine3", None, "M123BS", countryCode = "GB")
+  val startDate:         LocalDate = LocalDate.of(2023, 12, 31)
+  val endDate:           LocalDate = LocalDate.of(2025, 12, 31)
   private val accountingPeriod = AccountingPeriod(startDate, endDate, None)
   private val grsLCResponse = GrsResponse(
     Some(
@@ -80,9 +80,9 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
     )
   )
 
-  "upeJourney" - {
+  "upeJourney" when {
 
-    "from" - {
+    "from" must {
 
       "must return a completed journey model when the user has selected a uk based limited company" in {
         val answers: UserAnswers = UserAnswers("id")
@@ -196,9 +196,9 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
     }
   }
 
-  "fmJourney" - {
+  "fmJourney" when {
 
-    "from" - {
+    "from" must {
 
       "must return a completed journey model when the user has selected a uk based limited company" in {
         val answers: UserAnswers = UserAnswers("id")
@@ -320,7 +320,7 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
     }
   }
 
-  "groupJourney" - {
+  "groupJourney" when {
 
     "must return a completed journey model when the user has all answers" in {
       val answers: UserAnswers = UserAnswers("id")
@@ -332,8 +332,8 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
         .value
       val expected = groupJourney(
         mneOrDomestic = MneOrDomestic.Uk,
-        groupAccountingPeriodStartDate = startDate,
-        groupAccountingPeriodEndDate = endDate
+        groupAccountingPeriodStartDate = "31 December 2023",
+        groupAccountingPeriodEndDate = "31 December 2025"
       )
       groupJourney.from(answers).toOption.value mustEqual expected
     }
@@ -348,7 +348,7 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
 
   }
 
-  "contactJourney" - {
+  "contactJourney" when {
 
     "must return a completed journey model when the user has all answers" in {
       val answers: UserAnswers = UserAnswers("id")
@@ -392,7 +392,7 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
         secondaryContactEmail = Some("secondary@test.com"),
         secondaryContactByTelephone = Some(true),
         secondaryContactTelephone = Some("0191 987654321"),
-        contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
+        contactAddress = NonUKAddress("1 drive", None, "la la land", None, None, countryCode = "US")
       )
       contactJourney.from(answers).toOption.value mustEqual expected
     }
@@ -424,7 +424,7 @@ class SubscriptionJourneyModelSpec extends AnyFreeSpec with Matchers with Option
         secondaryContactEmail = None,
         secondaryContactByTelephone = None,
         secondaryContactTelephone = None,
-        contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
+        contactAddress = NonUKAddress("1 drive", None, "la la land", None, None, countryCode = "US")
       )
       contactJourney.from(answers).toOption.value mustEqual expected
     }

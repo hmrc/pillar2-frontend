@@ -22,9 +22,9 @@ import models.grs.EntityType
 import models.registration.GrsResponse
 import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
 import pages._
+import play.api.i18n.Messages
 import queries.Query
-
-import java.time.LocalDate
+import utils.ViewHelpers
 
 final case class upeJourney(
   upeRegisteredInUK:                 Boolean,
@@ -63,8 +63,8 @@ final case class fmJourney(
 
 final case class groupJourney(
   mneOrDomestic:                  MneOrDomestic,
-  groupAccountingPeriodStartDate: LocalDate,
-  groupAccountingPeriodEndDate:   LocalDate
+  groupAccountingPeriodStartDate: String,
+  groupAccountingPeriodEndDate:   String
 )
 
 final case class contactJourney(
@@ -368,11 +368,13 @@ object fmJourney {
 }
 
 object groupJourney {
-  def from(answers: UserAnswers): EitherNec[Query, groupJourney] =
+
+  val dateHelper = new ViewHelpers()
+  def from(answers: UserAnswers)(implicit messages: Messages): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
-      answers.getEither(SubAccountingPeriodPage).map(ap => ap.startDate),
-      answers.getEither(SubAccountingPeriodPage).map(ap => ap.endDate)
+      answers.getEither(SubAccountingPeriodPage).map(ap => dateHelper.formatDateGDS(ap.startDate)),
+      answers.getEither(SubAccountingPeriodPage).map(ap => dateHelper.formatDateGDS(ap.endDate))
     ).parMapN {
       (
         mneOrDomestic,

@@ -16,10 +16,11 @@
 
 @import models.subscription.{upeJourney, fmJourney, groupJourney, contactJourney}
 @import models.grs.EntityType
+@import utils.countryOptions.CountryOptions
 
 @this()
 
-@(upeModel: upeJourney, fmModel: fmJourney, groupModel: groupJourney, contactModel: contactJourney)(implicit request: RequestHeader, messages: Messages)
+@(upeModel: upeJourney, fmModel: fmJourney, groupModel: groupJourney, contactModel: contactJourney, countryOptions: CountryOptions)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
 
@@ -103,72 +104,86 @@
                         @upeModel.upeEntityType.map { upeEntityType =>
                             @if(upeEntityType == EntityType.UkLimitedCompany) {
                                 <!-- entityTypeIncorporatedCompanyName -->
+                                @upeModel.entityTypeIncorporatedCompanyName.map { entityTypeIncorporatedCompanyName =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypeIncorporatedCompanyName</fo:block>
+                                            <fo:block>@entityTypeIncorporatedCompanyName</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                                 <!-- entityTypeIncorporatedCompanyReg -->
+                                @upeModel.entityTypeIncorporatedCompanyReg.map { entityTypeIncorporatedCompanyReg =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyReg.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypeIncorporatedCompanyReg</fo:block>
+                                            <fo:block>@entityTypeIncorporatedCompanyReg</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                                 <!-- entityTypeIncorporatedCompanyUtr -->
+                                @upeModel.entityTypeIncorporatedCompanyUtr.map { entityTypeIncorporatedCompanyUtr =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyUtr.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypeIncorporatedCompanyUtr</fo:block>
+                                            <fo:block>@entityTypeIncorporatedCompanyUtr</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                             } else {
                                 <!-- entityTypePartnershipCompanyName -->
+                                @upeModel.entityTypePartnershipCompanyName.map { entityTypePartnershipCompanyName =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypePartnershipCompanyName</fo:block>
+                                            <fo:block>@entityTypePartnershipCompanyName</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                                 <!-- entityTypePartnershipCompanyReg -->
+                                @upeModel.entityTypePartnershipCompanyReg.map { entityTypePartnershipCompanyReg =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyReg.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypePartnershipCompanyReg</fo:block>
+                                            <fo:block>@entityTypePartnershipCompanyReg</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                                 <!-- entityTypePartnershipCompanyUtr -->
+                                @upeModel.entityTypePartnershipCompanyUtr.map { entityTypePartnershipCompanyUtr =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyUtr.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@upeModel.entityTypePartnershipCompanyUtr</fo:block>
+                                            <fo:block>entityTypePartnershipCompanyUtr</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
                             }
                         }
                     } else {
                         <!-- upeNameRegistration -->
+                        @upeModel.upeNameRegistration.map { upeNameRegistration =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("upeNameRegistration.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@upeModel.upeNameRegistration</fo:block>
+                                    <fo:block>@upeNameRegistration</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>
+                        }
 
                         <!-- upeRegisteredAddress -->
                         @upeModel.upeRegisteredAddress.map { upeRegisteredAddress =>
@@ -176,7 +191,7 @@
                                 <fo:list-item  margin-bottom="3mm">
                                     <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("upeRegisteredAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
-                                        @upeRegisteredAddress.getAddressList.map { line =>
+                                        @upeRegisteredAddress.getAddressList(countryOptions).map { line =>
                                         <fo:block>@line</fo:block>
                                         }
                                     </fo:list-item-body>
@@ -185,42 +200,48 @@
                         }
 
                         <!-- upeContactName -->
+                        @upeModel.upeContactName.map { upeContactName =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("upe-input-business-name.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@upeModel.upeContactName</fo:block>
+                                    <fo:block>@upeContactName</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>
+                        }
 
                         <!-- upeContactEmail -->
+                        @upeModel.upeContactEmail.map { upeContactEmail =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("upe-input-business-email.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@upeModel.upeContactEmail</fo:block>
+                                    <fo:block>@upeContactEmail</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>
+                        }
 
                         <!-- upePhonePreference -->
+                        @upeModel.upePhonePreference.map { upePhonePreference =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactUPEByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@if(upeModel.upePhonePreference){Yes}else{No}</fo:block>
+                                    <fo:block>@if(upePhonePreference){Yes}else{No}</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>
+                        }
 
                         <!-- upeCapturePhone -->
-                        @upeModel.upePhonePreference.map { upePhonePreference =>
+                        @upeModel.upeCapturePhone.map { upeCapturePhone =>
                             <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                 <fo:list-item  margin-bottom="3mm">
                                     <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("captureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
-                                        <fo:block>@upeModel.upeCapturePhone</fo:block>
+                                        <fo:block>@upeCapturePhone</fo:block>
                                     </fo:list-item-body>
                                 </fo:list-item>
                             </fo:list-block>
@@ -249,72 +270,86 @@
                                 @fmModel.fmEntityType.map { fmEntityType =>
                                     @if(fmEntityType == EntityType.UkLimitedCompany) {
                                         <!-- fmEntityTypeIncorporatedCompanyName -->
+                                        @fmModel.fmEntityTypeIncorporatedCompanyName.map { fmEntityTypeIncorporatedCompanyName =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypeIncorporatedCompanyName</fo:block>
+                                                    <fo:block>@fmEntityTypeIncorporatedCompanyName</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                         <!-- fmEntityTypeIncorporatedCompanyReg -->
+                                        @fmModel.fmEntityTypeIncorporatedCompanyReg.map { fmEntityTypeIncorporatedCompanyReg =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyReg.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypeIncorporatedCompanyReg</fo:block>
+                                                    <fo:block>@fmEntityTypeIncorporatedCompanyReg</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                         <!-- fmEntityTypeIncorporatedCompanyUtr -->
+                                        @fmModel.fmEntityTypeIncorporatedCompanyUtr.map { fmEntityTypeIncorporatedCompanyUtr =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyUtr.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypeIncorporatedCompanyUtr</fo:block>
+                                                    <fo:block>@fmEntityTypeIncorporatedCompanyUtr</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                     } else {
                                         <!-- fmEntityTypePartnershipCompanyName -->
+                                        @fmModel.fmEntityTypePartnershipCompanyName.map { fmEntityTypePartnershipCompanyName =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypePartnershipCompanyName</fo:block>
+                                                    <fo:block>@fmEntityTypePartnershipCompanyName</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                         <!-- fmEntityTypePartnershipCompanyReg -->
+                                        @fmModel.fmEntityTypePartnershipCompanyReg.map { fmEntityTypePartnershipCompanyReg =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyReg.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypePartnershipCompanyReg</fo:block>
+                                                    <fo:block>@fmEntityTypePartnershipCompanyReg</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                         <!-- fmEntityTypePartnershipCompanyUtr -->
+                                        @fmModel.fmEntityTypePartnershipCompanyUtr.map { fmEntityTypePartnershipCompanyUtr =>
                                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                             <fo:list-item  margin-bottom="3mm">
                                                 <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("entityType.companyUtr.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                                 <fo:list-item-body start-indent="body-start()">
-                                                    <fo:block>@fmModel.fmEntityTypePartnershipCompanyUtr</fo:block>
+                                                    <fo:block>@fmEntityTypePartnershipCompanyUtr</fo:block>
                                                 </fo:list-item-body>
                                             </fo:list-item>
                                         </fo:list-block>
+                                        }
                                     }
                                 }
                             } else {
                                 <!-- fmNameRegistration -->
+                                @fmModel.fmNameRegistration.map { fmNameRegistration =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmNameRegistration.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@fmModel.fmNameRegistration</fo:block>
+                                            <fo:block>@fmNameRegistration</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
 
                                 <!-- fmRegisteredAddress -->
                                 @fmModel.fmRegisteredAddress.map { fmRegisteredAddress =>
@@ -322,7 +357,7 @@
                                         <fo:list-item  margin-bottom="3mm">
                                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmRegisteredAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                             <fo:list-item-body start-indent="body-start()">
-                                                @fmRegisteredAddress.getAddressList.map { line =>
+                                                @fmRegisteredAddress.getAddressList(countryOptions).map { line =>
                                                     <fo:block>@line</fo:block>
                                                 }
                                             </fo:list-item-body>
@@ -331,42 +366,48 @@
                                 }
 
                                 <!-- fmContactName -->
+                                @fmModel.fmContactName.map { fmContactName =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmContactName.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@fmModel.fmContactName</fo:block>
+                                            <fo:block>@fmContactName</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
 
                                 <!-- fmEmailAddress -->
+                                @fmModel.fmEmailAddress.map { fmEmailAddress =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmEmailAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@fmModel.fmEmailAddress</fo:block>
+                                            <fo:block>@fmEmailAddress</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
 
                                 <!-- fmTelephonePreference -->
+                                @fmModel.fmTelephonePreference.map { fmTelephonePreference =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
                                         <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactNfmByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@if(fmModel.fmTelephonePreference){Yes}else{No}</fo:block>
+                                            <fo:block>@if(fmTelephonePreference){Yes}else{No}</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
+                                }
 
                                 <!-- upeCapturePhone -->
-                                @fmModel.fmTelephonePreference.map { fmTelephonePreference =>
+                                @fmModel.fmContactTelephone.map { fmContactTelephone =>
                                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                         <fo:list-item  margin-bottom="3mm">
                                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                             <fo:list-item-body start-indent="body-start()">
-                                                <fo:block>@fmModel.fmContactTelephone</fo:block>
+                                                <fo:block>@fmContactTelephone</fo:block>
                                             </fo:list-item-body>
                                         </fo:list-item>
                                     </fo:list-block>
@@ -387,7 +428,7 @@
                         <fo:list-item  margin-bottom="3mm">
                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("mneOrDomestic.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@groupModel.mneOrDomestic</fo:block>
+                                <fo:block>@messages(s"mneOrDomestic.${groupModel.mneOrDomestic}")</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
@@ -456,7 +497,7 @@
                         <fo:list-item  margin-bottom="3mm">
                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@contactModel.primaryContactTelephone</fo:block>
+                                <fo:block>@primaryContactTelephone</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
@@ -544,7 +585,7 @@
                         <fo:list-item  margin-bottom="3mm">
                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("subscriptionAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                @contactModel.contactAddress.getAddressList.map { line =>
+                                @contactModel.contactAddress.getAddressList(countryOptions).map { line =>
                                 <fo:block>@line</fo:block>
                                 }
                             </fo:list-item-body>

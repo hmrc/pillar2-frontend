@@ -23,10 +23,10 @@ import play.api.i18n.Messages
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.util.Date
-import javax.inject.{Inject, Singleton}
+import javax.inject.Singleton
 
 @Singleton
-class ViewHelpers @Inject() extends Logging {
+class ViewHelpers extends Logging {
   //only for date like Sunday 25 January 2015
   def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
     dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
