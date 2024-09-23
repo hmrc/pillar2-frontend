@@ -19,11 +19,12 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeRegisteredAddressFormProvider
-import models.NormalMode
+import models.UKAddress.format
+import models.{NonUKAddress, NormalMode, UKAddress}
 import models.grs.EntityType
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredInUKPage}
+import pages.{UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -39,6 +40,42 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET with no previous answer" in {
       val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "Name").success.value
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include(
+          "What is the registered office address of "
+        )
+        contentAsString(result) must include(
+          "Address line 1"
+        )
+        contentAsString(result) must include(
+          "Address line 2 (optional)"
+        )
+        contentAsString(result) must include(
+          "Town or city"
+        )
+        contentAsString(result) must include(
+          "Region (optional)"
+        )
+        contentAsString(result) must include(
+          "Region (optional)"
+        )
+        contentAsString(result) must include(
+          "Enter text and then choose from the list."
+        )
+      }
+    }
+
+    "return OK and the correct view for a GET with  previous filled answer" in {
+      val ua = emptyUserAnswers
+        .setOrException(UpeNameRegistrationPage, "Name")
+        .setOrException(UpeRegisteredAddressPage, UKAddress("line1", None, "line3", None, "test", "GB"))
+
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
