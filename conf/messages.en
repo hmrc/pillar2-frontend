@@ -604,7 +604,7 @@ groupAccountingPeriod.error.endDate.dayYear.invalid = End date must be a real da
 groupAccountingPeriod.error.endDate.day.length = End date must be a real date
 groupAccountingPeriod.error.endDate.month.length = End date must be a real date
 groupAccountingPeriod.error.endDate.year.length = End date must be a real date
-groupAccountingPeriod.change.hidden = the group’s consolidated accounting period
+groupAccountingPeriod.change.hidden = the dates of the group’s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Group details
 contactNfmByTelephone.title = Can we contact by telephone?
@@ -637,7 +637,7 @@ mneOrDomestic.uk = Only in the UK
 mneOrDomestic.group-operate = Where are the entities in your group located?
 mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
 mneOrDomestic.error.required = Select if the group has entities located only in the UK or in the UK and outside the UK
-mneOrDomestic.change.hidden = where the entities in your group are located
+mneOrDomestic.change.hidden = where are the entities in your group are located
 mneOrDomestic.ukAndOther = In the UK and outside the UK
 mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
 mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
@@ -692,7 +692,7 @@ contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = your response to whether we can contact the first contact by telephone
+contactByTelephone.change.hidden = can we contact the first contact by telephone
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number?
@@ -713,7 +713,7 @@ secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-addSecondaryContact.change.hidden = your response to whether you want to provide a second contact
+addSecondaryContact.change.hidden = do you have a second contact
 secondaryContactName.change.hidden = the second contact name
 secondaryContactEmail.change.hidden = the second contact email address
 secondaryTelephonePreference.change.hidden = your response to whether we can contact the second contact by telephone
