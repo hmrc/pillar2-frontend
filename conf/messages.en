@@ -410,7 +410,7 @@ NominateFilingMemberYesNo.error.required = Select yes if you want to register a 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
-NominateFilingMemberYesNo.change.hidden = is there a nominated filing member
+NominateFilingMemberYesNo.change.hidden = is there a nominated filing member?
 
 duplicateSafeId.title = You have provided duplicate filing member details
 duplicateSafeId.heading = You have provided duplicate filing member details
@@ -455,7 +455,7 @@ nfmNameRegistration.heading = What is the name of the nominated filing member?
 nfmNameRegistration.checkYourAnswersLabel = Name
 nfmNameRegistration.error.required =  Enter the name of the nominated filing member
 nfmNameRegistration.error.length = Name of the nominated filing member must be 105 characters or less
-nfmNameRegistration.change.hidden = the name of the nominated filing member?
+nfmNameRegistration.change.hidden = the name of the nominated filing member
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 securityQuestionsCheckYourAnswers.title = Check Your Answers
