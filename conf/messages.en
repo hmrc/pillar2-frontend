@@ -740,7 +740,7 @@ entityType.companyReg.checkYourAnswersLabel = Company Registration Number
 entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
 entityType.Upe.change.hidden = the ultimate parent entity
 
-entityType.Nfm.change.hidden = the filing member entity
+entityType.Nfm.change.hidden = the nominated filing member entity
 
 checkYourAnswers.first = First contact
 checkYourAnswers.heading = Check your answers before submitting your registration
