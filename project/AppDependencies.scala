@@ -12,7 +12,7 @@ object AppDependencies {
     "com.typesafe.play"             %% "play-json-joda"                         % "2.10.4",
     "org.julienrf"                  %% "play-json-derived-codecs"               % "10.0.2",
     "org.typelevel"                 %% "cats-core"                              % "2.10.0",
-    "org.apache.xmlgraphics"        %  "fop"                            % "2.9"
+    "org.apache.xmlgraphics"        %  "fop"                            % "2.7"
   )
 
   val test: Seq[ModuleID] = Seq(
