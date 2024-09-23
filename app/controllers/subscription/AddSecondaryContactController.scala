@@ -47,13 +47,12 @@ class AddSecondaryContactController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
-
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
       _           <- request.userAnswers.get(SubPrimaryEmailPage)
       contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
     } yield {
+      val form: Form[Boolean] = formProvider(contactName)
       val preparedForm = request.userAnswers.get(SubAddSecondaryContactPage) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -67,6 +66,7 @@ class AddSecondaryContactController @Inject() (
     request.userAnswers
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
+        val form = formProvider(contactName)
         form
           .bindFromRequest()
           .fold(

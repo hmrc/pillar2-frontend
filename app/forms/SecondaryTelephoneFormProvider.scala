@@ -28,6 +28,6 @@ class SecondaryTelephoneFormProvider @Inject() extends Mappings {
     Form(
       "value" -> text("secondaryTelephone.error.required", Seq(userName))
         .verifying(maxLength(phoneNumberLength, "secondaryTelephone.error.length"))
-        .verifying(regexp(phoneRegex, "secondaryTelephone.error.format"))
+        .verifying(regexp(phoneRegex, "secondaryTelephone.error.format", Seq(userName)))
     )
 }

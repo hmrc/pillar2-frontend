@@ -79,7 +79,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
     "value entered exceeds character limit" should {
 
-      val contactName = "".padTo(101, 'A')
+      val contactName = "".padTo(161, 'A')
 
       val view: Document =
         Jsoup.parse(
@@ -89,12 +89,12 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       "have an error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Name of the contact person or team must be 100 characters or less"
+          "Name of the contact person or team must be 160 characters or less"
         )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Name of the contact person or team must be 100 characters or less")
+        view.getElementsByClass("govuk-error-message").text must include("Name of the contact person or team must be 160 characters or less")
       }
 
     }

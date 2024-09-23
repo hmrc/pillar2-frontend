@@ -28,6 +28,6 @@ class ContactCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
     "value" ->
       text("contactCaptureTelephoneDetails.error.required", Seq(userName))
         .verifying(maxLength(phoneNumberLength, "contactCaptureTelephoneDetails.error.length"))
-        .verifying(regexp(phoneRegex, "contactCaptureTelephoneDetails.error.format"))
+        .verifying(regexp(phoneRegex, "contactCaptureTelephoneDetails.error.format", userName))
   )
 }
