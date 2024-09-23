@@ -410,7 +410,7 @@ NominateFilingMemberYesNo.error.required = Select yes if you want to register a 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no= No
 NominateFilingMemberYesNo.checkYourAnswersLabel = Is there a nominated filing member
-NominateFilingMemberYesNo.change.hidden = is there a nominated filing member
+NominateFilingMemberYesNo.change.hidden = is there a nominated filing member?
 
 duplicateSafeId.title = You have provided duplicate filing member details
 duplicateSafeId.heading = You have provided duplicate filing member details
