@@ -21,6 +21,7 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import forms.EntityTypeFormProvider
 import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{UpeEntityTypePage, UpeRegisteredInUKPage}
@@ -79,6 +80,7 @@ class EntityTypeControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "if chosen, populate view with entity type not listed and set fm as a uk based entity to delete all no ID data" in {
       val ua = emptyUserAnswers
         .setOrException(UpeEntityTypePage, EntityType.Other)
@@ -228,12 +230,17 @@ class EntityTypeControllerSpec extends SpecBase {
       }
 
     }
+
     "redirect to ultimate parent name registration if entity type not listed chosen with set UPE as non-uk based" in {
       val jsonTobeReturned = Json.toJson(
         emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
-          .setOrException(UpeEntityTypePage, EntityType.Other)
       )
+
+      val expectedUserAnswerData =
+        """
+          |{"upeRegisteredInUK":false}
+          |""".stripMargin
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -242,7 +249,8 @@ class EntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any(), ArgumentMatchers.eq(Json.parse(expectedUserAnswerData)))(any()))
+          .thenReturn(Future(jsonTobeReturned))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

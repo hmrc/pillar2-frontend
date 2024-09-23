@@ -21,6 +21,7 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import forms.NfmEntityTypeFormProvider
 import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
+import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{FmEntityTypePage, FmRegisteredInUKPage}
@@ -246,8 +247,12 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       val jsonTobeReturned = Json.toJson(
         emptyUserAnswers
           .setOrException(FmRegisteredInUKPage, false)
-          .setOrException(FmEntityTypePage, EntityType.Other)
       )
+
+      val expectedUserAnswerData =
+        """
+          |{"fmRegisteredInUK":false}
+          |""".stripMargin
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -256,7 +261,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.fm.routes.NfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any(), ArgumentMatchers.eq(Json.parse(expectedUserAnswerData)))(any()))
+          .thenReturn(Future(jsonTobeReturned))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

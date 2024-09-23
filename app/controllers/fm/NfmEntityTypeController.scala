@@ -103,9 +103,8 @@ class NfmEntityTypeController @Inject() (
             case EntityType.Other =>
               logger.info("Filing Member- Redirecting to the no ID journey as entity type not listed chosen")
               for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, updatedAnswers1.data)
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, false))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, updatedAnswers.data)
               } yield Redirect(controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode))
           }
       )
