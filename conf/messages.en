@@ -738,7 +738,7 @@ subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
 entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
-entityType.Upe.change.hidden = Change the ultimate parent entity
+entityType.Upe.change.hidden = the ultimate parent entity
 
 entityType.Nfm.change.hidden = Change the filing member entity
 
