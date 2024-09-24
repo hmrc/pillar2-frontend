@@ -252,7 +252,7 @@ upe-input-business-email.caption = Group details
 upe-input-business-contact.email.error.required = Enter the email address for {0}
 upe-input-business-contact.email.error.length = Email address must be 132 characters or less
 upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-upe-input-business-email.change.hidden= the contact email address
+upe-input-business-email.change.hidden= the email address for the ultimate parent entity contact
 upe-input-business-email.checkYourAnswersLabel = Email address
 
 
@@ -388,7 +388,7 @@ contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required= Select yes if we can contact {0} by telephone
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-contactUPEByTelephone.change.hidden = can we contact by telephone?
+contactUPEByTelephone.change.hidden = can we contact the ultimate parent entity by telephone
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
@@ -396,7 +396,7 @@ captureTelephoneDetails.hint = For international numbers include the country cod
 captureTelephoneDetails.error.required = Enter the telephone number for {0}
 captureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
-captureTelephoneDetails.change.hidden =  the contact telephone number
+captureTelephoneDetails.change.hidden = the telephone number for the ultimate parent entity contact
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 NominateFilingMemberYesNo.title = Nominated filing member
@@ -550,16 +550,16 @@ nfmEmailAddress.checkYourAnswersLabel = Email address
 nfmEmailAddress.error.required = Enter the email address for {0}
 nfmEmailAddress.error.length = Email address must be 132 characters or less
 nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
-nfmEmailAddress.change.hidden = the contact email address
+nfmEmailAddress.change.hidden = the contact email address for the nominated filing member
 
 nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden =  the name of the nominated filing member
 
 contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-contactNfmByTelephone.change.hidden = can we contact by telephone?
+contactNfmByTelephone.change.hidden = can we contact the nominated filing member by telephone
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-nfmCaptureTelephoneDetails.change.hidden =  the contact telephone number
+nfmCaptureTelephoneDetails.change.hidden =  the telephone number for the nominated filing member
 
 groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = When did the group’s first accounting period start and end after 31 December 2023?
@@ -621,10 +621,10 @@ nfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
 nfmCaptureTelephoneDetails.error.length = The telephone number must be 24 characters or less
 nfmCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
-nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden =  the contact telephone number
-contactNfmByTelephone.checkYourAnswersLabel.hidden = can we contact by telephone?
-nfmEmailAddress.checkYourAnswersLabel.hidden =  the contact email address
-nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we should contact at the nominated filing member
+nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the telephone number for the nominated filing member
+contactNfmByTelephone.checkYourAnswersLabel.hidden = can we contact the nominated filing member by telephone
+nfmEmailAddress.checkYourAnswersLabel.hidden =  the contact email address for the nominated filing member
+nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we should contact from the nominated filing member
 nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office address of the nominated filing member
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
@@ -637,7 +637,7 @@ mneOrDomestic.uk = Only in the UK
 mneOrDomestic.group-operate = Where are the entities in your group located?
 mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
 mneOrDomestic.error.required = Select if the group has entities located only in the UK or in the UK and outside the UK
-mneOrDomestic.change.hidden = where the entities in your group are located
+mneOrDomestic.change.hidden = where are the entities in your group located
 mneOrDomestic.ukAndOther = In the UK and outside the UK
 mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
 mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
