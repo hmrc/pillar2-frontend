@@ -539,7 +539,7 @@ nfmContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 nfmContactName.checkYourAnswersLabel = Contact name
 nfmContactName.error.required = Enter the name of the person or team from the nominated filing member to keep on record
 nfmContactName.error.length = Name of the contact person or team should be 105 characters or less
-nfmContactName.change.hidden = the name of the person or team we should contact at the nominated filing member
+nfmContactName.change.hidden = the name of the person or team we should contact from the nominated filing member
 nfmContactName.error.invalid = Name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 nfmEmailAddress.heading.caption = Group details
