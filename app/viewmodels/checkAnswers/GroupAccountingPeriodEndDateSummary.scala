@@ -25,6 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
+import models.CheckMode
 
 object GroupAccountingPeriodEndDateSummary {
   val dateHelper = new ViewHelpers()
@@ -33,7 +34,12 @@ object GroupAccountingPeriodEndDateSummary {
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate))
+        value = ValueViewModel(HtmlContent(startDate)),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+            .withCssClass("govuk-!-display-none-print")
+        )
       )
 
     }
