@@ -23,10 +23,12 @@
         sectionHeader: sectionHeader,
         govukButton: GovukButton,
         printLink: printLink,
+        pdfLink: pdfLink,
         formHelper: FormWithCSRF,
         heading: heading,
         h2: HeadingH2,
-        para: paragraphBody
+        para: paragraphBody,
+        bulletList: bulletList
 )
 
 @(listUpe: SummaryList, listNfm: SummaryList, furtherRegistrationDetailsList: SummaryList, listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -61,7 +63,10 @@
         @h2(messages("checkYourAnswers.save.h2"), size = "m")
         @para(messages("checkYourAnswers.save.p"))
 
-        @printLink(messages("site.print"))
+        @bulletList(items = List(
+            printLink(messages("site.print")),
+            pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRegistrationAnswers.url)
+        ), additionalListClasses = Some("govuk-list--spaced, govuk-!-display-none-print"))
 
         @h2(messages("checkYourAnswers.submit.registration"), size = "m", extraClasses = Seq("govuk-!-margin-top-6"))
         @para(messages("checkYourAnswers.submit.p"))

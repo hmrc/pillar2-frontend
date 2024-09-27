@@ -32,8 +32,10 @@ package models
  * limitations under the License.
  */
 
+import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import play.twirl.api.HtmlFormat
+import utils.countryOptions.CountryOptions
 
 case class UKAddress(
   addressLine1: String,
@@ -50,6 +52,12 @@ case class UKAddress(
   val field4   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
   val postcode = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
+
+  def getAddressList(countryOptions: CountryOptions)(implicit messages: Messages): List[String] = {
+    val country = countryOptions.getCountryNameFromCode(countryCode)
+    List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode, country).filter(_.nonEmpty)
+  }
+
 }
 object UKAddress {
   implicit val format: OFormat[UKAddress] = Json.format[UKAddress]

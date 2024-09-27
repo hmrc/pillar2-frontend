@@ -812,7 +812,6 @@ class SubscriptionServiceSpec extends SpecBase {
         result shouldEqual Some("ABC Limited")
       }
       "return an error redirect if the retrieval of the company name fails" in {
-        val date        = LocalDate.now()
         val grsResponse = GrsResponse(None, None)
 
         val userAnswers = emptyUserAnswers
