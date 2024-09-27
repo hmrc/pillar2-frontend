@@ -15,10 +15,11 @@
  *@
 
 @import models.rfm.RfmJourneyModel
+@import utils.countryOptions.CountryOptions
 
 @this()
 
-@(model: RfmJourneyModel)(implicit request: RequestHeader, messages: Messages)
+@(model: RfmJourneyModel, countryOptions: CountryOptions)(implicit request: RequestHeader, messages: Messages)
 
 <fo:root xml:lang="@messages.lang.locale.getLanguage" xmlns:fo="http://www.w3.org/1999/XSL/Format" xmlns:fox="http://xmlgraphics.apache.org/fop/extensions" font-family="sans-serif">
 
@@ -150,7 +151,7 @@
                                 <fo:list-item  margin-bottom="3mm">
                                     <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.registeredAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
-                                        @registeredOfficeAddress.getAddressList.map { line =>
+                                        @registeredOfficeAddress.getAddressList(countryOptions).map { line =>
                                         <fo:block>@line</fo:block>
                                         }
                                     </fo:list-item-body>
@@ -291,7 +292,7 @@
                         <fo:list-item  margin-bottom="3mm">
                             <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmContactAddress.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                @model.contactAddress.getAddressList.map { line =>
+                                @model.contactAddress.getAddressList(countryOptions).map { line =>
                                 <fo:block>@line</fo:block>
                                 }
                             </fo:list-item-body>
