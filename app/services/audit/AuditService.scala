@@ -19,6 +19,7 @@ package services.audit
 import models.audit._
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.subscription.NewFilingMemberDetail
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -165,4 +166,42 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
   }
+
+  def auditRepayments(repaymentAuditDetail: RepaymentsAuditEvent)(implicit hc: HeaderCarrier): Future[AuditResult] =
+    auditConnector.sendExtendedEvent(
+      RepaymentsAuditEvent(
+        repaymentAuditDetail.refundAmount,
+        repaymentAuditDetail.reasonForRequestingRefund,
+        repaymentAuditDetail.ukOrAbroadBankAccount,
+        repaymentAuditDetail.uKBankAccountDetails,
+        repaymentAuditDetail.nonUKBank,
+        repaymentAuditDetail.repaymentsContactName,
+        repaymentAuditDetail.repaymentsContactEmail,
+        repaymentAuditDetail.repaymentsContactByPhone,
+        repaymentAuditDetail.repaymentsTelephoneDetails
+      ).extendedDataEvent
+    )
+
+  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(implicit hc: HeaderCarrier): Future[AuditResult] =
+    auditConnector.sendExtendedEvent(
+      RfmAuditEvent(
+        nfmDetail.plrReference,
+        nfmDetail.securityAnswerRegistrationDate,
+        nfmDetail.corporatePosition,
+        nfmDetail.ukBased,
+        nfmDetail.nameRegistration,
+        nfmDetail.registeredAddress,
+        nfmDetail.primaryContactName,
+        nfmDetail.primaryContactEmail,
+        nfmDetail.primaryContactPhonePreference,
+        nfmDetail.primaryContactPhoneNumber,
+        nfmDetail.addSecondaryContact,
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.name),
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.emailAddress),
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.telephone.isDefined),
+        nfmDetail.secondaryContactInformation.flatMap(scInfo => scInfo.telephone.map(tel => tel)),
+        nfmDetail.contactAddress
+      ).extendedDataEvent
+    )
+
 }

@@ -17,14 +17,15 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
-import play.api.data.FormError
+import play.api.data.{Form, FormError}
 
 class AddSecondaryContactFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey = "addSecondaryContact.error.required"
   val invalidKey  = "error.boolean"
 
-  val form = new AddSecondaryContactFormProvider()()
+  val formProvider = new AddSecondaryContactFormProvider()
+  val form: Form[Boolean] = formProvider("test")
 
   ".value" - {
 
@@ -33,7 +34,7 @@ class AddSecondaryContactFormProviderSpec extends BooleanFieldBehaviours {
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      requiredError = FormError(fieldName, requiredKey, List("test"))
     )
   }
 }

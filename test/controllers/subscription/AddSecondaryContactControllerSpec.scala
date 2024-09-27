@@ -54,7 +54,11 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), "name", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider("name"), "name", NormalMode)(
+          request,
+          appConfig(application),
+          messages(application)
+        ).toString
       }
     }
 
@@ -75,7 +79,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(true), "name", NormalMode)(
+        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name", NormalMode)(
           request,
           appConfig(application),
           messages(application)
@@ -95,7 +99,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
-        val boundForm = formProvider().bind(Map("value" -> ""))
+        val boundForm = formProvider("name").bind(Map("value" -> ""))
 
         val view = application.injector.instanceOf[AddSecondaryContactView]
 

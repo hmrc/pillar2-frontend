@@ -34,7 +34,10 @@ class TransactionHistoryConnectorSpec extends SpecBase {
 
   lazy val connector: TransactionHistoryConnector = app.injector.instanceOf[TransactionHistoryConnector]
 
-  val TransactionHistoryUrl = s"/report-pillar2-top-up-taxes/transaction-history/$PlrReference"
+  val dateFrom = LocalDate.now()
+  val dateTo   = LocalDate.now.plusYears(1)
+
+  val TransactionHistoryUrl = s"/report-pillar2-top-up-taxes/transaction-history/$PlrReference/${dateFrom.toString}/${dateTo.toString}"
 
   val transactionHistoryResponse =
     TransactionHistory(
@@ -49,7 +52,7 @@ class TransactionHistoryConnectorSpec extends SpecBase {
     "return a transaction history" in {
       stubGet(TransactionHistoryUrl, expectedStatus = 200, Json.toJson(transactionHistoryResponse).toString())
 
-      val value = connector.retrieveTransactionHistory(PlrReference)
+      val value = connector.retrieveTransactionHistory(PlrReference, dateFrom, dateTo)
 
       value.futureValue mustBe transactionHistoryResponse
     }
@@ -57,7 +60,7 @@ class TransactionHistoryConnectorSpec extends SpecBase {
     "return a no result error when there is no results found for plr reference" in {
       stubGet(TransactionHistoryUrl, expectedStatus = 404, "")
 
-      val value = connector.retrieveTransactionHistory(PlrReference)
+      val value = connector.retrieveTransactionHistory(PlrReference, dateFrom, dateTo)
 
       value.failed.futureValue mustBe NoResultFound
     }
@@ -65,7 +68,7 @@ class TransactionHistoryConnectorSpec extends SpecBase {
     "return a unexpected response when an error is returned" in {
       stubGet(TransactionHistoryUrl, expectedStatus = 500, "")
 
-      val value = connector.retrieveTransactionHistory(PlrReference)
+      val value = connector.retrieveTransactionHistory(PlrReference, dateFrom, dateTo)
 
       value.failed.futureValue mustBe UnexpectedResponse
     }

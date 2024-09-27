@@ -18,14 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.{PlrReferencePage, SubMneOrDomesticPage}
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.RegistrationConfirmationView
 
 import javax.inject.Inject
@@ -43,16 +42,18 @@ class RegistrationConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.formatDateGDS(java.time.LocalDate.now))
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-        mneOrDom <- userAnswer.get(SubMneOrDomesticPage)
-      } yield Ok(view(pillar2Id, currentDate.toString(), mneOrDom))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        mneOrDom              <- userAnswer.get(SubMneOrDomesticPage)
+        companyName           <- userAnswer.get(UpeNameRegistrationPage)
+        registrationDate      <- userAnswer.get(PdfRegistrationDatePage)
+        registrationTimeStamp <- userAnswer.get(PdfRegistrationTimeStampPage)
+      } yield Ok(view(pillar2Id, companyName, registrationDate, registrationTimeStamp, mneOrDom)))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
-
 }

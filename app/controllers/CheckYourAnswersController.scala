@@ -20,9 +20,11 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus._
-import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers}
-import pages.{CheckYourAnswersLogicPage, PlrReferencePage, SubMneOrDomesticPage, SubscriptionStatusPage}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers, WithName}
+import pages._
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -34,6 +36,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
+import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
@@ -72,41 +75,51 @@ class CheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
-      val subscriptionStatus = request.userAnswers
-        .get(SubMneOrDomesticPage)
-        .map { mneOrDom =>
-          (for {
-            plr <- subscriptionService.createSubscription(request.userAnswers)
-            dataToSave = UserAnswers(request.userId).setOrException(SubMneOrDomesticPage, mneOrDom).setOrException(PlrReferencePage, plr)
-            _ <- sessionRepository.set(dataToSave)
-            _ <- userAnswersConnectors.remove(request.userId)
-          } yield SuccessfullyCompletedSubscription)
-            .recover {
-              case InternalIssueError =>
-                logger.error("Subscription failed due to failed call to the backend")
-                FailedWithInternalIssueError
-              case DuplicateSubmissionError =>
-                logger.error("Subscription failed due to a Duplicate Submission")
-                FailedWithDuplicatedSubmission
-              case DuplicateSafeIdError =>
-                logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
-                FailedWithDuplicatedSafeIdError
-            }
-        }
-        .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
-      for {
-        updatedSubscriptionStatus <- subscriptionStatus
-        optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
-        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
-        _                  <- sessionRepository.set(updatedSessionData)
-      } yield (): Unit
-      Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+      subscriptionService.getCompanyName(request.userAnswers) match {
+        case Left(errorRedirect) => errorRedirect
+        case Right(companyName) =>
+          val subscriptionStatus: Future[WithName with SubscriptionStatus] =
+            request.userAnswers
+              .get(SubMneOrDomesticPage)
+              .map { mneOrDom =>
+                (for {
+                  plr <- subscriptionService.createSubscription(request.userAnswers)
+                  dataToSave = UserAnswers(request.userId)
+                                 .setOrException(UpeNameRegistrationPage, companyName)
+                                 .setOrException(SubMneOrDomesticPage, mneOrDom)
+                                 .setOrException(PlrReferencePage, plr)
+                                 .setOrException(PdfRegistrationDatePage, formattedCurrentDate)
+                                 .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
+                  _ <- sessionRepository.set(dataToSave)
+                  _ <- userAnswersConnectors.remove(request.userId)
+                } yield SuccessfullyCompletedSubscription)
+                  .recover {
+                    case InternalIssueError =>
+                      logger.error("Subscription failed due to failed call to the backend")
+                      FailedWithInternalIssueError
+                    case DuplicateSubmissionError =>
+                      logger.error("Subscription failed due to a Duplicate Submission")
+                      FailedWithDuplicatedSubmission
+                    case DuplicateSafeIdError =>
+                      logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+                      FailedWithDuplicatedSafeIdError
+                  }
+
+              }
+              .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
+          for {
+            updatedSubscriptionStatus <- subscriptionStatus
+            optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
+            sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+            updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
+            _                  <- sessionRepository.set(updatedSessionData)
+          } yield (): Unit
+          Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+      }
     } else {
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
-
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
@@ -189,5 +202,4 @@ class CheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
-
 }

@@ -24,14 +24,19 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
 
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClient, ec: ExecutionContext) extends Logging {
 
-  def retrieveTransactionHistory(plrReference: String)(implicit hc: HeaderCarrier): Future[TransactionHistory] =
+  def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
+    hc:                                        HeaderCarrier
+  ): Future[TransactionHistory] =
     http
-      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference")
+      .GET[HttpResponse](
+        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference/${dateFrom.toString}/${dateTo.toString}"
+      )
       .flatMap {
         case response if response.status == OK => Future successful Json.parse(response.body).as[TransactionHistory]
         case response if response.status == NOT_FOUND =>

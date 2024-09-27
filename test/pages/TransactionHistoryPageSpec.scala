@@ -14,11 +14,19 @@
  * limitations under the License.
  */
 
-package models.repayments
+package pages
 
-import play.api.libs.json._
+import models.TransactionHistory
+import pages.behaviours.PageBehaviours
 
-case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: String, iban: String)
-object NonUKBank {
-  implicit val format: OFormat[NonUKBank] = Json.format[NonUKBank]
+class TransactionHistoryPageSpec extends PageBehaviours {
+
+  "TransactionHistoryPage" - {
+
+    beRetrievable[TransactionHistory](TransactionHistoryPage)
+
+    beSettable[TransactionHistory](TransactionHistoryPage)
+
+    beRemovable[TransactionHistory](TransactionHistoryPage)
+  }
 }

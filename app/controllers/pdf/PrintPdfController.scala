@@ -17,12 +17,15 @@
 package controllers.pdf
 
 import cats.data.OptionT
+import com.google.inject.Inject
+import com.google.inject.name.Named
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
-import pages.PlrReferencePage
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -33,10 +36,8 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
-import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
-@Singleton
 class PrintPdfController @Inject() (
   override val messagesApi:                        MessagesApi,
   @Named("EnrolmentIdentifier") identifyRepayment: IdentifierAction,
@@ -49,6 +50,7 @@ class PrintPdfController @Inject() (
   rfmConfirmationPdfView:                          RfmConfirmationPdf,
   repaymentAnswersPdfView:                         RepaymentAnswersPdf,
   repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
+  registrationConfirmationPdfView:                 ConfirmationPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
   val controllerComponents:                        MessagesControllerComponents
@@ -113,6 +115,33 @@ class PrintPdfController @Inject() (
           .as("application/octet-stream")
           .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")
       }
+  }
+
+  def printRegistrationConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.get(request.userAnswers.id).flatMap { userAnswers =>
+      userAnswers.flatMap { userAnswer =>
+        for {
+          pillar2Id <- Pillar2Reference
+                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                         .orElse(userAnswer.get(PlrReferencePage))
+          mneOrDom    <- userAnswer.get(SubMneOrDomesticPage)
+          companyName <- userAnswer.get(UpeNameRegistrationPage)
+          regDate     <- userAnswer.get(PdfRegistrationDatePage)
+          timeStamp   <- userAnswer.get(PdfRegistrationTimeStampPage)
+        } yield (pillar2Id, mneOrDom, regDate, timeStamp, companyName)
+      } match {
+        case Some((pillar2Id, mneOrDom, regDate, timeStamp, companyName)) =>
+          fopService
+            .render(registrationConfirmationPdfView.render(pillar2Id, mneOrDom, regDate, timeStamp, companyName, implicitly, implicitly).body)
+            .map { pdf =>
+              Ok(pdf)
+                .as("application/octet-stream")
+                .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=Pillar 2 Registration Confirmation.pdf")
+            }
+        case None =>
+          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+    }
   }
 
 }

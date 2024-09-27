@@ -1,0 +1,59 @@
+
+
+        @this()
+
+        @(pillar2Id: String, mneOrDomestic: MneOrDomestic, regDate: String, timeStamp: String, companyName: String)(implicit request: RequestHeader, messages: Messages)
+
+<fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format"
+         xml:lang="@messages.lang.locale.getLanguage"
+         font-family="sans-serif">
+
+    <fo:layout-master-set>
+        <fo:simple-page-master master-name="A4"
+                               page-height="29.7cm"
+                               page-width="21.0cm"
+                               margin-top="1cm"
+                               margin-bottom="1cm"
+                               margin-left="2cm"
+                               margin-right="2cm">
+            <fo:region-body margin-top="3cm" margin-bottom="2cm"/>
+            <fo:region-before extent="3cm"/>
+            <fo:region-after extent="2cm"/>
+        </fo:simple-page-master>
+    </fo:layout-master-set>
+
+    <fo:page-sequence master-reference="A4">
+
+        <!-- Header -->
+        <fo:static-content flow-name="xsl-region-before">
+            <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">
+                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")</fo:block>
+            </fo:block>
+        </fo:static-content>
+
+        <!-- Body -->
+        <fo:flow flow-name="xsl-region-body">
+            <fo:block border="4pt solid black" space-before="8pt" space-after="8pt">
+                <fo:block font-size="24pt" font-weight="bold" margin-bottom="5pt" text-align="center">
+                    @messages("registrationConfirmation.registrationComplete")
+                </fo:block>
+                <fo:block font-size="24pt" text-align="center">
+                    @messages("registrationConfirmation.topup")
+                </fo:block>
+                <fo:block font-size="24pt" text-align="center" font-weight="bold">
+                    @pillar2Id
+                </fo:block>
+            </fo:block>
+
+            <fo:block font-size="16pt" font-family="sans-serif" space-before="15pt" space-after="15pt"
+                      font-weight="bold">
+                @messages("registrationConfirmation.reg-date", regDate)
+            </fo:block>
+
+            <fo:block font-size="16pt" font-family="sans-serif" space-before="15pt" space-after="15pt">
+                @messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), regDate , timeStamp)
+            </fo:block>
+        </fo:flow>
+    </fo:page-sequence>
+
+</fo:root>

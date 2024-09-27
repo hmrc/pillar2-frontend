@@ -22,28 +22,30 @@ import connectors.TransactionHistoryConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.{FinancialHistory, NoResultFound, UnexpectedResponse, UserAnswers}
-import pages.AgentClientPillar2ReferencePage
+import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
-import services.ReferenceNumberService
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
+import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val paymentHistoryConnector:            TransactionHistoryConnector,
+  val transactionHistoryConnector:        TransactionHistoryConnector,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   val controllerComponents:               MessagesControllerComponents,
   referenceNumberService:                 ReferenceNumberService,
+  subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   view:                                   TransactionHistoryView,
   noTransactionHistoryView:               NoTransactionHistoryView,
@@ -61,10 +63,21 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        paymentHistory <- OptionT.liftF(paymentHistoryConnector.retrieveTransactionHistory(referenceNumber))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), paymentHistory.financialHistory))
-        pagination = generatePagination(paymentHistory.financialHistory, page)
-      } yield Ok(view(table, pagination))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        transactionHistory <-
+          OptionT
+            .fromOption[Future](mayBeUserAnswer.flatMap(_.get(TransactionHistoryPage)))
+            .orElse(
+              OptionT.liftF(
+                transactionHistoryConnector
+                  .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+              )
+            )
+        updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
+        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+        pagination = generatePagination(transactionHistory.financialHistory, page)
+      } yield Ok(view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -77,7 +90,19 @@ class TransactionHistoryController @Inject() (
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
     (identify andThen getData).async { implicit request =>
-      Future successful Ok(noTransactionHistoryView())
+      val result = for {
+        mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
+        userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
+        referenceNumber <- OptionT
+                             .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
+                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        registrationDate = subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      } yield Ok(noTransactionHistoryView(registrationDate))
+
+      result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
+        Redirect(routes.TransactionHistoryController.onPageLoadError())
+      }
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
@@ -165,13 +190,18 @@ object TransactionHistoryController {
         Seq(
           HeadCell(Text(messages("transactionHistory.date"))),
           HeadCell(Text(messages("transactionHistory.description"))),
-          HeadCell(Text(messages("transactionHistory.amountPaid"))),
-          HeadCell(Text(messages("transactionHistory.amountRefunded")))
+          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric"),
+          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric")
         )
       )
     )
 
-  private def createTableRows(history: FinancialHistory): Seq[TableRow] =
+  private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
+    val df = new DecimalFormat("#,###.00")
+
+    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
+    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+
     Seq(
       TableRow(
         content = Text(history.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
@@ -180,10 +210,13 @@ object TransactionHistoryController {
         content = Text(history.paymentType)
       ),
       TableRow(
-        content = Text("£" + history.amountPaid.setScale(2))
+        content = Text(amountPaid),
+        classes = "govuk-table__cell--numeric"
       ),
       TableRow(
-        content = Text("£" + history.amountRepaid.setScale(2))
+        content = Text(amountRepaid),
+        classes = "govuk-table__cell--numeric"
       )
     )
+  }
 }

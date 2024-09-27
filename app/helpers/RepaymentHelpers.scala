@@ -17,7 +17,9 @@
 package helpers
 
 import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
-import models.UserAnswers
+import models.{UkOrAbroadBankAccount, UserAnswers}
+import models.audit.RepaymentsAuditEvent
+import models.repayments.{BankAccountDetails, NonUKBank}
 import pages._
 
 trait RepaymentHelpers {
@@ -41,6 +43,43 @@ trait RepaymentHelpers {
       case (true, true, Some(ForeignBankAccount), false, true, true, true, Some(true), true)   => true
       case (true, true, Some(ForeignBankAccount), false, true, true, true, Some(false), false) => true
       case _                                                                                   => false
+    }
+
+  def getRepaymentAuditDetail: Option[RepaymentsAuditEvent] =
+    for {
+      refundAmount              <- get(RepaymentsRefundAmountPage)
+      reasonForRequestingRefund <- get(ReasonForRequestingRefundPage)
+      ukOrAbroadBankAccount     <- get(UkOrAbroadBankAccountPage)
+      repaymentsContactName     <- get(RepaymentsContactNamePage)
+      repaymentsContactEmail    <- get(RepaymentsContactEmailPage)
+      repaymentsContactByPhone  <- get(RepaymentsContactByTelephonePage)
+    } yield RepaymentsAuditEvent(
+      refundAmount,
+      reasonForRequestingRefund,
+      ukOrAbroadBankAccount,
+      getUkBankAccountDetails,
+      getNonUKBank,
+      repaymentsContactName,
+      repaymentsContactEmail,
+      repaymentsContactByPhone,
+      getRepaymentsTelephoneDetails
+    )
+
+  private def getUkBankAccountDetails: Option[BankAccountDetails] =
+    get(UkOrAbroadBankAccountPage) match {
+      case Some(UkOrAbroadBankAccount.UkBankAccount) => get(BankAccountDetailsPage)
+      case _                                         => None
+    }
+
+  private def getNonUKBank: Option[NonUKBank] =
+    get(UkOrAbroadBankAccountPage) match {
+      case Some(UkOrAbroadBankAccount.ForeignBankAccount) => get(NonUKBankPage)
+      case _                                              => None
+    }
+
+  private def getRepaymentsTelephoneDetails: Option[String] =
+    get(RepaymentsContactByTelephonePage).flatMap { nominated =>
+      if (nominated) get(RepaymentsTelephoneDetailsPage) else None
     }
 
 }

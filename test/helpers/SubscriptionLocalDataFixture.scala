@@ -91,6 +91,7 @@ trait SubscriptionLocalDataFixture {
   )
 
   val amendData: AmendSubscription = AmendSubscription(
+    replaceFilingMember = true,
     upeDetails = upeDetailsAmend,
     accountingPeriod = AccountingPeriodAmend(currentDate, currentDate.plusYears(1)),
     upeCorrespAddressDetails = upeCorrespondenceAddress,
@@ -99,13 +100,20 @@ trait SubscriptionLocalDataFixture {
     filingMemberDetails = Some(filingMemberAmendDetails)
   )
   val replaceFilingMemberData: NewFilingMemberDetail = NewFilingMemberDetail(
+    securityAnswerUserReference = "plrReference",
+    securityAnswerRegistrationDate = LocalDate.of(2024, 12, 31),
     plrReference = "plrReference",
     corporatePosition = CorporatePosition.Upe,
-    contactName = "shadow",
-    contactEmail = "shadow@fiend.com",
-    phoneNumber = Some("dota2"),
-    address = NonUKAddress("middle", None, "lane", None, None, "obv"),
-    secondaryContactInformation = Some(contactDetails)
+    ukBased = Some(false),
+    nameRegistration = Some("nameRegistration"),
+    registeredAddress = Some(NonUKAddress("middle", None, "lane", None, None, "obv")),
+    primaryContactName = "shadow",
+    primaryContactEmail = "shadow@fiend.com",
+    primaryContactPhonePreference = true,
+    primaryContactPhoneNumber = Some("dota2"),
+    addSecondaryContact = true,
+    secondaryContactInformation = Some(contactDetails),
+    contactAddress = NonUKAddress("middle", None, "lane", None, None, "obv")
   )
 
   def subscriptionDataGroupSummaryList()(implicit messages: Messages, request: SubscriptionDataRequest[_]): SummaryList = SummaryListViewModel(

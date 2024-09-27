@@ -27,10 +27,12 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core._
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class TransactionHistoryControllerSpec extends SpecBase {
@@ -85,7 +87,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -95,14 +98,17 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any())(any())).thenReturn(Future.successful(transactionHistoryResponse))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.successful(transactionHistoryResponse))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
-          generatePagination(transactionHistoryResponse.financialHistory, None)
+          generatePagination(transactionHistoryResponse.financialHistory, None),
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
           appConfig(application),
@@ -117,7 +123,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -127,7 +134,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
           .thenReturn(Future.successful(transactionHistoryResponsePagination))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
@@ -135,7 +143,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
-          generatePagination(transactionHistoryResponsePagination.financialHistory, None)
+          generatePagination(transactionHistoryResponsePagination.financialHistory, None),
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
           appConfig(application),
@@ -150,7 +159,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -160,7 +170,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any())(any())).thenReturn(Future.failed(NoResultFound))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(NoResultFound))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -174,7 +185,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -184,7 +196,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any())(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(UnexpectedResponse))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -197,7 +210,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -205,6 +219,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -217,7 +232,8 @@ class TransactionHistoryControllerSpec extends SpecBase {
         applicationBuilder(userAnswers = None, enrolments)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector)
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
 
@@ -227,16 +243,42 @@ class TransactionHistoryControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[NoTransactionHistoryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
           request,
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to error page if there is no retrievable data" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadNoTransactionHistory().url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.failed(new Exception("")))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/repayment/error/payment-history")
       }
     }
 

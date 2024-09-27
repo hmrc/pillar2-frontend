@@ -14,11 +14,14 @@
  * limitations under the License.
  */
 
-package models.repayments
+package pages
 
-import play.api.libs.json._
+import models.TransactionHistory
+import play.api.libs.json.JsPath
 
-case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: String, iban: String)
-object NonUKBank {
-  implicit val format: OFormat[NonUKBank] = Json.format[NonUKBank]
+object TransactionHistoryPage extends QuestionPage[TransactionHistory] {
+
+  override def path: JsPath = JsPath \ toString
+
+  override def toString: String = "transactionHistory"
 }

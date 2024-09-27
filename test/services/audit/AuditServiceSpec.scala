@@ -17,8 +17,10 @@
 package services.audit
 
 import base.SpecBase
+import models.audit.RepaymentsAuditEvent
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.subscription.NewFilingMemberDetail
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,14 +33,18 @@ class AuditServiceSpec extends SpecBase {
   val service: AuditService = app.injector.instanceOf[AuditService]
 
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
-  val validRegisterWithIdResponse        = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
-  val validRegisterWithIdResponseForLLP  = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
+  val validRegisterWithIdResponse: IncorporatedEntityRegistrationData =
+    Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
+  val validRegisterWithIdResponseForLLP: PartnershipEntityRegistrationData =
+    Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
+  val validReplaceFilingMemberNoId: NewFilingMemberDetail = Json.parse(validReplaceFilingMember).as[NewFilingMemberDetail]
+  val validRepayment:               RepaymentsAuditEvent  = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
 
-  val serviceName = ServiceName(
+  val serviceName: ServiceName = ServiceName(
     OptServiceName("Report Pillar 2 top-up taxes"),
     OptServiceName("Report Pillar 2 top-up taxes")
   )
-  val requestData = IncorporatedEntityCreateRegistrationRequest(
+  val requestData: IncorporatedEntityCreateRegistrationRequest = IncorporatedEntityCreateRegistrationRequest(
     continueUrl =
       s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Upe.value.toLowerCase}",
     businessVerificationCheck = false,
@@ -86,5 +92,22 @@ class AuditServiceSpec extends SpecBase {
       result mustBe AuditResult.Success
 
     }
+
+    "successful for auditRepayments" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditRepayments(validRepayment).futureValue
+      result mustBe AuditResult.Success
+    }
+
+    "successful for auditReplaceFilingMember" in {
+      when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+        .thenReturn(Future.successful(AuditResult.Success))
+
+      val result = service.auditReplaceFilingMember(validReplaceFilingMemberNoId).futureValue
+      result mustBe AuditResult.Success
+    }
+
   }
 }

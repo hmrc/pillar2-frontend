@@ -48,6 +48,7 @@
                 field = form("value"),
                 legend = LegendViewModel(messages("contactByTelephone.heading", userName)).asPageHeading(Large)
             )
+            .withHint(Hint(content = Text(messages("contactByTelephone.hint"))))
         )
         @govukButton(
             ButtonViewModel(messages("site.save-and-continue")).withAttribute("id", "submit")

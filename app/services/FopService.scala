@@ -16,10 +16,11 @@
 
 package services
 
+import org.apache.commons.io.output.ByteArrayOutputStream
 import org.apache.fop.apps.{FOUserAgent, FopFactory}
 import org.apache.xmlgraphics.util.MimeConstants
 
-import java.io.{ByteArrayOutputStream, StringReader}
+import java.io.StringReader
 import javax.inject.{Inject, Singleton}
 import javax.xml.transform.TransformerFactory
 import javax.xml.transform.sax.SAXResult

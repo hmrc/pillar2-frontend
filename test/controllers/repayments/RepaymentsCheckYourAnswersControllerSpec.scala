@@ -30,6 +30,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.RepaymentService
+import services.audit.AuditService
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -116,13 +118,15 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[RepaymentService].toInstance(mockRepaymentService),
-            bind[SessionRepository].toInstance(mockSessionRepository)
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[AuditService].toInstance(mockAuditService)
           )
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockAuditService.auditRepayments(any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
@@ -143,6 +147,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
