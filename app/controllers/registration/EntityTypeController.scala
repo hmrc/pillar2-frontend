@@ -104,8 +104,7 @@ class EntityTypeController @Inject() (
               logger.info("UPE- Redirecting to the no ID journey as entity type not listed chosen")
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, false))
-                updatedAnswer1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
-                _              <- userAnswersConnectors.save(updatedAnswer1.id, Json.toJson(updatedAnswer1.data))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
               } yield Redirect(controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode))
           }
       )
