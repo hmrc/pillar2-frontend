@@ -628,7 +628,6 @@ nfmContactName.checkYourAnswersLabel.hidden =  the name of the person or team we
 nfmRegisteredAddress.checkYourAnswersLabel.hidden =  the registered office address of the nominated filing member
 nfmNameRegistration.checkYourAnswersLabel.hidden =  the name of the nominated filing member
 
-
 mneOrDomestic.title = Entity locations
 mneOrDomestic.heading.caption = Group details
 mneOrDomestic.heading = Entity locations
