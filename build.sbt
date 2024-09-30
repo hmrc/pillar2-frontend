@@ -9,7 +9,7 @@ ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
 
 lazy val root = (project in file("."))
-  .enablePlugins(PlayScala, SbtDistributablesPlugin)
+  .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(inConfig(Test)(testSettings) *)
   .settings(ThisBuild / useSuperShell := false)
