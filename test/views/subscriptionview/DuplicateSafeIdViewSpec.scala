@@ -68,4 +68,31 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
+
+  "Duplicate SafeId View when binding with missing values" should {
+
+    val view: Document =
+      Jsoup.parse(
+        page(formProvider().bind(Map("nominateFilingMember" -> "")))(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+    "have an error summary" in {
+      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        "Select yes if a different company in your group has been nominated to act as your filing member"
+      )
+    }
+
+    "have an input error" in {
+      view.getElementsByClass("govuk-error-message").text must include(
+        "Error: Select yes if a different company in your group has been nominated to act as your filing member"
+      )
+    }
+
+  }
+
 }

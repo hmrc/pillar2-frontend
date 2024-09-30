@@ -70,4 +70,31 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
+
+  "Nominate Filing Member Yes No View when binding with missing values" should {
+
+    val view: Document =
+      Jsoup.parse(
+        page(formProvider().bind(Map("nominateFilingMember" -> "")), NormalMode)(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+    "have an error summary" in {
+      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        "Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member"
+      )
+    }
+
+    "have an input error" in {
+      view.getElementsByClass("govuk-error-message").text must include(
+        "Error: Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member"
+      )
+    }
+
+  }
+
 }
