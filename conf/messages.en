@@ -604,7 +604,7 @@ groupAccountingPeriod.error.endDate.dayYear.invalid = End date must be a real da
 groupAccountingPeriod.error.endDate.day.length = End date must be a real date
 groupAccountingPeriod.error.endDate.month.length = End date must be a real date
 groupAccountingPeriod.error.endDate.year.length = End date must be a real date
-groupAccountingPeriod.change.hidden = the group’s consolidated accounting period
+groupAccountingPeriod.change.hidden = the dates of the group’s consolidated accounting period
 
 contactNfmByTelephone.heading.caption = Group details
 contactNfmByTelephone.title = Can we contact by telephone?
@@ -740,7 +740,7 @@ entityType.companyReg.checkYourAnswersLabel = Company Registration Number
 entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
 entityType.Upe.change.hidden = the ultimate parent entity
 
-entityType.Nfm.change.hidden = the nominated filing member entity
+entityType.Nfm.change.hidden = the nominated filing member
 
 checkYourAnswers.first = First contact
 checkYourAnswers.heading = Check your answers before submitting your registration
