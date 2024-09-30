@@ -50,11 +50,13 @@ object CountryOptions {
       .resourceAsStream(fileName)
       .flatMap { in =>
         val locationJsValue = Json.parse(in)
-        Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
-          _.map { countryList =>
-            InputOption(countryList(1).replaceAll("country:", ""), countryList.head)
-          }.filterNot(country => excludeUk && country.value == UK_COUNTRY_CODE)
-            .sortBy(x => x.label.toLowerCase)
+        Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map { countryList =>
+          val countries = countryList.map { country =>
+            InputOption(country(1).replaceAll("country:", ""), country.head)
+          }
+
+          val filteredCountries = if (excludeUk) countries.filterNot(_.value == UK_COUNTRY_CODE) else countries
+          filteredCountries.sortBy(_.label.toLowerCase)
         }
       }
       .getOrElse {
