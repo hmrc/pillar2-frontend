@@ -20,10 +20,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import forms.UpeRegisteredAddressFormProvider
-import models.grs.EntityType
 import models.{Mode, UKAddress}
 import navigation.UltimateParentNavigator
-import pages.{UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
+import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -57,13 +56,9 @@ class UpeRegisteredAddressController @Inject() (
           case Some(value) => form.fill(value)
           case None        => form
         }
-        val first  = request.userAnswers.get(UpeRegisteredInUKPage)
-        val second = request.userAnswers.get(UpeEntityTypePage)
-        val excludeUk = (first, second) match {
-          case (Some(false), Some(EntityType.Other)) => false
-          case _                                     => true
-        }
-        Ok(view(preparedForm, mode, name, countryOptions.options(excludeUk)))
+        val isUkRegistered = request.userAnswers.get(UpeRegisteredInUKPage).fold(false)(identity)
+
+        Ok(view(preparedForm, mode, name, countryOptions.options(isUkRegistered)))
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }

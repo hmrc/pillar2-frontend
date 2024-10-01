@@ -19,11 +19,10 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NfmRegisteredAddressFormProvider
-import models.{NonUKAddress, NormalMode}
-import models.grs.EntityType
+import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
+import pages.FmNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -40,47 +39,6 @@ class NfmUKAddressControllerSpec extends SpecBase {
       val data =
         emptyUserAnswers.set(FmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
-        )
-      }
-    }
-
-    "must return OK and the correct view for a GET if no previous data is found and FmRegisteredInUKPage is false and entity type other" in {
-      val ua = emptyUserAnswers
-        .setOrException(FmNameRegistrationPage, "adios")
-        .setOrException(FmRegisteredInUKPage, false)
-        .setOrException(FmEntityTypePage, EntityType.Other)
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
-        )
-      }
-    }
-
-    "must return OK and the correct view for a GET if no previous data is found and FmRegisteredInUKPage is false and entity type other previous filled data" in {
-      val ua = emptyUserAnswers
-        .setOrException(FmNameRegistrationPage, "adios")
-        .setOrException(FmRegisteredInUKPage, false)
-        .setOrException(FmEntityTypePage, EntityType.Other)
-        .setOrException(FmRegisteredAddressPage, NonUKAddress("line1", None, "line3", None, None, "GB"))
-
-      val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 

@@ -45,7 +45,7 @@ class CountryOptions @Inject() (environment: Environment, config: FrontendAppCon
 }
 object CountryOptions {
 
-  def getCountries(environment: Environment, fileName: String, excludeUk: Boolean = false): Seq[InputOption] =
+  def getCountries(environment: Environment, fileName: String, includeUk: Boolean = true): Seq[InputOption] =
     environment
       .resourceAsStream(fileName)
       .flatMap { in =>
@@ -55,7 +55,7 @@ object CountryOptions {
             InputOption(country(1).replaceAll("country:", ""), country.head)
           }
 
-          val filteredCountries = if (excludeUk) countries.filterNot(_.value == UK_COUNTRY_CODE) else countries
+          val filteredCountries = if (includeUk) countries else countries.filterNot(_.value == UK_COUNTRY_CODE)
           filteredCountries.sortBy(_.label.toLowerCase)
         }
       }
