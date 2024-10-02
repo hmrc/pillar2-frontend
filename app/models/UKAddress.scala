@@ -44,11 +44,11 @@ case class UKAddress(
   countryCode:  String
 ) {
 
-  val field1   = HtmlFormat.escape(addressLine1).toString + "<br>"
-  val field2   = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
-  val field3   = HtmlFormat.escape(addressLine3).toString + "<br>"
-  val field4   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
-  val postcode = HtmlFormat.escape(postalCode).toString + "<br>"
+  val field1: String   = HtmlFormat.escape(addressLine1).toString + "<br>"
+  val field2: String   = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
+  val field3: String   = HtmlFormat.escape(addressLine3).toString + "<br>"
+  val field4: String   = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
+  val postcode: String = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 }
 object UKAddress {

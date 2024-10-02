@@ -32,6 +32,7 @@ import views.html.rfm.RfmPrimaryContactNameView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.data.Form
 
 class RfmPrimaryContactNameController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
@@ -47,7 +48,7 @@ class RfmPrimaryContactNameController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
     implicit request =>

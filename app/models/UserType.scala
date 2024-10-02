@@ -16,7 +16,7 @@
 
 package models
 
-import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
 import play.api.mvc.JavascriptLiteral
 
 sealed trait UserType extends Product with Serializable

@@ -17,7 +17,7 @@
 package services
 
 import connectors._
-import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
+import models.repayments._
 import models.{UkOrAbroadBankAccount, UserAnswers}
 import org.apache.pekko.Done
 import pages._

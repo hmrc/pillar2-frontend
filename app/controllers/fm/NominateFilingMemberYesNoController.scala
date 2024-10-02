@@ -33,6 +33,7 @@ import views.html.fmview.NominateFilingMemberYesNoView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.data.Form
 
 class NominateFilingMemberYesNoController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -47,7 +48,7 @@ class NominateFilingMemberYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.upeStatus == RowStatus.Completed) {

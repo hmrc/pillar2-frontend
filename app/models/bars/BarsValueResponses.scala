@@ -24,7 +24,7 @@ object AccountNumberIsWellFormatted {
   case object No extends AccountNumberIsWellFormatted
   case object Indeterminate extends AccountNumberIsWellFormatted
 
-  val values = List(Yes, No, Indeterminate)
+  val values: List[AccountNumberIsWellFormatted] = List(Yes, No, Indeterminate)
 
   implicit val reads: Reads[AccountNumberIsWellFormatted] =
     JsPath
@@ -48,7 +48,7 @@ object SortCodeIsPresentOnEISCD {
   case object No extends SortCodeIsPresentOnEISCD
   case object Error extends SortCodeIsPresentOnEISCD
 
-  val values = List(Yes, No, Error)
+  val values: List[SortCodeIsPresentOnEISCD] = List(Yes, No, Error)
 
   implicit val reads: Reads[SortCodeIsPresentOnEISCD] =
     JsPath
@@ -72,7 +72,7 @@ object NonStandardAccountDetailsRequiredForBacs {
   case object No extends NonStandardAccountDetailsRequiredForBacs
   case object Inapplicable extends NonStandardAccountDetailsRequiredForBacs
 
-  val values = List(Yes, No, Inapplicable)
+  val values: List[NonStandardAccountDetailsRequiredForBacs] = List(Yes, No, Inapplicable)
 
   implicit val reads: Reads[NonStandardAccountDetailsRequiredForBacs] =
     JsPath
@@ -99,7 +99,7 @@ object AccountExists {
   case object Indeterminate extends AccountExists
   case object Error extends AccountExists
 
-  val values = List(Yes, No, Inapplicable, Indeterminate, Error)
+  val values: List[AccountExists] = List(Yes, No, Inapplicable, Indeterminate, Error)
 
   implicit val reads: Reads[AccountExists] =
     JsPath
@@ -131,7 +131,7 @@ object NameMatches {
   case object Indeterminate extends NameMatches
   case object Error extends NameMatches
 
-  val values = List(Yes, No, Inapplicable, Indeterminate, Error)
+  val values: List[NameMatches] = List(Yes, No, Inapplicable, Indeterminate, Error)
 
   implicit val reads: Reads[NameMatches] =
     JsPath
@@ -162,7 +162,7 @@ object SortCodeSupportsDirectDebit {
   case object No extends SortCodeSupportsDirectDebit
   case object Error extends SortCodeSupportsDirectDebit
 
-  val values = List(Yes, No, Error)
+  val values: List[SortCodeSupportsDirectDebit] = List(Yes, No, Error)
 
   implicit val reads: Reads[SortCodeSupportsDirectDebit] =
     JsPath
@@ -187,7 +187,7 @@ object SortCodeSupportsDirectCredit {
   case object No extends SortCodeSupportsDirectCredit
   case object Error extends SortCodeSupportsDirectCredit
 
-  val values = List(Yes, No, Error)
+  val values: List[SortCodeSupportsDirectCredit] = List(Yes, No, Error)
 
   implicit val reads: Reads[SortCodeSupportsDirectCredit] =
     JsPath

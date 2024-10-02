@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
+import controllers.actions._
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator

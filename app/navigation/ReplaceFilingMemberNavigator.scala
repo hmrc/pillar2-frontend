@@ -18,9 +18,9 @@ package navigation
 
 import controllers.routes
 import models._
+import models.rfm.CorporatePosition
 import pages._
 import play.api.mvc.Call
-import models.rfm.CorporatePosition
 
 import javax.inject.{Inject, Singleton}
 

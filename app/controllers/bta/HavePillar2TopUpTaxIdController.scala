@@ -31,6 +31,7 @@ import views.html.bta.HavePillar2TopUpTaxIdView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import play.api.data.Form
 
 class HavePillar2TopUpTaxIdController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
@@ -44,7 +45,7 @@ class HavePillar2TopUpTaxIdController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val btaAccessEnabled = appConfig.btaAccessEnabled
