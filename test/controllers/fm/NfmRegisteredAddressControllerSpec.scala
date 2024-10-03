@@ -14,15 +14,15 @@
  * limitations under the License.
  */
 
-package controllers.rfm
+package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmRegisteredAddressFormProvider
+import forms.NfmRegisteredAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
+import pages.{FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -32,13 +32,13 @@ import play.api.test.Helpers._
 
 import scala.concurrent.Future
 
-class RfmRegisteredAddressControllerSpec extends SpecBase {
-  val formProvider = new RfmRegisteredAddressFormProvider()
+class NfmRegisteredAddressControllerSpec extends SpecBase {
+  val formProvider = new NfmRegisteredAddressFormProvider()
   val defaultUa: UserAnswers = emptyUserAnswers
-    .set(RfmUkBasedPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
-    .set(RfmNameRegistrationPage, "Name")
+    .set(FmNameRegistrationPage, "Name")
     .success
     .value
 
@@ -49,7 +49,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
     .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
     .build()
 
-  def getRequest = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+  def getRequest = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val address = Map(
       "addressLine1" -> "27 House",
@@ -60,15 +60,15 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       "countryCode"  -> "GB"
     ) ++ alterations
 
-    FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+    FakeRequest(POST, controllers.fm.routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
       .withFormUrlEncodedBody(address.toSeq: _*)
   }
 
-  "RFMRegisteredAddressController" when {
+  "NfmRegisteredAddressController" when {
 
     ".onPageLoad" should {
 
-      "return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
+      "return OK and the correct view for a GET if Nfm access is enabled and no previous data is found" in {
 
         running(application) {
           val result = route(application, getRequest).value
@@ -78,9 +78,9 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "return OK and the correct view for a GET if RFM access is enabled and page has previously been answered" in {
+      "return OK and the correct view for a GET if Nfm access is enabled and page has previously been answered" in {
         val ua = defaultUa
-          .set(RfmRegisteredAddressPage, nonUkAddress)
+          .set(FmRegisteredAddressPage, nonUkAddress)
           .success
           .value
 
@@ -93,9 +93,9 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "include/not include UK in country list based on user answer in RfmUkBasedPage" should {
+      "include/not include UK in country list based on user answer in NfmUkBasedPage" should {
 
-        "include UK if RfmUkBasedPage is true" in {
+        "include UK if NfmUkBasedPage is true" in {
 
           running(application) {
             val result = route(application, getRequest).value
@@ -105,13 +105,13 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
           }
         }
 
-        "not include UK if RfmUkBasedPage is false" in {
+        "not include UK if NfmUkBasedPage is false" in {
 
           val ua = emptyUserAnswers
-            .set(RfmUkBasedPage, false)
+            .set(FmRegisteredInUKPage, false)
             .success
             .value
-            .set(RfmNameRegistrationPage, "Name")
+            .set(FmNameRegistrationPage, "Name")
             .success
             .value
 
@@ -128,18 +128,18 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
     }
 
     ".onSubmit" should {
-      "redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
+      "redirect to next page with valid data onSubmit" in {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         running(applicationOverride) {
           val result = route(applicationOverride, postRequest()).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url
+          redirectLocation(result).value mustEqual controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url
         }
       }
 
       "in a form with errors, include/not include UK in country list based on previous answers" should {
-        "include UK if RfmUkBasedPage is true" in {
+        "include UK if NfmUkBasedPage is true" in {
 
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
@@ -150,13 +150,13 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
           }
         }
 
-        "not include UK if RfmUkBasedPage is false" in {
+        "not include UK if NfmUkBasedPage is false" in {
 
           val ua = emptyUserAnswers
-            .set(RfmUkBasedPage, false)
+            .set(FmRegisteredInUKPage, false)
             .success
             .value
-            .set(RfmNameRegistrationPage, "Name")
+            .set(FmNameRegistrationPage, "Name")
             .success
             .value
 
@@ -173,7 +173,6 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       }
 
       "display error page and status should be BAD_REQUEST if invalid data is submitted" should {
-
         "UK address" in {
 
           running(application) {
@@ -190,11 +189,11 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             ).value
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) must include("The first line of the address must be 35 characters or less")
-            contentAsString(result) must include("The second line of the address must be 35 characters or less")
-            contentAsString(result) must include("The town or city must be 35 characters or less")
-            contentAsString(result) must include("The region must be 35 characters or less")
-            contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
+            contentAsString(result) must include("First line of the address must be 35 characters or less")
+            contentAsString(result) must include("Second line of the address must be 35 characters or less")
+            contentAsString(result) must include("Town or city must be 35 characters or less")
+            contentAsString(result) must include("Region must be 35 characters or less")
+            contentAsString(result) must include("Enter a full UK postcode")
           }
         }
 
@@ -214,11 +213,11 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             ).value
 
             status(result) mustEqual BAD_REQUEST
-            contentAsString(result) must include("The first line of the address must be 35 characters or less")
-            contentAsString(result) must include("The second line of the address must be 35 characters or less")
-            contentAsString(result) must include("The town or city must be 35 characters or less")
-            contentAsString(result) must include("The region must be 35 characters or less")
-            contentAsString(result) must include("The postcode must be 10 characters or less")
+            contentAsString(result) must include("First line of the address must be 35 characters or less")
+            contentAsString(result) must include("Second line of the address must be 35 characters or less")
+            contentAsString(result) must include("Town or city must be 35 characters or less")
+            contentAsString(result) must include("Region must be 35 characters or less")
+            contentAsString(result) must include("Postcode must be 10 characters or less")
           }
         }
       }
