@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
+import pages.{RfmEntityTypePage, RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -60,9 +60,15 @@ class RfmRegisteredAddressController @Inject() (
             case Some(value) => form.fill(value)
             case None        => form
           }
-          val isUkBased = request.userAnswers.get(RfmUkBasedPage).fold(false)(identity)
 
-          Ok(view(preparedForm, mode, name, countryOptions.options(isUkBased)))
+          Ok(
+            view(
+              preparedForm,
+              mode,
+              name,
+              countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
+            )
+          )
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }

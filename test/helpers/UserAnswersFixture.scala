@@ -278,9 +278,6 @@ trait UserAnswersFixture extends TryValues {
     .set(UpeRegisteredInUKPage, true)
     .success
     .value
-    .set(GrsUpeStatusPage, RowStatus.Completed)
-    .success
-    .value
 
   val upeNoGrsResponseType: UserAnswers = emptyUserAnswers
     .set(UpeEntityTypePage, EntityType.UkLimitedCompany)

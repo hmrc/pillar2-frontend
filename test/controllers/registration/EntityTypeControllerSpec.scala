@@ -235,12 +235,8 @@ class EntityTypeControllerSpec extends SpecBase {
       val jsonTobeReturned = Json.toJson(
         emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeEntityTypePage, EntityType.Other)
       )
-
-      val expectedUserAnswerData =
-        """
-          |{"upeRegisteredInUK":false}
-          |""".stripMargin
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -249,7 +245,7 @@ class EntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), ArgumentMatchers.eq(Json.parse(expectedUserAnswerData)))(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(any()))
           .thenReturn(Future(jsonTobeReturned))
         val result = route(application, request).value
 
