@@ -76,7 +76,17 @@ class UpeRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    name,
+                    countryOptions.conditionalUkInclusion(request.userAnswers.get(UpeRegisteredInUKPage), request.userAnswers.get(UpeEntityTypePage))
+                  )
+                )
+              ),
             value =>
               for {
                 updatedAnswers <-

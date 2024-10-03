@@ -73,7 +73,17 @@ class NfmRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    name,
+                    countryOptions.conditionalUkInclusion(request.userAnswers.get(FmRegisteredInUKPage), request.userAnswers.get(FmEntityTypePage))
+                  )
+                )
+              ),
             value =>
               for {
                 updatedAnswers <-

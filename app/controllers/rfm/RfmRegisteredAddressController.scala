@@ -80,7 +80,17 @@ class RfmRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    name,
+                    countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
+                  )
+                )
+              ),
             value =>
               for {
                 updatedAnswers <-
