@@ -416,9 +416,12 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
 
       "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" in {
-        val ua = rfmNoID
+        // Set up the UserAnswers with required data for the test
+        val ua = rfmNoID.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailException)
+
+        // Set up the application with necessary mock overrides
         val application = applicationBuilder(userAnswers = Some(ua))
           .overrides(
             bind[SubscriptionService].toInstance(mockSubscriptionService),
@@ -426,20 +429,28 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
+
+        // Ensure mock expectations
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(
           mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
             any()
           )
-        ).thenReturn(Future.failed(new Exception("no rfm uk based")))
+        )
+          .thenReturn(Future.failed(new Exception("no rfm uk based")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
+          // Execute the request
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
+
+          // Verify the result status and redirection
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+
+          // Verify that sessionRepository.set was invoked with the correct arguments
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }

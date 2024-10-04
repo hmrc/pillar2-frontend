@@ -25,7 +25,10 @@ import scala.util.control.Exception.nonFatalCatch
 import scala.util.{Failure, Success, Try}
 
 trait Formatters extends Transforms with Constraints {
+
   private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+
+  // String Formatter
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -39,6 +42,7 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  // Pillar2 ID Formatter
   private[mappings] def pillar2IdFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -52,6 +56,7 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  // Sort Code Formatter
   private[mappings] def sortCodeFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -65,6 +70,7 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  // Bank Account Formatter
   private[mappings] def bankAccountFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -78,6 +84,7 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  // Boolean Formatter
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
     new Formatter[Boolean] {
 
@@ -109,19 +116,28 @@ trait Formatters extends Transforms with Constraints {
       val maxLengthNonUKPostcode = 10
 
       (postCode, country, requiredKey) match {
-        case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp)       => Right(Some(postCodeValidTransform(zip)))
-        case (Some(_), Some("GB"), _)                                        => Left(Seq(FormError(key, invalidKey)))
-        case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode => Right(Some(zip))
-        case (Some(_), Some(_), _)                                           => Left(Seq(FormError(key, nonUkLengthKey)))
-        case (Some(zip), None, _)                                            => Right(Some(zip))
-        case (None, Some("GB"), Some(rk))                                    => Left(Seq(FormError(key, rk)))
-        case _                                                               => Right(None)
+        case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp) =>
+          Right(Some(postCodeValidTransform(zip))) // Ensure the space is added for GB postcodes
+        case (Some(_), Some("GB"), _) =>
+          Left(Seq(FormError(key, invalidKey)))
+        case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode =>
+          Right(Some(zip))
+        case (Some(_), Some(_), _) =>
+          Left(Seq(FormError(key, nonUkLengthKey)))
+        case (Some(zip), None, _) =>
+          Right(Some(zip))
+        case (None, Some("GB"), Some(rk)) =>
+          Left(Seq(FormError(key, rk)))
+        case _ =>
+          Right(None)
       }
     }
+
     override def unbind(key: String, value: Option[String]): Map[String, String] =
       Map(key -> value.getOrElse(""))
   }
 
+  // Currency Formatter
   private[mappings] def currencyFormatter(
     requiredKey:     String,
     invalidCurrency: String,
@@ -152,6 +168,7 @@ trait Formatters extends Transforms with Constraints {
         baseFormatter.unbind(key, value.toString)
     }
 
+  // Mandatory Postcode Formatter
   private[mappings] def mandatoryPostcodeFormatter(
     requiredKeyGB:    String,
     requiredKeyOther: String,
@@ -180,56 +197,56 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  // Integer Formatter
   private[mappings] def intFormatter(
     requiredKey:    String,
     wholeNumberKey: String,
     nonNumericKey:  String,
     invalidLength:  String,
     args:           Seq[String] = Seq.empty
-  ): Formatter[Int] =
-    new Formatter[Int] {
-      val decimalRegexp         = """^-?(\d*\.\d*)$"""
-      private val baseFormatter = stringFormatter(requiredKey, args)
+  ): Formatter[Int] = new Formatter[Int] {
+    val decimalRegexp         = """^-?(\d*\.\d*)$"""
+    private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
-        baseFormatter
-          .bind(key, data)
-          .map(_.replace(" ", ""))
-          .flatMap {
-            case s if s.matches(decimalRegexp) =>
-              Left(Seq(FormError(key, wholeNumberKey, args)))
-            case s =>
-              Try(s.toInt) match {
-                case Failure(_) => Left(Seq(FormError(key, nonNumericKey, args)))
-                case Success(number)
-                    if ((number > 31 || number < 1) && key.contains("day"))
-                      || ((number > 12 || number < 1) && key.contains("month"))
-                      || (number.toString.length > 4 && key.contains("year")) =>
-                  Left(Seq(FormError(key, invalidLength, args)))
-                case Success(number) =>
-                  Right(number)
-              }
-          }
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] =
+      baseFormatter
+        .bind(key, data)
+        .map(_.replace(" ", ""))
+        .flatMap {
+          case s if s.matches(decimalRegexp) =>
+            Left(Seq(FormError(key, wholeNumberKey, args)))
+          case s =>
+            Try(s.toInt) match {
+              case Failure(_) => Left(Seq(FormError(key, nonNumericKey, args)))
+              case Success(number)
+                  if ((number > 31 || number < 1) && key.contains("day"))
+                    || ((number > 12 || number < 1) && key.contains("month"))
+                    || (number.toString.length > 4 && key.contains("year")) =>
+                Left(Seq(FormError(key, invalidLength, args)))
+              case Success(number) =>
+                Right(number)
+            }
+        }
 
-      override def unbind(key: String, value: Int): Map[String, String] =
-        baseFormatter.unbind(key, value.toString)
-    }
+    override def unbind(key: String, value: Int): Map[String, String] =
+      baseFormatter.unbind(key, value.toString)
+  }
 
   private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
     ev:                                                     Enumerable[A]
-  ): Formatter[A] =
-    new Formatter[A] {
+  ): Formatter[A] = new Formatter[A] {
 
-      private val baseFormatter = stringFormatter(requiredKey, args)
+    private val baseFormatter = stringFormatter(requiredKey, args)
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
-        baseFormatter.bind(key, data).right.flatMap { str =>
-          ev.withName(str)
-            .map(Right.apply)
-            .getOrElse(Left(Seq(FormError(key, invalidKey, args))))
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
+      baseFormatter.bind(key, data).flatMap { str =>
+        ev.withName(str) match {
+          case Some(value) => Right(value)
+          case None        => Left(Seq(FormError(key, invalidKey, args)))
         }
+      }
 
-      override def unbind(key: String, value: A): Map[String, String] =
-        baseFormatter.unbind(key, value.toString)
-    }
+    override def unbind(key: String, value: A): Map[String, String] =
+      baseFormatter.unbind(key, value.toString)
+  }
 }

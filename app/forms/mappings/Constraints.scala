@@ -28,6 +28,7 @@ trait Constraints {
   private val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
+
   protected def country(countryOptions: CountryOptions, errorKey: String)(implicit messages: Messages): Constraint[String] =
     Constraint { input =>
       countryOptions.options
@@ -149,4 +150,6 @@ trait Constraints {
       }
     }
 
+  // Retaining only the isGBCountry method
+  private def isGBCountry(countryCode: String): Boolean = countryCode == "GB"
 }

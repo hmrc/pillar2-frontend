@@ -14,50 +14,98 @@
  * limitations under the License.
  */
 
+//
+//package models
+//
+//import play.api.libs.json._
+//import play.api.mvc.JavascriptLiteral
+//
+//sealed trait UserType extends Product with Serializable
+//
+//object UserType {
+//  case object Upe extends UserType {
+//    val value: String = this.toString
+//  }
+//  case object Fm extends UserType {
+//    val value: String = this.toString
+//  }
+//
+//  case object Rfm extends UserType {
+//    val value: String = this.toString
+//  }
+//
+//  implicit val format: Format[UserType] = new Format[UserType] {
+//    override def reads(json: JsValue): JsResult[UserType] =
+//      json.as[String] match {
+//        case "Upe" => JsSuccess[UserType](Upe)
+//        case "Fm"  => JsSuccess[UserType](Fm)
+//        case "Rfm" => JsSuccess[UserType](Rfm)
+//
+//        case other => JsError(s"Invalid Source System: $other")
+//      }
+//
+//    override def writes(sourceSystem: UserType): JsValue =
+//      sourceSystem match {
+//        case Upe => JsString("Upe")
+//        case Fm  => JsString("Fm")
+//        case Rfm => JsString("Rfm")
+//      }
+//  }
+//
+//  implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
+//    override def to(value: UserType): String =
+//      value match {
+//        case Upe => "Upe"
+//        case Fm  => "Fm"
+//        case Fm  => "Rfm"
+//      }
+//  }
+//
+//}
 package models
 
 import play.api.libs.json._
 import play.api.mvc.JavascriptLiteral
 
-sealed trait UserType extends Product with Serializable
+sealed trait UserType {
+  def value: String // Reintroducing the value field for backward compatibility
+}
 
 object UserType {
   case object Upe extends UserType {
-    val value: String = this.toString
+    val value: String = "Upe" // Ensure this returns the expected string value
   }
+
   case object Fm extends UserType {
-    val value: String = this.toString
+    val value: String = "Fm"
   }
 
   case object Rfm extends UserType {
-    val value: String = this.toString
+    val value: String = "Rfm"
   }
 
+  // JSON Format for serializing/deserializing UserType
   implicit val format: Format[UserType] = new Format[UserType] {
-    override def reads(json: JsValue): JsResult[UserType] =
-      json.as[String] match {
-        case "Upe" => JsSuccess[UserType](Upe)
-        case "Fm"  => JsSuccess[UserType](Fm)
-        case "Rfm" => JsSuccess[UserType](Rfm)
+    override def reads(json: JsValue): JsResult[UserType] = json.as[String] match {
+      case "Upe" => JsSuccess(Upe)
+      case "Fm"  => JsSuccess(Fm)
+      case "Rfm" => JsSuccess(Rfm)
+      case other => JsError(s"Invalid Source System: $other")
+    }
 
-        case other => JsError(s"Invalid Source System: $other")
-      }
-
-    override def writes(sourceSystem: UserType): JsValue =
-      sourceSystem match {
-        case Upe => JsString("Upe")
-        case Fm  => JsString("Fm")
-        case Rfm => JsString("Rfm")
-      }
+    override def writes(userType: UserType): JsValue = userType match {
+      case Upe => JsString("Upe")
+      case Fm  => JsString("Fm")
+      case Rfm => JsString("Rfm")
+    }
   }
 
+  // JavascriptLiteral for UserType
   implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
-    override def to(value: UserType): String =
-      value match {
-        case Upe => "Upe"
-        case Fm  => "Fm"
-        case Fm  => "Rfm"
-      }
+    override def to(value: UserType): String = value match {
+      case Upe => "Upe"
+      case Fm  => "Fm"
+      case Rfm => "Rfm"
+    }
   }
-
 }

@@ -212,4 +212,87 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       }
     }
   }
+
+  "postcode" - {
+
+    "must return Valid for a valid UK postcode" in {
+      val result = postCode("error.postcode")("SW1A 1AA")
+      result mustEqual Valid
+    }
+
+    "must return Invalid for an invalid UK postcode" in {
+      val result = postCode("error.postcode")("INVALID")
+      result mustEqual Invalid("error.postcode")
+    }
+
+    "must return Invalid for a postcode that is too short" in {
+      val result = postCode("error.postcode")("A1A")
+      result mustEqual Invalid("error.postcode")
+    }
+  }
+
+  "inRange" - {
+
+    "must return Valid for an input within the range" in {
+      val result = inRange(1, 10, "error.range").apply(5)
+      result mustEqual Valid
+    }
+
+    "must return Valid for an input equal to the minimum" in {
+      val result = inRange(1, 10, "error.range").apply(1)
+      result mustEqual Valid
+    }
+
+    "must return Valid for an input equal to the maximum" in {
+      val result = inRange(1, 10, "error.range").apply(10)
+      result mustEqual Valid
+    }
+
+    "must return Invalid for an input below the range" in {
+      val result = inRange(1, 10, "error.range").apply(0)
+      result mustEqual Invalid("error.range", 1, 10)
+    }
+
+    "must return Invalid for an input above the range" in {
+      val result = inRange(1, 10, "error.range").apply(11)
+      result mustEqual Invalid("error.range", 1, 10)
+    }
+  }
+
+  "nonEmptySet" - {
+
+    "must return Valid for a non-empty set" in {
+      val result = nonEmptySet("error.emptySet")(Set(1))
+      result mustEqual Valid
+    }
+
+    "must return Invalid for an empty set" in {
+      val result = nonEmptySet("error.emptySet")(Set.empty)
+      result mustEqual Invalid("error.emptySet")
+    }
+  }
+
+  "greaterThanZero" - {
+
+    "must return Valid for a positive number" in {
+      val result = greaterThanZero("error.zero")("10")
+      result mustEqual Valid
+    }
+
+    "must return Invalid for zero" in {
+      val result = greaterThanZero("error.zero")("0")
+      result mustEqual Invalid("error.zero")
+    }
+
+    "must return Invalid for a negative number" in {
+      val result = greaterThanZero("error.zero")("-5")
+      result mustEqual Invalid("error.zero")
+    }
+
+    "must return Invalid for a non-numeric input" in {
+      val result = greaterThanZero("error.zero")("invalid")
+      result mustEqual Invalid("error.zero")
+    }
+  }
+
 }
