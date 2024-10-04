@@ -41,7 +41,11 @@
         <!-- Header -->
         <fo:static-content flow-name="xsl-region-before">
             <fo:block border-color="#1d70b8" border-after-style="solid" border-after-width="5pt">
-                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")</fo:block>
+                <fo:external-graphic content-width="148px" content-height="20px"
+                                     src="url(conf/resources/gov-uk-logo.png)" padding-right="1cm"
+                                     fox:alt-text="GOV.UK"/>
+                <fo:block role="H1" font-size="16pt" font-weight="bold" margin-bottom="1mm">@messages("service.name")
+                </fo:block>
             </fo:block>
         </fo:static-content>
 
