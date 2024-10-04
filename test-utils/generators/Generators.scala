@@ -16,7 +16,9 @@
 
 package generators
 
-import models.{FinancialHistory, TransactionHistory}
+import models.grs.{BusinessVerificationResult, GrsRegistrationResult, GrsRegistrationResultFailure, RegistrationStatus, VerificationStatus}
+import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, RegistrationInfo, WithoutIdRegData}
+import models.{FinancialHistory, TransactionHistory, UKAddress}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
@@ -173,6 +175,179 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
         plrReference     <- nonEmptyString
         financialHistory <- Gen.listOf(arbitrary[FinancialHistory])
       } yield TransactionHistory(plrReference, financialHistory)
+    }
+
+  implicit lazy val arbitraryRegistration: Arbitrary[Registration] =
+    Arbitrary {
+      for {
+        isUPERegisteredInUK <- Gen.oneOf(true, false)
+        orgType             <- Gen.option(arbitraryEntityType.arbitrary)
+        withIdRegData       <- Gen.option(arbitraryGrsResponse.arbitrary)
+        withoutIdRegData    <- Gen.option(arbitraryWithoutIdRegData.arbitrary)
+        registrationInfo    <- Gen.option(arbitraryRegistrationInfo.arbitrary)
+      } yield Registration(
+        isUPERegisteredInUK,
+        orgType,
+        withIdRegData,
+        withoutIdRegData,
+        registrationInfo
+      )
+    }
+
+  implicit lazy val arbitraryRegistrationInfo: Arbitrary[RegistrationInfo] =
+    Arbitrary {
+      for {
+        crn              <- Gen.alphaNumStr
+        utr              <- Gen.alphaNumStr
+        safeId           <- Gen.alphaNumStr
+        registrationDate <- Gen.option(datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(2024, 1, 1)))
+        filingMember     <- Gen.option(Gen.oneOf(true, false))
+      } yield RegistrationInfo(
+        crn,
+        utr,
+        safeId,
+        registrationDate,
+        filingMember
+      )
+    }
+
+  implicit lazy val arbitraryWithoutIdRegData: Arbitrary[WithoutIdRegData] =
+    Arbitrary {
+      for {
+        upeNameRegistration   <- Gen.alphaStr
+        upeRegisteredAddress  <- arbitraryUkAddress.arbitrary
+        upeContactName        <- Gen.alphaStr
+        emailAddress          <- Gen.alphaStr
+        contactUpeByTelephone <- Gen.oneOf(true, false)
+        telephoneNumber       <- Gen.option(Gen.alphaNumStr)
+      } yield WithoutIdRegData(
+        upeNameRegistration,
+        upeRegisteredAddress,
+        upeContactName,
+        emailAddress,
+        contactUpeByTelephone,
+        telephoneNumber
+      )
+    }
+
+  implicit lazy val arbitraryGrsResponse: Arbitrary[GrsResponse] =
+    Arbitrary {
+      for {
+        incorporatedEntityRegistrationData <- Gen.option(arbitraryIncorporatedEntityRegistrationData.arbitrary)
+        partnershipEntityRegistrationData  <- Gen.option(arbitraryPartnershipEntityRegistrationData.arbitrary)
+      } yield GrsResponse(incorporatedEntityRegistrationData, partnershipEntityRegistrationData)
+    }
+
+  implicit lazy val arbitraryIncorporatedEntityRegistrationData: Arbitrary[IncorporatedEntityRegistrationData] =
+    Arbitrary {
+      for {
+        companyProfile       <- arbitraryCompanyProfile.arbitrary
+        ctutr                <- Gen.alphaNumStr
+        identifiersMatch     <- Gen.oneOf(true, false)
+        businessVerification <- Gen.option(arbitraryBusinessVerificationResult.arbitrary)
+        registration         <- arbitraryGrsRegistrationResult.arbitrary
+      } yield IncorporatedEntityRegistrationData(
+        companyProfile,
+        ctutr,
+        identifiersMatch,
+        businessVerification,
+        registration
+      )
+    }
+
+  implicit lazy val arbitraryPartnershipEntityRegistrationData: Arbitrary[PartnershipEntityRegistrationData] =
+    Arbitrary {
+      for {
+        companyProfile       <- Gen.option(arbitraryCompanyProfile.arbitrary)
+        sautr                <- Gen.option(Gen.alphaNumStr)
+        postcode             <- Gen.option(Gen.alphaStr)
+        identifiersMatch     <- Gen.oneOf(true, false)
+        businessVerification <- Gen.option(arbitraryBusinessVerificationResult.arbitrary)
+        registration         <- arbitraryGrsRegistrationResult.arbitrary
+      } yield PartnershipEntityRegistrationData(
+        companyProfile,
+        sautr,
+        postcode,
+        identifiersMatch,
+        businessVerification,
+        registration
+      )
+    }
+
+  implicit lazy val arbitraryCompanyProfile: Arbitrary[CompanyProfile] =
+    Arbitrary {
+      for {
+        companyName         <- Gen.alphaStr
+        companyNumber       <- Gen.alphaNumStr
+        dateOfIncorporation <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.now)
+        address             <- arbitraryIncorporatedEntityAddress.arbitrary
+      } yield CompanyProfile(companyName, companyNumber, dateOfIncorporation, address)
+    }
+
+  implicit lazy val arbitraryIncorporatedEntityAddress: Arbitrary[IncorporatedEntityAddress] =
+    Arbitrary {
+      for {
+        addressLine1 <- Gen.alphaStr
+        addressLine2 <- Gen.option(Gen.alphaStr)
+        country      <- Gen.alphaStr
+        locality     <- Gen.alphaStr
+        poBox        <- Gen.option(Gen.alphaStr)
+        postalCode   <- Gen.alphaStr
+        premises     <- Gen.option(Gen.alphaStr)
+        region       <- Gen.option(Gen.alphaStr)
+      } yield IncorporatedEntityAddress(
+        Some(addressLine1),
+        addressLine2,
+        Some(country),
+        Some(locality),
+        poBox,
+        Some(postalCode),
+        premises,
+        region
+      )
+    }
+
+  implicit lazy val arbitraryGrsRegistrationResult: Arbitrary[GrsRegistrationResult] =
+    Arbitrary {
+      for {
+        registrationStatus <-
+          Gen.oneOf(RegistrationStatus.Registered, RegistrationStatus.RegistrationFailed, RegistrationStatus.RegistrationNotCalled)
+        registeredBusinessPartnerId <- Gen.option(Gen.alphaNumStr)
+        failures                    <- Gen.option(Gen.listOf(arbitraryGrsRegistrationResultFailure.arbitrary))
+      } yield GrsRegistrationResult(registrationStatus, registeredBusinessPartnerId, failures)
+    }
+
+  implicit lazy val arbitraryGrsRegistrationResultFailure: Arbitrary[GrsRegistrationResultFailure] =
+    Arbitrary {
+      for {
+        code   <- Gen.alphaStr
+        reason <- Gen.alphaStr
+      } yield GrsRegistrationResultFailure(code, reason)
+    }
+
+  implicit lazy val arbitraryBusinessVerificationResult: Arbitrary[BusinessVerificationResult] =
+    Arbitrary {
+      for {
+        verificationStatus <- Gen.oneOf(
+                                VerificationStatus.Pass,
+                                VerificationStatus.Fail,
+                                VerificationStatus.Unchallenged,
+                                VerificationStatus.CtEnrolled,
+                                VerificationStatus.SaEnrolled
+                              )
+      } yield BusinessVerificationResult(verificationStatus)
+    }
+
+  implicit lazy val arbitraryUkAddress: Arbitrary[UKAddress] =
+    Arbitrary {
+      for {
+        addressLine1 <- Gen.alphaStr
+        addressLine2 <- Gen.option(Gen.alphaStr)
+        addressLine3 <- Gen.alphaStr
+        addressLine4 <- Gen.option(Gen.alphaStr)
+        postalCode   <- Gen.alphaStr
+        countryCode  <- Gen.alphaStr
+      } yield UKAddress(addressLine1, addressLine2, addressLine3, addressLine4, postalCode, countryCode)
     }
 
 }
