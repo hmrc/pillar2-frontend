@@ -16,7 +16,18 @@
 
 package models.eacd
 
+// Case class for Pillar2Enrolment
+case class Pillar2Enrolment(serviceName: String = "HMRC-PILLAR2-ORG", identifierKey: String = "pillar2Reference")
+
+// Companion object to preserve the same static behavior
 object Pillar2Enrolment {
   val ServiceName:   String = "HMRC-PILLAR2-ORG"
   val IdentifierKey: String = "pillar2Reference"
+
+  // Function to retrieve default values (if needed in future)
+  def defaultEnrolment: Pillar2Enrolment = Pillar2Enrolment()
+
+  // Providing backward compatibility for the static-like calls
+  def getServiceName:   String = ServiceName
+  def getIdentifierKey: String = IdentifierKey
 }

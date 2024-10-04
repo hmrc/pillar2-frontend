@@ -16,12 +16,15 @@
 
 package models.grs
 
-case class GrsErrorCodes(partyTypeMismatch: String = "PARTY_TYPE_MISMATCH")
+import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 
-object GrsErrorCodes {
-  val PartyTypeMismatch: String = "PARTY_TYPE_MISMATCH"
+class GrsErrorCodesSpec extends AnyWordSpec with Matchers {
 
-  // Default instance of GrsErrorCodes to simulate previous object behavior
-  val default: GrsErrorCodes = GrsErrorCodes()
+  "GrsErrorCodes" should {
 
+    "return the correct value for PartyTypeMismatch" in {
+      GrsErrorCodes.PartyTypeMismatch mustBe "PARTY_TYPE_MISMATCH"
+    }
+  }
 }

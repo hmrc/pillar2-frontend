@@ -28,7 +28,6 @@ trait Formatters extends Transforms with Constraints {
 
   private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
-  // String Formatter
   private[mappings] def stringFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -42,7 +41,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
-  // Pillar2 ID Formatter
   private[mappings] def pillar2IdFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -56,7 +54,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
-  // Sort Code Formatter
   private[mappings] def sortCodeFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -70,7 +67,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
-  // Bank Account Formatter
   private[mappings] def bankAccountFormatter(errorKey: String, args: Seq[String] = Seq.empty): Formatter[String] = new Formatter[String] {
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] =
@@ -84,7 +80,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
-  // Boolean Formatter
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
     new Formatter[Boolean] {
 
@@ -137,7 +132,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value.getOrElse(""))
   }
 
-  // Currency Formatter
   private[mappings] def currencyFormatter(
     requiredKey:     String,
     invalidCurrency: String,
@@ -168,7 +162,6 @@ trait Formatters extends Transforms with Constraints {
         baseFormatter.unbind(key, value.toString)
     }
 
-  // Mandatory Postcode Formatter
   private[mappings] def mandatoryPostcodeFormatter(
     requiredKeyGB:    String,
     requiredKeyOther: String,
@@ -197,7 +190,6 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
-  // Integer Formatter
   private[mappings] def intFormatter(
     requiredKey:    String,
     wholeNumberKey: String,
