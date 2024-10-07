@@ -32,27 +32,30 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
   "Duplicate SafeId View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You have provided duplicate filing member details")
+      view.getElementsByTag("title").text must include("There is a problem with your registration")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You have provided duplicate filing member details")
+      view.getElementsByTag("h1").text must include("There is a problem with your registration")
     }
 
     "have a paragraph body" in {
       view.getElementsByClass("govuk-body").first().text must include(
-        "The details you provided for the nominated filing member are the same as those for the ultimate parent entity."
+        "You indicated that the ultimate parent entity has nominated a different company within your group to act as the filing member."
       )
-      view.getElementsByClass("govuk-body").get(1).text must include("To complete your registration you must either:")
+      view.getElementsByClass("govuk-body").get(1).text must include(
+        "However, the details you provided for the nominated filing member are the same as those for the ultimate parent entity."
+      )
+      view.getElementsByClass("govuk-body").get(2).text must include("Before submitting your registration, you must either:")
       view.getElementsByTag("li").get(0).text must include(
-        "provide the details for the entity that has been nominated to act as your nominated filing member"
+        "provide the details of the company that will act as your nominated filing member"
       )
       view.getElementsByTag("li").get(1).text must include("keep your ultimate parent entity as the default filing member")
     }
 
     "has legend" in {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
-        "Has a different entity in your group been nominated to act as your filing member?"
+        "Has a different company in your group been nominated to act as your filing member?"
       )
     }
 
@@ -65,4 +68,31 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
+
+  "Duplicate SafeId View when binding with missing values" should {
+
+    val view: Document =
+      Jsoup.parse(
+        page(formProvider().bind(Map("nominateFilingMember" -> "")))(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+    "have an error summary" in {
+      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        "Select yes if a different company in your group has been nominated to act as your filing member"
+      )
+    }
+
+    "have an input error" in {
+      view.getElementsByClass("govuk-error-message").text must include(
+        "Error: Select yes if a different company in your group has been nominated to act as your filing member"
+      )
+    }
+
+  }
+
 }

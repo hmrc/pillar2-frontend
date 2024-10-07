@@ -24,6 +24,7 @@ import controllers.actions._
 import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
+import models.subscription._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging
@@ -33,6 +34,7 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.countryOptions.CountryOptions
 import utils.{Pillar2Reference, ViewHelpers}
 import views.xml.pdf._
 
@@ -50,9 +52,11 @@ class PrintPdfController @Inject() (
   rfmConfirmationPdfView:                          RfmConfirmationPdf,
   repaymentAnswersPdfView:                         RepaymentAnswersPdf,
   repaymentConfirmationPdfView:                    RepaymentConfirmationPdf,
+  registrationAnswersPdfView:                      RegistrationAnswersPdf,
   registrationConfirmationPdfView:                 ConfirmationPdf,
   fopService:                                      FopService,
   sessionRepository:                               SessionRepository,
+  countryOptions:                                  CountryOptions,
   val controllerComponents:                        MessagesControllerComponents
 )(implicit ec:                                     ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -65,7 +69,7 @@ class PrintPdfController @Inject() (
     RfmJourneyModel
       .from(request.userAnswers)
       .map { model =>
-        fopService.render(rfmAnswersPdfView.render(model, implicitly, implicitly).body).map { pdf =>
+        fopService.render(rfmAnswersPdfView.render(model, countryOptions, implicitly, implicitly).body).map { pdf =>
           Ok(pdf)
             .as("application/octet-stream")
             .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=replace-filing-member-answers.pdf")
@@ -115,6 +119,27 @@ class PrintPdfController @Inject() (
           .as("application/octet-stream")
           .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")
       }
+  }
+
+  def onDownloadRegistrationAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    upeJourney
+      .from(request.userAnswers)
+      .flatMap { upeModel =>
+        fmJourney.from(request.userAnswers).flatMap { fmModel =>
+          groupJourney.from(request.userAnswers).flatMap { groupModel =>
+            contactJourney.from(request.userAnswers).map { contactModel =>
+              fopService
+                .render(registrationAnswersPdfView.render(upeModel, fmModel, groupModel, contactModel, countryOptions, implicitly, implicitly).body)
+                .map { pdf =>
+                  Ok(pdf)
+                    .as("application/octet-stream")
+                    .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=registration-answers.pdf")
+                }
+            }
+          }
+        }
+      }
+      .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
   def printRegistrationConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
