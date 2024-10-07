@@ -149,7 +149,4 @@ trait Constraints {
         case _                           => Invalid(errorKey)
       }
     }
-
-  // Retaining only the isGBCountry method
-  private def isGBCountry(countryCode: String): Boolean = countryCode == "GB"
 }
