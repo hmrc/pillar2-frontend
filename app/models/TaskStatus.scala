@@ -23,7 +23,7 @@ object TaskStatus {
   case object NotStarted extends TaskStatus
   case object CannotStartYet extends TaskStatus
   case object Default extends TaskStatus {
-    val value = this.toString.toLowerCase
+    val value: String = this.toString.toLowerCase
   }
 
 }

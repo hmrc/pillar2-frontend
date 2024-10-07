@@ -18,6 +18,7 @@ package views.paymenthistory
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.html.paymenthistory.TransactionHistoryView
@@ -26,7 +27,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   private val date: String = "31 January 2024"
 
-  val table = Table(
+  val table: Table = Table(
     List(
       List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
       List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
@@ -42,7 +43,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  val pagination = Some(
+  val pagination: Some[Pagination] = Some(
     Pagination(
       Some(
         Vector(
@@ -60,9 +61,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  val page = inject[TransactionHistoryView]
+  val page: TransactionHistoryView = inject[TransactionHistoryView]
 
-  val view = Jsoup.parse(page(table, pagination, date)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(table, pagination, date)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 

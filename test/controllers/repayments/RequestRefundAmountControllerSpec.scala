@@ -18,7 +18,6 @@ package controllers.repayments
 
 import base.SpecBase
 import forms.RequestRefundAmountFormProvider
-
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

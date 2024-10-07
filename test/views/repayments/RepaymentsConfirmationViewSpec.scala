@@ -17,12 +17,12 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.repayments.RepaymentsConfirmationView
-import controllers.routes
 import play.twirl.api.HtmlFormat
 import utils.ViewHelpers
+import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 

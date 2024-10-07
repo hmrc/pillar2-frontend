@@ -27,28 +27,27 @@ object VerificationStatus {
   case object CtEnrolled extends VerificationStatus
   case object SaEnrolled extends VerificationStatus
 
-  implicit val format: Format[VerificationStatus] = new Format[VerificationStatus] {
-    override def reads(json: JsValue): JsResult[VerificationStatus] = json.validate[String] match {
-      case JsSuccess(value, _) =>
-        value match {
-          case "PASS"         => JsSuccess(Pass)
-          case "FAIL"         => JsSuccess(Fail)
-          case "UNCHALLENGED" => JsSuccess(Unchallenged)
-          case "CT_ENROLLED"  => JsSuccess(CtEnrolled)
-          case "SA_ENROLLED"  => JsSuccess(SaEnrolled)
-          case s              => JsError(s"$s is not a valid VerificationStatus")
-        }
-      case e: JsError => e
-    }
-
-    override def writes(o: VerificationStatus): JsValue = o match {
-      case Pass         => JsString("PASS")
-      case Fail         => JsString("FAIL")
-      case Unchallenged => JsString("UNCHALLENGED")
-      case CtEnrolled   => JsString("CT_ENROLLED")
-      case SaEnrolled   => JsString("SA_ENROLLED")
-    }
+  // Reads for the trait, deserializing from JSON strings
+  implicit val reads: Reads[VerificationStatus] = Reads[VerificationStatus] {
+    case JsString("PASS")         => JsSuccess(Pass)
+    case JsString("FAIL")         => JsSuccess(Fail)
+    case JsString("UNCHALLENGED") => JsSuccess(Unchallenged)
+    case JsString("CT_ENROLLED")  => JsSuccess(CtEnrolled)
+    case JsString("SA_ENROLLED")  => JsSuccess(SaEnrolled)
+    case _                        => JsError("Invalid VerificationStatus")
   }
+
+  // Writes for the trait, serializing to JSON strings
+  implicit val writes: Writes[VerificationStatus] = Writes[VerificationStatus] {
+    case Pass         => JsString("PASS")
+    case Fail         => JsString("FAIL")
+    case Unchallenged => JsString("UNCHALLENGED")
+    case CtEnrolled   => JsString("CT_ENROLLED")
+    case SaEnrolled   => JsString("SA_ENROLLED")
+  }
+
+  // Combine the Reads and Writes into a Format
+  implicit val format: Format[VerificationStatus] = Format(reads, writes)
 }
 
 final case class BusinessVerificationResult(

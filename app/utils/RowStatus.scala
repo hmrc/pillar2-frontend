@@ -16,7 +16,7 @@
 
 package utils
 
-import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
 import play.api.mvc.JavascriptLiteral
 
 sealed trait RowStatus extends Product with Serializable
@@ -42,14 +42,15 @@ object RowStatus {
         case "InProgress"     => JsSuccess[RowStatus](InProgress)
         case "NotStarted"     => JsSuccess[RowStatus](NotStarted)
         case "CannotStartYet" => JsSuccess[RowStatus](CannotStartYet)
-        case other            => JsError(s"Invalid Source System: $other")
+        case other            => JsError(s"Invalid RowStatus: $other")
       }
 
     override def writes(sourceSystem: RowStatus): JsValue =
       sourceSystem match {
-        case Completed  => JsString("Completed")
-        case InProgress => JsString("InProgress")
-        case NotStarted => JsString("NotStarted")
+        case Completed      => JsString("Completed")
+        case InProgress     => JsString("InProgress")
+        case NotStarted     => JsString("NotStarted")
+        case CannotStartYet => JsString("CannotStartYet")
       }
   }
 

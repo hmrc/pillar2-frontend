@@ -22,7 +22,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeCapturePhonePage, UpeContactNamePage, UpeNameRegistrationPage, UpePhonePreferencePage}
+import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest

@@ -42,7 +42,8 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
     "have a link with the correct text and url" in {
       val expectedLink = "/report-pillar2-top-up-taxes/repayment/before-you-start"
-      val linkExists   = view.getElementsByAttributeValue("href", expectedLink).first() != null
+
+      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
       linkExists mustBe true
 
       view.getElementsByTag("a").text must include(

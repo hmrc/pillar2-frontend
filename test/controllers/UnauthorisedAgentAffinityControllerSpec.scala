@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers._
 import views.html.UnauthorisedAgentView
 
 class UnauthorisedAgentAffinityControllerSpec extends SpecBase {

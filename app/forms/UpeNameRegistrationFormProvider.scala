@@ -16,10 +16,11 @@
 
 package forms
 
-import javax.inject.Inject
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class UpeNameRegistrationFormProvider @Inject() extends Mappings {
 

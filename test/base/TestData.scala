@@ -16,7 +16,7 @@
 
 package base
 
-import models.repayments.{BankDetails, RepaymentContactDetails, RepaymentDetails, SendRepaymentDetails}
+import models.repayments._
 
 trait TestData {
 

@@ -16,11 +16,11 @@
 
 package controllers.subscription.manageAccount
 
-import org.apache.pekko.Done
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
+import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -30,8 +30,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import viewmodels.govuk.SummaryListFluency
 

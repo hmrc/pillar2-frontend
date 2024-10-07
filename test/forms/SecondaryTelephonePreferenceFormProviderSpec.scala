@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.Form
 import play.api.data.FormError
 
 class SecondaryTelephonePreferenceFormProviderSpec extends BooleanFieldBehaviours {
@@ -25,7 +26,7 @@ class SecondaryTelephonePreferenceFormProviderSpec extends BooleanFieldBehaviour
   val invalidKey  = "error.boolean"
 
   val formProvider = new SecondaryTelephonePreferenceFormProvider()
-  val form         = formProvider("test")
+  val form: Form[Boolean] = formProvider("test")
 
   ".value" - {
 

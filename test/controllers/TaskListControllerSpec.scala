@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.registration._
 import models.subscription.AccountingPeriod
 import models.tasklist.SectionStatus
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}

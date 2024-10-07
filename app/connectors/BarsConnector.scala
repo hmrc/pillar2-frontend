@@ -18,7 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models.InternalIssueError
-import models.bars.{Account, BarsAccountResponse, BarsBusinessAssessmentRequest, Business}
+import models.bars._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
 
 import java.util.UUID

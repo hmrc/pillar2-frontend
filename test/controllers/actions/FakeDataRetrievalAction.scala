@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.UserAnswers
-import models.requests.{IdentifierRequest, OptionalDataRequest, OptionalSubscriptionDataRequest, SessionOptionalDataRequest}
+import models.requests._
 import models.subscription.SubscriptionLocalData
 
 import scala.concurrent.{ExecutionContext, Future}

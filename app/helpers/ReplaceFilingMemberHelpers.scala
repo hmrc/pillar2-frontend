@@ -16,15 +16,15 @@
 
 package helpers
 
-import models.{GovUKMarginBottom9, NonUKAddress, UserAnswers}
 import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
+import models.{GovUKMarginBottom9, NonUKAddress, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers.{EntityTypeIncorporatedCompanyNameRfmSummary, EntityTypeIncorporatedCompanyRegRfmSummary, EntityTypeIncorporatedCompanyUtrRfmSummary, EntityTypePartnershipCompanyNameRfmSummary, EntityTypePartnershipCompanyRegRfmSummary, EntityTypePartnershipCompanyUtrRfmSummary, RfmAddSecondaryContactSummary, RfmCapturePrimaryTelephoneSummary, RfmContactByTelephoneSummary, RfmCorporatePositionSummary, RfmNameRegistrationSummary, RfmPrimaryContactEmailSummary, RfmPrimaryContactNameSummary, RfmRegisteredAddressSummary, RfmSecondaryContactEmailSummary, RfmSecondaryContactNameSummary, RfmSecondaryTelephonePreferenceSummary, RfmSecondaryTelephoneSummary}
+import viewmodels.checkAnswers._
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait ReplaceFilingMemberHelpers {

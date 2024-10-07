@@ -18,11 +18,13 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
+import controllers.actions._
 import forms.RfmContactAddressFormProvider
 import models.Mode
+import models.NonUKAddress
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmContactAddressPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -47,7 +49,7 @@ class RfmContactAddressController @Inject() (
 )(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form = formProvider()
+  val form: Form[NonUKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
     implicit request =>
       val preparedForm = request.userAnswers.get(RfmContactAddressPage) match {

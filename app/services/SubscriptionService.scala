@@ -18,10 +18,10 @@ package services
 
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
-import models.registration.{CRN, GrsResponse, Pillar2Identifier, UTR}
+import models._
+import models.registration._
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, NoResultFound, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import pages._
 import play.api.Logging

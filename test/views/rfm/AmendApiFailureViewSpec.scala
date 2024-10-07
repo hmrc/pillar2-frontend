@@ -18,13 +18,14 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.AmendApiFailureView
 
 class AmendApiFailureViewSpec extends ViewSpecBase {
 
-  val page = inject[AmendApiFailureView]
+  val page: AmendApiFailureView = inject[AmendApiFailureView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Amend Api Failure View" should {
 

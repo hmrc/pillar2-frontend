@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmPrimaryContactEmailFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmPrimaryContactEmailView
 
 class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmPrimaryContactEmailFormProvider
-  val page         = inject[RfmPrimaryContactEmailView]
+  val page: RfmPrimaryContactEmailView = inject[RfmPrimaryContactEmailView]
 
-  val view = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
   "Rfm Primary Contact Email View" should {
 

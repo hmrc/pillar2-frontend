@@ -57,7 +57,7 @@ class BarsConnectorSpec extends SpecBase {
 object BarsConnectorSpec {
   val barsUrl = "/verify/business"
 
-  val barsRequest =
+  val barsRequest: String =
     """
       |{
       |  "account": {
@@ -70,7 +70,7 @@ object BarsConnectorSpec {
       |}
       |""".stripMargin
 
-  val barsResponse =
+  val barsResponse: String =
     """{
       |  "accountNumberIsWellFormatted": "yes",
       |  "sortCodeIsPresentOnEISCD":"yes",
@@ -82,16 +82,16 @@ object BarsConnectorSpec {
       |  "sortCodeSupportsDirectCredit": "yes"
       |}""".stripMargin
 
-  val errorResponse =
+  val errorResponse: String =
     s"""
       |{
       | "error": "error-code-thrown
       |""".stripMargin
 
-  val account  = Account("123456", "87654321", None)
-  val business = Business("some company")
+  val account:  Account  = Account("123456", "87654321", None)
+  val business: Business = Business("some company")
 
-  val expectedBarsResponse = BarsAccountResponse(
+  val expectedBarsResponse: BarsAccountResponse = BarsAccountResponse(
     AccountNumberIsWellFormatted.Yes,
     SortCodeIsPresentOnEISCD.Yes,
     Some("Lloyds"),

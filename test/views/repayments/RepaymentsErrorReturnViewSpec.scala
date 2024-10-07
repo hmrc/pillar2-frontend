@@ -24,7 +24,7 @@ import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
 
-  val page           = inject[RepaymentsErrorReturnView]
+  val page: RepaymentsErrorReturnView = inject[RepaymentsErrorReturnView]
   val testPillar2Ref = "XMPLR0012345674"
 
   "Repayments error return view" should {

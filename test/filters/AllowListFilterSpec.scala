@@ -19,7 +19,7 @@ package filters
 import base.SpecBase
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc.{ActionBuilder, AnyContent, Request, _}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 

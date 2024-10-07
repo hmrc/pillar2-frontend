@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmSecurityCheckFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmSecurityCheckFormProvider
-  val page         = inject[SecurityCheckView]
+  val page: SecurityCheckView = inject[SecurityCheckView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Security Check View" should {
 

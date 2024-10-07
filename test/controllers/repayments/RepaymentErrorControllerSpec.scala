@@ -22,7 +22,7 @@ import models.NormalMode
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.repayments.{AccountNameConfirmationView, BankDetailsErrorView, CouldNotConfirmDetailsView, RepaymentErrorView, RepaymentSubmissionErrorView}
+import views.html.repayments._
 
 class RepaymentErrorControllerSpec extends SpecBase {
 

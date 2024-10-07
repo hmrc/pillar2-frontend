@@ -16,6 +16,12 @@
 
 package models.grs
 
+case class GrsErrorCodes(partyTypeMismatch: String = "PARTY_TYPE_MISMATCH")
+
 object GrsErrorCodes {
   val PartyTypeMismatch: String = "PARTY_TYPE_MISMATCH"
+
+  // Default instance of GrsErrorCodes to simulate previous object behavior
+  val default: GrsErrorCodes = GrsErrorCodes()
+
 }

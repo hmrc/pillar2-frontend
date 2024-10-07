@@ -18,13 +18,14 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.RegistrationFailedRfmView
 
 class RegistrationFailedRfmViewSpec extends ViewSpecBase {
 
-  val page = inject[RegistrationFailedRfmView]
+  val page: RegistrationFailedRfmView = inject[RegistrationFailedRfmView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Registration Failed Rfm View" should {
 

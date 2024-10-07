@@ -17,9 +17,9 @@
 package models.subscription
 
 import base.SpecBase
+import models._
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
+import models.registration._
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
 import pages._

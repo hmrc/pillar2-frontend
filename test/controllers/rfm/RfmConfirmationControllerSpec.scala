@@ -27,8 +27,8 @@ import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import uk.gov.hmrc.auth.core.{AuthConnector, Enrolment, EnrolmentIdentifier, User}
 import utils.ViewHelpers
 import views.html.rfm.RfmConfirmationView
 

@@ -3,10 +3,14 @@ import sbt.Def
 import scoverage.ScoverageKeys
 import uk.gov.hmrc.DefaultBuildSettings
 import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
+
 lazy val appName: String = "pillar2-frontend"
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
+
+ThisBuild / semanticdbEnabled := true
+ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtAutoBuildPlugin, SbtDistributablesPlugin)
@@ -39,12 +43,9 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-    scalacOptions ++= Seq(
-      "-feature",
-      "-rootdir",
-      baseDirectory.value.getCanonicalPath,
-      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
-    ),
+
+    scalacOptions += s"-Wconf:src=${target.value}/scala-${scalaBinaryVersion.value}/routes/.*:s,src=${target.value}/scala-${scalaBinaryVersion.value}/twirl/.*:s",
+
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions :=

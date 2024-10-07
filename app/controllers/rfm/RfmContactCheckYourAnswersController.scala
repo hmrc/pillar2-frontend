@@ -19,7 +19,7 @@ import cats.data.OptionT.{fromOption, liftF}
 import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, FeatureFlagActionFactory, IdentifierAction}
+import controllers.actions._
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus._
 import models.subscription.NewFilingMemberDetail

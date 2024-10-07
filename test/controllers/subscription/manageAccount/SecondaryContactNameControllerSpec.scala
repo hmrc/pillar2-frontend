@@ -25,16 +25,16 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondaryContactNamePage}
+import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
+import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
-import play.api.inject.bind
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.{AuthConnector, User}
-import uk.gov.hmrc.auth.core.retrieve.Credentials
 
 import java.util.UUID
 import scala.concurrent.Future

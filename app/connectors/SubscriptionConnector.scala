@@ -26,7 +26,7 @@ import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import uk.gov.hmrc.http._
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
+  val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
   def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
     http

@@ -18,9 +18,13 @@ package pages
 
 import play.api.libs.json.JsPath
 
-case object TradingBusinessConfirmationPage extends QuestionPage[Boolean] {
+final case class TradingBusinessConfirmationPage() extends QuestionPage[Boolean] {
 
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "tradingBusinessConfirmation"
+}
+
+object TradingBusinessConfirmationPage {
+  val default: TradingBusinessConfirmationPage = TradingBusinessConfirmationPage()
 }

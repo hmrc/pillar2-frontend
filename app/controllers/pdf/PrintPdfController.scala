@@ -24,7 +24,7 @@ import controllers.actions._
 import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
-import models.subscription.{contactJourney, fmJourney, groupJourney, upeJourney}
+import models.subscription._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging

@@ -19,8 +19,8 @@ package controllers
 import base.SpecBase
 import connectors.TransactionHistoryConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
+import models._
 import models.subscription._
-import models.{FinancialHistory, NoResultFound, TransactionHistory, UnexpectedResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -48,7 +48,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
     )
   )
 
-  val transactionHistoryResponse =
+  val transactionHistoryResponse: TransactionHistory =
     TransactionHistory(
       PlrReference,
       List(
@@ -56,7 +56,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
         FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
-  val transactionHistoryResponsePagination =
+  val transactionHistoryResponsePagination: TransactionHistory =
     TransactionHistory(
       PlrReference,
       List(

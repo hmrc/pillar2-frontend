@@ -17,8 +17,8 @@
 package helpers
 
 import base.SpecBase
-import models.audit.RepaymentsAuditEvent
 import models.UkOrAbroadBankAccount
+import models.audit.RepaymentsAuditEvent
 import models.repayments.{BankAccountDetails, NonUKBank}
 import pages._
 

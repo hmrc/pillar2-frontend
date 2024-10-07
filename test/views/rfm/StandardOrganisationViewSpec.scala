@@ -18,13 +18,14 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.StandardOrganisationView
 
 class StandardOrganisationViewSpec extends ViewSpecBase {
 
-  val page = inject[StandardOrganisationView]
+  val page: StandardOrganisationView = inject[StandardOrganisationView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Standard Organisation View" should {
 
