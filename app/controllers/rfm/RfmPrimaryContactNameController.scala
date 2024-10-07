@@ -23,6 +23,7 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPrimaryContactNamePage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -32,7 +33,6 @@ import views.html.rfm.RfmPrimaryContactNameView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
 
 class RfmPrimaryContactNameController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,

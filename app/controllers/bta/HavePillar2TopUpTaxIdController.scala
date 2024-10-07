@@ -22,6 +22,7 @@ import controllers.actions._
 import forms.HavePillar2TopUpTaxIdFormProvider
 import models.Mode
 import pages.BtaPillar2ReferencePage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -31,7 +32,6 @@ import views.html.bta.HavePillar2TopUpTaxIdView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
 
 class HavePillar2TopUpTaxIdController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,

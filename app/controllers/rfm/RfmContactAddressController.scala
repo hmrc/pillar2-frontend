@@ -21,8 +21,10 @@ import connectors.UserAnswersConnectors
 import controllers.actions._
 import forms.RfmContactAddressFormProvider
 import models.Mode
+import models.NonUKAddress
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmContactAddressPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,8 +34,6 @@ import views.html.rfm.RfmContactAddressView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import models.NonUKAddress
-import play.api.data.Form
 
 class RfmContactAddressController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,

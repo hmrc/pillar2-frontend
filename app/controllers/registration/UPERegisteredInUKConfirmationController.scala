@@ -23,6 +23,7 @@ import forms.UPERegisteredInUKConfirmationFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -33,7 +34,6 @@ import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import play.api.data.Form
 
 class UPERegisteredInUKConfirmationController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
