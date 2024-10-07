@@ -15,11 +15,11 @@
  */
 
 package models
+import models.UserType
+import models.UserType.{Fm, Rfm, Upe}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-import models.UserType
-import models.UserType.{Fm, Rfm, Upe}
 import play.api.mvc.JavascriptLiteral
 
 class UserTypeSpec extends AnyWordSpec with Matchers {

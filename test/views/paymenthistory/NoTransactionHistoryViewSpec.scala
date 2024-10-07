@@ -18,15 +18,16 @@ package views.paymenthistory
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
   private val date: String = "31 January 2024"
 
-  val page = inject[NoTransactionHistoryView]
+  val page: NoTransactionHistoryView = inject[NoTransactionHistoryView]
 
-  val view = Jsoup.parse(page(date)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(date)(request, appConfig, messages).toString())
 
   "No Transaction History View" should {
 

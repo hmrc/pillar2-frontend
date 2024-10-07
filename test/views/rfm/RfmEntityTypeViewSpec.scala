@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmEntityTypeFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmEntityTypeView
 
 class RfmEntityTypeViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmEntityTypeFormProvider
-  val page         = inject[RfmEntityTypeView]
+  val page: RfmEntityTypeView = inject[RfmEntityTypeView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Rfm Entity Type View" should {
 

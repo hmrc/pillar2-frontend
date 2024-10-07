@@ -39,13 +39,13 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
+import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmPrimaryContactEmailView
 
 import scala.concurrent.Future
-import play.api.inject.bind
-import play.api.libs.json.Json
 class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactEmailFormProvider()

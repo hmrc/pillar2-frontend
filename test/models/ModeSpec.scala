@@ -16,9 +16,9 @@
 
 package models
 
+import models.{CheckMode, Mode, NormalMode}
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import models.{CheckMode, Mode, NormalMode}
 import play.api.mvc.JavascriptLiteral
 
 class ModeSpec extends AnyWordSpec with Matchers {

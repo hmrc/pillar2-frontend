@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage}
+import play.api.data.Form
 import play.api.inject
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -34,8 +35,8 @@ import scala.concurrent.Future
 
 class RfmSecondaryContactEmailControllerSpec extends SpecBase {
 
-  val form         = new RfmSecondaryContactEmailFormProvider()
-  val formProvider = form("name")
+  val form = new RfmSecondaryContactEmailFormProvider()
+  val formProvider: Form[String] = form("name")
 
   "RfmSecondaryContactEmail Controller" when {
 

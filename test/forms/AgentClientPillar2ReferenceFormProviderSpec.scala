@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.BooleanFieldBehaviours
 import mapping.Constants
+import play.api.data.Form
 import play.api.data.FormError
 
 class AgentClientPillar2ReferenceFormProviderSpec extends BooleanFieldBehaviours {
@@ -27,7 +28,7 @@ class AgentClientPillar2ReferenceFormProviderSpec extends BooleanFieldBehaviours
   val regexPattern = Validation.GROUPID_REGEX
 
   val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val form         = formProvider()
+  val form: Form[String] = formProvider()
 
   ".value" - {
 

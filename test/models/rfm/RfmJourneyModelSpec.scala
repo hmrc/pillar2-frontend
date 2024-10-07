@@ -21,7 +21,7 @@ import models.{NonUKAddress, UserAnswers}
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
-import pages.{RfmAddSecondaryContactPage, RfmCapturePrimaryTelephonePage, RfmContactAddressPage, RfmContactByTelephonePage, RfmCorporatePositionPage, RfmGrsDataPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmRegisteredAddressPage, RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage, RfmUkBasedPage}
+import pages._
 
 class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues with EitherValues with TryValues {
 

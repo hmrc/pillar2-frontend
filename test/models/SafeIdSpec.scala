@@ -16,10 +16,10 @@
 
 package models
 
+import models.SafeId
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import play.api.libs.json._
-import models.SafeId
 
 class SafeIdSpec extends AnyWordSpec with Matchers {
 

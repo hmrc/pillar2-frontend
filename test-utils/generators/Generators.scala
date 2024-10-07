@@ -16,8 +16,8 @@
 
 package generators
 
-import models.grs.{BusinessVerificationResult, GrsRegistrationResult, GrsRegistrationResultFailure, RegistrationStatus, VerificationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData, Registration, RegistrationInfo, WithoutIdRegData}
+import models.grs._
+import models.registration._
 import models.{FinancialHistory, TransactionHistory, UKAddress}
 import org.scalacheck.Arbitrary._
 import org.scalacheck.Gen._

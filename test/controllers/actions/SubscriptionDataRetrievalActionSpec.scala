@@ -18,13 +18,12 @@ package controllers.actions
 
 import base.SpecBase
 import connectors.SubscriptionConnector
+import models.requests.{IdentifierRequest, OptionalSubscriptionDataRequest}
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import models.{MneOrDomestic, NonUKAddress}
-import models.requests.{IdentifierRequest, OptionalSubscriptionDataRequest}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import play.api.test.FakeRequest
-import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
 import scala.concurrent.Future

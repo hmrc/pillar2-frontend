@@ -18,12 +18,13 @@ package forms.mappings
 
 import config.FrontendAppConfig
 import generators.Generators
+import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
-import org.scalatest.OptionValues
+import play.api.Application
 import play.api.Environment
 import play.api.data.{Form, FormError}
-import play.api.i18n.{Lang, Messages, MessagesApi, MessagesImpl}
+import play.api.i18n._
 import play.api.inject.guice.GuiceApplicationBuilder
 import utils.InputOption
 import utils.countryOptions.CountryOptions
@@ -31,13 +32,13 @@ import utils.countryOptions.CountryOptions
 class AddressMappingsSpec extends AnyWordSpec with Matchers with AddressMappings with Generators with Constraints with OptionValues {
 
   val environment: Environment = Environment.simple()
-  val app = new GuiceApplicationBuilder().build()
+  val app:         Application = new GuiceApplicationBuilder().build()
 
   implicit val config:   FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   val messagesApi:       MessagesApi       = app.injector.instanceOf[MessagesApi]
   implicit val messages: Messages          = MessagesImpl(Lang("en"), messagesApi)
 
-  val countryOptions = new CountryOptions(environment, config) {
+  val countryOptions: CountryOptions = new CountryOptions(environment, config) {
     override def options()(implicit messages: Messages): Seq[InputOption] =
       Seq(InputOption("UK", "United Kingdom"), InputOption("FR", "France"))
   }

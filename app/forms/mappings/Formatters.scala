@@ -112,7 +112,7 @@ trait Formatters extends Transforms with Constraints {
 
       (postCode, country, requiredKey) match {
         case (Some(zip), Some("GB"), _) if zip.matches(postcodeRegexp) =>
-          Right(Some(postCodeValidTransform(zip))) // Ensure the space is added for GB postcodes
+          Right(Some(postCodeValidTransform(zip)))
         case (Some(_), Some("GB"), _) =>
           Left(Seq(FormError(key, invalidKey)))
         case (Some(zip), Some(_), _) if zip.length <= maxLengthNonUKPostcode =>

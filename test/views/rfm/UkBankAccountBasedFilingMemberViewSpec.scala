@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.UkBasedFilingMemberView
 
 class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
 
   val formProvider = new NFMRegisteredInUKConfirmationFormProvider
-  val page         = inject[UkBasedFilingMemberView]
+  val page: UkBasedFilingMemberView = inject[UkBasedFilingMemberView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Uk Based Filing Member View" should {
 

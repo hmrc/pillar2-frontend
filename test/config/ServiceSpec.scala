@@ -17,7 +17,7 @@
 package config
 
 import base.SpecBase
-import play.api.{ConfigLoader, Configuration}
+import play.api.Configuration
 
 class ServiceSpec extends SpecBase {
 

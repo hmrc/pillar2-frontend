@@ -23,6 +23,7 @@ import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
+
 import java.time.LocalDate
 
 class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {

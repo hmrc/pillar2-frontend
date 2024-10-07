@@ -19,16 +19,17 @@ package views.rfm
 import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
   val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page         = inject[IncompleteDataView]
+  val page: IncompleteDataView = inject[IncompleteDataView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
-  "Replace filing memeber incomplete data view" should {
+  "Replace filing member incomplete data view" should {
     "have a title" in {
       view.getElementsByTag("title").text must include("You have an incomplete task")
     }
@@ -39,13 +40,12 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
     "have a link with the correct text and url" in {
       val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/review-submit/check-answers"
-      val linkExists   = view.getElementsByAttributeValue("href", expectedLink).first() != null
+
+      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
       linkExists mustBe true
 
       view.getElementsByTag("p").text must include(
-        "You can go back to"
-          + " "
-          + "replace the filing member for a Pillar 2 top-up taxes account to try again"
+        "You can go back to replace the filing member for a Pillar 2 top-up taxes account to try again"
       )
     }
 

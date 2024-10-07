@@ -18,7 +18,6 @@ package pages
 
 import generators.Generators
 import models.registration.Registration
-import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
 class RegistrationPageSpec extends PageBehaviours with Generators {

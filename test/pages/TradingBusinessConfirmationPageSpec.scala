@@ -15,8 +15,6 @@
  */
 
 package pages
-
-import org.scalacheck.Arbitrary
 import pages.behaviours.PageBehaviours
 
 class TradingBusinessConfirmationPageSpec extends PageBehaviours {

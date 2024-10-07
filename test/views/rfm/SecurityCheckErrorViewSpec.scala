@@ -18,13 +18,14 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.SecurityCheckErrorView
 
 class SecurityCheckErrorViewSpec extends ViewSpecBase {
 
-  val page = inject[SecurityCheckErrorView]
+  val page: SecurityCheckErrorView = inject[SecurityCheckErrorView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Security Check Error View" should {
 

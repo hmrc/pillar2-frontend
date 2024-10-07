@@ -17,7 +17,7 @@
 package connectors
 
 import base.SpecBase
-import models.{FinancialHistory, NoResultFound, TransactionHistory, UnexpectedResponse}
+import models._
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -34,12 +34,12 @@ class TransactionHistoryConnectorSpec extends SpecBase {
 
   lazy val connector: TransactionHistoryConnector = app.injector.instanceOf[TransactionHistoryConnector]
 
-  val dateFrom = LocalDate.now()
-  val dateTo   = LocalDate.now.plusYears(1)
+  val dateFrom: LocalDate = LocalDate.now()
+  val dateTo:   LocalDate = LocalDate.now.plusYears(1)
 
-  val TransactionHistoryUrl = s"/report-pillar2-top-up-taxes/transaction-history/$PlrReference/${dateFrom.toString}/${dateTo.toString}"
+  val TransactionHistoryUrl: String = s"/report-pillar2-top-up-taxes/transaction-history/$PlrReference/${dateFrom.toString}/${dateTo.toString}"
 
-  val transactionHistoryResponse =
+  val transactionHistoryResponse: TransactionHistory =
     TransactionHistory(
       PlrReference,
       List(

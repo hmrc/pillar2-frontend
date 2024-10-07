@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmContactByTelephonePage, RfmPrimaryContactNamePage}
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,8 +34,8 @@ import scala.concurrent.Future
 
 class RfmContactByTelephoneControllerSpec extends SpecBase {
 
-  val form         = new RfmContactByTelephoneFormProvider()
-  val formProvider = form("sad")
+  val form = new RfmContactByTelephoneFormProvider()
+  val formProvider: Form[Boolean] = form("sad")
 
   "Rfm Can we contact by Telephone Controller" when {
 

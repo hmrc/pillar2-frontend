@@ -15,8 +15,6 @@
  */
 
 package models.eacd
-
-import base.SpecBase
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 

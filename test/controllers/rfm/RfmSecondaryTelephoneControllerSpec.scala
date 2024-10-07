@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,8 +34,8 @@ import scala.concurrent.Future
 
 class RfmSecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form         = new RfmSecondaryTelephoneFormProvider()
-  val formProvider = form("test")
+  val form = new RfmSecondaryTelephoneFormProvider()
+  val formProvider: Form[String] = form("test")
 
   "RFM SecondaryTelephone Controller" when {
 

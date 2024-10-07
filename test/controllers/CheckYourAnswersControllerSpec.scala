@@ -18,11 +18,11 @@ package controllers
 
 import base.SpecBase
 import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
+import models._
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
 import models.subscription.SubscriptionStatus._
-import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo

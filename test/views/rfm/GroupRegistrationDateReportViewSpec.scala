@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.GroupRegistrationDateReportFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.GroupRegistrationDateReportView
 
 class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
 
   val formProvider = new GroupRegistrationDateReportFormProvider
-  val page         = inject[GroupRegistrationDateReportView]
+  val page: GroupRegistrationDateReportView = inject[GroupRegistrationDateReportView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Group Registration Date Report View" should {
 

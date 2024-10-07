@@ -16,14 +16,14 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import base.SpecBase
 import models.InternalIssueError
+import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
+import play.api.libs.json.JsValue
 import play.api.libs.json.Json
-import play.api.test.Helpers._
 import uk.gov.hmrc.http.HttpException
 
 import scala.collection.Seq
@@ -38,8 +38,8 @@ class UserAnswersConnectorSpec extends SpecBase {
 
   lazy val connector: UserAnswersConnectors = app.injector.instanceOf[UserAnswersConnectors]
 
-  val apiUrl   = "/report-pillar2-top-up-taxes"
-  val testData = Json.parse("""{"test": "data"}""".stripMargin)
+  val apiUrl = "/report-pillar2-top-up-taxes"
+  val testData:           JsValue  = Json.parse("""{"test": "data"}""".stripMargin)
   private val errorCodes: Gen[Int] = Gen.oneOf(Seq(400, 403, 500, 501, 502, 503, 504))
 
   "UserAnswersConnectors" when {

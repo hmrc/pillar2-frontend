@@ -19,11 +19,11 @@ package services
 import base.SpecBase
 import connectors._
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
+import models._
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, RegistrationInfo}
+import models.registration._
 import models.rfm.CorporatePosition
 import models.subscription._
-import models.{EnrolmentRequest, GroupIds, Identifier, InternalIssueError, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -812,7 +812,7 @@ class SubscriptionServiceSpec extends SpecBase {
         result shouldEqual Some("ABC Limited")
       }
       "return an error redirect if the retrieval of the company name fails" in {
-        val date        = LocalDate.now()
+        LocalDate.now()
         val grsResponse = GrsResponse(None, None)
 
         val userAnswers = emptyUserAnswers
