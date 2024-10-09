@@ -56,6 +56,13 @@ class TransactionHistoryControllerSpec extends SpecBase {
         FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
+
+  val emptyTransactionHistoryResponse =
+    TransactionHistory(
+      PlrReference,
+      List.empty[FinancialHistory]
+    )
+
   val transactionHistoryResponsePagination =
     TransactionHistory(
       PlrReference,
@@ -150,6 +157,35 @@ class TransactionHistoryControllerSpec extends SpecBase {
           appConfig(application),
           messages(application)
         ).toString
+      }
+    }
+
+    "redirect to no transaction history page when transaction history is empty" in {
+
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any()))
+          .thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.successful(emptyTransactionHistoryResponse))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/payment/history-empty")
       }
     }
 
