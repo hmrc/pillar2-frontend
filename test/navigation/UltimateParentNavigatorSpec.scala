@@ -23,15 +23,7 @@ import pages._
 
 class UltimateParentNavigatorSpec extends SpecBase {
 
-  val navigator = new UltimateParentNavigator
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
+  val navigator                    = new UltimateParentNavigator
   private lazy val upeCYA          = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()

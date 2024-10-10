@@ -64,10 +64,10 @@ trait SubscriptionHelpers {
       get(UpeGRSResponsePage).isDefined,
       get(GrsUpeStatusPage).isDefined
     ) match {
-      case (Some(false), true, true, true, true, Some(true), true, false, false, false)   => true
-      case (Some(false), true, true, true, true, Some(false), false, false, false, false) => true
-      case (Some(true), false, false, false, false, None, false, true, true, true)        => true
-      case _                                                                              => false
+      case (Some(false), true, true, true, true, Some(true), true, _, false, false)   => true
+      case (Some(false), true, true, true, true, Some(false), false, _, false, false) => true
+      case (Some(true), false, false, false, false, None, false, _, true, true)       => true
+      case _                                                                          => false
     }
 
   def upeFinalStatus: RowStatus =
@@ -91,11 +91,11 @@ trait SubscriptionHelpers {
       get(FmGRSResponsePage).isDefined,
       get(GrsFilingMemberStatusPage).isDefined
     ) match {
-      case (Some(true), Some(false), true, true, true, true, Some(false), false, false, false, false) => true
-      case (Some(true), Some(false), true, true, true, true, Some(true), true, false, false, false)   => true
-      case (Some(true), Some(true), false, false, false, false, None, false, true, true, true)        => true
-      case (Some(false), None, false, false, false, false, None, false, false, false, false)          => true
-      case _                                                                                          => false
+      case (Some(true), Some(false), true, true, true, true, Some(false), false, _, false, false) => true
+      case (Some(true), Some(false), true, true, true, true, Some(true), true, _, false, false)   => true
+      case (Some(true), Some(true), false, false, false, false, None, false, _, true, true)       => true
+      case (Some(false), None, false, false, false, false, None, false, _, false, false)          => true
+      case _                                                                                      => false
     }
 
   def fmFinalStatus: RowStatus =

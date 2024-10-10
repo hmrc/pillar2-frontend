@@ -22,7 +22,7 @@ import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
 import models.subscription.SubscriptionStatus._
-import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UKAddress, UserAnswers}
+import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, MneOrDomestic, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -45,14 +45,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val plrReference = "XE1111123456789"
 
   private val date = LocalDate.now()
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
   private val grsResponse = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(
