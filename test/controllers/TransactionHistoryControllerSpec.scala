@@ -57,12 +57,6 @@ class TransactionHistoryControllerSpec extends SpecBase {
       )
     )
 
-  val emptyTransactionHistoryResponse =
-    TransactionHistory(
-      PlrReference,
-      List.empty[FinancialHistory]
-    )
-
   val transactionHistoryResponsePagination =
     TransactionHistory(
       PlrReference,
