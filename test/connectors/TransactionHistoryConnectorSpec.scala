@@ -48,6 +48,8 @@ class TransactionHistoryConnectorSpec extends SpecBase {
       )
     )
 
+  val emptyTransactionHistoryResponse = TransactionHistory(PlrReference, List.empty)
+
   "Transaction history connector" must {
     "return a transaction history" in {
       stubGet(TransactionHistoryUrl, expectedStatus = 200, Json.toJson(transactionHistoryResponse).toString())
@@ -55,6 +57,14 @@ class TransactionHistoryConnectorSpec extends SpecBase {
       val value = connector.retrieveTransactionHistory(PlrReference, dateFrom, dateTo)
 
       value.futureValue mustBe transactionHistoryResponse
+    }
+
+    "return a no result error when financial history is empty for plr reference" in {
+      stubGet(TransactionHistoryUrl, expectedStatus = 200, Json.toJson(emptyTransactionHistoryResponse).toString())
+
+      val value = connector.retrieveTransactionHistory(PlrReference, dateFrom, dateTo)
+
+      value.failed.futureValue mustBe NoResultFound
     }
 
     "return a no result error when there is no results found for plr reference" in {

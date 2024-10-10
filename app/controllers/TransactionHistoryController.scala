@@ -73,10 +73,6 @@ class TransactionHistoryController @Inject() (
                   .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
               )
             )
-        _ <- OptionT.liftF(
-               if (transactionHistory.financialHistory.nonEmpty) Future.successful(())
-               else Future.failed(NoResultFound)
-             )
         updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
         _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
         table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))

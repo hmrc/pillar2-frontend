@@ -32,19 +32,26 @@ class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppCon
 
   def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                                        HeaderCarrier
-  ): Future[TransactionHistory] =
-    http
-      .GET[HttpResponse](
-        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference/${dateFrom.toString}/${dateTo.toString}"
-      )
-      .flatMap {
-        case response if response.status == OK => Future successful Json.parse(response.body).as[TransactionHistory]
-        case response if response.status == NOT_FOUND =>
+  ): Future[TransactionHistory] = {
+    val url = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference/${dateFrom.toString}/${dateTo.toString}"
+
+    http.GET[HttpResponse](url).flatMap { response =>
+      response.status match {
+        case OK =>
+          val transactionHistory = Json.parse(response.body).as[TransactionHistory]
+          if (transactionHistory.financialHistory.isEmpty) {
+            logger.warn(s"Payment history not found for $plrReference (empty financial history)")
+            Future.failed(NoResultFound)
+          } else
+            Future.successful(transactionHistory)
+        case NOT_FOUND =>
           logger.warn(s"Payment history not found for $plrReference")
-          Future failed NoResultFound
-        case e @ _ =>
-          logger.error(s"Payment History error for $plrReference - status=${e.status} - error=${e.body}")
-          Future failed UnexpectedResponse
+          Future.failed(NoResultFound)
+        case _ =>
+          logger.error(s"Payment History error for $plrReference - status=${response.status} - error=${response.body}")
+          Future.failed(UnexpectedResponse)
       }
+    }
+  }
 
 }
