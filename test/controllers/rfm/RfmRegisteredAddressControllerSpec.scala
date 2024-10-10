@@ -26,7 +26,7 @@ import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.AnyContentAsFormUrlEncoded
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -49,7 +49,8 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
     .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
     .build()
 
-  def getRequest = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val address = Map(
       "addressLine1" -> "27 House",
@@ -90,6 +91,31 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
           val result = route(customApplication, getRequest).value
           status(result) mustEqual OK
           contentAsString(result) must include("la la land")
+        }
+      }
+
+      "redirect to JourneyRecoveryController if previous page not answered" in {
+        val application = applicationBuilder(userAnswers = None)
+          .build()
+
+        running(application) {
+          val result = route(application, getRequest).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
+        }
+      }
+
+      "redirect to UnderConstructionController page if RFM access is disabled" in {
+        val application = applicationBuilder(userAnswers = Some(defaultUa))
+          .configure(Seq("features.rfmAccessEnabled" -> false): _*)
+          .build()
+
+        running(application) {
+          val result = route(application, getRequest).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
         }
       }
 
@@ -135,6 +161,20 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url
+        }
+      }
+
+      "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
+        val application = applicationBuilder(userAnswers = None)
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
         }
       }
 

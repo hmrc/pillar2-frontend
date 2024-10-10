@@ -20,65 +20,53 @@ import base.SpecBase
 import com.typesafe.config.ConfigException
 import mapping.Constants.{ENGLISH, WELSH}
 import org.mockito.MockitoSugar
+import play.api.Application
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
 import utils.InputOption
 
+import scala.language.implicitConversions
+
 class CountryOptionsSpec extends SpecBase with MockitoSugar {
 
+  override lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
+  def application(language: String = ENGLISH): Application = {
+    val config = language match {
+      case ENGLISH => Map("location.canonical.list.all" -> "countries-canonical-list-test.json")
+      case WELSH   => Map("location.canonical.list.allCY" -> "countries-canonical-list-test-cy.json")
+      case _       => Map("location.canonical.list.all" -> "countries-canonical-test.json")
+    }
+
+    applicationBuilder().configure(config).build()
+  }
+
+  val countryOption: CountryOptions = application().injector.instanceOf[CountryOptions]
+
   "Country Options" must {
+    implicit def messages(language: String = ENGLISH): MessagesImpl = MessagesImpl(lang = Lang(language), messagesApi = messagesApi)
 
-    "build correctly the English InputOptions with country list and country code" in {
+    "build correctly the English InputOptions with country list and country code" when {
 
-      val application = applicationBuilder()
-        .configure(
-          Map(
-            "location.canonical.list.all" -> "countries-canonical-list-test.json"
-          )
-        )
-        .build()
+      "UK is to be included" in {
 
-      val messagesApi       = app.injector.instanceOf[MessagesApi]
-      implicit val messages = MessagesImpl(lang = Lang(ENGLISH), messagesApi = messagesApi)
+        countryOption.options()(messages()) mustEqual Seq(InputOption("ES", "Spain"), InputOption("GB", "United Kingdom"))
+      }
 
-      val countryOption: CountryOptions = application.injector.instanceOf[CountryOptions]
-      countryOption.options()(messages) mustEqual Seq(InputOption("ES", "Spain"), InputOption("GB", "United Kingdom"))
+      "UK is not to be included" in {
 
-      application.stop()
+        countryOption.options(includeUk = false)(messages()) mustEqual Seq(InputOption("ES", "Spain"))
+      }
     }
 
     "build correctly the Welsh InputOptions with all country list and country code" in {
+      val countryOption: CountryOptions = application(WELSH).injector.instanceOf[CountryOptions]
 
-      val application = applicationBuilder()
-        .configure(
-          Map(
-            "location.canonical.list.allCY" -> "countries-canonical-list-test-cy.json"
-          )
-        )
-        .build()
-
-      val messagesApi       = app.injector.instanceOf[MessagesApi]
-      implicit val messages = MessagesImpl(lang = Lang(WELSH), messagesApi = messagesApi)
-
-      val countryOption: CountryOptions = application.injector.instanceOf[CountryOptions]
-      countryOption.options()(messages) mustEqual Seq(InputOption("ES", "Sbaen"), InputOption("GB", "Y Deyrnas Unedig"))
-
-      application.stop()
+      countryOption.options()(messages(WELSH)) mustEqual Seq(InputOption("ES", "Sbaen"), InputOption("GB", "Y Deyrnas Unedig"))
     }
     "throw the error if the country json does not exist" in {
 
-      val application = applicationBuilder()
-        .configure(
-          Map(
-            "location.canonical.list.all" -> "countries-canonical-test.json"
-          )
-        )
-        .build()
-
       an[ConfigException.BadValue] shouldBe thrownBy {
-        application.injector.instanceOf[CountryOptions].options()
+        application("INVALID").injector.instanceOf[CountryOptions].options()
       }
-
-      application.stop()
     }
   }
 }

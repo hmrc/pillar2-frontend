@@ -22,7 +22,7 @@ import forms.UpeRegisteredAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeNameRegistrationPage, UpeRegisteredInUKPage}
+import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -83,6 +83,41 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           contentAsString(result) must include("Town or city")
           contentAsString(result) must include("Region (optional)")
           contentAsString(result) must include("Enter text and then choose from the list.")
+        }
+      }
+
+      "return OK and the correct view for a GET with previous answers with" when {
+
+        "a UK address" in {
+
+          val ua = defaultUa.set(UpeRegisteredAddressPage, ukAddress).success.value
+          val application: Application = applicationBuilder(Some(ua)).build()
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("1 drive")
+            contentAsString(result) must include("la la land")
+            contentAsString(result) must include("m19hgs")
+            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+          }
+        }
+
+        "a non-UK address" in {
+
+          val ua = defaultUa.set(UpeRegisteredAddressPage, postcodedNonUkAddress).success.value
+          val application: Application = applicationBuilder(Some(ua)).build()
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("132 My Street")
+            contentAsString(result) must include("Kingston")
+            contentAsString(result) must include("12401")
+            contentAsString(result) must include("""<option value="US" selected>United States of America</option>""")
+          }
         }
       }
 
@@ -168,9 +203,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "return errors if invalid data is submitted" should {
+      "return errors if invalid data is submitted with" should {
 
-        "UK address" in {
+        "a UK address" in {
           running(applicationOverride) {
             val result = route(
               applicationOverride,
@@ -193,7 +228,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           }
         }
 
-        "non-UK address" in {
+        "a non-UK address" in {
           running(applicationOverride) {
             val result = route(
               applicationOverride,

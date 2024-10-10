@@ -21,7 +21,6 @@ import connectors.{IncorporatedEntityIdentificationFrontendConnector, Partnershi
 import forms.EntityTypeFormProvider
 import models.NormalMode
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
-import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{UpeEntityTypePage, UpeRegisteredInUKPage}
