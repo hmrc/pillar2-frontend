@@ -56,7 +56,6 @@ class TransactionHistoryControllerSpec extends SpecBase {
         FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
-
   val transactionHistoryResponsePagination =
     TransactionHistory(
       PlrReference,
