@@ -18,7 +18,7 @@ package config
 
 import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
-import connectors.{IncorporatedEntityIdentificationFrontendConnector, IncorporatedEntityIdentificationFrontendConnectorImpl, PartnershipIdentificationFrontendConnector, PartnershipIdentificationFrontendConnectorImpl}
+import connectors._
 import controllers.actions._
 import org.apache.fop.apps.FopFactory
 import play.api.{Configuration, Environment}

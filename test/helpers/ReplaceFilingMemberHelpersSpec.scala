@@ -28,7 +28,7 @@ import java.time.LocalDate
 
 class ReplaceFilingMemberHelpersSpec extends SpecBase {
 
-  val date = LocalDate.of(2024, 12, 31)
+  val date: LocalDate = LocalDate.of(2024, 12, 31)
 
   "SubscriptionHelpers.securityQuestionStatus" should {
 

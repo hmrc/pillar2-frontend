@@ -22,7 +22,7 @@ import forms.ContactUPEByTelephoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage, UpePhonePreferencePage}
+import pages._
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json

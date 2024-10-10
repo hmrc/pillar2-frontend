@@ -20,8 +20,9 @@ import base.SpecBase
 import models.UserAnswers
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
-import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableFor3
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class UltimateParentDetailSectionSpec extends UltimateParentDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
@@ -63,7 +64,7 @@ class UltimateParentDetailSectionSpec extends UltimateParentDetailSectionFixture
 
 protected trait UltimateParentDetailSectionFixture extends SpecBase {
 
-  val progressScenarios = Table(
+  val progressScenarios: TableFor3[String, UserAnswers, SectionStatus] = Table(
     ("assertion", "input", "result"),
     ("return InProgress if all answers for ultimate parent detail section has not been completed", upeInProgressUserAnswer, SectionStatus.InProgress),
     ("return NotStarted if answers have not been attempted", emptyUserAnswers, SectionStatus.NotStarted),

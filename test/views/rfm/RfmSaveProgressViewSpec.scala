@@ -18,13 +18,14 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressViewSpec extends ViewSpecBase {
 
-  val page = inject[RfmSaveProgressInformView]
+  val page: RfmSaveProgressInformView = inject[RfmSaveProgressInformView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Rfm Save Progress inform View" should {
 

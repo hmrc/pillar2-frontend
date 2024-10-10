@@ -16,9 +16,9 @@
 
 package models.requests
 
-import play.api.mvc.{Request, WrappedRequest}
 import models.UserAnswers
 import models.subscription.SubscriptionLocalData
+import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.Enrolment
 case class OptionalDataRequest[A](
   request:            Request[A],

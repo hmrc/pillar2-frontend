@@ -188,9 +188,9 @@ object SubscriptionConnectorSpec {
       |"processingDate":"2023-09-22T00:00"
       |}
       |}""".stripMargin
-  val validSubscriptionCreateParameter = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
+  val validSubscriptionCreateParameter: SubscriptionRequestParameters = SubscriptionRequestParameters("id", "regSafeId", Some("fmSafeId"))
 
-  val validSubscriptionSuccessResponse =
+  val validSubscriptionSuccessResponse: SubscriptionResponse =
     SubscriptionResponse(
       plrReference = "XMPLR0012345678",
       formBundleNumber = "119000004320",

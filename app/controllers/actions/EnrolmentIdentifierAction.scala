@@ -17,7 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, HMRC_PILLAR2_ORG_KEY, VerifyAgentClientPredicate, defaultPredicate}
+import controllers.actions.EnrolmentIdentifierAction._
 import controllers.routes
 import models.requests.IdentifierRequest
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, UnauthorisedClientPillar2ReferencePage}

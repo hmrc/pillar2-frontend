@@ -19,10 +19,10 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models._
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
-import models.{InternalIssueError, NonUKAddress, UnexpectedResponse, UserAnswers, Verifier}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo

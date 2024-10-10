@@ -21,7 +21,7 @@ import models.{NonUKAddress, NormalMode, UserAnswers}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.Configuration
 import play.api.test.FakeRequest
-import play.api.test.Helpers.{GET, POST, defaultAwaitTimeout, route, running}
+import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
 
 class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {

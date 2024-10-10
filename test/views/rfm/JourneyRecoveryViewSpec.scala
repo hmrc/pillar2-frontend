@@ -18,13 +18,14 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
 
-  val page = inject[JourneyRecoveryView]
+  val page: JourneyRecoveryView = inject[JourneyRecoveryView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Replace filing member journey recovery view" should {
 
@@ -38,16 +39,15 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
 
     "have a link with the correct text and url" in {
       val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/start"
-      val linkExists   = view.getElementsByAttributeValue("href", expectedLink).first() != null
+
+      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
       linkExists mustBe true
 
       view.getElementsByTag("p").text must include(
-        messages("You can go back to")
-          + " "
-          + messages("replace the filing member for a Pillar 2 top-up taxes account to try again")
+        messages("You can go back to") + " " + messages("replace the filing member for a Pillar 2 top-up taxes account to try again")
       )
-
     }
 
   }
+
 }

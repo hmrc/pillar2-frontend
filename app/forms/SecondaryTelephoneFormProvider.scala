@@ -16,10 +16,10 @@
 
 package forms
 
-import javax.inject.Inject
-
 import forms.mappings.Mappings
 import play.api.data.Form
+
+import javax.inject.Inject
 
 class SecondaryTelephoneFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24

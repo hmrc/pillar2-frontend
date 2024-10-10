@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmContactAddressFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmContactAddressView
 
 class RfmContactAddressViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmContactAddressFormProvider
-  val page         = inject[RfmContactAddressView]
+  val page: RfmContactAddressView = inject[RfmContactAddressView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode, Seq.empty)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode, Seq.empty)(request, appConfig, messages).toString())
 
   "Rfm Contact Address View" should {
 

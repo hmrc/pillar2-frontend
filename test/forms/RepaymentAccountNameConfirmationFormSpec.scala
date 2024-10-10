@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import play.api.data.Form
 import play.api.data.FormError
 
 class RepaymentAccountNameConfirmationFormSpec extends StringFieldBehaviours {
@@ -24,7 +25,7 @@ class RepaymentAccountNameConfirmationFormSpec extends StringFieldBehaviours {
   val requiredKey = "repayments.accountNameConfirm.error.required"
 
   val formProvider = new RepaymentAccountNameConfirmationForm
-  val form         = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   ".value" - {
 

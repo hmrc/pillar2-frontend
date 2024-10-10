@@ -22,7 +22,7 @@ import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsObject, JsValue}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpException, HttpResponse}
+import uk.gov.hmrc.http._
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Named, Singleton}

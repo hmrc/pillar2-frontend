@@ -45,11 +45,11 @@ import scala.concurrent.Future
 class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
-  val startDate    = LocalDate.of(2023, 12, 31)
-  val endDate      = LocalDate.of(2025, 12, 31)
-  val id:           String = UUID.randomUUID().toString
-  val providerId:   String = UUID.randomUUID().toString
-  val providerType: String = UUID.randomUUID().toString
+  val startDate:    LocalDate = LocalDate.of(2023, 12, 31)
+  val endDate:      LocalDate = LocalDate.of(2025, 12, 31)
+  val id:           String    = UUID.randomUUID().toString
+  val providerId:   String    = UUID.randomUUID().toString
+  val providerType: String    = UUID.randomUUID().toString
 
   "GroupAccountingPeriod Controller for Organisation View Contact details" when {
 

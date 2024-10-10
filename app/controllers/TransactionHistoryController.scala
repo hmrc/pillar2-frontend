@@ -21,11 +21,11 @@ import config.FrontendAppConfig
 import connectors.TransactionHistoryConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.{FinancialHistory, NoResultFound, UnexpectedResponse, UserAnswers}
+import models._
 import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text

@@ -23,6 +23,7 @@ import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.BtaPillar2ReferencePage
+import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,8 +34,8 @@ import scala.concurrent.Future
 
 class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
 
-  val form         = new HavePillar2TopUpTaxIdFormProvider()
-  val formProvider = form()
+  val form = new HavePillar2TopUpTaxIdFormProvider()
+  val formProvider: Form[Boolean] = form()
 
   "Have Pillar two TopUp Tax Id  Controller" when {
 

@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import play.api.data.Form
 import play.api.data.FormError
 
 class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
@@ -28,7 +29,7 @@ class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
   val formatReg   = """^[A-Z0-9 )/(\-*#+]*$"""
 
   val formProvider = new RfmCaptureTelephoneDetailsFormProvider()
-  val form         = formProvider("test")
+  val form: Form[String] = formProvider("test")
 
   ".value" - {
 
