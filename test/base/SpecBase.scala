@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import config.FrontendAppConfig
 import controllers.actions._
 import generators.StringGenerators
-import helpers.{AllMocks, SubscriptionLocalDataFixture, UserAnswersFixture, ViewInstances}
+import helpers._
 import models.UserAnswers
 import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
@@ -32,14 +32,14 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http.{HeaderNames, HttpProtocol, MimeTypes, Status}
+import play.api.http._
 import play.api.i18n.{DefaultLangs, Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.JsValue
 import play.api.mvc._
 import play.api.test.Helpers.baseApplicationBuilder.injector
-import play.api.test.{EssentialActionCaller, FakeRequest, ResultExtractors, Writeables}
+import play.api.test._
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}

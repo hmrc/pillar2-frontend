@@ -21,6 +21,7 @@ import models.UserAnswers
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableFor3
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class ReviewAndSubmitSectionSpec extends ReviewAndSubmitSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
@@ -66,7 +67,7 @@ class ReviewAndSubmitSectionSpec extends ReviewAndSubmitSectionFixture with Matc
 
 protected trait ReviewAndSubmitSectionFixture extends SpecBase {
 
-  val progressScenarios = Table(
+  val progressScenarios: TableFor3[String, UserAnswers, SectionStatus] = Table(
     ("assertion", "input", "result"),
     ("return CannotStart if sections have not been answered", emptyUserAnswers, SectionStatus.CannotStart),
     (

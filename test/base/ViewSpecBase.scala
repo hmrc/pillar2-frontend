@@ -38,7 +38,7 @@ trait ViewSpecBase
 
   val request:                        Request[AnyContent] = FakeRequest().withCSRFToken
   protected lazy val realMessagesApi: MessagesApi         = inject[MessagesApi]
-  val appConfig = inject[FrontendAppConfig]
+  val appConfig:                      FrontendAppConfig   = inject[FrontendAppConfig]
 
   implicit def messages: Messages =
     realMessagesApi.preferred(request)

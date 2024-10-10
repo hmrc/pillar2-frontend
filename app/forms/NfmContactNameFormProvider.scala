@@ -17,8 +17,9 @@
 package forms
 
 import forms.mappings.Mappings
-import play.api.data.Form
 import mapping.Constants
+import play.api.data.Form
+
 import javax.inject.Inject
 
 class NfmContactNameFormProvider @Inject() extends Mappings {

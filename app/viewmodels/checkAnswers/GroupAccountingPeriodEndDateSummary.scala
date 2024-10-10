@@ -16,6 +16,7 @@
 
 package viewmodels.checkAnswers
 
+import models.CheckMode
 import models.UserAnswers
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
@@ -25,7 +26,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
-import models.CheckMode
 
 object GroupAccountingPeriodEndDateSummary {
   val dateHelper = new ViewHelpers()

@@ -19,9 +19,9 @@ package forms
 import forms.mappings.{AddressMappings, Mappings}
 import mapping.Constants
 import models.NonUKAddress
-
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
+
 import javax.inject.Inject
 
 class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {

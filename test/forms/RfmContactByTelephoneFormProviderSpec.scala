@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.Form
 import play.api.data.FormError
 
 class RfmContactByTelephoneFormProviderSpec extends BooleanFieldBehaviours {
@@ -25,7 +26,7 @@ class RfmContactByTelephoneFormProviderSpec extends BooleanFieldBehaviours {
   val invalidKey  = "error.boolean"
 
   val formProvider = new RfmContactByTelephoneFormProvider()
-  val form         = formProvider("test")
+  val form: Form[Boolean] = formProvider("test")
 
   ".value" - {
 

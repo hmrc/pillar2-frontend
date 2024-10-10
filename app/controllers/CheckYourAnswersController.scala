@@ -20,9 +20,9 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
+import models._
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus._
-import models.{DuplicateSafeIdError, DuplicateSubmissionError, InternalIssueError, UserAnswers, WithName}
 import pages._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging

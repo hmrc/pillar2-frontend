@@ -16,14 +16,13 @@
 
 package forms.mappings
 
+import forms.Validation.MONETARY_REGEX
 import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import scala.util.{Failure, Success, Try}
-import forms.Validation.MONETARY_REGEX
-
 import scala.util.control.Exception.nonFatalCatch
+import scala.util.{Failure, Success, Try}
 
 trait Formatters extends Transforms with Constraints {
   private[mappings] val postcodeRegexp = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""

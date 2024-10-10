@@ -21,6 +21,7 @@ import controllers.routes
 import models._
 import models.subscription.AccountingPeriod
 import pages._
+
 import java.time.LocalDate
 
 class SubscriptionNavigatorSpec extends SpecBase {

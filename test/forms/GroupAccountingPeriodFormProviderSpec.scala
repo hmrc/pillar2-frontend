@@ -17,14 +17,17 @@
 package forms
 
 import forms.behaviours.DateBehaviours
+import models.subscription.AccountingPeriod
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import java.time.LocalDate
+import play.api.data.Form
 import play.api.data.FormError
+
+import java.time.LocalDate
 
 class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
 
   val formProvider = new GroupAccountingPeriodFormProvider()
-  val form         = formProvider()
+  val form: Form[AccountingPeriod] = formProvider()
 
   "throw a form error for an start date before 31/12/2023" in {
 

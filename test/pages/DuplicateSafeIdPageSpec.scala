@@ -18,7 +18,7 @@ package pages
 
 import models.grs.EntityType.UkLimitedCompany
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
-import models.registration.{CompanyProfile, GrsResponse, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
+import models.registration._
 import models.{NonUKAddress, UserAnswers}
 import pages.behaviours.PageBehaviours
 import utils.RowStatus

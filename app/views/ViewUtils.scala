@@ -20,8 +20,8 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import play.twirl.api.Html
 
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
 object ViewUtils {
 

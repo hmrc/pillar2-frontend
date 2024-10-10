@@ -18,6 +18,7 @@ package pages
 
 import models.{UkOrAbroadBankAccount, UserAnswers}
 import play.api.libs.json.JsPath
+
 import scala.util.Try
 
 case object UkOrAbroadBankAccountPage extends QuestionPage[UkOrAbroadBankAccount] {

@@ -25,7 +25,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage}
 import play.api.inject.bind
-import play.api.mvc.{Action, AnyContent, BodyParsers, Results}
+import play.api.mvc._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository

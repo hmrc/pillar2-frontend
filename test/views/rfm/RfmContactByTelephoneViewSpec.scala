@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmContactByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmContactByTelephoneView
 
 class RfmContactByTelephoneViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmContactByTelephoneFormProvider
-  val page         = inject[RfmContactByTelephoneView]
+  val page: RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
 
-  val view = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
   "Rfm Contact By Telephone View" should {
 

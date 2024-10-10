@@ -18,6 +18,7 @@ package forms
 
 import forms.mappings.Mappings
 import play.api.data.Form
+
 import javax.inject.Inject
 
 class RfmSecondaryTelephoneFormProvider @Inject() extends Mappings {

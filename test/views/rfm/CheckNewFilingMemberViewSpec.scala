@@ -19,13 +19,14 @@ package views.rfm
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.CheckNewFilingMemberView
 
 class CheckNewFilingMemberViewSpec extends ViewSpecBase {
 
-  val page = inject[CheckNewFilingMemberView]
+  val page: CheckNewFilingMemberView = inject[CheckNewFilingMemberView]
 
-  val view = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
 
   "Check New Filing Member View" should {
 

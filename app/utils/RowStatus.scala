@@ -16,7 +16,7 @@
 
 package utils
 
-import play.api.libs.json.{Format, JsError, JsResult, JsString, JsSuccess, JsValue}
+import play.api.libs.json._
 import play.api.mvc.JavascriptLiteral
 
 sealed trait RowStatus extends Product with Serializable

@@ -19,13 +19,14 @@ package views.paymenthistory
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.paymenthistory.TransactionHistoryErrorView
 
 class TransactionHistoryErrorViewSpec extends ViewSpecBase {
 
-  val page = inject[TransactionHistoryErrorView]
+  val page: TransactionHistoryErrorView = inject[TransactionHistoryErrorView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Transaction History Error View" should {
 

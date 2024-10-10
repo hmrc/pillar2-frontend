@@ -21,6 +21,7 @@ import models.UserAnswers
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableFor3
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class NewFilingMemberDetailSectionSpec extends NewFilingMemberDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
@@ -68,7 +69,7 @@ class NewFilingMemberDetailSectionSpec extends NewFilingMemberDetailSectionFixtu
 
 protected trait NewFilingMemberDetailSectionFixture extends SpecBase {
 
-  val progressScenarios = Table(
+  val progressScenarios: TableFor3[String, UserAnswers, SectionStatus] = Table(
     ("assertion", "input", "result"),
     ("return InProgress if all answers for contact detail section has not been completed", contactDetailInProgress, SectionStatus.InProgress),
     (

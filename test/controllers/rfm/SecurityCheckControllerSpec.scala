@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import connectors.{EnrolmentStoreProxyConnector, UserAnswersConnectors}
 import forms.RfmSecurityCheckFormProvider
-import models.{CheckMode, GroupIds, NormalMode, UserAnswers}
+import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmPillar2ReferencePage

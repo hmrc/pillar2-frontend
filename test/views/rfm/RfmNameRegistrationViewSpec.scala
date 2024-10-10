@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmNameRegistrationView
 
 class RfmNameRegistrationViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider
-  val page         = inject[RfmNameRegistrationView]
+  val page: RfmNameRegistrationView = inject[RfmNameRegistrationView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Rfm Name Registration View" should {
 

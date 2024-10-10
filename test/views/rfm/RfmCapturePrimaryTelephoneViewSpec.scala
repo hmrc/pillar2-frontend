@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmCaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmCapturePrimaryTelephoneView
 
 class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmCaptureTelephoneDetailsFormProvider
-  val page         = inject[RfmCapturePrimaryTelephoneView]
+  val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
 
-  val view = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
   "Rfm Capture Primary Telephone View" should {
 

@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.CorporatePositionView
 
 class CorporatePositionViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmCorporatePositionFormProvider
-  val page         = inject[CorporatePositionView]
+  val page: CorporatePositionView = inject[CorporatePositionView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Corporate Position View" should {
 

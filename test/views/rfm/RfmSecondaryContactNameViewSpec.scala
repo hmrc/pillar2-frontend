@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmSecondaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmSecondaryContactNameView
 
 class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmSecondaryContactNameFormProvider
-  val page         = inject[RfmSecondaryContactNameView]
+  val page: RfmSecondaryContactNameView = inject[RfmSecondaryContactNameView]
 
-  val view = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Rfm Secondary Contact Name View" should {
 

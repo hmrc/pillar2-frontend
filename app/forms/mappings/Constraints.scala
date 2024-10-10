@@ -16,11 +16,11 @@
 
 package forms.mappings
 
-import java.time.LocalDate
 import play.api.data.validation.{Constraint, Invalid, Valid}
 import play.api.i18n.Messages
 import utils.countryOptions.CountryOptions
 
+import java.time.LocalDate
 import scala.util.{Success, Try}
 
 trait Constraints {

@@ -19,9 +19,9 @@ package stubsonly.data
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
-import models.grs.{BusinessVerificationResult, EntityType, GrsErrorCodes, GrsRegistrationResult, GrsRegistrationResultFailure}
+import models.grs._
 import models.registration
-import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
+import models.registration._
 import play.api.libs.json.Json
 
 import java.time.LocalDate
