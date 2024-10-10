@@ -19,6 +19,7 @@ package utils.countryOptions
 import base.SpecBase
 import com.typesafe.config.ConfigException
 import mapping.Constants.{ENGLISH, WELSH}
+import models.grs.EntityType
 import org.mockito.MockitoSugar
 import play.api.Application
 import play.api.i18n.{Lang, MessagesApi, MessagesImpl}
@@ -39,25 +40,55 @@ class CountryOptionsSpec extends SpecBase with MockitoSugar {
     applicationBuilder().configure(config).build()
   }
 
-  val countryOption: CountryOptions = application().injector.instanceOf[CountryOptions]
+  val countryOption:         CountryOptions   = application().injector.instanceOf[CountryOptions]
+  val countryListUkIncluded: Seq[InputOption] = Seq(InputOption("ES", "Spain"), InputOption("GB", "United Kingdom"))
+  val countryListUkExcluded: Seq[InputOption] = Seq(InputOption("ES", "Spain"))
 
   "Country Options" must {
     implicit def messages(language: String = ENGLISH): MessagesImpl = MessagesImpl(lang = Lang(language), messagesApi = messagesApi)
 
-    "build correctly the English InputOptions with country list and country code" when {
+    "render correct InputOptions with country list and country code - English" should {
 
-      "UK is to be included" in {
+      "include UK in the country list" when {
+        "EntityType.Other i.e. companyTypeNotListed, irrespective of registered/base location" in {
 
-        countryOption.options()(messages()) mustEqual Seq(InputOption("ES", "Spain"), InputOption("GB", "United Kingdom"))
+          countryOption.conditionalUkInclusion(None, entityTypePage = Some(EntityType.Other))(messages()) mustEqual countryListUkIncluded
+        }
+
+        "UK-registered/based" in {
+
+          countryOption.conditionalUkInclusion(Some(true), entityTypePage = Some(EntityType.UkLimitedCompany))(
+            messages()
+          ) mustEqual countryListUkIncluded
+        }
+
+        "force-inclusion, skipping location/type checks" in {
+
+          countryOption.options()(messages()) mustEqual countryListUkIncluded
+        }
       }
 
-      "UK is not to be included" in {
+      "not include UK in the country list" when {
+        "unknown registered/base location and not companyTypeNotListed" in {
 
-        countryOption.options(includeUk = false)(messages()) mustEqual Seq(InputOption("ES", "Spain"))
+          countryOption.conditionalUkInclusion(None, entityTypePage = Some(EntityType.UkLimitedCompany))(messages()) mustEqual countryListUkExcluded
+        }
+
+        "not UK-registered/based and not companyTypeNotListed" in {
+
+          countryOption.conditionalUkInclusion(Some(false), entityTypePage = Some(EntityType.UkLimitedCompany))(
+            messages()
+          ) mustEqual countryListUkExcluded
+        }
+
+        "not include irrespective of location/type checks" in {
+
+          countryOption.options(includeUk = false)(messages()) mustEqual countryListUkExcluded
+        }
       }
     }
 
-    "build correctly the Welsh InputOptions with all country list and country code" in {
+    "render correct InputOptions with all country list and country code - Welsh" in {
       val countryOption: CountryOptions = application(WELSH).injector.instanceOf[CountryOptions]
 
       countryOption.options()(messages(WELSH)) mustEqual Seq(InputOption("ES", "Sbaen"), InputOption("GB", "Y Deyrnas Unedig"))
