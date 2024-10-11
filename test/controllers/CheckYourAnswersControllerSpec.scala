@@ -45,14 +45,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
   private val plrReference = "XE1111123456789"
 
   private val date = LocalDate.now()
-  private val ukAddress = UKAddress(
-    addressLine1 = "1 drive",
-    addressLine2 = None,
-    addressLine3 = "la la land",
-    addressLine4 = None,
-    postalCode = "m19hgs",
-    countryCode = "AB"
-  )
   private val grsResponse = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(

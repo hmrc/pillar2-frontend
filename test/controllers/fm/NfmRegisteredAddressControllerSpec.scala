@@ -14,32 +14,32 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.UpeRegisteredAddressFormProvider
+import forms.NfmRegisteredAddressFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
+import pages.{FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
-import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
+import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 import scala.concurrent.Future
+import play.api.mvc.AnyContentAsEmpty
 
-class UpeRegisteredAddressControllerSpec extends SpecBase {
-  val formProvider = new UpeRegisteredAddressFormProvider()
-
+class NfmRegisteredAddressControllerSpec extends SpecBase {
+  val formProvider = new NfmRegisteredAddressFormProvider()
   val defaultUa: UserAnswers = emptyUserAnswers
-    .set(UpeRegisteredInUKPage, true)
+    .set(FmRegisteredInUKPage, true)
     .success
     .value
-    .set(UpeNameRegistrationPage, "Name")
+    .set(FmNameRegistrationPage, "Name")
     .success
     .value
 
@@ -51,7 +51,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     .build()
 
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+    FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val address = Map(
       "addressLine1" -> "27 House",
@@ -62,69 +62,42 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       "countryCode"  -> "GB"
     ) ++ alterations
 
-    FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+    FakeRequest(POST, controllers.fm.routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
       .withFormUrlEncodedBody(address.toSeq: _*)
   }
 
-  when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
-  "UpeRegisteredAddressController" when {
+  "NfmRegisteredAddressController" when {
 
     ".onPageLoad" should {
 
-      "return OK and the correct view for a GET with no previous answer" in {
+      "return OK and the correct view for a GET if Nfm access is enabled and no previous data is found" in {
 
         running(application) {
           val result = route(application, getRequest).value
+
           status(result) mustEqual OK
-
-          contentAsString(result) must include("What is the registered office address of")
-          contentAsString(result) must include("Address line 1")
-          contentAsString(result) must include("Address line 2 (optional)")
-          contentAsString(result) must include("Town or city")
-          contentAsString(result) must include("Region (optional)")
-          contentAsString(result) must include("Enter text and then choose from the list.")
+          contentAsString(result) must include("Name")
         }
       }
 
-      "return OK and the correct view for a GET with previous answers with" when {
+      "return OK and the correct view for a GET if Nfm access is enabled and page has previously been answered" in {
+        val ua = defaultUa
+          .set(FmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
 
-        "a UK address" in {
+        val customApplication = applicationBuilder(Some(ua)).build()
 
-          val ua = defaultUa.set(UpeRegisteredAddressPage, ukAddress).success.value
-          val application: Application = applicationBuilder(Some(ua)).build()
-
-          running(application) {
-            val result = route(application, getRequest).value
-            status(result) mustEqual OK
-
-            contentAsString(result) must include("1 drive")
-            contentAsString(result) must include("la la land")
-            contentAsString(result) must include("m19hgs")
-            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
-          }
-        }
-
-        "a non-UK address" in {
-
-          val ua = defaultUa.set(UpeRegisteredAddressPage, postcodedNonUkAddress).success.value
-          val application: Application = applicationBuilder(Some(ua)).build()
-
-          running(application) {
-            val result = route(application, getRequest).value
-            status(result) mustEqual OK
-
-            contentAsString(result) must include("132 My Street")
-            contentAsString(result) must include("Kingston")
-            contentAsString(result) must include("12401")
-            contentAsString(result) must include("""<option value="US" selected>United States of America</option>""")
-          }
+        running(customApplication) {
+          val result = route(customApplication, getRequest).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("la la land")
         }
       }
 
-      "include/not include UK in country list based on user answer in UpeRegisteredInUKPage" should {
+      "include/not include UK in country list based on user answer in NfmUkBasedPage" should {
 
-        "include UK if UpeRegisteredInUKPage is true" in {
+        "include UK if NfmUkBasedPage is true" in {
 
           running(application) {
             val result = route(application, getRequest).value
@@ -134,13 +107,13 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           }
         }
 
-        "not include UK if UpeRegisteredInUKPage is false" in {
+        "not include UK if NfmUkBasedPage is false" in {
 
           val ua = emptyUserAnswers
-            .set(UpeRegisteredInUKPage, false)
+            .set(FmRegisteredInUKPage, false)
             .success
             .value
-            .set(UpeNameRegistrationPage, "Name")
+            .set(FmNameRegistrationPage, "Name")
             .success
             .value
 
@@ -157,10 +130,18 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     }
 
     ".onSubmit" should {
+      "redirect to next page with valid data onSubmit" in {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        running(applicationOverride) {
+          val result = route(applicationOverride, postRequest()).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url
+        }
+      }
 
       "in a form with errors, include/not include UK in country list based on previous answers" should {
-
-        "include UK if UpeRegisteredInUKPage is true" in {
+        "include UK if NfmUkBasedPage is true" in {
 
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
@@ -171,13 +152,13 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           }
         }
 
-        "not include UK if UpeRegisteredInUKPage is false" in {
+        "not include UK if NfmUkBasedPage is false" in {
 
           val ua = emptyUserAnswers
-            .set(UpeRegisteredInUKPage, false)
+            .set(FmRegisteredInUKPage, false)
             .success
             .value
-            .set(UpeNameRegistrationPage, "Name")
+            .set(FmNameRegistrationPage, "Name")
             .success
             .value
 
@@ -193,23 +174,12 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "redirect to next page and status should be OK if valid data is used when country code is GB" in {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+      "display error page and status should be BAD_REQUEST if invalid data is submitted" should {
+        "UK address" in {
 
-        running(applicationOverride) {
-          val result = route(applicationOverride, postRequest()).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
-        }
-      }
-
-      "return errors if invalid data is submitted with" should {
-
-        "a UK address" in {
-          running(applicationOverride) {
+          running(application) {
             val result = route(
-              applicationOverride,
+              application,
               postRequest(
                 "addressLine1" -> textOver35Chars,
                 "addressLine2" -> textOver35Chars,
@@ -225,14 +195,15 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("Second line of the address must be 35 characters or less")
             contentAsString(result) must include("Town or city must be 35 characters or less")
             contentAsString(result) must include("Region must be 35 characters or less")
-            contentAsString(result) must include("Enter a valid UK postal code or change the country you selected")
+            contentAsString(result) must include("Enter a full UK postcode")
           }
         }
 
-        "a non-UK address" in {
-          running(applicationOverride) {
+        "non-UK address" in {
+
+          running(application) {
             val result = route(
-              applicationOverride,
+              application,
               postRequest(
                 "addressLine1" -> textOver35Chars,
                 "addressLine2" -> textOver35Chars,

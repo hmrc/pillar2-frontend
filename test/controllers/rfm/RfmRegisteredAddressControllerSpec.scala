@@ -19,12 +19,14 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmRegisteredAddressFormProvider
-import models.{NonUKAddress, NormalMode}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
-import play.api.inject
+import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
+import play.api.Application
+import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -32,183 +34,233 @@ import scala.concurrent.Future
 
 class RfmRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new RfmRegisteredAddressFormProvider()
+  val defaultUa: UserAnswers = emptyUserAnswers
+    .set(RfmUkBasedPage, true)
+    .success
+    .value
+    .set(RfmNameRegistrationPage, "Name")
+    .success
+    .value
 
-  "RFM NFM Registered Address Controller" must {
+  val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-    val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "UK")
+  def application: Application = applicationBuilder(Some(defaultUa)).build()
+  def applicationOverride: Application = applicationBuilder(Some(defaultUa))
+    .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+    .build()
 
-    "must return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
-      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+  def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val address = Map(
+      "addressLine1" -> "27 House",
+      "addressLine2" -> "Street",
+      "addressLine3" -> "Newcastle",
+      "addressLine4" -> "North east",
+      "postalCode"   -> "NE5 2TR",
+      "countryCode"  -> "GB"
+    ) ++ alterations
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+    FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+      .withFormUrlEncodedBody(address.toSeq: _*)
+  }
 
-        val result = route(application, request).value
+  "RFMRegisteredAddressController" when {
 
-        status(result) mustEqual OK
-        contentAsString(result) must include("Name")
+    ".onPageLoad" should {
+
+      "return OK and the correct view for a GET if RFM access is enabled and no previous data is found" in {
+
+        running(application) {
+          val result = route(application, getRequest).value
+
+          status(result) mustEqual OK
+          contentAsString(result) must include("Name")
+        }
+      }
+
+      "return OK and the correct view for a GET if RFM access is enabled and page has previously been answered" in {
+        val ua = defaultUa
+          .set(RfmRegisteredAddressPage, nonUkAddress)
+          .success
+          .value
+
+        val customApplication = applicationBuilder(Some(ua)).build()
+
+        running(customApplication) {
+          val result = route(customApplication, getRequest).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("la la land")
+        }
+      }
+
+      "redirect to JourneyRecoveryController if previous page not answered" in {
+        val application = applicationBuilder(userAnswers = None)
+          .build()
+
+        running(application) {
+          val result = route(application, getRequest).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
+        }
+      }
+
+      "redirect to UnderConstructionController page if RFM access is disabled" in {
+        val application = applicationBuilder(userAnswers = Some(defaultUa))
+          .configure(Seq("features.rfmAccessEnabled" -> false): _*)
+          .build()
+
+        running(application) {
+          val result = route(application, getRequest).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
+        }
+      }
+
+      "include/not include UK in country list based on user answer in RfmUkBasedPage" should {
+
+        "include UK if RfmUkBasedPage is true" in {
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
+
+        "not include UK if RfmUkBasedPage is false" in {
+
+          val ua = emptyUserAnswers
+            .set(RfmUkBasedPage, false)
+            .success
+            .value
+            .set(RfmNameRegistrationPage, "Name")
+            .success
+            .value
+
+          val customApplication = applicationBuilder(userAnswers = Some(ua)).build()
+
+          running(customApplication) {
+            val result = route(customApplication, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
       }
     }
 
-    "must return OK and the correct view for a GET if RFM access is enabled and page previously has been answered" in {
-      val ua = emptyUserAnswers
-        .set(RfmNameRegistrationPage, "adios")
-        .success
-        .value
-        .set(RfmRegisteredAddressPage, nonUkAddress)
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
-
-      running(application) {
-        val request =
-          FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include("Name")
-        contentAsString(result) must include("Address")
-      }
-    }
-
-    "must redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
-
-      val ua = emptyUserAnswers
-        .set(RfmNameRegistrationPage, "adios")
-        .success
-        .value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(
-          inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
-        )
-        .build()
-
-      running(application) {
+    ".onSubmit" should {
+      "redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        running(applicationOverride) {
+          val result = route(applicationOverride, postRequest()).value
 
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", "21"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Road"),
-            ("addressLine4", "North east"),
-            ("postalCode", "IG3 1QA"),
-            ("countryCode", "GB")
-          )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url
+        }
       }
-    }
 
-    "redirect to JourneyRecoveryController if previous page not answered" in {
-      val application = applicationBuilder(userAnswers = None)
-        .build()
+      "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
+        val application = applicationBuilder(userAnswers = None)
+          .build()
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        running(application) {
+          val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
 
-        val result = route(application, request).value
+          val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
+        }
       }
-    }
 
-    "redirect to JourneyRecoveryController if previous page not answered OnSubmit" in {
-      val application = applicationBuilder(userAnswers = None)
-        .build()
+      "in a form with errors, include/not include UK in country list based on previous answers" should {
+        "include UK if RfmUkBasedPage is true" in {
 
-      running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        val result = route(application, request).value
+          running(applicationOverride) {
+            val result = route(applicationOverride, postRequest("postalCode" -> textOver35Chars)).value
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
+            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+          }
+        }
+
+        "not include UK if RfmUkBasedPage is false" in {
+
+          val ua = emptyUserAnswers
+            .set(RfmUkBasedPage, false)
+            .success
+            .value
+            .set(RfmNameRegistrationPage, "Name")
+            .success
+            .value
+
+          val customApplication = applicationBuilder(Some(ua))
+            .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+            .build()
+
+          running(customApplication) {
+            val result = route(customApplication, postRequest("postalCode" -> textOver35Chars)).value
+
+            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
       }
-    }
 
-    "redirect to UnderConstructionController page if RFM access is disabled" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
+      "display error page and status should be BAD_REQUEST if invalid data is submitted" should {
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmRegisteredAddressController.onPageLoad(NormalMode).url)
+        "UK address" in {
 
-        val result = route(application, request).value
+          running(application) {
+            val result = route(
+              application,
+              postRequest(
+                "addressLine1" -> textOver35Chars,
+                "addressLine2" -> textOver35Chars,
+                "addressLine3" -> textOver35Chars,
+                "addressLine4" -> textOver35Chars,
+                "postalCode"   -> textOver35Chars,
+                "countryCode"  -> "GB"
+              )
+            ).value
 
-        status(result) mustEqual SEE_OTHER
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) must include("The first line of the address must be 35 characters or less")
+            contentAsString(result) must include("The second line of the address must be 35 characters or less")
+            contentAsString(result) must include("The town or city must be 35 characters or less")
+            contentAsString(result) must include("The region must be 35 characters or less")
+            contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
+          }
+        }
 
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
+        "non-UK address" in {
 
-    "display error page and status should be Bad request if invalid data is submitted" in {
+          running(application) {
+            val result = route(
+              application,
+              postRequest(
+                "addressLine1" -> textOver35Chars,
+                "addressLine2" -> textOver35Chars,
+                "addressLine3" -> textOver35Chars,
+                "addressLine4" -> textOver35Chars,
+                "postalCode"   -> textOver35Chars,
+                "countryCode"  -> "PL"
+              )
+            ).value
 
-      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
-
-      running(application) {
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", ""),
-              ("addressLine2", "Drive"),
-              ("addressLine3", ""),
-              ("addressLine4", "North east"),
-              ("postalCode", "hhhhhhhhhhhhddddddddd"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Enter the first line of the address")
-        contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
-      }
-    }
-
-    "display error page and status should be Bad request if invalid address length is used" in {
-
-      val ua = emptyUserAnswers.set(RfmNameRegistrationPage, "adios").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
-
-      running(application) {
-        val longChars =
-          "27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house 27 house"
-        val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              (
-                "addressLine1",
-                longChars
-              ),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "hhhhhhhhhhhh"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("The first line of the address must be 35 characters or less")
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) must include("The first line of the address must be 35 characters or less")
+            contentAsString(result) must include("The second line of the address must be 35 characters or less")
+            contentAsString(result) must include("The town or city must be 35 characters or less")
+            contentAsString(result) must include("The region must be 35 characters or less")
+            contentAsString(result) must include("The postcode must be 10 characters or less")
+          }
+        }
       }
     }
   }
