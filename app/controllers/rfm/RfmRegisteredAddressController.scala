@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
+import pages.{RfmEntityTypePage, RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -60,7 +60,15 @@ class RfmRegisteredAddressController @Inject() (
             case Some(value) => form.fill(value)
             case None        => form
           }
-          Ok(view(preparedForm, mode, name, countryOptions.options()))
+
+          Ok(
+            view(
+              preparedForm,
+              mode,
+              name,
+              countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
+            )
+          )
         }
         .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
@@ -72,7 +80,17 @@ class RfmRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    name,
+                    countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
+                  )
+                )
+              ),
             value =>
               for {
                 updatedAnswers <-

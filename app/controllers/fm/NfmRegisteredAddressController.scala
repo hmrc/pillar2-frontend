@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmNameRegistrationPage, FmRegisteredAddressPage}
+import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -53,7 +53,15 @@ class NfmRegisteredAddressController @Inject() (
       .get(FmNameRegistrationPage)
       .map { name =>
         val preparedForm = request.userAnswers.get(FmRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
-        Ok(view(preparedForm, mode, name, countryOptions.options()))
+
+        Ok(
+          view(
+            preparedForm,
+            mode,
+            name,
+            countryOptions.conditionalUkInclusion(request.userAnswers.get(FmRegisteredInUKPage), request.userAnswers.get(FmEntityTypePage))
+          )
+        )
       }
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
@@ -65,7 +73,17 @@ class NfmRegisteredAddressController @Inject() (
         form
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, name, countryOptions.options()))),
+            formWithErrors =>
+              Future.successful(
+                BadRequest(
+                  view(
+                    formWithErrors,
+                    mode,
+                    name,
+                    countryOptions.conditionalUkInclusion(request.userAnswers.get(FmRegisteredInUKPage), request.userAnswers.get(FmEntityTypePage))
+                  )
+                )
+              ),
             value =>
               for {
                 updatedAnswers <-

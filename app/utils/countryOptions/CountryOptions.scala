@@ -18,7 +18,8 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import mapping.Constants.WELSH
+import mapping.Constants.{UK_COUNTRY_CODE, WELSH}
+import models.grs.EntityType
 import play.api.Environment
 import play.api.i18n.Messages
 import play.api.libs.json.Json
@@ -28,15 +29,25 @@ import javax.inject.{Inject, Singleton}
 
 @Singleton
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
-  def options()(implicit messages: Messages): Seq[InputOption] = CountryOptions.getCountries(environment, getFileName())
+
+  def conditionalUkInclusion(countryPage: Option[Boolean], entityTypePage: Option[EntityType])(implicit messages: Messages): Seq[InputOption] = {
+    val isUkRegistered = entityTypePage match {
+      case Some(EntityType.Other) => true
+      case _                      => countryPage.fold(false)(identity)
+    }
+    options(isUkRegistered)
+  }
+
+  def options(includeUk: Boolean = true)(implicit messages: Messages): Seq[InputOption] =
+    CountryOptions.getCountries(environment, getFileName(), includeUk)
 
   def getCountryNameFromCode(code: String)(implicit messages: Messages): String =
-    options
+    options()
       .find(_.value == code)
       .map(_.label)
       .getOrElse(code)
 
-  def getFileName()(implicit messages: Messages): String = {
+  private def getFileName()(implicit messages: Messages): String = {
     val isWelsh = messages.lang.code == WELSH
     if (isWelsh) config.locationCanonicalListCY else config.locationCanonicalList
   }
@@ -44,15 +55,18 @@ class CountryOptions @Inject() (environment: Environment, config: FrontendAppCon
 }
 object CountryOptions {
 
-  def getCountries(environment: Environment, fileName: String): Seq[InputOption] =
+  private def getCountries(environment: Environment, fileName: String, includeUk: Boolean): Seq[InputOption] =
     environment
       .resourceAsStream(fileName)
       .flatMap { in =>
         val locationJsValue = Json.parse(in)
-        Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map {
-          _.map { countryList =>
-            InputOption(countryList(1).replaceAll("country:", ""), countryList.head)
-          }.sortBy(x => x.label.toLowerCase)
+        Json.fromJson[Seq[Seq[String]]](locationJsValue).asOpt.map { countryList =>
+          val countries = countryList.map { country =>
+            InputOption(country(1).replaceAll("country:", ""), country.head)
+          }
+
+          val filteredCountries = if (includeUk) countries else countries.filterNot(_.value == UK_COUNTRY_CODE)
+          filteredCountries.sortBy(_.label.toLowerCase)
         }
       }
       .getOrElse {

@@ -19,144 +19,238 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UpeRegisteredAddressFormProvider
-import models.NormalMode
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.UpeNameRegistrationPage
+import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
+import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.InputOption
 
 import scala.concurrent.Future
 
 class UpeRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
-  val countryList  = List(InputOption("AD", "Andorra", None))
-  "Upe Registered Address Controller" when {
+  val defaultUa: UserAnswers = emptyUserAnswers
+    .set(UpeRegisteredInUKPage, true)
+    .success
+    .value
+    .set(UpeNameRegistrationPage, "Name")
+    .success
+    .value
 
-    "return OK and the correct view for a GET with no previous answer" in {
-      val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "Name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
+  val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-        contentAsString(result) must include(
-          "What is the registered office address of "
-        )
-        contentAsString(result) must include(
-          "Address line 1"
-        )
-        contentAsString(result) must include(
-          "Address line 2 (optional)"
-        )
-        contentAsString(result) must include(
-          "Town or city"
-        )
-        contentAsString(result) must include(
-          "Region (optional)"
-        )
-        contentAsString(result) must include(
-          "Region (optional)"
-        )
-        contentAsString(result) must include(
-          "Enter text and then choose from the list."
-        )
+  def application: Application = applicationBuilder(Some(defaultUa)).build()
+  def applicationOverride: Application = applicationBuilder(Some(defaultUa))
+    .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+    .build()
+
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
+  def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val address = Map(
+      "addressLine1" -> "27 House",
+      "addressLine2" -> "Street",
+      "addressLine3" -> "Newcastle",
+      "addressLine4" -> "North east",
+      "postalCode"   -> "NE5 2TR",
+      "countryCode"  -> "GB"
+    ) ++ alterations
+
+    FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
+      .withFormUrlEncodedBody(address.toSeq: _*)
+  }
+
+  when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+  "UpeRegisteredAddressController" when {
+
+    ".onPageLoad" should {
+
+      "return OK and the correct view for a GET with no previous answer" in {
+
+        running(application) {
+          val result = route(application, getRequest).value
+          status(result) mustEqual OK
+
+          contentAsString(result) must include("What is the registered office address of")
+          contentAsString(result) must include("Address line 1")
+          contentAsString(result) must include("Address line 2 (optional)")
+          contentAsString(result) must include("Town or city")
+          contentAsString(result) must include("Region (optional)")
+          contentAsString(result) must include("Enter text and then choose from the list.")
+        }
+      }
+
+      "return OK and the correct view for a GET with previous answers with" when {
+
+        "a UK address" in {
+
+          val ua = defaultUa.set(UpeRegisteredAddressPage, ukAddress).success.value
+          val application: Application = applicationBuilder(Some(ua)).build()
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("1 drive")
+            contentAsString(result) must include("la la land")
+            contentAsString(result) must include("m19hgs")
+            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+          }
+        }
+
+        "a non-UK address" in {
+
+          val ua = defaultUa.set(UpeRegisteredAddressPage, postcodedNonUkAddress).success.value
+          val application: Application = applicationBuilder(Some(ua)).build()
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("132 My Street")
+            contentAsString(result) must include("Kingston")
+            contentAsString(result) must include("12401")
+            contentAsString(result) must include("""<option value="US" selected>United States of America</option>""")
+          }
+        }
+      }
+
+      "include/not include UK in country list based on user answer in UpeRegisteredInUKPage" should {
+
+        "include UK if UpeRegisteredInUKPage is true" in {
+
+          running(application) {
+            val result = route(application, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) must include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
+
+        "not include UK if UpeRegisteredInUKPage is false" in {
+
+          val ua = emptyUserAnswers
+            .set(UpeRegisteredInUKPage, false)
+            .success
+            .value
+            .set(UpeNameRegistrationPage, "Name")
+            .success
+            .value
+
+          val customApplication = applicationBuilder(userAnswers = Some(ua)).build()
+
+          running(customApplication) {
+            val result = route(customApplication, getRequest).value
+            status(result) mustEqual OK
+
+            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
       }
     }
 
-    "display next  page and status should be ok if valid data is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Name").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+    ".onSubmit" should {
 
-      running(application) {
+      "in a form with errors, include/not include UK in country list based on previous answers" should {
+
+        "include UK if UpeRegisteredInUKPage is true" in {
+
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+          running(applicationOverride) {
+            val result = route(applicationOverride, postRequest("postalCode" -> textOver35Chars)).value
+
+            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+          }
+        }
+
+        "not include UK if UpeRegisteredInUKPage is false" in {
+
+          val ua = emptyUserAnswers
+            .set(UpeRegisteredInUKPage, false)
+            .success
+            .value
+            .set(UpeNameRegistrationPage, "Name")
+            .success
+            .value
+
+          val customApplication = applicationBuilder(Some(ua))
+            .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+            .build()
+
+          running(customApplication) {
+            val result = route(customApplication, postRequest("postalCode" -> textOver35Chars)).value
+
+            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+          }
+        }
+      }
+
+      "redirect to next page and status should be OK if valid data is used when country code is GB" in {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "Ne5 2TR"),
-              ("countryCode", "GB")
-            )
 
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
+        running(applicationOverride) {
+          val result = route(applicationOverride, postRequest()).value
 
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
+        }
+      }
+
+      "return errors if invalid data is submitted with" should {
+
+        "a UK address" in {
+          running(applicationOverride) {
+            val result = route(
+              applicationOverride,
+              postRequest(
+                "addressLine1" -> textOver35Chars,
+                "addressLine2" -> textOver35Chars,
+                "addressLine3" -> textOver35Chars,
+                "addressLine4" -> textOver35Chars,
+                "postalCode"   -> textOver35Chars,
+                "countryCode"  -> "GB"
+              )
+            ).value
+
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) must include("First line of the address must be 35 characters or less")
+            contentAsString(result) must include("Second line of the address must be 35 characters or less")
+            contentAsString(result) must include("Town or city must be 35 characters or less")
+            contentAsString(result) must include("Region must be 35 characters or less")
+            contentAsString(result) must include("Enter a valid UK postal code or change the country you selected")
+          }
+        }
+
+        "a non-UK address" in {
+          running(applicationOverride) {
+            val result = route(
+              applicationOverride,
+              postRequest(
+                "addressLine1" -> textOver35Chars,
+                "addressLine2" -> textOver35Chars,
+                "addressLine3" -> textOver35Chars,
+                "addressLine4" -> textOver35Chars,
+                "postalCode"   -> textOver35Chars,
+                "countryCode"  -> "PL"
+              )
+            ).value
+
+            status(result) mustEqual BAD_REQUEST
+            contentAsString(result) must include("First line of the address must be 35 characters or less")
+            contentAsString(result) must include("Second line of the address must be 35 characters or less")
+            contentAsString(result) must include("Town or city must be 35 characters or less")
+            contentAsString(result) must include("Region must be 35 characters or less")
+            contentAsString(result) must include("Postcode must be 10 characters or less")
+          }
+        }
       }
     }
-
-    "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Name").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "hhhhhhhhhhhh"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(
-          "Enter a valid UK postal code or change the country you selected"
-        )
-
-      }
-    }
-
-    "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Name").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val badHouse = "27 house" * 120
-        val request =
-          FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              (
-                "addressLine1",
-                badHouse
-              ),
-              ("addressLine2", badHouse),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "ne5 2th"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(
-          "First line of the address must be 35 characters or less"
-        )
-        contentAsString(result) must include(
-          "Second line of the address must be 35 characters or less"
-        )
-      }
-    }
-
   }
 }
