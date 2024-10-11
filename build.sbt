@@ -43,9 +43,12 @@ lazy val root = (project in file("."))
     ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-
-    scalacOptions += s"-Wconf:src=${target.value}/scala-${scalaBinaryVersion.value}/routes/.*:s,src=${target.value}/scala-${scalaBinaryVersion.value}/twirl/.*:s",
-
+    scalacOptions ++= Seq(
+      "-feature",
+      "-rootdir",
+      baseDirectory.value.getCanonicalPath,
+      "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+    ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
     update / evictionWarningOptions :=
