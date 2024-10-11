@@ -19,6 +19,7 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
+
 import javax.inject.Inject
 
 class RfmNameRegistrationFormProvider @Inject() extends Mappings {

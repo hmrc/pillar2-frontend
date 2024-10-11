@@ -23,6 +23,7 @@ import forms.NominateFilingMemberYesNoFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.NominateFilingMemberPage
+import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
@@ -47,7 +48,7 @@ class NominateFilingMemberYesNoController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  val form = formProvider()
+  val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.upeStatus == RowStatus.Completed) {

@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmEntityTypePage, FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKPage}
+import pages._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

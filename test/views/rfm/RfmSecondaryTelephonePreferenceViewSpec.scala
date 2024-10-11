@@ -20,14 +20,15 @@ import base.ViewSpecBase
 import forms.RfmSecondaryTelephonePreferenceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
 class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmSecondaryTelephonePreferenceFormProvider
-  val page         = inject[RfmSecondaryTelephonePreferenceView]
+  val page: RfmSecondaryTelephonePreferenceView = inject[RfmSecondaryTelephonePreferenceView]
 
-  val view = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
   "Rfm Secondary Telephone Preference View" should {
 

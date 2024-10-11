@@ -26,6 +26,7 @@ import pages.{FmNameRegistrationPage, FmRegisteredAddressPage, FmRegisteredInUKP
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.AnyContentAsEmpty
 import play.api.mvc.AnyContentAsFormUrlEncoded
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -49,7 +50,8 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
     .build()
 
-  def getRequest = FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode).url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
     val address = Map(
       "addressLine1" -> "27 House",

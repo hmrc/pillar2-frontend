@@ -18,13 +18,14 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import views.html.AgentClientUnauthorisedView
 
 class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
 
-  val page = inject[AgentClientUnauthorisedView]
+  val page: AgentClientUnauthorisedView = inject[AgentClientUnauthorisedView]
 
-  val view = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
   "Agent Error View" should {
 

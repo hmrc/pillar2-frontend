@@ -34,6 +34,7 @@ import scala.concurrent.Future
 
 class UpeRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
+
   val defaultUa: UserAnswers = emptyUserAnswers
     .set(UpeRegisteredInUKPage, true)
     .success

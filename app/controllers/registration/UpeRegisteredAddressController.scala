@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.UpeRegisteredAddressFormProvider
 import models.{Mode, UKAddress}
 import navigation.UltimateParentNavigator
-import pages.{UpeEntityTypePage, UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
+import pages._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

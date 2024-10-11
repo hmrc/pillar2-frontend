@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class RfmContactAddressControllerSpec extends SpecBase {
   val formProvider = new RfmContactAddressFormProvider()
-  val countryList  = List(InputOption("AD", "Andorra", None))
+  val countryList: List[InputOption] = List(InputOption("AD", "Andorra", None))
   "RfmContactAddress Controller" when {
 
     "return OK and the correct view for a GET with no previous answer" in {

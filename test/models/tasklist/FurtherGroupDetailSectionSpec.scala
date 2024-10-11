@@ -21,6 +21,7 @@ import models.UserAnswers
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableFor3
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 class FurtherGroupDetailSectionSpec extends FurtherGroupDetailSectionFixture with Matchers with ScalaCheckPropertyChecks with OptionValues {
@@ -67,7 +68,7 @@ class FurtherGroupDetailSectionSpec extends FurtherGroupDetailSectionFixture wit
 
 protected trait FurtherGroupDetailSectionFixture extends SpecBase {
 
-  val progressScenarios = Table(
+  val progressScenarios: TableFor3[String, UserAnswers, SectionStatus] = Table(
     ("assertion", "input", "result"),
     ("return InProgress if all answers for further group detail section has not been completed", groupDetailInProgress, SectionStatus.InProgress),
     (

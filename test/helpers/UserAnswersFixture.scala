@@ -16,12 +16,12 @@
 
 package helpers
 
-import models.grs.{EntityType, GrsRegistrationData, GrsRegistrationResult, RegistrationStatus}
+import models._
+import models.grs._
 import models.registration._
 import models.repayments.{BankAccountDetails, NonUKBank}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
-import models.{MneOrDomestic, NonUKAddress, UKAddress, UkOrAbroadBankAccount, UserAnswers}
 import org.scalatest.TryValues
 import pages._
 import utils.RowStatus
@@ -32,7 +32,7 @@ trait UserAnswersFixture extends TryValues {
   val userAnswersId:    String      = "id"
   val emptyUserAnswers: UserAnswers = UserAnswers(userAnswersId)
 
-  val ukAddress = UKAddress(
+  val ukAddress: UKAddress = UKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
@@ -40,7 +40,7 @@ trait UserAnswersFixture extends TryValues {
     postalCode = "m19hgs",
     countryCode = "GB"
   )
-  val nonUkAddress = NonUKAddress(
+  val nonUkAddress: NonUKAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
     addressLine3 = "la la land",
@@ -49,7 +49,7 @@ trait UserAnswersFixture extends TryValues {
     countryCode = "US"
   )
 
-  val postcodedNonUkAddress = UKAddress(
+  val postcodedNonUkAddress: UKAddress = UKAddress(
     addressLine1 = "132 My Street",
     addressLine2 = None,
     addressLine3 = "Kingston",

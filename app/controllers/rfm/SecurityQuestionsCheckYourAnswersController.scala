@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{FeatureFlagActionFactory, IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
+import controllers.actions._
 import models.{InternalIssueError, Mode, NoResultFound}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Logging

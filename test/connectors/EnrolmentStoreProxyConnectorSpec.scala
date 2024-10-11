@@ -36,8 +36,8 @@ class EnrolmentStoreProxyConnectorSpec extends SpecBase {
 
   private val getKnownFactsUrl = "/enrolment-store-proxy/enrolment-store/enrolments"
 
-  val groupIds     = GroupIds(principalGroupIds = Seq("ABCEDEFGI1234567"), delegatedGroupIds = Seq("ABCEDEFGI1234568"))
-  val jsonGroupIds = Json.toJson(groupIds).toString()
+  val groupIds:     GroupIds = GroupIds(principalGroupIds = Seq("ABCEDEFGI1234567"), delegatedGroupIds = Seq("ABCEDEFGI1234568"))
+  val jsonGroupIds: String   = Json.toJson(groupIds).toString()
 
   private val errorCodes: Gen[Int] =
     Gen.oneOf(Seq(BAD_REQUEST, FORBIDDEN, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_GATEWAY, GATEWAY_TIMEOUT, SERVICE_UNAVAILABLE))

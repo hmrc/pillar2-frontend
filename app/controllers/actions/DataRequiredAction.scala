@@ -20,6 +20,7 @@ import models.UserAnswers
 import models.requests.{DataRequest, OptionalDataRequest}
 import play.api.Logging
 import play.api.mvc.{ActionRefiner, Result}
+
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 

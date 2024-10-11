@@ -16,10 +16,10 @@
 
 package connectors
 
-import org.apache.pekko.Done
 import base.SpecBase
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, Verifier}
+import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

@@ -22,7 +22,7 @@ import controllers.actions._
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
-import pages.{RfmEntityTypePage, RfmNameRegistrationPage, RfmRegisteredAddressPage, RfmUkBasedPage}
+import pages._
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json

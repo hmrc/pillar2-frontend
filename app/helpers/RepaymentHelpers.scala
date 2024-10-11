@@ -17,9 +17,9 @@
 package helpers
 
 import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
-import models.{UkOrAbroadBankAccount, UserAnswers}
 import models.audit.RepaymentsAuditEvent
 import models.repayments.{BankAccountDetails, NonUKBank}
+import models.{UkOrAbroadBankAccount, UserAnswers}
 import pages._
 
 trait RepaymentHelpers {

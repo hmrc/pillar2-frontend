@@ -23,6 +23,7 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage}
+import play.api.data.Form
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
@@ -33,8 +34,8 @@ import scala.concurrent.Future
 
 class RfmSecondaryTelephonePreferenceControllerSpec extends SpecBase {
 
-  val form         = new RfmSecondaryTelephonePreferenceFormProvider()
-  val formProvider = form("name")
+  val form = new RfmSecondaryTelephonePreferenceFormProvider()
+  val formProvider: Form[Boolean] = form("name")
   "RFM SecondaryTelephonePreference Controller" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {

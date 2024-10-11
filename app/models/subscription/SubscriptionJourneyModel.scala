@@ -17,10 +17,10 @@
 package models.subscription
 
 import cats.data.{EitherNec, NonEmptyChain}
-import cats.implicits.{catsSyntaxTuple10Parallel, catsSyntaxTuple14Parallel, catsSyntaxTuple15Parallel, catsSyntaxTuple3Parallel}
+import cats.implicits._
+import models._
 import models.grs.EntityType
 import models.registration.GrsResponse
-import models.{MneOrDomestic, NonUKAddress, UKAddress, UserAnswers}
 import pages._
 import play.api.i18n.Messages
 import queries.Query

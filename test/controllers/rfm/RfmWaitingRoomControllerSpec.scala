@@ -18,13 +18,13 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.{NonUKAddress, UserAnswers}
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
+import models.{NonUKAddress, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactAddressPage, RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmStatusPage}
+import pages._
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._

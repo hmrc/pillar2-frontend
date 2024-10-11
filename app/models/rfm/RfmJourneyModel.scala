@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxTuple15Parallel
 import models.grs.GrsRegistrationData
 import models.rfm.CorporatePosition.{NewNfm, Upe}
 import models.{NonUKAddress, UserAnswers}
-import pages.{RfmAddSecondaryContactPage, RfmCapturePrimaryTelephonePage, RfmContactAddressPage, RfmContactByTelephonePage, RfmCorporatePositionPage, RfmGrsDataPage, RfmNameRegistrationPage, RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage, RfmRegisteredAddressPage, RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage, RfmSecondaryEmailPage, RfmSecondaryPhonePreferencePage, RfmUkBasedPage}
+import pages._
 import queries.Query
 
 final case class RfmJourneyModel(

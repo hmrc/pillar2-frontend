@@ -23,10 +23,10 @@ import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
-import play.api.test.FakeRequest
-import play.api.test.Helpers._
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.test.FakeRequest
+import play.api.test.Helpers._
 import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 import scala.concurrent.Future

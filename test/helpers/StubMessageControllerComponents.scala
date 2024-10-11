@@ -28,7 +28,7 @@ import scala.concurrent.ExecutionContext
 
 trait StubMessageControllerComponents extends Configs {
 
-  val lang = Lang(new Locale("en"))
+  val lang: Lang = Lang(new Locale("en"))
 
   val langs: Langs = new DefaultLangs(Seq(lang))
 
