@@ -40,10 +40,7 @@ class AuditServiceSpec extends SpecBase {
   val validReplaceFilingMemberNoId: NewFilingMemberDetail = Json.parse(validReplaceFilingMember).as[NewFilingMemberDetail]
   val validRepayment:               RepaymentsAuditEvent  = Json.parse(validRepaymentDetails).as[RepaymentsAuditEvent]
 
-  val serviceName: ServiceName = ServiceName(
-    OptServiceName("Report Pillar 2 top-up taxes"),
-    OptServiceName("Report Pillar 2 top-up taxes")
-  )
+  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
   val requestData: IncorporatedEntityCreateRegistrationRequest = IncorporatedEntityCreateRegistrationRequest(
     continueUrl =
       s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Upe.value.toLowerCase}",

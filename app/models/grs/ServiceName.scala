@@ -19,22 +19,17 @@ package models.grs
 import play.api.i18n.{Lang, MessagesApi}
 import play.api.libs.json.{Json, OFormat}
 
-final case class ServiceName(en: OptServiceName, cy: OptServiceName)
+final case class ServiceName(en: OptServiceName)
 
 object ServiceName {
   def apply()(implicit messagesApi: MessagesApi): ServiceName =
-    ServiceName(
-      OptServiceName(optServiceName = messagesApi("service.name")(Lang("en"))),
-      OptServiceName(optServiceName = messagesApi("service.name")(Lang("cy")))
-    )
+    ServiceName(OptServiceName(optServiceName = messagesApi("service.name")(Lang("en"))))
 
-  implicit val format: OFormat[ServiceName] =
-    Json.format[ServiceName]
+  implicit val format: OFormat[ServiceName] = Json.format[ServiceName]
 }
 
 final case class OptServiceName(optServiceName: String)
 
 object OptServiceName {
-  implicit val format: OFormat[OptServiceName] =
-    Json.format[OptServiceName]
+  implicit val format: OFormat[OptServiceName] = Json.format[OptServiceName]
 }
