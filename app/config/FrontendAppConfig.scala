@@ -17,9 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
-import mapping.Constants.{ENGLISH, WELSH}
 import play.api.Configuration
-import play.api.i18n.Lang
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
@@ -83,13 +81,11 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val partnershipBvEnabled:        Boolean = configuration.get[Boolean]("features.partnershipBvEnabled")
 
   //Enable Disable
-  val privateBetaEnabled:         Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
-  val languageTranslationEnabled: Boolean = configuration.get[Boolean]("features.welsh-translation")
-  val grsStubEnabled:             Boolean = configuration.get[Boolean]("features.grsStubEnabled")
-  val pillar2mailbox:             String  = configuration.get[String]("features.pillar2mailbox")
+  val privateBetaEnabled: Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
+  val grsStubEnabled:     Boolean = configuration.get[Boolean]("features.grsStubEnabled")
+  val pillar2mailbox:     String  = configuration.get[String]("features.pillar2mailbox")
 
-  lazy val locationCanonicalList:   String = loadConfig("location.canonical.list.all")
-  lazy val locationCanonicalListCY: String = configuration.get[String]("location.canonical.list.allCY")
+  lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 
   val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
   val registrationControllerDomestic: String = "Domestic Top-up Tax"
@@ -110,19 +106,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
   lazy val excludedPaths:  Seq[String] = configuration.get[Seq[String]]("filters.allowlist.excluded")
 
-  def languageMap: Map[String, Lang] =
-    if (languageTranslationEnabled) {
-      Map(
-        "english" -> Lang(ENGLISH),
-        "cymraeg" -> Lang(WELSH)
-      )
-    } else { Map("english" -> Lang(ENGLISH)) }
-
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
 
-    if (date == "now")
-      LocalDate.now()
-    else LocalDate.parse(date)
+    if (date == "now") LocalDate.now() else LocalDate.parse(date)
   }
 }

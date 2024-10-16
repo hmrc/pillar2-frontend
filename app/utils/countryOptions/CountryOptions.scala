@@ -18,10 +18,9 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import mapping.Constants.{UK_COUNTRY_CODE, WELSH}
+import mapping.Constants.UK_COUNTRY_CODE
 import models.grs.EntityType
 import play.api.Environment
-import play.api.i18n.Messages
 import play.api.libs.json.Json
 import utils.InputOption
 
@@ -30,7 +29,7 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class CountryOptions @Inject() (environment: Environment, config: FrontendAppConfig) {
 
-  def conditionalUkInclusion(countryPage: Option[Boolean], entityTypePage: Option[EntityType])(implicit messages: Messages): Seq[InputOption] = {
+  def conditionalUkInclusion(countryPage: Option[Boolean], entityTypePage: Option[EntityType]): Seq[InputOption] = {
     val isUkRegistered = entityTypePage match {
       case Some(EntityType.Other) => true
       case _                      => countryPage.fold(false)(identity)
@@ -38,19 +37,14 @@ class CountryOptions @Inject() (environment: Environment, config: FrontendAppCon
     options(isUkRegistered)
   }
 
-  def options(includeUk: Boolean = true)(implicit messages: Messages): Seq[InputOption] =
-    CountryOptions.getCountries(environment, getFileName(), includeUk)
+  def options(includeUk: Boolean = true): Seq[InputOption] =
+    CountryOptions.getCountries(environment, fileName = config.locationCanonicalList, includeUk)
 
-  def getCountryNameFromCode(code: String)(implicit messages: Messages): String =
+  def getCountryNameFromCode(code: String): String =
     options()
       .find(_.value == code)
       .map(_.label)
       .getOrElse(code)
-
-  private def getFileName()(implicit messages: Messages): String = {
-    val isWelsh = messages.lang.code == WELSH
-    if (isWelsh) config.locationCanonicalListCY else config.locationCanonicalList
-  }
 
 }
 object CountryOptions {

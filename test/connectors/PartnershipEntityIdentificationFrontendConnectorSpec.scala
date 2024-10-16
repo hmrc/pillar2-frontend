@@ -34,17 +34,13 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
   val apiUrl: String = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
   val connector                                 = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
+  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
 
   "PartnershipEntityIdentificationFrontendConnector" when {
 
     "must return OK status for createPartnershipJourney" in {
       val expectedUrl = s"$apiUrl/limited-liability-partnership-journey"
-      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest = {
-        val serviceName = ServiceName(
-          OptServiceName("Report Pillar 2 top-up taxes"),
-          OptServiceName("Report Pillar 2 top-up taxes")
-        )
-
+      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest =
         IncorporatedEntityCreateRegistrationRequest(
           continueUrl =
             s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Fm.value.toLowerCase}",
@@ -55,7 +51,6 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
           accessibilityUrl = "/accessibility-statement/pillar2-frontend",
           labels = serviceName
         )
-      }
 
       when(
         mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
@@ -79,12 +74,7 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
 
     "must return OK status for createPartnershipJourney for RFM" in {
       val expectedUrl = s"$apiUrl/limited-liability-partnership-journey"
-      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest = {
-        val serviceName = ServiceName(
-          OptServiceName("Report Pillar 2 top-up taxes"),
-          OptServiceName("Report Pillar 2 top-up taxes")
-        )
-
+      val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest =
         IncorporatedEntityCreateRegistrationRequest(
           continueUrl =
             s"http://localhost:10050/report-pillar2-top-up-taxes/grs-return/${NormalMode.toString.toLowerCase}/${UserType.Rfm.value.toLowerCase}",
@@ -95,7 +85,6 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase {
           accessibilityUrl = "/accessibility-statement/pillar2-frontend",
           labels = serviceName
         )
-      }
 
       when(
         mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
