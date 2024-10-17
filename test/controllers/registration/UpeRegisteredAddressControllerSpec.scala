@@ -225,7 +225,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("Second line of the address must be 35 characters or less")
             contentAsString(result) must include("Town or city must be 35 characters or less")
             contentAsString(result) must include("Region must be 35 characters or less")
-            contentAsString(result) must include("Enter a valid UK postal code or change the country you selected")
+            contentAsString(result) must include("Enter a full UK postcode")
           }
         }
 

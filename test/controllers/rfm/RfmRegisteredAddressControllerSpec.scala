@@ -234,7 +234,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("The second line of the address must be 35 characters or less")
             contentAsString(result) must include("The town or city must be 35 characters or less")
             contentAsString(result) must include("The region must be 35 characters or less")
-            contentAsString(result) must include("Enter a valid UK postcode or change the country you selected")
+            contentAsString(result) must include("Enter a full UK postcode")
           }
         }
 
@@ -258,7 +258,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("The second line of the address must be 35 characters or less")
             contentAsString(result) must include("The town or city must be 35 characters or less")
             contentAsString(result) must include("The region must be 35 characters or less")
-            contentAsString(result) must include("The postcode must be 10 characters or less")
+            contentAsString(result) must include("Postcode must be 10 characters or less")
           }
         }
       }

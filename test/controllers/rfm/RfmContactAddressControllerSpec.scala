@@ -159,10 +159,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(
-          "Enter a valid UK postcode or change the country you selected"
-        )
-
+        contentAsString(result) must include("Enter a full UK postcode")
       }
     }
 
