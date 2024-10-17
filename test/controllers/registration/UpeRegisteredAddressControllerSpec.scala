@@ -46,9 +46,13 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
   def application: Application = applicationBuilder(Some(defaultUa)).build()
-  def applicationOverride: Application = applicationBuilder(Some(defaultUa))
-    .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-    .build()
+  def applicationOverride: Application = {
+    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+    applicationBuilder(Some(defaultUa))
+      .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      .build()
+  }
 
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url)
@@ -65,8 +69,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
       .withFormUrlEncodedBody(address.toSeq: _*)
   }
-
-  when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
   "UpeRegisteredAddressController" when {
 
@@ -162,8 +164,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
         "include UK if UpeRegisteredInUKPage is true" in {
 
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
           running(application) {
             val result = route(application, postRequest("postalCode" -> textOver35Chars)).value
 
@@ -194,8 +194,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
       }
 
       "redirect to next page and status should be OK if valid data is used when country code is GB" in {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-
         running(applicationOverride) {
           val result = route(applicationOverride, postRequest()).value
 

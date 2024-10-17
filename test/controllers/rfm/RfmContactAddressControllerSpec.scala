@@ -19,184 +19,149 @@ package controllers.rfm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.RfmContactAddressFormProvider
-import models.{NonUKAddress, NormalMode}
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmContactAddressPage, RfmPrimaryContactNamePage}
+import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import utils.InputOption
 
 import scala.concurrent.Future
 
 class RfmContactAddressControllerSpec extends SpecBase {
   val formProvider = new RfmContactAddressFormProvider()
-  val countryList: List[InputOption] = List(InputOption("AD", "Andorra", None))
+
+  val defaultUa:   UserAnswers = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
+  def application: Application = applicationBuilder(userAnswers = Some(defaultUa)).build()
+  def applicationOverride: Application = {
+    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+    applicationBuilder(userAnswers = Some(defaultUa))
+      .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      .build()
+  }
+
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
+  def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    val address = Map(
+      "addressLine1" -> "27 House",
+      "addressLine2" -> "Street",
+      "addressLine3" -> "Newcastle",
+      "addressLine4" -> "North east",
+      "postalCode"   -> "NE5 2TR",
+      "countryCode"  -> "GB"
+    ) ++ alterations
+
+    FakeRequest(POST, routes.RfmContactAddressController.onSubmit(NormalMode).url)
+      .withFormUrlEncodedBody(address.toSeq: _*)
+  }
+
+  val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
+
   "RfmContactAddress Controller" when {
 
     "return OK and the correct view for a GET with no previous answer" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val result = route(application, getRequest).value
+
         status(result) mustEqual OK
-        contentAsString(result) must include(
-          "What address do you want to use as the filing member’s contact address?"
-        )
-        contentAsString(result) must include(
-          "Address line 1"
-        )
-        contentAsString(result) must include(
-          "Town or city"
-        )
-        contentAsString(result) must include(
-          "Region (optional)"
-        )
-        contentAsString(result) must include(
-          "Postcode (if applicable)"
-        )
-        contentAsString(result) must include(
-          "Enter text and then choose from the list."
-        )
+        contentAsString(result) must include("What address do you want to use as the filing member’s contact address?")
+        contentAsString(result) must include("Address line 1")
+        contentAsString(result) must include("Town or city")
+        contentAsString(result) must include("Region (optional)")
+        contentAsString(result) must include("Postcode (if applicable)")
+        contentAsString(result) must include("Enter text and then choose from the list.")
       }
     }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
-      val contactAddress = NonUKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), Some("ne5 2dh"), "AT")
-      val ua = emptyUserAnswers
-        .set(RfmPrimaryContactNamePage, "name")
-        .success
-        .value
-        .set(RfmContactAddressPage, contactAddress)
-        .success
-        .value
-
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .build()
+      val uaWithAddress = defaultUa.set(RfmContactAddressPage, nonUkAddress).success.value
+      val application   = applicationBuilder(userAnswers = Some(uaWithAddress)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val result = route(application, getRequest).value
         status(result) mustEqual OK
-        contentAsString(result) must include(
-          "Address line first drive"
-        )
-        contentAsString(result) must include(
-          "Home Town"
-        )
 
+        contentAsString(result) must include("1 drive")
+        contentAsString(result) must include("la la land")
       }
     }
 
     "must redirect to correct view when rfm feature false" in {
-      val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryContactNamePage, "sad")
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
+      val application = applicationBuilder(userAnswers = Some(defaultUa))
+        .configure(Seq("features.rfmAccessEnabled" -> false): _*)
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val result = route(application, getRequest).value
+
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
 
-    "display next  page and status should be ok if valid data is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+    "display next page and status should be ok if valid data is used when country code is GB" in {
+      running(applicationOverride) {
+        val result = route(applicationOverride, postRequest()).value
 
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.RfmContactAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "Ne5 2TR"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
 
       }
     }
 
-    "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+    "return form with errors when postcode is invalid" should {
 
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, routes.RfmContactAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "hhhhhhhhhhhh"),
-              ("countryCode", "GB")
+      "UK address" when {
+        "empty postcode" in {
+          val result = route(application, postRequest("postalCode" -> "")).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include("Enter a full UK postcode")
+        }
+
+        "invalid format/length" in {
+          val postcodeExceeding35Chars = route(application, postRequest("postalCode" -> textOver35Chars)).value
+          val invalidUkPostcode        = route(application, postRequest("postalCode" -> "W111 1RC")).value
+
+          status(postcodeExceeding35Chars) mustEqual BAD_REQUEST
+          status(invalidUkPostcode) mustEqual BAD_REQUEST
+
+          contentAsString(postcodeExceeding35Chars) must include("Enter a full UK postcode")
+          contentAsString(invalidUkPostcode)        must include("Enter a full UK postcode")
+        }
+      }
+
+      "non-UK address" when {
+        "invalid length" in {
+          val result = route(
+            application,
+            postRequest(
+              "postalCode"  -> textOver35Chars,
+              "countryCode" -> "PL"
             )
+          ).value
 
-        val result = route(application, request).value
-        status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Enter a full UK postcode")
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include("Postcode must be 10 characters or less")
+        }
       }
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val userAnswersWitNameReg = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Alex").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val badHouse = "27 house" * 120
-        val request =
-          FakeRequest(POST, routes.RfmContactAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              (
-                "addressLine1",
-                badHouse
-              ),
-              ("addressLine2", badHouse),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "ne5 2th"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
+        val result = route(application, postRequest("addressLine1" -> textOver35Chars, "addressLine2" -> textOver35Chars)).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include(
-          "The first line of the address must be 35 characters or less"
-        )
-        contentAsString(result) must include(
-          "The second line of the address must be 35 characters or less"
-        )
+        contentAsString(result) must include("The first line of the address must be 35 characters or less")
+        contentAsString(result) must include("The second line of the address must be 35 characters or less")
       }
     }
-
   }
 }
