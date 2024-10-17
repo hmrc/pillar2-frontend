@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
 import play.api.data.Form
@@ -24,35 +25,27 @@ import play.api.data.Forms.{mapping, optional}
 import javax.inject.Inject
 
 class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength    = 35
-  private val addressLength = 35
   def apply(): Form[NonUKAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("subscriptionAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(addressLength, "subscriptionAddress.messages.error.addressLine1.length")),
+        text("subscriptionAddress.error.addressLine1.required")
+          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(addressLength, "subscriptionAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine2.length"))
       ),
       "addressLine3" ->
         text("subscriptionAddress.town_city.error.required")
-          .verifying(maxLength(addressLength, "subscriptionAddress.town_city.error.length")),
+          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(addressLength, "subscriptionAddress.region.error.length"))
+            .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.region.error.length"))
         ),
-      "postalCode" ->
-        optionalPostcode(
-          Some("subscriptionAddress.postcode.error.invalid"),
-          "subscriptionAddress.postcode.error.invalid",
-          "subscriptionAddress.postcode.error.length",
-          "countryCode"
-        ),
+      "postalCode" -> optionalPostcode(),
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
-          .verifying(maxLength(textLength, "subscriptionAddress.country.error.length"))
+          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.country.error.length"))
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

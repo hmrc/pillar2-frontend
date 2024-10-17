@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.UKAddress
 import play.api.data.Form
@@ -23,35 +24,27 @@ import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMappings {
-  private val textLength = 35
   def apply(): Form[UKAddress] = Form(
     mapping(
       "addressLine1" ->
-        text("upeRegisteredAddress.messages.error.addressLine1.required")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine1.length")),
+        text("upeRegisteredAddress.error.addressLine1.required")
+          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine1.length")),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.messages.error.addressLine2.length"))
+          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine2.length"))
       ),
       "addressLine3" ->
         text("upeRegisteredAddress.town_city.error.required")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.town_city.error.length")),
+          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.town_city.error.length")),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(textLength, "upeRegisteredAddress.region.error.length"))
+            .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.region.error.length"))
         ),
-      "postalCode" ->
-        mandatoryPostcode(
-          "upeRegisteredAddress.messages.error.postcode.required.GB",
-          "upeRegisteredAddress.messages.error.postcode.required.Other",
-          "upeRegisteredAddress.postcode.error.invalid",
-          "upeRegisteredAddress.postcode.error.length",
-          "countryCode"
-        ),
+      "postalCode" -> mandatoryPostcode(),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
-          .verifying(maxLength(textLength, "upeRegisteredAddress.country.error.length"))
+          .verifying(maxLength(maxAddressLineLength, "address.postcode.error.length"))
     )(UKAddress.apply)(UKAddress.unapply)
   )
 }

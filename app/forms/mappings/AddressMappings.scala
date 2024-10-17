@@ -16,32 +16,22 @@
 
 package forms.mappings
 
+import play.api.data.FieldMapping
 import play.api.data.Forms.of
-import play.api.data.{FieldMapping, Mapping}
-import play.api.i18n.Messages
-import utils.countryOptions.CountryOptions
 
 trait AddressMappings extends Mappings with Constraints with Transforms {
 
   protected def optionalPostcode(
-    requiredKey:      Option[String],
-    invalidKey:       String,
-    nonUkLengthKey:   String,
-    countryFieldName: String
-  ): FieldMapping[Option[String]] =
-    of(optionalPostcodeFormatter(requiredKey, invalidKey, nonUkLengthKey, countryFieldName))
+    requiredKeyGB:    String = "address.postcode.error.invalid.GB",
+    invalidLengthKey: String = "address.postcode.error.length",
+    countryFieldName: String = "countryCode"
+  ): FieldMapping[Option[String]] = of(optionalPostcodeFormatter(requiredKeyGB, invalidLengthKey, countryFieldName))
   protected def mandatoryPostcode(
-    requiredKeyGB:    String,
-    requiredKeyOther: String,
-    invalidKey:       String,
-    nonUkLengthKey:   String,
-    countryFieldName: String
-  ): FieldMapping[String] =
-    of(mandatoryPostcodeFormatter(requiredKeyGB, requiredKeyOther, invalidKey, nonUkLengthKey, countryFieldName))
-
-  def countryMapping(countryOptions: CountryOptions, keyRequired: String, keyInvalid: String)(implicit messages: Messages): Mapping[String] =
-    text(keyRequired)
-      .verifying(country(countryOptions, keyInvalid))
+    requiredKeyGB:    String = "address.postcode.error.invalid.GB",
+    requiredKeyOther: String = "address.postcode.error.required",
+    invalidLengthKey: String = "address.postcode.error.length",
+    countryFieldName: String = "countryCode"
+  ): FieldMapping[String] = of(mandatoryPostcodeFormatter(requiredKeyGB, requiredKeyOther, invalidLengthKey, countryFieldName))
 
 }
 
