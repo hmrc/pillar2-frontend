@@ -164,8 +164,8 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
-          running(applicationOverride) {
-            val result = route(applicationOverride, postRequest("postalCode" -> textOver35Chars)).value
+          running(application) {
+            val result = route(application, postRequest("postalCode" -> textOver35Chars)).value
 
             contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
           }
@@ -204,51 +204,99 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "return errors if invalid data is submitted with" should {
+      "return errors if invalid data is submitted" when {
 
-        "a UK address" in {
-          running(applicationOverride) {
-            val result = route(
-              applicationOverride,
-              postRequest(
-                "addressLine1" -> textOver35Chars,
-                "addressLine2" -> textOver35Chars,
-                "addressLine3" -> textOver35Chars,
-                "addressLine4" -> textOver35Chars,
-                "postalCode"   -> textOver35Chars,
-                "countryCode"  -> "GB"
-              )
-            ).value
+        "a UK address is submitted" when {
 
-            status(result) mustEqual BAD_REQUEST
-            contentAsString(result) must include("First line of the address must be 35 characters or less")
-            contentAsString(result) must include("Second line of the address must be 35 characters or less")
-            contentAsString(result) must include("Town or city must be 35 characters or less")
-            contentAsString(result) must include("Region must be 35 characters or less")
-            contentAsString(result) must include("Enter a full UK postcode")
+          "empty form" in {
+            running(application) {
+              val result = route(
+                application,
+                postRequest(
+                  "addressLine1" -> "",
+                  "addressLine2" -> "",
+                  "addressLine3" -> "",
+                  "addressLine4" -> "",
+                  "postalCode"   -> "",
+                  "countryCode"  -> "GB"
+                )
+              ).value
+
+              status(result) mustEqual BAD_REQUEST
+              contentAsString(result) must include("Enter the first line of the address")
+              contentAsString(result) must include("Enter the town or city")
+              contentAsString(result) must include("Enter a full UK postcode")
+            }
+          }
+
+          "invalid length" in {
+            running(application) {
+              val result = route(
+                application,
+                postRequest(
+                  "addressLine1" -> textOver35Chars,
+                  "addressLine2" -> textOver35Chars,
+                  "addressLine3" -> textOver35Chars,
+                  "addressLine4" -> textOver35Chars,
+                  "postalCode"   -> textOver35Chars,
+                  "countryCode"  -> "GB"
+                )
+              ).value
+
+              status(result) mustEqual BAD_REQUEST
+              contentAsString(result) must include("First line of the address must be 35 characters or less")
+              contentAsString(result) must include("Second line of the address must be 35 characters or less")
+              contentAsString(result) must include("Town or city must be 35 characters or less")
+              contentAsString(result) must include("Region must be 35 characters or less")
+              contentAsString(result) must include("Enter a full UK postcode")
+            }
           }
         }
 
-        "a non-UK address" in {
-          running(applicationOverride) {
-            val result = route(
-              applicationOverride,
-              postRequest(
-                "addressLine1" -> textOver35Chars,
-                "addressLine2" -> textOver35Chars,
-                "addressLine3" -> textOver35Chars,
-                "addressLine4" -> textOver35Chars,
-                "postalCode"   -> textOver35Chars,
-                "countryCode"  -> "PL"
-              )
-            ).value
+        "a non-UK address is submitted" when {
+          "empty form" in {
 
-            status(result) mustEqual BAD_REQUEST
-            contentAsString(result) must include("First line of the address must be 35 characters or less")
-            contentAsString(result) must include("Second line of the address must be 35 characters or less")
-            contentAsString(result) must include("Town or city must be 35 characters or less")
-            contentAsString(result) must include("Region must be 35 characters or less")
-            contentAsString(result) must include("Postcode must be 10 characters or less")
+            running(application) {
+              val result = route(
+                application,
+                postRequest(
+                  "addressLine1" -> "",
+                  "addressLine2" -> "",
+                  "addressLine3" -> "",
+                  "addressLine4" -> "",
+                  "postalCode"   -> "",
+                  "countryCode"  -> "PL"
+                )
+              ).value
+
+              status(result) mustEqual BAD_REQUEST
+              contentAsString(result) must include("Enter the first line of the address")
+              contentAsString(result) must include("Enter the town or city")
+              contentAsString(result) must include("Enter the postcode")
+            }
+          }
+
+          "invalid length" in {
+            running(application) {
+              val result = route(
+                application,
+                postRequest(
+                  "addressLine1" -> textOver35Chars,
+                  "addressLine2" -> textOver35Chars,
+                  "addressLine3" -> textOver35Chars,
+                  "addressLine4" -> textOver35Chars,
+                  "postalCode"   -> textOver35Chars,
+                  "countryCode"  -> "PL"
+                )
+              ).value
+
+              status(result) mustEqual BAD_REQUEST
+              contentAsString(result) must include("First line of the address must be 35 characters or less")
+              contentAsString(result) must include("Second line of the address must be 35 characters or less")
+              contentAsString(result) must include("Town or city must be 35 characters or less")
+              contentAsString(result) must include("Region must be 35 characters or less")
+              contentAsString(result) must include("Postcode must be 10 characters or less")
+            }
           }
         }
       }
