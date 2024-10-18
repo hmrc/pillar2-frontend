@@ -245,16 +245,13 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
                 "companyName": "Test Company",
                 "companyNumber": "12345678",
                 "unsanitisedCHROAddress": {
-                  "address_line_1": "123 Test Street",
-                  "country": "United Kingdom",
                   "postal_code": "TE1 1ST"
                 }
               },
               "ctutr": "1234567890",
               "identifiersMatch": true,
               "registration": {
-                "registrationStatus": "REGISTERED",
-                "registeredBusinessPartnerId": "X1234567"
+                "registrationStatus": "REGISTERED"
               }
             }
           }
@@ -269,12 +266,11 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
           data.companyProfile.companyName mustBe "Test Company"
           data.companyProfile.companyNumber mustBe "12345678"
           data.companyProfile.dateOfIncorporation mustBe None
-          data.companyProfile.unsanitisedCHROAddress.address_line_1 mustBe Some("123 Test Street")
           data.ctutr mustBe "1234567890"
           data.identifiersMatch mustBe true
           data.businessVerification mustBe None
           data.registration.registrationStatus mustBe RegistrationStatus.Registered
-          data.registration.registeredBusinessPartnerId mustBe Some("X1234567")
+          data.registration.registeredBusinessPartnerId mustBe None
         }
       }
     }
