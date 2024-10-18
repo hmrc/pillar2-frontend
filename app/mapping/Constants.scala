@@ -19,14 +19,12 @@ package mapping
 object Constants {
   final val ENGLISH                     = "en"
   final val UK_COUNTRY_CODE             = "GB"
-  final val RFM_ADDRESS_MAX_LENGTH      = 35
   final val MIN_LENGTH_6                = 6
   final val MIN_LENGTH_8                = 8
   final val MAX_LENGTH_11               = 11
   final val MAX_LENGTH_24               = 24
   final val MAX_LENGTH_34               = 34
   final val MAX_LENGTH_40               = 40
-  final val MAX_LENGTH_50               = 50
   final val MAX_LENGTH_60               = 60
   final val MAX_LENGTH_100              = 100
   final val MAX_LENGTH_105              = 105

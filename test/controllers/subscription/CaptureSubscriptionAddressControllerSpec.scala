@@ -23,8 +23,10 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.SubAddSecondaryContactPage
+import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.Json
+import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -33,106 +35,104 @@ import scala.concurrent.Future
 class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   val formProvider = new CaptureSubscriptionAddressFormProvider()
 
-  "UpeRegisteredAddress Controller" when {
+  def application: Application = {
+    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+    applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)))
+      .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+      .build()
+  }
+
+  def getRequest: FakeRequest[AnyContentAsEmpty.type] =
+    FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
+  def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+    val address = Map(
+      "addressLine1" -> "27 House",
+      "addressLine2" -> "Street",
+      "addressLine3" -> "Newcastle",
+      "addressLine4" -> "North east",
+      "postalCode"   -> "NE5 2TR",
+      "countryCode"  -> "GB"
+    ) ++ alterations
+
+    FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
+      .withFormUrlEncodedBody(address.toSeq: _*)
+  }
+
+  val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
+
+  "CaptureSubscriptionAddressController" should {
 
     "redirect to contact CYA when valid data is submitted" in {
-      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(
-            ("addressLine1", "27 house"),
-            ("addressLine2", "Drive"),
-            ("addressLine3", "Newcastle"),
-            ("addressLine4", "North east"),
-            ("postalCode", "NE3 2TR"),
-            ("countryCode", "GB")
-          )
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
-      }
+      val result = route(application, postRequest()).value
+
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
     }
     "must return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+      val result = route(application, getRequest).value
 
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual OK
-      }
+      status(result) mustEqual OK
     }
 
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
+      val result      = route(application, getRequest).value
 
-        val result = route(application, request).value
+      status(result) mustEqual SEE_OTHER
+      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+    }
 
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
+    "return form with errors when postcode is invalid" should {
+
+      "UK address" when {
+        "empty postcode" in {
+          val result = route(application, postRequest("postalCode" -> "")).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include("Enter a full UK postcode")
+        }
+
+        "invalid format/length" in {
+          val postcodeExceeding35Chars = route(application, postRequest("postalCode" -> textOver35Chars)).value
+          val invalidUkPostcode        = route(application, postRequest("postalCode" -> "W111 1RC")).value
+
+          status(postcodeExceeding35Chars) mustEqual BAD_REQUEST
+          status(invalidUkPostcode) mustEqual BAD_REQUEST
+
+          contentAsString(postcodeExceeding35Chars) must include("Enter a full UK postcode")
+          contentAsString(invalidUkPostcode)        must include("Enter a full UK postcode")
+        }
+      }
+
+      "non-UK address" when {
+        "invalid format" in {
+          val result = route(
+            application,
+            postRequest(
+              "postalCode"  -> textOver35Chars,
+              "countryCode" -> "PL"
+            )
+          ).value
+
+          status(result) mustEqual BAD_REQUEST
+          contentAsString(result) must include("Postcode must be 10 characters or less")
+        }
       }
     }
 
-    "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+    "display error page and status should be Bad request if invalid postcode is used when country code is GB" in {
+      val result = route(application, postRequest("postalCode" -> "W111 1RC")).value
 
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val request =
-          FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("addressLine1", "27 house"),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "hhhhhhhhhhhh"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-      }
+      status(result) mustEqual BAD_REQUEST
     }
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-        .build()
+      val result = route(application, postRequest("addressLine1" -> textOver35Chars)).value
 
-      running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val badHouse = "27 house" * 120
-        val request =
-          FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              (
-                "addressLine1",
-                badHouse
-              ),
-              ("addressLine2", "Drive"),
-              ("addressLine3", "Newcastle"),
-              ("addressLine4", "North east"),
-              ("postalCode", "ne5 2th"),
-              ("countryCode", "GB")
-            )
-
-        val result = route(application, request).value
-
-        status(result) mustEqual BAD_REQUEST
-      }
+      status(result) mustEqual BAD_REQUEST
     }
-
   }
 }
