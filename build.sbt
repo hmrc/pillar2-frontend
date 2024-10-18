@@ -72,6 +72,9 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
+
 lazy val it = project
   .enablePlugins(PlayScala)
   .dependsOn(root % "test->test") // the "test->test" allows reusing test code and test dependencies
