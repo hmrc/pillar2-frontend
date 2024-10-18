@@ -51,7 +51,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         companyProfile = CompanyProfile(
           companyName = "ABC Limited",
           companyNumber = "1234",
-          dateOfIncorporation = date,
+          dateOfIncorporation = Some(date),
           unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
         ),
         ctutr = "1234567890",
