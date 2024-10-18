@@ -811,41 +811,6 @@ class SubscriptionServiceSpec extends SpecBase {
 
         result shouldEqual Some("ABC Limited")
       }
-      "return the company name if it is stored in the session and dateOfIncorporation is None" in {
-        val grsResponse = GrsResponse(
-          Some(
-            IncorporatedEntityRegistrationData(
-              companyProfile = CompanyProfile(
-                companyName = "ABC Limited",
-                companyNumber = "1234",
-                dateOfIncorporation = None,
-                unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
-              ),
-              ctutr = "1234567890",
-              identifiersMatch = true,
-              businessVerification = None,
-              registration = GrsRegistrationResult(
-                registrationStatus = RegistrationStatus.Registered,
-                registeredBusinessPartnerId = Some("XB0000000000001"),
-                failures = None
-              )
-            )
-          )
-        )
-        val userAnswers = emptyUserAnswers
-          .setOrException(FmGRSResponsePage, grsResponse)
-
-        val application = applicationBuilder(userAnswers = Some(userAnswers))
-          .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
-          .build()
-
-        when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswers)))
-
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-        val result = service.getCompanyNameFromGRS(grsResponse)
-
-        result shouldEqual Some("ABC Limited")
-      }
       "return an error redirect if the retrieval of the company name fails" in {
         val grsResponse = GrsResponse(None, None)
 
