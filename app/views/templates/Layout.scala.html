@@ -15,9 +15,9 @@
  *@
 
 @import config.FrontendAppConfig
+@import play.twirl.api.Html
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
-@import play.twirl.api.Html
 @this(
     govukLayout: GovukLayout,
     govukBackLink: GovukBackLink,
@@ -70,14 +70,6 @@
 }
 
 @beforeContent = {
-
-    @if(appConfig.languageTranslationEnabled) {
-        @hmrcLanguageSelect(LanguageSelect(
-            if (messages.lang.code == "cy") Cy else En,
-            (En, routes.LanguageSwitchController.switchToLanguage("en").url),
-            (Cy, routes.LanguageSwitchController.switchToLanguage("cy").url)
-        ))
-    }
 
     @if(showBackLink) {
         @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
