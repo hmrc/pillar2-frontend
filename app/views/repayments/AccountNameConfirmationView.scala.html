@@ -25,7 +25,7 @@
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         para: paragraphBody,
-        h1: heading
+        h2: HeadingH2
 )
 
 @(form: Form[_], accountNamePartial: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -36,8 +36,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmRepaymentAccountName" -> "confirmRepaymentAccountName_0")))
         }
-
-        @h1(messages("repayments.accountNameConfirm.subheading", accountNamePartial), classes = "govuk-heading-l")
+        @h2(messages("repayments.accountNameConfirm.subheading", accountNamePartial), size = "m")
 
         @para(messages("repayments.accountNameConfirm.p1"))
         @para(messages("repayments.accountNameConfirm.p2"))

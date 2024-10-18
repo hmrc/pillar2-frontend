@@ -1,19 +1,3 @@
-/*
- * Copyright 2024 HM Revenue & Customs
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package views.repayments
 
 import base.ViewSpecBase
@@ -37,8 +21,13 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text mustBe title
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").first().text must include("This account belongs to James")
+    "have a heading with the account holder's name" in {
+      view.getElementsByTag("h2").first().text must include("This account belongs to James")
+    }
+
+    "have a subheading" in {
+      val subheading = view.getElementsByTag("legend").text
+      subheading must include("Do you want to continue with these bank details?")
     }
 
     "have a paragraph" in {
@@ -46,10 +35,6 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
         "Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again."
       )
       view.getElementsByClass("govuk-body").get(1).text must include("We may not be able to recover your money if it goes to the wrong account.")
-    }
-
-    "have a subheading" in {
-      view.getElementsByTag("h1").get(1).text must include("Do you want to continue with these bank details?")
     }
 
     "have a yes or no form" in {

@@ -23,6 +23,7 @@
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
+        span: Span,
         govukErrorSummary: GovukErrorSummary,
         govukInput: GovukInput,
         govukButton: GovukButton
@@ -39,7 +40,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("rfm.heading.caption"))
+        @span(messages("rfm.heading.caption"))
 
         @govukInput(
             InputViewModel(

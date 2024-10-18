@@ -20,6 +20,7 @@
 @this(
         layout: templates.Layout,
         heading: heading,
+        span: Span,
         sectionHeader: sectionHeader,
         paragraphBody: paragraphBody,
         govukButton: GovukButton
@@ -30,7 +31,7 @@
 @layout(
     pageTitle = titleNoForm(messages("rfm.saveProgressInform.title"))) {
 
-    @sectionHeader(messages("rfm.saveProgressInform.heading.caption"))
+    @span(messages("rfm.saveProgressInform.heading.caption"))
     @heading(messages("rfm.saveProgressInform.heading"), "govuk-heading-l")
     @paragraphBody(messages("rfm.saveProgressInform.p1"), id = Some("save-p1"))
 
