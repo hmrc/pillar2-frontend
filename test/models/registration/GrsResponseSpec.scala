@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+package models.registration
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
@@ -59,7 +60,6 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
         val result = json.as[GrsResponse]
         result.incorporatedEntityRegistrationData must not be None
         result.partnershipEntityRegistrationData mustBe None
-        // More specific assertions
         result.incorporatedEntityRegistrationData.foreach { data =>
           data.companyProfile.companyName mustBe "Test Company"
           data.companyProfile.companyNumber mustBe "12345678"
@@ -97,7 +97,6 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
         result.incorporatedEntityRegistrationData mustBe None
         result.partnershipEntityRegistrationData must not be None
 
-        // Specific assertions about the partnershipEntityRegistrationData
         result.partnershipEntityRegistrationData.foreach { data =>
           data.sautr mustBe Some("1234567890")
           data.postcode mustBe Some("AB1 2CD")
@@ -219,7 +218,6 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
         result.incorporatedEntityRegistrationData must not be None
         result.partnershipEntityRegistrationData  must be(None)
 
-        // More specific assertions
         result.incorporatedEntityRegistrationData.foreach { data =>
           data.companyProfile.companyName mustBe "Test Company"
           data.companyProfile.companyNumber mustBe "12345678"
@@ -232,7 +230,6 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
           data.registration.registeredBusinessPartnerId mustBe Some("X1234567")
         }
 
-        // Ensure unexpected field is ignored
         (json \ "unexpectedField").as[String] mustBe "Some value"
       }
 
