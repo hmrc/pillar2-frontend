@@ -38,7 +38,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a heading with the account holder's name" in {
-      view.getElementsByTag("h2").first().text must include("This account belongs to James")
+      view.getElementsByTag("h1").first().text must include("This account belongs to James")
     }
 
     "have a subheading" in {
