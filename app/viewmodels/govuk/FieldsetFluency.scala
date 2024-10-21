@@ -17,11 +17,11 @@
 package viewmodels.govuk
 
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import viewmodels.LegendSize
 
-object fieldset extends FieldsetFluency
+object FieldsetFluency extends FieldsetFluency
 
 trait FieldsetFluency {
 
@@ -65,16 +65,16 @@ trait FieldsetFluency {
         case LegendSize.Small      => "govuk-fieldset__legend--s"
       }
 
-      val isPageHeadingFlag = headingLevel == "h1"
-
-      legend
-        .copy(
-          isPageHeading = isPageHeadingFlag,
-          classes = cssClass
-        )
+      legend.copy(
+        isPageHeading = headingLevel == "h1",
+        content = HtmlContent(
+          s"""<$headingLevel class="govuk-fieldset__heading">${legend.content.asHtml}</$headingLevel>"""
+        ),
+        classes = cssClass
+      )
     }
 
     def withCssClass(newClass: String): Legend =
-      legend.copy(classes = s"${legend.classes} $newClass")
+      legend copy (classes = s"${legend.classes} $newClass")
   }
 }

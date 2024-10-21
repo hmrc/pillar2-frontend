@@ -38,12 +38,13 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a heading with the account holder's name" in {
-      view.getElementsByTag("h1").first().text must include("This account belongs to James")
+      val heading = "This account belongs to James"
+      view.getElementsByTag("h1").first().text must include(heading)
     }
 
     "have a subheading" in {
-      val subheading = view.getElementsByTag("legend").text
-      subheading must include("Do you want to continue with these bank details?")
+      val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
+      view.getElementsByTag("legend").text must include(subheading)
     }
 
     "have a paragraph" in {
