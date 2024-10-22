@@ -270,7 +270,7 @@ rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfmContactByTelephone.error.required = Select yes if we can contact {0} by telephone
 rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-rfmContactByTelephone.change.hidden = can we contact the first contact by telephone
+rfmContactByTelephone.change.hidden = Can we contact by telephone?
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
@@ -686,7 +686,7 @@ contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = can we contact the first contact by telephone?
+contactByTelephone.change.hidden = Can we contact by telephone?
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number?
