@@ -53,9 +53,8 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have the correct link" in {
-      pending //TODO - Change link as a part
       val element = makePaymentDashboardView.getElementsByClass("govuk-link")
-      element.get(2).attr("href") must include("/guidance-for-payment")
+      element.get(2).attr("href") must include("https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax")
     }
   }
 }
