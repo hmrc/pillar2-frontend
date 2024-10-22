@@ -58,8 +58,7 @@ trait FieldsetFluency {
   implicit class FluentLegend(legend: Legend) {
 
     def asPageHeading(size: LegendSize = LegendSize.ExtraLarge, headingLevel: Option[String] = None): Legend = {
-      val level = headingLevel.getOrElse("h1")
-
+      val actualHeadingLevel = headingLevel.getOrElse("h1")
 
       val cssClass = size match {
         case LegendSize.ExtraLarge => "govuk-fieldset__legend--xl"
@@ -69,9 +68,9 @@ trait FieldsetFluency {
       }
 
       legend.copy(
-        isPageHeading = level == "h1",
+        isPageHeading = actualHeadingLevel == "h1",
         content = HtmlContent(
-          s"""<$level class="govuk-fieldset__heading">${legend.content.asHtml}</$level>"""
+          s"""<$actualHeadingLevel class="govuk-fieldset__heading">${legend.content.asHtml}</$actualHeadingLevel>"""
         ),
         classes = cssClass
       )
