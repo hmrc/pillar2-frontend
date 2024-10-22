@@ -57,7 +57,12 @@ trait FieldsetFluency {
 
   implicit class FluentLegend(legend: Legend) {
 
-    def asPageHeading(size: LegendSize = LegendSize.ExtraLarge, headingLevel: String = "h1"): Legend = {
+    // New version that allows for backward compatibility with an optional headingLevel parameter.
+    def asPageHeading(size: LegendSize = LegendSize.ExtraLarge, headingLevel: Option[String] = None): Legend = {
+      // Determine the default heading level based on size or allow overriding via headingLevel parameter.
+      val level = headingLevel.getOrElse("h1")
+
+      // Keep the old behavior as the default.
       val cssClass = size match {
         case LegendSize.ExtraLarge => "govuk-fieldset__legend--xl"
         case LegendSize.Large      => "govuk-fieldset__legend--l"
@@ -66,15 +71,15 @@ trait FieldsetFluency {
       }
 
       legend.copy(
-        isPageHeading = headingLevel == "h1",
+        isPageHeading = level == "h1",
         content = HtmlContent(
-          s"""<$headingLevel class="govuk-fieldset__heading">${legend.content.asHtml}</$headingLevel>"""
+          s"""<$level class="govuk-fieldset__heading">${legend.content.asHtml}</$level>"""
         ),
         classes = cssClass
       )
     }
 
     def withCssClass(newClass: String): Legend =
-      legend copy (classes = s"${legend.classes} $newClass")
+      legend.copy(classes = s"${legend.classes} $newClass")
   }
 }
