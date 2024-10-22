@@ -44,7 +44,7 @@
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
-                label = LabelViewModel(messages("contactEmailAddress.heading", UserName)).asPageHeading(Large)
+                label = LabelViewModel(Text(messages("contactEmailAddress.heading", UserName))).asPageHeading(Large)
                 .withCssClass("long-word")
             )
             .withHint(Hint(content = Text(messages("contactEmailAddress.hint"))))

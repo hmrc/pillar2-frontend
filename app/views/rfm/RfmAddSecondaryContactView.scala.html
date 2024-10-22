@@ -39,7 +39,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("rfm.addSecondaryContact.heading", contactName)).asPageHeading(Large)
+                legend = LegendViewModel(Text(messages("rfm.addSecondaryContact.heading", contactName))).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("rfm.addSecondaryContact.hint"))))
         )

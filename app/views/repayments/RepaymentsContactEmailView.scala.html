@@ -39,7 +39,7 @@
         @govukInput(
             InputViewModel(
                 field = form("contactEmail"),
-                label = LabelViewModel(messages("repayments.contactEmail.heading", contactName)).asPageHeading(Large)
+                label = LabelViewModel(Text(messages("repayments.contactEmail.heading", contactName))).asPageHeading(Large)
             )
             .withHint(Hint(content = Text(messages("repayments.contactEmail.hint"))))
             .withWidth(TwoThirds)
