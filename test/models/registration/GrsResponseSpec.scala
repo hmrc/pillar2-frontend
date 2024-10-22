@@ -15,12 +15,13 @@
  */
 
 package models.registration
+import models.grs.{BusinessVerificationResult, RegistrationStatus, VerificationStatus}
+import models.registration.GrsResponse
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json
-import models.registration.GrsResponse
+
 import java.time.LocalDate
-import models.grs.{BusinessVerificationResult, RegistrationStatus, VerificationStatus}
 
 class GrsResponseSpec extends AnyFreeSpec with Matchers {
 
