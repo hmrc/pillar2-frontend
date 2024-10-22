@@ -38,7 +38,7 @@ lazy val root = (project in file("."))
     PlayKeys.playDefaultPort := 10050,
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;" +
       ".*Routes.*;.*viewmodels.*;.*queries.*;.*views.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 80,
+    ScoverageKeys.coverageMinimumStmtTotal := 95,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
@@ -71,6 +71,9 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
+
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
 lazy val it = project
   .enablePlugins(PlayScala)
