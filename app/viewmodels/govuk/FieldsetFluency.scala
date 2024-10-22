@@ -57,12 +57,10 @@ trait FieldsetFluency {
 
   implicit class FluentLegend(legend: Legend) {
 
-    // New version that allows for backward compatibility with an optional headingLevel parameter.
     def asPageHeading(size: LegendSize = LegendSize.ExtraLarge, headingLevel: Option[String] = None): Legend = {
-      // Determine the default heading level based on size or allow overriding via headingLevel parameter.
       val level = headingLevel.getOrElse("h1")
 
-      // Keep the old behavior as the default.
+
       val cssClass = size match {
         case LegendSize.ExtraLarge => "govuk-fieldset__legend--xl"
         case LegendSize.Large      => "govuk-fieldset__legend--l"
