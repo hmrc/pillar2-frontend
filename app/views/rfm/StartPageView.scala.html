@@ -22,6 +22,7 @@
         formHelper: FormWithCSRF,
         heading: heading,
         sectionHeader: sectionHeader,
+        span: Span,
         paragraphBody: paragraphBody,
         link: link,
         bulletList: bulletList,
@@ -33,7 +34,7 @@
 
 @layout(pageTitle = titleNoForm(messages("rfm.startPage.title")), showSignOut = false, timeout = false) {
 
-    @sectionHeader(messages("rfm.heading.caption"))
+    @span(messages("rfm.heading.caption"))
     @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
 
     @heading(messages("rfm.startPage.subHeading1"), "govuk-heading-m", "h2")
@@ -62,10 +63,10 @@
     @paragraphBody(messages("rfm.startPage.p8"))
     @paragraphBody(messages("rfm.startPage.p9"))
     @bulletList(items = List(
-            Html(messages("rfm.startPage.b4")),
-            Html(messages("rfm.startPage.b5")),
-            Html(messages("rfm.startPage.b6")),
-            Html(messages("rfm.startPage.b7"))
+        Html(messages("rfm.startPage.b4")),
+        Html(messages("rfm.startPage.b5")),
+        Html(messages("rfm.startPage.b6")),
+        Html(messages("rfm.startPage.b7"))
     ), additionalListClasses = Some("govuk-list--spaced"))
 
     @heading(messages("rfm.startPage.subHeading5"), "govuk-heading-s", "h2")

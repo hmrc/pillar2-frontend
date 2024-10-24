@@ -25,6 +25,7 @@
         formHelper: FormWithCSRF,
         sectionHeader: sectionHeader,
         heading: heading,
+        span: Span,
         govukSummaryList: GovukSummaryList,
         govukButton: GovukButton
 )
@@ -35,7 +36,7 @@
 
     @formHelper(action = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit) {
 
-        @sectionHeader(messages("securityQuestionsCheckYourAnswers.heading.caption"))
+        @span(messages("securityQuestionsCheckYourAnswers.heading.caption"))
 
         @heading(messages("securityQuestionsCheckYourAnswers.heading"), "govuk-heading-l")
 
