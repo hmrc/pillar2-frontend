@@ -17,15 +17,23 @@
 package forms
 
 import forms.mappings.Mappings
+import mapping.Constants.MAX_LENGTH_250
 import play.api.data.Form
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("reasonForRequestingRefund.error.required")
-        .verifying(maxLength(250, "reasonForRequestingRefund.error.length"))
+        .verifying(
+          firstError(
+            maxLength(MAX_LENGTH_250, "reasonForRequestingRefund.error.length"),
+            regexp(XSS_REGEX, "reasonForRequestingRefund.error.xss")
+          )
+        )
     )
 }

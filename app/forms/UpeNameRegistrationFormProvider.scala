@@ -17,16 +17,23 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants
+import mapping.Constants.MAX_LENGTH_105
 import play.api.data.Form
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class UpeNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("upeNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "upeNameRegistration.error.length"))
+        .verifying(
+          firstError(
+            maxLength(MAX_LENGTH_105, "upeNameRegistration.error.length"),
+            regexp(XSS_REGEX, "upeNameRegistration.error.xss")
+          )
+        )
     )
 }
