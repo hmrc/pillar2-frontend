@@ -19,19 +19,19 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class RepaymentsContactNameFormProviderSpec extends StringFieldBehaviours {
+class ContactNameComplianceFormProviderSpec extends StringFieldBehaviours {
 
-  val REQUIRED_KEY = "repayments.contactName.error.required"
-  val LENGTH_KEY   = "repayments.contactName.error.length"
+  val REQUIRED_KEY = "contactNameCompliance.error.required"
+  val LENGTH_KEY   = "contactNameCompliance.error.length"
   val MAX_LENGTH   = 160
-  val XSS_KEY      = "repayments.contactName.error.xss"
+  val XSS_KEY      = "contactNameCompliance.error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
-  val form = new RepaymentsContactNameFormProvider()()
+  val form = new ContactNameComplianceFormProvider()()
 
-  ".contactName" - {
+  ".value" - {
 
-    val FIELD_NAME = "contactName"
+    val FIELD_NAME = "value"
 
     behave like fieldThatBindsValidData(
       form,
@@ -57,3 +57,4 @@ class RepaymentsContactNameFormProviderSpec extends StringFieldBehaviours {
 
   }
 }
+

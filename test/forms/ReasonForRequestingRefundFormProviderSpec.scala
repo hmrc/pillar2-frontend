@@ -27,31 +27,22 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
   val XSS_KEY      = "reasonForRequestingRefund.error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
-  val nonRegexConformingStrings = Seq(
-    "Test <script>alert('xss')</script>",
-    "Invalid input with < character",
-    "Another invalid input with > character",
-    "Input with \" double quotes",
-    "Input with & ampersand"
-  )
-
-  val FORM = new ReasonForRequestingRefundFormProvider()()
+  val form = new ReasonForRequestingRefundFormProvider()()
 
   ".value" - {
 
     val FIELD_NAME = "value"
 
     behave like fieldThatBindsValidData(
-      FORM,
+      form,
       FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
-    behave like regexFieldWithMaxLength(
-      FORM,
+    behave like fieldWithRegexAndMaxLength(
+      form,
       FIELD_NAME,
       MAX_LENGTH,
-      generatorLimit = 500,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
@@ -59,7 +50,7 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
     )
 
     behave like mandatoryField(
-      FORM,
+      form,
       FIELD_NAME,
       requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )

@@ -82,7 +82,6 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     val formatKey     = "repayments.bankAccountDetails.sortCodeFormatError"
     val sortCodeRegex = """^[0-9]{6}$"""
     val maxLength     = 6
-    val genLimit      = 10
 
     behave like fieldThatBindsValidData(
       form,
@@ -90,15 +89,14 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       nonEmptyRegexConformingStringWithMaxLength(sortCodeRegex, maxLength)
     )
 
-    behave like regexFieldWithMaxLength(
+    behave like fieldWithRegexAndMaxLength(
       form,
       fieldName,
       maxLength,
-      genLimit,
-      sortCodeRegex,
-      invalidSortCodes,
-      FormError(fieldName, lengthKey, Seq(maxLength)),
-      FormError(fieldName, formatKey)
+      regex = sortCodeRegex,
+      regexViolationGen = invalidSortCodes,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      regexError = FormError(fieldName, formatKey)
     )
 
     behave like mandatoryField(

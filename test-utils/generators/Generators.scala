@@ -128,7 +128,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def longStringsConformingToRegex(regex: String, minLength: Int): Gen[String] =
     RegexpGen
       .from(regex)
-      .suchThat(_.length > minLength)
       .map(_.padTo(minLength + 1, 'a'))
 
   def stringsLongerThan(minLength: Int): Gen[String] = for {

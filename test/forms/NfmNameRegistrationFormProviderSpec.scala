@@ -17,38 +17,43 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import mapping.Constants
 import play.api.data.FormError
 
 class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "nfmNameRegistration.error.required"
-  val lengthKey   = "nfmNameRegistration.error.length"
-  val maxLength   = Constants.MAX_LENGTH_105
-  val form        = new NfmNameRegistrationFormProvider()()
+  val REQUIRED_KEY = "nfmNameRegistration.error.required"
+  val LENGTH_KEY   = "nfmNameRegistration.error.length"
+  val MAX_LENGTH   = 105
+  val XSS_KEY      = "nfmNameRegistration.error.xss"
+  val XSS_REGEX    = """^[^<>"&]*$"""
+
+  val form = new NfmNameRegistrationFormProvider()()
 
   ".value" - {
 
-    val fieldName = "value"
+    val FIELD_NAME = "value"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
+      FIELD_NAME,
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
-    behave like fieldWithMaxLength(
+    behave like fieldWithRegexAndMaxLength(
       form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(stringsWithMinLength(maxLength + 1))
+      FIELD_NAME,
+      MAX_LENGTH,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
+
   }
 }

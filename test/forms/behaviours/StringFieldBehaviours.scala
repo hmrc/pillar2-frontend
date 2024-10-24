@@ -30,11 +30,10 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def regexFieldWithMaxLength(
+  def fieldWithRegexAndMaxLength(
     form:              Form[_],
     fieldName:         String,
     maxLength:         Int,
-    generatorLimit:    Int,
     regex:             String,
     regexViolationGen: Gen[String],
     lengthError:       FormError,
