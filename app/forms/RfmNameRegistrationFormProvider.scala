@@ -21,12 +21,18 @@ import mapping.Constants
 import play.api.data.Form
 
 import javax.inject.Inject
+import forms.Validation.XSS_REGEX
 
 class RfmNameRegistrationFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
       "value" -> text("rfm.nameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "rfm.nameRegistration.error.length"))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_105, "rfm.nameRegistration.error.length"),
+            regexp(XSS_REGEX, "rfm.nameRegistration.error.xss")
+          )
+        )
     )
 }
