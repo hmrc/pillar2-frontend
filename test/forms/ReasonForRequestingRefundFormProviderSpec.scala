@@ -49,5 +49,32 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       requiredError = FormError(fieldName, requiredKey)
     )
+
+    "not bind strings containing XSS characters" in {
+      val invalidInputs = Seq(
+        "Test <script>alert('xss')</script>",
+        "Test >",
+        "Test \"",
+        "Test &"
+      )
+
+      invalidInputs.foreach { input =>
+        val result = form.bind(Map(fieldName -> input)).apply(fieldName)
+        assert(result.errors == Seq(FormError(fieldName, "reasonForRequestingRefund.error.xss")))
+      }
+    }
+
+    "bind valid strings" in {
+      val validInputs = Seq(
+        "This is a valid reason",
+        "Another valid reason with numbers 123",
+        "Valid reason with allowed characters: , . - ( )"
+      )
+
+      validInputs.foreach { input =>
+        val result = form.bind(Map(fieldName -> input)).apply(fieldName)
+        assert(result.errors.isEmpty)
+      }
+    }
   }
 }

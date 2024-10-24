@@ -1020,7 +1020,7 @@ rfm.registeredAddress.error.addressLine1.length = The first line of the address 
 rfm.registeredAddress.error.addressLine1.invalid = The first line of the address contains invalid characters
 rfm.registeredAddress.error.addressLine2.length = The second line of the address must be 35 characters or less
 rfm.registeredAddress.error.addressLine2.invalid = The second line of the address contains invalid characters
-rfm.registeredAddress.warning.message = You must provide the registered office address for HMRC to keep on record. If you're uncertain, verify the registered address before proceeding.
+rfm.registeredAddress.warning.message = You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
 rfm.registeredAddress.error.xss = The address you enter must not contain the following characters: <, >, " or &
 
 rfm.rfmCheckYourAnswers.title = Check your answers for filing member details
@@ -1337,6 +1337,7 @@ repayments.contactName.heading = What is the name of the person or team we shoul
 repayments.contactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 repayments.contactName.error.required = Enter name of the person or team we should contact for this refund request
 repayments.contactName.error.length = Name of the contact person or team must be 160 characters or less
+repayments.contactName.error.xss = The name of the contact person or team must not contain the following characters: <, >, " or &
 
 repayments.contactEmail.title = What is the email address?
 repayments.contactEmail.heading = What is the email address for {0}?
