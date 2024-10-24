@@ -19,9 +19,10 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants.MAX_LENGTH_105
 import play.api.data.Form
-import Validation.XSS_REGEX
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class NfmContactNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =

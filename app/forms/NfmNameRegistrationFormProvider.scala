@@ -19,9 +19,10 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
-import Validation.XSS_REGEX
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class NfmNameRegistrationFormProvider @Inject() extends Mappings {
 

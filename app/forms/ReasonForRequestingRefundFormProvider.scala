@@ -17,11 +17,12 @@
 package forms
 
 import forms.mappings.Mappings
-import play.api.data.Form
 import mapping.Constants.MAX_LENGTH_250
-import Validation.XSS_REGEX
+import play.api.data.Form
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
 

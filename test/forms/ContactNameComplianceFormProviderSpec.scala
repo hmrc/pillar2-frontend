@@ -57,4 +57,3 @@ class ContactNameComplianceFormProviderSpec extends StringFieldBehaviours {
 
   }
 }
-

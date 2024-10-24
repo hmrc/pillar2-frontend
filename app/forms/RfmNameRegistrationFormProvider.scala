@@ -16,12 +16,12 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
 
 import javax.inject.Inject
-import forms.Validation.XSS_REGEX
 
 class RfmNameRegistrationFormProvider @Inject() extends Mappings {
 

@@ -19,9 +19,10 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants.MAX_LENGTH_160
 import play.api.data.Form
-import Validation.XSS_REGEX
 
 import javax.inject.Inject
+
+import Validation.XSS_REGEX
 
 class RfmSecondaryContactNameFormProvider @Inject() extends Mappings {
 
