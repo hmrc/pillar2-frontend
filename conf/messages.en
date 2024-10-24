@@ -519,7 +519,6 @@ nfmRegisteredAddress.error.addressLine1.invalid = The first line of the address 
 nfmRegisteredAddress.error.addressLine2.length = Second line of the address must be 35 characters or less
 nfmRegisteredAddress.error.addressLine2.invalid = The second line of the address contains invalid characters
 nfmRegisteredAddress.change.hidden = the registered office address of the nominated filing member
-nfmRegisteredAddress.error.xss = The address you enter must not contain the following characters: <, >, " or &
 
 nfmEntityType.title = What entity type is the nominated filing member?
 nfmEntityType.heading = What entity type is the nominated filing member?
@@ -551,7 +550,6 @@ nfmEmailAddress.error.required = Enter the email address for {0}
 nfmEmailAddress.error.length = Email address must be 132 characters or less
 nfmEmailAddress.error.invalid = Enter an email address in the correct format, like name@example.com
 nfmEmailAddress.change.hidden = the contact email address for the nominated filing member
-nfmEmailAddress.error.xss = The email address you enter must not contain the following characters: <, >, " or &
 
 nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden = the name of the nominated filing member
@@ -686,7 +684,6 @@ contactEmailAddress.error.required = Enter the email address for {0}
 contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 contactEmailAddress.change.hidden = the first contact email address
-contactEmailAddress.error.xss = The email address you enter must not contain the following characters: <, >, " or &
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
@@ -774,7 +771,6 @@ secondaryContactEmail.hint = We will only use this to contact you about Pillar 2
 secondaryContactEmail.error.required = Enter the email address for {0}
 secondaryContactEmail.error.length = Email address must be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
-secondaryContactEmail.error.xss = The email address you enter must not contain the following characters: <, >, " or &
 
 secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
@@ -840,7 +836,6 @@ subscriptionAddress.error.addressLine1.invalid = The first line of the address c
 subscriptionAddress.error.addressLine2.length = Second line of the address must be 35 characters or less
 subscriptionAddress.error.addressLine2.invalid = The second line of the address contains invalid characters
 subscriptionAddress.change.hidden = the registered contact address
-subscriptionAddress.error.xss = The address you enter must not contain the following characters: <, >, " or &
 
 ###############################################
 #

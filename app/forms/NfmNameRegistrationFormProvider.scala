@@ -19,6 +19,7 @@ package forms
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
+import Validation.XSS_REGEX
 
 import javax.inject.Inject
 
@@ -27,6 +28,11 @@ class NfmNameRegistrationFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("nfmNameRegistration.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"))
+        .verifying(
+          firstError(
+            maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"),
+            regexp(XSS_REGEX, "nfmNameRegistration.error.xss")
+          )
+        )
     )
 }
