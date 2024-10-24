@@ -27,7 +27,7 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
   val XSS_KEY      = "reasonForRequestingRefund.error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
-  val nonConformingStrings = Seq(
+  val nonRegexConformingStrings = Seq(
     "Test <script>alert('xss')</script>",
     "Invalid input with < character",
     "Another invalid input with > character",
@@ -44,30 +44,24 @@ class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       FORM,
       FIELD_NAME,
-      stringsWithMaxLength(MAX_LENGTH)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
-    behave like fieldWithMaxLength(
+    behave like regexFieldWithMaxLength(
       FORM,
       FIELD_NAME,
-      maxLength = MAX_LENGTH,
-      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH))
+      MAX_LENGTH,
+      generatorLimit = 500,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       FORM,
       FIELD_NAME,
       requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
-    )
-
-    behave like fieldWithRegexValidation(
-      FORM,
-      FIELD_NAME,
-      regex = XSS_REGEX,
-      validDataGenerator =
-        nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH), // Gave it a max length to ensure we're not triggering the other validation
-      invalidExamples = nonConformingStrings,
-      error = FormError(FIELD_NAME, XSS_KEY)
     )
 
   }

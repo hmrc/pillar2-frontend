@@ -31,45 +31,26 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
 
   def regexFieldWithMaxLength(
-    form:           Form[_],
-    fieldName:      String,
-    maxLength:      Int,
-    generatorLimit: Int,
-    regex:          String,
-    lengthError:    FormError,
-    formatError:    FormError
-  ): Unit =
-    s"not bind strings longer than $maxLength characters" in {
-      forAll(regexWithMaxLength(maxLength, generatorLimit, regex) -> "longString") { string =>
-        val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-        result.errors must contain.atLeastOneOf(lengthError, formatError)
-      }
-    }
-
-  def fieldWithRegexValidation(
-    form:               Form[_],
-    fieldName:          String,
-    regex:              String,
-    validDataGenerator: Gen[String],
-    invalidExamples: Seq[
-      String
-    ],
-    error: FormError
+    form:              Form[_],
+    fieldName:         String,
+    maxLength:         Int,
+    generatorLimit:    Int,
+    regex:             String,
+    regexViolationGen: Gen[String],
+    lengthError:       FormError,
+    regexError:        FormError
   ): Unit = {
-
-    "bind valid data" in {
-      forAll(validDataGenerator) { validValue =>
-        val result = form.bind(Map(fieldName -> validValue)).apply(fieldName)
-        result.errors mustBe empty
+    s"not bind strings longer than $maxLength characters" in {
+      forAll(longStringsConformingToRegex(regex, maxLength)) { string =>
+        val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+        result.errors must contain only lengthError
       }
     }
 
-    // Invalid data would be generated if it wasn't so hard to do so:
-    // https://stackoverflow.com/questions/13316644/randomly-generate-a-string-that-does-not-match-a-given-regular-expression
-    "not bind invalid data" in {
-      invalidExamples.foreach { invalidValue =>
+    "not bind data violating the regex" in {
+      forAll(regexViolationGen) { invalidValue =>
         val result = form.bind(Map(fieldName -> invalidValue)).apply(fieldName)
-        result.errors must contain only error
+        result.errors must contain only regexError
       }
     }
   }

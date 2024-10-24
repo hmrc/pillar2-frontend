@@ -100,17 +100,36 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
   }
 
+  def stringsWithAtLeastOneSpecialChar(specialChars: String, maxLength: Int): Gen[String] = {
+    require(specialChars.nonEmpty, "specialChars must not be empty")
+    require(maxLength > 0, "maxLength must be positive")
+
+    val normalChar = arbitrary[Char] suchThat (!specialChars.contains(_))
+
+    for {
+      length         <- Gen.choose(1, maxLength)
+      normalString   <- Gen.listOfN(length - 1, normalChar).map(_.mkString)
+      specialChar    <- Gen.oneOf(specialChars)
+      insertPosition <- Gen.choose(0, normalString.length)
+      (left, right) = normalString.splitAt(insertPosition)
+    } yield (left + specialChar + right).take(maxLength)
+  }
+
+  def invalidSortCodes: Gen[String] = {
+    val digits    = Gen.numChar
+    val nonDigits = arbitrary[Char] suchThat (!_.isDigit)
+    for {
+      n            <- Gen.choose(1, 5)
+      digitPart    <- Gen.listOfN(n, digits)
+      nonDigitPart <- Gen.listOfN(6 - n, nonDigits)
+    } yield (digitPart ++ nonDigitPart).mkString
+  }
+
   def longStringsConformingToRegex(regex: String, minLength: Int): Gen[String] =
     RegexpGen
       .from(regex)
       .suchThat(_.length > minLength)
       .map(_.padTo(minLength + 1, 'a'))
-
-  def regexWithMaxLength(maxLength: Int, genLimit: Int, regex: String): Gen[String] =
-    for {
-      length      <- choose(maxLength, genLimit)
-      regexString <- Gen.listOfN(length, RegexpGen.from(regex))
-    } yield regexString.mkString
 
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)

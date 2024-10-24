@@ -96,8 +96,9 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       maxLength,
       genLimit,
       sortCodeRegex,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      formatError = FormError(fieldName, formatKey, Seq(maxLength))
+      invalidSortCodes,
+      FormError(fieldName, lengthKey, Seq(maxLength)),
+      FormError(fieldName, formatKey)
     )
 
     behave like mandatoryField(
