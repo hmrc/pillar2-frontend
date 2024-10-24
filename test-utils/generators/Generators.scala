@@ -111,6 +111,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       length      <- choose(maxLength, genLimit)
       regexString <- Gen.listOfN(length, RegexpGen.from(regex))
     } yield regexString.mkString
+
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)
     length    <- Gen.chooseNum(minLength + 1, maxLength)

@@ -45,4 +45,32 @@ trait StringFieldBehaviours extends FieldBehaviours {
         result.errors must contain.atLeastOneOf(lengthError, formatError)
       }
     }
+
+  def fieldWithRegexValidation(
+    form:               Form[_],
+    fieldName:          String,
+    regex:              String,
+    validDataGenerator: Gen[String],
+    invalidExamples: Seq[
+      String
+    ],
+    error: FormError
+  ): Unit = {
+
+    "bind valid data" in {
+      forAll(validDataGenerator) { validValue =>
+        val result = form.bind(Map(fieldName -> validValue)).apply(fieldName)
+        result.errors mustBe empty
+      }
+    }
+
+    // Invalid data would be generated if it wasn't so hard to do so:
+    // https://stackoverflow.com/questions/13316644/randomly-generate-a-string-that-does-not-match-a-given-regular-expression
+    "not bind invalid data" in {
+      invalidExamples.foreach { invalidValue =>
+        val result = form.bind(Map(fieldName -> invalidValue)).apply(fieldName)
+        result.errors must contain only error
+      }
+    }
+  }
 }

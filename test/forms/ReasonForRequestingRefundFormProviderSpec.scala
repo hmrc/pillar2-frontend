@@ -21,60 +21,54 @@ import play.api.data.FormError
 
 class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "reasonForRequestingRefund.error.required"
-  val lengthKey   = "reasonForRequestingRefund.error.length"
-  val maxLength   = 250
+  val REQUIRED_KEY = "reasonForRequestingRefund.error.required"
+  val LENGTH_KEY   = "reasonForRequestingRefund.error.length"
+  val MAX_LENGTH   = 250
+  val XSS_KEY      = "reasonForRequestingRefund.error.xss"
+  val XSS_REGEX    = """^[^<>"&]*$"""
 
-  val form = new ReasonForRequestingRefundFormProvider()()
+  val nonConformingStrings = Seq(
+    "Test <script>alert('xss')</script>",
+    "Invalid input with < character",
+    "Another invalid input with > character",
+    "Input with \" double quotes",
+    "Input with & ampersand"
+  )
+
+  val FORM = new ReasonForRequestingRefundFormProvider()()
 
   ".value" - {
 
-    val fieldName = "value"
+    val FIELD_NAME = "value"
 
     behave like fieldThatBindsValidData(
-      form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
+      FORM,
+      FIELD_NAME,
+      stringsWithMaxLength(MAX_LENGTH)
     )
 
     behave like fieldWithMaxLength(
-      form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      FORM,
+      FIELD_NAME,
+      maxLength = MAX_LENGTH,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH))
     )
 
     behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FORM,
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
 
-    "not bind strings containing XSS characters" in {
-      val invalidInputs = Seq(
-        "Test <script>alert('xss')</script>",
-        "Test >",
-        "Test \"",
-        "Test &"
-      )
+    behave like fieldWithRegexValidation(
+      FORM,
+      FIELD_NAME,
+      regex = XSS_REGEX,
+      validDataGenerator =
+        nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH), // Gave it a max length to ensure we're not triggering the other validation
+      invalidExamples = nonConformingStrings,
+      error = FormError(FIELD_NAME, XSS_KEY)
+    )
 
-      invalidInputs.foreach { input =>
-        val result = form.bind(Map(fieldName -> input)).apply(fieldName)
-        assert(result.errors == Seq(FormError(fieldName, "reasonForRequestingRefund.error.xss")))
-      }
-    }
-
-    "bind valid strings" in {
-      val validInputs = Seq(
-        "This is a valid reason",
-        "Another valid reason with numbers 123",
-        "Valid reason with allowed characters: , . - ( )"
-      )
-
-      validInputs.foreach { input =>
-        val result = form.bind(Map(fieldName -> input)).apply(fieldName)
-        assert(result.errors.isEmpty)
-      }
-    }
   }
 }
