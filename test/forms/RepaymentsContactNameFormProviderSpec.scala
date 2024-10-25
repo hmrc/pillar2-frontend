@@ -24,7 +24,7 @@ class RepaymentsContactNameFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "repayments.contactName.error.required"
   val LENGTH_KEY   = "repayments.contactName.error.length"
   val MAX_LENGTH   = 160
-  val XSS_KEY      = "repayments.contactName.error.xss"
+  val XSS_KEY      = "error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new RepaymentsContactNameFormProvider()()

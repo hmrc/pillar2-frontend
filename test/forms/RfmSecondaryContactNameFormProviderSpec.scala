@@ -24,7 +24,7 @@ class RfmSecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "rfm.SecondaryContactName.error.required"
   val LENGTH_KEY   = "rfm.SecondaryContactName.error.length"
   val MAX_LENGTH   = 160
-  val XSS_KEY      = "rfm.SecondaryContactName.error.xss"
+  val XSS_KEY      = "error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new RfmSecondaryContactNameFormProvider()()

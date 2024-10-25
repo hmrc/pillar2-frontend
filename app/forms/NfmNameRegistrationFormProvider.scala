@@ -32,7 +32,7 @@ class NfmNameRegistrationFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"),
-            regexp(XSS_REGEX, "nfmNameRegistration.error.xss")
+            regexp(XSS_REGEX, "error.xss")
           )
         )
     )

@@ -31,7 +31,7 @@ class RfmNameRegistrationFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_105, "rfm.nameRegistration.error.length"),
-            regexp(XSS_REGEX, "rfm.nameRegistration.error.xss")
+            regexp(XSS_REGEX, "error.xss")
           )
         )
     )

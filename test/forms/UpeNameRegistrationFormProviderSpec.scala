@@ -24,7 +24,7 @@ class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "upeNameRegistration.error.required"
   val LENGTH_KEY   = "upeNameRegistration.error.length"
   val MAX_LENGTH   = 105
-  val XSS_KEY      = "upeNameRegistration.error.xss"
+  val XSS_KEY      = "error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new UpeNameRegistrationFormProvider()()

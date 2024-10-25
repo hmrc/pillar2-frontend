@@ -24,7 +24,7 @@ class NfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "nfmNameRegistration.error.required"
   val LENGTH_KEY   = "nfmNameRegistration.error.length"
   val MAX_LENGTH   = 105
-  val XSS_KEY      = "nfmNameRegistration.error.xss"
+  val XSS_KEY      = "error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new NfmNameRegistrationFormProvider()()

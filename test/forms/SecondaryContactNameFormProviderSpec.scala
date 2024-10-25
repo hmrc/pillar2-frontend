@@ -24,7 +24,7 @@ class SecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "secondaryContactName.error.required"
   val LENGTH_KEY   = "secondaryContactName.error.length"
   val MAX_LENGTH   = 160
-  val XSS_KEY      = "secondaryContactName.error.xss"
+  val XSS_KEY      = "error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new SecondaryContactNameFormProvider()()

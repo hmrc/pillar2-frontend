@@ -32,7 +32,7 @@ class SecondaryContactNameFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_160, "secondaryContactName.error.length"),
-            regexp(XSS_REGEX, "secondaryContactName.error.xss")
+            regexp(XSS_REGEX, "error.xss")
           )
         )
     )
