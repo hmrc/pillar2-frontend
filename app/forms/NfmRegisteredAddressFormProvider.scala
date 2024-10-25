@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -32,7 +33,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine1.length"),
-              regexp(Validation.XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "error.xss")
             )
           ),
       "addressLine2" -> optional(
@@ -40,7 +41,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine2.length"),
-              regexp(Validation.XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "error.xss")
             )
           )
       ),
@@ -49,7 +50,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "nfmRegisteredAddress.town_city.error.length"),
-              regexp(Validation.XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "error.xss")
             )
           ),
       "addressLine4" ->
@@ -58,7 +59,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "nfmRegisteredAddress.region.error.length"),
-                regexp(Validation.XSS_REGEX, "error.xss")
+                regexp(XSS_REGEX, "error.xss")
               )
             )
         ),
@@ -68,7 +69,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "nfmRegisteredAddress.country.error.length"),
-              regexp(Validation.XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
