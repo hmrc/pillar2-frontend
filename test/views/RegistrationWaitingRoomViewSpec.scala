@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import models.subscription.SubscriptionStatus.SuccessfullyCompletedSubscription
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.RegistrationWaitingRoomView
+import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
 

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.{RegistrationNotCalledNfmView, RegistrationNotCalledRfmView, RegistrationNotCalledUpeView}
+import views.html.registrationview.{RegistrationNotCalledNfmView, RegistrationNotCalledRfmView, RegistrationNotCalledUpeView}
 
 class GrsRegistrationNotCalledControllerSpec extends SpecBase {
 
