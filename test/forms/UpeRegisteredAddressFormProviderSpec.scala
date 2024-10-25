@@ -18,19 +18,19 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.AddressMappings.maxAddressLineLength
-import models.NonUKAddress
+import models.UKAddress
 import play.api.data.FormError
 
-class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
+class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form      = new CaptureSubscriptionAddressFormProvider()()
+  val form      = new UpeRegisteredAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
   val xssKey    = "error.xss"
 
   ".addressLine1" - {
     val fieldName   = "addressLine1"
-    val requiredKey = "subscriptionAddress.error.addressLine1.required"
-    val lengthKey   = "subscriptionAddress.error.addressLine1.length"
+    val requiredKey = "upeRegisteredAddress.error.addressLine1.required"
+    val lengthKey   = "upeRegisteredAddress.error.addressLine1.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -57,7 +57,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine2" - {
     val fieldName = "addressLine2"
-    val lengthKey = "subscriptionAddress.error.addressLine2.length"
+    val lengthKey = "upeRegisteredAddress.error.addressLine2.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -74,13 +74,12 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
       regexError = FormError(fieldName, xssKey)
     )
-
   }
 
   ".addressLine3" - {
     val fieldName   = "addressLine3"
-    val requiredKey = "subscriptionAddress.town_city.error.required"
-    val lengthKey   = "subscriptionAddress.town_city.error.length"
+    val requiredKey = "upeRegisteredAddress.town_city.error.required"
+    val lengthKey   = "upeRegisteredAddress.town_city.error.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -107,7 +106,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine4" - {
     val fieldName = "addressLine4"
-    val lengthKey = "subscriptionAddress.region.error.length"
+    val lengthKey = "upeRegisteredAddress.region.error.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -124,16 +123,15 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
       regexError = FormError(fieldName, xssKey)
     )
-
   }
 
-  // ".postalCode" - {
-  // }
+//   ".postalCode" - {
+//   }
 
   ".countryCode" - {
     val fieldName   = "countryCode"
-    val requiredKey = "subscriptionAddress.country.error.required"
-    val lengthKey   = "subscriptionAddress.country.error.length"
+    val requiredKey = "upeRegisteredAddress.country.error.required"
+    val lengthKey   = "address.postcode.error.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -164,10 +162,14 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
         Map(
           "addressLine1" -> "123 Test Street",
           "addressLine3" -> "Test City",
-          "countryCode"  -> "FR"
+          "postalCode"   -> "AB1 2CD",
+          "countryCode"  -> "GB"
         )
       )
-      assert(result.value.value == NonUKAddress("123 Test Street", None, "Test City", None, None, "FR"))
+      assert(result.value.value == UKAddress("123 Test Street", None, "Test City", None, "AB1 2CD", "GB"))
     }
   }
 }
+
+
+

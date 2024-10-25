@@ -28,23 +28,48 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
     mapping(
       "addressLine1" ->
         text("upeRegisteredAddress.error.addressLine1.required")
-          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine1.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine1.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine2.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine2.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
       ),
       "addressLine3" ->
         text("upeRegisteredAddress.town_city.error.required")
-          .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.town_city.error.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "upeRegisteredAddress.town_city.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(maxAddressLineLength, "upeRegisteredAddress.region.error.length"))
+            .verifying(
+              firstError(
+                maxLength(maxAddressLineLength, "upeRegisteredAddress.region.error.length"),
+                regexp(Validation.XSS_REGEX, "error.xss")
+              )
+            )
         ),
       "postalCode" -> mandatoryPostcode(),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
-          .verifying(maxLength(maxAddressLineLength, "address.postcode.error.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "address.postcode.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
     )(UKAddress.apply)(UKAddress.unapply)
   )
 }

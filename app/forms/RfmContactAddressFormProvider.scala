@@ -29,23 +29,48 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
     mapping(
       "addressLine1" ->
         text("rfmContactAddress.error.addressLine1.required")
-          .verifying(maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine1.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine1.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine2.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine2.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
       ),
       "addressLine3" ->
         text("rfmContactAddress.town_city.error.required")
-          .verifying(maxLength(maxAddressLineLength, "rfmContactAddress.town_city.error.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "rfmContactAddress.town_city.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(maxAddressLineLength, "rfmContactAddress.region.error.length"))
+            .verifying(
+              firstError(
+                maxLength(maxAddressLineLength, "rfmContactAddress.region.error.length"),
+                regexp(Validation.XSS_REGEX, "error.xss")
+              )
+            )
         ),
       "postalCode" -> optionalPostcode(),
       "countryCode" ->
         text("rfmContactAddress.country.error.required")
-          .verifying(maxLength(maxAddressLineLength, "rfmContactAddress.country.error.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "rfmContactAddress.country.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

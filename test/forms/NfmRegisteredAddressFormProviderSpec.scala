@@ -21,16 +21,16 @@ import forms.mappings.AddressMappings.maxAddressLineLength
 import models.NonUKAddress
 import play.api.data.FormError
 
-class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
+class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form      = new CaptureSubscriptionAddressFormProvider()()
+  val form      = new NfmRegisteredAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
   val xssKey    = "error.xss"
 
   ".addressLine1" - {
     val fieldName   = "addressLine1"
-    val requiredKey = "subscriptionAddress.error.addressLine1.required"
-    val lengthKey   = "subscriptionAddress.error.addressLine1.length"
+    val requiredKey = "nfmRegisteredAddress.error.addressLine1.required"
+    val lengthKey   = "nfmRegisteredAddress.error.addressLine1.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -57,7 +57,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine2" - {
     val fieldName = "addressLine2"
-    val lengthKey = "subscriptionAddress.error.addressLine2.length"
+    val lengthKey = "nfmRegisteredAddress.error.addressLine2.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -74,13 +74,12 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
       regexError = FormError(fieldName, xssKey)
     )
-
   }
 
   ".addressLine3" - {
     val fieldName   = "addressLine3"
-    val requiredKey = "subscriptionAddress.town_city.error.required"
-    val lengthKey   = "subscriptionAddress.town_city.error.length"
+    val requiredKey = "nfmRegisteredAddress.town_city.error.required"
+    val lengthKey   = "nfmRegisteredAddress.town_city.error.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -107,7 +106,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".addressLine4" - {
     val fieldName = "addressLine4"
-    val lengthKey = "subscriptionAddress.region.error.length"
+    val lengthKey = "nfmRegisteredAddress.region.error.length"
 
     behave like fieldThatBindsValidData(
       form,
@@ -124,16 +123,12 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
       regexError = FormError(fieldName, xssKey)
     )
-
   }
-
-  // ".postalCode" - {
-  // }
 
   ".countryCode" - {
     val fieldName   = "countryCode"
-    val requiredKey = "subscriptionAddress.country.error.required"
-    val lengthKey   = "subscriptionAddress.country.error.length"
+    val requiredKey = "nfmRegisteredAddress.country.error.required"
+    val lengthKey   = "nfmRegisteredAddress.country.error.length"
 
     behave like fieldThatBindsValidData(
       form,

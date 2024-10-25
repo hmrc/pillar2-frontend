@@ -29,23 +29,48 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
     mapping(
       "addressLine1" ->
         text("nfmRegisteredAddress.error.addressLine1.required")
-          .verifying(maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine1.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine1.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine2.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "nfmRegisteredAddress.error.addressLine2.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
       ),
       "addressLine3" ->
         text("nfmRegisteredAddress.town_city.error.required")
-          .verifying(maxLength(maxAddressLineLength, "nfmRegisteredAddress.town_city.error.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "nfmRegisteredAddress.town_city.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(maxAddressLineLength, "nfmRegisteredAddress.region.error.length"))
+            .verifying(
+              firstError(
+                maxLength(maxAddressLineLength, "nfmRegisteredAddress.region.error.length"),
+                regexp(Validation.XSS_REGEX, "error.xss")
+              )
+            )
         ),
       "postalCode" -> optionalPostcode(),
       "countryCode" ->
         text("nfmRegisteredAddress.country.error.required")
-          .verifying(maxLength(maxAddressLineLength, "nfmRegisteredAddress.country.error.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "nfmRegisteredAddress.country.error.length"),
+              regexp(Validation.XSS_REGEX, "error.xss")
+            )
+          )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }
