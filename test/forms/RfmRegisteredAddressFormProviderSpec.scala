@@ -125,9 +125,6 @@ class RfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     )
   }
 
-//   ".postalCode" - {
-//   }
-
   ".countryCode" - {
     val fieldName   = "countryCode"
     val requiredKey = "rfm.registeredAddress.country.error.required"

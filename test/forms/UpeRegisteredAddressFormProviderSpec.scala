@@ -125,9 +125,6 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     )
   }
 
-//   ".postalCode" - {
-//   }
-
   ".countryCode" - {
     val fieldName   = "countryCode"
     val requiredKey = "upeRegisteredAddress.country.error.required"
@@ -170,6 +167,3 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     }
   }
 }
-
-
-
