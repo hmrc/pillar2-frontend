@@ -34,7 +34,7 @@ object AddSecondaryContactSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("addSecondaryContact.change.hidden"))
         )

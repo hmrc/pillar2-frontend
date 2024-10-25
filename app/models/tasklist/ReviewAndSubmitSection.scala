@@ -22,7 +22,7 @@ import play.api.mvc.Call
 import utils.RowStatus
 
 object ReviewAndSubmitSection extends Section {
-  override def toRequiredSection(ss: SectionStatus): Call = routes.CheckYourAnswersController.onPageLoad
+  override def toRequiredSection(ss: SectionStatus): Call = routes.CheckYourAnswersController.onPageLoad()
 
   override def name(ss: SectionStatus): String = "taskList.task.review"
 

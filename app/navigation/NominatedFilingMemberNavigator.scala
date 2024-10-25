@@ -33,8 +33,8 @@ class NominatedFilingMemberNavigator @Inject() {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
-  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
-  private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad()
+  private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad()
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case NominateFilingMemberPage => nfmLogic
@@ -46,7 +46,7 @@ class NominatedFilingMemberNavigator @Inject() {
     case FmContactEmailPage       => _ => controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode)
     case FmPhonePreferencePage    => telephonePreferenceLogic
     case FmCapturePhonePage       => _ => nfmCheckYourAnswers
-    case _                        => _ => routes.IndexController.onPageLoad
+    case _                        => _ => routes.IndexController.onPageLoad()
   }
 
   private def nfmLogic(userAnswers: UserAnswers): Call =
@@ -68,7 +68,7 @@ class NominatedFilingMemberNavigator @Inject() {
         if (fmNominated) {
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.CheckYourAnswersController.onPageLoad
+          controllers.routes.CheckYourAnswersController.onPageLoad()
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())

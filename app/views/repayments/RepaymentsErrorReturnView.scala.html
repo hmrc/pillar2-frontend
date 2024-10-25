@@ -33,13 +33,13 @@
     showSignOut = true,
     timeout = false,
     authorised = false,
-    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
+    bannerUrl = Some(routes.DashboardController.onPageLoad().url)
 ) {
         @heading(messages("repayments.refundErrorConfirmation.heading"))
         @paragraphBody(messages("repayments.refundErrorConfirmation.paragraphOne"))
         @paragraphMessageWithLink(message1 = Some(messages("repayments.refundErrorConfirmation.paragraphTwo")),
             linkMessage = messages("repayments.refundErrorConfirmation.paragraphTwo.link"),
-            linkUrl = routes.DashboardController.onPageLoad.url,
+            linkUrl = routes.DashboardController.onPageLoad().url,
             message2 = Some(".")
         )
 

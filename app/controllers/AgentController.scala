@@ -125,7 +125,7 @@ class AgentController @Inject() (
             updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
             dataToSave     <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
             _              <- sessionRepository.set(dataToSave)
-          } yield Redirect(routes.DashboardController.onPageLoad)
+          } yield Redirect(routes.DashboardController.onPageLoad())
         }
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     }

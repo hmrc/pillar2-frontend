@@ -33,7 +33,7 @@
 @layout(pageTitle = title(form, messages("secondaryContactName.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

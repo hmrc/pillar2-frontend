@@ -32,7 +32,6 @@ case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
     value match {
       case Some(CorporatePosition.NewNfm) =>
         super.cleanup(value, userAnswers)
-
       case Some(CorporatePosition.Upe) =>
         userAnswers
           .remove(RfmUkBasedPage)
@@ -49,5 +48,6 @@ case object RfmCorporatePositionPage extends QuestionPage[CorporatePosition] {
               )
             )
           )
+      case _ => Try(UserAnswers("Invalid UserAnswers - not NFM or UPE"))
     }
 }

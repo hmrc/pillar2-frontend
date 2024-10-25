@@ -40,6 +40,7 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmContactCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class RfmContactCheckYourAnswersController @Inject() (
@@ -79,7 +80,7 @@ class RfmContactCheckYourAnswersController @Inject() (
               _          <- userAnswer.get(PlrReferencePage)
             } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
               .getOrElse {
-                removeRfmStatus(userAnswers)
+                removeRfmStatus(userAnswers): Unit
                 Ok(
                   view(
                     request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
@@ -92,10 +93,10 @@ class RfmContactCheckYourAnswersController @Inject() (
         }
       }
   }
-
+  @nowarn
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
+      updateSessionData(request.userAnswers, RfmStatusPage, InProgress): Unit
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))

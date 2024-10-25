@@ -39,6 +39,7 @@ import viewmodels.govuk.summarylist._
 import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
@@ -65,14 +66,16 @@ class CheckYourAnswersController @Inject() (
         _          <- userAnswer.get(PlrReferencePage)
       } yield Redirect(controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad))
         .getOrElse {
-          setCheckYourAnswersLogic(userAnswers)
+          setCheckYourAnswersLogic(userAnswers): Unit
           Ok(
             view(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)
           )
         }
     }
   }
-
+  // sbt-tpolecat warning switched off because `for` comprehension creates an unused `Future[Unit]`
+  // at :  "updatedSubscriptionStatus <- subscriptionStatus".
+  @nowarn
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
       subscriptionService.getCompanyName(request.userAnswers) match {
@@ -120,6 +123,8 @@ class CheckYourAnswersController @Inject() (
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
+  // sbt-tpolecat:on
+
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))

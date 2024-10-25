@@ -17,8 +17,8 @@
 package controllers.auth
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
+import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
@@ -27,14 +27,13 @@ import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
 import javax.inject.Inject
-import scala.concurrent.ExecutionContext
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthController @Inject() (
   val controllerComponents:   MessagesControllerComponents,
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
-  sessionRepository:          SessionRepository,
-  identify:                   IdentifierAction
+  sessionRepository:          SessionRepository
 )(implicit ec:                ExecutionContext)
     extends FrontendBaseController
     with AuthorisedFunctions
@@ -42,8 +41,9 @@ class AuthController @Inject() (
 
   def signOut(): Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(Retrievals.internalId) { case Some(internalId) =>
-        sessionRepository.clear(internalId)
+      .retrieve(Retrievals.internalId) {
+        case Some(internalId) => sessionRepository.clear(internalId)
+        case _                => Future.successful(logger.info("signOut with No InternalId."))
       }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(config.exitSurveyUrl)))
@@ -58,8 +58,9 @@ class AuthController @Inject() (
 
   def signOutNoSurvey(): Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
-      .retrieve(Retrievals.internalId) { case Some(internalId) =>
-        sessionRepository.clear(internalId)
+      .retrieve(Retrievals.internalId) {
+        case Some(internalId) => sessionRepository.clear(internalId)
+        case _                => Future.successful(logger.info("signOutNoSurvey with No InternalId."))
       }
       .map { _ =>
         Redirect(config.signOutUrl, Map("continue" -> Seq(routes.SignedOutController.onPageLoad.url)))

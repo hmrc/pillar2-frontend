@@ -38,7 +38,7 @@
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

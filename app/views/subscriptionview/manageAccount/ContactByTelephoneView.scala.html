@@ -34,7 +34,7 @@
 @layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ContactByTelephoneController.onSubmit(), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

@@ -35,6 +35,7 @@ import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
+import scala.annotation.nowarn
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsCheckYourAnswersController @Inject() (
@@ -65,7 +66,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
       }
     }
-
+  @nowarn
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
       if (request.userAnswers.isRepaymentsJourneyCompleted) {

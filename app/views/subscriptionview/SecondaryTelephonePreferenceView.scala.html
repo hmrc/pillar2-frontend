@@ -30,10 +30,7 @@
 @(form: Form[_], mode: Mode, userName: String = "")(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondaryTelephonePreference.title", userName))) {
-
-
-    @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
-
+    @formHelper(action = controllers.subscription.routes.SecondaryTelephonePreferenceController.onSubmit(mode), Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }

@@ -32,7 +32,6 @@ package models
  * limitations under the License.
  */
 
-import play.api.i18n.Messages
 import play.api.libs.json.{Json, OFormat}
 import play.twirl.api.HtmlFormat
 import utils.countryOptions.CountryOptions
@@ -47,13 +46,13 @@ case class NonUKAddress(
 ) {
 
   val field1:      String = HtmlFormat.escape(addressLine1).toString + "<br>"
-  val field2:      String = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")) + "<br>" else ""
+  val field2:      String = if (addressLine2.isDefined) HtmlFormat.escape(addressLine2.mkString("")).toString + "<br>" else ""
   val field3:      String = HtmlFormat.escape(addressLine3).toString + "<br>"
-  val field4:      String = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")) + "<br>" else ""
-  val postcode:    String = if (postalCode.isDefined) HtmlFormat.escape(postalCode.mkString("")) + "<br>" else ""
+  val field4:      String = if (addressLine4.isDefined) HtmlFormat.escape(addressLine4.mkString("")).toString + "<br>" else ""
+  val postcode:    String = if (postalCode.isDefined) HtmlFormat.escape(postalCode.mkString("")).toString + "<br>" else ""
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 
-  def getAddressList(countryOptions: CountryOptions)(implicit messages: Messages): List[String] = {
+  def getAddressList(countryOptions: CountryOptions): List[String] = {
     val country = countryOptions.getCountryNameFromCode(countryCode)
     List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode.getOrElse(""), country).filter(_.nonEmpty)
   }

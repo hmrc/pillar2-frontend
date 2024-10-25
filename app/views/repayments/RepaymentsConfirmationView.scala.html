@@ -37,7 +37,7 @@
     showSignOut = true,
     timeout = false,
     authorised = false,
-    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
+    bannerUrl = Some(routes.DashboardController.onPageLoad().url)
 ) {
 
     @govukPanel(Panel(
@@ -54,7 +54,7 @@
 
     @paragraphMessageWithLink(message1 = Some(messages("repayments.refundConfirmation.paragraphText.four")),
         linkMessage = messages("repayments.refundConfirmation.paragraphText.returnLink"),
-        linkUrl = routes.DashboardController.onPageLoad.url,
+        linkUrl = routes.DashboardController.onPageLoad().url,
         message2 = Some(".")
     )
 

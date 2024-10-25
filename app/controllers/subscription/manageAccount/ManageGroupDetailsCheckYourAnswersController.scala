@@ -73,9 +73,9 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                              .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
+      } yield Redirect(controllers.routes.DashboardController.onPageLoad()))
         .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad())
         }
         .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
     }

@@ -51,7 +51,7 @@ object ContactByTelephoneSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("contactByTelephone.change.hidden"))
         )

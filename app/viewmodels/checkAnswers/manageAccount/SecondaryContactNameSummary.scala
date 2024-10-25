@@ -35,7 +35,7 @@ object SecondaryContactNameSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("secondaryContactName.change.hidden"))
         )

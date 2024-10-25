@@ -21,14 +21,14 @@ import com.google.inject.{AbstractModule, Provides}
 import connectors._
 import controllers.actions._
 import org.apache.fop.apps.FopFactory
-import play.api.{Configuration, Environment}
+import play.api.Configuration
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.Singleton
 
-class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+class GuiceModule(configuration: Configuration) extends AbstractModule {
 
   override def configure(): Unit = {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()

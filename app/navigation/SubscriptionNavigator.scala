@@ -32,9 +32,9 @@ class SubscriptionNavigator @Inject() {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
-  private lazy val groupDetailCheckYourAnswerRoute: Call = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
-  private lazy val contactDetailCheckYourAnswersRoute = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
-  private lazy val reviewAndSubmitCheckYourAnswers    = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val groupDetailCheckYourAnswerRoute: Call = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad()
+  private lazy val contactDetailCheckYourAnswersRoute = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad()
+  private lazy val reviewAndSubmitCheckYourAnswers    = controllers.routes.CheckYourAnswersController.onPageLoad()
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case SubMneOrDomesticPage            => _ => controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(NormalMode)
@@ -50,7 +50,7 @@ class SubscriptionNavigator @Inject() {
     case SubSecondaryPhonePreferencePage => secondaryPhonePreference
     case SubSecondaryCapturePhonePage    => _ => controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
     case SubRegisteredAddressPage        => _ => contactDetailCheckYourAnswersRoute
-    case _                               => _ => routes.IndexController.onPageLoad
+    case _                               => _ => routes.IndexController.onPageLoad()
   }
 
   private def usePrimaryContactRoute(userAnswers: UserAnswers): Call =

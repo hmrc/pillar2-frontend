@@ -33,7 +33,7 @@
 @layout(pageTitle = title(form, messages("contactEmailAddress.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

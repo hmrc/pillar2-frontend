@@ -33,7 +33,7 @@
 @layout(pageTitle = title(form, messages("contactNameCompliance.title"))) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.ContactNameComplianceController.onSubmit) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ContactNameComplianceController.onSubmit()) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

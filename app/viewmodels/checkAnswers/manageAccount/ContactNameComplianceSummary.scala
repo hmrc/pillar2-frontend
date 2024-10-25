@@ -36,7 +36,7 @@ object ContactNameComplianceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
         )

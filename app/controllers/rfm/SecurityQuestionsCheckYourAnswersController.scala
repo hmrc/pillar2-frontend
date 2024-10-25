@@ -75,10 +75,10 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
         OptionT.liftF(subscriptionService.matchingPillar2Records(request.userId, inputPillar2Reference, inputRegistrationDate))
     } yield
       if (matchingPillar2Records) {
-        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
+        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad())
       } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate)) {
-        userAnswersConnectors.remove(request.userId)
-        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
+        userAnswersConnectors.remove(request.userId): Unit
+        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad())
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })

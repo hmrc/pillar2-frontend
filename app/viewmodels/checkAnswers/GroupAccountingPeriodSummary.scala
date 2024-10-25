@@ -27,7 +27,7 @@ import viewmodels.implicits._
 object GroupAccountingPeriodSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubAccountingPeriodPage).map { answer =>
+    answers.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(""))

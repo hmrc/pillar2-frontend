@@ -159,6 +159,7 @@ class UseContactPrimaryController @Inject() (
           Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
         case None if telPref  => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
+        case _                => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
@@ -174,6 +175,7 @@ class UseContactPrimaryController @Inject() (
         case Some(value) if !telPref => Ok(view(form.fill(value), mode, contactSummaryList(contactName, contactEmail, None)))
         case None if telPref         => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, contactTel)))
         case None if !telPref        => Ok(view(form, mode, contactSummaryList(contactName, contactEmail, None)))
+        case _                       => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 }

@@ -32,8 +32,8 @@ class UltimateParentNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
-  private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad()
+  private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad()
   private val normalRoutes: Page => UserAnswers => Call = {
     case UpeRegisteredInUKPage    => domesticOrNotRoute
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
@@ -42,7 +42,7 @@ class UltimateParentNavigator @Inject() {
     case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
     case UpePhonePreferencePage   => telephonePreferenceLogic
     case UpeCapturePhonePage      => _ => upeCheckYourAnswers
-    case _                        => _ => routes.IndexController.onPageLoad
+    case _                        => _ => routes.IndexController.onPageLoad()
   }
 
   private def domesticOrNotRoute(userAnswers: UserAnswers) =

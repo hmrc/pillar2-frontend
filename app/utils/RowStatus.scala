@@ -47,19 +47,22 @@ object RowStatus {
 
     override def writes(sourceSystem: RowStatus): JsValue =
       sourceSystem match {
-        case Completed  => JsString("Completed")
-        case InProgress => JsString("InProgress")
-        case NotStarted => JsString("NotStarted")
+        case Completed      => JsString("Completed")
+        case InProgress     => JsString("InProgress")
+        case NotStarted     => JsString("NotStarted")
+        case CannotStartYet => JsString("CannotStartYet")
+        case _              => JsString(s"Invalid Source System: _")
       }
   }
 
   implicit val jsLiteral: JavascriptLiteral[RowStatus] = new JavascriptLiteral[RowStatus] {
     override def to(value: RowStatus): String =
       value match {
-        case Completed  => "Completed"
-        case InProgress => "InProgress"
-        case NotStarted => "NotStarted"
+        case Completed      => "Completed"
+        case InProgress     => "InProgress"
+        case NotStarted     => "NotStarted"
+        case CannotStartYet => "CannotStartYet"
+        case _              => "Invalid RowStatus"
       }
   }
-
 }

@@ -141,6 +141,7 @@ package object models {
                   }
                 }
             }
+        case _ => JsError("Invalid Javascript path")
       }
   }
 }

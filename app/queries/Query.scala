@@ -20,6 +20,7 @@ import models.UserAnswers
 import play.api.libs.json.JsPath
 
 import scala.util.{Success, Try}
+import scala.annotation.nowarn
 
 sealed trait Query {
 
@@ -30,8 +31,11 @@ trait Gettable[A] extends Query
 
 trait Settable[A] extends Query {
 
+  // we still want to include input-arg "value" for classes which inherit this trait [eg case object DuplicateSafeIdPage].
+  @nowarn("cat=unused")
   def cleanup(value: Option[A], userAnswers: UserAnswers): Try[UserAnswers] =
     Success(userAnswers)
 
+  @nowarn("cat=unused")
   def cleanupBeforeSettingValue(value: Option[A], userAnswers: UserAnswers): Try[UserAnswers] = Success(userAnswers)
 }

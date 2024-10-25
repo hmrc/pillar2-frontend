@@ -29,9 +29,9 @@ class AmendSubscriptionNavigator @Inject() {
   def nextPage(page: Page, subscriptionUserAnswers: SubscriptionLocalData): Call =
     checkRouteMap(page)(subscriptionUserAnswers)
   private lazy val groupDetailCheckYourAnswerRoute: Call =
-    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
   private lazy val contactDetailCheckYourAnswersRoute: Call =
-    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
 
   private val checkRouteMap: Page => SubscriptionLocalData => Call = {
     case SubMneOrDomesticPage            => _ => groupDetailCheckYourAnswerRoute
@@ -46,7 +46,7 @@ class AmendSubscriptionNavigator @Inject() {
     case SubSecondaryPhonePreferencePage => data => secondaryTelephoneCheckRouteLogic(data)
     case SubSecondaryCapturePhonePage    => _ => contactDetailCheckYourAnswersRoute
     case SubRegisteredAddressPage        => _ => contactDetailCheckYourAnswersRoute
-    case _                               => _ => routes.IndexController.onPageLoad
+    case _                               => _ => routes.IndexController.onPageLoad()
   }
 
   private def phonePrefOrCYA(subscriptionUserAnswers: SubscriptionLocalData): Call =
@@ -54,7 +54,7 @@ class AmendSubscriptionNavigator @Inject() {
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryPhonePreferencePage).isEmpty) {
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad
+          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad()
         } else {
           contactDetailCheckYourAnswersRoute
         }
@@ -66,7 +66,7 @@ class AmendSubscriptionNavigator @Inject() {
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryEmailPage).isEmpty) {
-          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad
+          controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad()
         } else {
           contactDetailCheckYourAnswersRoute
         }
@@ -78,7 +78,7 @@ class AmendSubscriptionNavigator @Inject() {
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
         if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryContactNamePage).isEmpty) {
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
         } else {
           contactDetailCheckYourAnswersRoute
         }
@@ -90,7 +90,7 @@ class AmendSubscriptionNavigator @Inject() {
       .get(SubPrimaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad()
         } else {
           contactDetailCheckYourAnswersRoute
         }
@@ -102,7 +102,7 @@ class AmendSubscriptionNavigator @Inject() {
       .get(SubSecondaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubSecondaryCapturePhonePage).isEmpty) {
-          controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad
+          controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad()
         } else {
           contactDetailCheckYourAnswersRoute
         }

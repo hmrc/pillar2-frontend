@@ -35,7 +35,7 @@
 @layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title"))) {
 
 
-    @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit) {
+    @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit()) {
 
         @heading(messages("repaymentsCheckYourAnswers.heading"), classes = "govuk-heading-l")
 

@@ -80,7 +80,7 @@ class RepaymentErrorController @Inject() (
       request.userAnswers
         .get(BarsAccountNamePartialPage)
         .map(name => Future successful Ok(accountNameConfirmationView(preparedForm, name, mode)))
-        .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError))
+        .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError()))
     }
 
   def onSubmitPartialNameError(mode: Mode): Action[AnyContent] =
@@ -99,6 +99,6 @@ class RepaymentErrorController @Inject() (
                 } yield Redirect(navigator.nextPage(RepaymentAccountNameConfirmationPage, mode, updatedAnswers))
             )
         }
-        .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError))
+        .getOrElse(Future successful Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadError()))
     }
 }
