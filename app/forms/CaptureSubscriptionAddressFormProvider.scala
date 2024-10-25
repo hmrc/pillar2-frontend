@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -29,23 +30,48 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
     mapping(
       "addressLine1" ->
         text("subscriptionAddress.error.addressLine1.required")
-          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine1.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine1.length"),
+              regexp(XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine2" -> optional(
         text("")
-          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine2.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "subscriptionAddress.error.addressLine2.length"),
+              regexp(XSS_REGEX, "error.xss")
+            )
+          )
       ),
       "addressLine3" ->
         text("subscriptionAddress.town_city.error.required")
-          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.town_city.error.length")),
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "subscriptionAddress.town_city.error.length"),
+              regexp(XSS_REGEX, "error.xss")
+            )
+          ),
       "addressLine4" ->
         optional(
           text("")
-            .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.region.error.length"))
+            .verifying(
+              firstError(
+                maxLength(maxAddressLineLength, "subscriptionAddress.region.error.length"),
+                regexp(XSS_REGEX, "error.xss")
+              )
+            )
         ),
       "postalCode" -> optionalPostcode(),
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
-          .verifying(maxLength(maxAddressLineLength, "subscriptionAddress.country.error.length"))
+          .verifying(
+            firstError(
+              maxLength(maxAddressLineLength, "subscriptionAddress.country.error.length"),
+              regexp(XSS_REGEX, "error.xss")
+            )
+          )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 }

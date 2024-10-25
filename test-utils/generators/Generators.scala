@@ -97,7 +97,8 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def nonEmptyRegexConformingStringWithMaxLength(regex: String, maxLength: Int): Gen[String] = {
     val regexGen = RegexpGen.from(regex)
     regexGen
-      .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
+      .suchThat(_.nonEmpty)
+      .map(s => s.take(maxLength))
   }
 
   def stringsWithAtLeastOneSpecialChar(specialChars: String, maxLength: Int): Gen[String] = {
