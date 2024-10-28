@@ -261,7 +261,7 @@ rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter the email address for {0}
 rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-rfm-input-business-email.change.hidden = the first contact email address
+rfm-input-business-email.change.hidden = the primary contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
 
 rfmContactByTelephone.heading.caption = Contact details
@@ -678,7 +678,7 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = Enter the email address for {0}
 contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = the first contact email address
+contactEmailAddress.change.hidden = the primary contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
@@ -698,7 +698,7 @@ contactCaptureTelephoneDetails.error.format = Enter the telephone number for {0}
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the contact telephone number
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
-contactNameCompliance.change.hidden = the first contact name
+contactNameCompliance.change.hidden = the primary contact name
 contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 contactCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
@@ -715,17 +715,17 @@ secondaryTelephone.change.hidden = the telephone number for the second contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
 
-contactCheckYourAnswers.first = First contact
+contactCheckYourAnswers.first = Primary contact
 contactCheckYourAnswers.heading = Check your answers for contact details
 contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
-contactCheckYourAnswers.second = Second contact
+contactCheckYourAnswers.second = Secondary contact
 contactCheckYourAnswers.address = Contact address
 
 manageContactCheckYourAnswers.title = Contact details
 manageContactCheckYourAnswers.heading.caption = Contact details
-manageContactCheckYourAnswers.first = First contact
-manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.first = Primary contact
+manageContactCheckYourAnswers.second = Secondary contact
 manageContactCheckYourAnswers.address = Contact address
 
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
@@ -985,7 +985,7 @@ rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith�
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team must be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
-rfm.rfmPrimaryContactName.change.hidden = the first contact name
+rfm.rfmPrimaryContactName.change.hidden = the primary contact name
 
 rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
@@ -1095,8 +1095,8 @@ rfm.contactCheckYourAnswers.record.subheading = Do you need to keep a record of 
 rfm.checkYourAnswers.submit.record.p = If you need to keep a record of your answers, you can:
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
 rfm.checkYourAnswers.submit.p = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
-rfm.contactCheckYourAnswers.first = First contact
-rfm.contactCheckYourAnswers.second = Second contact
+rfm.contactCheckYourAnswers.first = Primary contact
+rfm.contactCheckYourAnswers.second = Secondary contact
 rfm.contactCheckYourAnswers.address = Contact address
 
 rfm.amendAPIFailure.title = Sorry, there is a problem with the service
