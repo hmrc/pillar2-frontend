@@ -36,10 +36,9 @@ lazy val root = (project in file("."))
       "viewmodels.govuk.all._"
     ),
     PlayKeys.playDefaultPort := 10050,
-    //TODO - Remove .*views.* exclusion from tests coverage
     ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;" +
-      ".*Routes.*;.*viewmodels.*;.*queries.*;.*views.*;",
-    ScoverageKeys.coverageMinimumStmtTotal := 95,
+      ".*Routes.*;.*viewmodels.*;.*queries.*;",
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
