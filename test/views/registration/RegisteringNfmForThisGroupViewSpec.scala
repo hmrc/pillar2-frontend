@@ -24,10 +24,6 @@ import views.html.registrationview.RegisteringNfmForThisGroupView
 
 class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
-  /*
-  USE THIS TO SEE THE ACTUAL PAGE: http://localhost:10050/report-pillar2-top-up-taxes/eligibility/nfm
-   */
-
   val formProvider: RegisteringNfmForThisGroupFormProvider = new RegisteringNfmForThisGroupFormProvider
   val page:         RegisteringNfmForThisGroupView         = inject[RegisteringNfmForThisGroupView]
   val view:         Document                               = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
