@@ -17,11 +17,11 @@
 package viewmodels.govuk
 
 import play.twirl.api.Html
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Content
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.{Content, HtmlContent}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.fieldset.{Fieldset, Legend}
 import viewmodels.LegendSize
 
-object fieldset extends FieldsetFluency
+object FieldsetFluency extends FieldsetFluency
 
 trait FieldsetFluency {
 
@@ -62,7 +62,26 @@ trait FieldsetFluency {
         .copy(isPageHeading = true)
         .withCssClass(size.toString)
 
+    def asPageHeading1(size: LegendSize = LegendSize.ExtraLarge, headingLevel: Option[String] = None): Legend = {
+      val actualHeadingLevel = headingLevel.getOrElse("h1")
+
+      val cssClass = size match {
+        case LegendSize.ExtraLarge => "govuk-fieldset__legend--xl"
+        case LegendSize.Large      => "govuk-fieldset__legend--l"
+        case LegendSize.Medium     => "govuk-fieldset__legend--m"
+        case LegendSize.Small      => "govuk-fieldset__legend--s"
+      }
+
+      legend.copy(
+        isPageHeading = actualHeadingLevel == "h1",
+        content = HtmlContent(
+          s"""<$actualHeadingLevel class="govuk-fieldset__heading">${legend.content.asHtml}</$actualHeadingLevel>"""
+        ),
+        classes = cssClass
+      )
+    }
+
     def withCssClass(newClass: String): Legend =
-      legend copy (classes = s"${legend.classes} $newClass")
+      legend.copy(classes = s"${legend.classes} $newClass")
   }
 }

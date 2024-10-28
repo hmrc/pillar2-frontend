@@ -37,8 +37,14 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text mustBe title
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").first().text must include("This account belongs to James")
+    "have a heading with the account holder's name" in {
+      val heading = "This account belongs to James"
+      view.getElementsByTag("h1").first().text must include(heading)
+    }
+
+    "have a subheading" in {
+      val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
+      view.getElementsByTag("legend").text must include(subheading)
     }
 
     "have a paragraph" in {
@@ -46,10 +52,6 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
         "Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again."
       )
       view.getElementsByClass("govuk-body").get(1).text must include("We may not be able to recover your money if it goes to the wrong account.")
-    }
-
-    "have a subheading" in {
-      view.getElementsByTag("h1").get(1).text must include("Do you want to continue with these bank details?")
     }
 
     "have a yes or no form" in {

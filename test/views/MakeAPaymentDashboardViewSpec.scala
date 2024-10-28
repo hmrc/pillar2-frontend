@@ -35,27 +35,28 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       val h1 = makePaymentDashboardView.getElementsByTag("h1")
-      h1.text must include("Make a payment")
+      h1.text must equal("Make a payment")
       h1.hasClass("govuk-heading-l") mustBe true
     }
 
     "have the correct paragraphs" in {
       val element = makePaymentDashboardView.getElementsByTag("p")
-      element.get(1).text() must include(
+      element.get(1).text() must equal(
         s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 top-up tax payments."""
       )
-      element.get(2).text() must include(
+      element.get(2).text() must equal(
         "Submit your return before making a payment. Your payment is due on the same date as your return."
       )
-      element.get(3).text() must include(
+      element.get(3).text() must equal(
         "You can read the guidance to find the methods you can use to make a payment."
       )
     }
 
     "have the correct link" in {
-      pending //TODO - Change link as a part
       val element = makePaymentDashboardView.getElementsByClass("govuk-link")
-      element.get(2).attr("href") must include("/guidance-for-payment")
+      element.get(2).attr("href") must equal(
+        "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      )
     }
   }
 }

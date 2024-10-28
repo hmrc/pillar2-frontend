@@ -34,7 +34,7 @@
 
     @formHelper(action = controllers.repayments.routes.RepaymentErrorController.onSubmitPartialNameError(mode)) {
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("confirmRepaymentAccountName" -> "confirmRepaymentAccountName_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
         @h1(messages("repayments.accountNameConfirm.subheading", accountNamePartial), classes = "govuk-heading-l")
@@ -45,12 +45,11 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("confirmRepaymentAccountName"),
-                legend = LegendViewModel(messages("repayments.accountNameConfirm.heading")).asPageHeading(LegendSize.Medium)
+                legend = LegendViewModel(Text(messages("repayments.accountNameConfirm.heading")))
+                .asPageHeading1(LegendSize.Medium, headingLevel = Some("h2"))
             )
         )
 
-        @govukButton(
-            ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")
-        )
+        @govukButton(ButtonViewModel(messages("site.continue")).withAttribute("id", "submit"))
     }
 }
