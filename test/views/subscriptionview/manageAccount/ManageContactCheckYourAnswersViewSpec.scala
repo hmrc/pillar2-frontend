@@ -61,8 +61,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     }
 
     "have first contact header" in {
-      view.getElementsByTag("h2").first.text      must include("First contact")
-      agentView.getElementsByTag("h2").first.text must include("First contact")
+      view.getElementsByTag("h2").first.text      must include("Primary contact")
+      agentView.getElementsByTag("h2").first.text must include("Primary contact")
     }
 
     "have a first contact summary list" in {
@@ -124,12 +124,12 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     }
 
     "have second contact header" in {
-      view.getElementsByTag("h2").get(1).text      must include("Second contact")
-      agentView.getElementsByTag("h2").get(1).text must include("Second contact")
+      view.getElementsByTag("h2").get(1).text      must include("Secondary contact")
+      agentView.getElementsByTag("h2").get(1).text must include("Secondary contact")
     }
 
     "have a second contact summary list" in {
-      val isSecondContact      = "Do you have a second contact?"
+      val isSecondContact      = "Do you have a secondary contact?"
       val isSecondContactValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       view.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
@@ -143,7 +143,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
       )
 
-      val secondContact      = "Second contact name"
+      val secondContact      = "Secondary contact name"
       val secondContactValue = "Doe"
       view.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       view.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
