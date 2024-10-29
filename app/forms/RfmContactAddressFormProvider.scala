@@ -33,7 +33,7 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine1.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine1.error.xss")
             )
           ),
       "addressLine2" -> optional(
@@ -41,7 +41,7 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfmContactAddress.error.addressLine2.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine2.error.xss")
             )
           )
       ),
@@ -50,7 +50,7 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfmContactAddress.town_city.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "town_city.error.xss")
             )
           ),
       "addressLine4" ->
@@ -59,19 +59,19 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "rfmContactAddress.region.error.length"),
-                regexp(XSS_REGEX, "error.xss")
+                regexp(XSS_REGEX, "region.error.xss")
               )
             )
         ),
       "postalCode" -> optionalPostcode().verifying(
-        regexp(XSS_REGEX, "error.xss")
+        regexp(XSS_REGEX, "address.postcode.error.xss")
       ),
       "countryCode" ->
         text("rfmContactAddress.country.error.required")
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfmContactAddress.country.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "country.error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)

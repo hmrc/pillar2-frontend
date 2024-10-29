@@ -34,7 +34,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine1.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine1.error.xss")
             )
           ),
       "addressLine2" -> optional(
@@ -42,7 +42,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine2.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine2.error.xss")
             )
           )
       ),
@@ -51,7 +51,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.town_city.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "town_city.error.xss")
             )
           ),
       "addressLine4" ->
@@ -60,7 +60,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "rfm.registeredAddress.region.error.length"),
-                regexp(XSS_REGEX, "error.xss")
+                regexp(XSS_REGEX, "region.error.xss")
               )
             )
         ),
@@ -70,7 +70,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.country.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "country.error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)

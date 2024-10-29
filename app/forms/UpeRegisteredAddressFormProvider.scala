@@ -32,7 +32,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine1.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine1.error.xss")
             )
           ),
       "addressLine2" -> optional(
@@ -40,7 +40,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine2.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "addressLine2.error.xss")
             )
           )
       ),
@@ -49,7 +49,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.town_city.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "town_city.error.xss")
             )
           ),
       "addressLine4" ->
@@ -58,17 +58,17 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "upeRegisteredAddress.region.error.length"),
-                regexp(XSS_REGEX, "error.xss")
+                regexp(XSS_REGEX, "region.error.xss")
               )
             )
         ),
-      "postalCode" -> mandatoryPostcode().verifying(regexp(XSS_REGEX, "error.xss")),
+      "postalCode" -> mandatoryPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "address.postcode.error.length"),
-              regexp(XSS_REGEX, "error.xss")
+              regexp(XSS_REGEX, "country.error.xss")
             )
           )
     )(UKAddress.apply)(UKAddress.unapply)

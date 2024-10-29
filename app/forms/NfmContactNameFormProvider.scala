@@ -31,7 +31,7 @@ class NfmContactNameFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_105, "nfmContactName.error.length"),
-            regexp(XSS_REGEX, "error.xss")
+            regexp(XSS_REGEX, "name.error.xss")
           )
         )
     )

@@ -18,6 +18,7 @@ package forms
 
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
+import forms.Validation.XSS_REGEX
 class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
 
   val form = new BankAccountDetailsFormProvider()()
@@ -39,6 +40,14 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxLength),
+      regexError = FormError(fieldName, "repayments.bankAccountDetails.bankName.error.xss")
     )
 
     behave like mandatoryField(
@@ -66,6 +75,14 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxLength),
+      regexError = FormError(fieldName, "repayments.bankAccountDetails.accountName.error.xss")
     )
 
     behave like mandatoryField(

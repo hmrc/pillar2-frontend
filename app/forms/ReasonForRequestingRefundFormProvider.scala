@@ -32,7 +32,7 @@ class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_250, "reasonForRequestingRefund.error.length"),
-            regexp(XSS_REGEX, "error.xss")
+            regexp(XSS_REGEX, "reasonForRequestingRefund.error.xss")
           )
         )
     )

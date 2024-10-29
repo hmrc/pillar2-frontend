@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
+import forms.Validation.XSS_REGEX
 
 class BankAccountDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[BankAccountDetails] = Form(
@@ -30,12 +31,14 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
       "bankName" ->
         text("repayments.bankAccountDetails.bankError")
           .verifying(
-            maxLength(Constants.MAX_LENGTH_40, "repayments.bankAccountDetails.bankNameFormatError")
+            maxLength(Constants.MAX_LENGTH_40, "repayments.bankAccountDetails.bankNameFormatError"),
+            regexp(XSS_REGEX, "repayments.bankAccountDetails.bankName.error.xss")
           ),
       "accountHolderName" ->
         text("repayments.bankAccountDetails.accountError")
           .verifying(
-            maxLength(Constants.MAX_LENGTH_60, "repayments.bankAccountDetails.accountNameFormatError")
+            maxLength(Constants.MAX_LENGTH_60, "repayments.bankAccountDetails.accountNameFormatError"),
+            regexp(XSS_REGEX, "repayments.bankAccountDetails.accountName.error.xss")
           ),
       "sortCode" ->
         sortCode("repayments.bankAccountDetails.sortCodeError")
