@@ -25,131 +25,171 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form      = new UpeRegisteredAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
-  val xssKey    = "error.xss"
+  val XSS_KEY   = "error.xss"
 
   ".addressLine1" - {
-    val fieldName   = "addressLine1"
-    val requiredKey = "upeRegisteredAddress.error.addressLine1.required"
-    val lengthKey   = "upeRegisteredAddress.error.addressLine1.length"
+    val FIELD_NAME   = "addressLine1"
+    val REQUIRED_KEY = "upeRegisteredAddress.error.addressLine1.required"
+    val LENGTH_KEY   = "upeRegisteredAddress.error.addressLine1.length"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
   }
 
   ".addressLine2" - {
-    val fieldName = "addressLine2"
-    val lengthKey = "upeRegisteredAddress.error.addressLine2.length"
+    val FIELD_NAME = "addressLine2"
+    val LENGTH_KEY = "upeRegisteredAddress.error.addressLine2.length"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
   }
 
   ".addressLine3" - {
-    val fieldName   = "addressLine3"
-    val requiredKey = "upeRegisteredAddress.town_city.error.required"
-    val lengthKey   = "upeRegisteredAddress.town_city.error.length"
+    val FIELD_NAME   = "addressLine3"
+    val REQUIRED_KEY = "upeRegisteredAddress.town_city.error.required"
+    val LENGTH_KEY   = "upeRegisteredAddress.town_city.error.length"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
   }
 
   ".addressLine4" - {
-    val fieldName = "addressLine4"
-    val lengthKey = "upeRegisteredAddress.region.error.length"
+    val FIELD_NAME = "addressLine4"
+    val LENGTH_KEY = "upeRegisteredAddress.region.error.length"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
   }
 
+  ".postalCode" - {
+    val FIELD_NAME = "postalCode"
+
+    behave like postcodeField(form, maxAddressLineLength)
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
+      regexError = FormError(FIELD_NAME, XSS_KEY)
+    )
+
+  }
+
   ".countryCode" - {
-    val fieldName   = "countryCode"
-    val requiredKey = "upeRegisteredAddress.country.error.required"
-    val lengthKey   = "address.postcode.error.length"
+    val FIELD_NAME   = "countryCode"
+    val REQUIRED_KEY = "upeRegisteredAddress.country.error.required"
+    val LENGTH_KEY   = "address.postcode.error.length"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
   }
 

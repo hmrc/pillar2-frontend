@@ -64,7 +64,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               )
             )
         ),
-      "postalCode" -> optionalPostcode(),
+      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "error.xss")),
       "countryCode" ->
         text("rfm.registeredAddress.country.error.required")
           .verifying(

@@ -62,7 +62,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               )
             )
         ),
-      "postalCode" -> mandatoryPostcode(),
+      "postalCode" -> mandatoryPostcode().verifying(regexp(XSS_REGEX, "error.xss")),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
           .verifying(

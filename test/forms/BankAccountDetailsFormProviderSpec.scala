@@ -89,13 +89,19 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       nonEmptyRegexConformingStringWithMaxLength(sortCodeRegex, maxLength)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength,
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(sortCodeRegex, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
       regex = sortCodeRegex,
       regexViolationGen = invalidSortCodes,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
       regexError = FormError(fieldName, formatKey)
     )
 

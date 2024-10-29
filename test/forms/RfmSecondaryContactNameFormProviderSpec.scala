@@ -39,13 +39,19 @@ class RfmSecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
-    behave like fieldWithRegexAndMaxLength(
+    behave like fieldWithMaxLength(
       form,
       FIELD_NAME,
-      MAX_LENGTH,
+      maxLength = MAX_LENGTH,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX, MAX_LENGTH))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
-      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 

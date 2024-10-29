@@ -63,7 +63,7 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
               )
             )
         ),
-      "postalCode" -> optionalPostcode(),
+      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "error.xss")),
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
           .verifying(

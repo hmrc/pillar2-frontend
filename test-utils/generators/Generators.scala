@@ -126,6 +126,52 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     } yield (digitPart ++ nonDigitPart).mkString
   }
 
+  def invalidPostcodeGen: Gen[String] = {
+    val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+
+    // Helper generators for different types of invalid postcodes
+    val tooShortGen: Gen[String] = Gen.choose(1, 5).flatMap { length =>
+      stringsLongerThan(length).map(_.take(length))
+    }
+
+    val tooLongGen: Gen[String] = for {
+      length <- Gen.choose(15, 20) // Assuming valid postcodes are <= 8 characters
+      str    <- stringsLongerThan(length)
+    } yield str.take(length)
+
+    val missingSpaceGen: Gen[String] = for {
+      part1 <- Gen.oneOf("A1", "AA1", "A12", "AA12")
+      part2 <- Gen.oneOf("AAA", "AAB", "AAC", "AAD")
+    } yield part1 + part2 // Missing space between part1 and part2
+
+    val invalidCharactersGen: Gen[String] = stringsWithAtLeastOneSpecialChar("<>\"&", 8)
+
+    val lowercaseGen: Gen[String] = for {
+      part1 <- Gen.oneOf("a1", "aa1", "a12", "aa12")
+      part2 <- Gen.oneOf("aaa", "aab", "aac", "aad")
+      space <- Gen.oneOf(" ", "")
+    } yield (part1 + space + part2).toUpperCase.take(7) // Force some lowercase by original generation
+
+    val incorrectFormatGen: Gen[String] = Gen.oneOf(
+      Gen.const("123 ABC"), // All digits first
+      Gen.const("A1 AA1A"), // Extra characters
+      Gen.const("AA11AA"), // Missing space
+      Gen.alphaStr.map(_.take(6)) // Completely invalid string
+    )
+
+    // Combine all invalid generators
+    Gen
+      .oneOf(
+        tooShortGen,
+        tooLongGen,
+        missingSpaceGen,
+        invalidCharactersGen,
+        lowercaseGen,
+        incorrectFormatGen
+      )
+      .suchThat(!_.matches(postcodeRegex))
+  }
+
   def longStringsConformingToRegex(regex: String, minLength: Int): Gen[String] =
     RegexpGen
       .from(regex)
