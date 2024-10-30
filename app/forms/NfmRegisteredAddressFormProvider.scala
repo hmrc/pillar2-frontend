@@ -63,7 +63,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               )
             )
         ),
-      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "error.xss")),
+      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
       "countryCode" ->
         text("nfmRegisteredAddress.country.error.required")
           .verifying(

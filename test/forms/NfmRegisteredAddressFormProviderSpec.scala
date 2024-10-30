@@ -25,46 +25,46 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form      = new NfmRegisteredAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
-  val XSS_KEY   = "error.xss"
 
   ".addressLine1" - {
-    val fieldName   = "addressLine1"
-    val requiredKey = "nfmRegisteredAddress.error.addressLine1.required"
-    val lengthKey   = "nfmRegisteredAddress.error.addressLine1.length"
+    val FIELD_NAME   = "addressLine1"
+    val REQUIRED_KEY = "nfmRegisteredAddress.error.addressLine1.required"
+    val LENGTH_KEY   = "nfmRegisteredAddress.error.addressLine1.length"
+    val XSS_KEY      = "addressLine1.error.xss"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
+      FIELD_NAME,
       nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
       form,
-      fieldName,
+      FIELD_NAME,
       maxLength = maxAddressLineLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxAddressLineLength)),
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
       generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
-      fieldName,
+      FIELD_NAME,
       regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
-      regexError = FormError(fieldName, XSS_KEY)
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
   }
 
   ".addressLine2" - {
     val FIELD_NAME = "addressLine2"
     val LENGTH_KEY = "nfmRegisteredAddress.error.addressLine2.length"
-
+    val XSS_KEY    = "addressLine2.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -92,6 +92,7 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "addressLine3"
     val REQUIRED_KEY = "nfmRegisteredAddress.town_city.error.required"
     val LENGTH_KEY   = "nfmRegisteredAddress.town_city.error.length"
+    val XSS_KEY      = "town_city.error.xss"
 
     behave like fieldThatBindsValidData(
       form,
@@ -125,7 +126,7 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine4" - {
     val FIELD_NAME = "addressLine4"
     val LENGTH_KEY = "nfmRegisteredAddress.region.error.length"
-
+    val XSS_KEY    = "region.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -151,7 +152,7 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".postalCode" - {
     val FIELD_NAME = "postalCode"
-
+    val XSS_KEY    = "address.postcode.error.xss"
     behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
@@ -167,7 +168,7 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "countryCode"
     val REQUIRED_KEY = "nfmRegisteredAddress.country.error.required"
     val LENGTH_KEY   = "nfmRegisteredAddress.country.error.length"
-
+    val XSS_KEY      = "country.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,

@@ -98,8 +98,8 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
   "Non UK Bank View when provided with values in the incorrect format" should {
 
-    val testBankName        = randomStringGenerator(41)
-    val testBankAccountName = randomStringGenerator(61)
+    val testBankName        = randomAlphaNumericStringGenerator(41)
+    val testBankAccountName = randomAlphaNumericStringGenerator(61)
     val testSortCode        = "1234567"
     val testAccountNumber   = "123456789"
 

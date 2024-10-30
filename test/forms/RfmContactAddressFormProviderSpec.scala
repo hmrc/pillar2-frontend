@@ -24,12 +24,12 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form      = new RfmContactAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
-  val XSS_KEY   = "error.xss"
 
   ".addressLine1" - {
     val FIELD_NAME   = "addressLine1"
     val REQUIRED_KEY = "rfmContactAddress.error.addressLine1.required"
     val LENGTH_KEY   = "rfmContactAddress.error.addressLine1.length"
+    val XSS_KEY      = "addressLine1.error.xss"
 
     behave like fieldThatBindsValidData(
       form,
@@ -63,6 +63,7 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
     val FIELD_NAME = "addressLine2"
     val LENGTH_KEY = "rfmContactAddress.error.addressLine2.length"
+    val XSS_KEY    = "addressLine2.error.xss"
 
     behave like fieldThatBindsValidData(
       form,
@@ -91,7 +92,7 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "addressLine3"
     val REQUIRED_KEY = "rfmContactAddress.town_city.error.required"
     val LENGTH_KEY   = "rfmContactAddress.town_city.error.length"
-
+    val XSS_KEY      = "town_city.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -124,7 +125,7 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine4" - {
     val FIELD_NAME = "addressLine4"
     val LENGTH_KEY = "rfmContactAddress.region.error.length"
-
+    val XSS_KEY    = "region.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -150,8 +151,8 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
   }
 
   ".postalCode" - {
-
     val FIELD_NAME = "postalCode"
+    val XSS_KEY    = "address.postcode.error.xss"
 
     behave like postcodeField(form, maxAddressLineLength)
 
@@ -168,7 +169,7 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "countryCode"
     val REQUIRED_KEY = "rfmContactAddress.country.error.required"
     val LENGTH_KEY   = "rfmContactAddress.country.error.length"
-
+    val XSS_KEY      = "country.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,

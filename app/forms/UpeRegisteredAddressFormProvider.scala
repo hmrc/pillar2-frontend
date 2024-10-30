@@ -67,7 +67,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
         text("upeRegisteredAddress.country.error.required")
           .verifying(
             firstError(
-              maxLength(maxAddressLineLength, "address.postcode.error.length"),
+              maxLength(maxAddressLineLength, "upeRegisteredAddress.country.error.length"),
               regexp(XSS_REGEX, "country.error.xss")
             )
           )

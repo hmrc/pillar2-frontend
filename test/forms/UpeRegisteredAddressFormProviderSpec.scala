@@ -25,13 +25,12 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form      = new UpeRegisteredAddressFormProvider()()
   val XSS_REGEX = """^[^<>"&]*$"""
-  val XSS_KEY   = "error.xss"
 
   ".addressLine1" - {
     val FIELD_NAME   = "addressLine1"
     val REQUIRED_KEY = "upeRegisteredAddress.error.addressLine1.required"
     val LENGTH_KEY   = "upeRegisteredAddress.error.addressLine1.length"
-
+    val XSS_KEY      = "addressLine1.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -63,7 +62,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
     val FIELD_NAME = "addressLine2"
     val LENGTH_KEY = "upeRegisteredAddress.error.addressLine2.length"
-
+    val XSS_KEY    = "addressLine2.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -90,7 +89,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "addressLine3"
     val REQUIRED_KEY = "upeRegisteredAddress.town_city.error.required"
     val LENGTH_KEY   = "upeRegisteredAddress.town_city.error.length"
-
+    val XSS_KEY      = "town_city.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -122,7 +121,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine4" - {
     val FIELD_NAME = "addressLine4"
     val LENGTH_KEY = "upeRegisteredAddress.region.error.length"
-
+    val XSS_KEY    = "region.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
@@ -147,7 +146,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".postalCode" - {
     val FIELD_NAME = "postalCode"
-
+    val XSS_KEY    = "address.postcode.error.xss"
     behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
@@ -163,8 +162,8 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   ".countryCode" - {
     val FIELD_NAME   = "countryCode"
     val REQUIRED_KEY = "upeRegisteredAddress.country.error.required"
-    val LENGTH_KEY   = "address.postcode.error.length"
-
+    val LENGTH_KEY   = "upeRegisteredAddress.country.error.length"
+    val XSS_KEY      = "country.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,

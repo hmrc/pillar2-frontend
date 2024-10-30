@@ -24,7 +24,7 @@ class UpeContactNameFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "upe-input-business-name.error.required"
   val LENGTH_KEY   = "upe-input-business-name.error.length"
   val MAX_LENGTH   = 200
-  val XSS_KEY      = "error.xss"
+  val XSS_KEY      = "name.error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new UpeContactNameFormProvider()()
