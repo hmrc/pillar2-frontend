@@ -17,13 +17,13 @@
 package forms
 
 import _root_.mapping.Constants
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import models.repayments.BankAccountDetails
 import play.api.data.Form
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
-import forms.Validation.XSS_REGEX
 
 class BankAccountDetailsFormProvider @Inject() extends Mappings {
   def apply(): Form[BankAccountDetails] = Form(

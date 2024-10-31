@@ -24,7 +24,7 @@ class NfmContactNameFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "nfmContactName.error.required"
   val LENGTH_KEY   = "nfmContactName.error.length"
   val MAX_LENGTH   = 105
-  val XSS_KEY      = "name.error.xss"
+  val XSS_KEY      = "name.error.xss.forbidAmpersand"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new NfmContactNameFormProvider()()
@@ -51,7 +51,7 @@ class NfmContactNameFormProviderSpec extends StringFieldBehaviours {
       form,
       FIELD_NAME,
       regex = XSS_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MAX_LENGTH),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 

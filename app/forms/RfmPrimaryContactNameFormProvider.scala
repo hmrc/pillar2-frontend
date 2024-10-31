@@ -15,7 +15,6 @@
  */
 
 package forms
-
 import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import mapping.Constants
@@ -31,7 +30,7 @@ class RfmPrimaryContactNameFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_160, "rfm.rfmPrimaryContactName.error.length"),
-            regexp(XSS_REGEX, "name.error.xss")
+            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
           )
         )
     )

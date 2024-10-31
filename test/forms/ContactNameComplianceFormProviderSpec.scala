@@ -24,7 +24,7 @@ class ContactNameComplianceFormProviderSpec extends StringFieldBehaviours {
   val REQUIRED_KEY = "contactNameCompliance.error.required"
   val LENGTH_KEY   = "contactNameCompliance.error.length"
   val MAX_LENGTH   = 160
-  val XSS_KEY      = "name.error.xss"
+  val XSS_KEY      = "name.error.xss.forbidAmpersand"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new ContactNameComplianceFormProvider()()

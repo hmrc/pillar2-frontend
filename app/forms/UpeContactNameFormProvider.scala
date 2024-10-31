@@ -16,14 +16,12 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import mapping.Constants.MAX_LENGTH_200
 import play.api.data.Form
 
 import javax.inject.Inject
-
-import Validation.XSS_REGEX
-
 class UpeContactNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
@@ -31,7 +29,7 @@ class UpeContactNameFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_200, "upe-input-business-name.error.length"),
-            regexp(XSS_REGEX, "name.error.xss")
+            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
           )
         )
     )

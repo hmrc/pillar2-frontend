@@ -16,13 +16,12 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.mappings.Mappings
 import mapping.Constants.MAX_LENGTH_105
 import play.api.data.Form
 
 import javax.inject.Inject
-
-import Validation.XSS_REGEX
 
 class UpeNameRegistrationFormProvider @Inject() extends Mappings {
 
@@ -32,7 +31,7 @@ class UpeNameRegistrationFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_105, "upeNameRegistration.error.length"),
-            regexp(XSS_REGEX, "name.error.xss")
+            regexp(XSS_REGEX_ALLOW_AMPERSAND, "name.error.xss.allowAmpersand")
           )
         )
     )
