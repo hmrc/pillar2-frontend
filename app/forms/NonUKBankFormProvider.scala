@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
+import forms.Validation.XSS_REGEX
 
 class NonUKBankFormProvider @Inject() extends Mappings {
 
@@ -30,11 +31,13 @@ class NonUKBankFormProvider @Inject() extends Mappings {
     mapping(
       "bankName" -> text("repayments.nonUKBank.error.bankName.required")
         .verifying(
-          maxLength(Constants.MAX_LENGTH_40, "repayments.nonUKBank.error.bankName.length")
+          maxLength(Constants.MAX_LENGTH_40, "repayments.nonUKBank.error.bankName.length"),
+          regexp(XSS_REGEX, "repayments.nonUKBank.error.bankName.xss")
         ),
       "nameOnBankAccount" -> text("repayments.nonUKBank.error.nameOnBankAccount.required")
         .verifying(
-          maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length")
+          maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length"),
+          regexp(XSS_REGEX, "repayments.nonUKBank.error.nameOnBankAccount.xss")
         ),
       "bic" -> bankAccount("repayments.nonUKBank.error.bic.required")
         .verifying(

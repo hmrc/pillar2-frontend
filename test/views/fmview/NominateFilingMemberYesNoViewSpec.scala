@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.fm
+package views.fmview
 
 import base.ViewSpecBase
 import forms.NominateFilingMemberYesNoFormProvider

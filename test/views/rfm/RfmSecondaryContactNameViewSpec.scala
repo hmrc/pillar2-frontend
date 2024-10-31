@@ -22,40 +22,81 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.rfm.RfmSecondaryContactNameView
+import play.api.data.Form
 
 class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new RfmSecondaryContactNameFormProvider
+  val form: Form[String]                = formProvider()
   val page: RfmSecondaryContactNameView = inject[RfmSecondaryContactNameView]
 
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  "RFM Secondary Contact Name View" should {
+    val view: Document = Jsoup.parse(
+      page(form, NormalMode)(request, appConfig, messages).toString()
+    )
 
-  "Rfm Secondary Contact Name View" should {
+    "have the correct title" in {
+      view.getElementsByTag("title").text must include(messages("rfm.secondaryContactName.title"))
+    }
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the alternative person or team we should contact " +
-          "about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes - GOV.UK"
+    "have the correct caption" in {
+      view.getElementsByClass("govuk-caption-l").text must include(messages("taskList.task.contact.heading"))
+    }
+
+    "have the correct heading" in {
+      view.getElementsByTag("h1").text must include(messages("rfm.secondaryContactName.heading"))
+    }
+
+    "have the correct hint text" in {
+      view.getElementsByClass("govuk-hint").text must include(messages("rfm.secondaryContactName.hint"))
+    }
+
+    "have a save and continue button" in {
+      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+    }
+
+    "show required field error when form is submitted empty" in {
+      val errorView = Jsoup.parse(
+        page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
+
+      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+
+      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
+      errorList must include(messages("rfm.SecondaryContactName.error.required"))
+
+      val fieldError = errorView.getElementsByClass("govuk-error-message").text
+      fieldError must include(s"Error: ${messages("rfm.SecondaryContactName.error.required")}")
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
-    }
-
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the alternative person or team we should " +
-          "contact about compliance for Pillar 2 top-up taxes?"
+    "show length validation error when input exceeds maximum length" in {
+      val longInput = "A" * 161
+      val errorView = Jsoup.parse(
+        page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
+
+      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+
+      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
+      errorList must include(messages("rfm.SecondaryContactName.error.length"))
+
+      val fieldError = errorView.getElementsByClass("govuk-error-message").text
+      fieldError must include(s"Error: ${messages("rfm.SecondaryContactName.error.length")}")
     }
 
-    "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
-    }
+    "show XSS validation error when special characters are entered" in {
+      val invalidInput = "Test <script>alert('xss')</script> & Company"
+      val errorView = Jsoup.parse(
+        page(form.bind(Map("value" -> invalidInput)), NormalMode)(request, appConfig, messages).toString()
+      )
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+
+      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
+      errorList must include(messages("name.error.xss.forbidAmpersand"))
+
+      val fieldError = errorView.getElementsByClass("govuk-error-message").text
+      fieldError must include(s"Error: ${messages("name.error.xss.forbidAmpersand")}")
     }
   }
 }
