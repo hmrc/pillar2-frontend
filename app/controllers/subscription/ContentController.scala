@@ -21,7 +21,6 @@ import controllers.actions.IdentifierAction
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import scala.annotation.nowarn
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.ContentView
 
@@ -36,9 +35,7 @@ class ContentController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  // this annotation is required to suppress an sbt-tpolecat error on target class Routes.scala
-  @nowarn("cat=unused")
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = identify { implicit request =>
     Ok(view())
   }
 

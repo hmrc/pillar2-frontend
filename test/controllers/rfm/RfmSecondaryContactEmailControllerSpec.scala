@@ -88,7 +88,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
@@ -138,7 +138,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))

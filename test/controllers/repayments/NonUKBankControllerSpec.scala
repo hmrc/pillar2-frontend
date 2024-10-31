@@ -65,7 +65,7 @@ class NonUKBankControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(ua)))
         val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[NonUKBankView]
         val result  = route(application, request).value
@@ -84,7 +84,7 @@ class NonUKBankControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(

@@ -103,7 +103,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -166,7 +169,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
 
@@ -176,7 +179,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -191,7 +197,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
       )
       val result = route(application, request).value
       status(result) mustBe SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
     }
 
     "redirect to dashboard page if they successfully amend their data" in {
@@ -204,7 +210,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url)
         val result  = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad().url
       }
     }
 
@@ -214,7 +220,10 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -230,7 +239,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Summ
         )
         val result = route(application, request).value
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad().url
       }
     }
 

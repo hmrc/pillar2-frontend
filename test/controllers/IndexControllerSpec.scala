@@ -27,10 +27,12 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.~
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class IndexControllerSpec extends SpecBase {
 
@@ -43,7 +45,7 @@ class IndexControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustBe controllers.routes.TaskListController.onPageLoad.url
@@ -64,10 +66,10 @@ class IndexControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.IndexController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
 
       }
     }
@@ -75,11 +77,13 @@ class IndexControllerSpec extends SpecBase {
 
   "redirect Organisation to the tasklist if no pillar 2 reference is found" in {
     val application = applicationBuilder(userAnswers = None).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.TaskListController.onPageLoad.url
@@ -98,14 +102,16 @@ class IndexControllerSpec extends SpecBase {
       )
     )
     val application = applicationBuilder(userAnswers = None, enrolments).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(enrolments)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+      redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
     }
   }
 
@@ -115,15 +121,17 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ Some(Agent) ~ pillar2AgentEnrolmentWithDelegatedAuth))
-    when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+    when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+      redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
     }
   }
 
@@ -132,12 +140,14 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolment.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ Some(Agent) ~ pillar2AgentEnrolment))
-    when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+    when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe appConfig.asaHomePageUrl
@@ -148,11 +158,13 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = None)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ Some(Individual) ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe routes.UnauthorisedIndividualAffinityController.onPageLoad.url
@@ -162,11 +174,13 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = None)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(Future.successful(Some(id) ~ None ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url

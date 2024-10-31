@@ -93,6 +93,8 @@ class RfmContactCheckYourAnswersController @Inject() (
         }
       }
   }
+  // sbt-tpolecat warning switched off because `for` comprehension creates an unused `Future[Unit]`
+  // at: "updatedRfmStatus    <- rfmStatus".
   @nowarn
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {

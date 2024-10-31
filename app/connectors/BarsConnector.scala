@@ -20,6 +20,7 @@ import config.FrontendAppConfig
 import models.InternalIssueError
 import models.bars._
 import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.HttpReads.Implicits._
 
 import java.util.UUID
 import javax.inject.{Inject, Singleton}

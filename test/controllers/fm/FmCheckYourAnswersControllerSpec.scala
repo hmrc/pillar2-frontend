@@ -28,7 +28,7 @@ class FmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency 
     "redirect to bookmark prevention page if all required pages have not been answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -40,7 +40,7 @@ class FmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency 
     "return ok with correct view" in {
       val application = applicationBuilder(userAnswers = Some(fmCompletedGrsResponse)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 

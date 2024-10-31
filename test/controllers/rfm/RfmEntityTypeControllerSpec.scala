@@ -19,15 +19,16 @@ package controllers.rfm
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.RfmEntityTypeFormProvider
-import models.NormalMode
+import models.{Mode, NormalMode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{RfmEntityTypePage, RfmUkBasedPage}
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.rfm.RfmEntityTypeView
 
 import scala.concurrent.Future
@@ -161,9 +162,9 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any[UserType](), any[Mode]())(any[HeaderCarrier]()))
           .thenReturn(
             Future(
               GrsCreateRegistrationResponse(
@@ -199,8 +200,12 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(
+          mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any[UserType](), any[EntityType](), any[Mode]())(
+            any[HeaderCarrier]()
+          )
+        )
           .thenReturn(
             Future(
               GrsCreateRegistrationResponse(
@@ -236,7 +241,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(jsonTobeReturned))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -260,7 +265,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(jsonTobeReturned))
         val view = application.injector.instanceOf[RfmEntityTypeView]
 
         val result = route(application, request).value

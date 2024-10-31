@@ -484,7 +484,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -518,7 +518,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -550,7 +550,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
@@ -572,7 +572,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
@@ -595,7 +595,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
@@ -617,7 +617,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
@@ -647,7 +647,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -678,7 +678,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -696,7 +696,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value

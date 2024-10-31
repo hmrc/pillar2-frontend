@@ -135,7 +135,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -169,7 +172,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -195,7 +201,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -215,7 +224,10 @@ class ContactByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

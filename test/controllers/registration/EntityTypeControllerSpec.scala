@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import forms.EntityTypeFormProvider
-import models.NormalMode
+import models.{Mode, NormalMode, UserType}
 import models.grs.{EntityType, GrsCreateRegistrationResponse}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,6 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.EntityTypeView
 
 import scala.concurrent.Future
@@ -93,7 +94,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(jsUserAnswers))
         val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
@@ -121,7 +122,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(jsUserAnswers))
         val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
@@ -175,9 +176,9 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any[UserType](), any[Mode]())(any[HeaderCarrier]()))
           .thenReturn(
             Future(
               GrsCreateRegistrationResponse(
@@ -207,8 +208,12 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(
+          mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any[UserType](), any[EntityType](), any[Mode]())(
+            any[HeaderCarrier]()
+          )
+        )
           .thenReturn(
             Future(
               GrsCreateRegistrationResponse(
@@ -244,7 +249,7 @@ class EntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]()))
           .thenReturn(Future(jsonTobeReturned))
         val result = route(application, request).value
 

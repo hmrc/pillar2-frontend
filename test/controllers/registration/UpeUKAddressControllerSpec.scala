@@ -24,9 +24,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.UpeNameRegistrationPage
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -64,7 +65,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -87,7 +88,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -112,7 +113,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
         val request =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)

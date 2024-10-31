@@ -98,7 +98,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
             bind[FopService].toInstance(mockFopService)
           )
           .build()
-        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        when(mockFopService.render(any[String]())).thenReturn(Future.successful("hello".getBytes))
         running(application) {
           val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmAnswers.url)
           val result  = route(application, request).value
@@ -130,8 +130,8 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
+        when(mockFopService.render(any[String]())).thenReturn(Future.successful("hello".getBytes))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
         running(application) {
           val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRfmConfirmation.url)
           val result  = route(application, request).value
@@ -200,7 +200,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
             bind[FopService].toInstance(mockFopService)
           )
           .build()
-        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        when(mockFopService.render(any[String]())).thenReturn(Future.successful("hello".getBytes))
         running(application) {
           val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentAnswers.url)
           val result  = route(application, request).value
@@ -231,7 +231,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
             bind[FopService].toInstance(mockFopService)
           )
           .build()
-        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
+        when(mockFopService.render(any[String]())).thenReturn(Future.successful("hello".getBytes))
         running(application) {
           val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
           val result  = route(application, request).value
@@ -264,8 +264,8 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       val mockFopService = mock[FopService]
       val fakePdfContent = Array[Byte](1, 2, 3)
 
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-      when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(ua)))
+      when(mockFopService.render(any[String]())).thenReturn(Future.successful(fakePdfContent))
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
@@ -292,8 +292,8 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       val mockFopService = mock[FopService]
       val fakePdfContent = Array[Byte](1, 2, 3)
 
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
-      when(mockFopService.render(any())).thenReturn(Future.successful(fakePdfContent))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(ua)))
+      when(mockFopService.render(any[String]())).thenReturn(Future.successful(fakePdfContent))
 
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(

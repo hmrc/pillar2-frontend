@@ -112,7 +112,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
           val request =
             FakeRequest(POST, controllers.rfm.routes.UkBasedFilingMemberController.onSubmit(NormalMode).url).withFormUrlEncodedBody("value" -> "true")
           val result = route(application, request).value

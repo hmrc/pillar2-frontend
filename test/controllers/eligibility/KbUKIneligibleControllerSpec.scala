@@ -22,7 +22,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
 class KbUKIneligibleControllerSpec extends SpecBase {
-
   def controller(): KbUKIneligibleController =
     new KbUKIneligibleController(
       stubMessagesControllerComponents(),
@@ -31,15 +30,12 @@ class KbUKIneligibleControllerSpec extends SpecBase {
 
   "Trading Business Confirmation Controller" when {
     "must return OK and the correct view for a GET" in {
-
       val request =
         FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)
 
-      val result = controller.onPageLoad()()(request)
+      val result = controller().onPageLoad()()(request)
       status(result)        shouldBe OK
       contentAsString(result) should include("Pillar 2 top-up taxes may be collected when you have an entity located in the UK.")
-
     }
-
   }
 }

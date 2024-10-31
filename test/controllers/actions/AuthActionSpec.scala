@@ -66,7 +66,10 @@ class AuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
@@ -91,7 +94,10 @@ class AuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant) ~ Some(Credentials(providerId, providerType)))
           )
@@ -117,7 +123,10 @@ class AuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))))
 
         running(application) {
@@ -141,7 +150,10 @@ class AuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))))
 
         running(application) {
@@ -165,7 +177,10 @@ class AuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(None ~ None ~ noEnrolments ~ None ~ None ~ None))
 
         running(application) {

@@ -18,12 +18,12 @@ package models.tasklist
 
 import controllers.subscription.routes
 import models.tasklist.SectionStatus.{CannotStart, Completed}
-import models.{NormalMode, UserAnswers}
+import models.UserAnswers
 import play.api.mvc.Call
 import utils.RowStatus
 
 object ContactDetailSection extends Section {
-  override def toRequiredSection(ss: SectionStatus): Call = routes.ContentController.onPageLoad(NormalMode)
+  override def toRequiredSection(ss: SectionStatus): Call = routes.ContentController.onPageLoad
 
   override def name(ss: SectionStatus): String = ss match {
     case Completed   => "taskList.task.contact.edit"

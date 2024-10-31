@@ -196,7 +196,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -227,7 +230,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -256,7 +262,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
       val bigString = "123" * 100
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -286,7 +295,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -311,7 +323,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url
       )
         .withFormUrlEncodedBody("value" -> "12233444")
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -344,7 +359,10 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

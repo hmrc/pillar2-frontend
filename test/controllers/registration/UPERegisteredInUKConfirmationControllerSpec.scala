@@ -19,16 +19,17 @@ package controllers.registration
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.UPERegisteredInUKConfirmationFormProvider
-import models.NormalMode
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.UltimateParentNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
-import play.api.libs.json.Json
+import pages.{GrsUpeStatusPage, Page, UpeRegisteredInUKPage}
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
@@ -89,8 +90,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[UltimateParentNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockNavigator.nextPage(any[Page](), any[Mode](), any[UserAnswers]())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(UpeRegisteredInUKPage, true)
@@ -115,7 +116,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any[HeaderCarrier]())
         verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }
@@ -125,8 +126,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[UltimateParentNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockNavigator.nextPage(any[Page](), any[Mode](), any[UserAnswers]())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(UpeRegisteredInUKPage, false)
@@ -151,7 +152,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any[HeaderCarrier]())
         verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }

@@ -216,7 +216,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -246,7 +249,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -274,7 +280,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -295,7 +304,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -351,7 +363,10 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

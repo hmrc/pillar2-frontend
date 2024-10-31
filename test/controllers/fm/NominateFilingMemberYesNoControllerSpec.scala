@@ -24,9 +24,10 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
@@ -91,7 +92,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
             "value" -> "$$"
           )
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val result    = route(application, request).value
         val boundForm = formProvider().bind(Map("value" -> "$$"))
         val view      = application.injector.instanceOf[NominateFilingMemberYesNoView]
@@ -106,7 +107,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("nominateFilingMember", "true"))

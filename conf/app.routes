@@ -188,10 +188,10 @@ GET         /manage-account/further-details/change-group-status                 
 POST        /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit()
 
 
-GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
+GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad
 POST        /contact-details                                                                         controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
 
-GET         /contact-details/change-content                                                          controllers.subscription.ContentController.onPageLoad(mode: Mode = CheckMode)
+GET         /contact-details/change-content                                                          controllers.subscription.ContentController.onPageLoad
 POST        /contact-details/change-content                                                          controllers.subscription.ContentController.onSubmit(mode: Mode = CheckMode)
 
 

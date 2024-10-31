@@ -68,8 +68,8 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[BankAccountDetailsView]
@@ -101,7 +101,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
         when(mockBarsService.verifyBusinessAccount(any(), any(), any(), any())(any(), any(), any()))
           .thenReturn(Future successful Redirect(controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)))
 
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(

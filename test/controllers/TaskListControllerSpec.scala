@@ -34,6 +34,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.RowStatus
 
 import java.time.LocalDate
@@ -75,7 +76,7 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
         val result = route(application, request).value
@@ -110,8 +111,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
 
         val result = route(application, request).value
@@ -130,10 +131,10 @@ class TaskListControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TaskListController.onPageLoad.url)
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad().url
       }
     }
 
@@ -154,8 +155,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -185,8 +186,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -211,8 +212,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -237,8 +238,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -267,8 +268,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -298,8 +299,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -323,8 +324,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
 
@@ -357,8 +358,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -404,8 +405,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -447,8 +448,8 @@ class TaskListControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+        when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
         val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -496,8 +497,8 @@ class TaskListControllerSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
+          when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
           val request = FakeRequest(GET, routes.TaskListController.onPageLoad.url)
           val result  = route(application, request).value
           status(result) mustEqual OK

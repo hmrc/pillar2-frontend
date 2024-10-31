@@ -62,7 +62,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
         val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
@@ -143,13 +143,16 @@ class RfmConfirmationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
             )
           )
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(None))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER

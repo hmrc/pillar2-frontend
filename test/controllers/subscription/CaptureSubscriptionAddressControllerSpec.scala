@@ -36,7 +36,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   val formProvider = new CaptureSubscriptionAddressFormProvider()
 
   def application: Application = {
-    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
 
     applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)))
       .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

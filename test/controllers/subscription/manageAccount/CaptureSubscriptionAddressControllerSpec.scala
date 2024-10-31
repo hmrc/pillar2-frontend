@@ -46,7 +46,10 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       .build()
 
   def agentApp: Application = {
-    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+    when(
+      mockAuthConnector
+        .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+    )
       .thenReturn(
         Future.successful(
           Some(randomUUID) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId = randomUUID, providerType = randomUUID))

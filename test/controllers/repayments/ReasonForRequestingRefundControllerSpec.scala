@@ -119,8 +119,8 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[RepaymentNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockNavigator.nextPage(any[Page](), any[Mode](), any[UserAnswers]())).thenReturn(expectedNextPage)
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
 
       val userAnswers = emptyUserAnswers
         .setOrException(ReasonForRequestingRefundPage, "valid reason")

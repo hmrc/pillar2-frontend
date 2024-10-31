@@ -74,7 +74,7 @@ class CheckYourAnswersController @Inject() (
     }
   }
   // sbt-tpolecat warning switched off because `for` comprehension creates an unused `Future[Unit]`
-  // at :  "updatedSubscriptionStatus <- subscriptionStatus".
+  // at: "updatedSubscriptionStatus <- subscriptionStatus".
   @nowarn
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     if (request.userAnswers.finalStatusCheck) {

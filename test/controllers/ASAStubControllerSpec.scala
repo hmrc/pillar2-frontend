@@ -46,7 +46,9 @@ class ASAStubControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -66,7 +68,9 @@ class ASAStubControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

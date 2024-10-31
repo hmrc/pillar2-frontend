@@ -27,10 +27,12 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class RfmAuthActionSpec extends SpecBase {
 
@@ -63,7 +65,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ Some(groupId) ~ pillar2Enrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -91,7 +96,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(Some(id) ~ Some(groupId) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType)))
           )
@@ -116,7 +124,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant) ~ Some(Credentials(providerId, providerType)))
           )
@@ -142,7 +153,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))))
 
         running(application) {
@@ -166,7 +180,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ None ~ noEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))))
 
         running(application) {
@@ -190,7 +207,10 @@ class RfmAuthActionSpec extends SpecBase {
 
         val application = applicationBuilder(userAnswers = None).build()
 
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(None ~ None ~ noEnrolments ~ None ~ None ~ Some(Credentials(providerId, providerType))))
 
         running(application) {

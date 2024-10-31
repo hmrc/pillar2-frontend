@@ -29,11 +29,13 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.MakeAPaymentDashboardView
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
@@ -60,9 +62,9 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
@@ -86,14 +88,17 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+        when(
+          mockAuthConnector
+            .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
             )
           )
-        val request = FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
@@ -113,10 +118,10 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionUserAnswers)))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(sessionUserAnswers)))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
@@ -134,11 +139,11 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+          FakeRequest(GET, controllers.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

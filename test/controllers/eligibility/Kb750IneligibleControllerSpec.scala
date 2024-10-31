@@ -35,7 +35,7 @@ class Kb750IneligibleControllerSpec extends SpecBase {
       val request =
         FakeRequest(GET, controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url)
 
-      val result = controller.onPageLoad()()(request)
+      val result = controller().onPageLoad()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
         "Pillar 2 top-up taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."

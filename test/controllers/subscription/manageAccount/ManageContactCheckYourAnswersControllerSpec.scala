@@ -115,7 +115,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress)).build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -135,7 +135,10 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -143,7 +146,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         )
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
         val request = FakeRequest(
           GET,
           controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
@@ -187,7 +190,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
         }
       }
 
@@ -196,7 +199,10 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -209,7 +215,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad.url
+          redirectLocation(result).value mustBe controllers.routes.DashboardController.onPageLoad().url
         }
       }
 
@@ -224,7 +230,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
 
       "redirect to the journey recovery if no pillar2 reference is found" in {

@@ -31,13 +31,14 @@ import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core.retrieve.Credentials
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval}
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class SecondaryContactNameControllerSpec extends SpecBase {
 
@@ -154,7 +155,10 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -185,7 +189,10 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -213,7 +220,10 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -255,7 +265,10 @@ class SecondaryContactNameControllerSpec extends SpecBase {
           bind[AuthConnector].toInstance(mockAuthConnector)
         )
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector
+          .authorise[AgentRetrievalsType](any[Predicate](), any[Retrieval[AgentRetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

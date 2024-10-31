@@ -31,7 +31,10 @@ trait Gettable[A] extends Query
 
 trait Settable[A] extends Query {
 
-  // we still want to include input-arg "value" for classes which inherit this trait [eg case object DuplicateSafeIdPage].
+  // we still want to include the unused input-arg "value" for classes which inherit this trait,
+  // and do in fact used argument "value".
+  // eg:  case object DuplicateSafeIdPage] extends QuestionPage[Boolean],
+  //      trait QuestionPage[A] extends Page with Gettable[A] with Settable[A].
   @nowarn("cat=unused")
   def cleanup(value: Option[A], userAnswers: UserAnswers): Try[UserAnswers] =
     Success(userAnswers)

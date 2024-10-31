@@ -69,7 +69,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(
             Future.successful(
               Some(emptyUserAnswers.setOrException(RepaymentsContactNamePage, "ABC Limited"))
@@ -94,7 +94,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(
             POST,

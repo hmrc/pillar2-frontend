@@ -19,16 +19,17 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.AddSecondaryContactFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.SubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages._
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.subscriptionview.AddSecondaryContactView
 
 import scala.concurrent.Future
@@ -145,8 +146,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[SubscriptionNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockNavigator.nextPage(any[Page](), any[Mode](), any[UserAnswers]())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(SubAddSecondaryContactPage, false)
@@ -175,7 +176,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any[HeaderCarrier]())
         verify(mockNavigator).nextPage(SubAddSecondaryContactPage, NormalMode, expectedUserAnswers)
       }
     }

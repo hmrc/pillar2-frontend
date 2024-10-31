@@ -24,10 +24,13 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.Retrieval
 import uk.gov.hmrc.auth.core.{AuthConnector, InsufficientEnrolments, MissingBearerToken}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.net.URLEncoder
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AuthControllerSpec extends SpecBase {
 
@@ -47,12 +50,15 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(userAnswersId)))
-        when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.clear(any[String]())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request   = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -76,10 +82,13 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -101,10 +110,13 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request = FakeRequest(GET, routes.AuthController.signOut().url)
 
         val result = route(application, request).value
 
@@ -134,12 +146,15 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(userAnswersId)))
-        when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
+        when(mockSessionRepository.clear(any[String]())) thenReturn Future.successful(true)
 
         val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 
@@ -163,10 +178,13 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 
@@ -188,10 +206,13 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[Option[String]](any[Predicate](), any[Retrieval[Option[String]]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
-        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
 
         val result = route(application, request).value
 

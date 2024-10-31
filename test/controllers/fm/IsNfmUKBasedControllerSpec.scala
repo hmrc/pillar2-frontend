@@ -19,17 +19,18 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
-import models.{NormalMode, UserAnswers}
+import models.{Mode, NormalMode, UserAnswers}
 import navigation.NominatedFilingMemberNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage}
+import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage, Page}
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.Call
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
 
@@ -116,8 +117,8 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[NominatedFilingMemberNavigator]
-      when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockNavigator.nextPage(any[Page](), any[Mode](), any[UserAnswers]())).thenReturn(expectedNextPage)
+      when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, true)
@@ -142,7 +143,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any[HeaderCarrier]())
         verify(mockNavigator).nextPage(FmRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }
@@ -153,7 +154,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
         val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
@@ -168,7 +169,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future.successful(Json.obj()))
         val request = FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> "false")
         val result = route(application, request).value

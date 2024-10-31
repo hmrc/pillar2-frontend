@@ -66,6 +66,9 @@ class RepaymentsCheckYourAnswersController @Inject() (
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
       }
     }
+
+  // sbt-tpolecat warning switched off because `for` comprehension creates an unused `Future[Unit]`
+  // at: "updatedRfmStatus    <- rfmStatus".
   @nowarn
   def onSubmit(): Action[AnyContent] =
     (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
@@ -117,7 +120,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
       } else {
         Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
       }
-
     }
 
   private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =

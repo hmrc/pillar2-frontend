@@ -25,10 +25,11 @@ import org.mockito.Mockito.when
 import pages.{UpeNameRegistrationPage, UpeRegisteredAddressPage, UpeRegisteredInUKPage}
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.Json
+import play.api.libs.json.{JsValue, Json}
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import uk.gov.hmrc.http.HeaderCarrier
 
 import scala.concurrent.Future
 
@@ -47,7 +48,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
   def application: Application = applicationBuilder(Some(defaultUa)).build()
   def applicationOverride: Application = {
-    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    when(mockUserAnswersConnectors.save(any[String](), any[JsValue]())(any[HeaderCarrier]())).thenReturn(Future(Json.toJson(Json.obj())))
 
     applicationBuilder(Some(defaultUa))
       .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

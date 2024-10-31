@@ -48,7 +48,7 @@ class TransactionHistoryErrorViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").get(2).getElementsByTag("a")
 
       link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
     }
 
   }

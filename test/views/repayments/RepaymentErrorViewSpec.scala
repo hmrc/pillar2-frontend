@@ -47,7 +47,7 @@ class RepaymentErrorViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.attr("href") must include(routes.DashboardController.onPageLoad().url)
     }
 
   }

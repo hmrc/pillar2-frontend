@@ -86,7 +86,7 @@ class RepaymentServiceSpec extends SpecBase {
         )
         val service = application.injector.instanceOf[RepaymentService]
         when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
-        when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.clear(any[String]())).thenReturn(Future.successful(true))
         service.sendRepaymentDetails(validRepaymentPayloadUkBank).futureValue mustEqual Done
       }
       "return failed results if connector fails" in {
@@ -96,7 +96,7 @@ class RepaymentServiceSpec extends SpecBase {
         )
         val service = application.injector.instanceOf[RepaymentService]
         when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
-        when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.clear(any[String]())).thenReturn(Future.successful(true))
         service.sendRepaymentDetails(validRepaymentPayloadUkBank).failed.futureValue mustEqual UnexpectedResponse
       }
     }

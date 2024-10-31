@@ -60,7 +60,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
         mockSessionRepository
       )
       val request = FakeRequest(GET, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad.url)
-      val result  = controller.onPageLoad()()(request)
+      val result  = controller.onPageLoad()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
@@ -70,7 +70,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(NfmEqPage, true))))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(NfmEqPage, true))))
         val request =
           FakeRequest(GET, controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad.url)
 

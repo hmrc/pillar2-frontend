@@ -69,7 +69,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(Future.successful(Some(ua)))
         val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value

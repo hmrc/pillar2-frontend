@@ -31,6 +31,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.DashboardView
 
 import java.time.LocalDate
@@ -78,12 +79,13 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
+        when(mockSessionRepository.set(any[UserAnswers]()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readAndCacheSubscription(any[ReadSubscriptionRequestParameters]())(any[HeaderCarrier]()))
+          .thenReturn(Future.successful(subscriptionData))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[DashboardView]
 
@@ -111,14 +113,15 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           )
           .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-        when(mockSessionRepository.set(any()))
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSubscriptionService.readAndCacheSubscription(any[ReadSubscriptionRequestParameters]())(any[HeaderCarrier]()))
+          .thenReturn(Future.failed(models.InternalIssueError))
+        when(mockSessionRepository.set(any[UserAnswers]()))
           .thenReturn(Future.successful(true))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
 
       }
     }
@@ -131,13 +134,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
-      when(mockSessionRepository.get(any()))
+      when(mockSessionRepository.get(any[String]()))
         .thenReturn(Future.successful(None))
-      when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSubscriptionService.readAndCacheSubscription(any[ReadSubscriptionRequestParameters]())(any[HeaderCarrier]()))
+        .thenReturn(Future.failed(models.InternalIssueError))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -154,21 +158,24 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             bind[AuthConnector].toInstance(mockAuthConnector)
           )
           .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+      when(mockSubscriptionService.readAndCacheSubscription(any[ReadSubscriptionRequestParameters]())(any[HeaderCarrier]()))
+        .thenReturn(Future.failed(models.InternalIssueError))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
 

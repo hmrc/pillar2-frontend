@@ -48,7 +48,6 @@ lazy val root = (project in file("."))
       "-rootdir",
       baseDirectory.value.getCanonicalPath,
       "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s",
-      // "-Ypatmat-exhaust-depth", "40"
       "-deprecation"
     ),
     libraryDependencies ++= AppDependencies(),

@@ -62,7 +62,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      when(mockSessionRepository.get(any()))
+      when(mockSessionRepository.get(any[String]()))
         .thenReturn(Future.successful(Some(userAnswers)))
 
       running(application) {
@@ -90,7 +90,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
-      when(mockSessionRepository.get(any()))
+      when(mockSessionRepository.get(any[String]()))
         .thenReturn(
           Future.successful(
             Some(ua)
@@ -114,7 +114,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
 
     "must redirect to next Page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

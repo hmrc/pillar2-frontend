@@ -61,7 +61,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
         mockSessionRepository
       )
       val request = FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
-      val result  = controller.onPageLoad()()(request)
+      val result  = controller.onPageLoad()(request)
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
@@ -71,7 +71,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(UpeEqPage, true))))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers.setOrException(UpeEqPage, true))))
         val request =
           FakeRequest(GET, controllers.eligibility.routes.GroupTerritoriesController.onPageLoad.url)
 

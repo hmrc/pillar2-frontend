@@ -93,7 +93,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.matchingPillar2Records(any(), any(), any())(any())).thenReturn(Future.successful(true))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
             .withFormUrlEncodedBody()
@@ -115,9 +115,9 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.matchingPillar2Records(any(), any(), any())(any())).thenReturn(Future.successful(false))
-          when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+          when(mockUserAnswersConnectors.remove(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(Done))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
             .withFormUrlEncodedBody()
 
@@ -137,7 +137,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]())).thenReturn(Future.successful(subscriptionData))
           when(mockSubscriptionService.matchingPillar2Records(any(), any(), any())(any())).thenReturn(Future.successful(false))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
@@ -154,7 +154,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+          when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]())).thenReturn(Future.failed(InternalIssueError))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
           val result = route(application, request).value
@@ -172,7 +172,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           .overrides(inject.bind[SubscriptionService].toInstance(mockSubscriptionService))
           .build()
         running(application) {
-          when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(NoResultFound))
+          when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]())).thenReturn(Future.failed(NoResultFound))
           val request = FakeRequest(POST, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onSubmit.url)
 
           val result = route(application, request).value

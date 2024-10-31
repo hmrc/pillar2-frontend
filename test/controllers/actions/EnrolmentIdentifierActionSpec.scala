@@ -31,10 +31,12 @@ import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class EnrolmentIdentifierActionSpec extends SpecBase {
 
@@ -72,13 +74,16 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "has correct credentials" must {
         "return the credentials we require" in {
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -93,8 +98,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "doesn't have sufficient enrolments" must {
         "redirect to the error page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -116,8 +124,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "there is no relationship between agent and organisation" must {
         "redirect to Org-agent relationship check failed page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -140,8 +151,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "there is an AuthorisationException no relationship between agent and organisation" must {
         "redirect to Org-agent relationship check failed page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -163,8 +177,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "internal error with auth service" must {
         "redirect to agent there is a problem page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -185,8 +202,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         }
 
         "redirect to agent there is a problem page if an error outside service" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -208,8 +228,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "does not satisfy predicate" must {
         "redirect to error page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -231,8 +254,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "used an unaccepted auth provider" must {
         "redirect to error page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -254,8 +280,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "unsupported affinity group" must {
         "redirect the user to the error page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -278,8 +307,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "session has expired - no active session on 2nd authorised call" must {
         "redirect the user to log in " in {
           val application = applicationBuilder(userAnswers = None).build()
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -303,8 +335,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "no active session on 2nd authorised call" must {
         "redirect the user to log in " in {
           val application = applicationBuilder(userAnswers = None).build()
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -330,8 +365,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
       "no active AgentClientPillar2Reference - Insufficient enrolment for Agent" must {
         "redirect the user to unauthorised page" in {
           val application = applicationBuilder(userAnswers = None).build()
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -353,8 +391,11 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "an unsupported credential role" must {
         "redirect the user to the error page" in {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -384,13 +425,16 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "has pillar2 enrolment" must {
         "return the credentials we require" in {
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ pillar2OrganisationEnrolment ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -407,13 +451,16 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         "return the credentials we require" in {
           val userAnswer = emptyUserAnswers
             .setOrException(PlrReferencePage, PlrReference)
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -428,13 +475,16 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
       "has no pillar2 enrolment, has no plrReference in session " must {
         "return the credentials we require" in {
-          when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+          when(
+            mockAuthConnector
+              .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+          )
             .thenReturn(
               Future.successful(
                 Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               )
             )
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
           running(application) {
             val bodyParsers = application.injector.instanceOf[BodyParsers.Default]
@@ -489,7 +539,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(None ~ pillar2AgentEnrolment ~ None ~ None ~ None))
 
         running(application) {
@@ -509,7 +562,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.failed(InsufficientEnrolments())
           )
@@ -531,7 +587,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(Assistant) ~ None))
 
         running(application) {
@@ -551,7 +610,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Individual) ~ None ~ None))
 
         running(application) {
@@ -571,7 +633,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
         val application = applicationBuilder(userAnswers = None)
           .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
           .build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(Future.successful(Some(id) ~ noEnrolments ~ Some(Agent) ~ None ~ None))
 
         running(application) {
@@ -596,7 +661,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
     "has Agent affinity group and Agent enrolment" must {
       "return the credentials we require" in {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -616,7 +684,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
     "has Organisation affinity group" must {
       "redirect to the ASA Organisation error page" in {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ noEnrolments ~ Some(Organisation) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -637,7 +708,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
     "has Individual affinity group" must {
       "redirect to the ASA Individual error page" in {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               Some(id) ~ noEnrolments ~ Some(Individual) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -658,7 +732,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
     "has no internal id or affinity group" must {
       "redirect to the error page" in {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.successful(
               None ~ noEnrolments ~ None ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -680,7 +757,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
     "session has expired - no active session on authorised call" must {
       "redirect the user to log in " in {
         val application = applicationBuilder(userAnswers = None).build()
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.failed(BearerTokenExpired())
           )
@@ -699,7 +779,10 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
 
     "internal error with auth service" must {
       "redirect to agent there is a problem page" in {
-        when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        when(
+          mockAuthConnector
+            .authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+        )
           .thenReturn(
             Future.failed(InternalError())
           )

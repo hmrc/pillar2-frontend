@@ -58,7 +58,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(Future.successful(Some(userAnswers)))
         val request =
           FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
@@ -85,7 +85,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(
             Future.successful(
               Some(ua)
@@ -112,7 +112,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
@@ -130,7 +130,7 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       running(application) {
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "false"))

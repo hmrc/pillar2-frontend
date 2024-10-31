@@ -57,8 +57,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(
             Future.successful(
               Some(
@@ -95,9 +95,9 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       val testDate        = "17 January 2025"
 
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
 
-        when(mockSessionRepository.get(any()))
+        when(mockSessionRepository.get(any[String]()))
           .thenReturn(
             Future.successful(
               Some(
@@ -124,7 +124,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

@@ -61,7 +61,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
         running(application) {
           val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
           val result  = route(application, request).value
@@ -77,8 +77,8 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
@@ -124,8 +124,8 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
         when(mockAuditService.auditRepayments(any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         running(application) {
@@ -147,9 +147,9 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
 
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)

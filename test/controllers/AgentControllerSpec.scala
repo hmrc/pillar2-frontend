@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.actions.TestAuthRetrievals.Ops
 import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
+import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,12 +32,14 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.auth.core.authorise.Predicate
+import uk.gov.hmrc.auth.core.retrieve.{Credentials, Retrieval, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html._
 import views.html.rfm.AgentView
 
 import java.util.UUID
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
 class AgentControllerSpec extends SpecBase {
 
@@ -93,14 +95,15 @@ class AgentControllerSpec extends SpecBase {
         .build()
       val userAnswer = emptyUserAnswers
         .setOrException(AgentClientPillar2ReferencePage, PlrReference)
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      )
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
@@ -121,12 +124,13 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
+      )
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
@@ -151,13 +155,14 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      )
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
       when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(any()))
         .thenReturn(Future.successful(subscriptionData))
 
@@ -180,14 +185,15 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSubscriptionService.readSubscription(any())(any()))
+      )
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+      when(mockSubscriptionService.readSubscription(any[String]())(any[HeaderCarrier]()))
         .thenReturn(Future.failed(InternalIssueError))
 
       running(application) {
@@ -208,13 +214,15 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(POST, routes.AgentController.onSubmitClientPillarId.url)
@@ -238,7 +246,9 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -266,7 +276,9 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      )
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -287,12 +299,13 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
+      )
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadConfirmClientDetails.url)
@@ -311,20 +324,21 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
+      )
 
       running(application) {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad().url
       }
 
     }
@@ -338,16 +352,17 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any[String]())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockSessionRepository.set(any[UserAnswers]())).thenReturn(Future.successful(true))
       when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          ),
-          Future.failed(InsufficientEnrolments("HMRC-PILLAR2-ORG"))
-        )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+        ),
+        Future.failed(InsufficientEnrolments("HMRC-PILLAR2-ORG"))
+      )
 
       running(application) {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
@@ -377,12 +392,13 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
+      )
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
@@ -439,12 +455,13 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
+      when(
+        mockAuthConnector.authorise[RetrievalsType](any[Predicate](), any[Retrieval[RetrievalsType]]())(any[HeaderCarrier](), any[ExecutionContext]())
+      ).thenReturn(
+        Future.successful(
+          Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
         )
+      )
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
