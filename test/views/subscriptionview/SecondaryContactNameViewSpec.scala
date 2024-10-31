@@ -21,13 +21,13 @@ import forms.SecondaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.subscriptionview.SecondaryContactNameView
 import play.api.data.Form
+import views.html.subscriptionview.SecondaryContactNameView
 
 class SecondaryContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new SecondaryContactNameFormProvider
-  val form: Form[String] = formProvider()
+  val form: Form[String]             = formProvider()
   val page: SecondaryContactNameView = inject[SecondaryContactNameView]
 
   "Secondary Contact Name page" should {
@@ -67,7 +67,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
-      
+
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
       errorList.text must include(
         "Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes"
@@ -86,7 +86,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
-      
+
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
       errorList.text must include(
         "Name of the alternative contact person or team should be 160 characters or less"
@@ -105,7 +105,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
       errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
-      
+
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
       errorList.text must include(
         "The name you enter must not include the following characters <, >, \" or &"

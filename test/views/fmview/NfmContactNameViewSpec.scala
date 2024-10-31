@@ -21,13 +21,13 @@ import forms.NfmContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.fmview.NfmContactNameView
 import play.api.data.Form
+import views.html.fmview.NfmContactNameView
 
 class NfmContactNameViewSpec extends ViewSpecBase {
 
   val formProvider = new NfmContactNameFormProvider
-  val form: Form[String] = formProvider()
+  val form: Form[String]       = formProvider()
   val page: NfmContactNameView = inject[NfmContactNameView]
 
   "NFM Contact Name View" should {
@@ -69,7 +69,7 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Enter the name of the person or team from the nominated filing member to keep on record"
@@ -81,7 +81,7 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Name of the contact person or team should be 105 characters or less"
@@ -92,13 +92,13 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       val xssInput = Map(
         "value" -> "Test <script>alert('xss')</script> & Company"
       )
-      
+
       val view: Document = Jsoup.parse(
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      
+
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("The name you enter must not include the following characters <, >, \" or &")
 
@@ -113,5 +113,4 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
   }
-} 
-
+}

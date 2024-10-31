@@ -18,12 +18,12 @@ package views.rfm
 
 import base.ViewSpecBase
 import forms.RfmContactAddressFormProvider
+import models.NonUKAddress
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmContactAddressView
-import models.NonUKAddress
 import play.api.data.Form
+import views.html.rfm.RfmContactAddressView
 
 class RfmContactAddressViewSpec extends ViewSpecBase {
 

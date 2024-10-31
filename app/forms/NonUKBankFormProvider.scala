@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import mapping.Constants
 import models.repayments.NonUKBank
@@ -23,7 +24,6 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
-import forms.Validation.XSS_REGEX
 
 class NonUKBankFormProvider @Inject() extends Mappings {
 

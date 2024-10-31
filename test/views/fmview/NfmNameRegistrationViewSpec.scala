@@ -21,13 +21,13 @@ import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.fmview.NfmNameRegistrationView
 import play.api.data.Form
+import views.html.fmview.NfmNameRegistrationView
 
 class NfmNameRegistrationViewSpec extends ViewSpecBase {
 
   val formProvider = new NfmNameRegistrationFormProvider
-  val form: Form[String] = formProvider()
+  val form: Form[String]            = formProvider()
   val page: NfmNameRegistrationView = inject[NfmNameRegistrationView]
 
   "NFM Name Registration View" should {
@@ -55,7 +55,7 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
       val errorView = Jsoup.parse(
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Enter the name of the nominated filing member"
@@ -67,7 +67,7 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
       val errorView = Jsoup.parse(
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Name of the nominated filing member must be 105 characters or less"
@@ -78,13 +78,13 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
       val xssInput = Map(
         "value" -> "Test <script>alert('xss')</script>"
       )
-      
+
       val errorView = Jsoup.parse(
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      
+
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("The name you enter must not include the following characters <, > or \"")
 
@@ -92,5 +92,4 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
       fieldErrors must include("Error: The name you enter must not include the following characters <, > or \"")
     }
   }
-} 
-
+}

@@ -21,8 +21,8 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmPrimaryContactNameView
 import play.api.data.Form
+import views.html.rfm.RfmPrimaryContactNameView
 
 class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 

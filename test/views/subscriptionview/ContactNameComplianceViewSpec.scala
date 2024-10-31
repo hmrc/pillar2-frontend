@@ -21,13 +21,13 @@ import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.subscriptionview.ContactNameComplianceView
 import play.api.data.Form
+import views.html.subscriptionview.ContactNameComplianceView
 
 class ContactNameComplianceViewSpec extends ViewSpecBase {
 
   val formProvider = new ContactNameComplianceFormProvider
-  val form: Form[String] = formProvider()
+  val form: Form[String]              = formProvider()
   val page: ContactNameComplianceView = inject[ContactNameComplianceView]
 
   "Contact Name Compliance View" should {
@@ -36,14 +36,18 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("title").text must include("What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes - GOV.UK")
+      view.getElementsByTag("title").text must include(
+        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes - GOV.UK"
+      )
     }
 
     "display the correct heading" in {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("h1").text must include("What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?")
+      view.getElementsByTag("h1").text must include(
+        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
+      )
     }
 
     "display the hint text" in {
@@ -85,13 +89,13 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val xssInput = Map(
         "value" -> "Test <script>alert('xss')</script> & Company"
       )
-      
+
       val view: Document = Jsoup.parse(
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      
+
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("The name you enter must not include the following characters <, >, \" or &")
 

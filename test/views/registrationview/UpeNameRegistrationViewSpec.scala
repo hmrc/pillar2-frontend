@@ -21,13 +21,13 @@ import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.registrationview.UpeNameRegistrationView
 import play.api.data.Form
+import views.html.registrationview.UpeNameRegistrationView
 
 class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
   val formProvider = new UpeNameRegistrationFormProvider
-  val form: Form[String] = formProvider()
+  val form: Form[String]            = formProvider()
   val page: UpeNameRegistrationView = inject[UpeNameRegistrationView]
 
   "UPE Name Registration View" should {
@@ -55,7 +55,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
       val errorView = Jsoup.parse(
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "You need to enter the name of the ultimate parent entity"
@@ -67,7 +67,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
       val errorView = Jsoup.parse(
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
-      
+
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
         "Name of the ultimate parent entity must be 105 characters or less"
@@ -78,13 +78,13 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
       val xssInput = Map(
         "value" -> "Test <script>alert('xss')</script>"
       )
-      
+
       val errorView = Jsoup.parse(
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      
+
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include(
         "The name you enter must not include the following characters <, >, \" or &"
@@ -96,4 +96,4 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
       )
     }
   }
-} 
+}

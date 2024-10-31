@@ -19,16 +19,16 @@ package views.registrationview
 import base.ViewSpecBase
 import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
+import models.UKAddress
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.registrationview.UpeRegisteredAddressView
-import models.UKAddress
 import play.api.data.Form
+import views.html.registrationview.UpeRegisteredAddressView
 
 class UpeRegisteredAddressViewSpec extends ViewSpecBase {
 
   val formProvider = new UpeRegisteredAddressFormProvider
-  val form: Form[UKAddress] = formProvider()
+  val form: Form[UKAddress]          = formProvider()
   val page: UpeRegisteredAddressView = inject[UpeRegisteredAddressView]
   val userName = "Test Company"
 
@@ -77,7 +77,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
             Map(
               "addressLine1" -> "",
               "addressLine3" -> "",
-              "countryCode" -> ""
+              "countryCode"  -> ""
             )
           ),
           NormalMode,
@@ -104,7 +104,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
               "addressLine2" -> longInput,
               "addressLine3" -> longInput,
               "addressLine4" -> longInput,
-              "countryCode" -> longInput
+              "countryCode"  -> longInput
             )
           ),
           NormalMode,
@@ -129,8 +129,8 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
         "addressLine2" -> "Test & Company",
         "addressLine3" -> "Test City <script>",
         "addressLine4" -> "Test Region >",
-        "postalCode" -> "AB1 2CD<",
-        "countryCode" -> "Test Country &"
+        "postalCode"   -> "AB1 2CD<",
+        "countryCode"  -> "Test Country &"
       )
 
       val errorView = Jsoup.parse(
@@ -154,5 +154,4 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
     }
   }
-} 
-
+}

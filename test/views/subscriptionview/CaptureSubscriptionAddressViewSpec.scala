@@ -18,17 +18,17 @@ package views.subscriptionview
 
 import base.ViewSpecBase
 import forms.CaptureSubscriptionAddressFormProvider
+import models.NonUKAddress
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.subscriptionview.CaptureSubscriptionAddressView
-import models.NonUKAddress
 import play.api.data.Form
+import views.html.subscriptionview.CaptureSubscriptionAddressView
 
 class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
 
   val formProvider = new CaptureSubscriptionAddressFormProvider
-  val form: Form[NonUKAddress]         = formProvider()
+  val form: Form[NonUKAddress]             = formProvider()
   val page: CaptureSubscriptionAddressView = inject[CaptureSubscriptionAddressView]
 
   "Capture Subscription Address View" should {
@@ -175,13 +175,13 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
         "postalCode"   -> "AB1< >2CD",
         "countryCode"  -> "United & Kingdom"
       )
-      
+
       val view: Document = Jsoup.parse(
         page(form.bind(xssInput), NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
 
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      
+
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("First line of the address you enter must not include the following characters <, >, \" or &")
       errorList must include("Second line of the address you enter must not include the following characters <, >, \" or &")

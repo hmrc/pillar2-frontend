@@ -16,9 +16,9 @@
 
 package forms
 
+import forms.Validation.XSS_REGEX
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
-import forms.Validation.XSS_REGEX
 
 class NonUKBankFormProviderSpec extends StringFieldBehaviours {
 
