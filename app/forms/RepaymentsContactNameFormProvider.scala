@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
 import mapping.Constants.MAX_LENGTH_160
 import play.api.data.Form
@@ -31,7 +31,7 @@ class RepaymentsContactNameFormProvider @Inject() extends Mappings {
         .verifying(
           firstError(
             maxLength(MAX_LENGTH_160, "repayments.contactName.error.length"),
-            regexp(XSS_REGEX_ALLOW_AMPERSAND, "name.error.xss.allowAmpersand")
+            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
           )
         )
     )
