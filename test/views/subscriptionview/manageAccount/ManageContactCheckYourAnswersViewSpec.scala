@@ -129,7 +129,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     }
 
     "have a second contact summary list" in {
-      val isSecondContact      = "Can we contact the secondary contact by telephone?"
+      val isSecondContact      = "Do you have a secondary contact?"
       val isSecondContactValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       view.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
