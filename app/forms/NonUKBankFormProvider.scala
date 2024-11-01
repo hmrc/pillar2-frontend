@@ -15,8 +15,7 @@
  */
 
 package forms
-
-import forms.Validation.XSS_REGEX
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.mappings.Mappings
 import mapping.Constants
 import models.repayments.NonUKBank
@@ -32,12 +31,12 @@ class NonUKBankFormProvider @Inject() extends Mappings {
       "bankName" -> text("repayments.nonUKBank.error.bankName.required")
         .verifying(
           maxLength(Constants.MAX_LENGTH_40, "repayments.nonUKBank.error.bankName.length"),
-          regexp(XSS_REGEX, "repayments.nonUKBank.error.bankName.xss")
+          regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.nonUKBank.error.bankName.xss")
         ),
       "nameOnBankAccount" -> text("repayments.nonUKBank.error.nameOnBankAccount.required")
         .verifying(
           maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length"),
-          regexp(XSS_REGEX, "repayments.nonUKBank.error.nameOnBankAccount.xss")
+          regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.nonUKBank.error.nameOnBankAccount.xss")
         ),
       "bic" -> bankAccount("repayments.nonUKBank.error.bic.required")
         .verifying(

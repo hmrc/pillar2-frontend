@@ -146,7 +146,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
   "display XSS validation error messages when special characters are entered" in {
     val xssInput = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
-      "accountHolderName" -> "Test & Company",
+      "accountHolderName" -> "Test <script>alert('xss')</script>",
       "sortCode"          -> "123456",
       "accountNumber"     -> "12345678"
     )
@@ -158,11 +158,11 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
     val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-    errorList must include("Name of the bank you enter must not include the following characters <, >, \" or &")
-    errorList must include("Name on the account you enter must not include the following characters <, >, \" or &")
+    errorList must include("Name of the bank you enter must not include the following characters <, > or \"")
+    errorList must include("Name on the account you enter must not include the following characters <, > or \"")
 
     val fieldErrors = view.getElementsByClass("govuk-error-message").text
-    fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, >, \" or &")
-    fieldErrors must include("Error: Name on the account you enter must not include the following characters <, >, \" or &")
+    fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, > or \"")
+    fieldErrors must include("Error: Name on the account you enter must not include the following characters <, > or \"")
   }
 }

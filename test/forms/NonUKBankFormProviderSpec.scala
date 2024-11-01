@@ -17,6 +17,7 @@
 package forms
 
 import forms.Validation.XSS_REGEX
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
@@ -47,8 +48,8 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithRegex(
       form,
       fieldName,
-      regex = XSS_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxLength),
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
       regexError = FormError(fieldName, "repayments.nonUKBank.error.bankName.xss")
     )
 
@@ -83,7 +84,7 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       regex = XSS_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxLength),
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
       regexError = FormError(fieldName, "repayments.nonUKBank.error.nameOnBankAccount.xss")
     )
 

@@ -17,7 +17,7 @@
 package forms
 
 import _root_.mapping.Constants
-import forms.Validation.XSS_REGEX
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.mappings.Mappings
 import models.repayments.BankAccountDetails
 import play.api.data.Form
@@ -32,13 +32,13 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
         text("repayments.bankAccountDetails.bankError")
           .verifying(
             maxLength(Constants.MAX_LENGTH_40, "repayments.bankAccountDetails.bankNameFormatError"),
-            regexp(XSS_REGEX, "repayments.bankAccountDetails.bankName.error.xss")
+            regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.bankAccountDetails.bankName.error.xss")
           ),
       "accountHolderName" ->
         text("repayments.bankAccountDetails.accountError")
           .verifying(
             maxLength(Constants.MAX_LENGTH_60, "repayments.bankAccountDetails.accountNameFormatError"),
-            regexp(XSS_REGEX, "repayments.bankAccountDetails.accountName.error.xss")
+            regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.bankAccountDetails.accountName.error.xss")
           ),
       "sortCode" ->
         sortCode("repayments.bankAccountDetails.sortCodeError")

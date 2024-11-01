@@ -131,7 +131,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   "when form is submitted with special characters" should {
     val xssInput = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
-      "nameOnBankAccount" -> "Test & Company",
+      "nameOnBankAccount" -> "Test <script>alert('xss')</script>",
       "bic"               -> "ABCD>EFG",
       "iban"              -> "GB82<WEST12345698765432"
     )
@@ -144,12 +144,12 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Name of the bank you enter must not include the following characters <, >, \" or &")
-      errorList must include("Name on the account you enter must not include the following characters <, >, \" or &")
+      errorList must include("Name of the bank you enter must not include the following characters <, > or \"")
+      errorList must include("Name on the account you enter must not include the following characters <, > or \"")
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: Name on the account you enter must not include the following characters <, >, \" or &")
+      fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, > or \"")
+      fieldErrors must include("Error: Name on the account you enter must not include the following characters <, > or \"")
     }
   }
 }
