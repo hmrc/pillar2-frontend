@@ -87,12 +87,12 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include(
-        "The name you enter must not include the following characters <, >, \" or &"
+        "The name you enter must not include the following characters <, > or \""
       )
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
       fieldErrors must include(
-        "Error: The name you enter must not include the following characters <, >, \" or &"
+        "Error: The name you enter must not include the following characters <, > or \""
       )
     }
   }
