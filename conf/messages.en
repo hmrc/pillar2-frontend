@@ -684,7 +684,7 @@ contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactByTelephone.change.hidden = can we contact the primary contact by telephone?
 
@@ -770,7 +770,7 @@ secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading.caption = Contact details
 secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 secondaryTelephone.title = What is the telephone number?

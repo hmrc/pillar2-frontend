@@ -94,7 +94,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
       )
 
-      val contactTelephone      = "Can we contact by telephone?"
+      val contactTelephone      = "Can we contact the primary contact by telephone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
@@ -171,7 +171,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
       )
 
-      val contactTelephone      = "Can we contact by telephone?"
+      val contactTelephone      = "Can we contact the secondary contact by telephone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
