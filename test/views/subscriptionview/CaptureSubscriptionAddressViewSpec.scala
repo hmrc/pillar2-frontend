@@ -183,7 +183,7 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("First line of the address you enter must not include the following characters <, >, \" or &")
+      errorList must include("First line of the address you enter must not include the following characters <, > or \"")
       errorList must include("Second line of the address you enter must not include the following characters <, >, \" or &")
       errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
       errorList must include("The region you enter must not include the following characters <, >, \" or &")
@@ -191,7 +191,7 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       errorList must include("The country you enter must not include the following characters <, >, \" or &")
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: First line of the address you enter must not include the following characters <, >, \" or &")
+      fieldErrors must include("Error: First line of the address you enter must not include the following characters <, > or \"")
       fieldErrors must include("Error: Second line of the address you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The town or city you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The region you enter must not include the following characters <, >, \" or &")

@@ -23,8 +23,9 @@ import play.api.data.FormError
 
 class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form      = new CaptureSubscriptionAddressFormProvider()()
-  val XSS_REGEX = """^[^<>"&]*$"""
+  val form                      = new CaptureSubscriptionAddressFormProvider()()
+  val XSS_REGEX                 = """^[^<>"&]*$"""
+  val XSS_REGEX_ALLOW_AMPERSAND = """^[^<>"]*$"""
 
   ".addressLine1" - {
     val FIELD_NAME   = "addressLine1"
@@ -35,7 +36,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -43,14 +44,14 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = XSS_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 

@@ -17,6 +17,7 @@
 package forms
 
 import forms.Validation.XSS_REGEX
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -34,7 +35,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine1.length"),
-              regexp(XSS_REGEX, "addressLine1.error.xss")
+              regexp(XSS_REGEX_ALLOW_AMPERSAND, "addressLine1.error.xss")
             )
           ),
       "addressLine2" -> optional(

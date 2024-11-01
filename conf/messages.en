@@ -41,7 +41,7 @@ page_not_available.message2 = and complete the required tasks.
 ###############################################
 name.error.xss.allowAmpersand = The name you enter must not include the following characters <, > or "
 name.error.xss.forbidAmpersand = The name you enter must not include the following characters <, >, " or &
-addressLine1.error.xss = First line of the address you enter must not include the following characters <, >, " or &
+addressLine1.error.xss = First line of the address you enter must not include the following characters <, > or "
 addressLine2.error.xss = Second line of the address you enter must not include the following characters <, >, " or &
 town_city.error.xss = The town or city you enter must not include the following characters <, >, " or &
 region.error.xss = The region you enter must not include the following characters <, >, " or &
