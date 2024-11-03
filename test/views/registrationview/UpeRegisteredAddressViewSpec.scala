@@ -42,7 +42,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("upeRegisteredAddress.heading.caption"))
+      view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
     "have the correct heading" in {
@@ -50,7 +50,9 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "display the warning text" in {
-      view.getElementsByClass("govuk-warning-text__text").text must include(messages("address.warning"))
+      view.getElementsByClass("govuk-warning-text__text").text must include(
+        "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
+      )
     }
 
     "have the correct field labels" in {

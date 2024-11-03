@@ -26,10 +26,10 @@ class RfmSecondaryContactNameFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("rfm.SecondaryContactName.error.required")
+      "value" -> text("rfm.secondaryContactName.error.required")
         .verifying(
           firstError(
-            maxLength(MAX_LENGTH_160, "rfm.SecondaryContactName.error.length"),
+            maxLength(MAX_LENGTH_160, "rfm.secondaryContactName.error.length"),
             regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
           )
         )

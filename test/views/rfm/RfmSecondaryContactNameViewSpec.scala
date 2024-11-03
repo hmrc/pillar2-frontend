@@ -36,23 +36,27 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include(messages("rfm.secondaryContactName.title"))
+      view.getElementsByTag("title").text must include(
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes"
+      )
     }
 
     "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include(messages("taskList.task.contact.heading"))
+      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include(messages("rfm.secondaryContactName.heading"))
+      view.getElementsByTag("h1").text must include(
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?"
+      )
     }
 
     "have the correct hint text" in {
-      view.getElementsByClass("govuk-hint").text must include(messages("rfm.secondaryContactName.hint"))
+      view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include(messages("site.save-and-continue"))
+      view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
 
     "show required field error when form is submitted empty" in {
@@ -63,10 +67,10 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(messages("rfm.SecondaryContactName.error.required"))
+      errorList must include("Enter name of the person or team we should contact")
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include(s"Error: ${messages("rfm.SecondaryContactName.error.required")}")
+      fieldError must include(s"Error: Enter name of the person or team we should contact")
     }
 
     "show length validation error when input exceeds maximum length" in {
@@ -78,10 +82,10 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(messages("rfm.SecondaryContactName.error.length"))
+      errorList must include("Name of the contact person or team should be 105 characters or less")
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include(s"Error: ${messages("rfm.SecondaryContactName.error.length")}")
+      fieldError must include(s"Error: Name of the contact person or team should be 105 characters or less")
     }
 
     "show XSS validation error when special characters are entered" in {
@@ -93,10 +97,10 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(messages("name.error.xss.forbidAmpersand"))
+      errorList must include("The name you enter must not include the following characters <, >, \" or &")
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include(s"Error: ${messages("name.error.xss.forbidAmpersand")}")
+      fieldError must include(s"Error: The name you enter must not include the following characters <, >, \" or &")
     }
   }
 }

@@ -21,8 +21,8 @@ import play.api.data.FormError
 
 class RfmSecondaryContactNameFormProviderSpec extends StringFieldBehaviours {
 
-  val REQUIRED_KEY = "rfm.SecondaryContactName.error.required"
-  val LENGTH_KEY   = "rfm.SecondaryContactName.error.length"
+  val REQUIRED_KEY = "rfm.secondaryContactName.error.required"
+  val LENGTH_KEY   = "rfm.secondaryContactName.error.length"
   val MAX_LENGTH   = 160
   val XSS_KEY      = "name.error.xss.forbidAmpersand"
   val XSS_REGEX    = """^[^<>"&]*$"""
