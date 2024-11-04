@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Pillar2Reference
-import views.html.RegistrationConfirmationView
+import views.html.registrationview.RegistrationConfirmationView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

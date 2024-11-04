@@ -25,7 +25,7 @@ import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.RegisteringNfmForThisGroupView
+import views.html.registrationview.RegisteringNfmForThisGroupView
 
 import scala.concurrent.Future
 

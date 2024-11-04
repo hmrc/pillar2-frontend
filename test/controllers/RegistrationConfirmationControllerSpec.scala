@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import views.html.RegistrationConfirmationView
+import views.html.registrationview.RegistrationConfirmationView
 
 import scala.concurrent.Future
 
