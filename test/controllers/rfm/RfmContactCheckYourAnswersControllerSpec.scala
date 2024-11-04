@@ -81,12 +81,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Primary contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Second contact")
         contentAsString(result) must include("Second contact name")
         contentAsString(result) must include("Second contact email address")
-        contentAsString(result) must include("Can we contact by telephone?")
+        contentAsString(result) must include("Can we contact the secondary contact by telephone?")
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
@@ -107,7 +106,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
-
       }
     }
 
@@ -133,12 +131,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Primary contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Secondary contact")
         contentAsString(result) must include("Second contact name")
         contentAsString(result) must include("Second contact email address")
-        contentAsString(result) must include("Can we contact by telephone?")
+        contentAsString(result) must include("Can we contact the secondary contact by telephone?")
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
@@ -160,7 +157,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
-
       }
     }
 
@@ -181,26 +177,19 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
         contentAsString(result) must include("Filing member details")
         contentAsString(result) must include("New nominated filing member")
-        contentAsString(result) must include(
-          "Company"
-        )
+        contentAsString(result) must include("Company")
         contentAsString(result) must include("ABC Limited")
-        contentAsString(result) must include(
-          "Company Registration Number"
-        )
+        contentAsString(result) must include("Company Registration Number")
         contentAsString(result) must include("1234")
-        contentAsString(result) must include(
-          "Unique Taxpayer Reference"
-        )
+        contentAsString(result) must include("Unique Taxpayer Reference")
         contentAsString(result) must include("Primary contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Secondary contact")
         contentAsString(result) must include("Second contact name")
         contentAsString(result) must include("Second contact email address")
-        contentAsString(result) must include("Can we contact by telephone?")
+        contentAsString(result) must include("Can we contact the secondary contact by telephone?")
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
@@ -222,7 +211,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include(
           "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
         )
-
       }
     }
 
@@ -247,12 +235,11 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Primary contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")
-        contentAsString(result) must include("Can we contact by telephone?")
         contentAsString(result) must include("Telephone number")
         contentAsString(result) must include("Secondary contact")
         contentAsString(result) must include("Second contact name")
         contentAsString(result) must include("Second contact email address")
-        contentAsString(result) must include("Can we contact by telephone?")
+        contentAsString(result) must include("Can we contact the secondary contact by telephone?")
         contentAsString(result) must include("Second contact telephone number")
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")

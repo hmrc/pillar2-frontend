@@ -269,7 +269,7 @@ rfmContactByTelephone.title = Can we contact by telephone?
 rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfmContactByTelephone.error.required = Select yes if we can contact {0} by telephone
-rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
@@ -1025,7 +1025,7 @@ rfm.registeredAddress.change.hidden = the address of the new nominated filing me
 rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
 rfm.addsecondaryContact.change.hidden = do you have a secondary contact
@@ -1060,7 +1060,7 @@ rfm.secondaryContactEmail.error.format = Enter an email address in the correct f
 rfm.secondaryTelephonePreference.title = Can we contact by telephone?
 rfm.secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 rfm.secondaryTelephone.title = What is the telephone number?
