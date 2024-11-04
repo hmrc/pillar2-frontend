@@ -15,7 +15,7 @@
  */
 
 package forms
-
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
@@ -31,14 +31,23 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
+      regexError = FormError(fieldName, "repayments.bankAccountDetails.bankName.error.xss")
     )
 
     behave like mandatoryField(
@@ -58,14 +67,23 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
+      regexError = FormError(fieldName, "repayments.bankAccountDetails.accountName.error.xss")
     )
 
     behave like mandatoryField(
@@ -82,7 +100,6 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     val formatKey     = "repayments.bankAccountDetails.sortCodeFormatError"
     val sortCodeRegex = """^[0-9]{6}$"""
     val maxLength     = 6
-    val genLimit      = 10
 
     behave like fieldThatBindsValidData(
       form,
@@ -90,14 +107,20 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       nonEmptyRegexConformingStringWithMaxLength(sortCodeRegex, maxLength)
     )
 
-    behave like regexFieldWithMaxLength(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength,
-      genLimit,
-      sortCodeRegex,
+      maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      formatError = FormError(fieldName, formatKey, Seq(maxLength))
+      generator = Some(longStringsConformingToRegex(sortCodeRegex, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = sortCodeRegex,
+      regexViolationGen = invalidSortCodes,
+      regexError = FormError(fieldName, formatKey)
     )
 
     behave like mandatoryField(

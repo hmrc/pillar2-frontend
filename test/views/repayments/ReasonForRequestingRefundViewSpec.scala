@@ -87,6 +87,28 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
     }
 
+    "show error when input contains special characters" in {
+      val xssInput = Map(
+        "value" -> "Test <script>alert('xss')</script> & Company"
+      )
+
+      val errorView = Jsoup.parse(
+        page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+      )
+
+      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+
+      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
+      errorList must include(
+        "The reason for your refund request you enter must not include the following characters <, >, \" or &"
+      )
+
+      val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
+      fieldErrors must include(
+        "Error: The reason for your refund request you enter must not include the following characters <, >, \" or &"
+      )
+    }
+
   }
 
 }

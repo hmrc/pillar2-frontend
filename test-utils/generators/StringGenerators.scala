@@ -22,4 +22,11 @@ trait StringGenerators {
       case 1 => util.Random.nextPrintableChar.toString
       case _ => util.Random.nextPrintableChar.toString ++ randomStringGenerator(n - 1)
     }
+
+  def randomAlphaNumericStringGenerator(n: Int): String = {
+    val alphanumericChars = ('a' to 'z') ++ ('A' to 'Z') ++ ('0' to '9')
+    val r                 = new scala.util.Random
+
+    Vector.fill(n)(alphanumericChars(r.nextInt(alphanumericChars.length))).mkString
+  }
 }

@@ -25,6 +25,12 @@ import scala.util.{Success, Try}
 
 trait Constraints {
 
+  implicit def convertToOptionalConstraint[T](constraint: Constraint[T]): Constraint[Option[T]] =
+    Constraint {
+      case Some(t) => constraint.apply(t)
+      case _       => Valid
+    }
+
   private val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)

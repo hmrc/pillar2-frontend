@@ -14,38 +14,45 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.registrationview
 
 import base.ViewSpecBase
-import forms.RfmContactAddressFormProvider
-import models.NonUKAddress
+import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
+import models.UKAddress
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
-import views.html.rfm.RfmContactAddressView
+import views.html.registrationview.UpeRegisteredAddressView
 
-class RfmContactAddressViewSpec extends ViewSpecBase {
+class UpeRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmContactAddressFormProvider
-  val form: Form[NonUKAddress]    = formProvider()
-  val page: RfmContactAddressView = inject[RfmContactAddressView]
+  val formProvider = new UpeRegisteredAddressFormProvider
+  val form: Form[UKAddress]          = formProvider()
+  val page: UpeRegisteredAddressView = inject[UpeRegisteredAddressView]
+  val userName = "Test Company"
 
-  "Rfm Contact Address View" should {
+  "UPE Registered Address View" should {
     val view: Document = Jsoup.parse(
-      page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
+      page(form, NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What address do you want to use as the filing member’s contact address?")
+      view.getElementsByTag("title").text must include("What is the registered office address?")
     }
 
     "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include("What address do you want to use as the filing member’s contact address?")
+      view.getElementsByTag("h1").text must include(s"What is the registered office address of $userName?")
+    }
+
+    "display the warning text" in {
+      view.getElementsByClass("govuk-warning-text__text").text must include(
+        "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
+      )
     }
 
     "have the correct field labels" in {
@@ -53,7 +60,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-label").get(1).text must include("Address line 2 (optional)")
       view.getElementsByClass("govuk-label").get(2).text must include("Town or city")
       view.getElementsByClass("govuk-label").get(3).text must include("Region (optional)")
-      view.getElementsByClass("govuk-label").get(4).text must include("Postcode (if applicable)")
+      view.getElementsByClass("govuk-label").get(4).text must include("Postcode")
       view.getElementsByClass("govuk-label").get(5).text must include("Country")
     }
 
@@ -76,6 +83,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
             )
           ),
           NormalMode,
+          userName,
           Seq.empty
         )(request, appConfig, messages).toString()
       )
@@ -84,7 +92,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("Enter the first line of the address")
-      errorList must include("Enter town or city")
+      errorList must include("Enter the town or city")
       errorList must include("Enter the country")
     }
 
@@ -102,6 +110,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
             )
           ),
           NormalMode,
+          userName,
           Seq.empty
         )(request, appConfig, messages).toString()
       )
@@ -109,11 +118,11 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The first line of the address must be 35 characters or less")
-      errorList must include("The second line of the address must be 35 characters or less")
-      errorList must include("The Town or city must be 35 characters or less")
-      errorList must include("The region must be 35 characters or less")
-      errorList must include("Country cannot be more than 200 characters")
+      errorList must include("First line of the address must be 35 characters or less")
+      errorList must include("Second line of the address must be 35 characters or less")
+      errorList must include("Town or city must be 35 characters or less")
+      errorList must include("Region must be 35 characters or less")
+      errorList must include("The country cannot be more than 200 characters")
     }
 
     "show XSS validation errors when special characters are entered" in {
@@ -127,7 +136,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       )
 
       val errorView = Jsoup.parse(
-        page(form.bind(xssInput), NormalMode, Seq.empty)(request, appConfig, messages).toString()
+        page(form.bind(xssInput), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
@@ -137,7 +146,6 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       errorList must include("Second line of the address you enter must not include the following characters <, >, \" or &")
       errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
       errorList must include("The region you enter must not include the following characters <, >, \" or &")
-      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
       errorList must include("The country you enter must not include the following characters <, >, \" or &")
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
@@ -145,7 +153,6 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       fieldErrors must include("Error: Second line of the address you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The town or city you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The region you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: The postcode you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
     }
   }

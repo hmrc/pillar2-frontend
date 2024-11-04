@@ -97,20 +97,86 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def nonEmptyRegexConformingStringWithMaxLength(regex: String, maxLength: Int): Gen[String] = {
     val regexGen = RegexpGen.from(regex)
     regexGen
-      .suchThat(s => s.trim.nonEmpty && s.length <= maxLength)
+      .suchThat(_.nonEmpty)
+      .map(s => s.take(maxLength))
+  }
+
+  def stringsWithAtLeastOneSpecialChar(specialChars: String, maxLength: Int): Gen[String] = {
+    require(specialChars.nonEmpty, "specialChars must not be empty")
+    require(maxLength > 0, "maxLength must be positive")
+
+    val normalChar = arbitrary[Char] suchThat (!specialChars.contains(_))
+
+    for {
+      length         <- Gen.choose(1, maxLength)
+      normalString   <- Gen.listOfN(length - 1, normalChar).map(_.mkString)
+      specialChar    <- Gen.oneOf(specialChars)
+      insertPosition <- Gen.choose(0, normalString.length)
+      (left, right) = normalString.splitAt(insertPosition)
+    } yield (left + specialChar + right).take(maxLength)
+  }
+
+  def invalidSortCodes: Gen[String] = {
+    val digits    = Gen.numChar
+    val nonDigits = arbitrary[Char] suchThat (!_.isDigit)
+    for {
+      n            <- Gen.choose(1, 5)
+      digitPart    <- Gen.listOfN(n, digits)
+      nonDigitPart <- Gen.listOfN(6 - n, nonDigits)
+    } yield (digitPart ++ nonDigitPart).mkString
+  }
+
+  def invalidPostcodeGen: Gen[String] = {
+    val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
+
+    // Helper generators for different types of invalid postcodes
+    val tooShortGen: Gen[String] = Gen.choose(1, 5).flatMap { length =>
+      stringsLongerThan(length).map(_.take(length))
+    }
+
+    val tooLongGen: Gen[String] = for {
+      length <- Gen.choose(15, 20) // Assuming valid postcodes are <= 8 characters
+      str    <- stringsLongerThan(length)
+    } yield str.take(length)
+
+    val missingSpaceGen: Gen[String] = for {
+      part1 <- Gen.oneOf("A1", "AA1", "A12", "AA12")
+      part2 <- Gen.oneOf("AAA", "AAB", "AAC", "AAD")
+    } yield part1 + part2 // Missing space between part1 and part2
+
+    val invalidCharactersGen: Gen[String] = stringsWithAtLeastOneSpecialChar("<>\"&", 8)
+
+    val lowercaseGen: Gen[String] = for {
+      part1 <- Gen.oneOf("a1", "aa1", "a12", "aa12")
+      part2 <- Gen.oneOf("aaa", "aab", "aac", "aad")
+      space <- Gen.oneOf(" ", "")
+    } yield (part1 + space + part2).toUpperCase.take(7) // Force some lowercase by original generation
+
+    val incorrectFormatGen: Gen[String] = Gen.oneOf(
+      Gen.const("123 ABC"), // All digits first
+      Gen.const("A1 AA1A"), // Extra characters
+      Gen.const("AA11AA"), // Missing space
+      Gen.alphaStr.map(_.take(6)) // Completely invalid string
+    )
+
+    // Combine all invalid generators
+    Gen
+      .oneOf(
+        tooShortGen,
+        tooLongGen,
+        missingSpaceGen,
+        invalidCharactersGen,
+        lowercaseGen,
+        incorrectFormatGen
+      )
+      .suchThat(!_.matches(postcodeRegex))
   }
 
   def longStringsConformingToRegex(regex: String, minLength: Int): Gen[String] =
     RegexpGen
       .from(regex)
-      .suchThat(_.length > minLength)
       .map(_.padTo(minLength + 1, 'a'))
 
-  def regexWithMaxLength(maxLength: Int, genLimit: Int, regex: String): Gen[String] =
-    for {
-      length      <- choose(maxLength, genLimit)
-      regexString <- Gen.listOfN(length, RegexpGen.from(regex))
-    } yield regexString.mkString
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)
     length    <- Gen.chooseNum(minLength + 1, maxLength)

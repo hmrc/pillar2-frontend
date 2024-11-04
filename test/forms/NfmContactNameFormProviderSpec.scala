@@ -19,15 +19,15 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
-class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
+class NfmContactNameFormProviderSpec extends StringFieldBehaviours {
 
-  val REQUIRED_KEY = "upeNameRegistration.error.required"
-  val LENGTH_KEY   = "upeNameRegistration.error.length"
+  val REQUIRED_KEY = "nfmContactName.error.required"
+  val LENGTH_KEY   = "nfmContactName.error.length"
   val MAX_LENGTH   = 105
-  val XSS_KEY      = "name.error.xss.allowAmpersand"
-  val XSS_REGEX    = """^[^<>"]*$"""
+  val XSS_KEY      = "name.error.xss.forbidAmpersand"
+  val XSS_REGEX    = """^[^<>"&]*$"""
 
-  val form = new UpeNameRegistrationFormProvider()()
+  val form = new NfmContactNameFormProvider()()
 
   ".value" - {
 

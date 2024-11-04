@@ -27,4 +27,6 @@ object Validation {
   final val MONETARY_REGEX             = """^-?(\d*(\.\d{1,2})?)$"""
   final val SORT_CODE_REGEX            = """^[0-9]{6}$"""
   final val ACCOUNT_NUMBER_REGEX       = """^[0-9]{8}$"""
+  final val XSS_REGEX                  = """^[^<>"&]*$"""
+  final val XSS_REGEX_ALLOW_AMPERSAND  = """^[^<>"]*$"""
 }

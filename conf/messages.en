@@ -36,6 +36,19 @@ page_not_available.message2 = and complete the required tasks.
 
 ###############################################
 #
+# Shared XSS validation messages
+#
+###############################################
+name.error.xss.allowAmpersand = The name you enter must not include the following characters <, > or "
+name.error.xss.forbidAmpersand = The name you enter must not include the following characters <, >, " or &
+addressLine1.error.xss = First line of the address you enter must not include the following characters <, > or "
+addressLine2.error.xss = Second line of the address you enter must not include the following characters <, >, " or &
+town_city.error.xss = The town or city you enter must not include the following characters <, >, " or &
+region.error.xss = The region you enter must not include the following characters <, >, " or &
+country.error.xss = The country you enter must not include the following characters <, >, " or &
+
+###############################################
+#
 # Error View
 #
 ###############################################
@@ -83,6 +96,7 @@ address.postcode.error.required = Enter the postcode
 address.postcode.error.invalid.GB = Enter a full UK postcode
 address.postcode.error.length = Postcode must be 10 characters or less
 address.warning = You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
+address.postcode.error.xss = The postcode you enter must not include the following characters <, >, " or &
 
 upeRegisteredAddress.title = What is the registered office address?
 upeRegisteredAddress.heading = What is the registered office address of {0}?
@@ -481,6 +495,7 @@ rfmContactAddress.addressLine1.error.required = Enter first line of the address
 rfmContactAddress.town_city.error.required = Enter town or city
 rfmContactAddress.town_city.error.length = The Town or city must be 35 characters or less
 rfmContactAddress.region.error.length = The region must be 35 characters or less
+rfmContactAddress.region.error.xss = The region must not include the following characters <, >, " or &
 rfmContactAddress.country.error.required = Enter the country
 rfmContactAddress.country.error.length = Country cannot be more than 200 characters
 rfmContactAddress.heading.caption = Contact details
@@ -1267,6 +1282,7 @@ repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits.
 repayments.bankAccountDetails.accountNumber = Account number
 repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits.
 
+
 repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
 repayments.bankAccountDetails.sortCodeError = Enter the sort code
@@ -1274,7 +1290,9 @@ repayments.bankAccountDetails.accountNumberError = Enter the account number
 repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
 repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
+repayments.bankAccountDetails.bankName.error.xss = Name of the bank you enter must not include the following characters <, > or "
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
+repayments.bankAccountDetails.accountName.error.xss = Name on the account you enter must not include the following characters <, > or "
 repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
 repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
 
@@ -1297,7 +1315,9 @@ repayments.nonUKBank.error.nameOnBankAccount.required = Enter the name on the ac
 repayments.nonUKBank.error.bic.required = Enter the BIC or SWIFT code
 repayments.nonUKBank.error.iban.required = Enter the IBAN
 repayments.nonUKBank.error.bankName.length = Name of the bank must be 40 characters or less
+repayments.nonUKBank.error.bankName.xss = Name of the bank you enter must not include the following characters <, > or "
 repayments.nonUKBank.error.nameOnBankAccount.length = Name on the account must be 60 characters or less
+repayments.nonUKBank.error.nameOnBankAccount.xss = Name on the account you enter must not include the following characters <, > or "
 repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 11 characters long
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
@@ -1411,6 +1431,7 @@ reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
 reasonForRequestingRefund.error.hint = For example, you made a payment that was greater than your actual liability.
 reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
+reasonForRequestingRefund.error.xss = The reason for your refund request you enter must not include the following characters <, >, " or &
 
 ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
 ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?
