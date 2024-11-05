@@ -63,7 +63,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -93,7 +93,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -123,7 +123,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, None)
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -154,7 +154,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -180,7 +180,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -210,7 +210,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -240,7 +240,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, None)
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -271,7 +271,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -411,7 +411,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -441,7 +441,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -499,7 +499,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -533,7 +533,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

@@ -43,7 +43,7 @@ class AmendApiFailureControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AmendApiFailureView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 

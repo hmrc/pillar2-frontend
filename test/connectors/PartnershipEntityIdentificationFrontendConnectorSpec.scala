@@ -32,8 +32,8 @@ import scala.concurrent.Future
 
 class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
-  val apiUrl: String = s"${appConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
-  val connector                                 = new PartnershipIdentificationFrontendConnectorImpl(appConfig, mockHttpClient, mockAuditService)
+  val apiUrl: String = s"${applicationConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
+  val connector = new PartnershipIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient, mockAuditService)
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
   val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
 

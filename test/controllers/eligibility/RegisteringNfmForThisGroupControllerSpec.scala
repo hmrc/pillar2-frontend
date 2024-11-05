@@ -47,7 +47,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase with ViewInstanc
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -81,7 +81,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase with ViewInstanc
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

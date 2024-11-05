@@ -38,7 +38,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[RepaymentsWaitingRoomView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(None)(request, applicationConfig, messages(application)).toString
       }
     }
 

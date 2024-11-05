@@ -40,7 +40,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationWaitingRoomView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(None)(request, applicationConfig, messages(application)).toString
       }
     }
     " redirect to registration confirmation page if database state is updated successfully" in {

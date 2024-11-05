@@ -58,7 +58,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -79,7 +79,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -102,7 +102,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -148,7 +148,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -175,7 +175,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("name"))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -204,7 +204,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

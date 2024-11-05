@@ -73,7 +73,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -106,7 +106,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual
           view(form.fill("hello@bye.com"), NormalMode, "ABC Limited")(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -146,7 +146,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

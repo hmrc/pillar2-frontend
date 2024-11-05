@@ -31,8 +31,8 @@ import scala.concurrent.Future
 
 class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
-  val apiUrl: String = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
-  val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)
+  val apiUrl: String = s"${applicationConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
+  val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient)
   private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
   val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
 

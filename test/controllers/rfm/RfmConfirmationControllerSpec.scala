@@ -71,7 +71,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("12345678", currentDate.toString())(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
 

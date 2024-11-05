@@ -73,7 +73,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -108,7 +108,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
         contentAsString(result) mustEqual
           view(form.fill("12345"), NormalMode, "ABC Limited")(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -148,7 +148,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

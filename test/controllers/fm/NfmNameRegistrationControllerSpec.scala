@@ -49,7 +49,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[NfmNameRegistrationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
     "must populate the view correctly on a GET when the question has previously been answered" in {
@@ -67,7 +67,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("alex"), NormalMode)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -102,7 +102,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 

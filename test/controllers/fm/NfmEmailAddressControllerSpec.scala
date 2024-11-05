@@ -52,7 +52,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("Ashley Smith"), NormalMode, "Ashley Smith")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -75,7 +75,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("Ashley Smith").fill("hello@goodbye.com"), NormalMode, "Ashley Smith")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -91,7 +91,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[NfmEmailAddressView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, applicationConfig, messages(application)).toString
       }
     }
 

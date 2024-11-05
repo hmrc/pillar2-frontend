@@ -34,7 +34,7 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -49,7 +49,7 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
 
       }
     }

@@ -96,7 +96,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           agentView = false
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

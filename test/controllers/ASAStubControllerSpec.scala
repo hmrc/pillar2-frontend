@@ -58,7 +58,7 @@ class ASAStubControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[ASAStubView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 

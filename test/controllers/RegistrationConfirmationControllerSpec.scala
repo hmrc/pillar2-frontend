@@ -77,7 +77,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(testPlr2Id, testCompanyName, testDate, testTimeStamp, MneOrDomestic.Uk)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -115,7 +115,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(testPlr2ID, testCompanyName, testDate, testTimeStamp, MneOrDomestic.UkAndOther)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

@@ -116,7 +116,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
             NormalMode
           )(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -155,7 +155,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
             NormalMode
           )(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -260,7 +260,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
             NormalMode
           )(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -365,7 +365,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
             NormalMode
           )(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -502,7 +502,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
             NormalMode
           )(
             request,
-            appConfig(),
+            applicationConfig,
             messages(application)
           ).toString
       }

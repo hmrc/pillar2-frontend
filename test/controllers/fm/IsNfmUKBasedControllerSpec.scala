@@ -53,7 +53,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[IsNFMUKBasedView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
     "redirect to bookmark page if previous page not answered" in {
@@ -87,7 +87,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -109,7 +109,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
     "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {

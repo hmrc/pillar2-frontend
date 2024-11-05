@@ -40,7 +40,7 @@ class StartPageControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[StartPageView]
         status(result) mustEqual OK
         val content = contentAsString(result)
-        content mustEqual view()(request, appConfig(), messages(application)).toString
+        content mustEqual view()(request, applicationConfig, messages(application)).toString
       }
 
     }

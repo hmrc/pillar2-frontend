@@ -47,7 +47,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -80,7 +80,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

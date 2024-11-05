@@ -112,7 +112,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -148,7 +148,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -252,7 +252,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -296,7 +296,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

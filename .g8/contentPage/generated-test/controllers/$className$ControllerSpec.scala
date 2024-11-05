@@ -21,7 +21,7 @@ class $className$ControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request,appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request,applicationConfig, messages(application)).toString
       }
     }
   }

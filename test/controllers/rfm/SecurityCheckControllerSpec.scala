@@ -49,7 +49,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecurityCheckView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -87,7 +87,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         val result  = route(application, request).value
         contentAsString(result) mustEqual view(formProvider().fill("plrID"), NormalMode)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
         status(result) mustEqual OK
@@ -189,7 +189,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -215,7 +215,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -279,7 +279,7 @@ class SecurityCheckControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecurityCheckErrorView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }

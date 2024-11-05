@@ -69,8 +69,7 @@ trait SpecBase
   implicit lazy val ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
   implicit lazy val hc:                HeaderCarrier     = HeaderCarrier()
   implicit lazy val system:            ActorSystem       = ActorSystem()
-  def appConfig():                     FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  implicit lazy val applicationConfig: FrontendAppConfig = appConfig()
+  implicit lazy val applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit lazy val materializer:      Materializer      = Materializer(system)
   def injectedParsers:                 PlayBodyParsers   = injector.instanceOf[PlayBodyParsers]
 

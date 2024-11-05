@@ -37,7 +37,7 @@ class GrsRegistrationFailedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationFailedUpeView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -53,7 +53,7 @@ class GrsRegistrationFailedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationFailedNfmView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -69,7 +69,7 @@ class GrsRegistrationFailedControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationFailedRfmView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }

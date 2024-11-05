@@ -56,7 +56,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[CorporatePositionView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -74,7 +74,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(CorporatePosition.NewNfm), NormalMode)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

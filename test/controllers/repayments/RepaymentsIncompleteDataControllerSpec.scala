@@ -38,7 +38,7 @@ class RepaymentsIncompleteDataControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[IncompleteDataView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }

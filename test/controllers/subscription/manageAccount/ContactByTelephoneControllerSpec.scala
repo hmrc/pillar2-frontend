@@ -64,7 +64,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
 
         contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
 
@@ -92,7 +92,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
 
@@ -149,7 +149,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
 
@@ -183,7 +183,7 @@ class ContactByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
 

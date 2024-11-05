@@ -70,7 +70,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("12345678")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -99,7 +99,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(PlrReference)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -122,7 +122,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("12345678")(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

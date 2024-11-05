@@ -50,7 +50,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RfmPrimaryContactNameView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -68,7 +68,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("name"), NormalMode)(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }

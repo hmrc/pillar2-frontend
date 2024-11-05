@@ -37,7 +37,7 @@ class InprogressTaskListControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(),
+          applicationConfig,
           messages(application)
         ).toString
       }
