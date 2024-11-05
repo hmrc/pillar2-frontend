@@ -135,10 +135,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
-            "First contact"
+            "Primary contact"
           )
           contentAsString(result) must include(
-            "Second contact"
+            "Secondary contact"
           )
         }
       }
@@ -210,7 +210,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             "Unique Taxpayer Reference"
           )
           contentAsString(result) must include(
-            "First contact"
+            "Primary contact"
           )
           contentAsString(result) must include(
             "Further group details"
@@ -240,7 +240,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
             "Unique Taxpayer Reference"
           )
           contentAsString(result) must include(
-            "First contact"
+            "Primary contact"
           )
           contentAsString(result) must include(
             "Further group details"
