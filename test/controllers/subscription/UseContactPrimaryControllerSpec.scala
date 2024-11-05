@@ -20,6 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
+import helpers.ViewInstances
 import models.NormalMode
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
@@ -34,7 +35,7 @@ import views.html.subscriptionview.UseContactPrimaryView
 import java.time.LocalDate
 import scala.concurrent.Future
 
-class UseContactPrimaryControllerSpec extends SpecBase {
+class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
 
   val formProvider = new UseContactPrimaryFormProvider()
   val name         = "name"
@@ -62,7 +63,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -92,7 +93,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -122,7 +123,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, None)
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -153,7 +154,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -179,7 +180,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -209,7 +210,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -239,7 +240,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, None)
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -270,7 +271,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -410,7 +411,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -440,7 +441,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
           contactSummaryList(name, email, Some(telephone))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -498,7 +499,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -532,7 +533,7 @@ class UseContactPrimaryControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, contactSummaryList(name, email, None))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

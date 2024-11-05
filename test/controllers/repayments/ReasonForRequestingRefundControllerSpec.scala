@@ -53,7 +53,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ReasonForRequestingRefundView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -74,7 +74,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("answer"), NormalMode)(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -112,7 +112,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
     "must update the user answers and redirect to the next page when the user answers has provided a valid answer" in {

@@ -19,6 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.TransactionHistoryConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
+import helpers.ViewInstances
 import models._
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +36,7 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
-class TransactionHistoryControllerSpec extends SpecBase {
+class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment(
@@ -111,7 +112,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -147,7 +148,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -251,7 +252,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -295,7 +296,7 @@ class TransactionHistoryControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

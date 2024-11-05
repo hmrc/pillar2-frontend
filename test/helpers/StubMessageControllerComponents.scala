@@ -26,7 +26,7 @@ import play.api.test.Helpers._
 import java.util.Locale
 import scala.concurrent.ExecutionContext
 
-trait StubMessageControllerComponents extends Configs {
+trait StubMessageControllerComponents {
 
   val lang: Lang = Lang(new Locale("en"))
 

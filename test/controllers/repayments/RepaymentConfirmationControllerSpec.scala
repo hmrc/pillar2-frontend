@@ -44,7 +44,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(currentDate.toString())(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(currentDate.toString())(request, applicationConfig, messages(application)).toString
       }
     }
 

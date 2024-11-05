@@ -59,7 +59,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -83,7 +83,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -174,7 +174,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -206,7 +206,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

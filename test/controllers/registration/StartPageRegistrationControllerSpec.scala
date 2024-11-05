@@ -17,12 +17,13 @@
 package controllers.registration
 
 import base.SpecBase
+import helpers.ViewInstances
 import models.NormalMode
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class StartPageRegistrationControllerSpec extends SpecBase {
+class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
 
   def controller(): StartPageRegistrationController =
     new StartPageRegistrationController(

@@ -15,7 +15,6 @@
  */
 
 package models.repayments
-
 import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
 import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec

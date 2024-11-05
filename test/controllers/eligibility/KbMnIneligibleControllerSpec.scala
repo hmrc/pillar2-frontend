@@ -17,11 +17,12 @@
 package controllers.eligibility
 
 import base.SpecBase
+import helpers.ViewInstances
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class KbMnIneligibleControllerSpec extends SpecBase {
+class KbMnIneligibleControllerSpec extends SpecBase with ViewInstances {
 
   def controller(): KbMnIneligibleController =
     new KbMnIneligibleController(

@@ -45,7 +45,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RfmWaitingRoomView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(None)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(None)(request, applicationConfig, messages(application)).toString
       }
     }
 

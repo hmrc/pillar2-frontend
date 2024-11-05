@@ -54,7 +54,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, NormalMode, "sad")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
 
@@ -77,7 +77,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "sad")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
 
@@ -137,7 +137,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "sad")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

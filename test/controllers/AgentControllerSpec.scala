@@ -68,7 +68,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
@@ -107,7 +107,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentClientPillarIdView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider())(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -135,7 +135,7 @@ class AgentControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill("XMPLR0123456789"))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -224,7 +224,7 @@ class AgentControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(formProvider().bind(Map("value" -> "foobar")))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -278,7 +278,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentClientConfirmDetailsView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("Some Org", "XMPLR0123456789")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view("Some Org", "XMPLR0123456789")(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -389,7 +389,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentClientNoMatch]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
@@ -416,7 +416,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentErrorView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
@@ -451,7 +451,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentClientUnauthorisedView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
@@ -478,7 +478,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentIndividualErrorView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
@@ -505,7 +505,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AgentOrganisationErrorView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }

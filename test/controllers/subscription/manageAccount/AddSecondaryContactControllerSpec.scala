@@ -67,7 +67,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -94,7 +94,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -230,7 +230,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -263,7 +263,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

@@ -140,7 +140,7 @@ class IndexControllerSpec extends SpecBase {
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe appConfig.asaHomePageUrl
+      redirectLocation(result).value mustBe applicationConfig.asaHomePageUrl
     }
   }
 

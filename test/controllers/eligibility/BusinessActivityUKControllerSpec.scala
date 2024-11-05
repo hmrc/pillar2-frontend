@@ -18,6 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.BusinessActivityUKFormProvider
+import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.BusinessActivityUKPage
@@ -29,7 +30,7 @@ import views.html.BusinessActivityUKView
 
 import scala.concurrent.Future
 
-class BusinessActivityUKControllerSpec extends SpecBase {
+class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
   val formProvider = new BusinessActivityUKFormProvider()
 
   "Trading Business Confirmation Controller" when {
@@ -46,7 +47,7 @@ class BusinessActivityUKControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -79,7 +80,7 @@ class BusinessActivityUKControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

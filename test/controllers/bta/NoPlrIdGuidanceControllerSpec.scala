@@ -43,7 +43,7 @@ class NoPlrIdGuidanceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[NoPlrIdGuidanceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
 

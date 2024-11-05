@@ -22,12 +22,10 @@ import mapping.Constants.ENGLISH
 import models.grs.EntityType
 import org.mockito.MockitoSugar
 import play.api.Application
-import play.api.i18n.MessagesApi
 import utils.InputOption
 
 class CountryOptionsSpec extends SpecBase with MockitoSugar {
 
-  override lazy val messagesApi: MessagesApi = app.injector.instanceOf[MessagesApi]
   def application(language: String = ENGLISH): Application = {
     val config = language match {
       case ENGLISH => Map("location.canonical.list.all" -> "countries-canonical-list-test.json")

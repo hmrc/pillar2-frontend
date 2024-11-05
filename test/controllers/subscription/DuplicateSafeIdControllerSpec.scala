@@ -54,7 +54,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[DuplicateSafeIdView]
         val result  = route(application, request).value
 
-        contentAsString(result) mustEqual view(formProvider())(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider())(request, applicationConfig, messages(application)).toString
         status(result) mustBe OK
       }
     }
@@ -83,7 +83,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
         val boundForm = formProvider().bind(Map("nominateFilingMember" -> "$$"))
         val view      = application.injector.instanceOf[DuplicateSafeIdView]
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString()
+        contentAsString(result) mustEqual view(boundForm)(request, applicationConfig, messages(application)).toString()
       }
     }
 

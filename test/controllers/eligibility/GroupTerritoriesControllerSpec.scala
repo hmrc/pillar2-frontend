@@ -18,6 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.GroupTerritoriesFormProvider
+import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.UpeEqPage
@@ -29,7 +30,7 @@ import views.html.GroupTerritoriesView
 
 import scala.concurrent.Future
 
-class GroupTerritoriesControllerSpec extends SpecBase {
+class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
 
   val formProvider = new GroupTerritoriesFormProvider()
 
@@ -47,7 +48,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -81,7 +82,7 @@ class GroupTerritoriesControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

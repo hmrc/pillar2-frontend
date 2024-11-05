@@ -54,7 +54,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name", NormalMode)(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -79,7 +79,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill(true), "name", NormalMode)(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -150,7 +150,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, "name", NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
