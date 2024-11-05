@@ -66,7 +66,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -91,7 +91,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -116,7 +116,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -254,7 +254,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -285,7 +285,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -316,7 +316,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

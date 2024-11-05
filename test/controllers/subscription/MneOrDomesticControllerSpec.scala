@@ -54,7 +54,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), NormalMode)(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -69,7 +69,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
       }
     }
 

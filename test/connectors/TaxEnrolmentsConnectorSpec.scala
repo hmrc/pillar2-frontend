@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.{EnrolmentInfo, Verifier}
 import org.apache.pekko.Done
@@ -24,7 +24,7 @@ import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class TaxEnrolmentsConnectorSpec extends SpecBase {
+class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(

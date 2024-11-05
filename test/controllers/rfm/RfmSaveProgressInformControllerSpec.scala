@@ -62,7 +62,7 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         )
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

@@ -51,7 +51,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RfmSecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -75,7 +75,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), NormalMode, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -100,7 +100,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

@@ -37,7 +37,7 @@ class GrsRegistrationNotCalledControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationNotCalledUpeView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -53,7 +53,7 @@ class GrsRegistrationNotCalledControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationNotCalledNfmView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -69,7 +69,7 @@ class GrsRegistrationNotCalledControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RegistrationNotCalledRfmView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
   }

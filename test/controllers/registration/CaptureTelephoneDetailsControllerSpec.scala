@@ -52,7 +52,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("sad"), NormalMode, "sad")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -74,7 +74,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("sad").fill("12321"), NormalMode, "sad")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

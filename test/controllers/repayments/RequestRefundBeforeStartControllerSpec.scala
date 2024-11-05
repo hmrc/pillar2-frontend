@@ -65,7 +65,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         contentAsString(result) must include("Request a refund")
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

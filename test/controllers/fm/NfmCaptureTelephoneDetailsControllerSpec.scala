@@ -55,7 +55,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -78,7 +78,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("12312323"), NormalMode, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

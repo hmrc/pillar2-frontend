@@ -46,7 +46,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           val view    = application.injector.instanceOf[UkBasedFilingMemberView]
           val result  = route(application, request).value
 
-          contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+          contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(), messages(application)).toString
           status(result) mustBe OK
         }
       }
@@ -63,7 +63,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
 
           contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(
             request,
-            appConfig(application),
+            appConfig(),
             messages(application)
           ).toString
           status(result) mustBe OK
@@ -100,7 +100,7 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           val result = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
-          contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+          contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
         }
       }
 

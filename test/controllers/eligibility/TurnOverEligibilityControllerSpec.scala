@@ -18,6 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.TurnOverEligibilityFormProvider
+import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -30,7 +31,7 @@ import views.html.TurnOverEligibilityView
 
 import scala.concurrent.Future
 
-class TurnOverEligibilityControllerSpec extends SpecBase {
+class TurnOverEligibilityControllerSpec extends SpecBase with ViewInstances {
 
   val formProvider = new TurnOverEligibilityFormProvider()
 
@@ -46,7 +47,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
         status(result) shouldBe OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -79,7 +80,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase {
         status(result) shouldBe OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

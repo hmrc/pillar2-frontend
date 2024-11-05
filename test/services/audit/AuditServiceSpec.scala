@@ -15,7 +15,6 @@
  */
 
 package services.audit
-
 import base.SpecBase
 import models.audit.RepaymentsAuditEvent
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
@@ -24,12 +23,18 @@ import models.subscription.NewFilingMemberDetail
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import play.api.Application
+import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
 
 import scala.concurrent.Future
 
 class AuditServiceSpec extends SpecBase {
+
+  override def fakeApplication(): Application =
+    new GuiceApplicationBuilder().configure(Map("auditing.enabled" -> "true")).build()
+
   val service: AuditService = app.injector.instanceOf[AuditService]
 
   val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
@@ -53,7 +58,6 @@ class AuditServiceSpec extends SpecBase {
   )
 
   "AuditService" when {
-
     "successful for auditGrsReturnForLimitedCompany" in {
       when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))

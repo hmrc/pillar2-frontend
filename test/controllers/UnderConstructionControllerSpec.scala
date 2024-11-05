@@ -37,7 +37,7 @@ class UnderConstructionControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UnderConstruction]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -53,7 +53,7 @@ class UnderConstructionControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UnderConstructionError]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -69,7 +69,7 @@ class UnderConstructionControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[UnderConstructionAgent]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view()(request, appConfig(), messages(application)).toString
       }
     }
   }

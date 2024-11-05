@@ -58,7 +58,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(form, NormalMode)(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -83,7 +83,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         contentAsString(result) mustEqual
           view(formProvider().fill("ABC Limited"), NormalMode)(
             request,
-            appConfig(application),
+            appConfig(),
             messages(application)
           ).toString
       }
@@ -118,7 +118,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[RepaymentsContactNameView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(), messages(application)).toString
       }
     }
 

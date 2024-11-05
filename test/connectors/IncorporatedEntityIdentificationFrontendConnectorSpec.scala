@@ -17,6 +17,7 @@
 package connectors
 
 import base.SpecBase
+import helpers.ViewInstances
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{NormalMode, UserType}
@@ -28,7 +29,7 @@ import play.api.libs.json.Json
 
 import scala.concurrent.Future
 
-class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase {
+class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl: String = s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
   val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(appConfig, mockHttpClient)

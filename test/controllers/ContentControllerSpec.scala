@@ -36,7 +36,7 @@ class ContentControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view()(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }

@@ -54,7 +54,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, NormalMode, "sad")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
 
@@ -110,7 +110,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "sad")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
 
@@ -159,7 +159,7 @@ class RfmContactByTelephoneControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "sad")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "sad")(request, appConfig(), messages(application)).toString
       }
     }
 

@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import models._
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -24,9 +24,9 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class TransactionHistoryConnectorSpec extends SpecBase {
+class TransactionHistoryConnectorSpec extends SpecBase with WireMockServerHandler {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.pillar2.port" -> server.port()
     )

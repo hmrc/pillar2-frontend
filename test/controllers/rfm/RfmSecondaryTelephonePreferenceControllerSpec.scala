@@ -52,7 +52,7 @@ class RfmSecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[RfmSecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(request, appConfig(), messages(application)).toString
       }
     }
 
@@ -75,7 +75,7 @@ class RfmSecondaryTelephonePreferenceControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "name")(
           request,
-          appConfig(application),
+          appConfig(),
           messages(application)
         ).toString
       }
@@ -146,7 +146,7 @@ class RfmSecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, appConfig(), messages(application)).toString
       }
     }
 
