@@ -19,7 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.RegistrationFailedRfmView
+import views.html.registrationview.RegistrationFailedRfmView
 
 class RegistrationFailedRfmViewSpec extends ViewSpecBase {
 

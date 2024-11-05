@@ -21,7 +21,7 @@ import models.MneOrDomestic
 import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.RegistrationConfirmationView
+import views.html.registrationview.RegistrationConfirmationView
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
   val testPillar2ID   = "PLR2ID123"

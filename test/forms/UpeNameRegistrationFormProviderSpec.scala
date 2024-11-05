@@ -17,38 +17,49 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import mapping.Constants
 import play.api.data.FormError
 
 class UpeNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "upeNameRegistration.error.required"
-  val lengthKey   = "upeNameRegistration.error.length"
-  val maxLength   = Constants.MAX_LENGTH_105
-  val form        = new UpeNameRegistrationFormProvider()()
+  val REQUIRED_KEY = "upeNameRegistration.error.required"
+  val LENGTH_KEY   = "upeNameRegistration.error.length"
+  val MAX_LENGTH   = 105
+  val XSS_KEY      = "name.error.xss.allowAmpersand"
+  val XSS_REGEX    = """^[^<>"]*$"""
+
+  val form = new UpeNameRegistrationFormProvider()()
 
   ".value" - {
 
-    val fieldName = "value"
+    val FIELD_NAME = "value"
 
     behave like fieldThatBindsValidData(
       form,
-      fieldName,
-      stringsWithMaxLength(maxLength)
+      FIELD_NAME,
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
     behave like fieldWithMaxLength(
       form,
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(stringsWithMinLength(maxLength + 1))
+      FIELD_NAME,
+      maxLength = MAX_LENGTH,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX, MAX_LENGTH))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MAX_LENGTH),
+      regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
     behave like mandatoryField(
       form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
     )
+
   }
 }

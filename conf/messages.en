@@ -36,6 +36,19 @@ page_not_available.message2 = and complete the required tasks.
 
 ###############################################
 #
+# Shared XSS validation messages
+#
+###############################################
+name.error.xss.allowAmpersand = The name you enter must not include the following characters <, > or "
+name.error.xss.forbidAmpersand = The name you enter must not include the following characters <, >, " or &
+addressLine1.error.xss = First line of the address you enter must not include the following characters <, > or "
+addressLine2.error.xss = Second line of the address you enter must not include the following characters <, >, " or &
+town_city.error.xss = The town or city you enter must not include the following characters <, >, " or &
+region.error.xss = The region you enter must not include the following characters <, >, " or &
+country.error.xss = The country you enter must not include the following characters <, >, " or &
+
+###############################################
+#
 # Error View
 #
 ###############################################
@@ -83,6 +96,7 @@ address.postcode.error.required = Enter the postcode
 address.postcode.error.invalid.GB = Enter a full UK postcode
 address.postcode.error.length = Postcode must be 10 characters or less
 address.warning = You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding.
+address.postcode.error.xss = The postcode you enter must not include the following characters <, >, " or &
 
 upeRegisteredAddress.title = What is the registered office address?
 upeRegisteredAddress.heading = What is the registered office address of {0}?
@@ -261,7 +275,7 @@ rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter the email address for {0}
 rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-rfm-input-business-email.change.hidden = the first contact email address
+rfm-input-business-email.change.hidden = the primary contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
 
 rfmContactByTelephone.heading.caption = Contact details
@@ -269,8 +283,8 @@ rfmContactByTelephone.title = Can we contact by telephone?
 rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfmContactByTelephone.error.required = Select yes if we can contact {0} by telephone
-rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-rfmContactByTelephone.change.hidden = can we contact the first contact by telephone
+rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
+rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
@@ -279,7 +293,7 @@ rfmCaptureTelephoneDetails.hint = For international numbers include the country 
 rfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
 rfmCaptureTelephoneDetails.messages.error.length = Telephone number must be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
-rfmCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
+rfmCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
@@ -481,6 +495,7 @@ rfmContactAddress.addressLine1.error.required = Enter first line of the address
 rfmContactAddress.town_city.error.required = Enter town or city
 rfmContactAddress.town_city.error.length = The Town or city must be 35 characters or less
 rfmContactAddress.region.error.length = The region must be 35 characters or less
+rfmContactAddress.region.error.xss = The region must not include the following characters <, >, " or &
 rfmContactAddress.country.error.required = Enter the country
 rfmContactAddress.country.error.length = Country cannot be more than 200 characters
 rfmContactAddress.heading.caption = Contact details
@@ -678,15 +693,15 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = Enter the email address for {0}
 contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = the first contact email address
+contactEmailAddress.change.hidden = the primary contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = can we contact the first contact by telephone?
+contactByTelephone.change.hidden = can we contact the primary contact by telephone?
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number?
@@ -698,34 +713,34 @@ contactCaptureTelephoneDetails.error.format = Enter the telephone number for {0}
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the contact telephone number
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
-contactNameCompliance.change.hidden = the first contact name
+contactNameCompliance.change.hidden = the primary contact name
 contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-contactCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
-addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+contactCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
+addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-addSecondaryContact.change.hidden = do you have a second contact?
-secondaryContactName.change.hidden = the second contact name
-secondaryContactEmail.change.hidden = the second contact email address
-secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone?
-secondaryTelephone.change.hidden = the telephone number for the second contact
+addSecondaryContact.change.hidden = do you have a secondary contact?
+secondaryContactName.change.hidden = the secondary contact name
+secondaryContactEmail.change.hidden = the secondary contact email address
+secondaryTelephonePreference.change.hidden = can we contact the secondary contact by telephone?
+secondaryTelephone.change.hidden = the telephone number for the secondary contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
 
-contactCheckYourAnswers.first = First contact
+contactCheckYourAnswers.first = Primary contact
 contactCheckYourAnswers.heading = Check your answers for contact details
 contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
-contactCheckYourAnswers.second = Second contact
+contactCheckYourAnswers.second = Secondary contact
 contactCheckYourAnswers.address = Contact address
 
 manageContactCheckYourAnswers.title = Contact details
 manageContactCheckYourAnswers.heading.caption = Contact details
-manageContactCheckYourAnswers.first = First contact
-manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.first = Primary contact
+manageContactCheckYourAnswers.second = Secondary contact
 manageContactCheckYourAnswers.address = Contact address
 
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
@@ -736,7 +751,7 @@ entityType.Upe.change.hidden = the ultimate parent entity
 
 entityType.Nfm.change.hidden = the nominated filing member
 
-checkYourAnswers.first = First contact
+checkYourAnswers.first = Primary contact
 checkYourAnswers.heading = Check your answers before submitting your registration
 checkYourAnswers.title = Check your answers before submitting your registration
 checkYourAnswers.heading.caption = Review and submit
@@ -747,11 +762,11 @@ addSecondaryContact.title = Is there someone else we can contact?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 
 secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
-secondaryContactName.checkYourAnswersLabel = Second contact name
+secondaryContactName.checkYourAnswersLabel = Secondary contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes
 secondaryContactName.error.length = Name of the alternative contact person or team should be 160 characters or less
@@ -770,7 +785,7 @@ secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading.caption = Contact details
 secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 secondaryTelephone.title = What is the telephone number?
@@ -985,7 +1000,7 @@ rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith�
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team must be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
-rfm.rfmPrimaryContactName.change.hidden = the first contact name
+rfm.rfmPrimaryContactName.change.hidden = the primary contact name
 
 rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
@@ -1022,23 +1037,23 @@ rfm.nameRegistration.change.hidden = the name of the new nominated filing member
 rfm.registeredAddress.checkYourAnswersLabel = Address
 rfm.registeredAddress.change.hidden = the address of the new nominated filing member
 
-rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-rfm.addsecondaryContact.change.hidden = do you have a second contact
-rfm.secondaryContactName.change.hidden = the second contact name
-rfm.secondaryContactEmail.change.hidden = the second contact email address
-rfm.secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone
-rfm.secondaryTelephone.change.hidden = the telephone number for the second contact
+rfm.addsecondaryContact.change.hidden = do you have a secondary contact
+rfm.secondaryContactName.change.hidden = the secondary contact name
+rfm.secondaryContactEmail.change.hidden = the secondary contact email address
+rfm.secondaryTelephonePreference.change.hidden = can we contact the secondary contact by telephone
+rfm.secondaryTelephone.change.hidden = the telephone number for the secondary contact
 
 rfm.addSecondaryContact.title = Is there someone else we can contact?
 rfm.addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
 rfm.addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 
 rfm.secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 rfm.secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
@@ -1060,7 +1075,7 @@ rfm.secondaryContactEmail.error.format = Enter an email address in the correct f
 rfm.secondaryTelephonePreference.title = Can we contact by telephone?
 rfm.secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 rfm.secondaryTelephone.title = What is the telephone number?
@@ -1095,8 +1110,8 @@ rfm.contactCheckYourAnswers.record.subheading = Do you need to keep a record of 
 rfm.checkYourAnswers.submit.record.p = If you need to keep a record of your answers, you can:
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
 rfm.checkYourAnswers.submit.p = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
-rfm.contactCheckYourAnswers.first = First contact
-rfm.contactCheckYourAnswers.second = Second contact
+rfm.contactCheckYourAnswers.first = Primary contact
+rfm.contactCheckYourAnswers.second = Secondary contact
 rfm.contactCheckYourAnswers.address = Contact address
 
 rfm.amendAPIFailure.title = Sorry, there is a problem with the service
@@ -1267,6 +1282,7 @@ repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits.
 repayments.bankAccountDetails.accountNumber = Account number
 repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits.
 
+
 repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
 repayments.bankAccountDetails.sortCodeError = Enter the sort code
@@ -1274,7 +1290,9 @@ repayments.bankAccountDetails.accountNumberError = Enter the account number
 repayments.bankAccountDetails.sortCodeFormatError = Enter a valid sort code like 309430
 repayments.bankAccountDetails.accountNumberFormatError = Enter a valid account number like 00733445
 repayments.bankAccountDetails.bankNameFormatError = The name of the bank must be 40 characters or less
+repayments.bankAccountDetails.bankName.error.xss = Name of the bank you enter must not include the following characters <, > or "
 repayments.bankAccountDetails.accountNameFormatError = The name on the account must be 60 characters or less
+repayments.bankAccountDetails.accountName.error.xss = Name on the account you enter must not include the following characters <, > or "
 repayments.bankAccountDetails.lengthError = Sort code must be 6 digits
 repayments.bankAccountDetails.accountNumberLengthError = Account number must be 8 digits
 
@@ -1297,7 +1315,9 @@ repayments.nonUKBank.error.nameOnBankAccount.required = Enter the name on the ac
 repayments.nonUKBank.error.bic.required = Enter the BIC or SWIFT code
 repayments.nonUKBank.error.iban.required = Enter the IBAN
 repayments.nonUKBank.error.bankName.length = Name of the bank must be 40 characters or less
+repayments.nonUKBank.error.bankName.xss = Name of the bank you enter must not include the following characters <, > or "
 repayments.nonUKBank.error.nameOnBankAccount.length = Name on the account must be 60 characters or less
+repayments.nonUKBank.error.nameOnBankAccount.xss = Name on the account you enter must not include the following characters <, > or "
 repayments.nonUKBank.error.bic.length = BIC or SWIFT code must be between 8 and 11 characters long
 repayments.nonUKBank.error.iban.length = IBAN must be up to 34 characters
 repayments.nonUKBank.error.bic.format = Enter a valid BIC or SWIFT code like HBUKGB4B
@@ -1411,6 +1431,7 @@ reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
 reasonForRequestingRefund.error.hint = For example, you made a payment that was greater than your actual liability.
 reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
+reasonForRequestingRefund.error.xss = The reason for your refund request you enter must not include the following characters <, >, " or &
 
 ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
 ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?

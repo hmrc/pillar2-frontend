@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.{RegistrationFailedNfmView, RegistrationFailedRfmView, RegistrationFailedUpeView}
+import views.html.registrationview.{RegistrationFailedNfmView, RegistrationFailedRfmView, RegistrationFailedUpeView}
 
 class GrsRegistrationFailedControllerSpec extends SpecBase {
 

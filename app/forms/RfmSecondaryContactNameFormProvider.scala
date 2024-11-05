@@ -15,9 +15,9 @@
  */
 
 package forms
-
+import forms.Validation.XSS_REGEX
 import forms.mappings.Mappings
-import mapping.Constants
+import mapping.Constants.MAX_LENGTH_160
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -27,6 +27,11 @@ class RfmSecondaryContactNameFormProvider @Inject() extends Mappings {
   def apply(): Form[String] =
     Form(
       "value" -> text("rfm.secondaryContactName.error.required")
-        .verifying(maxLength(Constants.MAX_LENGTH_160, "rfm.secondaryContactName.error.length"))
+        .verifying(
+          firstError(
+            maxLength(MAX_LENGTH_160, "rfm.secondaryContactName.error.length"),
+            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
+          )
+        )
     )
 }

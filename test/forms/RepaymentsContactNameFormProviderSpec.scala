@@ -17,38 +17,49 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import mapping.Constants
 import play.api.data.FormError
 
 class RepaymentsContactNameFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "repayments.contactName.error.required"
-  val lengthKey   = "repayments.contactName.error.length"
-  val maxLength: Int = Constants.MAX_LENGTH_160
-  val form = new RepaymentsContactNameFormProvider()
+  val REQUIRED_KEY = "repayments.contactName.error.required"
+  val LENGTH_KEY   = "repayments.contactName.error.length"
+  val MAX_LENGTH   = 160
+  val XSS_KEY      = "name.error.xss.forbidAmpersand"
+  val XSS_REGEX    = """^[^<>"&]*$"""
+
+  val form = new RepaymentsContactNameFormProvider()()
 
   ".contactName" - {
 
-    val fieldName = "contactName"
-
-    behave like mandatoryField(
-      form(),
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+    val FIELD_NAME = "contactName"
 
     behave like fieldThatBindsValidData(
-      form(),
-      fieldName,
-      stringsWithMaxLength(maxLength)
+      form,
+      FIELD_NAME,
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, MAX_LENGTH)
     )
 
     behave like fieldWithMaxLength(
-      form(),
-      fieldName,
-      maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(stringsWithMinLength(maxLength + 1))
+      form,
+      FIELD_NAME,
+      maxLength = MAX_LENGTH,
+      lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(MAX_LENGTH)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX, MAX_LENGTH))
     )
+
+    behave like fieldWithRegex(
+      form,
+      FIELD_NAME,
+      regex = XSS_REGEX,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", MAX_LENGTH),
+      regexError = FormError(FIELD_NAME, XSS_KEY)
+    )
+
+    behave like mandatoryField(
+      form,
+      FIELD_NAME,
+      requiredError = FormError(FIELD_NAME, REQUIRED_KEY)
+    )
+
   }
 }

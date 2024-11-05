@@ -30,19 +30,118 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def regexFieldWithMaxLength(
-    form:           Form[_],
-    fieldName:      String,
-    maxLength:      Int,
-    generatorLimit: Int,
-    regex:          String,
-    lengthError:    FormError,
-    formatError:    FormError
+  def fieldWithRegex(
+    form:              Form[_],
+    fieldName:         String,
+    regex:             String,
+    regexViolationGen: Gen[String],
+    regexError:        FormError
   ): Unit =
-    s"not bind strings longer than $maxLength characters" in {
-      forAll(regexWithMaxLength(maxLength, generatorLimit, regex) -> "longString") { string =>
-        val result = form.bind(Map(fieldName -> string)).apply(fieldName)
-        result.errors must contain.atLeastOneOf(lengthError, formatError)
+    "not bind data violating the regex" in {
+      forAll(regexViolationGen) { invalidValue =>
+        val result = form.bind(Map(fieldName -> invalidValue)).apply(fieldName)
+        result.errors must contain only regexError
       }
     }
+
+  def postcodeField(
+    form:      Form[_],
+    maxLength: Int
+  ): Unit = {
+
+    val countryFieldName     = "countryCode"
+    val postcodeFieldName    = "postalCode"
+    val lengthError          = FormError(postcodeFieldName, "address.postcode.error.length")
+    val invalidFormatGBError = FormError(postcodeFieldName, "address.postcode.error.invalid.GB")
+    val POSTCODE_REGEX       = "^[A-Za-z]{1,2}[0-9R][0-9A-Za-z]? [0-9][ABD-HJLNP-UW-Zabdhjlnp-uw-z]{2}$"
+
+    "when country code is GB" - {
+      "not bind empty postal code" in {
+        val data = Map(
+          countryFieldName  -> "GB",
+          postcodeFieldName -> ""
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.errors must contain only invalidFormatGBError
+      }
+
+      "not bind invalid formatted postal code" in {
+        forAll(invalidPostcodeGen) { invalidValue =>
+          val data = Map(
+            countryFieldName  -> "GB",
+            postcodeFieldName -> invalidValue
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.value mustBe Some(invalidValue)
+        }
+      }
+
+      "not bind postal code exceeding maximum length" in {
+        forAll(stringsLongerThan(maxLength)) { longPostalCode =>
+          val data = Map(
+            countryFieldName  -> "GB",
+            postcodeFieldName -> longPostalCode
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.errors must contain only invalidFormatGBError
+        }
+      }
+
+      "bind valid postal code" in {
+        forAll(nonEmptyRegexConformingStringWithMaxLength(POSTCODE_REGEX, maxLength)) { validValue =>
+          val data = Map(
+            countryFieldName  -> "GB",
+            postcodeFieldName -> validValue
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.value mustBe Some(validValue)
+        }
+      }
+
+    }
+
+    "when country code is not GB" - {
+      "bind empty postal code" in {
+        val data = Map(
+          countryFieldName  -> "US",
+          postcodeFieldName -> ""
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.value mustBe Some("")
+      }
+
+      "not bind postal code exceeding maximum length" in {
+        forAll(stringsLongerThan(maxLength)) { longPostalCode =>
+          val data = Map(
+            countryFieldName  -> "US",
+            postcodeFieldName -> longPostalCode
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.errors must contain only lengthError
+        }
+      }
+
+      "bind postal code even if it violates the postcode regex" in {
+        forAll(invalidPostcodeGen) { invalidValue =>
+          val data = Map(
+            countryFieldName  -> "US",
+            postcodeFieldName -> invalidValue
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.value mustBe Some(invalidValue)
+        }
+      }
+
+      "bind valid postal code" in {
+        forAll(nonEmptyRegexConformingStringWithMaxLength(POSTCODE_REGEX, maxLength)) { validValue =>
+          val data = Map(
+            countryFieldName  -> "US",
+            postcodeFieldName -> validValue
+          )
+          val result = form.bind(data).apply(postcodeFieldName)
+          result.value mustBe Some(validValue)
+        }
+      }
+    }
+  }
 }

@@ -15,7 +15,7 @@
  */
 
 package forms
-
+import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 
@@ -33,14 +33,23 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
+      regexError = FormError(fieldName, "repayments.nonUKBank.error.bankName.xss")
     )
 
     behave like mandatoryField(
@@ -60,14 +69,23 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      stringsWithMaxLength(maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
     )
 
     behave like fieldWithMaxLength(
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
+      regexError = FormError(fieldName, "repayments.nonUKBank.error.nameOnBankAccount.xss")
     )
 
     behave like mandatoryField(
