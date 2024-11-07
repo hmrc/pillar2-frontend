@@ -9,17 +9,15 @@ object AppDependencies {
     "uk.gov.hmrc"           %% "play-conditional-form-mapping-play-30" % "2.0.0",
     "uk.gov.hmrc"           %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                    % mongoVersion,
-    "com.typesafe.play"     %% "play-json-joda"                        % "2.10.4",
-    "org.julienrf"          %% "play-json-derived-codecs"              % "10.0.2",
-    "org.typelevel"         %% "cats-core"                             % "2.10.0",
-    "org.apache.xmlgraphics" % "fop"                                   % "2.7"
+    "org.typelevel"         %% "cats-core"                             % "2.12.0",
+    "org.apache.xmlgraphics" % "fop"                                   % "2.9"
   )
 
   val test: Seq[ModuleID] = Seq(
     "org.scalatestplus"    %% "mockito-4-11"             % "3.2.18.0",
-    "org.jsoup"             % "jsoup"                    % "1.17.2",
+    "org.jsoup"             % "jsoup"                    % "1.18.1",
     "uk.gov.hmrc"          %% "bootstrap-test-play-30"   % bootstrapVersion,
-    "org.mockito"          %% "mockito-scala"            % "1.17.31",
+    "org.mockito"          %% "mockito-scala"            % "1.17.37",
     "uk.gov.hmrc.mongo"    %% "hmrc-mongo-test-play-30"  % mongoVersion,
     "org.scalatestplus"    %% "scalatestplus-scalacheck" % "3.1.0.0-RC2",
     "com.danielasfregola"  %% "random-data-generator"    % "2.9",
