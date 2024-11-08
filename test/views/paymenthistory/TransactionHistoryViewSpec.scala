@@ -78,7 +78,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text must include(
-        "You can see all transactions made by your group during this accounting period and the previous 6 accounting periods."
+        "The transactions displayed cover the date range from your group’s registration on 31 January 2024 to today’s date."
       )
     }
 

@@ -38,7 +38,7 @@
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), pageLayout = pageLayout) {
 
     @heading(messages("transactionHistory.heading"))
-    @p(messages("transactionHistory.p1"))
+    @p(messages("transactionHistory.p1", registrationDate))
 
     @govukTable(table)
 

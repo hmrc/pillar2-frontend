@@ -1525,7 +1525,7 @@ repaymentsWaitingRoom.h2 = Do not leave this page.
 ###################
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.p1 = You can see all transactions made by your group during this accounting period and the previous 6 accounting periods.
+transactionHistory.p1 = The transactions displayed cover the date range from your group’s registration on {0} to today’s date.
 transactionHistory.date = Date
 transactionHistory.description = Transaction description
 transactionHistory.amountPaid = You paid HMRC
