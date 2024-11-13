@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import models.InternalIssueError
 import org.apache.pekko.Done
 import org.scalacheck.Gen
@@ -27,9 +27,9 @@ import play.api.libs.json.Json
 
 import scala.collection.Seq
 
-class UserAnswersConnectorSpec extends SpecBase {
+class UserAnswersConnectorSpec extends SpecBase with WireMockServerHandler {
 
-  override lazy val app: Application = new GuiceApplicationBuilder()
+  override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
       conf = "microservice.services.pillar2.port" -> server.port()
     )

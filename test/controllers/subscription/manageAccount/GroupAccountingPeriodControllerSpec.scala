@@ -65,7 +65,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true))(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true))(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -83,7 +83,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -104,7 +104,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(true).fill(date))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -126,7 +126,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -197,7 +197,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
           formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod)
         )(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -227,7 +227,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(true).fill(date))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -258,7 +258,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm)(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

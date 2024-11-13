@@ -67,7 +67,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -84,7 +84,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -163,7 +163,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -189,7 +189,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

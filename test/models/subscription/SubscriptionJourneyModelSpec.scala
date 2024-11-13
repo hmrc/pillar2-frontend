@@ -17,6 +17,7 @@
 package models.subscription
 
 import base.SpecBase
+import helpers.ViewInstances
 import models._
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
@@ -26,7 +27,7 @@ import pages._
 
 import java.time.LocalDate
 
-class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionValues with EitherValues with TryValues {
+class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionValues with EitherValues with TryValues with ViewInstances {
 
   private val date = LocalDate.now()
 //  private val nonUkAddress: NonUKAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")

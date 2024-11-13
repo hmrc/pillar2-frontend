@@ -54,7 +54,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
         status(result) mustBe OK
       }
     }
@@ -67,7 +67,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[NominateFilingMemberYesNoView]
         val result  = route(application, request).value
 
-        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, applicationConfig, messages(application)).toString
         status(result) mustBe OK
       }
     }
@@ -96,7 +96,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         val boundForm = formProvider().bind(Map("value" -> "$$"))
         val view      = application.injector.instanceOf[NominateFilingMemberYesNoView]
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString()
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString()
       }
     }
 

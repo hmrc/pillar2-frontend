@@ -18,6 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
+import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.NfmEqPage
@@ -29,7 +30,7 @@ import views.html.registrationview.RegisteringNfmForThisGroupView
 
 import scala.concurrent.Future
 
-class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
+class RegisteringNfmForThisGroupControllerSpec extends SpecBase with ViewInstances {
   val formProvider = new RegisteringNfmForThisGroupFormProvider()
 
   "Register FM for this group controller" must {
@@ -46,7 +47,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider())(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -80,7 +81,7 @@ class RegisteringNfmForThisGroupControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true))(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }

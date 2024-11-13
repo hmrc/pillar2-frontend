@@ -17,7 +17,6 @@
 package controllers.auth
 
 import base.SpecBase
-import config.FrontendAppConfig
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import play.api.inject.bind
@@ -51,13 +50,12 @@ class AuthControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(userAnswersId)))
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOut.url)
+        val request = FakeRequest(GET, routes.AuthController.signOut.url)
 
         val result = route(application, request).value
 
-        val encodedContinueUrl  = URLEncoder.encode(appConfig.exitSurveyUrl, "UTF-8")
-        val expectedRedirectUrl = s"${appConfig.signOutUrl}?continue=$encodedContinueUrl"
+        val encodedContinueUrl  = URLEncoder.encode(applicationConfig.exitSurveyUrl, "UTF-8")
+        val expectedRedirectUrl = s"${applicationConfig.signOutUrl}?continue=$encodedContinueUrl"
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl
@@ -108,8 +106,8 @@ class AuthControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val encodedContinueUrl  = URLEncoder.encode(appConfig.loginContinueUrl, "UTF-8")
-        val expectedRedirectUrl = s"${appConfig.loginUrl}?continue=$encodedContinueUrl"
+        val encodedContinueUrl  = URLEncoder.encode(applicationConfig.loginContinueUrl, "UTF-8")
+        val expectedRedirectUrl = s"${applicationConfig.loginUrl}?continue=$encodedContinueUrl"
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl
@@ -138,13 +136,12 @@ class AuthControllerSpec extends SpecBase {
           .thenReturn(Future.successful(Some(userAnswersId)))
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
-        val appConfig = application.injector.instanceOf[FrontendAppConfig]
-        val request   = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
+        val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey.url)
 
         val result = route(application, request).value
 
         val encodedContinueUrl  = URLEncoder.encode(routes.SignedOutController.onPageLoad.url, "UTF-8")
-        val expectedRedirectUrl = s"${appConfig.signOutUrl}?continue=$encodedContinueUrl"
+        val expectedRedirectUrl = s"${applicationConfig.signOutUrl}?continue=$encodedContinueUrl"
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl
@@ -195,8 +192,8 @@ class AuthControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val encodedContinueUrl  = URLEncoder.encode(appConfig.loginContinueUrl, "UTF-8")
-        val expectedRedirectUrl = s"${appConfig.loginUrl}?continue=$encodedContinueUrl"
+        val encodedContinueUrl  = URLEncoder.encode(applicationConfig.loginContinueUrl, "UTF-8")
+        val expectedRedirectUrl = s"${applicationConfig.loginUrl}?continue=$encodedContinueUrl"
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedRedirectUrl

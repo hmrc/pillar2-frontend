@@ -275,7 +275,7 @@ rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter the email address for {0}
 rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
 rfm-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-rfm-input-business-email.change.hidden = the first contact email address
+rfm-input-business-email.change.hidden = the primary contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
 
 rfmContactByTelephone.heading.caption = Contact details
@@ -283,8 +283,8 @@ rfmContactByTelephone.title = Can we contact by telephone?
 rfmContactByTelephone.heading = Can we contact {0} by telephone?
 rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
 rfmContactByTelephone.error.required = Select yes if we can contact {0} by telephone
-rfmContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-rfmContactByTelephone.change.hidden = can we contact the first contact by telephone
+rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
+rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
 rfmCaptureTelephoneDetails.title = What is the telephone number?
@@ -293,7 +293,7 @@ rfmCaptureTelephoneDetails.hint = For international numbers include the country 
 rfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
 rfmCaptureTelephoneDetails.messages.error.length = Telephone number must be 24 characters or less
 rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format, like 01632 960 001 or +44 808 157 0192
-rfmCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
+rfmCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 
@@ -693,15 +693,15 @@ contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = Enter the email address for {0}
 contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
-contactEmailAddress.change.hidden = the first contact email address
+contactEmailAddress.change.hidden = the primary contact email address
 
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
 contactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-contactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
+contactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
-contactByTelephone.change.hidden = can we contact the first contact by telephone?
+contactByTelephone.change.hidden = can we contact the primary contact by telephone?
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
 contactCaptureTelephoneDetails.title = What is the telephone number?
@@ -713,34 +713,34 @@ contactCaptureTelephoneDetails.error.format = Enter the telephone number for {0}
 contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the contact telephone number
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
-contactNameCompliance.change.hidden = the first contact name
+contactNameCompliance.change.hidden = the primary contact name
 contactCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-contactCaptureTelephoneDetails.change.hidden = the telephone number for the first contact
-addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+contactCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
+addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-addSecondaryContact.change.hidden = do you have a second contact?
-secondaryContactName.change.hidden = the second contact name
-secondaryContactEmail.change.hidden = the second contact email address
-secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone?
-secondaryTelephone.change.hidden = the telephone number for the second contact
+addSecondaryContact.change.hidden = do you have a secondary contact?
+secondaryContactName.change.hidden = the secondary contact name
+secondaryContactEmail.change.hidden = the secondary contact email address
+secondaryTelephonePreference.change.hidden = can we contact the secondary contact by telephone?
+secondaryTelephone.change.hidden = the telephone number for the secondary contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
 
-contactCheckYourAnswers.first = First contact
+contactCheckYourAnswers.first = Primary contact
 contactCheckYourAnswers.heading = Check your answers for contact details
 contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
-contactCheckYourAnswers.second = Second contact
+contactCheckYourAnswers.second = Secondary contact
 contactCheckYourAnswers.address = Contact address
 
 manageContactCheckYourAnswers.title = Contact details
 manageContactCheckYourAnswers.heading.caption = Contact details
-manageContactCheckYourAnswers.first = First contact
-manageContactCheckYourAnswers.second = Second contact
+manageContactCheckYourAnswers.first = Primary contact
+manageContactCheckYourAnswers.second = Secondary contact
 manageContactCheckYourAnswers.address = Contact address
 
 subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
@@ -751,7 +751,7 @@ entityType.Upe.change.hidden = the ultimate parent entity
 
 entityType.Nfm.change.hidden = the nominated filing member
 
-checkYourAnswers.first = First contact
+checkYourAnswers.first = Primary contact
 checkYourAnswers.heading = Check your answers before submitting your registration
 checkYourAnswers.title = Check your answers before submitting your registration
 checkYourAnswers.heading.caption = Review and submit
@@ -762,11 +762,11 @@ addSecondaryContact.title = Is there someone else we can contact?
 addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
 addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 
 secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
-secondaryContactName.checkYourAnswersLabel = Second contact name
+secondaryContactName.checkYourAnswersLabel = Secondary contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 secondaryContactName.error.required = Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes
 secondaryContactName.error.length = Name of the alternative contact person or team should be 160 characters or less
@@ -785,7 +785,7 @@ secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading.caption = Contact details
 secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 top-up taxes.
-secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 secondaryTelephone.title = What is the telephone number?
@@ -1000,7 +1000,7 @@ rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith�
 rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team must be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
-rfm.rfmPrimaryContactName.change.hidden = the first contact name
+rfm.rfmPrimaryContactName.change.hidden = the primary contact name
 
 rfm.registration.heading.caption = Group details
 rfm.nameRegistration.title = What is the name of the new nominated filing member?
@@ -1037,23 +1037,23 @@ rfm.nameRegistration.change.hidden = the name of the new nominated filing member
 rfm.registeredAddress.checkYourAnswersLabel = Address
 rfm.registeredAddress.change.hidden = the address of the new nominated filing member
 
-rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 
-rfm.addsecondaryContact.change.hidden = do you have a second contact
-rfm.secondaryContactName.change.hidden = the second contact name
-rfm.secondaryContactEmail.change.hidden = the second contact email address
-rfm.secondaryTelephonePreference.change.hidden = can we contact the second contact by telephone
-rfm.secondaryTelephone.change.hidden = the telephone number for the second contact
+rfm.addsecondaryContact.change.hidden = do you have a secondary contact
+rfm.secondaryContactName.change.hidden = the secondary contact name
+rfm.secondaryContactEmail.change.hidden = the secondary contact email address
+rfm.secondaryTelephonePreference.change.hidden = can we contact the secondary contact by telephone
+rfm.secondaryTelephone.change.hidden = the telephone number for the secondary contact
 
 rfm.addSecondaryContact.title = Is there someone else we can contact?
 rfm.addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
 rfm.addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 
 rfm.secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 rfm.secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
@@ -1075,7 +1075,7 @@ rfm.secondaryContactEmail.error.format = Enter an email address in the correct f
 rfm.secondaryTelephonePreference.title = Can we contact by telephone?
 rfm.secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by telephone?
+rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
 rfm.secondaryTelephone.title = What is the telephone number?
@@ -1525,7 +1525,7 @@ repaymentsWaitingRoom.h2 = Do not leave this page.
 ###################
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.p1 = The transactions displayed cover the date range from your group’s registration on {0} to today’s date.
+transactionHistory.p1 = You can see all transactions made by your group during this accounting period and the previous 6 accounting periods.
 transactionHistory.date = Date
 transactionHistory.description = Transaction description
 transactionHistory.amountPaid = You paid HMRC

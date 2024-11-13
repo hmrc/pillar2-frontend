@@ -17,13 +17,14 @@
 package controllers.eligibility
 
 import base.SpecBase
+import helpers.ViewInstances
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class Kb750IneligibleControllerSpec extends SpecBase {
+class Kb750IneligibleControllerSpec extends SpecBase with ViewInstances {
 
-  def controller(): Kb750IneligibleController =
+  lazy val controller: Kb750IneligibleController =
     new Kb750IneligibleController(
       stubMessagesControllerComponents(),
       viewKb750Ineligible

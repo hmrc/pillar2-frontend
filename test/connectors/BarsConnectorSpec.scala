@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import connectors.BarsConnectorSpec._
 import models.InternalIssueError
 import models.bars._
@@ -25,7 +25,7 @@ import play.api.inject.guice.GuiceApplicationBuilder
 
 import java.util.UUID
 
-class BarsConnectorSpec extends SpecBase {
+class BarsConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(

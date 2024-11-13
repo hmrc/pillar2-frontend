@@ -19,6 +19,7 @@ package services
 import base.SpecBase
 import connectors.BarsConnector
 import forms.BankAccountDetailsFormProvider
+import helpers.ViewInstances
 import models.NormalMode
 import models.bars._
 import models.repayments.BankAccountDetails
@@ -35,7 +36,7 @@ import views.html.repayments.BankAccountDetailsView
 
 import scala.concurrent.Future
 
-class BarsServiceSpec extends SpecBase {
+class BarsServiceSpec extends SpecBase with ViewInstances {
 
   "BarsService" when {
 
@@ -115,7 +116,7 @@ class BarsServiceSpec extends SpecBase {
             NormalMode
           )(
             request,
-            appConfig(application),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -154,7 +155,7 @@ class BarsServiceSpec extends SpecBase {
             NormalMode
           )(
             request,
-            appConfig(application),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -259,7 +260,7 @@ class BarsServiceSpec extends SpecBase {
             NormalMode
           )(
             request,
-            appConfig(application),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -364,7 +365,7 @@ class BarsServiceSpec extends SpecBase {
             NormalMode
           )(
             request,
-            appConfig(application),
+            applicationConfig,
             messages(application)
           ).toString
       }
@@ -501,7 +502,7 @@ class BarsServiceSpec extends SpecBase {
             NormalMode
           )(
             request,
-            appConfig(application),
+            applicationConfig,
             messages(application)
           ).toString
       }

@@ -67,7 +67,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupRegistrationDateReportView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -86,7 +86,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(startDate), NormalMode)(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -133,7 +133,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, appConfig(application), messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 

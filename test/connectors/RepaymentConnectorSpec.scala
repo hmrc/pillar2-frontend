@@ -16,14 +16,14 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import models.UnexpectedResponse
 import org.apache.pekko.Done
 import org.scalacheck.Gen
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 
-class RepaymentConnectorSpec extends SpecBase {
+class RepaymentConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(

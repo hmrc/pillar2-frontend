@@ -16,6 +16,7 @@
 
 package helpers
 
+import base.SpecBase
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
 import uk.gov.hmrc.hmrcfrontend.config._
@@ -33,7 +34,10 @@ import views.html.rfm.RfmEntityTypeView
 import views.html.subscriptionview._
 import views.html.templates._
 
-trait ViewInstances extends Configs with StubMessageControllerComponents {
+trait ViewInstances extends StubMessageControllerComponents {
+  this: SpecBase =>
+
+  lazy val configuration = app.configuration
 
   val hmrcTrackingConsent = new HmrcTrackingConsentSnippet(new TrackingConsentConfig(configuration))
 

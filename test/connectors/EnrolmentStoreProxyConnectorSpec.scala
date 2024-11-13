@@ -16,7 +16,7 @@
 
 package connectors
 
-import base.SpecBase
+import base.{SpecBase, WireMockServerHandler}
 import models.EnrolmentRequest.{KnownFacts, KnownFactsParameters, KnownFactsResponse}
 import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
 import org.scalacheck.Gen
@@ -24,7 +24,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 
-class EnrolmentStoreProxyConnectorSpec extends SpecBase {
+class EnrolmentStoreProxyConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(

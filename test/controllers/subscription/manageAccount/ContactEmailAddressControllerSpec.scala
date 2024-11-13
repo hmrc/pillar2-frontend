@@ -62,7 +62,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -86,7 +86,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -171,7 +171,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
@@ -201,7 +201,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name")(
           request,
-          appConfig(application),
+          applicationConfig,
           messages(application)
         ).toString
       }
