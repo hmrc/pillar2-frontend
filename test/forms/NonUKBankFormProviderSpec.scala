@@ -128,7 +128,7 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
     val fieldName   = "iban"
     val requiredKey = "repayments.nonUKBank.error.iban.required"
     val lengthKey   = "repayments.nonUKBank.error.iban.length"
-    val regex       = "^GB[0-9]{2}[A-Z]{4}[0-9]{14}$"
+    val regex       = Validation.IBAN_REGEX
     val maxLength   = 34
 
     behave like fieldThatBindsValidData(
@@ -141,7 +141,8 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
 
     behave like mandatoryField(
