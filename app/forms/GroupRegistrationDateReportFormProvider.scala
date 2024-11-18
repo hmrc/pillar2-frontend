@@ -19,11 +19,10 @@ package forms
 import forms.mappings.Mappings
 import play.api.data._
 
+import java.time.LocalDate
 import javax.inject.Inject
 
 class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
-
-  import java.time.LocalDate
 
   def apply(): Form[LocalDate] = Form(
     "rfmRegistrationDate" -> localDate(
@@ -38,7 +37,12 @@ class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
       invalidYear = "groupRegistrationDateReport.error.startDate.year.nan",
       invalidYearLength = "groupRegistrationDateReport.error.startDate.year.length",
       messageKeyPart = "groupRegistrationDateReport"
-    ).verifying(maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum"))
-      .verifying(minDate(LocalDate.of(2023, 12, 31), "groupRegistrationDateReport.error.startDate.dayMonthYear.minimum"))
+    )
+      .verifying(
+        maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum")
+      )
+      .verifying(
+        minDate(LocalDate.of(2023, 12, 31), "groupRegistrationDateReport.error.startDate.dayMonthYear.minimum")
+      )
   )
 }

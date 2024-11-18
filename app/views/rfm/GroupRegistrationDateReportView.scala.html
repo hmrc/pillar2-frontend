@@ -18,7 +18,7 @@
 @import play.twirl.api.Html
 @import viewmodels.LegendSize.Small
 @import views.html.components.gds.{HtmlHeading, paragraph, sectionHeader}
-
+@import views.ViewUtils.errorKey
 
 @this(
         layout: templates.Layout,
@@ -31,19 +31,19 @@
         paragraph: paragraph
 )
 
-
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-
-
 @layout(pageTitle = title(form, messages("groupRegistrationDateReport.title"))) {
-
 
     @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "rfmRegistrationDate.day")))
-
+            @govukErrorSummary(
+                ErrorSummaryViewModel(form, errorLinkOverrides = Map(
+                    "rfmRegistrationDate" -> errorKey1(form, "rfmRegistrationDate"
+                    )
+                ))
+            )
         }
 
         @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
@@ -52,12 +52,14 @@
 
         @paragraph(Html(messages("groupRegistrationDateReport.hint.desc")), "govuk-hint govuk-!-padding-bottom-3")
 
+
         @govukDateInput(
             DateViewModel(
                 field = form("rfmRegistrationDate"),
                 legend = LegendViewModel("")
             )
             .withHint(HintViewModel(messages("groupRegistrationDateReport.registrationDate.hint")))
+            .withFormGroupClasses("govuk-form-group--error")
         )
 
         @govukButton(
