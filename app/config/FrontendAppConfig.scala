@@ -101,11 +101,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
 
-  def allowlistEnabled:    Boolean     = configuration.getOptional[Boolean]("filters.allowlist.enabled").getOrElse(false)
-  lazy val allowListedIps: Seq[String] = configuration.get[Seq[String]]("filters.allowlist.ips")
-  lazy val destination:    String      = configuration.get[String]("filters.allowlist.destination")
-  lazy val excludedPaths:  Seq[String] = configuration.get[Seq[String]]("filters.allowlist.excluded")
-
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
 
