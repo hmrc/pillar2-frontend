@@ -41,19 +41,18 @@ object ViewUtils {
     val fieldErrors   = form.errors.filter(_.key.startsWith(fieldKey))
     val missingFields = fieldErrors.flatMap(_.args.map(_.toString)).distinct
 
-    if (missingFields.contains("month")) {
-      s"$fieldKey.month"
-    } else if (missingFields.contains("year")) {
-      s"$fieldKey.year"
-    } else if (missingFields.contains("day")) {
+    val invalidDay   = form(s"$fieldKey.day").value.exists(day => day.toIntOption.exists(d => d < 1 || d > 31))
+    val invalidMonth = form(s"$fieldKey.month").value.exists(month => month.toIntOption.exists(m => m < 1 || m > 12))
+    val invalidYear  = form(s"$fieldKey.year").value.exists(year => year.toIntOption.exists(y => y < 1000 || y > 9999))
+
+    if (invalidDay || fieldErrors.exists(_.key == s"$fieldKey.day") || missingFields.contains("day")) {
       s"$fieldKey.day"
+    } else if (invalidMonth || fieldErrors.exists(_.key == s"$fieldKey.month") || missingFields.contains("month")) {
+      s"$fieldKey.month"
+    } else if (invalidYear || fieldErrors.exists(_.key == s"$fieldKey.year") || missingFields.contains("year")) {
+      s"$fieldKey.year"
     } else {
-      fieldErrors
-        .find(_.key == s"$fieldKey.month")
-        .map(_ => s"$fieldKey.month")
-        .orElse(fieldErrors.find(_.key == s"$fieldKey.year").map(_ => s"$fieldKey.year"))
-        .orElse(fieldErrors.find(_.key == s"$fieldKey.day").map(_ => s"$fieldKey.day"))
-        .getOrElse(s"$fieldKey.day")
+      s"$fieldKey.day"
     }
   }
 
