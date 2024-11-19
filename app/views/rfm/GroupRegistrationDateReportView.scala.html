@@ -40,7 +40,7 @@
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(
                 ErrorSummaryViewModel(form, errorLinkOverrides = Map(
-                    "rfmRegistrationDate" -> errorKey1(form, "rfmRegistrationDate"
+                    "rfmRegistrationDate" -> localDateErrorKey(form, "rfmRegistrationDate"
                     )
                 ))
             )

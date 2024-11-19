@@ -18,6 +18,7 @@ package views
 
 import play.api.data.Form
 import play.api.i18n.Messages
+import play.twirl.api.Html
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
@@ -36,7 +37,7 @@ object ViewUtils {
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
 
-  def errorKey1(form: Form[_], fieldKey: String): String = {
+  def localDateErrorKey(form: Form[_], fieldKey: String): String = {
     val fieldErrors   = form.errors.filter(_.key.startsWith(fieldKey))
     val missingFields = fieldErrors.flatMap(_.args.map(_.toString)).distinct
 
@@ -83,4 +84,10 @@ object ViewUtils {
     val formattedTime = zonedTime.format(formatter)
     formattedTime
   }
+
+  def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =
+    screenReaderKey.fold(
+      Html(s"<span aria-hidden='true'>$visualKey</span>")
+    )(screenReaderAlt => Html(s"<span aria-hidden='true'>$visualKey</span> <span class='govuk-visually-hidden'>$screenReaderAlt</span>"))
+
 }
