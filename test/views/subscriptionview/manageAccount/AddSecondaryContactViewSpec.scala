@@ -14,30 +14,29 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
-import forms.RfmAddSecondaryContactFormProvider
-import models.NormalMode
+import forms.AddSecondaryContactFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmAddSecondaryContactView
+import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
-class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
+class AddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmAddSecondaryContactFormProvider
-  val page: RfmAddSecondaryContactView = inject[RfmAddSecondaryContactView]
+  val formProvider = new AddSecondaryContactFormProvider
+  val page: AddSecondaryContactView = inject[AddSecondaryContactView]
 
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe")(request, appConfig, messages).toString())
 
-  "Rfm Add Secondary Contact View" should {
+  "AddSecondaryContactView" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include("Add a secondary contact")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text must equal("Contact details")
     }
 
     "have a heading" in {
@@ -58,7 +57,7 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+      view.getElementsByClass("govuk-button").text must equal("Continue")
     }
   }
 }
