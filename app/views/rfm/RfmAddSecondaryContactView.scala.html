@@ -15,15 +15,19 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
+@import viewmodels.LegendSize.Medium
+@import views.html.components.gds.{heading, paragraphBody, sectionHeader}
 
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
-    govukButton: GovukButton
-    )
+    govukButton: GovukButton,
+    sectionHeader: sectionHeader,
+    paragraphBody: paragraphBody,
+    h1: heading
+)
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
@@ -32,16 +36,20 @@
     @formHelper(action = controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
-    }
-        <span class="govuk-caption-l">@messages("taskList.task.contact.heading")</span>
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
+        }
+
+        @sectionHeader(messages("taskList.task.contact.heading"))
+        @h1(messages("rfm.addSecondaryContact.title"), classes = "govuk-heading-l")
+
+        @paragraphBody(messages("rfm.addSecondaryContact.p1"))
+        @paragraphBody(messages("rfm.addSecondaryContact.p2"))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("rfm.addSecondaryContact.heading", contactName)).asPageHeading(Large)
+                legend = LegendViewModel(messages("rfm.addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading(Medium)
             )
-            .withHint(Hint(content = Text(messages("rfm.addSecondaryContact.hint"))))
         )
 
         @govukButton(

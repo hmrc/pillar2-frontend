@@ -15,8 +15,8 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Large
-@import views.html.components.gds.sectionHeader
+@import viewmodels.LegendSize.Medium
+@import views.html.components.gds.{heading, paragraphBody, sectionHeader}
 
 @this(
         layout: templates.Layout,
@@ -24,7 +24,9 @@
         sectionHeader: sectionHeader,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        paragraphBody: paragraphBody,
+        h1: heading,
 )
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -39,13 +41,16 @@
         }
 
         @sectionHeader(messages("taskList.task.contact.heading"))
+        @h1(messages("addSecondaryContact.title"), classes = "govuk-heading-l")
+
+        @paragraphBody(messages("addSecondaryContact.p1"))
+        @paragraphBody(messages("addSecondaryContact.p2"))
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("addSecondaryContact.heading", contactName)).asPageHeading(Large)
+                legend = LegendViewModel(messages("addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading(Medium)
             )
-            .withHint(Hint(content = Text(messages("addSecondaryContact.hint"))))
         )
 
         @govukButton(

@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.subscriptionview
 
 import base.ViewSpecBase
-import forms.RfmAddSecondaryContactFormProvider
+import forms.AddSecondaryContactFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmAddSecondaryContactView
+import views.html.subscriptionview.AddSecondaryContactView
 
-class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
+class AddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmAddSecondaryContactFormProvider
-  val page: RfmAddSecondaryContactView = inject[RfmAddSecondaryContactView]
+  val formProvider = new AddSecondaryContactFormProvider
+  val page: AddSecondaryContactView = inject[AddSecondaryContactView]
 
   val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
 
-  "Rfm Add Secondary Contact View" should {
+  "AddSecondaryContactView" should {
 
-    "have a title" in {
+    "have a title and a heading" in {
       view.getElementsByTag("title").text must include("Add a secondary contact")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text must equal("Contact details")
     }
 
     "have a heading" in {
