@@ -101,6 +101,14 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .map(s => s.take(maxLength))
   }
 
+  def nonWhitespaceRegexConformingStringWithMaxLength(regex: String, maxLength: Int): Gen[String] = {
+    val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char].suchThat(!_.isWhitespace))
+    val regexGen = RegexpGen.from(regex)(arbNonWhitespace)
+    regexGen
+      .suchThat(_.nonEmpty)
+      .map(s => s.take(maxLength))
+  }
+
   def stringsWithAtLeastOneSpecialChar(specialChars: String, maxLength: Int): Gen[String] = {
     require(specialChars.nonEmpty, "specialChars must not be empty")
     require(maxLength > 0, "maxLength must be positive")
