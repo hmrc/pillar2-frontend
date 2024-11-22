@@ -29,7 +29,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
 
-  implicit val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char].suchThat(!_.isWhitespace))
+  implicit val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char](Arbitrary.arbChar).suchThat(!_.isWhitespace))
 
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
