@@ -37,6 +37,25 @@ object ViewUtils {
   def errorPrefix(form: Form[_])(implicit messages: Messages): String =
     if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
 
+  def localDateErrorKey(form: Form[_], fieldKey: String): String = {
+    val fieldErrors   = form.errors.filter(_.key.startsWith(fieldKey))
+    val missingFields = fieldErrors.flatMap(_.args.map(_.toString)).distinct
+
+    val invalidDay   = form(s"$fieldKey.day").value.exists(day => day.toIntOption.exists(d => d < 1 || d > 31))
+    val invalidMonth = form(s"$fieldKey.month").value.exists(month => month.toIntOption.exists(m => m < 1 || m > 12))
+    val invalidYear  = form(s"$fieldKey.year").value.exists(year => year.toIntOption.exists(y => y < 1000 || y > 9999))
+
+    if (invalidDay || fieldErrors.exists(_.key == s"$fieldKey.day") || missingFields.contains("day")) {
+      s"$fieldKey.day"
+    } else if (invalidMonth || fieldErrors.exists(_.key == s"$fieldKey.month") || missingFields.contains("month")) {
+      s"$fieldKey.month"
+    } else if (invalidYear || fieldErrors.exists(_.key == s"$fieldKey.year") || missingFields.contains("year")) {
+      s"$fieldKey.year"
+    } else {
+      s"$fieldKey.day"
+    }
+  }
+
   def errorKey(form: Form[_], fieldKey: String): String = {
     val errorMessageKeys = form.errors.map(x => x.message).find(x => x.contains(fieldKey))
     val emptyErrorFields = form.errors.filter(x => x.key == fieldKey).flatMap(x => x.args.map(_.toString)).headOption

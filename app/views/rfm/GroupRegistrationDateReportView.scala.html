@@ -42,8 +42,12 @@
     @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "rfmRegistrationDate.day")))
-
+            @govukErrorSummary(
+                ErrorSummaryViewModel(form, errorLinkOverrides = Map(
+                    "rfmRegistrationDate" -> localDateErrorKey(form, "rfmRegistrationDate"
+                    )
+                ))
+            )
         }
 
         @sectionHeader(messages("groupRegistrationDateReport.heading.caption"))
