@@ -17,7 +17,7 @@
 package generators
 
 import models.{FinancialHistory, TransactionHistory}
-import org.scalacheck.Arbitrary._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -28,6 +28,7 @@ import scala.math.BigDecimal.RoundingMode
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  implicit val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char](Arbitrary.arbChar).suchThat(_ > ' '))
 
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
@@ -118,7 +119,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def invalidSortCodes: Gen[String] = {
     val digits    = Gen.numChar
-    val nonDigits = arbitrary[Char] suchThat (!_.isDigit)
+    val nonDigits = arbitrary[Char] suchThat (c => !c.isDigit && c != '-')
     for {
       n            <- Gen.choose(1, 5)
       digitPart    <- Gen.listOfN(n, digits)
