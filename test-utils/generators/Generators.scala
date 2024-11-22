@@ -17,7 +17,7 @@
 package generators
 
 import models.{FinancialHistory, TransactionHistory}
-import org.scalacheck.Arbitrary._
+import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -28,6 +28,8 @@ import scala.math.BigDecimal.RoundingMode
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
   implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+
+  implicit val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char].suchThat(!_.isWhitespace))
 
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
@@ -176,15 +178,6 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     RegexpGen
       .from(regex)
       .map(_.padTo(minLength + 1, 'a'))
-
-  def longNonWhitespaceRegexConformingString(regex: String, minLength: Int): Gen[String] = {
-    val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char].suchThat(!_.isWhitespace))
-    val regexGen = RegexpGen.from(regex)(arbNonWhitespace)
-    regexGen
-      .map { s =>
-        Stream.continually(s).take((minLength / s.length) + 1).mkString
-      }
-  }
 
   def stringsLongerThan(minLength: Int): Gen[String] = for {
     maxLength <- (minLength * 2).max(100)
