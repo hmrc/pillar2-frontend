@@ -758,11 +758,11 @@ checkYourAnswers.heading.caption = Review and submit
 checkYourAnswers.upe = Ultimate parent
 checkYourAnswers.nfm = Nominated filing member
 
-addSecondaryContact.title = Is there someone else we can contact?
-addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+addSecondaryContact.title = Add a secondary contact
+addSecondaryContact.p1 = We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible.
+addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
+addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
@@ -1049,11 +1049,11 @@ rfm.secondaryContactEmail.change.hidden = the secondary contact email address
 rfm.secondaryTelephonePreference.change.hidden = can we contact the secondary contact by telephone
 rfm.secondaryTelephone.change.hidden = the telephone number for the secondary contact
 
-rfm.addSecondaryContact.title = Is there someone else we can contact?
-rfm.addSecondaryContact.heading = Is there someone else we can contact if {0} is not available?
-rfm.addSecondaryContact.hint = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+rfm.addSecondaryContact.title = Add a secondary contact
+rfm.addSecondaryContact.p1 = We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible.
+rfm.addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
 rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
-rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
+rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
 rfm.secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
 rfm.secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
