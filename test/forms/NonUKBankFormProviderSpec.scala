@@ -114,7 +114,7 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(nonWhitespaceRegexConformingStringWithMaxLength(regex, maxLength))
+      generator = Some(longNonWhitespaceRegexConformingString(regex, maxLength))
     )
 
     behave like mandatoryField(
@@ -143,7 +143,7 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(nonWhitespaceRegexConformingStringWithMaxLength(regex, maxLength))
+      generator = Some(longNonWhitespaceRegexConformingString(regex, maxLength))
     )
 
     behave like mandatoryField(
