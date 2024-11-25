@@ -113,7 +113,8 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       maxLength = maxLength,
-      lengthError = FormError(fieldName, lengthKey, Seq(maxLength))
+      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
+      generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
 
     behave like mandatoryField(
