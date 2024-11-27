@@ -120,7 +120,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
 
   def invalidSortCodes: Gen[String] = {
     val digits    = Gen.numChar
-    val nonDigits = arbitrary[Char] suchThat (!_.isDigit)
+    val nonDigits = arbitrary[Char] suchThat (c => !c.isDigit && c != '-')
     for {
       n            <- Gen.choose(1, 5)
       digitPart    <- Gen.listOfN(n, digits)
