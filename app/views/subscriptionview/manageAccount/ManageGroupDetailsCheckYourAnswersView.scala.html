@@ -33,9 +33,12 @@
 
         @govukSummaryList(list)
 
-        @govukButton(
-            ButtonViewModel(messages("site.manage.save-and-continue")).withAttribute("id", "submit").withCssClass("govuk-!-margin-top-6")
-        )
+        @govukButton(Button(
+            element = Some("button"),
+            content = messages("site.manage.save-and-continue"),
+            preventDoubleClick = Some(true),
+            attributes = Map("id" -> "submit"),
+            classes = "govuk-!-margin-top-6"))
     }
 
 }
