@@ -19,22 +19,17 @@ package controllers
 import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.TransactionHistoryConnector
-import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
 import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
 import play.api.Logging
-import play.api.i18n.{I18nSupport, Messages}
+import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.SessionRepository
-import services.{ReferenceNumberService, SubscriptionService}
-import uk.gov.hmrc.govukfrontend.views.Aliases.Text
-import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
-import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import services.{ReferenceNumberService, SubscriptionService, TransactionHistoryViewService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
-import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -49,7 +44,8 @@ class TransactionHistoryController @Inject() (
   sessionRepository:                      SessionRepository,
   view:                                   TransactionHistoryView,
   noTransactionHistoryView:               NoTransactionHistoryView,
-  errorView:                              TransactionHistoryErrorView
+  errorView:                              TransactionHistoryErrorView,
+  transactionHistoryViewService:          TransactionHistoryViewService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -75,8 +71,10 @@ class TransactionHistoryController @Inject() (
             )
         updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
         _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
-        pagination = generatePagination(transactionHistory.financialHistory, page)
+        table <- OptionT.fromOption[Future](
+                   transactionHistoryViewService.generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory)
+                 )
+        pagination = transactionHistoryViewService.generatePagination(transactionHistory.financialHistory, page)
       } yield Ok(view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
 
       result
@@ -107,115 +105,5 @@ class TransactionHistoryController @Inject() (
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
     Future.successful(Ok(errorView()))
   }
-}
 
-object TransactionHistoryController {
-  val ROWS_ON_PAGE = 10
-
-  private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
-    messages:                                                   Messages
-  ): Option[Pagination] = {
-    val paginationIndex = page.getOrElse(1)
-    val numberOfPages   = financialHistory.grouped(ROWS_ON_PAGE).size
-
-    if (numberOfPages < 2) None
-    else
-      Some(
-        Pagination(
-          items = Some(generatePaginationItems(paginationIndex, numberOfPages)),
-          previous = generatePreviousLink(paginationIndex),
-          next = generateNextLink(paginationIndex, numberOfPages),
-          landmarkLabel = None,
-          attributes = Map.empty
-        )
-      )
-  }
-
-  private def generatePaginationItems(paginationIndex: Int, numberOfPages: Int): Seq[PaginationItem] =
-    Range
-      .inclusive(1, numberOfPages)
-      .map(pageIndex =>
-        PaginationItem(
-          href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(pageIndex)).url,
-          number = Some(pageIndex.toString),
-          visuallyHiddenText = None,
-          current = Some(pageIndex == paginationIndex),
-          ellipsis = None,
-          attributes = Map.empty
-        )
-      )
-
-  private def generatePreviousLink(paginationIndex: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == 1) None
-    else {
-      Some(
-        PaginationLink(
-          href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(paginationIndex - 1)).url,
-          text = Some(messages("transactionHistory.pagination.previous")),
-          labelText = None,
-          attributes = Map.empty
-        )
-      )
-    }
-
-  private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == numberOfPages) None
-    else {
-      Some(
-        PaginationLink(
-          href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(paginationIndex + 1)).url,
-          text = Some(messages("transactionHistory.pagination.next")),
-          labelText = None,
-          attributes = Map.empty
-        )
-      )
-    }
-
-  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, financialHistory: Seq[FinancialHistory])(implicit
-    messages:                                                               Messages
-  ): Option[Table] = {
-    val currentPage: Option[Seq[FinancialHistory]] = financialHistory.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
-
-    currentPage.map { historyOnPage =>
-      val rows = historyOnPage.map(createTableRows)
-      createTable(rows)
-    }
-  }
-
-  private def createTable(rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table =
-    Table(
-      rows = rows,
-      head = Some(
-        Seq(
-          HeadCell(Text(messages("transactionHistory.date")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.description")), attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
-        )
-      )
-    )
-
-  private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val df = new DecimalFormat("#,###.00")
-
-    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
-    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
-
-    Seq(
-      TableRow(
-        content = Text(history.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
-      ),
-      TableRow(
-        content = Text(history.paymentType)
-      ),
-      TableRow(
-        content = Text(amountPaid),
-        classes = "govuk-table__cell--numeric"
-      ),
-      TableRow(
-        content = Text(amountRepaid),
-        classes = "govuk-table__cell--numeric"
-      )
-    )
-  }
 }
