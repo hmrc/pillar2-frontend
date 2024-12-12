@@ -16,6 +16,10 @@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
+@import views.html.paymenthistory.styles.tableScrollStyles
+@import views.html.components.gds.ScrollWrapper
 
 @this(
         layout: templates.Layout,
@@ -28,19 +32,19 @@
 @(table: Table, pagination: Option[Pagination], registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @pageLayout(contentBlock: Html) = {
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-full">
-        @contentBlock
-        </div>
-    </div>
+      @contentBlock
 }
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), pageLayout = pageLayout) {
 
+    @tableScrollStyles()
+
     @heading(messages("transactionHistory.heading"))
     @p(messages("transactionHistory.p1"))
 
-    @govukTable(table)
+    @ScrollWrapper {
+        @govukTable(table)
+    }
 
     @pagination.map { pag =>
         @govukPagination(pag)
