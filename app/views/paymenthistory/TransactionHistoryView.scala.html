@@ -15,38 +15,91 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
-@import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.Pagination
-@import views.html.paymenthistory.styles.tableScrollStyles
-@import views.html.components.gds.ScrollWrapper
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukTable, GovukPagination}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{Table, TableRow, HeadCell}
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
+@import models.FinancialHistory
+@import views.html.helper._
+@import views.html.components.gds.tableScrollStyles // Import the table scroll styles
 
 @this(
-        layout: templates.Layout,
-        heading: heading,
-        p: paragraphBody,
-        govukPagination: GovukPagination,
-        govukTable: GovukTable
+    layout: templates.Layout,
+    govukTable: GovukTable,
+    govukPagination: GovukPagination,
+    headingH2: components.gds.HeadingH2,
+    paragraph: components.gds.paragraph, 
+    tableScrollWrapper: components.gds.TableScrollWrapper // Ensure this component is defined
 )
 
-@(table: Table, pagination: Option[Pagination], registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(financialTransactions: Seq[FinancialHistory], currentPage: Option[Int], registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@pageLayout(contentBlock: Html) = {
-      @contentBlock
-}
+@layout(
+    pageTitle = messages("transactionHistory.title"),
+    showBackLink = true,
+    maybeClientPillar2Id = None
+) {
+    @tableScrollStyles() // Include the table scroll styles
+    @headingH2(messages("transactionHistory.heading"))
+    @paragraph(Html(messages("transactionHistory.p1")))
 
-@layout(pageTitle = titleNoForm(messages("transactionHistory.title")), pageLayout = pageLayout) {
-
-    @tableScrollStyles()
-
-    @heading(messages("transactionHistory.heading"))
-    @p(messages("transactionHistory.p1"))
-
-    @ScrollWrapper {
-        @govukTable(table)
+    @tableScrollWrapper {
+        @{
+            val rowsPerPage = 10
+            val pageNumber = currentPage.getOrElse(1)
+            val startIndex = (pageNumber - 1) * rowsPerPage
+            val pagedTransactions = financialTransactions.slice(startIndex, startIndex + rowsPerPage)
+            
+            govukTable(Table(
+                head = Some(Seq(
+                    HeadCell(content = Text(messages("transactionHistory.date"))),
+                    HeadCell(content = Text(messages("transactionHistory.description"))),
+                    HeadCell(content = Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric"),
+                    HeadCell(content = Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric")
+                )),
+                rows = pagedTransactions.map { transaction =>
+                    Seq(
+                        TableRow(content = Text(transaction.date.format(java.time.format.DateTimeFormatter.ofPattern("dd MMM yyyy")))),
+                        TableRow(content = Text(transaction.paymentType)),
+                        TableRow(
+                            content = Text(f"£${transaction.amountPaid}%,.2f"),
+                            classes = "govuk-table__cell--numeric"
+                        ),
+                        TableRow(
+                            content = Text(f"£${transaction.amountRepaid}%,.2f"),
+                            classes = "govuk-table__cell--numeric"
+                        )
+                    )
+                }
+            ))
+        }
     }
 
-    @pagination.map { pag =>
-        @govukPagination(pag)
+    @{
+        val totalPages = Math.ceil(financialTransactions.size.toDouble / 10).toInt
+        if (totalPages > 1) {
+            val pagination = Pagination(
+                items = Some((1 to totalPages).map { page =>
+                    PaginationItem(
+                        href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(page)).url,
+                        number = Some(page.toString),
+                        current = Some(page == currentPage.getOrElse(1))
+                    )
+                }),
+                previous = if (currentPage.getOrElse(1) > 1) {
+                    Some(PaginationLink(
+                        href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(currentPage.getOrElse(1) - 1)).url,
+                        text = Some(messages("transactionHistory.pagination.previous"))
+                    ))
+                } else None,
+                next = if (currentPage.getOrElse(1) < totalPages) {
+                    Some(PaginationLink(
+                        href = routes.TransactionHistoryController.onPageLoadTransactionHistory(Some(currentPage.getOrElse(1) + 1)).url,
+                        text = Some(messages("transactionHistory.pagination.next"))
+                    ))
+                } else None
+            )
+            govukPagination(pagination)
+        }
     }
 }

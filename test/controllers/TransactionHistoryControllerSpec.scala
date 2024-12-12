@@ -27,7 +27,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{SubscriptionService, TransactionHistoryViewService}
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core._
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
