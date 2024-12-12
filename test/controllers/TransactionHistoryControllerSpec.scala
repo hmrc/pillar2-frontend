@@ -18,7 +18,6 @@ package controllers
 
 import base.SpecBase
 import connectors.TransactionHistoryConnector
-import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import helpers.ViewInstances
 import models._
 import models.subscription._
@@ -57,6 +56,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
       )
     )
+
   val transactionHistoryResponsePagination: TransactionHistory =
     TransactionHistory(
       PlrReference,
@@ -95,6 +95,9 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+
+        val transactionHistoryViewService = application.injector.instanceOf[TransactionHistoryViewService]
+
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
@@ -102,13 +105,16 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
           .thenReturn(Future.successful(transactionHistoryResponse))
+
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
-          generatePagination(transactionHistoryResponse.financialHistory, None),
+          transactionHistoryViewService
+            .generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory)
+            .get,
+          transactionHistoryViewService.generatePagination(transactionHistoryResponse.financialHistory, None),
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
@@ -131,6 +137,9 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+
+        val transactionHistoryViewService = application.injector.instanceOf[TransactionHistoryViewService]
+
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
@@ -138,13 +147,16 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
           .thenReturn(Future.successful(transactionHistoryResponsePagination))
+
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
-          generatePagination(transactionHistoryResponsePagination.financialHistory, None),
+          transactionHistoryViewService
+            .generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory)
+            .get,
+          transactionHistoryViewService.generatePagination(transactionHistoryResponsePagination.financialHistory, None),
           subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
         )(
           request,
@@ -167,17 +179,19 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(NoResultFound))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.failed(NoResultFound))
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/payment/history-empty")
-
       }
     }
 
@@ -193,12 +207,15 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
         when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.failed(UnexpectedResponse))
+
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -240,6 +257,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadNoTransactionHistory().url)
+
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
@@ -250,7 +268,9 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val view   = application.injector.instanceOf[NoTransactionHistoryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
+        contentAsString(result) mustEqual view(
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        )(
           request,
           applicationConfig,
           messages(application)

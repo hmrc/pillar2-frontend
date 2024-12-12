@@ -19,20 +19,20 @@
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
 @this(
-    govukLayout: GovukLayout,
-    govukBackLink: GovukBackLink,
-    hmrcHead: HmrcHead,
-    hmrcStandardHeader: HmrcStandardHeader,
-    hmrcStandardFooter: HmrcStandardFooter,
-    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-    hmrcLanguageSelect: HmrcLanguageSelect,
-    hmrcTimeoutDialog: HmrcTimeoutDialog,
-    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
-    hmrcScripts: HmrcScripts,
-    betaBanner: StandardBetaBanner,
-    stylesheets: Stylesheets,
-    twoThirdsContent: TwoThirdsMainContent
+        govukLayout: GovukLayout,
+        govukBackLink: GovukBackLink,
+        hmrcHead: HmrcHead,
+        hmrcStandardHeader: HmrcStandardHeader,
+        hmrcStandardFooter: HmrcStandardFooter,
+        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+        hmrcLanguageSelect: HmrcLanguageSelect,
+        hmrcTimeoutDialog: HmrcTimeoutDialog,
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+        autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
+        hmrcScripts: HmrcScripts,
+        betaBanner: StandardBetaBanner,
+        stylesheets: Stylesheets,
+        twoThirdsContent: TwoThirdsMainContent
 
 )
 
@@ -41,8 +41,8 @@
 
 
 @scripts = {
-    @hmrcScripts()
-    @autocompleteJavascript()
+@hmrcScripts()
+@autocompleteJavascript()
     <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
     <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
     <script @{CSPNonce.attr}>window.GOVUKFrontend.initAll();</script>
@@ -50,37 +50,37 @@
 
 @head = {
 
-    @hmrcHead(
-        headBlock = if(timeout) { Some(
-            hmrcTimeoutDialog(TimeoutDialog(
-                timeout             = Some(appConfig.timeout),
-                countdown           = Some(appConfig.countdown),
-                keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
-                keepAliveButtonText = Some(messages("timeout.keepAlive")),
-                timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
-                signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
-                signOutButtonText   = Some(messages("timeout.signOut")),
-                title               = Some(messages("timeout.title")),
-                message             = Some(messages("timeout.message"))
-                )
-            ))
-        } else None
-    )
-    @stylesheets()
+@hmrcHead(
+    headBlock = if(timeout) { Some(
+        hmrcTimeoutDialog(TimeoutDialog(
+            timeout             = Some(appConfig.timeout),
+            countdown           = Some(appConfig.countdown),
+            keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
+            keepAliveButtonText = Some(messages("timeout.keepAlive")),
+            timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
+            signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
+            signOutButtonText   = Some(messages("timeout.signOut")),
+            title               = Some(messages("timeout.title")),
+            message             = Some(messages("timeout.message"))
+        )
+        ))
+    } else None
+)
+@stylesheets()
 }
 
 @beforeContent = {
 
-    @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
-    }
+@if(showBackLink) {
+    @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
+}
 }
 
 @content = {
-    @contentBlock
+@contentBlock
 
     <div class="govuk-!-margin-top-8">
-        @hmrcReportTechnicalIssueHelper()
+    @hmrcReportTechnicalIssueHelper()
     </div>
 }
 
@@ -89,8 +89,8 @@
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = if (serviceBannerClickable) {
-                        if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
-                      } else {None},
+            if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
+        } else {None},
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),

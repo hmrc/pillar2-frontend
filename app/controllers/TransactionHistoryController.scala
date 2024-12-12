@@ -75,9 +75,14 @@ class TransactionHistoryController @Inject() (
             )
         updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
         _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
-      } yield Ok(view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
+      } yield Ok(
+        view(
+          transactionHistory.financialHistory,
+          page,
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+        )
+      )
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -85,7 +90,6 @@ class TransactionHistoryController @Inject() (
           case NoResultFound      => Redirect(routes.TransactionHistoryController.onPageLoadNoTransactionHistory())
           case UnexpectedResponse => Redirect(routes.TransactionHistoryController.onPageLoadError())
         }
-
     }
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
@@ -106,7 +110,7 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(errorView())
+    Future.successful(Ok(errorView()))
   }
 }
 
