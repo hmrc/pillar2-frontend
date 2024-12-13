@@ -85,7 +85,6 @@ class TransactionHistoryController @Inject() (
           case NoResultFound      => Redirect(routes.TransactionHistoryController.onPageLoadNoTransactionHistory())
           case UnexpectedResponse => Redirect(routes.TransactionHistoryController.onPageLoadError())
         }
-
     }
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
@@ -106,7 +105,7 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
-    Future successful Ok(errorView())
+    Future.successful(Ok(errorView()))
   }
 }
 
@@ -177,8 +176,8 @@ object TransactionHistoryController {
   ): Option[Table] = {
     val currentPage: Option[Seq[FinancialHistory]] = financialHistory.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
 
-    currentPage.map { financialHistory =>
-      val rows = financialHistory.map(createTableRows)
+    currentPage.map { historyOnPage =>
+      val rows = historyOnPage.map(createTableRows)
       createTable(rows)
     }
   }
@@ -188,10 +187,10 @@ object TransactionHistoryController {
       rows = rows,
       head = Some(
         Seq(
-          HeadCell(Text(messages("transactionHistory.date"))),
-          HeadCell(Text(messages("transactionHistory.description"))),
-          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric"),
-          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric")
+          HeadCell(Text(messages("transactionHistory.date")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("transactionHistory.description")), attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col")),
+          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
         )
       )
     )
