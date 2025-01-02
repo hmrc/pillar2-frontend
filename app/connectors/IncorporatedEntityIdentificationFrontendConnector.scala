@@ -21,8 +21,10 @@ import models.grs.{GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,7 +36,7 @@ trait IncorporatedEntityIdentificationFrontendConnector {
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
   appConfig:  FrontendAppConfig,
-  httpClient: HttpClient
+  httpClient: HttpClientV2
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
@@ -55,12 +57,14 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       accessibilityUrl = appConfig.accessibilityStatementPath,
       labels = serviceName
     )
-    httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-      s"$apiUrl/limited-company-journey",
-      registrationRequest
-    )
+    httpClient
+      .post(url"$apiUrl/limited-company-journey")
+      .withBody(Json.toJson(registrationRequest))
+      .execute[GrsCreateRegistrationResponse]
   }
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
-    httpClient.GET[IncorporatedEntityRegistrationData](s"$apiUrl/journey/$journeyId")
+    httpClient
+      .get(url"$apiUrl/journey/$journeyId")
+      .execute[IncorporatedEntityRegistrationData]
 }

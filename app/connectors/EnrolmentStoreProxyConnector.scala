@@ -23,14 +23,15 @@ import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClient) extends Logging {
+class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def getGroupIds(plrReference: String)(implicit
     hc:                         HeaderCarrier
@@ -38,9 +39,8 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     http
-      .GET[HttpResponse](
-        submissionUrl
-      )(rds = readRaw, hc = hc, ec = ec)
+      .get(url"$submissionUrl")
+      .execute[HttpResponse](readRaw, ec)
       .map {
         case response if response.status == OK =>
           logger.info(s"getGroupIds - success")
@@ -57,19 +57,23 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
 
   def getKnownFacts(knownFacts: KnownFactsParameters)(implicit hc: HeaderCarrier): Future[KnownFactsResponse] = {
     val submissionUrl = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments"
-    http.POST[KnownFactsParameters, HttpResponse](submissionUrl, knownFacts).flatMap { response =>
-      if (response.status == OK) {
-        logger.info("getKnownFacts - received ok status")
-        response.json.validate[KnownFactsResponse] match {
-          case JsSuccess(correctResponse, _) => correctResponse.toFuture
-          case JsError(_) =>
-            logger.error("Known facts response from tax enrolment received in unexpected json form")
-            Future.failed(UnexpectedJsResult)
+    http
+      .post(url"$submissionUrl")
+      .withBody(Json.toJson(knownFacts))
+      .execute[HttpResponse]
+      .flatMap { response =>
+        if (response.status == OK) {
+          logger.info("getKnownFacts - received ok status")
+          response.json.validate[KnownFactsResponse] match {
+            case JsSuccess(correctResponse, _) => correctResponse.toFuture
+            case JsError(_) =>
+              logger.error("Known facts response from tax enrolment received in unexpected json form")
+              Future.failed(UnexpectedJsResult)
+          }
+        } else {
+          logger.warn(s"get known facts returned an unexpected response : ${response.status} with body ${response.body}")
+          Future.failed(InternalIssueError)
         }
-      } else {
-        logger.warn(s"get known facts returned an unexpected response : ${response.status} with body ${response.body}")
-        Future.failed(InternalIssueError)
       }
-    }
   }
 }

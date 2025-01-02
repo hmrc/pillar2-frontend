@@ -22,7 +22,6 @@ import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RepaymentsContactNamePage
-import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -34,7 +33,6 @@ import scala.concurrent.Future
 class RepaymentsContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider()
-  val form: Form[String] = formProvider()
 
   "Repayments Contact Name Controller" when {
 
@@ -58,7 +56,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RepaymentsContactNameView]
         val result = route(application, request).value
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(form, NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -114,13 +112,10 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("contactName", ""))
-        val boundForm = formProvider().bind(Map("value" -> ""))
-        val view      = application.injector.instanceOf[RepaymentsContactNameView]
-        val result    = route(application, request).value
+        val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) must include("Enter name of the person or team we should contact for this refund request")
       }
     }
-
   }
 }

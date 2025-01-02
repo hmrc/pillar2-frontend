@@ -128,7 +128,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) must include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
 
@@ -148,7 +148,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
             val result = route(customApplication, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") mustNot include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
       }
@@ -187,7 +187,9 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
           running(application) {
             val result = route(application, postRequest("postalCode" -> textOver35Chars)).value
 
-            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include(
+              """<option value="GB" selected>United Kingdom</option>""".replaceAll("\\s", "")
+            )
           }
         }
 
@@ -208,7 +210,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
           running(customApplication) {
             val result = route(customApplication, postRequest("postalCode" -> textOver35Chars)).value
 
-            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") mustNot include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
       }

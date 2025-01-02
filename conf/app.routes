@@ -328,7 +328,7 @@ GET         /replace-filing-member/error/duplicate-registration                 
 GET         /replace-filing-member/error/standard-organisation                                       controllers.rfm.StandardOrganisationController.onPageLoad
 GET         /replace-filing-member/error/individual                                                  controllers.rfm.IndividualController.onPageLoad
 GET         /replace-filing-member/error/agent-sign-in                                               controllers.AgentController.onPageLoad
-GET        /replace-filing-member/error/amend-API-failure                                            controllers.rfm.AmendApiFailureController.onPageLoad
+GET         /replace-filing-member/error/amend-API-failure                                           controllers.rfm.AmendApiFailureController.onPageLoad
 
 GET         /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/business-matching/filing-member/no-id/input-name                  controllers.rfm.RfmNameRegistrationController.onSubmit(mode: Mode = NormalMode)

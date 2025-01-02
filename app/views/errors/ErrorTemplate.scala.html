@@ -14,13 +14,10 @@
  * limitations under the License.
  *@
 
-@import config.FrontendAppConfig
-@this(
-    layout: templates.Layout
-)
+@import config._
+@this(layout: templates.Layout)
 
-
-@(pageTitle: String, heading: String, message: String)(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
+@(pageTitle: String, heading: String, message: String)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(pageTitle), showBackLink = false) {
     <h1 class="govuk-heading-xl">@messages(heading)</h1>

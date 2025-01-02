@@ -18,16 +18,17 @@ package stubsonly.connectors
 
 import config.FrontendAppConfig
 import play.api.Logger
-import play.api.libs.json.JsValue
+import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class TestOnlyConnector @Inject() (
   appConfig:  FrontendAppConfig,
-  httpClient: HttpClient
+  httpClient: HttpClientV2
 )(implicit
   val ec: ExecutionContext
 ) {
@@ -38,29 +39,22 @@ class TestOnlyConnector @Inject() (
     s"${appConfig.pillar2BaseUrl}/report-pillar2-top-up-taxes/test-only"
 
   def clearAllData()(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET(
-      s"$pillar2Url/clear-all"
-    )
+    httpClient.get(url"$pillar2Url/clear-all").execute[HttpResponse]
 
   def clearCurrentData(id: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET(
-      s"$pillar2Url/clear-current/$id"
-    )
+    httpClient.get(url"$pillar2Url/clear-current/$id").execute[HttpResponse]
 
   def getAllRecords()(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET(
-      s"$pillar2Url/get-all"
-    )
+    httpClient.get(url"$pillar2Url/get-all").execute[HttpResponse]
 
   def upsertRecord(id: String, data: JsValue)(implicit hc: HeaderCarrier): Future[Unit] =
     httpClient
-      .POST[JsValue, HttpResponse](s"$pillar2Url/upsertRecord/$id", data)
+      .post(url"$pillar2Url/upsertRecord/$id")
+      .withBody(Json.toJson(data))
+      .execute[HttpResponse]
       .map { response =>
         response.status match {
-          case 200 => // OK
-            ()
-          case 201 => // Created
-            ()
+          case 200 | 201 => ()
           case status @ (400 | 404) =>
             val errorMessage = s"Error status: $status, body: ${response.body}"
             logger.error(errorMessage)
@@ -73,8 +67,5 @@ class TestOnlyConnector @Inject() (
       }
 
   def deEnrol(groupId: String, pillar2Reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
-    httpClient.GET(
-      s"$pillar2Url/de-enrol/$groupId/$pillar2Reference"
-    )
-
+    httpClient.get(url"$pillar2Url/de-enrol/$groupId/$pillar2Reference").execute[HttpResponse]
 }

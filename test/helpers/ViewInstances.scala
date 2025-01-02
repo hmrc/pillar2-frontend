@@ -19,6 +19,7 @@ package helpers
 import base.SpecBase
 import play.api.i18n.DefaultLangs
 import uk.gov.hmrc.govukfrontend.views.html.components._
+import uk.gov.hmrc.govukfrontend.views.html.helpers.{GovukFormGroup, GovukHintAndErrorMessage}
 import uk.gov.hmrc.hmrcfrontend.config._
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
 import uk.gov.hmrc.hmrcfrontend.views.html.components._
@@ -58,7 +59,7 @@ trait ViewInstances extends StubMessageControllerComponents {
     )
   )
   val hmrcStandardFooter = new HmrcStandardFooter(
-    new HmrcFooter,
+    new HmrcFooter(new GovukFooter),
     new HmrcFooterItems(new AccessibilityStatementConfig(configuration))
   )
 
@@ -69,12 +70,15 @@ trait ViewInstances extends StubMessageControllerComponents {
   val hmrcScripts        = new HmrcScripts(assetsConfig)
   val hmrcTimeoutDilogue = new HmrcTimeoutDialog
 
+  private val govukHintAndErrorMessage: GovukHintAndErrorMessage =
+    new GovukHintAndErrorMessage(new GovukHint(), new GovukErrorMessage())
+
   val languageUtils            = new LanguageUtils(new DefaultLangs(), configuration)
   val govukHint                = new GovukHint
-  val govukRadios              = new GovukRadios(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
-  val govukInput               = new GovukInput(new GovukErrorMessage, new GovukHint, new GovukLabel)
-  val govukDateInput           = new GovukDateInput(new GovukErrorMessage, new GovukHint, new GovukFieldset, govukInput)
-  val govukCheckboxes          = new GovukCheckboxes(new GovukErrorMessage, new GovukFieldset, new GovukHint, new GovukLabel)
+  val govukRadios              = new GovukRadios(new GovukFieldset, new GovukHint, new GovukLabel, new GovukFormGroup, govukHintAndErrorMessage)
+  val govukInput               = new GovukInput(new GovukLabel, new GovukFormGroup, govukHintAndErrorMessage)
+  val govukDateInput           = new GovukDateInput(new GovukFieldset, govukInput, new GovukFormGroup, govukHintAndErrorMessage)
+  val govukCheckboxes          = new GovukCheckboxes(new GovukFieldset, new GovukHint, new GovukLabel, new GovukFormGroup, govukHintAndErrorMessage)
   val govukLabel               = new GovukLabel()
   val govukDetails             = new GovukDetails
   val govukPanel               = new GovukPanel
@@ -84,7 +88,7 @@ trait ViewInstances extends StubMessageControllerComponents {
   val govukErrorSummary        = new GovukErrorSummary
   val govukErrorMessage        = new GovukErrorMessage
   val govukSummaryList         = new GovukSummaryList
-  val govukSelect              = new GovukSelect(new GovukErrorMessage, new GovukHint, new GovukLabel)
+  val govukSelect              = new GovukSelect(new GovukLabel, new GovukFormGroup, govukHintAndErrorMessage)
   val govukBackLink            = new GovukBackLink
   val govukWarningText         = new GovukWarningText
   val formWithCSRF             = new FormWithCSRF

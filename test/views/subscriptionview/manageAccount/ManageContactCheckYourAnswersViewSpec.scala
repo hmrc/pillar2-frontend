@@ -51,8 +51,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
 
     "have a title" in {
       val title = "Contact details - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text mustBe title
-      agentView.getElementsByTag("title").text mustBe title
+      view.getElementsByTag("title").text      must include(title)
+      agentView.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {

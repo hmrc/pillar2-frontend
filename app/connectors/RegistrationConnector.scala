@@ -20,24 +20,29 @@ import config.FrontendAppConfig
 import models.InternalIssueError
 import models.registration.RegistrationWithoutIDResponse
 import play.api.Logging
+import play.api.libs.json.Json
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.is2xx
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClient)(implicit
-  ec:                                                             ExecutionContext
+class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClientV2)(
+  implicit ec:                                                    ExecutionContext
 ) extends Logging {
   private val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
   private val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"
   private val rfmRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/rfm/registration"
 
   def registerUltimateParent(id: String)(implicit hc: HeaderCarrier): Future[String] =
-    http.POSTEmpty(s"$upeRegistrationUrl/$id") flatMap {
+    http
+      .post(url"$upeRegistrationUrl/$id")
+      .withBody(Json.obj())
+      .execute[HttpResponse] flatMap {
       case response if is2xx(response.status) =>
         logger.info(s" UPE register without ID successful with response ${response.status}")
         response.json.as[RegistrationWithoutIDResponse].safeId.value.toFuture
@@ -47,7 +52,10 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     }
 
   def registerFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
-    http.POSTEmpty(s"$fmRegistrationUrl/$id") flatMap {
+    http
+      .post(url"$fmRegistrationUrl/$id")
+      .withBody(Json.obj())
+      .execute[HttpResponse] flatMap {
       case response if is2xx(response.status) =>
         logger.info(
           s"Filing Member registration without ID successful with response ${response.status}"
@@ -61,7 +69,10 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
     }
 
   def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
-    http.POSTEmpty(s"$rfmRegistrationUrl/$id") flatMap {
+    http
+      .post(url"$rfmRegistrationUrl/$id")
+      .withBody(Json.obj())
+      .execute[HttpResponse] flatMap {
       case response if is2xx(response.status) =>
         logger.info(
           s"Replace Filing Member registration without ID successful with response ${response.status}"

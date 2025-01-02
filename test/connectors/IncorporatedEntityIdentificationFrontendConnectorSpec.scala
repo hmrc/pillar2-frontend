@@ -16,20 +16,20 @@
 
 package connectors
 
-import base.SpecBase
+import base.MockitoStubUtils
 import helpers.ViewInstances
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{NormalMode, UserType}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => Meq}
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.StringContextOps
 
 import scala.concurrent.Future
 
-class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase with ViewInstances {
+class IncorporatedEntityIdentificationFrontendConnectorSpec extends MockitoStubUtils with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl: String = s"${applicationConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
   val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient)
@@ -52,24 +52,12 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase wit
           labels = serviceName
         )
 
-      when(
-        mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          any(),
-          any(),
-          any()
-        )(any(), any(), any(), any())
-      )
+      when(executePost[GrsCreateRegistrationResponse](Json.toJson(expectedIncorporatedEntityCreateRegistrationRequest)))
         .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
 
       val result = connector.createLimitedCompanyJourney(UserType.Upe, NormalMode).futureValue
       result shouldBe validGrsCreateRegistrationResponse
-      verify(mockHttpClient, times(1))
-        .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          ArgumentMatchers.eq(expectedUrl),
-          ArgumentMatchers.eq(expectedIncorporatedEntityCreateRegistrationRequest),
-          any()
-        )(any(), any(), any(), any())
-
+      verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
     "must return OK status for createLimitedCompanyJourney for RFM" in {
@@ -86,35 +74,18 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends SpecBase wit
           labels = serviceName
         )
 
-      when(
-        mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          any(),
-          any(),
-          any()
-        )(any(), any(), any(), any())
-      )
+      when(executePost[GrsCreateRegistrationResponse](Json.toJson(expectedIncorporatedEntityCreateRegistrationRequest)))
         .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
 
       val result = connector.createLimitedCompanyJourney(UserType.Rfm, NormalMode).futureValue
       result shouldBe validGrsCreateRegistrationResponse
-      verify(mockHttpClient, times(1))
-        .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          ArgumentMatchers.eq(expectedUrl),
-          ArgumentMatchers.eq(expectedIncorporatedEntityCreateRegistrationRequest),
-          any()
-        )(any(), any(), any(), any())
-
+      verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
     "getJourneyData should be successful" in {
-      when(
-        mockHttpClient.GET[IncorporatedEntityRegistrationData](any(), any(), any())(any(), any(), any())
-      )
-        .thenReturn(Future.successful(validRegisterWithIdResponse))
+      when(executeGet[IncorporatedEntityRegistrationData]).thenReturn(Future.successful(validRegisterWithIdResponse))
       val result = connector.getJourneyData("1234")
-      whenReady(result) { response =>
-        response shouldBe validRegisterWithIdResponse
-      }
+      whenReady(result)(response => response shouldBe validRegisterWithIdResponse)
     }
   }
 

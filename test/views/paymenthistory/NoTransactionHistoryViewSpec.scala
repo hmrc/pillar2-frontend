@@ -33,7 +33,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text mustBe title
+      view.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {

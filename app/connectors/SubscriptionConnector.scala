@@ -24,21 +24,24 @@ import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.HttpReads.is2xx
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
-  val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+  private val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
   def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
     http
-      .POST[SubscriptionRequestParameters, HttpResponse](subscriptionUrl, subscriptionRequestParameters)
+      .post(url"$subscriptionUrl")
+      .withBody(Json.toJson(subscriptionRequestParameters))
+      .execute[HttpResponse]
       .flatMap {
         case response if is2xx(response.status) =>
           logger.info(s" Subscription request is successful with status ${response.status} ")
@@ -59,7 +62,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
   )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
-      .GET[HttpResponse](subscriptionUrl)
+      .get(url"$subscriptionUrl")
+      .execute[HttpResponse]
       .map {
         case response if response.status == 200 =>
           Some(Json.parse(response.body).as[SubscriptionData])
@@ -75,7 +79,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
-      .GET[HttpResponse](subscriptionUrl)
+      .get(url"$subscriptionUrl")
+      .execute[HttpResponse]
       .flatMap {
         case response if response.status == 200 =>
           Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
@@ -90,7 +95,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     userId:      String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
     http
-      .GET[HttpResponse](s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .execute[HttpResponse]
       .map {
         case response if response.status == 200 =>
           Some(Json.parse(response.body).as[SubscriptionLocalData])
@@ -103,10 +109,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
     hc:            HeaderCarrier
   ): Future[JsValue] =
     http
-      .POST[JsValue, HttpResponse](
-        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId",
-        subscriptionLocalData
-      )
+      .post(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
+      .withBody(Json.toJson(subscriptionLocalData))
+      .execute[HttpResponse]
       .map { response =>
         response.status match {
           case OK => subscriptionLocalData
@@ -116,10 +121,9 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
     http
-      .PUT[AmendSubscription, HttpResponse](
-        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId",
-        amendData
-      )
+      .put(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId")
+      .withBody(Json.toJson(amendData))
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
           case OK =>
