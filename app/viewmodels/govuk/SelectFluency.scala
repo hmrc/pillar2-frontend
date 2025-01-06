@@ -18,6 +18,7 @@ package viewmodels.govuk
 
 import play.api.data.Field
 import play.api.i18n.Messages
+import uk.gov.hmrc.govukfrontend.views.viewmodels.FormGroup
 import uk.gov.hmrc.govukfrontend.views.viewmodels.hint.Hint
 import uk.gov.hmrc.govukfrontend.views.viewmodels.label.Label
 import uk.gov.hmrc.govukfrontend.views.viewmodels.select.{Select, SelectItem}
@@ -52,7 +53,7 @@ trait SelectFluency {
       select copy (describedBy = Some(value))
 
     def withFormGroupClasses(classes: String): Select =
-      select copy (formGroupClasses = classes)
+      select copy (formGroup = FormGroup(classes = Some(classes)))
 
     def withCssClass(newClass: String): Select =
       select copy (classes = s"${select.classes} $newClass")

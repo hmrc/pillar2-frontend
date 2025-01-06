@@ -61,19 +61,21 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         result mustBe models.InternalIssueError
       }
     }
+
     "allocate Enrolment" should {
       val allocateBody = AllocateEnrolmentParameters("id", verifiers = Seq(Verifier("nonUkPostalCode", "1231"), Verifier("countryCode", "DS")))
       "return done in case of a CREATED response from tax enrolment " in {
         stubResponse("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", CREATED, "")
+
         val result = connector.allocateEnrolment("id", "plrId", allocateBody)
         result.futureValue mustBe Done
       }
+
       "return a failed result in case of any response else than 201" in {
         stubResponse("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
         val result = connector.allocateEnrolment("id", "plrId", allocateBody).failed.futureValue
         result mustBe models.InternalIssueError
       }
-
     }
 
     "revoke Enrolment" should {
@@ -82,6 +84,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.revokeEnrolment("id", "plrId")
         result.futureValue mustBe Done
       }
+
       "return a failed result in case of any response else than 204" in {
         stubDelete("/tax-enrolments/groups/id/enrolments/HMRC-PILLAR2-ORG~PLRID~plrId", errorCodes.sample.value, "")
         val result = connector.revokeEnrolment("id", "plrId").failed.futureValue

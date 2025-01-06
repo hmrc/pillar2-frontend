@@ -32,7 +32,7 @@ import repositories.SessionRepository
 import services._
 import services.audit.AuditService
 import uk.gov.hmrc.auth.core.AuthConnector
-import uk.gov.hmrc.http.HttpClient
+import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import utils.countryOptions.CountryOptions
 import views.html.{CheckYourAnswersView, DashboardView}
@@ -59,7 +59,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
     mock[IncorporatedEntityIdentificationFrontendConnector]
   val mockPartnershipIdentificationFrontendConnector: PartnershipIdentificationFrontendConnector = mock[PartnershipIdentificationFrontendConnector]
-  val mockHttpClient:                                 HttpClient                                 = mock[HttpClient]
+  val mockHttpClient:                                 HttpClientV2                               = mock[HttpClientV2]
   val mockRegistrationConnector:                      RegistrationConnector                      = mock[RegistrationConnector]
   val mockSubscriptionConnector:                      SubscriptionConnector                      = mock[SubscriptionConnector]
   val mockEnrolmentStoreProxyConnector:               EnrolmentStoreProxyConnector               = mock[EnrolmentStoreProxyConnector]

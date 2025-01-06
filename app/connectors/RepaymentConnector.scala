@@ -22,21 +22,22 @@ import models.repayments.SendRepaymentDetails
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClient)(implicit ec: ExecutionContext) extends Logging {
+class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
   def repayment(repaymentData: SendRepaymentDetails)(implicit hc: HeaderCarrier): Future[Done] =
     http
-      .POST[SendRepaymentDetails, HttpResponse](
-        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment",
-        repaymentData
-      )
+      .post(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment")
+      .withBody(Json.toJson(repaymentData))
+      .execute[HttpResponse]
       .flatMap { response =>
         response.status match {
           case CREATED =>

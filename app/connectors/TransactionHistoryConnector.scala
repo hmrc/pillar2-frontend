@@ -22,21 +22,21 @@ import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient, HttpResponse}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClient, ec: ExecutionContext) extends Logging {
+class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
 
   def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                                        HeaderCarrier
   ): Future[TransactionHistory] =
     http
-      .GET[HttpResponse](
-        s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference/${dateFrom.toString}/${dateTo.toString}"
-      )
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/transaction-history/$plrReference/${dateFrom.toString}/${dateTo.toString}")
+      .execute[HttpResponse]
       .flatMap {
         case response if response.status == OK => Future successful Json.parse(response.body).as[TransactionHistory]
         case response if response.status == NOT_FOUND =>

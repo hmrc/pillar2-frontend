@@ -1,21 +1,22 @@
 import sbt.*
 
 object AppDependencies {
-  val mongoVersion     = "1.7.0"
-  val bootstrapVersion = "8.4.0"
+  val mongoVersion     = "2.3.0"
+  val bootstrapVersion = "9.6.0"
   val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
-    "uk.gov.hmrc"           %% "play-frontend-hmrc-play-30"            % "8.5.0",
-    "uk.gov.hmrc"           %% "play-conditional-form-mapping-play-30" % "2.0.0",
+    "uk.gov.hmrc"           %% "play-frontend-hmrc-play-30"            % "11.8.0",
+    "uk.gov.hmrc"           %% "play-conditional-form-mapping-play-30" % "3.2.0",
     "uk.gov.hmrc"           %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                    % mongoVersion,
     "org.typelevel"         %% "cats-core"                             % "2.12.0",
-    "org.apache.xmlgraphics" % "fop"                                   % "2.9"
+    "org.apache.xmlgraphics" % "fop"                                   % "2.10",
+    "commons-io"             % "commons-io"                            % "2.18.0"
   )
 
   val test: Seq[ModuleID] = Seq(
     "org.scalatestplus"    %% "mockito-4-11"             % "3.2.18.0",
-    "org.jsoup"             % "jsoup"                    % "1.18.1",
+    "org.jsoup"             % "jsoup"                    % "1.18.3",
     "uk.gov.hmrc"          %% "bootstrap-test-play-30"   % bootstrapVersion,
     "org.mockito"          %% "mockito-scala"            % "1.17.37",
     "uk.gov.hmrc.mongo"    %% "hmrc-mongo-test-play-30"  % mongoVersion,

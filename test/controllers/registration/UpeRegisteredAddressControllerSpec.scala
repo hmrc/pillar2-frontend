@@ -103,7 +103,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("1 drive")
             contentAsString(result) must include("la la land")
             contentAsString(result) must include("m19hgs")
-            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include(
+              """<option value="GB" selected>United Kingdom</option>""".replaceAll("\\s", "")
+            )
           }
         }
 
@@ -119,7 +121,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             contentAsString(result) must include("132 My Street")
             contentAsString(result) must include("Kingston")
             contentAsString(result) must include("12401")
-            contentAsString(result) must include("""<option value="US" selected>United States of America</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include(
+              """<option value="US" selected>United States of America</option>""".replaceAll("\\s", "")
+            )
           }
         }
       }
@@ -132,7 +136,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) must include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
 
@@ -152,7 +156,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             val result = route(customApplication, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") mustNot include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
       }
@@ -167,7 +171,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           running(application) {
             val result = route(application, postRequest("postalCode" -> textOver35Chars)).value
 
-            contentAsString(result) must include("""<option value="GB" selected>United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") must include(
+              """<option value="GB" selected>United Kingdom</option>""".replaceAll("\\s", "")
+            )
           }
         }
 
@@ -188,7 +194,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           running(customApplication) {
             val result = route(customApplication, postRequest("postalCode" -> textOver35Chars)).value
 
-            contentAsString(result) mustNot include("""<option value="GB">United Kingdom</option>""")
+            contentAsString(result).replaceAll("\\s", "") mustNot include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
         }
       }

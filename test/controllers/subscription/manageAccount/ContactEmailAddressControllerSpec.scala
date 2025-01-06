@@ -44,8 +44,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
   "ContactEmail Address Controller for Organisations View Contact details" when {
 
-    "must return OK and the correct view for a GET if page previously  not answered" in {
-
+    "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
@@ -60,7 +59,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name")(
           request,
           applicationConfig,
           messages(application)
@@ -147,7 +146,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
   "ContactEmail Address Controller for Agents View Contact details" when {
 
-    "must return OK and the correct view for a GET if page previously  not answered" in {
+    "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubContactEmail))
@@ -169,7 +168,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name")(
           request,
           applicationConfig,
           messages(application)

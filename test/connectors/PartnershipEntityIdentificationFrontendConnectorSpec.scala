@@ -16,21 +16,21 @@
 
 package connectors
 
-import base.SpecBase
+import base.MockitoStubUtils
 import helpers.ViewInstances
 import models.grs.EntityType.LimitedLiabilityPartnership
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{NormalMode, UserType}
-import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{times, verify, when}
+import org.mockito.ArgumentMatchers.{any, eq => Meq}
+import org.mockito.Mockito.{verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.StringContextOps
 
 import scala.concurrent.Future
 
-class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase with ViewInstances {
+class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUtils with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl: String = s"${applicationConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
   val connector = new PartnershipIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient, mockAuditService)
@@ -53,24 +53,12 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase with
           labels = serviceName
         )
 
-      when(
-        mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          any(),
-          any(),
-          any()
-        )(any(), any(), any(), any())
-      )
+      when(executePost[GrsCreateRegistrationResponse](Json.toJson(expectedIncorporatedEntityCreateRegistrationRequest)))
         .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
 
       val result = connector.createPartnershipJourney(UserType.Fm, LimitedLiabilityPartnership, NormalMode).futureValue
       result shouldBe validGrsCreateRegistrationResponse
-      verify(mockHttpClient, times(1))
-        .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          ArgumentMatchers.eq(expectedUrl),
-          ArgumentMatchers.eq(expectedIncorporatedEntityCreateRegistrationRequest),
-          any()
-        )(any(), any(), any(), any())
-
+      verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
     "must return OK status for createPartnershipJourney for RFM" in {
@@ -87,37 +75,19 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends SpecBase with
           labels = serviceName
         )
 
-      when(
-        mockHttpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          any(),
-          any(),
-          any()
-        )(any(), any(), any(), any())
-      )
+      when(executePost[GrsCreateRegistrationResponse](Json.toJson(expectedIncorporatedEntityCreateRegistrationRequest)))
         .thenReturn(Future.successful(validGrsCreateRegistrationResponse))
 
       val result = connector.createPartnershipJourney(UserType.Rfm, LimitedLiabilityPartnership, NormalMode).futureValue
       result shouldBe validGrsCreateRegistrationResponse
-      verify(mockHttpClient, times(1))
-        .POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-          ArgumentMatchers.eq(expectedUrl),
-          ArgumentMatchers.eq(expectedIncorporatedEntityCreateRegistrationRequest),
-          any()
-        )(any(), any(), any(), any())
-
+      verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
     "getJourneyData should be successful" in {
-      when(
-        mockHttpClient.GET[PartnershipEntityRegistrationData](any(), any(), any())(any(), any(), any())
-      )
-        .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
+      when(executeGet[PartnershipEntityRegistrationData]).thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
+
       val result = connector.getJourneyData("1234")
-      whenReady(result) { response =>
-        response shouldBe validRegisterWithIdResponseForLLP
-      }
+      whenReady(result)(response => response shouldBe validRegisterWithIdResponseForLLP)
     }
-
   }
-
 }

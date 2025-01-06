@@ -21,9 +21,11 @@ import models.grs.{EntityType, GrsCreateRegistrationResponse, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
+import play.api.libs.json.Json
 import services.audit.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits._
-import uk.gov.hmrc.http.{HeaderCarrier, HttpClient}
+import uk.gov.hmrc.http.client.HttpClientV2
+import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,7 +42,7 @@ trait PartnershipIdentificationFrontendConnector {
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
   appConfig:    FrontendAppConfig,
-  httpClient:   HttpClient,
+  httpClient:   HttpClientV2,
   auditService: AuditService
 )(implicit
   val messagesApi: MessagesApi,
@@ -64,13 +66,14 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       accessibilityUrl = appConfig.accessibilityStatementPath,
       labels = serviceName
     )
-
-    httpClient.POST[IncorporatedEntityCreateRegistrationRequest, GrsCreateRegistrationResponse](
-      s"$apiUrl/limited-liability-partnership-journey",
-      registrationRequest
-    )
+    httpClient
+      .post(url"$apiUrl/limited-liability-partnership-journey")
+      .withBody(Json.toJson(registrationRequest))
+      .execute[GrsCreateRegistrationResponse]
   }
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
-    httpClient.GET[PartnershipEntityRegistrationData](s"$apiUrl/journey/$journeyId")
+    httpClient
+      .get(url"$apiUrl/journey/$journeyId")
+      .execute[PartnershipEntityRegistrationData]
 }

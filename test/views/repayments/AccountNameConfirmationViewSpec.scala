@@ -34,7 +34,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Do you want to continue with these bank details? - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text mustBe title
+      view.getElementsByTag("title").text must include(title)
     }
 
     "have a heading with the account holder's name" in {

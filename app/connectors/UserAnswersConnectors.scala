@@ -20,9 +20,10 @@ import models.{InternalIssueError, UserAnswers}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
-import play.api.libs.json.{JsObject, JsValue}
+import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.client.HttpClientV2
 import utils.FutureConverter.FutureOps
 
 import javax.inject.{Inject, Named, Singleton}
@@ -31,42 +32,51 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class UserAnswersConnectors @Inject() (
   @Named("pillar2Url") pillar2BaseUrl: String,
-  httpClient:                          HttpClient
+  httpClient:                          HttpClientV2
 )(implicit ec:                         ExecutionContext)
     extends Logging {
   private val url = s"$pillar2BaseUrl/report-pillar2-top-up-taxes"
 
   def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =
-    httpClient.POST[JsValue, HttpResponse](s"$url/user-cache/registration-subscription/$id", data).map { response =>
-      response.status match {
-        case OK => data
-        case _  => throw new HttpException(response.body, response.status)
+    httpClient
+      .post(url"$url/user-cache/registration-subscription/$id")
+      .withBody(Json.toJson(data))
+      .execute[HttpResponse]
+      .map { response =>
+        response.status match {
+          case OK => data
+          case _  => throw new HttpException(response.body, response.status)
+        }
       }
-
-    }
 
   def get(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
-    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) map { response =>
-      response.status match {
-        case OK        => Some(response.json)
-        case NOT_FOUND => None
-        case _         => throw new HttpException(response.body, response.status)
+    httpClient
+      .get(url"$url/user-cache/registration-subscription/$id")
+      .execute[HttpResponse](readRaw, ec)
+      .map { response =>
+        response.status match {
+          case OK        => Some(response.json)
+          case NOT_FOUND => None
+          case _         => throw new HttpException(response.body, response.status)
+        }
       }
-    }
 
   def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
-    httpClient.GET[HttpResponse](s"$url/user-cache/registration-subscription/$id")(rds = readRaw, hc = headerCarrier, ec = ec) flatMap { response =>
-      response.status match {
-        case OK        => Future.successful(Some(UserAnswers(id = id, data = response.json.as[JsObject])))
-        case NOT_FOUND => Future.successful(None)
-        case _         => Future.failed(InternalIssueError)
+    httpClient
+      .get(url"$url/user-cache/registration-subscription/$id")
+      .execute[HttpResponse](readRaw, ec)
+      .flatMap { response =>
+        response.status match {
+          case OK        => Future.successful(Some(UserAnswers(id = id, data = response.json.as[JsObject])))
+          case NOT_FOUND => Future.successful(None)
+          case _         => Future.failed(InternalIssueError)
+        }
       }
-    }
 
   def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[Done] =
-    httpClient.DELETE[HttpResponse](s"$url/user-cache/registration-subscription/$id").flatMap { response =>
-      if (response.status == OK) Done.toFuture else Future.failed(InternalIssueError)
-
-    }
+    httpClient
+      .delete(url"$url/user-cache/registration-subscription/$id")
+      .execute[HttpResponse]
+      .flatMap(response => if (response.status == OK) Done.toFuture else Future.failed(InternalIssueError))
 
 }
