@@ -45,7 +45,7 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
     "have a paragraph link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text must include("Find out how to register to report Pillar 2 top-up taxes (opens in new tab)")
+      link.text         must include("Find out how to register to report Pillar 2 top-up taxes (opens in new tab)")
       link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
       link.attr("target") mustBe "_blank"
     }
