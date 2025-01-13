@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views
+package views.registrationview
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
@@ -52,8 +52,11 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
 
       link1.text         must include("search Companies House for the company registration number and registered office address (opens in a new tab)")
       link1.attr("href") must include("https://find-and-update.company-information.service.gov.uk/")
+      link1.attr("target") mustBe "_blank"
+
       link2.text         must include("ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)")
       link2.attr("href") must include("https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr")
+      link2.attr("target") mustBe "_blank"
 
       link3.text must include(
         "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
