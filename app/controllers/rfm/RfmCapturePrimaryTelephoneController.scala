@@ -38,7 +38,6 @@ class RfmCapturePrimaryTelephoneController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
-  featureAction:                    FeatureFlagActionFactory,
   formProvider:                     RfmCaptureTelephoneDetailsFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmCapturePrimaryTelephoneView,
@@ -47,16 +46,15 @@ class RfmCapturePrimaryTelephoneController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      request.userAnswers
-        .get(RfmPrimaryContactNamePage)
-        .map { contactName =>
-          val form         = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage).map(form.fill).getOrElse(form)
-          Ok(view(preparedForm, mode, contactName))
-        }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(RfmPrimaryContactNamePage)
+      .map { contactName =>
+        val form         = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmCapturePrimaryTelephonePage).map(form.fill).getOrElse(form)
+        Ok(view(preparedForm, mode, contactName))
+      }
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

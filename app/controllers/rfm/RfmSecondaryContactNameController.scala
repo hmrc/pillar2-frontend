@@ -39,7 +39,6 @@ class RfmSecondaryContactNameController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
-  featureAction:                    FeatureFlagActionFactory,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmSecondaryContactNameFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -50,10 +49,9 @@ class RfmSecondaryContactNameController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage).map(form.fill).getOrElse(form)
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(RfmSecondaryContactNamePage).map(form.fill).getOrElse(form)
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

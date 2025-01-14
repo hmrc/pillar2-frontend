@@ -38,24 +38,6 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
   "RfmEntityTypeController Controller" when {
 
-    "must return Under Construction  view when rfm feature false" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-
-    }
-
     "must return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()

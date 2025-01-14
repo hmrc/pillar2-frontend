@@ -40,7 +40,6 @@ class RfmPrimaryContactNameController @Inject() (
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmPrimaryContactNameFormProvider,
-  featureAction:                    FeatureFlagActionFactory,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmPrimaryContactNameView,
   navigator:                        ReplaceFilingMemberNavigator
@@ -50,13 +49,12 @@ class RfmPrimaryContactNameController @Inject() (
 
   val form: Form[String] = formProvider()
 
-  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
-        case Some(v) => form.fill(v)
-        case None    => form
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(RfmPrimaryContactNamePage) match {
+      case Some(v) => form.fill(v)
+      case None    => form
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

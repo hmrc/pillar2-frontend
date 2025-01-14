@@ -33,7 +33,6 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentErrorController @Inject() (
-  featureAction:                          FeatureFlagActionFactory,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
@@ -52,26 +51,26 @@ class RepaymentErrorController @Inject() (
 
   val form: Form[Boolean] = formProvider()
   def onPageLoadNotConfirmedDetails(): Action[AnyContent] =
-    featureAction.repaymentsAccessAction { implicit request =>
+    Action { implicit request =>
       Ok(couldNotConfirmDetailsView(NormalMode))
     }
 
-  def onPageLoadError(): Action[AnyContent] = featureAction.repaymentsAccessAction { implicit request =>
+  def onPageLoadError(): Action[AnyContent] = Action { implicit request =>
     Ok(errorView())
   }
 
   def onPageLoadRepaymentSubmissionFailed(): Action[AnyContent] =
-    featureAction.repaymentsAccessAction { implicit request =>
+    Action { implicit request =>
       Ok(submissionErrorView())
     }
 
   def onPageLoadBankDetailsError(): Action[AnyContent] =
-    featureAction.repaymentsAccessAction { implicit request =>
+    Action { implicit request =>
       Ok(bankDetailsErrorView(NormalMode))
     }
 
   def onPageLoadPartialNameError(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentAccountNameConfirmationPage) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -84,7 +83,7 @@ class RepaymentErrorController @Inject() (
     }
 
   def onSubmitPartialNameError(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers
         .get(BarsAccountNamePartialPage)
         .map { accountName =>

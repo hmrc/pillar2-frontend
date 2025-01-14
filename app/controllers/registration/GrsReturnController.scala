@@ -42,7 +42,6 @@ class GrsReturnController @Inject() (
   identify:                                          IdentifierAction,
   @Named("RfmIdentifier") rfmIdentify:               IdentifierAction,
   getData:                                           DataRetrievalAction,
-  featureAction:                                     FeatureFlagActionFactory,
   requireData:                                       DataRequiredAction,
   val controllerComponents:                          MessagesControllerComponents,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
@@ -230,7 +229,7 @@ class GrsReturnController @Inject() (
   }
 
   def continueRfm(journeyId: String): Action[AnyContent] =
-    (featureAction.rfmAccessAction andThen rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    (rfmIdentify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers
         .get(RfmEntityTypePage)
         .map {

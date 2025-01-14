@@ -38,7 +38,6 @@ class ReasonForRequestingRefundController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
   navigator:                              RepaymentNavigator,
-  featureAction:                          FeatureFlagActionFactory,
   requireData:                            SessionDataRequiredAction,
   formProvider:                           ReasonForRequestingRefundFormProvider,
   val controllerComponents:               MessagesControllerComponents,
@@ -50,7 +49,7 @@ class ReasonForRequestingRefundController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getData andThen requireData) { implicit request =>
+    (identify andThen getData andThen requireData) { implicit request =>
       val preparedForm = request.userAnswers.get(ReasonForRequestingRefundPage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     }

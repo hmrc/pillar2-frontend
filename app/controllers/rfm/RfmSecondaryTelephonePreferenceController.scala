@@ -38,7 +38,6 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
-  featureAction:                    FeatureFlagActionFactory,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmSecondaryTelephonePreferenceFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -47,16 +46,15 @@ class RfmSecondaryTelephonePreferenceController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      request.userAnswers
-        .get(RfmSecondaryContactNamePage)
-        .map { contactName =>
-          val form         = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage).map(form.fill).getOrElse(form)
-          Ok(view(preparedForm, mode, contactName))
-        }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(RfmSecondaryContactNamePage)
+      .map { contactName =>
+        val form         = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmSecondaryPhonePreferencePage).map(form.fill).getOrElse(form)
+        Ok(view(preparedForm, mode, contactName))
+      }
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

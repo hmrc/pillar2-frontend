@@ -36,7 +36,6 @@ class RfmPrimaryContactEmailController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
-  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmPrimaryContactEmailFormProvider,
   val controllerComponents:         MessagesControllerComponents,
@@ -46,19 +45,18 @@ class RfmPrimaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      request.userAnswers
-        .get(RfmPrimaryContactNamePage)
-        .map { username =>
-          val form = formProvider(username)
-          val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
-            case Some(value) => form.fill(value)
-            case None        => form
-          }
-          Ok(view(preparedForm, mode, username))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(RfmPrimaryContactNamePage)
+      .map { username =>
+        val form = formProvider(username)
+        val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
         }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+        Ok(view(preparedForm, mode, username))
+      }
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

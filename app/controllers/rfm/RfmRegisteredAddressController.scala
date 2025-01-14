@@ -39,7 +39,6 @@ class RfmRegisteredAddressController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
-  featureAction:                    FeatureFlagActionFactory,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmRegisteredAddressFormProvider,
   val countryOptions:               CountryOptions,
@@ -51,26 +50,25 @@ class RfmRegisteredAddressController @Inject() (
 
   val form: Form[NonUKAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      request.userAnswers
-        .get(RfmNameRegistrationPage)
-        .map { name =>
-          val preparedForm = request.userAnswers.get(RfmRegisteredAddressPage) match {
-            case Some(value) => form.fill(value)
-            case None        => form
-          }
-
-          Ok(
-            view(
-              preparedForm,
-              mode,
-              name,
-              countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
-            )
-          )
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(RfmNameRegistrationPage)
+      .map { name =>
+        val preparedForm = request.userAnswers.get(RfmRegisteredAddressPage) match {
+          case Some(value) => form.fill(value)
+          case None        => form
         }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+
+        Ok(
+          view(
+            preparedForm,
+            mode,
+            name,
+            countryOptions.conditionalUkInclusion(request.userAnswers.get(RfmUkBasedPage), request.userAnswers.get(RfmEntityTypePage))
+          )
+        )
+      }
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

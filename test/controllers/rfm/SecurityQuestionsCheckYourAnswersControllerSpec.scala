@@ -23,9 +23,9 @@ import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
+import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.api.{Configuration, inject}
 import services.SubscriptionService
 import viewmodels.govuk.SummaryListFluency
 
@@ -69,19 +69,6 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
         }
       }
 
-      "redirect to Under Construction page when RFM access is disabled" in {
-        val testConfig = Configuration("features.rfmAccessEnabled" -> false)
-        val application = applicationBuilder()
-          .configure(testConfig)
-          .build()
-        running(application) {
-          val request = FakeRequest(GET, controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustBe Some(controllers.routes.ErrorController.pageNotFoundLoad.url)
-        }
-      }
     }
     "onSubmit" should {
       "redirect to corporate position group page if registration date and Pillar 2 ID match our records with the same pillar2 ID" in {

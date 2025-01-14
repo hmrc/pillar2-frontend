@@ -25,14 +25,9 @@ class StartPageControllerSpec extends SpecBase {
 
   "StartPage Controller" when {
 
-    "must return OK and the correct view when rfm feature true" in {
+    "must return OK and the correct view" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(GET, routes.StartPageController.onPageLoad.url)
@@ -42,27 +37,7 @@ class StartPageControllerSpec extends SpecBase {
         val content = contentAsString(result)
         content mustEqual view()(request, applicationConfig, messages(application)).toString
       }
-
     }
-
-    "must redirect to correct view when rfm feature false" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, routes.StartPageController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-
-    }
-
   }
 
 }

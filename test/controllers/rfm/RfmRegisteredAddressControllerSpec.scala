@@ -107,19 +107,6 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "redirect to UnderConstructionController page if RFM access is disabled" in {
-        val application = applicationBuilder(userAnswers = Some(defaultUa))
-          .configure(Seq("features.rfmAccessEnabled" -> false): _*)
-          .build()
-
-        running(application) {
-          val result = route(application, getRequest).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-        }
-      }
-
       "include/not include UK in country list based on user answer in RfmUkBasedPage" should {
 
         "include UK if RfmUkBasedPage is true" in {

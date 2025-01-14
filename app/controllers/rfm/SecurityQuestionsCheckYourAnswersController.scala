@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class SecurityQuestionsCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val userAnswersConnectors:        UserAnswersConnectors,
-  featureAction:                    FeatureFlagActionFactory,
   getSessionData:                   SessionDataRetrievalAction,
   requireSessionData:               SessionDataRequiredAction,
   subscriptionService:              SubscriptionService,
@@ -52,7 +51,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val list = SummaryListViewModel(
         rows = Seq(
           RfmSecurityCheckSummary.row(request.userAnswers),

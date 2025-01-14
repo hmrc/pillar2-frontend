@@ -85,27 +85,6 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to UnderConstructionController page if RFM access is disabled" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "must redirect to RFM Secondary Contact Name page when user selects Yes" in {
 
       val userAnswers = UserAnswers(userAnswersId)

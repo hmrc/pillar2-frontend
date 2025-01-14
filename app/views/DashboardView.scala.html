@@ -51,19 +51,17 @@
             @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
         }
         <!--PAY YOUR TUT SECTION-->
-        @if(appConfig.showPaymentsSection) {
-            @h2(messages("dashboard.payments"), size = "m")
-            @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        @h2(messages("dashboard.payments"), size = "m")
+        @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
-            @if(appConfig.showTransactionHistory) {
-                @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
-            }
+        @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
 
-            @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
 
-            @sectionBreak()
-        }
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.requestRefund"), linkUrl = controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
+
+        @sectionBreak()
+
 
         <!--MANAGE YOUR TUT SECTION-->
         @h2(if(agentView) messages("dashboard.agent.manageAccount") else messages("dashboard.manageAccount"), size = "m")
