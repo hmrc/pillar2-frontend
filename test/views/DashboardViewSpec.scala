@@ -17,11 +17,8 @@
 package views
 
 import base.ViewSpecBase
-import config.FrontendAppConfig
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import play.api.Configuration
-import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import views.html.DashboardView
 
 class DashboardViewSpec extends ViewSpecBase {
@@ -85,7 +82,7 @@ class DashboardViewSpec extends ViewSpecBase {
       elements.get(4).text must include(s"Ultimate parent entity: $organisationName")
     }
 
-    "have payment information if flag is true" in {
+    "have payment information" in {
       val h2       = organisationDashboardView.getElementsByTag("h2").get(1)
       val elements = organisationDashboardView.getElementsByTag("p")
       h2.text must include("Payments")
@@ -102,23 +99,6 @@ class DashboardViewSpec extends ViewSpecBase {
         .getElementsByTag("hr")
         .first()
         .hasClass("govuk-section-break govuk-section-break--l govuk-section-break--visible") mustBe true
-    }
-
-    "not have payment information if flag is false" in {
-      val config = new FrontendAppConfig(inject[Configuration], inject[ServicesConfig]) {
-        override val showPaymentsSection:    Boolean = false
-        override val showTransactionHistory: Boolean = false
-      }
-
-      val organisationDashboardView =
-        Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, config, messages).toString())
-
-      val h2       = organisationDashboardView.getElementsByTag("h2")
-      val elements = organisationDashboardView.getElementsByTag("p")
-
-      h2.text mustNot include("Payments")
-      elements.text mustNot include("You have no payments due")
-      elements.text mustNot include("View your transaction history")
     }
 
     "have manage your account heading and links" in {
@@ -246,7 +226,7 @@ class DashboardViewSpec extends ViewSpecBase {
       )
     }
 
-    "have payment information if flag is true" in {
+    "have payment information" in {
       val h2       = agentDashboardView.getElementsByTag("h2").get(1)
       val elements = agentDashboardView.getElementsByTag("p")
       h2.text must include("Payments")
@@ -263,23 +243,6 @@ class DashboardViewSpec extends ViewSpecBase {
         .getElementsByTag("hr")
         .first()
         .hasClass("govuk-section-break govuk-section-break--l govuk-section-break--visible") mustBe true
-    }
-
-    "not have payment information if flag is false" in {
-      val config = new FrontendAppConfig(inject[Configuration], inject[ServicesConfig]) {
-        override val showPaymentsSection:    Boolean = false
-        override val showTransactionHistory: Boolean = false
-      }
-
-      val agentDashboardView =
-        Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, config, messages).toString())
-
-      val h2       = agentDashboardView.getElementsByTag("h2")
-      val elements = agentDashboardView.getElementsByTag("p")
-
-      h2.text mustNot include("Payments")
-      elements.text mustNot include("Your client has no payments due.")
-      elements.text mustNot include("View your client’s transaction history")
     }
 
     "have pillar 2 information" in {

@@ -41,7 +41,6 @@ class RequestRefundAmountController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
-  featureAction:                          FeatureFlagActionFactory,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -49,7 +48,7 @@ class RequestRefundAmountController @Inject() (
 
   val form: Form[BigDecimal] = formProvider()
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
         case Some(value) => form.fill(value.setScale(2))
@@ -58,7 +57,7 @@ class RequestRefundAmountController @Inject() (
     }
 
   def onSubmit(mode: Mode = NormalMode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(

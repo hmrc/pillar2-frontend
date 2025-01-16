@@ -42,7 +42,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
-  featureAction:                          FeatureFlagActionFactory,
   sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsCheckYourAnswersView,
@@ -54,7 +53,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       userAnswers.get(RepaymentsStatusPage) match {
@@ -67,7 +66,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       if (request.userAnswers.isRepaymentsJourneyCompleted) {
         for {
           optionalSessionData <- sessionRepository.get(request.userAnswers.id)

@@ -61,24 +61,5 @@ class ASAStubControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
-
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
-        .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
-        )
-
-      running(application) {
-        val request = FakeRequest(GET, routes.ASAStubController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
   }
 }

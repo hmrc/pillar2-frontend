@@ -43,7 +43,6 @@ class BankAccountDetailsController @Inject() (
   sessionRepository:                      SessionRepository,
   barsService:                            BarsService,
   formProvider:                           BankAccountDetailsFormProvider,
-  featureAction:                          FeatureFlagActionFactory,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BankAccountDetailsView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -54,7 +53,7 @@ class BankAccountDetailsController @Inject() (
   val form: Form[BankAccountDetails] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       val preparedForm = request.userAnswers.get(BankAccountDetailsPage) match {
         case None              => form
         case Some(userAnswers) => form.fill(userAnswers)

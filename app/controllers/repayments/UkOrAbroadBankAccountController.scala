@@ -37,7 +37,6 @@ class UkOrAbroadBankAccountController @Inject() (
   val sessionRepository:                  SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
-  featureAction:                          FeatureFlagActionFactory,
   requireData:                            SessionDataRequiredAction,
   navigator:                              RepaymentNavigator,
   formProvider:                           UkOrAbroadBankAccountFormProvider,
@@ -50,8 +49,7 @@ class UkOrAbroadBankAccountController @Inject() (
   val form: Form[UkOrAbroadBankAccount] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction
-      andThen identify andThen getData andThen requireData) { implicit request =>
+    (identify andThen getData andThen requireData) { implicit request =>
       val preparedForm = request.userAnswers.get(UkOrAbroadBankAccountPage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     }

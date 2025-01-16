@@ -393,21 +393,6 @@ class GrsReturnControllerSpec extends SpecBase {
 
     }
 
-    "redirect to under construction page if rfm functionality is off" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure("features.rfmAccessEnabled" -> false)
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
-        val result  = route(application, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "redirect to registration not called controller for UPE if GRS fails to identify the entity" in {
       val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))

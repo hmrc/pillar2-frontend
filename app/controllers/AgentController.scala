@@ -51,7 +51,6 @@ class AgentController @Inject() (
   agentOrganisationErrorView:  AgentOrganisationErrorView,
   identify:                    EnrolmentIdentifierAction,
   asaIdentify:                 ASAEnrolmentIdentifierAction,
-  featureAction:               FeatureFlagActionFactory,
   getData:                     SessionDataRetrievalAction,
   requireData:                 SessionDataRequiredAction,
   formProvider:                AgentClientPillar2ReferenceFormProvider
@@ -67,7 +66,7 @@ class AgentController @Inject() (
   }
 
   def onPageLoadClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
+    (asaIdentify andThen getData andThen requireData).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
         _              <- sessionRepository.set(updatedAnswers)
@@ -81,7 +80,7 @@ class AgentController @Inject() (
     }
 
   def onSubmitClientPillarId: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
+    (asaIdentify andThen getData andThen requireData).async { implicit request =>
       form
         .bindFromRequest()
         .fold(
@@ -105,7 +104,7 @@ class AgentController @Inject() (
     }
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData).async { implicit request =>
+    (asaIdentify andThen getData andThen requireData).async { implicit request =>
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
         _              <- sessionRepository.set(updatedAnswers)
@@ -117,7 +116,7 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers
         .get(UnauthorisedClientPillar2ReferencePage)
         .map { clientPillar2Reference =>
@@ -131,25 +130,25 @@ class AgentController @Inject() (
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
+    (asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(clientNoMatchView())
     }
 
   def onPageLoadError: Action[AnyContent] =
-    featureAction.asaAccessAction { implicit request =>
+    Action { implicit request =>
       Ok(agentErrorView())
     }
 
   def onPageLoadUnauthorised: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen asaIdentify andThen getData andThen requireData) { implicit request =>
+    (asaIdentify andThen getData andThen requireData) { implicit request =>
       Ok(agentClientUnauthorisedView())
     }
 
-  def onPageLoadIndividualError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+  def onPageLoadIndividualError: Action[AnyContent] = Action { implicit request =>
     Ok(agentIndividualErrorView())
   }
 
-  def onPageLoadOrganisationError: Action[AnyContent] = featureAction.asaAccessAction { implicit request =>
+  def onPageLoadOrganisationError: Action[AnyContent] = Action { implicit request =>
     Ok(agentOrganisationErrorView())
   }
 

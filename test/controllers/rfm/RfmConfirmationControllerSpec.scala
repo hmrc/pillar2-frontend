@@ -116,24 +116,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
 
       }
     }
-    "must return OK and the correct view for a GET - rfm feature false" in {
 
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
       val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
         .overrides(

@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import base.SpecBase
-import controllers.routes
 import forms.ReasonForRequestingRefundFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.RepaymentNavigator
@@ -77,22 +76,6 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
           applicationConfig,
           messages(application)
         ).toString
-      }
-    }
-
-    "redirect to pageNotFoundLoad if feature flag is off" in {
-
-      val application = applicationBuilder()
-        .configure("features.repaymentsAccessEnabled" -> false)
-        .build()
-
-      running(application) {
-        val request =
-          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
       }
     }
 

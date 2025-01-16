@@ -74,28 +74,6 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when rfm feature is set to false" in {
-
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactNameController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "must redirect to the under construction page when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)

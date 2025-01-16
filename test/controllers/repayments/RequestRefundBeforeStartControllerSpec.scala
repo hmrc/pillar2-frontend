@@ -71,16 +71,5 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
   }
 }

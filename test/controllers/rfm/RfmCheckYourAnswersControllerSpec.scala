@@ -19,7 +19,6 @@ package controllers.rfm
 import base.SpecBase
 import models.{NonUKAddress, NormalMode, UserAnswers}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import viewmodels.govuk.SummaryListFluency
@@ -62,20 +61,6 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
-      }
-    }
-
-    "redirect to Under Construction page when RFM access is disabled" in {
-      val testConfig = Configuration("features.rfmAccessEnabled" -> false)
-      val application = applicationBuilder()
-        .configure(testConfig)
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
 

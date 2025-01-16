@@ -19,7 +19,6 @@ package controllers.rfm
 import base.SpecBase
 import models.UserAnswers
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
-import play.api.Configuration
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.rfm.RfmSaveProgressInformView
@@ -33,7 +32,6 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
     "return OK and the correct view for a GET" in {
       val plrReference = "XE1111123456789"
       val date         = LocalDate.of(2024, 12, 31)
-      val testConfig   = Configuration("features.rfmAccessEnabled" -> true)
       val userAnswer = UserAnswers(userAnswersId)
         .set(RfmPillar2ReferencePage, plrReference)
         .success
@@ -42,7 +40,6 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer))
-        .configure(testConfig)
         .build()
 
       running(application) {
@@ -65,26 +62,6 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
           applicationConfig,
           messages(application)
         ).toString
-      }
-    }
-
-    "must redirect to Under Construction page if RFM access is disabled" in {
-      val ua = emptyUserAnswers
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.routes.ErrorController.pageNotFoundLoad.url)
       }
     }
   }

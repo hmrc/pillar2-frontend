@@ -32,7 +32,6 @@ class ASAStubController @Inject() (
   val userAnswersConnectors:                 UserAnswersConnectors,
   view:                                      ASAStubView,
   @Named("ASAEnrolmentIdentifier") identify: IdentifierAction,
-  featureAction:                             FeatureFlagActionFactory,
   getData:                                   DataRetrievalAction,
   requireData:                               DataRequiredAction
 )(implicit appConfig:                        FrontendAppConfig)
@@ -40,7 +39,7 @@ class ASAStubController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (featureAction.asaAccessAction andThen identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { implicit request =>
       Future.successful(Ok(view()))
     }
 }

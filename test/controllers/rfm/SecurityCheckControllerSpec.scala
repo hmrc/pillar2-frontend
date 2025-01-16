@@ -53,27 +53,6 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "return OK and the correct view for a GET - rfm feature false" in {
-
-      val application = applicationBuilder()
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "return ok with correct view if page previously answered" in {
 
       val userAnswers = emptyUserAnswers.set(RfmPillar2ReferencePage, "plrID").success.value
@@ -170,11 +149,6 @@ class SecurityCheckControllerSpec extends SpecBase {
       val testPillar2Id = "     XMPlR0   123456789    XMP"
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -196,11 +170,6 @@ class SecurityCheckControllerSpec extends SpecBase {
     "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
 
       running(application) {
@@ -224,11 +193,6 @@ class SecurityCheckControllerSpec extends SpecBase {
         .overrides(
           bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
-        )
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
         )
         .build()
 

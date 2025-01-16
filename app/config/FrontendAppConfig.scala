@@ -93,9 +93,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
   val showDoYouHaveP2TopUpTaxId:    Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
-  val showPaymentsSection:          Boolean = configuration.get[Boolean]("features.showPaymentsSection")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
-  val showTransactionHistory:       Boolean = configuration.get[Boolean]("features.showTransactionHistory")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
   val asaHomePageUrl:               String  = configuration.get[String]("urls.asaHomePage")
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")

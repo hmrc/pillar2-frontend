@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
+import controllers.actions.IdentifierAction
 import models.Mode
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -29,14 +29,13 @@ import scala.concurrent.Future
 
 class CheckNewFilingMemberController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
-  featureAction:                    FeatureFlagActionFactory,
   val controllerComponents:         MessagesControllerComponents,
   view:                             CheckNewFilingMemberView
 )(implicit appConfig:               FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
     Ok(view(mode))
   }
 

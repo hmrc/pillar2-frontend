@@ -37,7 +37,6 @@ class UkBasedFilingMemberController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
-  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     NFMRegisteredInUKConfirmationFormProvider,
@@ -49,13 +48,12 @@ class UkBasedFilingMemberController @Inject() (
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
+      case None        => form
+      case Some(value) => form.fill(value)
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

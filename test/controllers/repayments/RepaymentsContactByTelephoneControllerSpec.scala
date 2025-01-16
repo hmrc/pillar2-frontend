@@ -38,18 +38,6 @@ class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
 
   "Repayments Contact By Telephone Controller" when {
 
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
-      running(application) {
-        val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
     "must return OK and the correct view for a GET" in {
 
       val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value

@@ -29,14 +29,13 @@ class RequestRefundBeforeStartController @Inject() (
   view:                                   RequestRefundBeforeStartView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSessionData:                         SessionDataRetrievalAction,
-  requireSessionData:                     SessionDataRequiredAction,
-  featureAction:                          FeatureFlagActionFactory
+  requireSessionData:                     SessionDataRequiredAction
 )(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       Ok(view())
     }
 
