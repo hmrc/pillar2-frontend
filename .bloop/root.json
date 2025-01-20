@@ -1,0 +1,2692 @@
+{
+    "version": "1.4.0",
+    "project": {
+        "name": "root",
+        "directory": "/Users/olkuy/Documents/Dev/pillar2-frontend",
+        "workspaceDir": "/Users/olkuy/Documents/Dev/pillar2-frontend",
+        "sources": [
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/app",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/app-2.13",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/app-2",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/target/scala-2.13/src_managed/main",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/target/scala-2.13/routes/main",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/target/scala-2.13/twirl/main"
+        ],
+        "dependencies": [
+            
+        ],
+        "classpath": [
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/twirl/twirl-api_2.13/2.0.7/twirl-api_2.13-2.0.7.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-server_2.13/3.0.6/play-server_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-logback_2.13/3.0.6/play-logback_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-pekko-http-server_2.13/3.0.6/play-pekko-http-server_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-filters-helpers_2.13/3.0.6/play-filters-helpers_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws_2.13/3.0.6/play-ahc-ws_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-frontend-hmrc-play-30_2.13/11.8.0/play-frontend-hmrc-play-30_2.13-11.8.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-conditional-form-mapping-play-30_2.13/3.2.0/play-conditional-form-mapping-play-30_2.13-3.2.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-frontend-play-30_2.13/9.6.0/bootstrap-frontend-play-30_2.13-9.6.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-play-30_2.13/2.3.0/hmrc-mongo-play-30_2.13-2.3.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.12.0/cats-core_2.13-2.12.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop/2.10/fop-2.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-io/commons-io/2.18.0/commons-io-2.18.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/2.2.0/scala-xml_2.13-2.2.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play_2.13/3.0.6/play_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.5.12/logback-classic-1.5.12.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-streams_2.13/3.0.6/play-streams_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-http-core_2.13/1.0.1/pekko-http-core_2.13-1.0.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws_2.13/3.0.6/play-ws_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws-standalone_2.13/3.0.6/play-ahc-ws-standalone_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-asynchttpclient/3.0.6/shaded-asynchttpclient-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-oauth/3.0.6/shaded-oauth-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/cache/cache-api/1.1.1/cache-api-1.1.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/webjars/hmrc-frontend/6.46.0/hmrc-frontend-6.46.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-language-play-30_2.13/8.1.0/play-language-play-30_2.13-8.1.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-common-play-30_2.13/9.6.0/bootstrap-common-play-30_2.13-9.6.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-health-play-30_2.13/9.6.0/bootstrap-health-play-30_2.13-9.6.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-core/1.5.12/logback-core-1.5.12.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-guice_2.13/3.0.6/play-guice_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-graphite/4.2.22/metrics-graphite-4.2.22.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-jvm/4.2.22/metrics-jvm-4.2.22.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-logback/4.2.22/metrics-logback-4.2.22.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/auth-client-play-30_2.13/8.2.0/auth-client-play-30_2.13-8.2.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/crypto_2.13/8.1.0/crypto_2.13-8.1.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/http-verbs-play-30_2.13/15.1.0/http-verbs-play-30_2.13-15.1.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-auditing-play-30_2.13/9.1.0/play-auditing-play-30_2.13-9.1.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/logback-json-logger_2.13/5.4.0/logback-json-logger_2.13-5.4.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-common_2.13/2.3.0/hmrc-mongo-common_2.13-2.3.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.12.0/cats-kernel_2.13-2.12.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-util/2.10/fop-util-2.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-events/2.10/fop-events-2.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-core/2.10/fop-core-2.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-build-link/3.0.6/play-build-link-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-configuration_2.13/3.0.6/play-configuration_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/2.0.16/jcl-over-slf4j-2.0.16.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor_2.13/1.0.3/pekko-actor_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor-typed_2.13/1.0.3/pekko-actor-typed_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-slf4j_2.13/1.0.3/pekko-slf4j_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-serialization-jackson_2.13/1.0.3/pekko-serialization-jackson_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.14.3/jackson-core-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.14.3/jackson-annotations-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.14.3/jackson-datatype-jdk8-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.14.3/jackson-datatype-jsr310-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.14.3/jackson-databind-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.14.3/jackson-dataformat-cbor-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-parameter-names/2.14.3/jackson-module-parameter-names-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.14.3/jackson-module-scala_2.13-2.14.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-api/0.11.5/jjwt-api-0.11.5.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-impl/0.11.5/jjwt-impl-0.11.5.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-jackson/0.11.5/jjwt-jackson-0.11.5.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-json_2.13/3.0.4/play-json_2.13-3.0.4.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/ssl-config-core_2.13/0.6.1/ssl-config-core_2.13-0.6.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/1.1.2/scala-parser-combinators_2.13-1.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-stream_2.13/1.0.3/pekko-stream_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-parsing_2.13/1.0.1/pekko-parsing_2.13-1.0.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/parboiled/parboiled_2.13/2.5.0/parboiled_2.13-2.5.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone_2.13/3.0.6/play-ws-standalone_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-xml_2.13/3.0.6/play-ws-standalone-xml_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-json_2.13/3.0.6/play-ws-standalone-json_2.13-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/cachecontrol_2.13/3.0.1/cachecontrol_2.13-3.0.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/webjars/npm/govuk-frontend/5.7.1/govuk-frontend-5.7.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/ibm/icu/icu4j/69.1/icu4j-69.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/6.0.0/guice-6.0.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/6.0.0/guice-assistedinject-6.0.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/4.2.22/metrics-core-4.2.22.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.20.0/amqp-client-5.20.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/config/1.4.3/config-1.4.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/softwaremill/sttp/model/core_2.13/1.7.10/core_2.13-1.7.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/2.3.8/izumi-reflect_2.13-2.3.8.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-driver_2.13/5.1.2/mongo-scala-driver_2.13-5.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.10/xmlgraphics-commons-2.10.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/qdox/qdox/1.12/qdox-1.12.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-anim/1.18/batik-anim-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-awt-util/1.18/batik-awt-util-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-bridge/1.18/batik-bridge-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-extension/1.18/batik-extension-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-gvt/1.18/batik-gvt-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-transcoder/1.18/batik-transcoder-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-codec/1.18/batik-codec-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-logging/commons-logging/1.3.0/commons-logging-1.3.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pdfbox/fontbox/2.0.27/fontbox-2.0.27.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-exceptions/3.0.6/play-exceptions-3.0.6.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-functional_2.13/3.0.4/play-functional_2.13-3.0.4.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/checkerframework/checker-qual/3.37.0/checker-qual-3.37.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.21.1/error_prone_annotations-2.21.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-protobuf-v3_2.13/1.0.3/pekko-protobuf-v3_2.13-1.0.3.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/jakarta/inject/jakarta.inject-api/2.0.1/jakarta.inject-api-2.0.1.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/2.3.8/izumi-reflect-thirdparty-boopickle-shaded_2.13-2.3.8.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-bson_2.13/5.1.2/mongo-scala-bson_2.13-5.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-reactivestreams/5.1.2/mongodb-driver-reactivestreams-5.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-css/1.18/batik-css-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-dom/1.18/batik-dom-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-ext/1.18/batik-ext-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-parser/1.18/batik-parser-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-shared-resources/1.18/batik-shared-resources-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svg-dom/1.18/batik-svg-dom-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-util/1.18/batik-util-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-script/1.18/batik-script-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-xml/1.18/batik-xml-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.18/batik-svggen-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson/5.1.2/bson-5.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/5.1.2/mongodb-driver-core-5.1.2.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/projectreactor/reactor-core/3.5.0/reactor-core-3.5.0.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-constants/1.18/batik-constants-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-i18n/1.18/batik-i18n-1.18.jar",
+            "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson-record-codec/5.1.2/bson-record-codec-5.1.2.jar"
+        ],
+        "out": "/Users/olkuy/Documents/Dev/pillar2-frontend/.bloop/root",
+        "classesDir": "/Users/olkuy/Documents/Dev/pillar2-frontend/.bloop/root/scala-2.13/classes",
+        "resources": [
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/conf",
+            "/Users/olkuy/Documents/Dev/pillar2-frontend/target/scala-2.13/resource_managed/main"
+        ],
+        "scala": {
+            "organization": "org.scala-lang",
+            "name": "scala-compiler",
+            "version": "2.13.12",
+            "options": [
+                "-unchecked",
+                "-deprecation",
+                "-encoding",
+                "UTF-8",
+                "-Xlint",
+                "-Ywarn-macros:after",
+                "-release",
+                "11",
+                "-deprecation",
+                "-unchecked",
+                "-encoding",
+                "utf8",
+                "-feature",
+                "-rootdir",
+                "/Users/olkuy/Documents/Dev/pillar2-frontend",
+                "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s",
+                "-Xplugin:/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scalameta/semanticdb-scalac_2.13.12/4.10.1/semanticdb-scalac_2.13.12-4.10.1.jar",
+                "-Yrangepos",
+                "-P:semanticdb:targetroot:/Users/olkuy/Documents/Dev/pillar2-frontend/target/scala-2.13/meta"
+            ],
+            "jars": [
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-compiler/2.13.12/scala-compiler-2.13.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/github/java-diff-utils/java-diff-utils/4.12/java-diff-utils-4.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/jline/jline/3.22.0/jline-3.22.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/net/java/dev/jna/jna/5.13.0/jna-5.13.0.jar"
+            ],
+            "setup": {
+                "order": "mixed",
+                "addLibraryToBootClasspath": true,
+                "addCompilerToClasspath": false,
+                "addExtraJarsToClasspath": false,
+                "manageBootClasspath": true,
+                "filterLibraryFromClasspath": true
+            },
+            "bridgeJars": [
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala2-sbt-bridge/2.13.12/scala2-sbt-bridge-2.13.12.jar"
+            ]
+        },
+        "java": {
+            "options": [
+                "-Xlint",
+                "-encoding",
+                "UTF-8",
+                "--release",
+                "11",
+                "-encoding",
+                "utf8",
+                "-g"
+            ]
+        },
+        "test": {
+            "frameworks": [
+                {
+                    "names": [
+                        "org.scalacheck.ScalaCheckFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs2.runner.Specs2Framework",
+                        "org.specs2.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.specs.runner.SpecsFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "org.scalatest.tools.Framework",
+                        "org.scalatest.tools.ScalaTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "com.novocode.junit.JUnitFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "munit.Framework"
+                    ]
+                },
+                {
+                    "names": [
+                        "zio.test.sbt.ZTestFramework"
+                    ]
+                },
+                {
+                    "names": [
+                        "weaver.framework.CatsEffect"
+                    ]
+                },
+                {
+                    "names": [
+                        "hedgehog.sbt.Framework"
+                    ]
+                }
+            ],
+            "options": {
+                "excludes": [
+                    
+                ],
+                "arguments": [
+                    
+                ]
+            }
+        },
+        "platform": {
+            "name": "jvm",
+            "config": {
+                "home": "/Users/olkuy/.sdkman/candidates/java/17.0.13-amzn",
+                "options": [
+                    "-Duser.dir=/Users/olkuy/Documents/Dev/pillar2-frontend",
+                    "-Djna.nosys=true"
+                ]
+            },
+            "mainClass": [
+                
+            ],
+            "runtimeConfig": {
+                "home": "/Users/olkuy/.sdkman/candidates/java/17.0.13-amzn",
+                "options": [
+                    "-Duser.dir=/Users/olkuy/Documents/Dev/pillar2-frontend",
+                    "-Djna.nosys=true"
+                ]
+            },
+            "classpath": [
+                "/Users/olkuy/Documents/Dev/pillar2-frontend/.bloop/root/scala-2.13/classes",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/twirl/twirl-api_2.13/2.0.7/twirl-api_2.13-2.0.7.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-server_2.13/3.0.6/play-server_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-logback_2.13/3.0.6/play-logback_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-pekko-http-server_2.13/3.0.6/play-pekko-http-server_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-filters-helpers_2.13/3.0.6/play-filters-helpers_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws_2.13/3.0.6/play-ahc-ws_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-frontend-hmrc-play-30_2.13/11.8.0/play-frontend-hmrc-play-30_2.13-11.8.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-conditional-form-mapping-play-30_2.13/3.2.0/play-conditional-form-mapping-play-30_2.13-3.2.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-frontend-play-30_2.13/9.6.0/bootstrap-frontend-play-30_2.13-9.6.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-play-30_2.13/2.3.0/hmrc-mongo-play-30_2.13-2.3.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.12.0/cats-core_2.13-2.12.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop/2.10/fop-2.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-io/commons-io/2.18.0/commons-io-2.18.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/2.2.0/scala-xml_2.13-2.2.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play_2.13/3.0.6/play_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.5.12/logback-classic-1.5.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-streams_2.13/3.0.6/play-streams_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-http-core_2.13/1.0.1/pekko-http-core_2.13-1.0.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws_2.13/3.0.6/play-ws_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws-standalone_2.13/3.0.6/play-ahc-ws-standalone_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-asynchttpclient/3.0.6/shaded-asynchttpclient-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-oauth/3.0.6/shaded-oauth-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/cache/cache-api/1.1.1/cache-api-1.1.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/webjars/hmrc-frontend/6.46.0/hmrc-frontend-6.46.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-language-play-30_2.13/8.1.0/play-language-play-30_2.13-8.1.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-common-play-30_2.13/9.6.0/bootstrap-common-play-30_2.13-9.6.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-health-play-30_2.13/9.6.0/bootstrap-health-play-30_2.13-9.6.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-core/1.5.12/logback-core-1.5.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-guice_2.13/3.0.6/play-guice_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-graphite/4.2.22/metrics-graphite-4.2.22.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-jvm/4.2.22/metrics-jvm-4.2.22.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-logback/4.2.22/metrics-logback-4.2.22.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/auth-client-play-30_2.13/8.2.0/auth-client-play-30_2.13-8.2.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/crypto_2.13/8.1.0/crypto_2.13-8.1.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/http-verbs-play-30_2.13/15.1.0/http-verbs-play-30_2.13-15.1.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-auditing-play-30_2.13/9.1.0/play-auditing-play-30_2.13-9.1.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/logback-json-logger_2.13/5.4.0/logback-json-logger_2.13-5.4.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-common_2.13/2.3.0/hmrc-mongo-common_2.13-2.3.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.12.0/cats-kernel_2.13-2.12.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-util/2.10/fop-util-2.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-events/2.10/fop-events-2.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-core/2.10/fop-core-2.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-build-link/3.0.6/play-build-link-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-configuration_2.13/3.0.6/play-configuration_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/2.0.16/jcl-over-slf4j-2.0.16.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor_2.13/1.0.3/pekko-actor_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor-typed_2.13/1.0.3/pekko-actor-typed_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-slf4j_2.13/1.0.3/pekko-slf4j_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-serialization-jackson_2.13/1.0.3/pekko-serialization-jackson_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.14.3/jackson-core-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.14.3/jackson-annotations-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.14.3/jackson-datatype-jdk8-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.14.3/jackson-datatype-jsr310-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.14.3/jackson-databind-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.14.3/jackson-dataformat-cbor-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-parameter-names/2.14.3/jackson-module-parameter-names-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.14.3/jackson-module-scala_2.13-2.14.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-api/0.11.5/jjwt-api-0.11.5.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-impl/0.11.5/jjwt-impl-0.11.5.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-jackson/0.11.5/jjwt-jackson-0.11.5.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-json_2.13/3.0.4/play-json_2.13-3.0.4.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/ssl-config-core_2.13/0.6.1/ssl-config-core_2.13-0.6.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/1.1.2/scala-parser-combinators_2.13-1.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-stream_2.13/1.0.3/pekko-stream_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-parsing_2.13/1.0.1/pekko-parsing_2.13-1.0.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/parboiled/parboiled_2.13/2.5.0/parboiled_2.13-2.5.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone_2.13/3.0.6/play-ws-standalone_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-xml_2.13/3.0.6/play-ws-standalone-xml_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-json_2.13/3.0.6/play-ws-standalone-json_2.13-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/cachecontrol_2.13/3.0.1/cachecontrol_2.13-3.0.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/webjars/npm/govuk-frontend/5.7.1/govuk-frontend-5.7.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/ibm/icu/icu4j/69.1/icu4j-69.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/6.0.0/guice-6.0.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/6.0.0/guice-assistedinject-6.0.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/4.2.22/metrics-core-4.2.22.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.20.0/amqp-client-5.20.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/config/1.4.3/config-1.4.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/softwaremill/sttp/model/core_2.13/1.7.10/core_2.13-1.7.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/2.3.8/izumi-reflect_2.13-2.3.8.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-driver_2.13/5.1.2/mongo-scala-driver_2.13-5.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.10/xmlgraphics-commons-2.10.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/qdox/qdox/1.12/qdox-1.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-anim/1.18/batik-anim-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-awt-util/1.18/batik-awt-util-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-bridge/1.18/batik-bridge-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-extension/1.18/batik-extension-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-gvt/1.18/batik-gvt-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-transcoder/1.18/batik-transcoder-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-codec/1.18/batik-codec-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-logging/commons-logging/1.3.0/commons-logging-1.3.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pdfbox/fontbox/2.0.27/fontbox-2.0.27.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-exceptions/3.0.6/play-exceptions-3.0.6.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-functional_2.13/3.0.4/play-functional_2.13-3.0.4.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/checkerframework/checker-qual/3.37.0/checker-qual-3.37.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.21.1/error_prone_annotations-2.21.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-protobuf-v3_2.13/1.0.3/pekko-protobuf-v3_2.13-1.0.3.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/jakarta/inject/jakarta.inject-api/2.0.1/jakarta.inject-api-2.0.1.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/2.3.8/izumi-reflect-thirdparty-boopickle-shaded_2.13-2.3.8.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-bson_2.13/5.1.2/mongo-scala-bson_2.13-5.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-reactivestreams/5.1.2/mongodb-driver-reactivestreams-5.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-css/1.18/batik-css-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-dom/1.18/batik-dom-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-ext/1.18/batik-ext-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-parser/1.18/batik-parser-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-shared-resources/1.18/batik-shared-resources-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svg-dom/1.18/batik-svg-dom-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-util/1.18/batik-util-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-script/1.18/batik-script-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-xml/1.18/batik-xml-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.18/batik-svggen-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson/5.1.2/bson-5.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/5.1.2/mongodb-driver-core-5.1.2.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/projectreactor/reactor-core/3.5.0/reactor-core-3.5.0.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-constants/1.18/batik-constants-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-i18n/1.18/batik-i18n-1.18.jar",
+                "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson-record-codec/5.1.2/bson-record-codec-5.1.2.jar"
+            ]
+        },
+        "resolution": {
+            "modules": [
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.13.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework.twirl",
+                    "name": "twirl-api_2.13",
+                    "version": "2.0.7",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "twirl-api_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/twirl/twirl-api_2.13/2.0.7/twirl-api_2.13-2.0.7.jar"
+                        },
+                        {
+                            "name": "twirl-api_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/twirl/twirl-api_2.13/2.0.7/twirl-api_2.13-2.0.7-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-server_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-server_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-server_2.13/3.0.6/play-server_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-server_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-server_2.13/3.0.6/play-server_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-logback_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-logback_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-logback_2.13/3.0.6/play-logback_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-logback_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-logback_2.13/3.0.6/play-logback_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-pekko-http-server_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-pekko-http-server_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-pekko-http-server_2.13/3.0.6/play-pekko-http-server_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-pekko-http-server_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-pekko-http-server_2.13/3.0.6/play-pekko-http-server_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-filters-helpers_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-filters-helpers_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-filters-helpers_2.13/3.0.6/play-filters-helpers_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-filters-helpers_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-filters-helpers_2.13/3.0.6/play-filters-helpers_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ahc-ws_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ahc-ws_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws_2.13/3.0.6/play-ahc-ws_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ahc-ws_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws_2.13/3.0.6/play-ahc-ws_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "play-frontend-hmrc-play-30_2.13",
+                    "version": "11.8.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-frontend-hmrc-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-frontend-hmrc-play-30_2.13/11.8.0/play-frontend-hmrc-play-30_2.13-11.8.0.jar"
+                        },
+                        {
+                            "name": "play-frontend-hmrc-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-frontend-hmrc-play-30_2.13/11.8.0/play-frontend-hmrc-play-30_2.13-11.8.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "play-conditional-form-mapping-play-30_2.13",
+                    "version": "3.2.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-conditional-form-mapping-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-conditional-form-mapping-play-30_2.13/3.2.0/play-conditional-form-mapping-play-30_2.13-3.2.0.jar"
+                        },
+                        {
+                            "name": "play-conditional-form-mapping-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-conditional-form-mapping-play-30_2.13/3.2.0/play-conditional-form-mapping-play-30_2.13-3.2.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "bootstrap-frontend-play-30_2.13",
+                    "version": "9.6.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "bootstrap-frontend-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-frontend-play-30_2.13/9.6.0/bootstrap-frontend-play-30_2.13-9.6.0.jar"
+                        },
+                        {
+                            "name": "bootstrap-frontend-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-frontend-play-30_2.13/9.6.0/bootstrap-frontend-play-30_2.13-9.6.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc.mongo",
+                    "name": "hmrc-mongo-play-30_2.13",
+                    "version": "2.3.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "hmrc-mongo-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-play-30_2.13/2.3.0/hmrc-mongo-play-30_2.13-2.3.0.jar"
+                        },
+                        {
+                            "name": "hmrc-mongo-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-play-30_2.13/2.3.0/hmrc-mongo-play-30_2.13-2.3.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "cats-core_2.13",
+                    "version": "2.12.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cats-core_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.12.0/cats-core_2.13-2.12.0.jar"
+                        },
+                        {
+                            "name": "cats-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-core_2.13/2.12.0/cats-core_2.13-2.12.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "fop",
+                    "version": "2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "fop",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop/2.10/fop-2.10.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "commons-io",
+                    "name": "commons-io",
+                    "version": "2.18.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "commons-io",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-io/commons-io/2.18.0/commons-io-2.18.0.jar"
+                        },
+                        {
+                            "name": "commons-io",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-io/commons-io/2.18.0/commons-io-2.18.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang.modules",
+                    "name": "scala-xml_2.13",
+                    "version": "2.2.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scala-xml_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/2.2.0/scala-xml_2.13-2.2.0.jar"
+                        },
+                        {
+                            "name": "scala-xml_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-xml_2.13/2.2.0/scala-xml_2.13-2.2.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play_2.13/3.0.6/play_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play_2.13/3.0.6/play_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "ch.qos.logback",
+                    "name": "logback-classic",
+                    "version": "1.5.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "logback-classic",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.5.12/logback-classic-1.5.12.jar"
+                        },
+                        {
+                            "name": "logback-classic",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-classic/1.5.12/logback-classic-1.5.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-streams_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-streams_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-streams_2.13/3.0.6/play-streams_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-streams_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-streams_2.13/3.0.6/play-streams_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-http-core_2.13",
+                    "version": "1.0.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-http-core_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-http-core_2.13/1.0.1/pekko-http-core_2.13-1.0.1.jar"
+                        },
+                        {
+                            "name": "pekko-http-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-http-core_2.13/1.0.1/pekko-http-core_2.13-1.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ws_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ws_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws_2.13/3.0.6/play-ws_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ws_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws_2.13/3.0.6/play-ws_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ahc-ws-standalone_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ahc-ws-standalone_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws-standalone_2.13/3.0.6/play-ahc-ws-standalone_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ahc-ws-standalone_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ahc-ws-standalone_2.13/3.0.6/play-ahc-ws-standalone_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "shaded-asynchttpclient",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "shaded-asynchttpclient",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-asynchttpclient/3.0.6/shaded-asynchttpclient-3.0.6.jar"
+                        },
+                        {
+                            "name": "shaded-asynchttpclient",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-asynchttpclient/3.0.6/shaded-asynchttpclient-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "shaded-oauth",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "shaded-oauth",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-oauth/3.0.6/shaded-oauth-3.0.6.jar"
+                        },
+                        {
+                            "name": "shaded-oauth",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/shaded-oauth/3.0.6/shaded-oauth-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "javax.cache",
+                    "name": "cache-api",
+                    "version": "1.1.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cache-api",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/cache/cache-api/1.1.1/cache-api-1.1.1.jar"
+                        },
+                        {
+                            "name": "cache-api",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/cache/cache-api/1.1.1/cache-api-1.1.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc.webjars",
+                    "name": "hmrc-frontend",
+                    "version": "6.46.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "hmrc-frontend",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/webjars/hmrc-frontend/6.46.0/hmrc-frontend-6.46.0.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "play-language-play-30_2.13",
+                    "version": "8.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-language-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-language-play-30_2.13/8.1.0/play-language-play-30_2.13-8.1.0.jar"
+                        },
+                        {
+                            "name": "play-language-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-language-play-30_2.13/8.1.0/play-language-play-30_2.13-8.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "bootstrap-common-play-30_2.13",
+                    "version": "9.6.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "bootstrap-common-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-common-play-30_2.13/9.6.0/bootstrap-common-play-30_2.13-9.6.0.jar"
+                        },
+                        {
+                            "name": "bootstrap-common-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-common-play-30_2.13/9.6.0/bootstrap-common-play-30_2.13-9.6.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "bootstrap-health-play-30_2.13",
+                    "version": "9.6.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "bootstrap-health-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-health-play-30_2.13/9.6.0/bootstrap-health-play-30_2.13-9.6.0.jar"
+                        },
+                        {
+                            "name": "bootstrap-health-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/bootstrap-health-play-30_2.13/9.6.0/bootstrap-health-play-30_2.13-9.6.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "ch.qos.logback",
+                    "name": "logback-core",
+                    "version": "1.5.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "logback-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-core/1.5.12/logback-core-1.5.12.jar"
+                        },
+                        {
+                            "name": "logback-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/ch/qos/logback/logback-core/1.5.12/logback-core-1.5.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-guice_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-guice_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-guice_2.13/3.0.6/play-guice_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-guice_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-guice_2.13/3.0.6/play-guice_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.dropwizard.metrics",
+                    "name": "metrics-graphite",
+                    "version": "4.2.22",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "metrics-graphite",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-graphite/4.2.22/metrics-graphite-4.2.22.jar"
+                        },
+                        {
+                            "name": "metrics-graphite",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-graphite/4.2.22/metrics-graphite-4.2.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.dropwizard.metrics",
+                    "name": "metrics-jvm",
+                    "version": "4.2.22",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "metrics-jvm",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-jvm/4.2.22/metrics-jvm-4.2.22.jar"
+                        },
+                        {
+                            "name": "metrics-jvm",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-jvm/4.2.22/metrics-jvm-4.2.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.dropwizard.metrics",
+                    "name": "metrics-logback",
+                    "version": "4.2.22",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "metrics-logback",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-logback/4.2.22/metrics-logback-4.2.22.jar"
+                        },
+                        {
+                            "name": "metrics-logback",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-logback/4.2.22/metrics-logback-4.2.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "auth-client-play-30_2.13",
+                    "version": "8.2.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "auth-client-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/auth-client-play-30_2.13/8.2.0/auth-client-play-30_2.13-8.2.0.jar"
+                        },
+                        {
+                            "name": "auth-client-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/auth-client-play-30_2.13/8.2.0/auth-client-play-30_2.13-8.2.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "crypto_2.13",
+                    "version": "8.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "crypto_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/crypto_2.13/8.1.0/crypto_2.13-8.1.0.jar"
+                        },
+                        {
+                            "name": "crypto_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/crypto_2.13/8.1.0/crypto_2.13-8.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "http-verbs-play-30_2.13",
+                    "version": "15.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "http-verbs-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/http-verbs-play-30_2.13/15.1.0/http-verbs-play-30_2.13-15.1.0.jar"
+                        },
+                        {
+                            "name": "http-verbs-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/http-verbs-play-30_2.13/15.1.0/http-verbs-play-30_2.13-15.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "play-auditing-play-30_2.13",
+                    "version": "9.1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-auditing-play-30_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-auditing-play-30_2.13/9.1.0/play-auditing-play-30_2.13-9.1.0.jar"
+                        },
+                        {
+                            "name": "play-auditing-play-30_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/play-auditing-play-30_2.13/9.1.0/play-auditing-play-30_2.13-9.1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc",
+                    "name": "logback-json-logger_2.13",
+                    "version": "5.4.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "logback-json-logger_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/logback-json-logger_2.13/5.4.0/logback-json-logger_2.13-5.4.0.jar"
+                        },
+                        {
+                            "name": "logback-json-logger_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/logback-json-logger_2.13/5.4.0/logback-json-logger_2.13-5.4.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "uk.gov.hmrc.mongo",
+                    "name": "hmrc-mongo-common_2.13",
+                    "version": "2.3.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "hmrc-mongo-common_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-common_2.13/2.3.0/hmrc-mongo-common_2.13-2.3.0.jar"
+                        },
+                        {
+                            "name": "hmrc-mongo-common_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/artefacts.tax.service.gov.uk/artifactory/hmrc-releases/uk/gov/hmrc/mongo/hmrc-mongo-common_2.13/2.3.0/hmrc-mongo-common_2.13-2.3.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.typelevel",
+                    "name": "cats-kernel_2.13",
+                    "version": "2.12.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cats-kernel_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.12.0/cats-kernel_2.13-2.12.0.jar"
+                        },
+                        {
+                            "name": "cats-kernel_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/typelevel/cats-kernel_2.13/2.12.0/cats-kernel_2.13-2.12.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "fop-util",
+                    "version": "2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "fop-util",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-util/2.10/fop-util-2.10.jar"
+                        },
+                        {
+                            "name": "fop-util",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-util/2.10/fop-util-2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "fop-events",
+                    "version": "2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "fop-events",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-events/2.10/fop-events-2.10.jar"
+                        },
+                        {
+                            "name": "fop-events",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-events/2.10/fop-events-2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "fop-core",
+                    "version": "2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "fop-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-core/2.10/fop-core-2.10.jar"
+                        },
+                        {
+                            "name": "fop-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/fop-core/2.10/fop-core-2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-build-link",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-build-link",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-build-link/3.0.6/play-build-link-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-build-link",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-build-link/3.0.6/play-build-link-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-configuration_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-configuration_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-configuration_2.13/3.0.6/play-configuration_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-configuration_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-configuration_2.13/3.0.6/play-configuration_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "slf4j-api",
+                    "version": "2.0.16",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "slf4j-api",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16.jar"
+                        },
+                        {
+                            "name": "slf4j-api",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/slf4j-api/2.0.16/slf4j-api-2.0.16-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "jul-to-slf4j",
+                    "version": "2.0.16",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jul-to-slf4j",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16.jar"
+                        },
+                        {
+                            "name": "jul-to-slf4j",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jul-to-slf4j/2.0.16/jul-to-slf4j-2.0.16-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.slf4j",
+                    "name": "jcl-over-slf4j",
+                    "version": "2.0.16",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jcl-over-slf4j",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/2.0.16/jcl-over-slf4j-2.0.16.jar"
+                        },
+                        {
+                            "name": "jcl-over-slf4j",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/slf4j/jcl-over-slf4j/2.0.16/jcl-over-slf4j-2.0.16-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-actor_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-actor_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor_2.13/1.0.3/pekko-actor_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-actor_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor_2.13/1.0.3/pekko-actor_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-actor-typed_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-actor-typed_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor-typed_2.13/1.0.3/pekko-actor-typed_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-actor-typed_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-actor-typed_2.13/1.0.3/pekko-actor-typed_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-slf4j_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-slf4j_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-slf4j_2.13/1.0.3/pekko-slf4j_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-slf4j_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-slf4j_2.13/1.0.3/pekko-slf4j_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-serialization-jackson_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-serialization-jackson_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-serialization-jackson_2.13/1.0.3/pekko-serialization-jackson_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-serialization-jackson_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-serialization-jackson_2.13/1.0.3/pekko-serialization-jackson_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.core",
+                    "name": "jackson-core",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.14.3/jackson-core-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-core/2.14.3/jackson-core-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.core",
+                    "name": "jackson-annotations",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-annotations",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.14.3/jackson-annotations-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-annotations",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-annotations/2.14.3/jackson-annotations-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.datatype",
+                    "name": "jackson-datatype-jdk8",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-datatype-jdk8",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.14.3/jackson-datatype-jdk8-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-datatype-jdk8",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jdk8/2.14.3/jackson-datatype-jdk8-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.datatype",
+                    "name": "jackson-datatype-jsr310",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-datatype-jsr310",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.14.3/jackson-datatype-jsr310-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-datatype-jsr310",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/datatype/jackson-datatype-jsr310/2.14.3/jackson-datatype-jsr310-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.core",
+                    "name": "jackson-databind",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-databind",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.14.3/jackson-databind-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-databind",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/core/jackson-databind/2.14.3/jackson-databind-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.dataformat",
+                    "name": "jackson-dataformat-cbor",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-dataformat-cbor",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.14.3/jackson-dataformat-cbor-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-dataformat-cbor",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/dataformat/jackson-dataformat-cbor/2.14.3/jackson-dataformat-cbor-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.module",
+                    "name": "jackson-module-parameter-names",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-module-parameter-names",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-parameter-names/2.14.3/jackson-module-parameter-names-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-module-parameter-names",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-parameter-names/2.14.3/jackson-module-parameter-names-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.fasterxml.jackson.module",
+                    "name": "jackson-module-scala_2.13",
+                    "version": "2.14.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jackson-module-scala_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.14.3/jackson-module-scala_2.13-2.14.3.jar"
+                        },
+                        {
+                            "name": "jackson-module-scala_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/fasterxml/jackson/module/jackson-module-scala_2.13/2.14.3/jackson-module-scala_2.13-2.14.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.jsonwebtoken",
+                    "name": "jjwt-api",
+                    "version": "0.11.5",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jjwt-api",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-api/0.11.5/jjwt-api-0.11.5.jar"
+                        },
+                        {
+                            "name": "jjwt-api",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-api/0.11.5/jjwt-api-0.11.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.jsonwebtoken",
+                    "name": "jjwt-impl",
+                    "version": "0.11.5",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jjwt-impl",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-impl/0.11.5/jjwt-impl-0.11.5.jar"
+                        },
+                        {
+                            "name": "jjwt-impl",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-impl/0.11.5/jjwt-impl-0.11.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.jsonwebtoken",
+                    "name": "jjwt-jackson",
+                    "version": "0.11.5",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jjwt-jackson",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-jackson/0.11.5/jjwt-jackson-0.11.5.jar"
+                        },
+                        {
+                            "name": "jjwt-jackson",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/jsonwebtoken/jjwt-jackson/0.11.5/jjwt-jackson-0.11.5-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-json_2.13",
+                    "version": "3.0.4",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-json_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-json_2.13/3.0.4/play-json_2.13-3.0.4.jar"
+                        },
+                        {
+                            "name": "play-json_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-json_2.13/3.0.4/play-json_2.13-3.0.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.guava",
+                    "name": "guava",
+                    "version": "32.1.3-jre",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "guava",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre.jar"
+                        },
+                        {
+                            "name": "guava",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/guava/32.1.3-jre/guava-32.1.3-jre-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "javax.inject",
+                    "name": "javax.inject",
+                    "version": "1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "javax.inject",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1.jar"
+                        },
+                        {
+                            "name": "javax.inject",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/javax/inject/javax.inject/1/javax.inject-1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.typesafe",
+                    "name": "ssl-config-core_2.13",
+                    "version": "0.6.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "ssl-config-core_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/ssl-config-core_2.13/0.6.1/ssl-config-core_2.13-0.6.1.jar"
+                        },
+                        {
+                            "name": "ssl-config-core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/ssl-config-core_2.13/0.6.1/ssl-config-core_2.13-0.6.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang.modules",
+                    "name": "scala-parser-combinators_2.13",
+                    "version": "1.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scala-parser-combinators_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/1.1.2/scala-parser-combinators_2.13-1.1.2.jar"
+                        },
+                        {
+                            "name": "scala-parser-combinators_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/modules/scala-parser-combinators_2.13/1.1.2/scala-parser-combinators_2.13-1.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.reactivestreams",
+                    "name": "reactive-streams",
+                    "version": "1.0.4",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "reactive-streams",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4.jar"
+                        },
+                        {
+                            "name": "reactive-streams",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/reactivestreams/reactive-streams/1.0.4/reactive-streams-1.0.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-stream_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-stream_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-stream_2.13/1.0.3/pekko-stream_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-stream_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-stream_2.13/1.0.3/pekko-stream_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-parsing_2.13",
+                    "version": "1.0.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-parsing_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-parsing_2.13/1.0.1/pekko-parsing_2.13-1.0.1.jar"
+                        },
+                        {
+                            "name": "pekko-parsing_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-parsing_2.13/1.0.1/pekko-parsing_2.13-1.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.parboiled",
+                    "name": "parboiled_2.13",
+                    "version": "2.5.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "parboiled_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/parboiled/parboiled_2.13/2.5.0/parboiled_2.13-2.5.0.jar"
+                        },
+                        {
+                            "name": "parboiled_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/parboiled/parboiled_2.13/2.5.0/parboiled_2.13-2.5.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ws-standalone_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ws-standalone_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone_2.13/3.0.6/play-ws-standalone_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ws-standalone_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone_2.13/3.0.6/play-ws-standalone_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ws-standalone-xml_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ws-standalone-xml_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-xml_2.13/3.0.6/play-ws-standalone-xml_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ws-standalone-xml_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-xml_2.13/3.0.6/play-ws-standalone-xml_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-ws-standalone-json_2.13",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-ws-standalone-json_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-json_2.13/3.0.6/play-ws-standalone-json_2.13-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-ws-standalone-json_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-ws-standalone-json_2.13/3.0.6/play-ws-standalone-json_2.13-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "cachecontrol_2.13",
+                    "version": "3.0.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "cachecontrol_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/cachecontrol_2.13/3.0.1/cachecontrol_2.13-3.0.1.jar"
+                        },
+                        {
+                            "name": "cachecontrol_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/cachecontrol_2.13/3.0.1/cachecontrol_2.13-3.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.webjars.npm",
+                    "name": "govuk-frontend",
+                    "version": "5.7.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "govuk-frontend",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/webjars/npm/govuk-frontend/5.7.1/govuk-frontend-5.7.1.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.ibm.icu",
+                    "name": "icu4j",
+                    "version": "69.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "icu4j",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/ibm/icu/icu4j/69.1/icu4j-69.1.jar"
+                        },
+                        {
+                            "name": "icu4j",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/ibm/icu/icu4j/69.1/icu4j-69.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.inject",
+                    "name": "guice",
+                    "version": "6.0.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "guice",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/6.0.0/guice-6.0.0.jar"
+                        },
+                        {
+                            "name": "guice",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/guice/6.0.0/guice-6.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.inject.extensions",
+                    "name": "guice-assistedinject",
+                    "version": "6.0.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "guice-assistedinject",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/6.0.0/guice-assistedinject-6.0.0.jar"
+                        },
+                        {
+                            "name": "guice-assistedinject",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/inject/extensions/guice-assistedinject/6.0.0/guice-assistedinject-6.0.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.dropwizard.metrics",
+                    "name": "metrics-core",
+                    "version": "4.2.22",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "metrics-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/4.2.22/metrics-core-4.2.22.jar"
+                        },
+                        {
+                            "name": "metrics-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/dropwizard/metrics/metrics-core/4.2.22/metrics-core-4.2.22-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.rabbitmq",
+                    "name": "amqp-client",
+                    "version": "5.20.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "amqp-client",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.20.0/amqp-client-5.20.0.jar"
+                        },
+                        {
+                            "name": "amqp-client",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/rabbitmq/amqp-client/5.20.0/amqp-client-5.20.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.typesafe",
+                    "name": "config",
+                    "version": "1.4.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "config",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/config/1.4.3/config-1.4.3.jar"
+                        },
+                        {
+                            "name": "config",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/typesafe/config/1.4.3/config-1.4.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.softwaremill.sttp.model",
+                    "name": "core_2.13",
+                    "version": "1.7.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "core_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/softwaremill/sttp/model/core_2.13/1.7.10/core_2.13-1.7.10.jar"
+                        },
+                        {
+                            "name": "core_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/softwaremill/sttp/model/core_2.13/1.7.10/core_2.13-1.7.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "izumi-reflect_2.13",
+                    "version": "2.3.8",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "izumi-reflect_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/2.3.8/izumi-reflect_2.13-2.3.8.jar"
+                        },
+                        {
+                            "name": "izumi-reflect_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect_2.13/2.3.8/izumi-reflect_2.13-2.3.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.commons",
+                    "name": "commons-lang3",
+                    "version": "3.14.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "commons-lang3",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar"
+                        },
+                        {
+                            "name": "commons-lang3",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb.scala",
+                    "name": "mongo-scala-driver_2.13",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "mongo-scala-driver_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-driver_2.13/5.1.2/mongo-scala-driver_2.13-5.1.2.jar"
+                        },
+                        {
+                            "name": "mongo-scala-driver_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-driver_2.13/5.1.2/mongo-scala-driver_2.13-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "xmlgraphics-commons",
+                    "version": "2.10",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "xmlgraphics-commons",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.10/xmlgraphics-commons-2.10.jar"
+                        },
+                        {
+                            "name": "xmlgraphics-commons",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.10/xmlgraphics-commons-2.10-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.thoughtworks.qdox",
+                    "name": "qdox",
+                    "version": "1.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "qdox",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/qdox/qdox/1.12/qdox-1.12.jar"
+                        },
+                        {
+                            "name": "qdox",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/qdox/qdox/1.12/qdox-1.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-anim",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-anim",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-anim/1.18/batik-anim-1.18.jar"
+                        },
+                        {
+                            "name": "batik-anim",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-anim/1.18/batik-anim-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-awt-util",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-awt-util",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-awt-util/1.18/batik-awt-util-1.18.jar"
+                        },
+                        {
+                            "name": "batik-awt-util",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-awt-util/1.18/batik-awt-util-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-bridge",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-bridge",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-bridge/1.18/batik-bridge-1.18.jar"
+                        },
+                        {
+                            "name": "batik-bridge",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-bridge/1.18/batik-bridge-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-extension",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-extension",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-extension/1.18/batik-extension-1.18.jar"
+                        },
+                        {
+                            "name": "batik-extension",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-extension/1.18/batik-extension-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-gvt",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-gvt",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-gvt/1.18/batik-gvt-1.18.jar"
+                        },
+                        {
+                            "name": "batik-gvt",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-gvt/1.18/batik-gvt-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-transcoder",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-transcoder",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-transcoder/1.18/batik-transcoder-1.18.jar"
+                        },
+                        {
+                            "name": "batik-transcoder",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-transcoder/1.18/batik-transcoder-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-codec",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-codec",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-codec/1.18/batik-codec-1.18.jar"
+                        },
+                        {
+                            "name": "batik-codec",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-codec/1.18/batik-codec-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "commons-logging",
+                    "name": "commons-logging",
+                    "version": "1.3.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "commons-logging",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-logging/commons-logging/1.3.0/commons-logging-1.3.0.jar"
+                        },
+                        {
+                            "name": "commons-logging",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/commons-logging/commons-logging/1.3.0/commons-logging-1.3.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pdfbox",
+                    "name": "fontbox",
+                    "version": "2.0.27",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "fontbox",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pdfbox/fontbox/2.0.27/fontbox-2.0.27.jar"
+                        },
+                        {
+                            "name": "fontbox",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pdfbox/fontbox/2.0.27/fontbox-2.0.27-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-exceptions",
+                    "version": "3.0.6",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-exceptions",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-exceptions/3.0.6/play-exceptions-3.0.6.jar"
+                        },
+                        {
+                            "name": "play-exceptions",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-exceptions/3.0.6/play-exceptions-3.0.6-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.lz4",
+                    "name": "lz4-java",
+                    "version": "1.8.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "lz4-java",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0.jar"
+                        },
+                        {
+                            "name": "lz4-java",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/lz4/lz4-java/1.8.0/lz4-java-1.8.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.thoughtworks.paranamer",
+                    "name": "paranamer",
+                    "version": "2.8",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "paranamer",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8.jar"
+                        },
+                        {
+                            "name": "paranamer",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/thoughtworks/paranamer/paranamer/2.8/paranamer-2.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.playframework",
+                    "name": "play-functional_2.13",
+                    "version": "3.0.4",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "play-functional_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-functional_2.13/3.0.4/play-functional_2.13-3.0.4.jar"
+                        },
+                        {
+                            "name": "play-functional_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/playframework/play-functional_2.13/3.0.4/play-functional_2.13-3.0.4-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-reflect",
+                    "version": "2.13.12",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "scala-reflect",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12.jar"
+                        },
+                        {
+                            "name": "scala-reflect",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-reflect/2.13.12/scala-reflect-2.13.12-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.guava",
+                    "name": "failureaccess",
+                    "version": "1.0.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "failureaccess",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1.jar"
+                        },
+                        {
+                            "name": "failureaccess",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/failureaccess/1.0.1/failureaccess-1.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.guava",
+                    "name": "listenablefuture",
+                    "version": "9999.0-empty-to-avoid-conflict-with-guava",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "listenablefuture",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/guava/listenablefuture/9999.0-empty-to-avoid-conflict-with-guava/listenablefuture-9999.0-empty-to-avoid-conflict-with-guava.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.code.findbugs",
+                    "name": "jsr305",
+                    "version": "3.0.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jsr305",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2.jar"
+                        },
+                        {
+                            "name": "jsr305",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/code/findbugs/jsr305/3.0.2/jsr305-3.0.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.checkerframework",
+                    "name": "checker-qual",
+                    "version": "3.37.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "checker-qual",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/checkerframework/checker-qual/3.37.0/checker-qual-3.37.0.jar"
+                        },
+                        {
+                            "name": "checker-qual",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/checkerframework/checker-qual/3.37.0/checker-qual-3.37.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.errorprone",
+                    "name": "error_prone_annotations",
+                    "version": "2.21.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "error_prone_annotations",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.21.1/error_prone_annotations-2.21.1.jar"
+                        },
+                        {
+                            "name": "error_prone_annotations",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/errorprone/error_prone_annotations/2.21.1/error_prone_annotations-2.21.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "com.google.j2objc",
+                    "name": "j2objc-annotations",
+                    "version": "2.8",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "j2objc-annotations",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8.jar"
+                        },
+                        {
+                            "name": "j2objc-annotations",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/com/google/j2objc/j2objc-annotations/2.8/j2objc-annotations-2.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.pekko",
+                    "name": "pekko-protobuf-v3_2.13",
+                    "version": "1.0.3",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "pekko-protobuf-v3_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-protobuf-v3_2.13/1.0.3/pekko-protobuf-v3_2.13-1.0.3.jar"
+                        },
+                        {
+                            "name": "pekko-protobuf-v3_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/pekko/pekko-protobuf-v3_2.13/1.0.3/pekko-protobuf-v3_2.13-1.0.3-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "jakarta.inject",
+                    "name": "jakarta.inject-api",
+                    "version": "2.0.1",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "jakarta.inject-api",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/jakarta/inject/jakarta.inject-api/2.0.1/jakarta.inject-api-2.0.1.jar"
+                        },
+                        {
+                            "name": "jakarta.inject-api",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/jakarta/inject/jakarta.inject-api/2.0.1/jakarta.inject-api-2.0.1-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "aopalliance",
+                    "name": "aopalliance",
+                    "version": "1.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "aopalliance",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0.jar"
+                        },
+                        {
+                            "name": "aopalliance",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/aopalliance/aopalliance/1.0/aopalliance-1.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "dev.zio",
+                    "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                    "version": "2.3.8",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/2.3.8/izumi-reflect-thirdparty-boopickle-shaded_2.13-2.3.8.jar"
+                        },
+                        {
+                            "name": "izumi-reflect-thirdparty-boopickle-shaded_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/dev/zio/izumi-reflect-thirdparty-boopickle-shaded_2.13/2.3.8/izumi-reflect-thirdparty-boopickle-shaded_2.13-2.3.8-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb.scala",
+                    "name": "mongo-scala-bson_2.13",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "mongo-scala-bson_2.13",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-bson_2.13/5.1.2/mongo-scala-bson_2.13-5.1.2.jar"
+                        },
+                        {
+                            "name": "mongo-scala-bson_2.13",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/scala/mongo-scala-bson_2.13/5.1.2/mongo-scala-bson_2.13-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb",
+                    "name": "mongodb-driver-reactivestreams",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "mongodb-driver-reactivestreams",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-reactivestreams/5.1.2/mongodb-driver-reactivestreams-5.1.2.jar"
+                        },
+                        {
+                            "name": "mongodb-driver-reactivestreams",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-reactivestreams/5.1.2/mongodb-driver-reactivestreams-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-css",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-css",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-css/1.18/batik-css-1.18.jar"
+                        },
+                        {
+                            "name": "batik-css",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-css/1.18/batik-css-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-dom",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-dom",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-dom/1.18/batik-dom-1.18.jar"
+                        },
+                        {
+                            "name": "batik-dom",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-dom/1.18/batik-dom-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-ext",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-ext",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-ext/1.18/batik-ext-1.18.jar"
+                        },
+                        {
+                            "name": "batik-ext",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-ext/1.18/batik-ext-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-parser",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-parser",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-parser/1.18/batik-parser-1.18.jar"
+                        },
+                        {
+                            "name": "batik-parser",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-parser/1.18/batik-parser-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-shared-resources",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-shared-resources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-shared-resources/1.18/batik-shared-resources-1.18.jar"
+                        },
+                        {
+                            "name": "batik-shared-resources",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-shared-resources/1.18/batik-shared-resources-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-svg-dom",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-svg-dom",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svg-dom/1.18/batik-svg-dom-1.18.jar"
+                        },
+                        {
+                            "name": "batik-svg-dom",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svg-dom/1.18/batik-svg-dom-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-util",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-util",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-util/1.18/batik-util-1.18.jar"
+                        },
+                        {
+                            "name": "batik-util",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-util/1.18/batik-util-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "xml-apis",
+                    "name": "xml-apis-ext",
+                    "version": "1.3.04",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "xml-apis-ext",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-script",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-script",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-script/1.18/batik-script-1.18.jar"
+                        },
+                        {
+                            "name": "batik-script",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-script/1.18/batik-script-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-xml",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-xml",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-xml/1.18/batik-xml-1.18.jar"
+                        },
+                        {
+                            "name": "batik-xml",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-xml/1.18/batik-xml-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-svggen",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-svggen",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.18/batik-svggen-1.18.jar"
+                        },
+                        {
+                            "name": "batik-svggen",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-svggen/1.18/batik-svggen-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb",
+                    "name": "bson",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "bson",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson/5.1.2/bson-5.1.2.jar"
+                        },
+                        {
+                            "name": "bson",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson/5.1.2/bson-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb",
+                    "name": "mongodb-driver-core",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "mongodb-driver-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/5.1.2/mongodb-driver-core-5.1.2.jar"
+                        },
+                        {
+                            "name": "mongodb-driver-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/5.1.2/mongodb-driver-core-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "io.projectreactor",
+                    "name": "reactor-core",
+                    "version": "3.5.0",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "reactor-core",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/projectreactor/reactor-core/3.5.0/reactor-core-3.5.0.jar"
+                        },
+                        {
+                            "name": "reactor-core",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/io/projectreactor/reactor-core/3.5.0/reactor-core-3.5.0-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "xml-apis",
+                    "name": "xml-apis",
+                    "version": "1.4.01",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "xml-apis",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01.jar"
+                        },
+                        {
+                            "name": "xml-apis",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/xml-apis/xml-apis/1.4.01/xml-apis-1.4.01-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-constants",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-constants",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-constants/1.18/batik-constants-1.18.jar"
+                        },
+                        {
+                            "name": "batik-constants",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-constants/1.18/batik-constants-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.apache.xmlgraphics",
+                    "name": "batik-i18n",
+                    "version": "1.18",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "batik-i18n",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-i18n/1.18/batik-i18n-1.18.jar"
+                        },
+                        {
+                            "name": "batik-i18n",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/apache/xmlgraphics/batik-i18n/1.18/batik-i18n-1.18-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.mongodb",
+                    "name": "bson-record-codec",
+                    "version": "5.1.2",
+                    "configurations": "default",
+                    "artifacts": [
+                        {
+                            "name": "bson-record-codec",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson-record-codec/5.1.2/bson-record-codec-5.1.2.jar"
+                        },
+                        {
+                            "name": "bson-record-codec",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/mongodb/bson-record-codec/5.1.2/bson-record-codec-5.1.2-sources.jar"
+                        }
+                    ]
+                },
+                {
+                    "organization": "org.scala-lang",
+                    "name": "scala-library",
+                    "version": "2.13.12",
+                    "configurations": "optional",
+                    "artifacts": [
+                        {
+                            "name": "scala-library",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12.jar"
+                        },
+                        {
+                            "name": "scala-library",
+                            "classifier": "sources",
+                            "path": "/Users/olkuy/Library/Caches/Coursier/v1/https/repo1.maven.org/maven2/org/scala-lang/scala-library/2.13.12/scala-library-2.13.12-sources.jar"
+                        }
+                    ]
+                }
+            ]
+        },
+        "tags": [
+            "library"
+        ]
+    }
+}
