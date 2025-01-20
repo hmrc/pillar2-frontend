@@ -37,3 +37,6 @@ bin
 **/sbt.json
 project/.bloop/
 .metals/
+.bloop/
+.vscode/
+project/metals.sbt
