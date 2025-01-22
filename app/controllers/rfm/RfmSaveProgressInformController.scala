@@ -29,7 +29,6 @@ import javax.inject.Named
 class RfmSaveProgressInformController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
-  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmSaveProgressInformView
@@ -37,7 +36,7 @@ class RfmSaveProgressInformController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     Ok(view())
   }
 }

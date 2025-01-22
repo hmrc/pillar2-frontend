@@ -69,20 +69,6 @@ class UkBankAccountBasedFilingMemberControllerSpec extends SpecBase {
           status(result) mustBe OK
         }
       }
-      "redirect to under construction page if rfm functionality is off" in {
-        val ua = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
-        val application = applicationBuilder(userAnswers = Some(ua))
-          .configure("features.rfmAccessEnabled" -> false)
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-          val result  = route(application, request).value
-
-          status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-        }
-      }
     }
     "onSubmit" should {
       "return bad request if invalid data is submitted" in {

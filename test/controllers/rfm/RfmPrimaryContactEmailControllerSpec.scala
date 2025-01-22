@@ -164,24 +164,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode, "name")(request, applicationConfig, messages(application)).toString
       }
     }
-    "must redirect to correct view when rfm feature false" in {
-      val ua = emptyUserAnswers
-        .setOrException(RfmPrimaryContactNamePage, "sad")
-      val application = applicationBuilder(userAnswers = Some(ua))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmPrimaryContactEmailController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
     "redirect to Recovery page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None)
         .build()

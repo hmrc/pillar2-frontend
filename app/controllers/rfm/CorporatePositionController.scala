@@ -40,7 +40,6 @@ class CorporatePositionController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   sessionRepository:                SessionRepository,
-  featureAction:                    FeatureFlagActionFactory,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   formProvider:                     RfmCorporatePositionFormProvider,
@@ -53,13 +52,12 @@ class CorporatePositionController @Inject() (
 
   val form: Form[CorporatePosition] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
-        case Some(value) => form.fill(value)
-        case None        => form
-      }
-      Ok(view(preparedForm, mode))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    val preparedForm = request.userAnswers.get(RfmCorporatePositionPage) match {
+      case Some(value) => form.fill(value)
+      case None        => form
+    }
+    Ok(view(preparedForm, mode))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

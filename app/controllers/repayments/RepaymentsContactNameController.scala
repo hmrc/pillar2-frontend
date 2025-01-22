@@ -39,7 +39,6 @@ class RepaymentsContactNameController @Inject() (
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
-  featureAction:                          FeatureFlagActionFactory,
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactNameView
@@ -50,7 +49,7 @@ class RepaymentsContactNameController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsContactNamePage) match {
         case None        => form
         case Some(value) => form.fill(value)

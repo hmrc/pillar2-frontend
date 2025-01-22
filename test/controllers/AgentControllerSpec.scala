@@ -75,19 +75,7 @@ class AgentControllerSpec extends SpecBase {
 
   "Enter And Submit Client Pillar 2 Id" must {
 
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
-
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadClientPillarId.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true and user is agent" in {
+    "must return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -233,26 +221,6 @@ class AgentControllerSpec extends SpecBase {
 
   "Confirm Client Details" must {
 
-    "redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
-        .build()
-
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
-        .thenReturn(
-          Future.successful(
-            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
-          )
-        )
-
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadConfirmClientDetails.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
     "return the correct view if client pillar 2 id and organisation name is in user answers" in {
       val userAnswer = emptyUserAnswers
         .set(UnauthorisedClientPillar2ReferencePage, "XMPLR0123456789")
@@ -360,19 +328,8 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Agent No Client Match" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadNoClientMatch.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true and user is agent" in {
+    "must return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -395,19 +352,8 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Agent Error" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true and user is agent" in {
+    "must return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -422,19 +368,8 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Agent Client Unauthorised" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadUnauthorised.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -457,19 +392,8 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Agent Individual Error" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadIndividualError.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true and user is agent" in {
+    "must return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -484,19 +408,8 @@ class AgentControllerSpec extends SpecBase {
   }
 
   "Agent Organisation Error" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.asaAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.AgentController.onPageLoadOrganisationError.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 

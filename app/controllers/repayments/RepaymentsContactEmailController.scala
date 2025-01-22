@@ -39,7 +39,6 @@ class RepaymentsContactEmailController @Inject() (
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
   navigator:                              RepaymentNavigator,
-  featureAction:                          FeatureFlagActionFactory,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactEmailView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -47,7 +46,7 @@ class RepaymentsContactEmailController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>

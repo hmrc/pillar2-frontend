@@ -40,7 +40,6 @@ class RfmEntityTypeController @Inject() (
   @Named("RfmIdentifier") identify:                  IdentifierAction,
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
-  featureAction:                                     FeatureFlagActionFactory,
   getData:                                           DataRetrievalAction,
   requireData:                                       DataRequiredAction,
   formProvider:                                      RfmEntityTypeFormProvider,
@@ -52,26 +51,25 @@ class RfmEntityTypeController @Inject() (
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
-    implicit request =>
-      request.userAnswers
-        .get(RfmUkBasedPage)
-        .map { ukBased =>
-          request.userAnswers
-            .get(RfmEntityTypePage)
-            .map { entityType =>
-              if (!ukBased & entityType == EntityType.Other) {
-                for {
-                  updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, true))
-                  _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-                } yield Ok(view(form.fill(entityType), mode))
-              } else {
-                Future.successful(Ok(view(form.fill(entityType), mode)))
-              }
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    request.userAnswers
+      .get(RfmUkBasedPage)
+      .map { ukBased =>
+        request.userAnswers
+          .get(RfmEntityTypePage)
+          .map { entityType =>
+            if (!ukBased & entityType == EntityType.Other) {
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, true))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Ok(view(form.fill(entityType), mode))
+            } else {
+              Future.successful(Ok(view(form.fill(entityType), mode)))
             }
-            .getOrElse(Future.successful(Ok(view(form, mode))))
-        }
-        .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
+          }
+          .getOrElse(Future.successful(Ok(view(form, mode))))
+      }
+      .getOrElse(Future.successful(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

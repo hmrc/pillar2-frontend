@@ -41,7 +41,6 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
 
     "redirect to the correct route on onSubmit" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.rfmAccessEnabled" -> true)
         .build()
 
       running(application) {
@@ -57,7 +56,6 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET in CheckMode" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.rfmAccessEnabled" -> true)
         .build()
 
       running(application) {
@@ -67,22 +65,6 @@ class CheckNewFilingMemberControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustBe OK
-      }
-    }
-
-    "redirect to Journey Recovery page when RFM feature is disabled" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.rfmAccessEnabled" -> false)
-        .build()
-
-      running(application) {
-
-        val request = FakeRequest(GET, controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
       }
     }
 

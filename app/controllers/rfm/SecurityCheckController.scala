@@ -38,7 +38,6 @@ class SecurityCheckController @Inject() (
   sessionRepository:                SessionRepository,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getSessionData:                   SessionDataRetrievalAction,
-  featureAction:                    FeatureFlagActionFactory,
   requireSessionData:               SessionDataRequiredAction,
   formProvider:                     RfmSecurityCheckFormProvider,
   navigator:                        ReplaceFilingMemberNavigator,
@@ -53,7 +52,7 @@ class SecurityCheckController @Inject() (
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     }
@@ -73,7 +72,7 @@ class SecurityCheckController @Inject() (
   }
 
   def onPageLoadNotAllowed: Action[AnyContent] =
-    (featureAction.rfmAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       Ok(errorView())
     }
 

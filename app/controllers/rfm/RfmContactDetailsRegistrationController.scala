@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions.{FeatureFlagActionFactory, IdentifierAction}
+import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -28,13 +28,12 @@ import javax.inject.{Inject, Named}
 class RfmContactDetailsRegistrationController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val controllerComponents:         MessagesControllerComponents,
-  featureAction:                    FeatureFlagActionFactory,
   view:                             RfmContactDetailsRegistrationView
 )(implicit appConfig:               FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = identify { implicit request =>
     Ok(view())
   }
 }

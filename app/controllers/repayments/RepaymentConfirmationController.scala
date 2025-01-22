@@ -33,7 +33,6 @@ class RepaymentConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   RepaymentsConfirmationView,
-  featureAction:                          FeatureFlagActionFactory,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction
 )(implicit appConfig:                     FrontendAppConfig)
@@ -42,7 +41,7 @@ class RepaymentConfirmationController @Inject() (
   val dateHelper = new ViewHelpers()
 
   def onPageLoad(): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
       userAnswers.get(RepaymentCompletionStatus) match {

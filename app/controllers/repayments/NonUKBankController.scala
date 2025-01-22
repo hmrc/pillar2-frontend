@@ -41,7 +41,6 @@ class NonUKBankController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   sessionRepository:                      SessionRepository,
   navigator:                              RepaymentNavigator,
-  featureAction:                          FeatureFlagActionFactory,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   NonUKBankView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -51,7 +50,7 @@ class NonUKBankController @Inject() (
   val form: Form[NonUKBank] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (featureAction.repaymentsAccessAction andThen identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(NonUKBankPage) match {
         case None        => form
         case Some(value) => form.fill(value)

@@ -45,22 +45,6 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
   "Check Your Answers Controller" must {
 
-    "redirect to correct view when rfm feature false" in {
-      val application = applicationBuilder(userAnswers = Some(rfmID))
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "return OK and the correct view if an answer is provided to every New RFM ID journey questions - Upe" in {
       val sessionRepositoryUserAnswers = UserAnswers("id")
       val application = applicationBuilder(userAnswers = Some(rfmUpe))

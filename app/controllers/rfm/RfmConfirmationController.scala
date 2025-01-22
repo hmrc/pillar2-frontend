@@ -34,7 +34,6 @@ class RfmConfirmationController @Inject() (
   getData:                  DataRetrievalAction,
   identify:                 IdentifierAction,
   requireData:              DataRequiredAction,
-  featureAction:            FeatureFlagActionFactory,
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmConfirmationView
@@ -43,16 +42,15 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
   val dateHelper = new ViewHelpers()
 
-  def onPageLoad(): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData).async {
-    implicit request =>
-      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
-      sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
-        (for {
-          userAnswer <- optionalUserAnswers
-          pillar2Id <- Pillar2Reference
-                         .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
-                         .orElse(userAnswer.get(PlrReferencePage))
-        } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+    sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
+      (for {
+        userAnswer <- optionalUserAnswers
+        pillar2Id <- Pillar2Reference
+                       .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
+                       .orElse(userAnswer.get(PlrReferencePage))
+      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
   }
 }

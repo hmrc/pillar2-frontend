@@ -37,7 +37,6 @@ class RfmSecondaryContactEmailController @Inject() (
   val userAnswersConnectors:        UserAnswersConnectors,
   @Named("RfmIdentifier") identify: IdentifierAction,
   getData:                          DataRetrievalAction,
-  featureAction:                    FeatureFlagActionFactory,
   requireData:                      DataRequiredAction,
   navigator:                        ReplaceFilingMemberNavigator,
   formProvider:                     RfmSecondaryContactEmailFormProvider,
@@ -47,19 +46,18 @@ class RfmSecondaryContactEmailController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (featureAction.rfmAccessAction andThen identify andThen getData andThen requireData) {
-    implicit request =>
-      request.userAnswers
-        .get(RfmSecondaryContactNamePage)
-        .map { contactName =>
-          val form = formProvider(contactName)
-          val preparedForm = request.userAnswers.get(RfmSecondaryEmailPage) match {
-            case Some(v) => form.fill(v)
-            case None    => form
-          }
-          Ok(view(preparedForm, mode, contactName))
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+    request.userAnswers
+      .get(RfmSecondaryContactNamePage)
+      .map { contactName =>
+        val form = formProvider(contactName)
+        val preparedForm = request.userAnswers.get(RfmSecondaryEmailPage) match {
+          case Some(v) => form.fill(v)
+          case None    => form
         }
-        .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
+        Ok(view(preparedForm, mode, contactName))
+      }
+      .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>

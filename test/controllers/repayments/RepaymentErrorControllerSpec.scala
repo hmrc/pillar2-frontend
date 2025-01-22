@@ -29,21 +29,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
   val formProvider = new RepaymentAccountNameConfirmationForm
 
   "Not Confirmed Bank Details" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -59,7 +46,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must return the correct error view if the feature flag is true  and submisstion error" in {
+    "must return the correct error view for a submission error" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -77,21 +64,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
   }
 
   "Repayment Error" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -109,21 +83,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
   }
 
   "Bank Details Error" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError.url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -141,21 +102,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
   }
 
   "Partial Account Name Match" must {
-    "must redirect to error page if the feature flag is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), additionalData = Map("features.repaymentsAccessEnabled" -> false))
-        .build()
 
-      running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadPartialNameError(NormalMode).url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some("/report-pillar2-top-up-taxes/error/page-not-found")
-      }
-    }
-
-    "must return the correct view if the feature flag is true" in {
+    "must return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "James")))
         .build()
 

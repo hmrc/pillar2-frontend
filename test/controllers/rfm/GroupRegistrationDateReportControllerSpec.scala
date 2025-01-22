@@ -38,24 +38,6 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
   val startDate: LocalDate = LocalDate.of(2023, 12, 31)
   "GroupRegistrationDateReport Controller" when {
 
-    "must redirect to correct view when rfm feature false" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-
-    }
-
     "must return OK and the correct view for Group Registration Date " in {
       val application = applicationBuilder(userAnswers = None)
         .build()

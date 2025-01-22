@@ -93,19 +93,6 @@ class RfmContactAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to correct view when rfm feature false" in {
-      val application = applicationBuilder(userAnswers = Some(defaultUa))
-        .configure(Seq("features.rfmAccessEnabled" -> false): _*)
-        .build()
-
-      running(application) {
-        val result = route(application, getRequest).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-    }
-
     "display next page and status should be ok if valid data is used when country code is GB" in {
       running(applicationOverride) {
         val result = route(applicationOverride, postRequest()).value

@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import base.SpecBase
-import controllers.routes
 import pages.RepaymentCompletionStatus
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -59,22 +58,6 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
-      }
-    }
-
-    "redirect to pageNotFoundLoad if feature flag is off" in {
-
-      val application = applicationBuilder()
-        .configure("features.repaymentsAccessEnabled" -> false)
-        .build()
-
-      running(application) {
-        val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.ErrorController.pageNotFoundLoad.url
       }
     }
   }

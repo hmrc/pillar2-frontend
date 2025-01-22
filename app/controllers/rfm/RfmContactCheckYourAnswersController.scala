@@ -48,7 +48,6 @@ class RfmContactCheckYourAnswersController @Inject() (
   @Named("RfmIdentifier") rfmIdentify: IdentifierAction,
   Identify:                            IdentifierAction,
   requireData:                         DataRequiredAction,
-  featureAction:                       FeatureFlagActionFactory,
   val controllerComponents:            MessagesControllerComponents,
   userAnswersConnectors:               UserAnswersConnectors,
   subscriptionService:                 SubscriptionService,
@@ -61,36 +60,35 @@ class RfmContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (featureAction.rfmAccessAction andThen Identify andThen getData andThen requireData).async {
-    implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
-      val address = SummaryListViewModel(
-        rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
-      )
-      sessionRepository.get(request.userId).map { optionalUserAnswer =>
-        (for {
-          userAnswer <- optionalUserAnswer
-          rfm        <- userAnswer.get(RfmStatusPage)
-        } yield rfm) match {
-          case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
-          case _ =>
-            (for {
-              userAnswer <- optionalUserAnswer
-              _          <- userAnswer.get(PlrReferencePage)
-            } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
-              .getOrElse {
-                removeRfmStatus(userAnswers)
-                Ok(
-                  view(
-                    request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
-                    request.userAnswers.rfmPrimaryContactList,
-                    request.userAnswers.rfmSecondaryContactList,
-                    address
-                  )
+  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
+    implicit val userAnswers: UserAnswers = request.userAnswers
+    val address = SummaryListViewModel(
+      rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
+    )
+    sessionRepository.get(request.userId).map { optionalUserAnswer =>
+      (for {
+        userAnswer <- optionalUserAnswer
+        rfm        <- userAnswer.get(RfmStatusPage)
+      } yield rfm) match {
+        case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+        case _ =>
+          (for {
+            userAnswer <- optionalUserAnswer
+            _          <- userAnswer.get(PlrReferencePage)
+          } yield Redirect(controllers.rfm.routes.RfmCannotReturnAfterConfirmationController.onPageLoad))
+            .getOrElse {
+              removeRfmStatus(userAnswers)
+              Ok(
+                view(
+                  request.userAnswers.rfmCorporatePositionSummaryList(countryOptions),
+                  request.userAnswers.rfmPrimaryContactList,
+                  request.userAnswers.rfmSecondaryContactList,
+                  address
                 )
-              }
-        }
+              )
+            }
       }
+    }
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>

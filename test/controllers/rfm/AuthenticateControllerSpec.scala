@@ -25,14 +25,9 @@ class AuthenticateControllerSpec extends SpecBase {
 
   "Authenticate Controller" when {
 
-    "must redirect to security question page when rfm feature true" in {
+    "must redirect to security question page" in {
 
       val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> true
-          ): _*
-        )
         .build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url)
@@ -41,27 +36,7 @@ class AuthenticateControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url)
 
       }
-
     }
-
-    "must redirect to UnderConstruction page when rfm feature false" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .configure(
-          Seq(
-            "features.rfmAccessEnabled" -> false
-          ): _*
-        )
-        .build()
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ErrorController.pageNotFoundLoad.url
-      }
-
-    }
-
   }
 
 }
