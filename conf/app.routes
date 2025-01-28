@@ -529,7 +529,6 @@ GET        /repayment/error/change-partial-name                                 
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
 GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
-GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
@@ -547,4 +546,6 @@ GET        /replace-filing-member/download-answers-pdf                          
 GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
 GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
 GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
+
+GET       /manage-account/contact/waiting-room                controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 
