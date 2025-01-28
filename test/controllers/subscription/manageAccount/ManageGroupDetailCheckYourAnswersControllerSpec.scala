@@ -39,18 +39,18 @@ import scala.concurrent.Future
 
 class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with BeforeAndAfterEach {
 
-  override val mockSessionRepository     = mock[SessionRepository]
-  override val mockSubscriptionService   = mock[SubscriptionService]
+  override val mockSessionRepository:   SessionRepository   = mock[SessionRepository]
+  override val mockSubscriptionService: SubscriptionService = mock[SubscriptionService]
   private val mockReferenceNumberService = mock[ReferenceNumberService]
-  override val mockUserAnswersConnectors = mock[UserAnswersConnectors]
-  private val mockView                   = mock[ManageGroupDetailsCheckYourAnswersView]
+  override val mockUserAnswersConnectors: UserAnswersConnectors = mock[UserAnswersConnectors]
+  private val mockView = mock[ManageGroupDetailsCheckYourAnswersView]
 
   private val userId               = "test-user-id"
   private val validReferenceNumber = "PILLAR2REF123"
   private val validUserAnswers     = UserAnswers(userId)
 
-  private val fakeView        = Html("fake view")
-  private val fakeSummaryList = SummaryList(Seq.empty)
+  private val fakeView = Html("fake view")
+  SummaryList(Seq.empty)
 
   override def beforeEach(): Unit = {
     super.beforeEach()

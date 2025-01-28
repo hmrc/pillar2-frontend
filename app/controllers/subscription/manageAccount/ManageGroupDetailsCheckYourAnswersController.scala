@@ -23,13 +23,12 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.UserAnswers
 import models.subscription.ManageGroupDetailsStatus
 import models.subscription.ManageGroupDetailsStatus._
-import models.{ApiError, InternalIssueError, UserAnswers}
+import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
-import play.api.i18n.{I18nSupport, MessagesApi}
+import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}

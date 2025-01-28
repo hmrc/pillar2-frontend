@@ -17,32 +17,37 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
+import controllers.routes
+import controllers.subscription.manageAccount.{routes => manageRoutes}
+import helpers.AllMocks
 import models.subscription.ManageGroupDetailsStatus.{InProgress, SuccessfullyCompleted}
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito._
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
+import play.api.test.CSRFTokenHelper._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
-import play.api.test.CSRFTokenHelper._
-import controllers.routes
-import controllers.subscription.manageAccount.{routes => manageRoutes}
-import play.twirl.api.Html
 
 import scala.concurrent.Future
 
-class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase {
+class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks {
 
   private val fakeView = Html("fake view")
+  private val mockView = mock[ManageGroupDetailsWaitingRoomView]
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockView)
+  }
 
   "ManageGroupDetailsWaitingRoomController" should {
 
     "return OK and render the spinner when status is InProgress" in {
-      val mockView              = mock[ManageGroupDetailsWaitingRoomView]
-      val mockSessionRepository = mock[SessionRepository]
-      val userAnswers           = emptyUserAnswers.set(ManageGroupDetailsStatusPage, InProgress).success.value
+      val userAnswers = emptyUserAnswers.set(ManageGroupDetailsStatusPage, InProgress).success.value
 
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -65,8 +70,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase {
     }
 
     "redirect to dashboard when status is SuccessfullyCompleted" in {
-      val mockSessionRepository = mock[SessionRepository]
-      val userAnswers           = emptyUserAnswers.set(ManageGroupDetailsStatusPage, SuccessfullyCompleted).success.value
+      val userAnswers = emptyUserAnswers.set(ManageGroupDetailsStatusPage, SuccessfullyCompleted).success.value
 
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
 
@@ -86,7 +90,6 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase {
     }
 
     "redirect to error page when UserAnswers are missing" in {
-      val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
 
       val application = applicationBuilder(None)
@@ -105,7 +108,6 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase {
     }
 
     "handle exceptions gracefully" in {
-      val mockSessionRepository = mock[SessionRepository]
       when(mockSessionRepository.get(any())).thenReturn(Future.failed(new RuntimeException("Database error")))
 
       val application = applicationBuilder(None)

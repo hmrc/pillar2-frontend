@@ -18,21 +18,19 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import models.subscription.ManageGroupDetailsStatus
 import models.subscription.ManageGroupDetailsStatus._
 import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.libs.concurrent.Futures
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
+import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
-import repositories.SessionRepository
-import services.{ReferenceNumberService, SubscriptionService}
-import play.api.libs.concurrent.Futures
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
-import scala.concurrent.duration._
 
 class ManageGroupDetailsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
