@@ -20,11 +20,13 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.routes
 import controllers.subscription.manageAccount.{routes => manageRoutes}
+import models.subscription.ManageGroupDetailsStatus
 import models.{InternalIssueError, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach
+import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
 import play.api.test.CSRFTokenHelper._
 import play.api.test.FakeRequest
@@ -34,8 +36,6 @@ import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
-import pages.ManageGroupDetailsStatusPage
-import models.subscription.ManageGroupDetailsStatus
 
 import scala.concurrent.Future
 
@@ -58,9 +58,6 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Befo
     super.beforeEach()
     reset(mockSessionRepository, mockSubscriptionService, mockReferenceNumberService, mockUserAnswersConnectors, mockView)
   }
-
-  private def createController(application: play.api.Application) =
-    application.injector.instanceOf[ManageGroupDetailsCheckYourAnswersController]
 
   "ManageGroupDetailsCheckYourAnswersController" when {
 
