@@ -52,4 +52,4 @@ object ManageContactDetailsStatus extends Enumerable.Implicits {
     case JsString("failException")            => JsSuccess(FailException)
     case _                                    => JsError("Unknown ManageContactDetailsStatus")
   }
-} 
+}

@@ -34,14 +34,14 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ManageContactDetailsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData: SubscriptionDataRetrievalAction,
-  requireData: SubscriptionDataRequiredAction,
-  val controllerComponents: MessagesControllerComponents,
-  view: ManageContactDetailsWaitingRoomView,
-  sessionRepository: SessionRepository,
-  subscriptionService: SubscriptionService,
-  futures: Futures
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ManageContactDetailsWaitingRoomView,
+  sessionRepository:                      SessionRepository,
+  subscriptionService:                    SubscriptionService,
+  futures:                                Futures
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -75,4 +75,4 @@ class ManageContactDetailsWaitingRoomController @Inject() (
         Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }
   }
-} 
+}

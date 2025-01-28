@@ -20,6 +20,6 @@ import models.subscription.ManageContactDetailsStatus
 import play.api.libs.json.JsPath
 
 case object ManageContactDetailsStatusPage extends QuestionPage[ManageContactDetailsStatus] {
-  override def path: JsPath = JsPath \ toString
+  override def path:     JsPath = JsPath \ toString
   override def toString: String = "manageContactDetailsStatus"
-} 
+}
