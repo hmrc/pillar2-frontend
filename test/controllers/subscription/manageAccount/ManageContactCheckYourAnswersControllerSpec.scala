@@ -19,17 +19,18 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription.{AccountingPeriod, DashboardInfo, SubscriptionLocalData}
-import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse}
+import models.subscription.{AccountingPeriod, DashboardInfo, ManageContactDetailsStatus, SubscriptionLocalData}
+import models.{MneOrDomestic, NonUKAddress, UnexpectedResponse, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SubscriptionService
+import repositories.SessionRepository
+import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -174,6 +175,24 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
     }
 
+    "must redirect to waiting room when status is InProgress" in {
+      val userAnswers = UserAnswers("id")
+        .setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(amendSubscription))
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(
+          result
+        ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+      }
+    }
+
     "onSubmit" should {
 
       "trigger amend subscription API if all data is available for contact detail" in {
@@ -239,6 +258,68 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
 
+      }
+
+      "set status to InProgress and redirect to waiting room on successful submission" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.successful(Done))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(
+            result
+          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+
+          verify(mockSessionRepository).set(any()) // Verify that the session was updated
+        }
+      }
+
+      "handle failed status update but successful submission" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(false))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.successful(Done))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        }
       }
     }
 

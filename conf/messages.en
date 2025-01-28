@@ -1546,5 +1546,6 @@ transactionHistory.none.p2 = It will take up to 5 working days for payments to a
 
 # Add these new messages
 manageContactDetails.title = Submitting your contact details
+manageContactDetails.heading = Submitting your contact details
 manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not leave this page.

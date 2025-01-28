@@ -548,6 +548,6 @@ GET        /replace-filing-member/download-confirmation-pdf                     
 GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
 GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
 
-GET        /manage-account/contact/waiting-room                                                     controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
+GET        /manage-account/contact/waiting-room                                                      controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 
 
