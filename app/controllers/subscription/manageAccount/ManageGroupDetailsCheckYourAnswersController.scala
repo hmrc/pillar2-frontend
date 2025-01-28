@@ -59,7 +59,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
       sessionRepository.get(request.userId).map {
-        case None => Redirect(routes.JourneyRecoveryController.onPageLoad(None))
+        case None => Redirect(routes.JourneyRecoveryController.onPageLoad())
         case Some(_) =>
           val list = SummaryListViewModel(
             rows = Seq(
@@ -100,11 +100,11 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             Some(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
           case e: Exception =>
             logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}: ${e.getMessage}")
-            Some(Redirect(routes.JourneyRecoveryController.onPageLoad(None)))
+            Some(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         }
         .map(_.getOrElse {
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}")
-          Redirect(routes.JourneyRecoveryController.onPageLoad(None))
+          Redirect(routes.JourneyRecoveryController.onPageLoad())
         })
     }
 
