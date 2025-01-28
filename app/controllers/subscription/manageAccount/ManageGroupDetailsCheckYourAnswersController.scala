@@ -57,18 +57,23 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
-      sessionRepository.get(request.userId).map {
-        case None => Redirect(routes.JourneyRecoveryController.onPageLoad())
-        case Some(_) =>
-          val list = SummaryListViewModel(
-            rows = Seq(
-              MneOrDomesticSummary.row,
-              GroupAccountingPeriodSummary.row,
-              GroupAccountingPeriodStartDateSummary.row,
-              GroupAccountingPeriodEndDateSummary.row
-            ).flatten
-          )
-          Ok(view(list))
+      sessionRepository.get(request.userId).flatMap {
+        case None => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        case Some(answers) =>
+          answers.get(ManageGroupDetailsStatusPage) match {
+            case Some(InProgress) =>
+              Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+            case _ =>
+              val list = SummaryListViewModel(
+                rows = Seq(
+                  MneOrDomesticSummary.row,
+                  GroupAccountingPeriodSummary.row,
+                  GroupAccountingPeriodStartDateSummary.row,
+                  GroupAccountingPeriodEndDateSummary.row
+                ).flatten
+              )
+              Future.successful(Ok(view(list)))
+          }
       }
     }
 
@@ -83,8 +88,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
         updatedAnswers = userAnswers match {
                            case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                           case None =>
-                             UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+                           case None => UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
                          }
         _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
       } yield {

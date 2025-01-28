@@ -34,6 +34,8 @@ import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
+import pages.ManageGroupDetailsStatusPage
+import models.subscription.ManageGroupDetailsStatus
 
 import scala.concurrent.Future
 
@@ -56,6 +58,9 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Befo
     super.beforeEach()
     reset(mockSessionRepository, mockSubscriptionService, mockReferenceNumberService, mockUserAnswersConnectors, mockView)
   }
+
+  private def createController(application: play.api.Application) =
+    application.injector.instanceOf[ManageGroupDetailsCheckYourAnswersController]
 
   "ManageGroupDetailsCheckYourAnswersController" when {
 
@@ -98,6 +103,76 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Befo
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad(None).url
+        }
+      }
+
+      "must redirect to waiting room when status is InProgress" in {
+        val userAnswers = UserAnswers("id")
+          .setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockView.apply(any())(any(), any(), any())).thenReturn(fakeView)
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(emptySubscriptionLocalData)
+        ).overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
+        ).build()
+
+        running(application) {
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(
+            result
+          ).value mustEqual controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+        }
+      }
+
+      "must display the check your answers page for any non-InProgress status" in {
+        val userAnswers = UserAnswers("id")
+        // Not setting any status - this tests the default case
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockView.apply(any())(any(), any(), any())).thenReturn(fakeView)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ManageGroupDetailsCheckYourAnswersView].toInstance(mockView)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual OK
+          verify(mockView).apply(any())(any(), any(), any())
+        }
+      }
+
+      "must redirect to Journey Recovery when no session data exists" in {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(None))
+
+        val application = applicationBuilder(userAnswers = None)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }
