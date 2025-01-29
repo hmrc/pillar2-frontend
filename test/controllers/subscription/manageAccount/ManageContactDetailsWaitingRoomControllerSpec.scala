@@ -17,9 +17,8 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import models.subscription.ManageContactDetailsStatus
-import models.subscription.ManageContactDetailsStatus._
 import models.UserAnswers
+import models.subscription.ManageContactDetailsStatus._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.BeforeAndAfterEach

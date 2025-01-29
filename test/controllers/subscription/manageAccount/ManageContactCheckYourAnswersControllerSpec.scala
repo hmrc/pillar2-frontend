@@ -18,10 +18,9 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
+import models._
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription.{AccountingPeriod, DashboardInfo, ManageContactDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, MneOrDomestic, NonUKAddress, UserAnswers}
-import models.UnexpectedResponse
+import models.subscription._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
