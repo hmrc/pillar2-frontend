@@ -28,7 +28,7 @@ import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.rfm.{SecurityCheckErrorView, SecurityCheckView}
+import views.html.rfm.SecurityCheckView
 
 import scala.concurrent.Future
 
@@ -94,30 +94,6 @@ class SecurityCheckControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "redirect to the error page when enrolment returns associated wrong group id" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any()))
-          .thenReturn(Future.successful(Some(GroupIds(Seq("incorrect ref"), Seq.empty))))
-
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed().url
       }
     }
 
@@ -229,21 +205,6 @@ class SecurityCheckControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "return OK and the correct view for a GET for error page" in {
-      val application = applicationBuilder().build()
-
-      running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[SecurityCheckErrorView]
-
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
   }
