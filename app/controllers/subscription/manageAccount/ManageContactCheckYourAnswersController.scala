@@ -61,6 +61,9 @@ class ManageContactCheckYourAnswersController @Inject() (
           answers.get(ManageContactDetailsStatusPage) match {
             case Some(ManageContactDetailsStatus.InProgress) =>
               Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
+            case Some(ManageContactDetailsStatus.Completed) =>
+              Future
+                .successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactCannotReturnAfterConfirmationController.onPageLoad))
             case _ =>
               val primaryContactList = SummaryListViewModel(
                 rows = Seq(
@@ -100,9 +103,9 @@ class ManageContactCheckYourAnswersController @Inject() (
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
         updatedAnswers = userAnswers match {
-                           case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                           case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Completed)
                            case None =>
-                             UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                             UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Completed)
                          }
         _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
       } yield {

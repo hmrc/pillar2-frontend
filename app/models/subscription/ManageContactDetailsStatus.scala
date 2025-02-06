@@ -27,12 +27,14 @@ object ManageContactDetailsStatus extends Enumerable.Implicits {
   case object SuccessfullyCompleted extends WithName("successfullyCompleted") with ManageContactDetailsStatus
   case object FailedInternalIssueError extends WithName("failedInternalIssueError") with ManageContactDetailsStatus
   case object FailException extends WithName("failException") with ManageContactDetailsStatus
+  case object Completed extends ManageContactDetailsStatus
 
   val values: Seq[ManageContactDetailsStatus] = Seq(
     InProgress,
     SuccessfullyCompleted,
     FailedInternalIssueError,
-    FailException
+    FailException,
+    Completed
   )
 
   implicit val enumerable: Enumerable[ManageContactDetailsStatus] =
@@ -43,6 +45,7 @@ object ManageContactDetailsStatus extends Enumerable.Implicits {
     case SuccessfullyCompleted    => JsString("successfullyCompleted")
     case FailedInternalIssueError => JsString("failedInternalIssueError")
     case FailException            => JsString("failException")
+    case Completed                => JsString("completed")
   }
 
   implicit val reads: Reads[ManageContactDetailsStatus] = Reads {
@@ -50,6 +53,7 @@ object ManageContactDetailsStatus extends Enumerable.Implicits {
     case JsString("successfullyCompleted")    => JsSuccess(SuccessfullyCompleted)
     case JsString("failedInternalIssueError") => JsSuccess(FailedInternalIssueError)
     case JsString("failException")            => JsSuccess(FailException)
+    case JsString("completed")                => JsSuccess(Completed)
     case _                                    => JsError("Unknown ManageContactDetailsStatus")
   }
 }

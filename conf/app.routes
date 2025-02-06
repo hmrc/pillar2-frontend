@@ -549,3 +549,5 @@ GET        /repayment/download-answers-pdf                                      
 GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
 
 GET        /manage-account/contact/waiting-room                                                      controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
+
+GET        /manage-contact-details/cannot-return        controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
