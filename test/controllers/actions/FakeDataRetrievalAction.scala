@@ -45,6 +45,6 @@ class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends 
     scala.concurrent.ExecutionContext.Implicits.global
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
-    Future(SessionOptionalDataRequest(request.request, request.userId, dataToReturn))
+    Future(SessionOptionalDataRequest(request, request.userId, dataToReturn))
 
 }

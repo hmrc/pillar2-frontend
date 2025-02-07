@@ -15,7 +15,6 @@
  */
 
 package controllers.rfm
-
 import config.FrontendAppConfig
 import connectors.EnrolmentStoreProxyConnector
 import controllers.actions._
@@ -62,11 +61,11 @@ class SecurityCheckController @Inject() (
       .bindFromRequest()
       .fold(
         formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode))),
-        value =>
+        pillar2Id =>
           for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, value))
+            updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmPillar2ReferencePage, pillar2Id))
             _              <- sessionRepository.set(updatedAnswers)
-            result         <- redirectSecurityCheck(value, mode, updatedAnswers)
+            result         <- redirectSecurityCheck(pillar2Id, mode, updatedAnswers)(request.request.groupId)
           } yield result
       )
   }
@@ -76,12 +75,22 @@ class SecurityCheckController @Inject() (
       Ok(errorView())
     }
 
-  private def redirectSecurityCheck(userEnteredGroupIdentifier: String, mode: Mode, updatedAnswers: UserAnswers)(implicit
-    hc:                                                         HeaderCarrier
+  /** If the groupId of the logged in user matches the groupId of the pillar2 enrolment, this check will redirect to a KB page
+    *
+    * The groupId can be the same if the user belongs to an organisation that has other enrolments on other HMRC systems but not a pillar2 enrolment.
+    *
+    * https://confluence.tools.tax.service.gov.uk/display/GGWRLS/EACD+Concepts%3A+Government+Gateway+Accounts+and+Groups
+    */
+  private def redirectSecurityCheck(pillar2Id: String, mode: Mode, updatedAnswers: UserAnswers)(userGroupIdOpt: Option[String])(implicit
+    hc:                                        HeaderCarrier
   ): Future[Result] =
-    enrolmentStoreProxyConnector.getGroupIds(userEnteredGroupIdentifier).map {
-      case Some(value) if value.principalGroupIds.contains(userEnteredGroupIdentifier) =>
-        Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
-      case _ => Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed())
-    }
+    enrolmentStoreProxyConnector
+      .getGroupIds(pillar2Id)
+      .map { groupIds =>
+        groupIds -> userGroupIdOpt match {
+          case (Some(value), Some(userGroupId)) if value.principalGroupIds.contains(userGroupId) =>
+            Redirect(controllers.rfm.routes.SecurityCheckController.onPageLoadNotAllowed())
+          case _ => Redirect(navigator.nextPage(RfmPillar2ReferencePage, mode, updatedAnswers))
+        }
+      }
 }

@@ -32,7 +32,7 @@ class SessionDataRetrievalActionImpl @Inject() (
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
     sessionRepository.get(request.userId).map { maybeUserAnswers =>
-      SessionOptionalDataRequest(request.request, request.userId, maybeUserAnswers)
+      SessionOptionalDataRequest(request, request.userId, maybeUserAnswers)
     }
 
 }
