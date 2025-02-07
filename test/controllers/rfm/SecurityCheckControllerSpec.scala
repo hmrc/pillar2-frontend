@@ -74,30 +74,7 @@ class SecurityCheckControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to the group registration date report page when enrolment returns associated group id" in {
-
-      val application = applicationBuilder(userAnswers = None)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
-        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(Some(GroupIds(Seq(PlrReference), Seq.empty))))
-
-        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody("value" -> PlrReference)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
-      }
-    }
-
-    "redirect to the error page when enrolment returns associated wrong group id" in {
+    "redirect to the group registration date report page when enrolment returns a groupId different to the logged in user's groupId" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -109,7 +86,31 @@ class SecurityCheckControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any()))
-          .thenReturn(Future.successful(Some(GroupIds(Seq("incorrect ref"), Seq.empty))))
+          .thenReturn(Future.successful(Some(GroupIds(Seq("different group Id"), Seq.empty))))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody("value" -> PlrReference)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(NormalMode).url
+      }
+    }
+
+    "redirect to the error page when enrolment returns the same groupId as the user" in {
+
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.set(any[UserAnswers])).thenReturn(Future.successful(true))
+        when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any()))
+          .thenReturn(Future.successful(Some(GroupIds(Seq("groupId"), Seq.empty))))
 
         val request = FakeRequest(POST, controllers.rfm.routes.SecurityCheckController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> PlrReference)

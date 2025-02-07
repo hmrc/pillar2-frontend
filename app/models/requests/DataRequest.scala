@@ -55,13 +55,13 @@ final case class SubscriptionDataRequest[A](
 ) extends WrappedRequest[A](request)
 
 final case class SessionDataRequest[A](
-  request:     Request[A],
+  request:     IdentifierRequest[A],
   userId:      String,
   userAnswers: UserAnswers
 ) extends WrappedRequest[A](request)
 
 final case class SessionOptionalDataRequest[A](
-  request:     Request[A],
+  request:     IdentifierRequest[A],
   userId:      String,
   userAnswers: Option[UserAnswers]
 ) extends WrappedRequest[A](request)
