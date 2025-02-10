@@ -26,14 +26,14 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsConfirmationV
 import javax.inject.Inject
 
 class ManageGroupDetailsConfirmationController @Inject() (
-  identify: IdentifierAction,
+  identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view: ManageGroupDetailsConfirmationView
-)(implicit appConfig: FrontendAppConfig)
+  view:                     ManageGroupDetailsConfirmationView
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     Ok(view())
   }
-} 
+}

@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction, SubscriptionDataRequiredAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -26,16 +26,16 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCannotReturnA
 import javax.inject.Inject
 
 class ManageGroupDetailsCannotReturnAfterConfirmationController @Inject() (
-  identify:         IdentifierAction,
-  getData:          SubscriptionDataRetrievalAction,
-  requireData:      SubscriptionDataRequiredAction,
+  identify:                 IdentifierAction,
+  getData:                  SubscriptionDataRetrievalAction,
+  requireData:              SubscriptionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
-  view:             ManageGroupDetailsCannotReturnAfterConfirmationView
-)(implicit appConfig: FrontendAppConfig)
-    extends FrontendBaseController with I18nSupport {
+  view:                     ManageGroupDetailsCannotReturnAfterConfirmationView
+)(implicit appConfig:       FrontendAppConfig)
+    extends FrontendBaseController
+    with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     Ok(view())
   }
 }
- 
