@@ -1,0 +1,3 @@
+package controllers.subscription.manageAccount class ManageContactCannotReturnAfterConfirmationController {
+
+}
