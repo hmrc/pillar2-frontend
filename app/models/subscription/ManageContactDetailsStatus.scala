@@ -16,44 +16,27 @@
 
 package models.subscription
 
-import models.{Enumerable, WithName}
-import play.api.libs.json._
+import enumeratum._
 
-sealed trait ManageContactDetailsStatus
+sealed trait ManageContactDetailsStatus extends EnumEntry
 
-object ManageContactDetailsStatus extends Enumerable.Implicits {
+object ManageContactDetailsStatus extends Enum[ManageContactDetailsStatus] with PlayJsonEnum[ManageContactDetailsStatus] {
 
-  case object InProgress extends WithName("inProgress") with ManageContactDetailsStatus
-  case object SuccessfullyCompleted extends WithName("successfullyCompleted") with ManageContactDetailsStatus
-  case object FailedInternalIssueError extends WithName("failedInternalIssueError") with ManageContactDetailsStatus
-  case object FailException extends WithName("failException") with ManageContactDetailsStatus
-  case object Completed extends ManageContactDetailsStatus
+  val values: IndexedSeq[ManageContactDetailsStatus] = findValues
 
-  val values: Seq[ManageContactDetailsStatus] = Seq(
-    InProgress,
-    SuccessfullyCompleted,
-    FailedInternalIssueError,
-    FailException,
-    Completed
-  )
-
-  implicit val enumerable: Enumerable[ManageContactDetailsStatus] =
-    Enumerable(values.map(v => v.toString -> v): _*)
-
-  implicit val writes: Writes[ManageContactDetailsStatus] = Writes {
-    case InProgress               => JsString("inProgress")
-    case SuccessfullyCompleted    => JsString("successfullyCompleted")
-    case FailedInternalIssueError => JsString("failedInternalIssueError")
-    case FailException            => JsString("failException")
-    case Completed                => JsString("completed")
+  case object InProgress extends ManageContactDetailsStatus {
+    override def entryName = "inProgress"
   }
-
-  implicit val reads: Reads[ManageContactDetailsStatus] = Reads {
-    case JsString("inProgress")               => JsSuccess(InProgress)
-    case JsString("successfullyCompleted")    => JsSuccess(SuccessfullyCompleted)
-    case JsString("failedInternalIssueError") => JsSuccess(FailedInternalIssueError)
-    case JsString("failException")            => JsSuccess(FailException)
-    case JsString("completed")                => JsSuccess(Completed)
-    case _                                    => JsError("Unknown ManageContactDetailsStatus")
+  case object SuccessfullyCompleted extends ManageContactDetailsStatus {
+    override def entryName = "successfullyCompleted"
+  }
+  case object FailedInternalIssueError extends ManageContactDetailsStatus {
+    override def entryName = "failedInternalIssueError"
+  }
+  case object FailException extends ManageContactDetailsStatus {
+    override def entryName = "failException"
+  }
+  case object Completed extends ManageContactDetailsStatus {
+    override def entryName = "completed"
   }
 }
