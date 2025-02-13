@@ -38,7 +38,7 @@ class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text must include("Do not leave this page.")
+      view.getElementsByTag("h2").text must include("Do not press back in your browser or leave this page.")
     }
 
   }

@@ -1521,7 +1521,7 @@ repaymentsWaitingRoom.h2 = Do not leave this page.
 manageGroupDetails.title = Submitting your group details
 manageGroupDetails.heading = Submitting your group details
 manageGroupDetails.h1 = Submitting your group details
-manageGroupDetails.h2 = Do not leave this page.
+manageGroupDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
 ###################
 
