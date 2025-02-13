@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,13 +17,11 @@
 package controllers.subscription.manageAccount
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
-import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import controllers.routes
-import models.UnexpectedResponse
-import pages.AgentClientPillar2ReferencePage
+import models.subscription.ManageContactDetailsStatus
+import models.{InternalIssueError, UserAnswers}
+import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -35,8 +33,9 @@ import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
-import javax.inject.Named
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+
 class ManageContactCheckYourAnswersController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
@@ -52,47 +51,75 @@ class ManageContactCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
-      val primaryContactList = SummaryListViewModel(
-        rows = Seq(
-          ContactNameComplianceSummary.row(),
-          ContactEmailAddressSummary.row(),
-          ContactByTelephoneSummary.row(),
-          ContactCaptureTelephoneDetailsSummary.row()
-        ).flatten
-      ).withCssClass("govuk-!-margin-bottom-9")
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    sessionRepository.get(request.userId).flatMap {
+      case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case Some(answers) =>
+        answers.get(ManageContactDetailsStatusPage) match {
+          case Some(ManageContactDetailsStatus.InProgress) =>
+            Future.successful(
+              Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
+            )
+          case _ =>
+            val primaryContactList = SummaryListViewModel(
+              rows = Seq(
+                ContactNameComplianceSummary.row(),
+                ContactEmailAddressSummary.row(),
+                ContactByTelephoneSummary.row(),
+                ContactCaptureTelephoneDetailsSummary.row()
+              ).flatten
+            )
 
-      val secondaryContactList = SummaryListViewModel(
-        rows = Seq(
-          AddSecondaryContactSummary.row(),
-          SecondaryContactNameSummary.row(),
-          SecondaryContactEmailSummary.row(),
-          SecondaryTelephonePreferenceSummary.row(),
-          SecondaryTelephoneSummary.row()
-        ).flatten
-      ).withCssClass("govuk-!-margin-bottom-9")
+            val secondaryContactList = SummaryListViewModel(
+              rows = Seq(
+                AddSecondaryContactSummary.row(),
+                SecondaryContactNameSummary.row(),
+                SecondaryContactEmailSummary.row(),
+                SecondaryTelephonePreferenceSummary.row(),
+                SecondaryTelephoneSummary.row()
+              ).flatten
+            )
 
-      val address = SummaryListViewModel(
-        rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
-      ).withCssClass("govuk-!-margin-bottom-9")
+            val address = SummaryListViewModel(
+              rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
+            )
 
-      Ok(view(primaryContactList, secondaryContactList, address))
-    }
-
-  def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
-      (for {
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
-        _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
-        .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+            Future.successful(Ok(view(primaryContactList, secondaryContactList, address)))
         }
-        .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+    }
+  }
+
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    logger.info(s"[ManageContactCheckYourAnswers] Submission started for user ${request.userId}")
+    val result = for {
+      userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
+      referenceNumber <- OptionT
+                           .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                           .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
+      _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
+      updatedAnswers = userAnswers match {
+                         case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                         case None =>
+                           UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                       }
+      _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+    } yield {
+      logger.info(s"[ManageContactCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
+      Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
     }
 
+    result.value
+      .recover {
+        case InternalIssueError =>
+          logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId} due to InternalIssueError")
+          Some(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+        case e: Exception =>
+          logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId}: ${e.getMessage}")
+          Some(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      }
+      .map(_.getOrElse {
+        logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId}")
+        Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+      })
+  }
 }
