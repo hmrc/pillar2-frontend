@@ -94,6 +94,9 @@ class CheckYourAnswersController @Inject() (
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield SuccessfullyCompletedSubscription)
                   .recover {
+                    case _: uk.gov.hmrc.http.GatewayTimeoutException =>
+                      logger.error("Subscription failed due to a Gateway timeout")
+                      FailedWithInternalIssueError
                     case InternalIssueError =>
                       logger.error("Subscription failed due to failed call to the backend")
                       FailedWithInternalIssueError
@@ -104,9 +107,9 @@ class CheckYourAnswersController @Inject() (
                       logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
                   }
-
               }
               .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
+
           for {
             updatedSubscriptionStatus <- subscriptionStatus
             optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
@@ -114,12 +117,14 @@ class CheckYourAnswersController @Inject() (
             updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
             _                  <- sessionRepository.set(updatedSessionData)
           } yield (): Unit
+
           Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
       }
     } else {
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
+
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
