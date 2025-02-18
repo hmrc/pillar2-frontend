@@ -20,7 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import models.subscription.ManageContactDetailsStatus
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -112,6 +112,9 @@ class ManageContactCheckYourAnswersController @Inject() (
       .recover {
         case InternalIssueError =>
           logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId} due to InternalIssueError")
+          Some(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+        case UnexpectedResponse =>
+          logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId} due to UnexpectedResponse")
           Some(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
         case e: Exception =>
           logger.error(s"[ManageContactCheckYourAnswers] Submission failed for ${request.userId}: ${e.getMessage}")

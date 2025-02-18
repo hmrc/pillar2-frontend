@@ -340,7 +340,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
             result
           ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(any()) // Verify that the session was updated
+          verify(mockSessionRepository).set(any())
         }
       }
 
@@ -532,6 +532,90 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        }
+      }
+
+      "must redirect to ViewAmendSubscriptionFailed when subscription service returns UnexpectedResponse" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.failed(UnexpectedResponse))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        }
+      }
+
+      "must redirect to ViewAmendSubscriptionFailed when subscription service returns InternalIssueError" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.failed(InternalIssueError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        }
+      }
+
+      "must redirect to JourneyRecovery when subscription service returns any other error" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.failed(new RuntimeException("Other error")))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }

@@ -18,7 +18,6 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
-import controllers.routes
 import models.subscription.ManageContactDetailsStatus
 import pages.ManageContactDetailsStatusPage
 import play.api.Logging
@@ -65,12 +64,12 @@ class ManageContactDetailsWaitingRoomController @Inject() (
 
           case _ =>
             logger.warn(s"[ManageContactDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
         }
       }
       .recover { case ex =>
         logger.error(s"[ManageContactDetailsWaitingRoom] Error while loading waiting room for ${request.userId}: ${ex.getMessage}")
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }
   }
 }
