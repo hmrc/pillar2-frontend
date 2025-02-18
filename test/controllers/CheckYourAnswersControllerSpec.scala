@@ -34,6 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.http.GatewayTimeoutException
 import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
@@ -413,7 +414,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any()))
-          .thenReturn(Future.failed(new uk.gov.hmrc.http.GatewayTimeoutException("Gateway timeout")))
+          .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
@@ -450,7 +451,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(any()))
-          .thenReturn(Future.failed(new uk.gov.hmrc.http.GatewayTimeoutException("Gateway timeout")))
+          .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)

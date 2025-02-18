@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -94,7 +94,7 @@ class CheckYourAnswersController @Inject() (
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield SuccessfullyCompletedSubscription)
                   .recover {
-                    case _: uk.gov.hmrc.http.GatewayTimeoutException =>
+                    case _: GatewayTimeoutException =>
                       logger.error("Subscription failed due to a Gateway timeout")
                       FailedWithInternalIssueError
                     case InternalIssueError =>
