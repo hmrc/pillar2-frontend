@@ -17,14 +17,16 @@
 package controllers.subscription.manageAccount
 
 import cats.data.OptionT
-import cats.implicits.catsSyntaxApplicativeError
+import cats.implicits._
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.UnexpectedResponse
-import pages.AgentClientPillar2ReferencePage
+import models.subscription.ManageGroupDetailsStatus
+import models.subscription.ManageGroupDetailsStatus._
+import models.{InternalIssueError, UserAnswers}
+import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,6 +39,7 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
+
 class ManageGroupDetailsCheckYourAnswersController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
@@ -53,31 +56,59 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
-      val list = SummaryListViewModel(
-        rows = Seq(
-          MneOrDomesticSummary.row(),
-          GroupAccountingPeriodSummary.row(),
-          GroupAccountingPeriodStartDateSummary.row(),
-          GroupAccountingPeriodEndDateSummary.row()
-        ).flatten
-      )
-      Ok(view(list))
+    (identify andThen getData andThen requireData).async { implicit request =>
+      sessionRepository.get(request.userId).flatMap {
+        case None => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        case Some(answers) =>
+          answers.get(ManageGroupDetailsStatusPage) match {
+            case Some(InProgress) =>
+              Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+            case _ =>
+              val list = SummaryListViewModel(
+                rows = Seq(
+                  MneOrDomesticSummary.row,
+                  GroupAccountingPeriodSummary.row,
+                  GroupAccountingPeriodStartDateSummary.row,
+                  GroupAccountingPeriodEndDateSummary.row
+                ).flatten
+              )
+              Future.successful(Ok(view(list)))
+          }
+      }
     }
 
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
-      (for {
+      logger.info(s"[ManageGroupDetailsCheckYourAnswers] Submission started for user ${request.userId}")
+      val result = for {
         userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
         _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
-      } yield Redirect(controllers.routes.DashboardController.onPageLoad))
-        .recover { case UnexpectedResponse =>
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        updatedAnswers = userAnswers match {
+                           case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+                           case None => UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+                         }
+        _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+      } yield {
+        logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
+        Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
+      }
+
+      result.value
+        .recover {
+          case InternalIssueError =>
+            logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId} due to InternalIssueError")
+            Some(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
+          case e: Exception =>
+            logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}: ${e.getMessage}")
+            Some(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         }
-        .getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        .map(_.getOrElse {
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}")
+          Redirect(routes.JourneyRecoveryController.onPageLoad())
+        })
     }
 
 }
