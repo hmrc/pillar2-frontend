@@ -551,3 +551,4 @@ GET        /repayment/download-confirmation-pdf                                 
 GET        /manage-account/contact/waiting-room                                                     controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 
+GET       /manage-account/details/waiting-room                                                      controllers.subscription.manageAccount.ManageGroupDetailsWaitingRoomController.onPageLoad
