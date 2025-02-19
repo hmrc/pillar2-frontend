@@ -39,4 +39,4 @@ project/.bloop/
 .metals/
 .bloop/
 .vscode/
-project/metals.sbt
+project/metals.sbtn

@@ -1,0 +1,45 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import views.html.templates.Layout
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.{GovukPanel, Panel, Text, HtmlContent}
+
+@this(
+    layout: Layout,
+    govukPanel: GovukPanel
+)
+
+@()(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
+
+@layout(
+    pageTitle = titleNoForm(messages("manageGroupDetails.confirmation.title"))
+) {
+
+    @govukPanel(Panel(
+        title = Text(messages("manageGroupDetails.confirmation.heading")),
+        content = HtmlContent(messages("manageGroupDetails.confirmation.content"))
+    ))
+
+    <p class="govuk-body">@messages("manageGroupDetails.confirmation.whatHappensNext")</p>
+    <p class="govuk-body">@messages("manageGroupDetails.confirmation.returnToHome")</p>
+
+    <p class="govuk-body">
+        <a href="@controllers.routes.IndexController.onPageLoad" class="govuk-link">
+            @messages("manageGroupDetails.confirmation.returnLink")
+        </a>
+    </p>
+} 
