@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
@@ -94,6 +94,9 @@ class CheckYourAnswersController @Inject() (
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield SuccessfullyCompletedSubscription)
                   .recover {
+                    case _: GatewayTimeoutException =>
+                      logger.error("Subscription failed due to a Gateway timeout")
+                      FailedWithInternalIssueError
                     case InternalIssueError =>
                       logger.error("Subscription failed due to failed call to the backend")
                       FailedWithInternalIssueError
@@ -103,10 +106,16 @@ class CheckYourAnswersController @Inject() (
                     case DuplicateSafeIdError =>
                       logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
+                    case error: HttpException =>
+                      logger.error(s"Subscription failed due to HTTP error ${error.responseCode}", error)
+                      FailedWithInternalIssueError
+                    case error: Exception =>
+                      logger.error(s"Subscription failed due to unexpected error", error)
+                      FailedWithInternalIssueError
                   }
-
               }
               .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
+
           for {
             updatedSubscriptionStatus <- subscriptionStatus
             optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
@@ -114,12 +123,14 @@ class CheckYourAnswersController @Inject() (
             updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
             _                  <- sessionRepository.set(updatedSessionData)
           } yield (): Unit
+
           Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
       }
     } else {
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
     }
   }
+
   private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
