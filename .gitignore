@@ -40,3 +40,4 @@ project/.bloop/
 .bloop/
 .vscode/
 project/metals.sbt
+

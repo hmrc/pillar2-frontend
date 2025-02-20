@@ -1548,3 +1548,15 @@ transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
 transactionHistory.none.p1 = No payments are available to display for the period starting from your group’s registration on {0} to today’s date.
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
+
+manageContact.cannotReturn.title = You cannot return, you have updated your contact details
+manageContact.cannotReturn.heading = You cannot return, you have updated your contact details
+manageContact.cannotReturn.p1 = You have successfully updated the contact details for your Pillar 2 top-up taxes account.
+manageContact.cannotReturn.p2 = You can now
+manageContact.cannotReturn.link = report and manage your Pillar 2 top-up taxes
+
+manageContactDetails.title = Submitting your contact details
+manageContactDetails.heading = Submitting your contact details
+manageContactDetails.h1 = Submitting your contact details
+manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
+
