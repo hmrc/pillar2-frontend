@@ -34,7 +34,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.http.GatewayTimeoutException
+import uk.gov.hmrc.http.{GatewayTimeoutException, HttpException}
 import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
@@ -496,6 +496,77 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
+      "redirect to waiting page and update status when encountering an HttpException" in {
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
+          .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSubscriptionService.createSubscription(any())(any()))
+          .thenReturn(Future.failed(new HttpException("Bad Request", BAD_REQUEST)))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          verify(mockSessionRepository).set(eqTo(sessionData))
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+        }
+      }
+
+      "redirect to waiting page and update status when encountering an unexpected Exception" in {
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
+          .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[TaxEnrolmentConnector].toInstance(mockEnrolmentConnector),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSubscriptionService.createSubscription(any())(any()))
+          .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          verify(mockSessionRepository).set(eqTo(sessionData))
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+        }
+      }
     }
   }
 }
