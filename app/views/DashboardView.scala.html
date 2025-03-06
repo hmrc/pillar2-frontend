@@ -53,7 +53,7 @@
         <!--PAY YOUR TUT SECTION-->
         @h2(messages("dashboard.payments"), size = "m")
         @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
-        @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
 

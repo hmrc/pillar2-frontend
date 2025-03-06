@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.payments
 
-import cats.data.OptionT
 import config.FrontendAppConfig
+import connectors.OPSConnector
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.UserAnswers
 import models.requests.OptionalDataRequest
 import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
@@ -37,18 +38,32 @@ class MakeAPaymentDashboardController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   view:                                   MakeAPaymentDashboardView,
-  getData:                                DataRetrievalAction
+  getData:                                DataRetrievalAction,
+  opsConnector:                           OPSConnector
 )(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
+  private def extractReferenceNumber(userAnswers: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent]) =
+    userAnswers
+      .flatMap(_.get(AgentClientPillar2ReferencePage))
+      .orElse(referenceNumberService.get(userAnswers, request.enrolments))
+
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
       (for {
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(userAnswers, request.enrolments)))
-      } yield Ok(view(referenceNumber))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        userAnswers <- sessionRepository.get(request.userId)
+        referenceNumber <-
+          extractReferenceNumber(userAnswers).fold(Future.failed[String](new RuntimeException("Reference number not found")))(Future.successful)
+      } yield Ok(view(referenceNumber))).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
+
+  def onRedirect(): Action[AnyContent] = (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+    (for {
+      userAnswers <- sessionRepository.get(request.userId)
+      referenceNumber <-
+        extractReferenceNumber(userAnswers).fold(Future.failed[String](new RuntimeException("Reference number not found")))(Future.successful)
+      redirect <- opsConnector.getRedirectLocation(referenceNumber)
+    } yield Redirect(redirect, SEE_OTHER)).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+  }
 }

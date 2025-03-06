@@ -37,7 +37,7 @@ class BarsConnectorSpec extends SpecBase with WireMockServerHandler {
 
   "BarsConnector" must {
     "verify business back account details and return response" in {
-      stubResponse(barsUrl, expectedStatus = 200, barsResponse)
+      stubResponse(barsUrl, returnStatus = 200, barsResponse)
 
       val value = connector.verify(business, account, UUID.randomUUID())
 
@@ -45,7 +45,7 @@ class BarsConnectorSpec extends SpecBase with WireMockServerHandler {
     }
 
     "return failed future with InternalIssueError for any bad response" in {
-      stubResponse(barsUrl, expectedStatus = 400, errorResponse)
+      stubResponse(barsUrl, returnStatus = 400, errorResponse)
 
       val value = connector.verify(business, account, UUID.randomUUID())
 

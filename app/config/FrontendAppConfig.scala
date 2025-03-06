@@ -87,17 +87,16 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 
-  val registrationControllerMne:      String = "Domestic Top-up Tax and Multinational Top-up Tax"
-  val registrationControllerDomestic: String = "Domestic Top-up Tax"
-  val serviceStartLink:               String = servicesConfig.getString("urls.serviceStartLink")
+  val serviceStartLink: String = servicesConfig.getString("urls.serviceStartLink")
 
-  val showErrorScreens:             Boolean = configuration.get[Boolean]("features.showErrorScreens")
-  val showDoYouHaveP2TopUpTaxId:    Boolean = configuration.get[Boolean]("features.showDoYouHaveP2TopUpTaxId")
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
   val asaHomePageUrl:               String  = configuration.get[String]("urls.asaHomePage")
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
+
+  val opsBaseUrl:  String = servicesConfig.baseUrl("ops")
+  val opsStartUrl: String = configuration.get[String]("microservice.services.ops.startUrl")
 
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")

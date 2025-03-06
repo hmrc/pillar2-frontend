@@ -90,7 +90,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(5).text                               must include("You have no payments due")
       elements.get(6).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
       elements.get(7).getElementsByTag("a").text()       must include("View your transaction history")
       elements.get(7).getElementsByTag("a").attr("href") must include(
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
@@ -234,7 +234,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(7).text                               must include("Your client has no payments due.")
       elements.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
       elements.get(9).getElementsByTag("a").text()       must include("View your client’s transaction history")
       elements.get(9).getElementsByTag("a").attr("href") must include(
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url

@@ -21,6 +21,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.MakeAPaymentDashboardView
 
+import scala.jdk.CollectionConverters._
+
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
   val testPlr2Id = "12345678"
@@ -35,26 +37,42 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       val h1 = makePaymentDashboardView.getElementsByTag("h1")
-      h1.text must equal("Make a payment")
+      h1.listIterator().asScala.toList must have size 1
+      h1.text                          must equal("Make a payment")
       h1.hasClass("govuk-heading-l") mustBe true
     }
 
     "have the correct paragraphs" in {
-      val element = makePaymentDashboardView.getElementsByTag("p")
-      element.get(1).text() must equal(
+      val paragraphs = makePaymentDashboardView.getElementsByTag("p").listIterator().asScala.toList.filter(_.hasClass("govuk-body"))
+      paragraphs must have size 2
+      paragraphs.head.text() must equal(
         s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 top-up tax payments."""
       )
-      element.get(2).text() must equal(
-        "Submit your return before making a payment. Your payment is due on the same date as your return."
-      )
-      element.get(3).text() must equal(
-        "You can read the guidance to find the methods you can use to make a payment."
+      paragraphs.tail.head.text() must equal(
+        "You can use the 'Pay Now' button to pay online, or read more about other payment methods. (opens in a new tab)"
       )
     }
 
-    "have the correct link" in {
-      val element = makePaymentDashboardView.getElementsByClass("govuk-link")
-      element.get(2).attr("href") must equal(
+    "have the correct Pay Now button" in {
+      val elements = makePaymentDashboardView.getElementsByTag("a").listIterator().asScala.toList.filter(_.hasClass("govuk-button"))
+      elements must have size 1
+      val button = elements.head
+      button.attr("href") must equal(
+        "/report-pillar2-top-up-taxes/payment/redirect"
+      )
+      button.text() mustEqual "Pay Now"
+    }
+
+    "have the correct link to payment guidance" in {
+      val elements = makePaymentDashboardView
+        .getElementsByTag("a")
+        .listIterator()
+        .asScala
+        .toList
+        .filter(_.text == "read more about other payment methods. (opens in a new tab)")
+      elements must have size 1
+      val guidancePageLink = elements.head
+      guidancePageLink.attr("href") must equal(
         "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
       )
     }

@@ -403,7 +403,8 @@ GET         /replace-filing-member/error/incomplete-task                        
 
 GET         /replace-filing-member/error/restart-error                              controllers.rfm.RfmJourneyRecoveryController.onPageLoad
 
-GET         /payment/pay                                                                             controllers.MakeAPaymentDashboardController.onPageLoad
+GET         /payment/pay                                                                             controllers.payments.MakeAPaymentDashboardController.onPageLoad
+GET         /payment/redirect                                                                        controllers.payments.MakeAPaymentDashboardController.onRedirect
 GET         /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/security/check-answers                                            controllers.rfm.SecurityQuestionsCheckYourAnswersController.onSubmit
 GET         /replace-filing-member/security/change-check-answers                                     controllers.rfm.SecurityQuestionsCheckYourAnswersController.onPageLoad(mode: Mode = CheckMode)
