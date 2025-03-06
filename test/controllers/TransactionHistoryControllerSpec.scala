@@ -109,7 +109,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          isAgent = false
         )(
           request,
           applicationConfig,
@@ -145,7 +146,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
           generatePagination(transactionHistoryResponsePagination.financialHistory, None),
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          isAgent = false
         )(
           request,
           applicationConfig,
@@ -250,7 +252,10 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val view   = application.injector.instanceOf[NoTransactionHistoryView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))(
+        contentAsString(result) mustEqual view(
+          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+          isAgent = false
+        )(
           request,
           applicationConfig,
           messages(application)
