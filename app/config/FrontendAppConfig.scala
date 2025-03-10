@@ -81,9 +81,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val partnershipBvEnabled:        Boolean = configuration.get[Boolean]("features.partnershipBvEnabled")
 
   //Enable Disable
-  val privateBetaEnabled: Boolean = configuration.get[Boolean]("features.privateBetaEnabled")
-  val grsStubEnabled:     Boolean = configuration.get[Boolean]("features.grsStubEnabled")
-  val pillar2mailbox:     String  = configuration.get[String]("features.pillar2mailbox")
+  val grsStubEnabled: Boolean = configuration.get[Boolean]("features.grsStubEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 
@@ -95,8 +93,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
 
-  val opsBaseUrl:  String = servicesConfig.baseUrl("ops")
-  val opsStartUrl: String = configuration.get[String]("microservice.services.ops.startUrl")
+  val opsBaseUrl:             String  = servicesConfig.baseUrl("ops")
+  val opsStartUrl:            String  = configuration.get[String]("microservice.services.ops.startUrl")
+  val enablePayByBankAccount: Boolean = configuration.get[Boolean]("features.enablePayByBankAccount")
 
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")

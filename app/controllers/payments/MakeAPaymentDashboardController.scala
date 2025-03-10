@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.ReferenceNumberService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.MakeAPaymentDashboardView
+import views.html.{LegacyMakeAPaymentDashboardView, MakeAPaymentDashboardView}
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -37,7 +37,8 @@ class MakeAPaymentDashboardController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
-  view:                                   MakeAPaymentDashboardView,
+  payByBankAccountView:                   MakeAPaymentDashboardView,
+  legacyView:                             LegacyMakeAPaymentDashboardView,
   getData:                                DataRetrievalAction,
   opsConnector:                           OPSConnector
 )(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
@@ -55,7 +56,8 @@ class MakeAPaymentDashboardController @Inject() (
         userAnswers <- sessionRepository.get(request.userId)
         referenceNumber <-
           extractReferenceNumber(userAnswers).fold(Future.failed[String](new RuntimeException("Reference number not found")))(Future.successful)
-      } yield Ok(view(referenceNumber))).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        view = if (appConfig.enablePayByBankAccount) payByBankAccountView(referenceNumber) else legacyView(referenceNumber)
+      } yield Ok(view)).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   def onRedirect(): Action[AnyContent] = (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>

@@ -33,7 +33,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
-import views.html.MakeAPaymentDashboardView
+import views.html.{LegacyMakeAPaymentDashboardView, MakeAPaymentDashboardView}
 
 import java.util.UUID
 import scala.concurrent.Future
@@ -135,6 +135,41 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view("12345678")(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+      }
+
+    }
+
+    "return OK and the legecy view for a GET when feature flag is disabled" in {
+      val enrolments: Set[Enrolment] = Set(
+        Enrolment(
+          key = "HMRC-PILLAR2-ORG",
+          identifiers = Seq(
+            EnrolmentIdentifier("PLRID", "12345678"),
+            EnrolmentIdentifier("UTR", "ABC12345")
+          ),
+          state = "activated"
+        )
+      )
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .configure("features.enablePayByBankAccount" -> false)
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
+        val request =
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[LegacyMakeAPaymentDashboardView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view("12345678")(
