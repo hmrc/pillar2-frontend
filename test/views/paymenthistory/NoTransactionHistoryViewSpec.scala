@@ -27,27 +27,33 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
   val page: NoTransactionHistoryView = inject[NoTransactionHistoryView]
 
-  val view: Document = Jsoup.parse(page(date)(request, appConfig, messages).toString())
+  def view(agentView: Boolean = false): Document = Jsoup.parse(page(date, isAgent = agentView)(request, appConfig, messages).toString())
 
   "No Transaction History View" should {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view().getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Transaction history")
+      view().getElementsByTag("h1").text must include("Transaction history")
     }
 
-    "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
+    "have correct paragraph for a group" in {
+      view().getElementsByClass("govuk-body").text must include(
         s"No payments are available to display for the period starting from your group’s registration on $date to today’s date."
       )
     }
 
+    "have correct paragraph for an agent" in {
+      view(true).getElementsByClass("govuk-body").text must include(
+        s"No payments are available to display for the period starting from your client’s registration on $date to today’s date."
+      )
+    }
+
     "have a inset" in {
-      view.getElementsByClass("govuk-inset-text").text must include(
+      view().getElementsByClass("govuk-inset-text").text must include(
         "It will take up to 5 working days for payments to appear after each transaction."
       )
     }
