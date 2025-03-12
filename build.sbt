@@ -8,6 +8,7 @@ lazy val appName: String = "pillar2-frontend"
 
 ThisBuild / scalaVersion := "2.13.12"
 ThisBuild / majorVersion := 0
+ThisBuild / javacOptions ++= Seq("--release", "21")
 
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
