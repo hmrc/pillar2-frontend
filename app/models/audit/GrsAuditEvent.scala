@@ -20,7 +20,6 @@ import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
 import play.api.libs.json._
 
 case class GrsReturnAuditEvent(
-  registeredinUK:       Boolean,
   entityType:           String,
   companyName:          String,
   companyNumber:        String,
@@ -46,7 +45,6 @@ object GrsReturnAuditEvent {
 }
 
 case class GrsReturnAuditEventForLLP(
-  registeredinUK:       Boolean,
   entityType:           String,
   companyName:          String,
   companyNumber:        String,
@@ -94,7 +92,6 @@ object GrsReturnNfmAuditEventForLlp {
 }
 
 case class NfmRegistration(
-  registeredinUK:       Boolean,
   entityType:           String,
   companyName:          String,
   companyNumber:        String,
