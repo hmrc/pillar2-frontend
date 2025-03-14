@@ -21,7 +21,7 @@ import com.github.tomakehurst.wiremock.client.WireMock._
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
-import play.api.libs.json.JsValue
+import play.api.libs.json.{Format, JsValue, Json}
 
 trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
   this: SpecBase =>
@@ -43,13 +43,24 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
     server.stop()
   }
 
-  protected def stubResponse(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+  protected def stubResponse(expectedEndpoint: String, returnStatus: Int, returnBody: String): StubMapping =
     server.stubFor(
       post(urlEqualTo(s"$expectedEndpoint"))
         .willReturn(
           aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
+            .withStatus(returnStatus)
+            .withBody(returnBody)
+        )
+    )
+
+  protected def stubResponse[T: Format](expectedEndpoint: String, expectedBody: T)(returnStatus: Int, returnBody: String): StubMapping =
+    server.stubFor(
+      post(urlEqualTo(s"$expectedEndpoint"))
+        .withRequestBody(equalToJson(Json.toJson(expectedBody).toString()))
+        .willReturn(
+          aResponse()
+            .withStatus(returnStatus)
+            .withBody(returnBody)
         )
     )
 
