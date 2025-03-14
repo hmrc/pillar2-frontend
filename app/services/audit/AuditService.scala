@@ -37,7 +37,6 @@ class AuditService @Inject() (
   )(implicit hc:      HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       GrsReturnAuditEvent(
-        registeredinUK = true,
         entityType = EntityType.UkLimitedCompany.toString,
         companyName = responseReceived.companyProfile.companyName,
         companyNumber = responseReceived.companyProfile.companyNumber,
@@ -79,7 +78,6 @@ class AuditService @Inject() (
 
     auditConnector.sendExtendedEvent(
       GrsReturnAuditEventForLLP(
-        registeredinUK = true,
         entityType = EntityType.LimitedLiabilityPartnership.toString,
         companyName = companyProfile._1,
         companyNumber = companyProfile._2,
@@ -104,7 +102,6 @@ class AuditService @Inject() (
     auditConnector.sendExtendedEvent(
       GrsReturnNfmAuditEvent(nfmRegistration =
         NfmRegistration(
-          registeredinUK = true,
           entityType = EntityType.UkLimitedCompany.toString,
           companyName = responseReceived.companyProfile.companyName,
           companyNumber = responseReceived.companyProfile.companyNumber,
@@ -147,7 +144,6 @@ class AuditService @Inject() (
     auditConnector.sendExtendedEvent(
       GrsReturnNfmAuditEventForLlp(nfmRegistration =
         NfmRegistration(
-          registeredinUK = true,
           entityType = EntityType.LimitedLiabilityPartnership.toString,
           companyName = companyProfile._1,
           companyNumber = companyProfile._2,
