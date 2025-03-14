@@ -1537,7 +1537,8 @@ manageGroupDetails.h2 = Do not press back in your browser or leave this page. It
 ###################
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.p1 = You can see all transactions made by your group during this accounting period and the previous 6 accounting periods.
+transactionHistory.group.p1 = You can see all transactions made by your group during this accounting period and the previous 6 accounting periods.
+transactionHistory.agent.p1 = You can see all transactions made by your client during this accounting period and the previous 6 accounting periods.
 transactionHistory.date = Date
 transactionHistory.description = Transaction description
 transactionHistory.amountPaid = You paid HMRC
@@ -1553,7 +1554,8 @@ transactionHistory.error.p3 = Return to your account homepage
 
 transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
-transactionHistory.none.p1 = No payments are available to display for the period starting from your group’s registration on {0} to today’s date.
+transactionHistory.group.none.p1 = No payments are available to display for the period starting from your group’s registration on {0} to today’s date.
+transactionHistory.agent.none.p1 = No payments are available to display for the period starting from your client’s registration on {0} to today’s date.
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
 
 manageContact.cannotReturn.title = You cannot return, you have updated your contact details

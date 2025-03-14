@@ -77,7 +77,9 @@ class TransactionHistoryController @Inject() (
         _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
         table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
-      } yield Ok(view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
+      } yield Ok(
+        view(table, pagination, subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")), request.isAgent)
+      )
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -97,7 +99,7 @@ class TransactionHistoryController @Inject() (
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
         registrationDate = subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-      } yield Ok(noTransactionHistoryView(registrationDate))
+      } yield Ok(noTransactionHistoryView(registrationDate, request.isAgent))
 
       result.getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError())).recover { case _ =>
         Redirect(routes.TransactionHistoryController.onPageLoadError())

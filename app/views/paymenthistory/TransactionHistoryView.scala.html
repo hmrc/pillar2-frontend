@@ -29,7 +29,7 @@
         govukTable: GovukTable
 )
 
-@(table: Table, pagination: Option[Pagination], registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(table: Table, pagination: Option[Pagination], registrationDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @pageLayout(contentBlock: Html) = {
       @contentBlock
@@ -40,7 +40,12 @@
     @tableScrollStyles()
 
     @heading(messages("transactionHistory.heading"))
-    @p(messages("transactionHistory.p1"))
+
+    @if(isAgent) {
+        @p(messages("transactionHistory.agent.p1"))
+    } else {
+        @p(messages("transactionHistory.group.p1"))
+    }
 
     @ScrollWrapper {
         @govukTable(table)

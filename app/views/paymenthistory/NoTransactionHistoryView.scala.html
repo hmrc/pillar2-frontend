@@ -24,11 +24,17 @@
         govukInsetText: GovukInsetText
 )
 
-@(registrationDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(registrationDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
 
     @heading(messages("transactionHistory.none.heading"))
-    @p(messages("transactionHistory.none.p1", registrationDate))
+
+    @if(isAgent) {
+        @p(messages("transactionHistory.agent.none.p1", registrationDate))
+    } else {
+        @p(messages("transactionHistory.group.none.p1", registrationDate))
+    }
+
     @govukInsetText(InsetText(content = Text(messages("transactionHistory.none.p2"))))
 }

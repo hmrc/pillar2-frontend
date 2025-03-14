@@ -63,27 +63,34 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   val page: TransactionHistoryView = inject[TransactionHistoryView]
 
-  val view: Document = Jsoup.parse(page(table, pagination, date)(request, appConfig, messages).toString())
+  def view(agentView: Boolean = false): Document =
+    Jsoup.parse(page(table, pagination, date, isAgent = agentView)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view().getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Transaction history")
+      view().getElementsByTag("h1").text must include("Transaction history")
     }
 
-    "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
+    "have correct paragraph for a group" in {
+      view().getElementsByClass("govuk-body").text must include(
         "You can see all transactions made by your group during this accounting period and the previous 6 accounting periods."
       )
     }
 
+    "have correct paragraph for an agent" in {
+      view(true).getElementsByClass("govuk-body").text must include(
+        "You can see all transactions made by your client during this accounting period and the previous 6 accounting periods."
+      )
+    }
+
     "have a table" in {
-      val tableHeaders = view.getElementsByClass("govuk-table__header")
+      val tableHeaders = view().getElementsByClass("govuk-table__header")
 
       tableHeaders.first().text must include("Date")
       tableHeaders.get(1).text  must include("Transaction description")
@@ -91,7 +98,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       tableHeaders.get(3).text  must include("HMRC paid you")
 
       (1 to 3).foreach { int =>
-        val tableRow = view.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
+        val tableRow = view().getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
         tableRow.first().text must include("01 Jul 2024")
         tableRow.get(1).text  must include("Payment")
         tableRow.get(2).text  must include("£-5000.00")
@@ -100,7 +107,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have pagination" in {
-      val link = view.getElementsByClass("govuk-link govuk-pagination__link")
+      val link = view().getElementsByClass("govuk-link govuk-pagination__link")
 
       link.first().text         must include("1")
       link.first().attr("href") must include("/report-pillar2-top-up-taxes/payment/history?page=1")
