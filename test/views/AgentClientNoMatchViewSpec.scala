@@ -31,7 +31,7 @@ class AgentClientNoMatchViewSpec extends ViewSpecBase {
   "Agent Client No Match View" should {
 
     "have a title" in {
-      val title = "Your client’s details did not match HMRC records - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Your client’s details did not match HMRC records - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 
@@ -46,7 +46,7 @@ class AgentClientNoMatchViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Re-enter your client’s Pillar 2 top-up taxes ID to try again")
+      link.text         must include("Re-enter your client’s Pillar 2 Top-up Taxes ID to try again")
       link.attr("href") must include(routes.AgentController.onPageLoadClientPillarId.url)
     }
 

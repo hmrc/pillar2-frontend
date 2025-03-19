@@ -46,7 +46,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
 
     "have radio items" in {
       view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("New nominated filing member")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("Ultimate parent entity (UPE)")
+      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("Ultimate Parent Entity (UPE)")
     }
 
     "have a button" in {

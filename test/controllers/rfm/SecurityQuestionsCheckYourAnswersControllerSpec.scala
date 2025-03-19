@@ -51,7 +51,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
 
           status(result) mustEqual OK
           contentAsString(result) must include("Check your answer")
-          contentAsString(result) must include("Pillar 2 top-up taxes ID")
+          contentAsString(result) must include("Pillar 2 Top-up Taxes ID")
 
         }
       }

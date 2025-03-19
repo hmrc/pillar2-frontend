@@ -42,13 +42,13 @@ class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
       val result = controller.onPageLoad(NormalMode)()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "We need to match the details of the ultimate parent entity to HMRC records"
+        "We need to match the details of the Ultimate Parent Entity to HMRC records"
       )
       contentAsString(result) should include(
-        "If the ultimate parent entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records."
+        "If the Ultimate Parent Entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records."
       )
       contentAsString(result) should include(
-        "If the ultimate parent entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record."
+        "If the Ultimate Parent Entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record."
       )
     }
 

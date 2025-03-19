@@ -37,7 +37,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
-        be("Check if you need to report Pillar 2 top-up taxes")
+        be("Check if you need to report Pillar 2 Top-up Taxes")
     }
 
     "have a hint" in {

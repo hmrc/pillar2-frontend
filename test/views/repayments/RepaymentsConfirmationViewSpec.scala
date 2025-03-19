@@ -42,7 +42,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     "have a title" in {
       view.getElementsByTag("title").text must include(
         "Refund request submitted" +
-          " - Report Pillar 2 top-up taxes - GOV.UK"
+          " - Report Pillar 2 Top-up Taxes - GOV.UK"
       )
     }
 
@@ -60,20 +60,20 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
         "What happens next If we require more information relating to your refund request, we will get in touch."
       )
       view.getElementsByClass("govuk-body").text must include(
-        "You can return to manage your Pillar 2 top-up taxes ."
+        "You can return to manage your Pillar 2 Top-up Taxes ."
       )
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("manage your Pillar 2 top-up taxes")
+      link.text         must include("manage your Pillar 2 Top-up Taxes")
     }
 
     "have the correct banner link" in {
       val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Report Pillar 2 top-up taxes")
+      link.text         must include("Report Pillar 2 Top-up Taxes")
     }
 
   }

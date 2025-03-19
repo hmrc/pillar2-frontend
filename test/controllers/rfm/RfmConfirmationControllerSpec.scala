@@ -91,7 +91,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "submit your group’s Pillar 2 top-up tax returns"
         )
         contentAsString(result) must include(
-          "ensure your group’s Pillar 2 top-up taxes account accurately reflects their records."
+          "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records."
         )
         contentAsString(result) must include(
           "If you fail to meet your obligations as a filing member, you may be liable for penalties."
@@ -103,7 +103,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "You can now"
         )
         contentAsString(result) must include(
-          "report and manage your group's Pillar 2 top-up taxes"
+          "report and manage your group's Pillar 2 Top-up Taxes"
         )
         contentAsString(result) must include(
           "on behalf of your group."

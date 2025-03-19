@@ -35,7 +35,7 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUt
   val apiUrl: String = s"${applicationConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
   val connector = new PartnershipIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient, mockAuditService)
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
-  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
+  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 Top-up Taxes"))
 
   "PartnershipEntityIdentificationFrontendConnector" when {
 

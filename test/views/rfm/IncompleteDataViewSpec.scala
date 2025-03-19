@@ -45,7 +45,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
       linkExists mustBe true
 
       view.getElementsByTag("p").text must include(
-        "You can go back to replace the filing member for a Pillar 2 top-up taxes account to try again"
+        "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
       )
     }
 

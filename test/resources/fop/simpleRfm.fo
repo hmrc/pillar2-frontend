@@ -18,7 +18,7 @@
 
     <fo:bookmark-tree>
         <fo:bookmark internal-destination="title">
-            <fo:bookmark-title>Replace the filing member for a Pillar 2 top-up taxes account</fo:bookmark-title>
+            <fo:bookmark-title>Replace the filing member for a Pillar 2 Top-up Taxes account</fo:bookmark-title>
 
             <fo:bookmark internal-destination="personal-details">
                 <fo:bookmark-title>section.personalDetails</fo:bookmark-title>
@@ -45,7 +45,7 @@
         <fo:static-content flow-name="xsl-region-before">
             <fo:block>
                 <fo:external-graphic src="url(conf/resources/logo.jpg)" padding-right="1cm" fox:alt-text="HM Revenue and Customs logo" />
-                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 top-up taxes account</fo:block>
+                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 Top-up Taxes account</fo:block>
             </fo:block>
         </fo:static-content>
 
@@ -200,7 +200,7 @@
         <fo:static-content flow-name="xsl-region-before">
             <fo:block>
                 <fo:external-graphic src="url(conf/resources/logo.jpg)" padding-right="1cm" fox:alt-text="HM Revenue and Customs logo" />
-                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 top-up taxes account</fo:block>
+                <fo:block role="H1" margin-left="3cm" margin-top="-1.25cm" text-align="right" font-size="16pt" font-weight="bold">Replace the filing member for a Pillar 2 Top-up Taxes account</fo:block>
             </fo:block>
         </fo:static-content>
 

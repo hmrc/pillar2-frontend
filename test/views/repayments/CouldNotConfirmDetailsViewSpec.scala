@@ -31,7 +31,7 @@ class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
   "Could Not Confirm Details View" should {
 
     "have a title" in {
-      val title = "We could not confirm your bank details - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "We could not confirm your bank details - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 

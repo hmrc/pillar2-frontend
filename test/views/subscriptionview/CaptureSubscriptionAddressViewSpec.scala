@@ -38,7 +38,7 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
         page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
       view.getElementsByTag("title").text must include(
-        "What address do you want to use as the filing member’s contact address? - Report Pillar 2 top-up taxes - GOV.UK"
+        "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
       )
     }
 

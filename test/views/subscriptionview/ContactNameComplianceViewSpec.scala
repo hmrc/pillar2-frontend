@@ -37,7 +37,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
       view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes - GOV.UK"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
       )
     }
 
@@ -46,7 +46,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
       view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -70,7 +70,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       )
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes"
+        "Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
       )
     }
 
