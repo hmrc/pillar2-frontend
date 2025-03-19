@@ -28,15 +28,10 @@
 
 @(plrID: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle = titleNoForm(messages("payment.dashboard.title")),
-    showBackLink = true
-) {
-    @heading(messages("payment.dashboard.header"), classes = "govuk-heading-l")
-    @p(messages("payment.dashboard.message1", plrID))
-    @paragraphMessageWithLink(Some(messages("payment.dashboard.message2")), linkMessage = messages("payment.dashboard.linkText"),
-        linkUrl = "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax")
-    @govukButton(
-        ButtonViewModel(messages("payment.dashboard.buttonText")).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url)
-    )
+    pageTitle = titleNoForm(messages("payment.legacy.dashboard.title"))) {
+    @heading(messages("payment.legacy.dashboard.header"), classes = "govuk-heading-l")
+    @p(messages("payment.legacy.dashboard.message1", plrID))
+    @p(messages("payment.legacy.dashboard.message2"))
+    @paragraphMessageWithLink(Some(messages("payment.legacy.dashboard.message3")), linkMessage = messages("payment.legacy.dashboard.message4"), linkUrl = "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax")
 
 }
