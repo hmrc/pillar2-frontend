@@ -85,10 +85,10 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "As the new filing member, you have taken over the obligations to:"
         )
         contentAsString(result) must include(
-          "act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance"
+          "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
         )
         contentAsString(result) must include(
-          "submit your group’s Pillar 2 top-up tax returns"
+          "submit your group’s Pillar 2 Top-up Taxes returns"
         )
         contentAsString(result) must include(
           "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records."

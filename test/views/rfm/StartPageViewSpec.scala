@@ -102,11 +102,11 @@ class StartPageViewSpec extends ViewSpecBase {
 
     "have bullet lists" in {
       view.getElementsByTag("li").get(0).text must include(
-        "act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance"
+        "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
       )
 
       view.getElementsByTag("li").get(1).text must include(
-        "submit your group’s Pillar 2 top-up tax returns"
+        "submit your group’s Pillar 2 Top-up Taxes returns"
       )
 
       view.getElementsByTag("li").get(2).text must include(

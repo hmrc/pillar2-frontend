@@ -143,7 +143,7 @@ class DashboardViewSpec extends ViewSpecBase {
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
       )
       pargraph.get(10).text() must include(
-        "Your group must submit your Pillar 2 top-up tax returns no later than:"
+        "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
       )
       pargraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."

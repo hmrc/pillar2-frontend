@@ -42,7 +42,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
     "have a hint" in {
       view.getElementsByClass("govuk-hint").text() must
-        be("The nominated filing member is responsible for managing the group’s Pillar 2 top-up tax returns and keeping business records.")
+        be("The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records.")
     }
 
     "have Yes/No radio buttons" in {

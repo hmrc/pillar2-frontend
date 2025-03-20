@@ -41,7 +41,7 @@ class AgentClientPillarIdViewSpec extends ViewSpecBase {
 
     "have a hint" in {
       view.getElementById("value-hint").text must include(
-        "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes top-up homepage."
+        "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes homepage."
       )
     }
 
