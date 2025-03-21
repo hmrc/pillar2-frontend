@@ -300,6 +300,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
+          await(result)
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
