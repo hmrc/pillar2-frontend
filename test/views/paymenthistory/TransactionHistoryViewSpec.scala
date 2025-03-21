@@ -25,8 +25,6 @@ import views.html.paymenthistory.TransactionHistoryView
 
 class TransactionHistoryViewSpec extends ViewSpecBase {
 
-  private val date: String = "31 January 2024"
-
   val table: Table = Table(
     List(
       List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
@@ -63,34 +61,40 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   val page: TransactionHistoryView = inject[TransactionHistoryView]
 
-  def view(agentView: Boolean = false): Document =
-    Jsoup.parse(page(table, pagination, date, isAgent = agentView)(request, appConfig, messages).toString())
+  val groupView: Document = Jsoup.parse(page(table, pagination, isAgent = false)(request, appConfig, messages).toString())
+  val agentView: Document = Jsoup.parse(page(table, pagination, isAgent = true)(request, appConfig, messages).toString())
 
   "Transaction History View" should {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
-      view().getElementsByTag("title").text must include(title)
+      groupView.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view().getElementsByTag("h1").text must include("Transaction history")
+      groupView.getElementsByTag("h1").text must include("Transaction history")
     }
 
-    "have correct paragraph for a group" in {
-      view().getElementsByClass("govuk-body").text must include(
-        "You can see all transactions made by your group during this accounting period and the previous 6 accounting periods."
+    "have correct paragraph 1 for a group" in {
+      groupView.getElementsByClass("govuk-body").text must include(
+        "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
       )
     }
 
-    "have correct paragraph for an agent" in {
-      view(true).getElementsByClass("govuk-body").text must include(
-        "You can see all transactions made by your client during this accounting period and the previous 6 accounting periods."
+    "have correct paragraph 1 for an agent" in {
+      agentView.getElementsByClass("govuk-body").text must include(
+        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
+      )
+    }
+
+    "have correct paragraph 2" in {
+      groupView.getElementsByClass("govuk-body").text must include(
+        "It will take up to 5 working days for payments to appear after each transaction."
       )
     }
 
     "have a table" in {
-      val tableHeaders = view().getElementsByClass("govuk-table__header")
+      val tableHeaders = groupView.getElementsByClass("govuk-table__header")
 
       tableHeaders.first().text must include("Date")
       tableHeaders.get(1).text  must include("Transaction description")
@@ -98,7 +102,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       tableHeaders.get(3).text  must include("HMRC paid you")
 
       (1 to 3).foreach { int =>
-        val tableRow = view().getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
+        val tableRow = groupView.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
         tableRow.first().text must include("01 Jul 2024")
         tableRow.get(1).text  must include("Payment")
         tableRow.get(2).text  must include("£-5000.00")
@@ -107,7 +111,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have pagination" in {
-      val link = view().getElementsByClass("govuk-link govuk-pagination__link")
+      val link = groupView.getElementsByClass("govuk-link govuk-pagination__link")
 
       link.first().text         must include("1")
       link.first().attr("href") must include("/report-pillar2-top-up-taxes/payment/history?page=1")
@@ -119,5 +123,28 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       link.get(3).attr("href")  must include("/report-pillar2-top-up-taxes/payment/history?page=4")
     }
 
+    "have a paragraph with link for a group" in {
+      val link = groupView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      groupView.getElementsByTag("p").text must include(
+        "You can find details of what your group currently owes on the"
+      )
+      link.text         must include("Outstanding payments")
+      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
+      groupView.getElementsByTag("p").text must include(
+        "page."
+      )
+    }
+
+    "have a paragraph with link for an agent" in {
+      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      agentView.getElementsByTag("p").text must include(
+        "You can find details of what your client currently owes on the"
+      )
+      link.text         must include("Outstanding payments")
+      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
+      agentView.getElementsByTag("p").text must include(
+        "page."
+      )
+    }
   }
 }

@@ -20,21 +20,33 @@
 @this(
         layout: templates.Layout,
         heading: heading,
+        h2: HeadingH2,
         p: paragraphBody,
-        govukInsetText: GovukInsetText
+        paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(registrationDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
 
     @heading(messages("transactionHistory.none.heading"))
 
     @if(isAgent) {
-        @p(messages("transactionHistory.agent.none.p1", registrationDate))
+        @p(messages("transactionHistory.agent.none.p1"))
     } else {
-        @p(messages("transactionHistory.group.none.p1", registrationDate))
+        @p(messages("transactionHistory.group.none.p1"))
     }
 
-    @govukInsetText(InsetText(content = Text(messages("transactionHistory.none.p2"))))
+    @p(messages("transactionHistory.none.p2"))
+
+    <br>
+    @p(messages("transactionHistory.none.p3"))
+    <br>
+
+    @h2(messages("transactionHistory.none.h2"), size = "m")
+    @if(isAgent){
+        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false)
+    } else {
+        @paragraphMessageWithLink(Some(messages("transactionHistory.group.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false)
+    }
 }

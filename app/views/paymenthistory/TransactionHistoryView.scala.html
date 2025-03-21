@@ -24,12 +24,14 @@
 @this(
         layout: templates.Layout,
         heading: heading,
+        h2: HeadingH2,
         p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
         govukPagination: GovukPagination,
         govukTable: GovukTable
 )
 
-@(table: Table, pagination: Option[Pagination], registrationDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(table: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @pageLayout(contentBlock: Html) = {
       @contentBlock
@@ -47,11 +49,20 @@
         @p(messages("transactionHistory.group.p1"))
     }
 
+    @p(messages("transactionHistory.p2"))
+
     @ScrollWrapper {
         @govukTable(table)
     }
 
     @pagination.map { pag =>
         @govukPagination(pag)
+    }
+
+    @h2(messages("transactionHistory.h2"), size = "m")
+    @if(isAgent){
+        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.p3")), linkMessage = messages("transactionHistory.link"), Some(messages("transactionHistory.p4")), linkUrl = "#", linkFullStop = false)
+    } else {
+        @paragraphMessageWithLink(Some(messages("transactionHistory.group.p3")), linkMessage = messages("transactionHistory.link"), Some(messages("transactionHistory.p4")), linkUrl = "#", linkFullStop = false)
     }
 }
