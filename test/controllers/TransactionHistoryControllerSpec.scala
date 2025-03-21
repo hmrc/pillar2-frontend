@@ -33,7 +33,6 @@ import uk.gov.hmrc.auth.core._
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import scala.concurrent.Future
 
 class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
@@ -109,7 +108,6 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
           generatePagination(transactionHistoryResponse.financialHistory, None),
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           isAgent = false
         )(
           request,
@@ -146,7 +144,6 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           generateTransactionHistoryTable(1, transactionHistoryResponsePagination.financialHistory).get,
           generatePagination(transactionHistoryResponsePagination.financialHistory, None),
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           isAgent = false
         )(
           request,
@@ -253,7 +250,6 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
           isAgent = false
         )(
           request,

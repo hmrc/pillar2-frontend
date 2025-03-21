@@ -154,6 +154,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
+          await(result)
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
           verify(mockSessionRepository).set(eqTo(userAnswer))
