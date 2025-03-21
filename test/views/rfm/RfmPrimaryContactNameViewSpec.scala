@@ -37,7 +37,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
     "have the correct title" in {
       view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -47,7 +47,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -68,12 +68,12 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include(
-        "Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes"
+        "Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
       )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
       fieldError must include(
-        "Error: Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes"
+        "Error: Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
       )
     }
 

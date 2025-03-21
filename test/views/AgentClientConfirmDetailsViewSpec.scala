@@ -42,7 +42,7 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
 
     "have two h2 headings" in {
       view.getElementsByTag("h2").text must include("Client’s ultimate parent")
-      view.getElementsByTag("h2").text must include("Client’s Pillar 2 top-up taxes ID")
+      view.getElementsByTag("h2").text must include("Client’s Pillar 2 Top-up Taxes ID")
     }
 
     "display the org name and pillar 2 id" in {
@@ -53,7 +53,7 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.attr("href") must include(routes.AgentController.onSubmitClientPillarId.url)
-      link.text         must include("Enter a different client’s Pillar 2 top-up taxes ID")
+      link.text         must include("Enter a different client’s Pillar 2 Top-up Taxes ID")
     }
 
     "have a button" in {

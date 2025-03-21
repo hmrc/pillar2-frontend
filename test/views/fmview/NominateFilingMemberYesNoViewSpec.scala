@@ -46,7 +46,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
     "have a paragraph body" in {
       view.getElementsByClass("govuk-body").first().text must include(
-        "The default filing member for your group is the ultimate parent entity (UPE). " +
+        "The default filing member for your group is the Ultimate Parent Entity (UPE). " +
           "However, the UPE can nominate another company in your group to act as the filing member."
       )
       view.getElementsByClass("govuk-body").get(1).text must include(
@@ -57,7 +57,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
     "has legend" in {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
-        "Has the ultimate parent entity nominated another company within your group to act as the filing member?"
+        "Has the Ultimate Parent Entity nominated another company within your group to act as the filing member?"
       )
     }
 
@@ -85,13 +85,13 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
     "have an error summary" in {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member"
+        "Select yes if the Ultimate Parent Entity has nominated another company within your group to act as the filing member"
       )
     }
 
     "have an input error" in {
       view.getElementsByClass("govuk-error-message").text must include(
-        "Error: Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member"
+        "Error: Select yes if the Ultimate Parent Entity has nominated another company within your group to act as the filing member"
       )
     }
 

@@ -47,7 +47,7 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
     "have a hint" in {
       view.getElementsByClass("govuk-hint").text must include(
         "We will only use this to contact you about Pillar 2 " +
-          "top-up taxes."
+          "Top-up Taxes."
       )
     }
 

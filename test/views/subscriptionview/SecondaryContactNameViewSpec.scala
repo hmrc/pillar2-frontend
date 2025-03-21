@@ -37,7 +37,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "display the correct page title" in {
       view.getElementsByTag("title").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -47,7 +47,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "display the main heading asking for alternative contact details" in {
       view.getElementsByTag("h1").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -70,12 +70,12 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
       errorList.text must include(
-        "Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes"
+        "Enter the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes"
       )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message")
       fieldError.text must include(
-        "Error: Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes"
+        "Error: Enter the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes"
       )
     }
 

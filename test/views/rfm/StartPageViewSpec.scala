@@ -30,7 +30,7 @@ class StartPageViewSpec extends ViewSpecBase {
   "Start Page View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Replace the filing member for a Pillar 2 top-up taxes account")
+      view.getElementsByTag("title").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
     }
 
     "have a caption" in {
@@ -38,7 +38,7 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Replace the filing member for a Pillar 2 top-up taxes account")
+      view.getElementsByTag("h1").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
     }
 
     "have sub headings" in {
@@ -57,7 +57,7 @@ class StartPageViewSpec extends ViewSpecBase {
     "have paragraphs" in {
       view.getElementsByClass("govuk-body").get(0).text must include(
         "Use this service to replace the filing member " +
-          "for an existing Pillar 2 top-up taxes account."
+          "for an existing Pillar 2 Top-up Taxes account."
       )
 
       view.getElementsByClass("govuk-body").get(1).text must include(
@@ -67,12 +67,12 @@ class StartPageViewSpec extends ViewSpecBase {
 
       view.getElementsByClass("govuk-body").get(2).text must include(
         "If your group has not yet registered, you will " +
-          "need to register to report Pillar 2 top-up taxes. You can choose to nominate a filing member during registration."
+          "need to register to report Pillar 2 Top-up Taxes. You can choose to nominate a filing member during registration."
       )
 
       view.getElementsByClass("govuk-body").get(3).text must include(
         "Only the new filing member can use this service. " +
-          "This can either be the ultimate parent entity or another company member which has been nominated by the ultimate parent entity."
+          "This can either be the Ultimate Parent Entity or another company member which has been nominated by the Ultimate Parent Entity."
       )
 
       view.getElementsByClass("govuk-body").get(4).text must include(
@@ -102,21 +102,21 @@ class StartPageViewSpec extends ViewSpecBase {
 
     "have bullet lists" in {
       view.getElementsByTag("li").get(0).text must include(
-        "act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance"
+        "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
       )
 
       view.getElementsByTag("li").get(1).text must include(
-        "submit your group’s Pillar 2 top-up tax returns"
+        "submit your group’s Pillar 2 Top-up Taxes returns"
       )
 
       view.getElementsByTag("li").get(2).text must include(
-        "ensure your group’s Pillar 2 top-up taxes account accurately reflects their records"
+        "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records"
       )
 
-      view.getElementsByTag("li").get(3).text must include("the group’s Pillar 2 top-up taxes ID")
+      view.getElementsByTag("li").get(3).text must include("the group’s Pillar 2 Top-up Taxes ID")
 
       view.getElementsByTag("li").get(4).text must include(
-        "the date the group first registered to report their Pillar 2 top up taxes in the UK"
+        "the date the group first registered to report their Pillar 2 Top-up Taxes in the UK"
       )
 
       view.getElementsByTag("li").get(5).text must include(

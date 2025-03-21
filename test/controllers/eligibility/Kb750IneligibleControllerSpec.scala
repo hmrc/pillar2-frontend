@@ -39,7 +39,7 @@ class Kb750IneligibleControllerSpec extends SpecBase with ViewInstances {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Pillar 2 top-up taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
+        "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
       )
     }
 

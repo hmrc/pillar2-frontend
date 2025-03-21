@@ -39,12 +39,12 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
 
   "Registration Confirmation View" should {
     "have a title" in {
-      viewDomestic.getElementsByTag("title").text must include("Registration complete - Report Pillar 2 top-up taxes - GOV.UK")
+      viewDomestic.getElementsByTag("title").text must include("Registration complete - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a panel" in {
       viewDomestic.getElementsByClass("govuk-panel__title").text must include("Registration complete")
-      viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 top-up taxes ID PLR2ID123")
+      viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 Top-up Taxes ID PLR2ID123")
     }
 
     "have a heading" in {
@@ -65,12 +65,12 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       )
 
       viewDomestic.getElementsByClass("govuk-body").get(1).text must include(
-        "You will be able to find your Pillar 2 top-up taxes ID and " +
+        "You will be able to find your Pillar 2 Top-up Taxes ID and " +
           "registration date on your account homepage. Keep these details safe."
       )
 
       viewDomestic.getElementsByClass("govuk-body").get(2).text must include(
-        "You can now report and manage your Pillar 2 top-up taxes."
+        "You can now report and manage your Pillar 2 Top-up Taxes."
       )
     }
 

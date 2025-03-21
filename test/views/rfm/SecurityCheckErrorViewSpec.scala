@@ -30,7 +30,7 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
   "Security Check Error View" should {
 
     "have a title" in {
-      val title = "You cannot replace the current filing member for this group - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "You cannot replace the current filing member for this group - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 
@@ -49,7 +49,7 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
       val link                     = paragraphMessageWithLink.getElementsByTag("a")
 
       paragraphMessageWithLink.text() must include(
-        "If you need to manage who can access your Pillar 2 top-up tax returns, go to your business tax account."
+        "If you need to manage who can access your Pillar 2 Top-up Taxes returns, go to your business tax account."
       )
       link.text must include("go to your business tax account")
       link.attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account"

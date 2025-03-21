@@ -35,7 +35,7 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     "have a title" in {
       view.getElementsByTag("title").text must include(
         "Enter the group’s registration date to the Report Pillar 2 " +
-          "top-up taxes service"
+          "Top-up Taxes service"
       )
     }
 
@@ -46,14 +46,14 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     "have a heading" in {
       view.getElementsByTag("h1").text must include(
         "Enter the group’s registration date to the Report Pillar 2 " +
-          "top-up taxes service"
+          "Top-up Taxes service"
       )
     }
 
     "have a hint description" in {
       view.getElementsByClass("govuk-hint").get(0).text must include(
         "This will be the date when your group first " +
-          "registered to report their pillar 2 taxes in the UK."
+          "registered to report their Pillar 2 Top-up Taxes in the UK."
       )
     }
 

@@ -37,7 +37,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
   "Manage Group Details Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Group details - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text      must include(title)
       agentView.getElementsByTag("title").text must include(title)
     }

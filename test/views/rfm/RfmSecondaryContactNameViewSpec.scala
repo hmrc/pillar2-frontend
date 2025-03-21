@@ -37,7 +37,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
 
     "have the correct title" in {
       view.getElementsByTag("title").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes? - Report Pillar 2 top-up taxes"
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes"
       )
     }
 
@@ -47,7 +47,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
 
     "have the correct heading" in {
       view.getElementsByTag("h1").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?"
+        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 

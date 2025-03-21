@@ -30,7 +30,7 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
   "Agent Individual Error View" should {
 
     "have a title" in {
-      val title = "Sorry, you’re unable to use this service - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Sorry, you’re unable to use this service - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 
@@ -49,12 +49,12 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
       val secondBullet = bulletList.first().getElementsByClass("govuk-body").get(1)
 
       firstBullet.text() must include(
-        "if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must"
+        "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must"
       )
       firstBullet.getElementsByTag("a").text() must include("sign in via agent services")
       firstBullet.getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
 
-      secondBullet.text()                       must include("if you need to request authorisation to report Pillar 2 top-up taxes, you must")
+      secondBullet.text()                       must include("if you need to request authorisation to report Pillar 2 Top-up Taxes, you must")
       secondBullet.getElementsByTag("a").text() must include("request authorisation on agent services")
       secondBullet
         .getElementsByTag("a")
@@ -64,7 +64,7 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Find out more about who can report for Pillar 2 top-up taxes")
+      link.text         must include("Find out more about who can report for Pillar 2 Top-up Taxes")
       link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
     }
 

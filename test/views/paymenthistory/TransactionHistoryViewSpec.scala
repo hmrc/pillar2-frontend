@@ -69,7 +69,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
   "Transaction History View" should {
 
     "have a title" in {
-      val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Transaction history - Report Pillar 2 Top-up Taxes - GOV.UK"
       view().getElementsByTag("title").text must include(title)
     }
 
