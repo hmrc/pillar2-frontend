@@ -27,14 +27,18 @@
 
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("transactionHistory.none.title"))) {
+@pageLayout(contentBlock: Html) = {
+    @contentBlock
+}
+
+@layout(pageTitle = titleNoForm(messages("transactionHistory.none.title")), pageLayout = pageLayout) {
 
     @heading(messages("transactionHistory.none.heading"))
 
     @if(isAgent) {
-        @p(messages("transactionHistory.agent.none.p1"))
+        @p(messages("transactionHistory.agent.none.p1"), classes = "govuk-body govuk-!-width-two-thirds")
     } else {
-        @p(messages("transactionHistory.group.none.p1"))
+        @p(messages("transactionHistory.group.none.p1"), classes = "govuk-body govuk-!-width-two-thirds")
     }
 
     @p(messages("transactionHistory.none.p2"))
@@ -45,8 +49,8 @@
 
     @h2(messages("transactionHistory.none.h2"), size = "m")
     @if(isAgent){
-        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false)
+        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
     } else {
-        @paragraphMessageWithLink(Some(messages("transactionHistory.group.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false)
+        @paragraphMessageWithLink(Some(messages("transactionHistory.group.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
     }
 }
