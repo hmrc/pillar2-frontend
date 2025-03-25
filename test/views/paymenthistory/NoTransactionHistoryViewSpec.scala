@@ -23,40 +23,74 @@ import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
-  private val date: String = "31 January 2024"
-
   val page: NoTransactionHistoryView = inject[NoTransactionHistoryView]
 
-  def view(agentView: Boolean = false): Document = Jsoup.parse(page(date, isAgent = agentView)(request, appConfig, messages).toString())
+  val groupView: Document = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
+  val agentView: Document = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
 
   "No Transaction History View" should {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 top-up taxes - GOV.UK"
-      view().getElementsByTag("title").text must include(title)
+      groupView.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view().getElementsByTag("h1").text must include("Transaction history")
+      groupView.getElementsByTag("h1").text must include("Transaction history")
     }
 
-    "have correct paragraph for a group" in {
-      view().getElementsByClass("govuk-body").text must include(
-        s"No payments are available to display for the period starting from your group’s registration on $date to today’s date."
+    "have paragraph 1 for a group" in {
+      groupView.getElementsByClass("govuk-body").text must include(
+        "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
       )
     }
 
-    "have correct paragraph for an agent" in {
-      view(true).getElementsByClass("govuk-body").text must include(
-        s"No payments are available to display for the period starting from your client’s registration on $date to today’s date."
+    "have paragraph 1 for an agent" in {
+      agentView.getElementsByClass("govuk-body").text must include(
+        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
       )
     }
 
-    "have a inset" in {
-      view().getElementsByClass("govuk-inset-text").text must include(
+    "have paragraph 2" in {
+      groupView.getElementsByClass("govuk-body").text must include(
         "It will take up to 5 working days for payments to appear after each transaction."
       )
     }
 
+    "have paragraph 3" in {
+      groupView.getElementsByClass("govuk-body").text must include(
+        "No transactions made"
+      )
+    }
+
+    "have heading 2" in {
+      groupView.getElementsByTag("h2").text must include(
+        "Outstanding payments"
+      )
+    }
+
+    "have a paragraph with link for a group" in {
+      val link = groupView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      groupView.getElementsByTag("p").text must include(
+        "You can find details of what your group currently owes on the"
+      )
+      link.text         must include("Outstanding payments")
+      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
+      groupView.getElementsByTag("p").text must include(
+        "page."
+      )
+    }
+
+    "have a paragraph with link for an agent" in {
+      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      agentView.getElementsByTag("p").text must include(
+        "You can find details of what your client currently owes on the"
+      )
+      link.text         must include("Outstanding payments")
+      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
+      agentView.getElementsByTag("p").text must include(
+        "page."
+      )
+    }
   }
 }
