@@ -58,11 +58,4 @@
     @pagination.map { pag =>
         @govukPagination(pag)
     }
-
-    @h2(messages("transactionHistory.h2"), size = "m")
-    @if(isAgent){
-        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.p3")), linkMessage = messages("transactionHistory.link"), Some(messages("transactionHistory.p4")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
-    } else {
-        @paragraphMessageWithLink(Some(messages("transactionHistory.group.p3")), linkMessage = messages("transactionHistory.link"), Some(messages("transactionHistory.p4")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
-    }
 }
