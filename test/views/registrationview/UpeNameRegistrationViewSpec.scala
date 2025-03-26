@@ -36,11 +36,11 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the name of the ultimate parent entity?")
+      view.getElementsByTag("title").text must include("What is the name of the Ultimate Parent Entity?")
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include("What is the name of the ultimate parent entity?")
+      view.getElementsByTag("h1").text must include("What is the name of the Ultimate Parent Entity?")
     }
 
     "have the correct section caption" in {
@@ -58,7 +58,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "You need to enter the name of the ultimate parent entity"
+        "You need to enter the name of the Ultimate Parent Entity"
       )
     }
 
@@ -70,7 +70,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Name of the ultimate parent entity must be 105 characters or less"
+        "Name of the Ultimate Parent Entity must be 105 characters or less"
       )
     }
 

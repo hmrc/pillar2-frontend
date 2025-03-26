@@ -193,7 +193,7 @@ class TaskListControllerSpec extends SpecBase {
         status(result) mustEqual OK
 
         val responseContent = contentAsString(result)
-        responseContent should include("Edit ultimate parent")
+        responseContent should include("Edit Ultimate Parent Entity")
       }
     }
 

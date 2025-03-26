@@ -38,12 +38,12 @@ class DashboardViewSpec extends ViewSpecBase {
   "Dashboard View for Organisation" should {
 
     "have a title" in {
-      organisationDashboardView.getElementsByTag("title").text must include("Your Pillar 2 top-up taxes account")
+      organisationDashboardView.getElementsByTag("title").text must include("Your Pillar 2 Top-up Taxes account")
     }
 
     "have a heading" in {
       val h1 = organisationDashboardView.getElementsByTag("h1")
-      h1.text must include("Your Pillar 2 top-up taxes account")
+      h1.text must include("Your Pillar 2 Top-up Taxes account")
       h1.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
@@ -51,7 +51,7 @@ class DashboardViewSpec extends ViewSpecBase {
       val bannerLink = organisationDashboardView.getElementsByClass("govuk-notification-banner__link")
 
       organisationDashboardView.getElementsByClass("govuk-notification-banner__heading").text() must include(
-        "HMRC has received a Below Threshold Notification for this account. Please contact the"
+        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
       bannerLink.attr("href") must include(
         "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
@@ -66,7 +66,7 @@ class DashboardViewSpec extends ViewSpecBase {
       val bannerLink = organisationDashboardView.getElementsByClass("govuk-notification-banner__link")
 
       organisationDashboardView.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
-        "HMRC has received a Below Threshold Notification for this account. Please contact the"
+        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
       bannerLink.attr("href") mustNot include(
         "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
@@ -77,9 +77,9 @@ class DashboardViewSpec extends ViewSpecBase {
     "have paragraphs detailing organisation information" in {
       val elements = organisationDashboardView.getElementsByTag("p")
 
-      elements.get(2).text must include(s"Group’s Pillar 2 top-up taxes ID: $plrRef")
+      elements.get(2).text must include(s"Group’s Pillar 2 Top-up Taxes ID: $plrRef")
       elements.get(3).text must include(s"Registration date: $date")
-      elements.get(4).text must include(s"Ultimate parent entity: $organisationName")
+      elements.get(4).text must include(s"Ultimate Parent Entity: $organisationName")
     }
 
     "have payment information" in {
@@ -122,9 +122,9 @@ class DashboardViewSpec extends ViewSpecBase {
       val element  = organisationDashboardView.getElementsByTag("li")
       val pargraph = organisationDashboardView.getElementsByTag("p")
       element.text() must not include
-        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       element.text() must not include
-        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+        "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
 
       pargraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
@@ -137,13 +137,13 @@ class DashboardViewSpec extends ViewSpecBase {
       val pargraph = inActiveOrganisationDashboardView.getElementsByTag("p")
 
       element.get(0).text() must include(
-        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       )
       element.get(1).text() must include(
-        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+        "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
       )
       pargraph.get(10).text() must include(
-        "Your group must submit your Pillar 2 top-up tax returns no later than:"
+        "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
       )
       pargraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
@@ -155,12 +155,12 @@ class DashboardViewSpec extends ViewSpecBase {
 
   "Dashboard View for Agent" should {
     "have a title" in {
-      agentDashboardView.getElementsByTag("title").text must include("Your Pillar 2 top-up taxes account")
+      agentDashboardView.getElementsByTag("title").text must include("Your Pillar 2 Top-up Taxes account")
     }
 
     "have a heading" in {
       val h1 = agentDashboardView.getElementsByTag("h1")
-      h1.text must include("Your Pillar 2 top-up taxes account")
+      h1.text must include("Your Pillar 2 Top-up Taxes account")
       h1.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
@@ -168,7 +168,7 @@ class DashboardViewSpec extends ViewSpecBase {
       val bannerLink = agentDashboardView.getElementsByClass("govuk-notification-banner__link")
 
       agentDashboardView.getElementsByClass("govuk-notification-banner__heading").text() must include(
-        "HMRC has received a Below Threshold Notification for this account. Please contact the"
+        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
       bannerLink.attr("href") must include(
         "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
@@ -183,7 +183,7 @@ class DashboardViewSpec extends ViewSpecBase {
       val bannerLink = agentDashboardView.getElementsByClass("govuk-notification-banner__link")
 
       agentDashboardView.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
-        "HMRC has received a Below Threshold Notification for this account. Please contact the"
+        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
       bannerLink.attr("href") mustNot include(
         "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
@@ -250,9 +250,9 @@ class DashboardViewSpec extends ViewSpecBase {
       val pargraph = organisationDashboardView.getElementsByTag("p")
 
       element.text() must not include
-        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024"
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       element.text() must not include
-        "30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024"
+        "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
       pargraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )

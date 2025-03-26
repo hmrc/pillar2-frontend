@@ -49,7 +49,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
         "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
       )
       view.getElementsByClass("govuk-body").get(1).text must equal(
-        "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes."
+        "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
       )
     }
 

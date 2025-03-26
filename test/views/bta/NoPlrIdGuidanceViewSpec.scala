@@ -30,22 +30,22 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
   "No Plr Id Guidance View" should {
 
     "have a title" in {
-      val title = "You need a Pillar 2 top-up taxes ID to access this service - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "You need a Pillar 2 Top-up Taxes ID to access this service - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You need a Pillar 2 top-up taxes ID to access this service")
+      view.getElementsByTag("h1").text must include("You need a Pillar 2 Top-up Taxes ID to access this service")
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.")
+      view.getElementsByClass("govuk-body").first().text must include("Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID.")
     }
 
     "have a paragraph link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Find out how to register to report Pillar 2 top-up taxes (opens in new tab)")
+      link.text         must include("Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)")
       link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
       link.attr("target") mustBe "_blank"
     }

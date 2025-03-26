@@ -33,7 +33,7 @@ class SecurityCheckViewSpec extends ViewSpecBase {
   "Security Check View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Enter the group’s Pillar 2 top-up taxes ID")
+      view.getElementsByTag("title").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
     }
 
     "have a caption" in {
@@ -41,13 +41,13 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Enter the group’s Pillar 2 top-up taxes ID")
+      view.getElementsByTag("h1").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
     }
 
     "have a hint description" in {
       view.getElementsByClass("govuk-hint").get(0).text must include(
         "This is 15 characters, for example, " +
-          "XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account."
+          "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
       )
     }
 

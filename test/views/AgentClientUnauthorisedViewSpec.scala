@@ -30,12 +30,12 @@ class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
   "Agent Error View" should {
 
     "have a title" in {
-      val title = "You have not been authorised to report this client’s Pillar 2 top-up taxes - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "You have not been authorised to report this client’s Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You have not been authorised to report this client’s Pillar 2 top-up taxes")
+      view.getElementsByTag("h1").text must include("You have not been authorised to report this client’s Pillar 2 Top-up Taxes")
     }
 
     "have a paragraph body" in {
@@ -45,7 +45,7 @@ class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("request authorisation to report and manage this client’s Pillar 2 top-up taxes")
+      link.text         must include("request authorisation to report and manage this client’s Pillar 2 Top-up Taxes")
       link.attr("href") must include("/report-pillar2-top-up-taxes/asa/home")
     }
 

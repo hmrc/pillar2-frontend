@@ -30,7 +30,7 @@ class AgentErrorViewSpec extends ViewSpecBase {
   "Agent Error View" should {
 
     "have a title" in {
-      val title = "Sorry, there is a problem with the service - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 

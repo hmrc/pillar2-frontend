@@ -324,7 +324,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
       }
 
-      "go to rfm UPE page from corporate position if ultimate parent entity is selected" in {
+      "go to rfm UPE page from corporate position if Ultimate Parent Entity is selected" in {
         navigator.nextPage(
           RfmCorporatePositionPage,
           CheckMode,

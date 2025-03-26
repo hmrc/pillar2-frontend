@@ -1,4 +1,4 @@
-service.name = Report Pillar 2 top-up taxes
+service.name = Report Pillar 2 Top-up Taxes
 site.back = Back
 site.remove = Remove
 site.change = Change
@@ -29,7 +29,7 @@ date.year = Year
 ###############################################
 page_not_available.title = There has been an error
 page_not_available.heading = There has been an error
-page_not_available.link = return to your Pillar 2 top-up taxes registration
+page_not_available.link = return to your Pillar 2 Top-up Taxes registration
 page_not_available.message2 = and complete the required tasks.
 
 ###############################################
@@ -63,9 +63,9 @@ error.eis.message2 = We have saved your answers and they will be available for 2
 error.eis.link = Return to registration to try again
 ###############################################
 cannotReturnAfterSubscriptionError.heading = You cannot return, your registration is complete
-cannotReturnAfterSubscriptionError.message = You have successfully registered to report pillar 2 top-up taxes.
+cannotReturnAfterSubscriptionError.message = You have successfully registered to report Pillar 2 Top-up Taxes.
 cannotReturnAfterSubscriptionError.message2 = You can now
-cannotReturnAfterSubscriptionError.link = report and manage your pillar 2 top-up taxes.
+cannotReturnAfterSubscriptionError.link = report and manage your Pillar 2 Top-up Taxes.
 
 ###############################################
 viewAmendSubscriptionFailed.title = Sorry, there is a problem with the service
@@ -87,9 +87,9 @@ error.pageNotFound.p1 = If you typed the web address, check it is correct.
 error.pageNotFound.p2 = If you pasted the web address, check you copied the entire address.
 ###############################################
 
-alreadyRegistered.title = Your group has already registered to report Pillar 2 top-up taxes
-alreadyRegistered.heading = Your group has already registered to report Pillar 2 top-up taxes
-alreadyRegistered.message1 = You can find your group’s Pillar 2 top-up taxes ID within your business tax account.
+alreadyRegistered.title = Your group has already registered to report Pillar 2 Top-up Taxes
+alreadyRegistered.heading = Your group has already registered to report Pillar 2 Top-up Taxes
+alreadyRegistered.message1 = You can find your group’s Pillar 2 Top-up Taxes ID within your business tax account.
 alreadyRegistered.message2 = If you need to request access to this account, your administrator can give you access using ‘Manage account’ settings within their business tax account.
 
 address.postcode.error.required = Enter the postcode
@@ -101,7 +101,7 @@ address.postcode.error.xss = The postcode you enter must not include the followi
 upeRegisteredAddress.title = What is the registered office address?
 upeRegisteredAddress.heading = What is the registered office address of {0}?
 upeRegisteredAddress.checkYourAnswersLabel = Address
-upeRegisteredAddress.change.hidden = the registered office address of the ultimate parent entity
+upeRegisteredAddress.change.hidden = the registered office address of the Ultimate Parent Entity
 upeRegisteredAddress.addressLine1 = Address line 1
 upeRegisteredAddress.addressLine2 = Address line 2 (optional)
 upeRegisteredAddress.town_city = Town or city
@@ -122,14 +122,14 @@ upeRegisteredAddress.error.addressLine1.invalid = The first line of the address 
 upeRegisteredAddress.error.addressLine2.length = Second line of the address must be 35 characters or less
 upeRegisteredAddress.error.addressLine2.invalid = The second line of the address contains invalid characters
 
-upe-input-business-name.title = What is the name of the person or team from the ultimate parent entity to keep on record?
+upe-input-business-name.title = What is the name of the person or team from the Ultimate Parent Entity to keep on record?
 upe-input-business-name.caption = Group details
-upe-input-business-name.heading = What is the name of the person or team from the ultimate parent entity to keep on record?
+upe-input-business-name.heading = What is the name of the person or team from the Ultimate Parent Entity to keep on record?
 upe-input-business-name.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-upe-input-business-name.error.required = Enter the name of the person or team from the ultimate parent entity to keep on record
+upe-input-business-name.error.required = Enter the name of the person or team from the Ultimate Parent Entity to keep on record
 upe-input-business-name.error.length = The name of the person or team must be 200 characters or less
 upe-input-business-name.error.invalid = The name of the person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
-upe-input-business-name.change.hidden = the name of the person or team we should contact from the ultimate parent entity
+upe-input-business-name.change.hidden = the name of the person or team we should contact from the Ultimate Parent Entity
 upe-input-business-name.checkYourAnswersLabel = Contact name
 
 task-list.title = Register your group
@@ -140,8 +140,8 @@ taskList.subheading.complete = Registration incomplete
 taskList.completedSections = You have completed {0} of 5 tasks.
 taskList.task.business.heading = Group details
 
-taskList.task.business.ultimate.add = Add ultimate parent entity details
-taskList.task.business.ultimate.edit = Edit ultimate parent entity details
+taskList.task.business.ultimate.add = Add Ultimate Parent Entity details
+taskList.task.business.ultimate.edit = Edit Ultimate Parent Entity details
 
 taskList.task.business.filingMember = Filing member details
 taskList.task.business.filingMember.add = Add filing member details
@@ -190,14 +190,14 @@ grs.registration.error.b33 = and try again using different details if you think 
 
 payment.dashboard.title = Make a payment
 payment.dashboard.header = Make a payment
-payment.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 top-up tax payments.
+payment.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.dashboard.message2 = You can use the ''Pay Now'' button to pay online, or
 payment.dashboard.linkText = read more about other payment methods. (opens in a new tab)
 payment.dashboard.buttonText = Pay Now
 
 payment.legacy.dashboard.title = Make a payment
 payment.legacy.dashboard.header = Make a payment
-payment.legacy.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 top-up tax payments.
+payment.legacy.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.legacy.dashboard.message2 = Submit your return before making a payment. Your payment is due on the same date as your return.
 payment.legacy.dashboard.message3 = You can
 payment.legacy.dashboard.message4 = read the guidance to find the methods you can use to make a payment.
@@ -238,25 +238,25 @@ error.number = Please enter a valid number
 error.required = Please enter a value
 error.summary.title = There is a problem
 
-index.title = Welcome to Report Pillar 2 top-up taxes
-index.heading = Welcome to Report Pillar 2 top-up taxes
+index.title = Welcome to Report Pillar 2 Top-up Taxes
+index.heading = Welcome to Report Pillar 2 Top-up Taxes
 index.guidance = Welcome to your new frontend. Please see the README file for a guide to getting started.
 index.continue = Continue
 
-startPageRegistration.title = We need to match the details of the ultimate parent entity to HMRC records
-startPageRegistration.heading = We need to match the details of the ultimate parent entity to HMRC records
-startPageRegistration.p1 = If the ultimate parent entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records.
-startPageRegistration.p2 = If the ultimate parent entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record.
+startPageRegistration.title = We need to match the details of the Ultimate Parent Entity to HMRC records
+startPageRegistration.heading = We need to match the details of the Ultimate Parent Entity to HMRC records
+startPageRegistration.p1 = If the Ultimate Parent Entity is registered in the UK, we will ask you for identifying information about the ultimate parent so we can match it with our records.
+startPageRegistration.p2 = If the Ultimate Parent Entity is registered outside of the UK, we will ask you for identifying information about the ultimate parent so we can create a HMRC record.
 startPageRegistration.heading.caption = Group details
 upeNameRegistration.heading.caption = Group details
-upeNameRegistration.title = What is the name of the ultimate parent entity?
-upeNameRegistration.heading = What is the name of the ultimate parent entity?
-upeNameRegistration.error.required = You need to enter the name of the ultimate parent entity
-upeNameRegistration.error.length = Name of the ultimate parent entity must be 105 characters or less
-upeNameRegistration.error.invalid = The name of the ultimate parent entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
+upeNameRegistration.title = What is the name of the Ultimate Parent Entity?
+upeNameRegistration.heading = What is the name of the Ultimate Parent Entity?
+upeNameRegistration.error.required = You need to enter the name of the Ultimate Parent Entity
+upeNameRegistration.error.length = Name of the Ultimate Parent Entity must be 105 characters or less
+upeNameRegistration.error.invalid = The name of the Ultimate Parent Entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 upeNameRegistration.checkYourAnswersLabel = Name
-upeNameRegistration.change.hidden = the name of the ultimate parent entity
+upeNameRegistration.change.hidden = the name of the Ultimate Parent Entity
 
 checkNewFilingMember.title = We need to match the details of the new nominated filing member to HMRC records
 checkNewFilingMember.heading = We need to match the details of the new nominated filing member to HMRC records
@@ -271,13 +271,13 @@ upe-input-business-email.caption = Group details
 upe-input-business-contact.email.error.required = Enter the email address for {0}
 upe-input-business-contact.email.error.length = Email address must be 132 characters or less
 upe-input-business-contact.email.error.invalid = Enter an email address in the correct format, like name@example.com
-upe-input-business-email.change.hidden = the email address for the ultimate parent entity contact
+upe-input-business-email.change.hidden = the email address for the Ultimate Parent Entity contact
 upe-input-business-email.checkYourAnswersLabel = Email address
 
 
 rfm-input-business-email.title = What is the email address?
 rfm-input-business-email.heading = What is the email address for {0}?
-rfm-input-business-email.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+rfm-input-business-email.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 rfm-input-business-email.caption = Contact details
 rfm-input-business-contact.email.error.required = Enter the email address for {0}
 rfm-input-business-contact.email.error.length = Email address must be 132 characters or less
@@ -288,7 +288,7 @@ rfm-input-business-email.checkYourAnswersLabel = Email address
 rfmContactByTelephone.heading.caption = Contact details
 rfmContactByTelephone.title = Can we contact by telephone?
 rfmContactByTelephone.heading = Can we contact {0} by telephone?
-rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 rfmContactByTelephone.error.required = Select yes if we can contact {0} by telephone
 rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
@@ -309,48 +309,48 @@ under_construction.heading = Under Construction
 under_construction.error.heading = Under Construction Error
 businessActivityUK.title = Does the group have an entity located in the UK?
 businessActivityUK.heading = Does the group have an entity located in the UK?
-businessActivityUK.check.liable.text = Check if you need to report Pillar 2 top-up taxes
+businessActivityUK.check.liable.text = Check if you need to report Pillar 2 Top-up Taxes
 businessActivityUK.yes = Yes
 businessActivityUK.no = No
-businessActivityUK.hint = Pillar 2 top-up taxes may be collected if you have an entity located in the UK.
+businessActivityUK.hint = Pillar 2 Top-up Taxes may be collected if you have an entity located in the UK.
 businessActivityUK.error.required = Select yes if the group has an entity located in the UK
 
 turnOverEligibility.title = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
 turnOverEligibility.heading = Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?
-turnOverEligibility.check.liable.text = Check if you need to report Pillar 2 top-up taxes
+turnOverEligibility.check.liable.text = Check if you need to report Pillar 2 Top-up Taxes
 turnOverEligibility.yes = Yes
 turnOverEligibility.no = No
 turnOverEligibility.hint = If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million by the number of days in your accounting period and dividing it by 365.
 turnOverEligibility.checkYourAnswersLabel = turn Over Eligibility
 turnOverEligibility.error.required = Select yes if the group has consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
 turnOverEligibility.change.hidden = Change
-groupTerritories.caption = Check if you need to report Pillar 2 top-up taxes
-groupTerritories.title = Are you registering as the group’s ultimate parent entity?
-groupTerritories.heading = Are you registering as the group’s ultimate parent entity?
+groupTerritories.caption = Check if you need to report Pillar 2 Top-up Taxes
+groupTerritories.title = Are you registering as the group’s Ultimate Parent Entity?
+groupTerritories.heading = Are you registering as the group’s Ultimate Parent Entity?
 groupTerritories.yes = Yes
 groupTerritories.no = No
-groupTerritories.hint = An ultimate parent entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one ultimate parent entity needs to register.
+groupTerritories.hint = An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one Ultimate Parent Entity needs to register.
 GroupTerritories.error.required = Select yes if you are registering as the group’s ultimate parent
-KBMnIneligible.title = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
-KBMnIneligible.heading = Based on your answers, you cannot register this group to report Pillar 2 top-up taxes
-KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 top-up taxes.
+KBMnIneligible.title = Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes
+KBMnIneligible.heading = Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes
+KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 Top-up Taxes.
 KBMnIneligible.p2 = This group may still need to register.
 KBMnIneligible.link = Find out more about who can use this service
 
-KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes in the UK
-KbUKIneligible.p1 = Pillar 2 top-up taxes may be collected when you have an entity located in the UK.
+KbUKIneligible.title = Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK
+KbUKIneligible.heading = Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK
+KbUKIneligible.p1 = Pillar 2 Top-up Taxes may be collected when you have an entity located in the UK.
 KbUKIneligible.p2 = If your group members are only located outside the UK, you should check where any liability may apply.
-KbUKIneligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
+KbUKIneligible.link = Find out more about who is eligible for Pillar 2 Top-up Taxes
 
-Kb750Ineligible.title = Based on your answers, this group does not need to report Pillar 2 top-up taxes
-Kb750Ineligible.heading = Based on your answers, this group does not need to report Pillar 2 top-up taxes
-Kb750Ineligible.p1 = Pillar 2 top-up taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
-Kb750Ineligible.p2 = You may need to report Pillar 2 top-up taxes if the global turnover meets the €750 million threshold in future accounting periods.
-Kb750Ineligible.link = Find out more about who is eligible for Pillar 2 top-up taxes
+Kb750Ineligible.title = Based on your answers, this group does not need to report Pillar 2 Top-up Taxes
+Kb750Ineligible.heading = Based on your answers, this group does not need to report Pillar 2 Top-up Taxes
+Kb750Ineligible.p1 = Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods.
+Kb750Ineligible.p2 = You may need to report Pillar 2 Top-up Taxes if the global turnover meets the €750 million threshold in future accounting periods.
+Kb750Ineligible.link = Find out more about who is eligible for Pillar 2 Top-up Taxes
 
-eligibilityconfirmation.title = You need to register this group to report Pillar 2 top-up taxes
-eligibilityconfirmation.heading = You need to register this group to report Pillar 2 top-up taxes
+eligibilityconfirmation.title = You need to register this group to report Pillar 2 Top-up Taxes
+eligibilityconfirmation.heading = You need to register this group to report Pillar 2 Top-up Taxes
 eligibilityconfirmation.inset = You cannot use an individual or agent Government Gateway user ID to register.
 eligibilityconfirmation.p1 = You now need to sign in with a Government Gateway user ID associated with the filing member.
 
@@ -368,11 +368,11 @@ nfmCheckYourAnswers.nfm.heading.caption = Group details
 checkYourAnswers.nfm.heading.caption = Group details
 journeyRecovery.continue.title = There has been an error
 journeyRecovery.continue.heading = There has been an error
-journeyRecovery.continue.link = return to your Pillar 2 top-up taxes registration
+journeyRecovery.continue.link = return to your Pillar 2 Top-up Taxes registration
 journeyRecovery.continue.message2 = and complete the required tasks.
 journeyRecovery.startAgain.title = There has been an error
 journeyRecovery.startAgain.heading = There has been an error
-journeyRecovery.startAgain.link = return to your Pillar 2 top-up taxes registration
+journeyRecovery.startAgain.link = return to your Pillar 2 Top-up Taxes registration
 journeyRecovery.startAgain.message2 = and complete the required tasks.
 
 signedOut.title = For your security, we signed you out
@@ -382,15 +382,15 @@ signedOut.feedback = What did you think of this service?
 unauthorised.title = You do not have access to this service
 unauthorised.heading = You do not have access to this service
 unauthorised.guidance = You need to {0} to access this page.
-unauthorised.guidance.link = register to report Pillar 2 top-up taxes
+unauthorised.guidance.link = register to report Pillar 2 Top-up Taxes
 
 
 isUPERegisteredInUK.heading.caption = Group details
-isUPERegisteredInUK.heading = Is the ultimate parent entity registered in the UK?
+isUPERegisteredInUK.heading = Is the Ultimate Parent Entity registered in the UK?
 isUPERegisteredInUK.yes = Yes
 isUPERegisteredInUK.no = No
-isUPERegisteredInUK.error.required = Select yes if the ultimate parent entity is registered in the UK
-isUPERegisteredInUK.title = Is the ultimate parent entity registered in the UK?
+isUPERegisteredInUK.error.required = Select yes if the Ultimate Parent Entity is registered in the UK
+isUPERegisteredInUK.title = Is the Ultimate Parent Entity registered in the UK?
 
 isNFMRegisteredInUK.heading.caption = Group details
 isNFMRegisteredInUK.heading = Is the new nominated filing member registered in the UK?
@@ -407,7 +407,7 @@ contactUPEByTelephone.yes = Yes
 contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-contactUPEByTelephone.change.hidden = can we contact the ultimate parent entity by telephone
+contactUPEByTelephone.change.hidden = can we contact the Ultimate Parent Entity by telephone
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the telephone number?
 captureTelephoneDetails.heading = What is the telephone number for {0}?
@@ -415,16 +415,16 @@ captureTelephoneDetails.hint = For international numbers include the country cod
 captureTelephoneDetails.error.required = Enter the telephone number for {0}
 captureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
-captureTelephoneDetails.change.hidden = the telephone number for the ultimate parent entity contact
+captureTelephoneDetails.change.hidden = the telephone number for the Ultimate Parent Entity contact
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
 NominateFilingMemberYesNo.title = Nominated filing member
 NominateFilingMemberYesNo.heading = Nominated filing member
 NominateFilingMemberYesNo.heading.caption = Group details
-NominateFilingMemberYesNo.subheading = Has the ultimate parent entity nominated another company within your group to act as the filing member?
-NominateFilingMemberYesNo.p1 = The default filing member for your group is the ultimate parent entity (UPE). However, the UPE can nominate another company in your group to act as the filing member.
+NominateFilingMemberYesNo.subheading = Has the Ultimate Parent Entity nominated another company within your group to act as the filing member?
+NominateFilingMemberYesNo.p1 = The default filing member for your group is the Ultimate Parent Entity (UPE). However, the UPE can nominate another company in your group to act as the filing member.
 NominateFilingMemberYesNo.p2 = If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). You do not need to submit this during registration, but we may ask for it during compliance checks.
-NominateFilingMemberYesNo.error.required = Select yes if the ultimate parent entity has nominated another company within your group to act as the filing member
+NominateFilingMemberYesNo.error.required = Select yes if the Ultimate Parent Entity has nominated another company within your group to act as the filing member
 
 NominateFilingMemberYesNo.yes = Yes
 NominateFilingMemberYesNo.no = No
@@ -433,11 +433,11 @@ NominateFilingMemberYesNo.change.hidden = is there a nominated filing member?
 
 duplicateSafeId.title = There is a problem with your registration
 duplicateSafeId.heading = There is a problem with your registration
-duplicateSafeId.p1 = You indicated that the ultimate parent entity has nominated a different company within your group to act as the filing member.
-duplicateSafeId.p2 = However, the details you provided for the nominated filing member are the same as those for the ultimate parent entity.
+duplicateSafeId.p1 = You indicated that the Ultimate Parent Entity has nominated a different company within your group to act as the filing member.
+duplicateSafeId.p2 = However, the details you provided for the nominated filing member are the same as those for the Ultimate Parent Entity.
 duplicateSafeId.p3 = Before submitting your registration, you must either:
 duplicateSafeId.l1 = provide the details of the company that will act as your nominated filing member
-duplicateSafeId.l2 = keep your ultimate parent entity as the default filing member
+duplicateSafeId.l2 = keep your Ultimate Parent Entity as the default filing member
 duplicateSafeId.subheading = Has a different company in your group been nominated to act as your filing member?
 duplicateSafeId.error.required = Select yes if a different company in your group has been nominated to act as your filing member
 duplicateSafeId.yes = Yes
@@ -459,8 +459,8 @@ registeringNfmForThisGroup.heading = Are you registering as the group’s nomina
 registeringNfmForThisGroup.yes = Yes
 registeringNfmForThisGroup.no = No
 registeringNfmForThisGroup.error.required = Select yes if you are registering as the group’s nominated filing member
-registeringNfmForThisGroup.caption = Check if you need to report Pillar 2 top-up taxes
-registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s Pillar 2 top-up tax returns and keeping business records.
+registeringNfmForThisGroup.caption = Check if you need to report Pillar 2 Top-up Taxes
+registeringNfmForThisGroup.hint = The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records.
 
 isNFMUKBased.title = Is the nominated filing member registered in the UK?
 isNFMUKBased.heading = Is the nominated filing member registered in the UK?
@@ -481,8 +481,8 @@ nfmNameRegistration.error.invalid = The name of the new nominated filing member 
 securityQuestionsCheckYourAnswers.title = Check Your Answers
 securityQuestionsCheckYourAnswers.heading = Check your answers
 securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
-rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 top-up taxes ID
-rfmSecurityCheck.change.hidden = The group’s Pillar 2 top-up taxes ID
+rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 Top-up Taxes ID
+rfmSecurityCheck.change.hidden = The group’s Pillar 2 Top-up Taxes ID
 rfmRegistrationDate.checkYourAnswersLabel = Registration date
 rfmRegistrationDate.change.hidden = The group’s registration date
 
@@ -581,7 +581,7 @@ nfmCaptureTelephoneDetails.change.hidden = the telephone number for the nominate
 groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = When did the group’s first accounting period start and end after 31 December 2023?
 groupAccountingPeriod.amend.title = When did the group’s first accounting period start and end after 31 December 2023?
-groupAccountingPeriod.title.desc = This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 top-up taxes in the UK, on or after 31 December 2023.
+groupAccountingPeriod.title.desc = This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in the UK, on or after 31 December 2023.
 groupAccountingPeriod.startDate.heading = Start date
 groupAccountingPeriod.startDate.hint = For example 27 3 2024
 groupAccountingPeriod.endDate.heading = End date
@@ -656,8 +656,8 @@ mneOrDomestic.error.required = Select if the group has entities located only in 
 mneOrDomestic.change.hidden = where are the entities in your group located
 mneOrDomestic.ukAndOther = In the UK and outside the UK
 mneOrDomestic.p1 = You must consider the locations of all the entities within your group.
-mneOrDomestic.p2 = The entity locations determine which Pillar 2 top-up tax your group needs to report for.
-mneOrDomestic.p3 = There are two Pillar 2 top-up taxes in the UK:
+mneOrDomestic.p2 = The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for.
+mneOrDomestic.p3 = There are two Pillar 2 Top-up Taxes in the UK:
 mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
 mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
@@ -669,7 +669,7 @@ groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 content.heading.caption = Contact details
 content.title = We need contact details for the filing member
 content.heading = We need contact details for the filing member
-content.p1 = We need the contact details for the filing member of this group so we can contact the right person or team when about compliance for Pillar 2 top-up taxes.
+content.p1 = We need the contact details for the filing member of this group so we can contact the right person or team when about compliance for Pillar 2 Top-up Taxes.
 content.p2 = These may be different to any contact details you have already provided during this registration.
 
 useContactPrimary.no = No
@@ -685,17 +685,17 @@ useContactPrimary.email = Email
 useContactPrimary.telephone = Telephone
 
 contactNameCompliance.heading.caption = Contact details
-contactNameCompliance.title = What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?
-contactNameCompliance.heading = What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?
+contactNameCompliance.title = What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?
+contactNameCompliance.heading = What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?
 contactNameCompliance.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-contactNameCompliance.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
+contactNameCompliance.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes
 contactNameCompliance.error.length = Name of the contact person or team should be 160 characters or less
 contactNameCompliance.error.invalid = Name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 contactEmailAddress.heading.caption = Contact details
 contactEmailAddress.title = What is the email address?
 contactEmailAddress.heading = What is the email address for {0}?
-contactEmailAddress.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+contactEmailAddress.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 contactEmailAddress.checkYourAnswersLabel = Email address
 contactEmailAddress.error.required = Enter the email address for {0}
 contactEmailAddress.error.length = Email address must be 132 characters or less
@@ -705,7 +705,7 @@ contactEmailAddress.change.hidden = the primary contact email address
 contactByTelephone.heading.caption = Contact details
 contactByTelephone.title = Can we contact by telephone?
 contactByTelephone.heading = Can we contact {0} by telephone?
-contactByTelephone.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+contactByTelephone.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 contactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by telephone?
 contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactByTelephone.change.hidden = can we contact the primary contact by telephone?
@@ -754,7 +754,7 @@ subscriptionAddress.checkYourAnswersLabel.hidden = the contact address
 entityType.companyName.checkYourAnswersLabel = Company
 entityType.companyReg.checkYourAnswersLabel = Company Registration Number
 entityType.companyUtr.checkYourAnswersLabel = Unique Taxpayer Reference
-entityType.Upe.change.hidden = the ultimate parent entity
+entityType.Upe.change.hidden = the Ultimate Parent Entity
 
 entityType.Nfm.change.hidden = the nominated filing member
 
@@ -767,15 +767,15 @@ checkYourAnswers.nfm = Nominated filing member
 
 addSecondaryContact.title = Add a secondary contact
 addSecondaryContact.p1 = We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible.
-addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes.
 addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
 addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
-secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
-secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
+secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?
+secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?
 secondaryContactName.checkYourAnswersLabel = Secondary contact name
 secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-secondaryContactName.error.required = Enter the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes
+secondaryContactName.error.required = Enter the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes
 secondaryContactName.error.length = Name of the alternative contact person or team should be 160 characters or less
 secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
@@ -783,7 +783,7 @@ secondaryContactEmail.title = What is the email address?
 secondaryContactEmail.heading = What is the email address for {0}?
 secondaryContactEmail.heading.caption = Contact details
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 secondaryContactEmail.error.required = Enter the email address for {0}
 secondaryContactEmail.error.length = Email address must be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
@@ -791,7 +791,7 @@ secondaryContactEmail.error.format = Enter an email address in the correct forma
 secondaryTelephonePreference.title = Can we contact by telephone?
 secondaryTelephonePreference.heading = Can we contact {0} by telephone?
 secondaryTelephonePreference.heading.caption = Contact details
-secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+secondaryTelephonePreference.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
@@ -804,7 +804,7 @@ secondaryTelephone.error.length = Telephone number must be 24 characters or less
 secondaryTelephone.error.format = Enter the telephone number for {0} in the correct format, like 01632 960 001 or +44 808 157 0192
 
 checkYourAnswers.furtherRegistrationDetail = Further group details
-checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 top-up taxes
+checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 Top-up Taxes
 checkYourAnswers.submit.p = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
 checkYourAnswers.save.h2 = Do you need to keep a record of your answers?
 checkYourAnswers.save.p = If you need to keep a record of your answers, you can:
@@ -813,19 +813,19 @@ site.confirm.send = Confirm and send
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
 registrationConfirmation.reg-date = Registration date: {0}
-registrationConfirmation.topup = Group’s Pillar 2 top-up taxes ID
+registrationConfirmation.topup = Group’s Pillar 2 Top-up Taxes ID
 registrationConfirmation.whatHappensNext = What happens next
 registrationConfirmation.p1 = {0} has successfully registered to report for {1}, on {2} at {3}.
 registrationConfirmation.p2 = You will not be emailed a confirmation of this registration.
-registrationConfirmation.p3 = You will be able to find your Pillar 2 top-up taxes ID and registration date on your account homepage. Keep these details safe.
+registrationConfirmation.p3 = You will be able to find your Pillar 2 Top-up Taxes ID and registration date on your account homepage. Keep these details safe.
 registrationConfirmation.next = What happens next
 registrationConfirmation.now = You can now {0}
-registrationConfirmation.link-home = report and manage your Pillar 2 top-up taxes
+registrationConfirmation.link-home = report and manage your Pillar 2 Top-up Taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
 registrationConfirmation.print = Print this page
 registrationConfirmation.downloadPdf = Download as PDF
-registrationConfirmation.pdf.title = Report Pillar 2 top-up Taxes
+registrationConfirmation.pdf.title = Report Pillar 2 Top-up Taxes
 mneOrDom.ukAndOther = Domestic Top-up Tax and Multinational Top-up Tax
 mneOrDom.uk = Domestic Top-up Tax
 
@@ -858,11 +858,11 @@ subscriptionAddress.change.hidden = the registered contact address
 # Dashboard
 #
 ###############################################
-dashboard.title = Your Pillar 2 top-up taxes account
-dashboard.heading = Your Pillar 2 top-up taxes account
-dashboard.topTaxes = Group’s Pillar 2 top-up taxes ID: {0}
+dashboard.title = Your Pillar 2 Top-up Taxes account
+dashboard.heading = Your Pillar 2 Top-up Taxes account
+dashboard.topTaxes = Group’s Pillar 2 Top-up Taxes ID: {0}
 dashboard.registrationDate = Registration date: {0}
-dashboard.upe = Ultimate parent entity: {0}
+dashboard.upe = Ultimate Parent Entity: {0}
 dashboard.payments = Payments
 dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
@@ -872,26 +872,26 @@ dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
 dashboard.whentoSubmitReturn = When to submit your returns
-dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 top-up taxes ended after 31 December 2024
-dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 top-up taxes ended on or before 31 December 2024
+dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024
+dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
 
 dashboard.whentoSubmitReturn.agent.h2 = When to submit your client’s first returns
-dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 top-up tax returns.
+dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 Top-up Taxes returns.
 dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
 
-dashboard.p3 = Your group must submit your Pillar 2 top-up tax returns no later than:
+dashboard.p3 = Your group must submit your Pillar 2 Top-up Taxes returns no later than:
 dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.p2 = for more details.
 
-dashboard.link = Refer to the Pillar 2 top-up taxes manual (opens in new tab)
-dashboard.inactive.message = HMRC has received a Below Threshold Notification for this account. Please contact the
+dashboard.link = Refer to the Pillar 2 Top-up Taxes manual (opens in new tab)
+dashboard.inactive.message = HMRC has received a Below-Threshold Notification for this account. Please contact the
 dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
 dashboard.inactive.message2 = if your circumstances change.
 
 ### Agent Dashboard
 dashboard.agent.accountLink = Agent Services Account
-dashboard.agent.title = Your Pillar 2 top-up taxes account
-dashboard.agent.heading = Your Pillar 2 top-up taxes account
+dashboard.agent.title = Your Pillar 2 Top-up Taxes account
+dashboard.agent.heading = Your Pillar 2 Top-up Taxes account
 dashboard.agent.changeClientLink = Change client
 dashboard.agent.noPayment = Your client has no payments due.
 dashboard.agent.paymentHistory = View your client’s transaction history
@@ -905,14 +905,14 @@ tasklist.incomplete.link = go back to register your group and complete any in pr
 unauthorised.org.standard.heading = Sorry, you’re unable to use this service
 unauthorised.org.standard.message = You’ve signed in with a standard organisation account.
 unauthorised.org.standard.message2 = Only Government Gateway accounts with an administrator role can register to use this service.
-unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage pillar 2 top-up taxes.
+unauthorised.org.standard.message3 = You need to find someone with an administrator’s Government Gateway user ID who can register and then give you authority to report and manage Pillar 2 Top-up Taxes.
 unauthorised.org.standard.hyperlink = Find out more about who can use this service
 
 unauthorised.agent.heading = Sorry, you’re unable to use this service
 unauthorised.agent.message = You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service.
-unauthorised.agent.message2 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+unauthorised.agent.message2 = if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 unauthorised.agent.hyper1 = sign in via agent services
-unauthorised.agent.message3 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+unauthorised.agent.message3 = if you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 unauthorised.agent.hyper2 = request authorisation via agent services
 unauthorised.agent.hyper3 = Find out more about who can use this service
 
@@ -927,27 +927,27 @@ manageFurtherGroupDetails.checkYourAnswers.heading = Group details
 manageFurtherGroupDetails.checkYourAnswers.title = Group details
 
 rfm.heading.caption = Replace filing member
-rfm.startPage.heading = Replace the filing member for a Pillar 2 top-up taxes account
-rfm.startPage.title = Replace the filing member for a Pillar 2 top-up taxes account
+rfm.startPage.heading = Replace the filing member for a Pillar 2 Top-up Taxes account
+rfm.startPage.title = Replace the filing member for a Pillar 2 Top-up Taxes account
 rfm.startPage.subHeading1 = Tell HMRC when you have replaced your filing member
-rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 top-up taxes account.
+rfm.startPage.p1 = Use this service to replace the filing member for an existing Pillar 2 Top-up Taxes account.
 rfm.startPage.p2 = It is a legal requirement to replace your filing member’s details within 6 months of the change occurring in your group.
 rfm.startPage.p3 = If your group has not yet registered, you will need to {0} You can choose to nominate a filing member during registration.
-rfm.startPage.p3.link = register to report Pillar 2 top-up taxes
+rfm.startPage.p3.link = register to report Pillar 2 Top-up Taxes
 rfm.startPage.subHeading2 = Who can replace a filing member
-rfm.startPage.p4 = Only the new filing member can use this service. This can either be the ultimate parent entity or another company member which has been nominated by the ultimate parent entity.
+rfm.startPage.p4 = Only the new filing member can use this service. This can either be the Ultimate Parent Entity or another company member which has been nominated by the Ultimate Parent Entity.
 rfm.startPage.subHeading3 = Obligations as the filing member
 rfm.startPage.p5 = As the new filing member, you will take over the obligations to:
-rfm.startPage.b1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
-rfm.startPage.b2 = submit your group’s Pillar 2 top-up tax returns
-rfm.startPage.b3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records
+rfm.startPage.b1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance
+rfm.startPage.b2 = submit your group’s Pillar 2 Top-up Taxes returns
+rfm.startPage.b3 = ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records
 rfm.startPage.p6 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
 rfm.startPage.subHeading4 = What you will need
 rfm.startPage.p7 = To replace the filing member, you’ll need to provide the Government Gateway user ID for the new filing member.
 rfm.startPage.p8 = If the new filing member is a UK limited company, or limited liability partnership, you must also provide the company registration number, and Unique Taxpayer Reference.
 rfm.startPage.p9 = You’ll also need to tell us:
-rfm.startPage.b4 = the group’s Pillar 2 top-up taxes ID
-rfm.startPage.b5 = the date the group first registered to report their Pillar 2 top up taxes in the UK
+rfm.startPage.b4 = the group’s Pillar 2 Top-up Taxes ID
+rfm.startPage.b5 = the date the group first registered to report their Pillar 2 Top-up Taxes in the UK
 rfm.startPage.b6 = contact details and preferences, for one or 2 individuals or teams in the group
 rfm.startPage.b7 = a contact postal address for the group
 rfm.startPage.subHeading5 = By continuing you confirm you are able to act as a new filing member for your group
@@ -979,32 +979,32 @@ rfm.agent.p2 = Agents cannot use this service to replace a nominated filing memb
 rfm.agent.p3 = Someone with an administrator’s Government Gateway user ID who is the new nominated filing member will need to replace the current filing member.
 rfm.agent.link = Find out more about who can use this service
 
-rfm.securityCheck.title = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.heading = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 top-up taxes account.
-rfm.securityCheck.error.required = Enter the group’s Pillar 2 top-up taxes ID
-rfm.securityCheck.error.length = Pillar 2 top-up taxes ID must be 15 characters
-rfm.securityCheck.error.format = Enter the group’s Pillar 2 top-up taxes ID in the correct format
+rfm.securityCheck.title = Enter the group’s Pillar 2 Top-up Taxes ID
+rfm.securityCheck.heading = Enter the group’s Pillar 2 Top-up Taxes ID
+rfm.securityCheck.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account.
+rfm.securityCheck.error.required = Enter the group’s Pillar 2 Top-up Taxes ID
+rfm.securityCheck.error.length = Pillar 2 Top-up Taxes ID must be 15 characters
+rfm.securityCheck.error.format = Enter the group’s Pillar 2 Top-up Taxes ID in the correct format
 
 rfm.corporatePosition.title = What is your position in the corporate structure of the group?
 rfm.corporatePosition.heading = What is your position in the corporate structure of the group?
-rfm.corporatePosition.upe = Ultimate parent entity (UPE)
+rfm.corporatePosition.upe = Ultimate Parent Entity (UPE)
 rfm.corporatePosition.newNfm = New nominated filing member
-rfm.corporatePosition.error.required = Select if you are the ultimate parent entity or a new nominated filing member
+rfm.corporatePosition.error.required = Select if you are the Ultimate Parent Entity or a new nominated filing member
 rfm.corporatePosition.change.hidden = the position in the group’s corporate structure
 
 rfm.corporatePositionCya.heading = Position in the group’s corporate structure
 
 rfm.contact.heading.caption = Contact details
-rfm.contactDetailsRegistration.title = We need contact details for your Pillar 2 top-up taxes account
-rfm.contactDetailsRegistration.heading = We need contact details for your Pillar 2 top-up taxes account
-rfm.contactDetailsRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 top-up tax compliance.
+rfm.contactDetailsRegistration.title = We need contact details for your Pillar 2 Top-up Taxes account
+rfm.contactDetailsRegistration.heading = We need contact details for your Pillar 2 Top-up Taxes account
+rfm.contactDetailsRegistration.p1 = We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 Top-up Taxes compliance.
 
 rfm.rfmPrimaryContactName.caption = Contact details
-rfm.rfmPrimaryContactName.title = What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?
-rfm.rfmPrimaryContactName.heading = What is the name of the person or team we should contact about compliance for Pillar 2 top-up taxes?
+rfm.rfmPrimaryContactName.title = What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?
+rfm.rfmPrimaryContactName.heading = What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?
 rfm.rfmPrimaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 top-up taxes
+rfm.rfmPrimaryContactName.error.required = Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes
 rfm.rfmPrimaryContactName.error.length = Name of the contact person or team must be 160 characters or less
 rfm.rfmPrimaryContactName.checkYourAnswersLabel = Contact name
 rfm.rfmPrimaryContactName.change.hidden = the primary contact name
@@ -1058,12 +1058,12 @@ rfm.secondaryTelephone.change.hidden = the telephone number for the secondary co
 
 rfm.addSecondaryContact.title = Add a secondary contact
 rfm.addSecondaryContact.p1 = We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible.
-rfm.addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 top-up taxes.
+rfm.addSecondaryContact.p2 = This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes.
 rfm.addSecondaryContact.error.required = Select yes if there is someone else we can contact if {0} is not available
 rfm.addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
 
-rfm.secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
-rfm.secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 top-up taxes?
+rfm.secondaryContactName.title = What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?
+rfm.secondaryContactName.heading = What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 rfm.secondaryContactName.error.required = Enter name of the person or team we should contact
@@ -1074,14 +1074,14 @@ rfm.secondaryContactEmail.title = What is the email address?
 rfm.secondaryContactEmail.heading = What is the email address for {0}?
 rfm.secondaryContactEmail.heading.caption = Contact details
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-rfm.secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 top-up taxes.
+rfm.secondaryContactEmail.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
 rfm.secondaryContactEmail.error.required = You need to enter the email address for {0}
 rfm.secondaryContactEmail.error.length = Email address must be 132 characters or less
 rfm.secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
 rfm.secondaryTelephonePreference.title = Can we contact by telephone?
 rfm.secondaryTelephonePreference.heading = Can we contact {0} by telephone?
-rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 top-up tax compliance.
+rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 Top-up Taxes compliance.
 rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
@@ -1096,17 +1096,17 @@ rfm.secondaryTelephone.error.format = Enter a telephone number, like 01632 960 0
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
 rfm.journeyRecoveryView.paragraphStart = You can go back
-rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.journeyRecoveryView.link.text = to replace the filing member for a Pillar 2 Top-up Taxes account to try again
 
 rfm.incompleteDataView.title = You have an incomplete task
 rfm.incompleteDataView.heading = You have an incomplete task
 rfm.incompleteDataView.paragraphStart = You can go back to
-rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.incompleteDataView.link.text = replace the filing member for a Pillar 2 Top-up Taxes account to try again
 
 rfm.cannotReturnAfterConfirmation.heading = You cannot return, you have replaced the filing member
-rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 top-up taxes account.
+rfm.cannotReturnAfterConfirmation.p1 = You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account.
 rfm.cannotReturnAfterConfirmation.p2 = You can now
-rfm.cannotReturnAfterConfirmation.link = report and manage your Pillar 2 top-up taxes
+rfm.cannotReturnAfterConfirmation.link = report and manage your Pillar 2 Top-up Taxes
 
 entityType.Rfm.change.hidden = company
 rfm.contactCheckYourAnswers.caption = Review and submit
@@ -1125,41 +1125,41 @@ rfm.amendAPIFailure.title = Sorry, there is a problem with the service
 rfm.amendAPIFailure.heading = Sorry, there is a problem with the service
 rfm.amendAPIFailure.p1 = Please try again later
 rfm.amendAPIFailure.p2 = You can go back {0}
-rfm.amendAPIFailure.p2.link = to replace the filing member for a Pillar 2 top-up taxes account to try again
+rfm.amendAPIFailure.p2.link = to replace the filing member for a Pillar 2 Top-up Taxes account to try again
 
 rfm.securityError.title = You cannot replace the current filing member for this group
 rfm.securityError.heading = You cannot replace the current filing member for this group
 rfm.securityError.p1 = This service is for new nominated filing members to takeover the responsibilities from the current filing member.
-rfm.securityError.p2 = If you need to manage who can access your Pillar 2 top-up tax returns,
+rfm.securityError.p2 = If you need to manage who can access your Pillar 2 Top-up Taxes returns,
 rfm.securityError.p2.link = go to your business tax account
 
-bta.noPlrIdGuidance.title = You need a Pillar 2 top-up taxes ID to access this service
-bta.noPlrIdGuidance.heading = You need a Pillar 2 top-up taxes ID to access this service
-bta.noPlrIdGuidance.p1 = Register to report Pillar 2 top-up taxes to get a Pillar 2 top-up taxes ID.
-bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 top-up taxes (opens in new tab)
+bta.noPlrIdGuidance.title = You need a Pillar 2 Top-up Taxes ID to access this service
+bta.noPlrIdGuidance.heading = You need a Pillar 2 Top-up Taxes ID to access this service
+bta.noPlrIdGuidance.p1 = Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID.
+bta.noPlrIdGuidance.link = Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)
 bta.noPlrIdGuidance.cta = Return to your Business Tax Account
-bta.eacd.title = EACD request access to Pillar 2 top-up taxes screen
-bta.eacd.heading = EACD request access to Pillar 2 top-up taxes screen
+bta.eacd.title = EACD request access to Pillar 2 Top-up Taxes screen
+bta.eacd.heading = EACD request access to Pillar 2 Top-up Taxes screen
 bta.eacd.p1 = screen owned by EACD
 
 
-asa.agent.title = ASA Home page for Pillar 2 top-up taxes screen
-asa.agent.heading = ASA Home page for Pillar 2 top-up taxes screen
+asa.agent.title = ASA Home page for Pillar 2 Top-up Taxes screen
+asa.agent.heading = ASA Home page for Pillar 2 Top-up Taxes screen
 asa.agent.p1 = This screen is home page in development and local for ASA, but for QA, staging and production, ASA has it own pages.
 
-havePillar2TopUpTaxId.title = Do you have a Pillar 2 top-up taxes ID?
-havePillar2TopUpTaxId.heading = Do you have a Pillar 2 top-up taxes ID?
+havePillar2TopUpTaxId.title = Do you have a Pillar 2 Top-up Taxes ID?
+havePillar2TopUpTaxId.heading = Do you have a Pillar 2 Top-up Taxes ID?
 havePillar2TopUpTaxId.hint = This is 15 characters, for example, XMPLR0123456789.
-havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 top-up taxes ID
+havePillar2TopUpTaxId.error.required = Select yes if you have a Pillar 2 Top-up Taxes ID
 
-groupRegistrationDateReport.title = Enter the group’s registration date to the Report Pillar 2 top-up taxes service
-groupRegistrationDateReport.heading = Enter the group’s registration date to the Report Pillar 2 top-up taxes service
+groupRegistrationDateReport.title = Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service
+groupRegistrationDateReport.heading = Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service
 groupRegistrationDateReport.heading.caption = Replace filing member
-groupRegistrationDateReport.hint.desc = This will be the date when your group first registered to report their pillar 2 taxes in the UK.
+groupRegistrationDateReport.hint.desc = This will be the date when your group first registered to report their Pillar 2 Top-up Taxes in the UK.
 groupRegistrationDateReport.registrationDate.hint = For example, 27 3 2026
 
 groupRegistrationDateReport.error.startDate.format = Enter a date in the correct format
-groupRegistrationDateReport.error.startDate.required.all = Enter the registration date to the Report Pillar 2 top-up taxes service
+groupRegistrationDateReport.error.startDate.required.all = Enter the registration date to the Report Pillar 2 Top-up Taxes service
 groupRegistrationDateReport.error.startDate.required.two = Registration date must include a {0} and {1}
 groupRegistrationDateReport.error.startDate.required = Registration date must include a {0}
 groupRegistrationDateReport.error.startDate.day.nan = Registration date must be a real date
@@ -1203,53 +1203,53 @@ rfm.site.confirm.submit = Confirm and submit
 # Agent Services
 #
 ###############################################
-agent.pillar2Ref.title = What is your client’s Pillar 2 top-up taxes ID?
-agent.pillar2Ref.heading = What is your client’s Pillar 2 top-up taxes ID?
-agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 taxes top-up homepage.
-agent.pillar2Ref.error.required = Enter your client’s Pillar 2 top-up taxes ID
-agent.pillar2Ref.error.format = Enter a Pillar 2 top-up taxes ID in the correct format, like XMPLR0123456789
-agent.pillar2Ref.error.length = Pillar 2 top-up taxes ID must be 15 characters
+agent.pillar2Ref.title = What is your client’s Pillar 2 Top-up Taxes ID?
+agent.pillar2Ref.heading = What is your client’s Pillar 2 Top-up Taxes ID?
+agent.pillar2Ref.hint = This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes homepage.
+agent.pillar2Ref.error.required = Enter your client’s Pillar 2 Top-up Taxes ID
+agent.pillar2Ref.error.format = Enter a Pillar 2 Top-up Taxes ID in the correct format, like XMPLR0123456789
+agent.pillar2Ref.error.length = Pillar 2 Top-up Taxes ID must be 15 characters
 
 agent.clientConfirm.title = Confirm your client’s details
 agent.clientConfirm.heading = Confirm your client’s details
 agent.clientConfirm.h2.upe = Client’s ultimate parent
-agent.clientConfirm.h2.id = Client’s Pillar 2 top-up taxes ID
-agent.clientConfirm.link = Enter a different client’s Pillar 2 top-up taxes ID
+agent.clientConfirm.h2.id = Client’s Pillar 2 Top-up Taxes ID
+agent.clientConfirm.link = Enter a different client’s Pillar 2 Top-up Taxes ID
 
 agent.noMatch.title = Your client’s details did not match HMRC records
 agent.noMatch.heading = Your client’s details did not match HMRC records
 agent.noMatch.p1 = We could not match the details you entered with records held by HMRC.
-agent.noMatch.link = Re-enter your client’s Pillar 2 top-up taxes ID to try again
+agent.noMatch.link = Re-enter your client’s Pillar 2 Top-up Taxes ID to try again
 
 agent.error.title = Sorry, there is a problem with the service
 agent.error.heading = Sorry, there is a problem with the service
 agent.error.p1 = Please try again later.
 agent.error.link = Return to your Agent Services Account
 
-agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 top-up taxes
-agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 top-up taxes
+agent.unauthorised.title = You have not been authorised to report this client’s Pillar 2 Top-up Taxes
+agent.unauthorised.heading = You have not been authorised to report this client’s Pillar 2 Top-up Taxes
 agent.unauthorised.p1 = You need to
-agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 top-up taxes
+agent.unauthorised.link = request authorisation to report and manage this client’s Pillar 2 Top-up Taxes
 
 agent.individual.title = Sorry, you’re unable to use this service
 agent.individual.heading = Sorry, you’re unable to use this service
 agent.individual.p1 = You’ve signed in with an individual account.
 agent.individual.p2 = Only users with an agent services account can use this service.
-agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.individual.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 agent.individual.bullet.p1.link = sign in via agent services
-agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.individual.bullet.p2 = if you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 agent.individual.bullet.p2.link = request authorisation on agent services
-agent.individual.link = Find out more about who can report for Pillar 2 top-up taxes
+agent.individual.link = Find out more about who can report for Pillar 2 Top-up Taxes
 
 agent.organisation.title = Sorry, you’re unable to use this service
 agent.organisation.heading = Sorry, you’re unable to use this service
 agent.organisation.p1 = You’ve signed in with an organisations account.
 agent.organisation.p2 = Only users with an agent services account can use this service.
-agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 top-up taxes on behalf of a group, you must
+agent.organisation.bullet.p1 = if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must
 agent.organisation.bullet.p1.link = sign in via agent services
-agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 top-up taxes, you must
+agent.organisation.bullet.p2 = if you need to request authorisation to report Pillar 2 Top-up Taxes, you must
 agent.organisation.bullet.p2.link = request authorisation on agent services
-agent.organisation.link = Find out more about who can report for Pillar 2 top-up taxes
+agent.organisation.link = Find out more about who can report for Pillar 2 Top-up Taxes
 ###############################################
 
 rfm.saveProgressInform.title = Saving progress
@@ -1260,16 +1260,16 @@ rfm.saveProgressInform.p1 = From this point, the information you enter will be s
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
 rfmConfirmation.reg-date = Filing member was replaced on
-rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.topup = Group Pillar 2 Top-up Taxes ID: {0}
 rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
-rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 top-up tax compliance
-rfmConfirmation.li2 = submit your group''s Pillar 2 top-up tax returns
-rfmConfirmation.li3 = ensure your group''s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 Top-up Taxes compliance
+rfmConfirmation.li2 = submit your group''s Pillar 2 Top-up Taxes returns
+rfmConfirmation.li3 = ensure your group''s Pillar 2 Top-up Taxes account accurately reflects their records.
 rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0} {1}
 rfmConfirmation.now.group = on behalf of your group.
-rfmConfirmation.link-home = report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.link-home = report and manage your group''s Pillar 2 Top-up Taxes
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
@@ -1420,16 +1420,16 @@ repayments.submission.error.p2.link = Return to your account homepage
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
 rfmConfirmation.reg-date = Your group’s filing member was replaced on
-rfmConfirmation.topup = Group Pillar 2 top-up taxes ID: {0}
+rfmConfirmation.topup = Group Pillar 2 Top-up Taxes ID: {0}
 rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
-rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 top-up tax compliance
-rfmConfirmation.li2 = submit your group’s Pillar 2 top-up tax returns
-rfmConfirmation.li3 = ensure your group’s Pillar 2 top-up taxes account accurately reflects their records.
+rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance
+rfmConfirmation.li2 = submit your group’s Pillar 2 Top-up Taxes returns
+rfmConfirmation.li3 = ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records.
 rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0} {1}
 rfmConfirmation.now.group = on behalf of your group.
-rfmConfirmation.link-home = report and manage your group''s Pillar 2 top-up taxes
+rfmConfirmation.link-home = report and manage your group''s Pillar 2 Top-up Taxes
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
@@ -1478,13 +1478,13 @@ repayments.refundConfirmation.saveLink.text = Save as PDF
 repayments.refundConfirmation.paragraphText.two = What happens next
 repayments.refundConfirmation.paragraphText.three = If we require more information relating to your refund request, we will get in touch.
 repayments.refundConfirmation.paragraphText.four = You can return to
-repayments.refundConfirmation.paragraphText.returnLink = manage your Pillar 2 top-up taxes
+repayments.refundConfirmation.paragraphText.returnLink = manage your Pillar 2 Top-up Taxes
 
 repayments.refundErrorConfirmation.title = You cannot return, your refund request is complete
 repayments.refundErrorConfirmation.heading = You cannot return, your refund request is complete
 repayments.refundErrorConfirmation.paragraphOne = You have successfully submitted your refund request.
 repayments.refundErrorConfirmation.paragraphTwo = You can return to
-repayments.refundErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 top-up taxes
+repayments.refundErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 Top-up Taxes
 
 repayments.bank-account-details.title = Bank account details
 repayments.bank-account-details.heading = Bank account details
@@ -1572,9 +1572,9 @@ transactionHistory.none.p5 = page.
 
 manageContact.cannotReturn.title = You cannot return, you have updated your contact details
 manageContact.cannotReturn.heading = You cannot return, you have updated your contact details
-manageContact.cannotReturn.p1 = You have successfully updated the contact details for your Pillar 2 top-up taxes account.
+manageContact.cannotReturn.p1 = You have successfully updated the contact details for your Pillar 2 Top-up Taxes account.
 manageContact.cannotReturn.p2 = You can now
-manageContact.cannotReturn.link = report and manage your Pillar 2 top-up taxes
+manageContact.cannotReturn.link = report and manage your Pillar 2 Top-up Taxes
 
 manageContactDetails.title = Submitting your contact details
 manageContactDetails.heading = Submitting your contact details

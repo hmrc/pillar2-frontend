@@ -34,7 +34,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends MockitoStubU
   val apiUrl: String = s"${applicationConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
   val connector                           = new IncorporatedEntityIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient)
   private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
-  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 top-up taxes"))
+  val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 Top-up Taxes"))
 
   "IncorporatedEntityIdentificationFrontendConnector" when {
 

@@ -60,7 +60,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Pillar 2 top-up taxes ID")
+      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Pillar 2 Top-up Taxes ID")
       view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Registration date")
     }
 
