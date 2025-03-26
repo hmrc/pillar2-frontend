@@ -46,11 +46,4 @@
     <br>
     @p(messages("transactionHistory.none.p3"))
     <br>
-
-    @h2(messages("transactionHistory.none.h2"), size = "m")
-    @if(isAgent){
-        @paragraphMessageWithLink(Some(messages("transactionHistory.agent.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
-    } else {
-        @paragraphMessageWithLink(Some(messages("transactionHistory.group.none.p4")), linkMessage = messages("transactionHistory.none.link"), Some(messages("transactionHistory.none.p5")), linkUrl = "#", linkFullStop = false, classes = "govuk-body govuk-!-width-two-thirds")
-    }
 }

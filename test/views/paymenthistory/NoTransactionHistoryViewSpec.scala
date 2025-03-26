@@ -62,35 +62,5 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
         "No transactions made"
       )
     }
-
-    "have heading 2" in {
-      groupView.getElementsByTag("h2").text must include(
-        "Outstanding payments"
-      )
-    }
-
-    "have a paragraph with link for a group" in {
-      val link = groupView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      groupView.getElementsByTag("p").text must include(
-        "You can find details of what your group currently owes on the"
-      )
-      link.text         must include("Outstanding payments")
-      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
-      groupView.getElementsByTag("p").text must include(
-        "page."
-      )
-    }
-
-    "have a paragraph with link for an agent" in {
-      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      agentView.getElementsByTag("p").text must include(
-        "You can find details of what your client currently owes on the"
-      )
-      link.text         must include("Outstanding payments")
-      link.attr("href") must include("#") //TODO: Change to outstanding payments page when built
-      agentView.getElementsByTag("p").text must include(
-        "page."
-      )
-    }
   }
 }
