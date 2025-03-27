@@ -61,7 +61,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         status(result) mustEqual OK
 
         contentAsString(result) must include("Filing member details")
-        contentAsString(result) must include("Ultimate parent entity (UPE)")
+        contentAsString(result) must include("Ultimate Parent Entity (UPE)")
         contentAsString(result) must include("Primary contact")
         contentAsString(result) must include("Contact name")
         contentAsString(result) must include("Email address")

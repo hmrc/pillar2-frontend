@@ -46,7 +46,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       val paragraphs = makePaymentDashboardView.getElementsByTag("p").listIterator().asScala.toList.filter(_.hasClass("govuk-body"))
       paragraphs must have size 2
       paragraphs.head.text() must equal(
-        s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 top-up tax payments."""
+        s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 Top-up Taxes payments."""
       )
       paragraphs.tail.head.text() must equal(
         "You can use the 'Pay Now' button to pay online, or read more about other payment methods. (opens in a new tab)"

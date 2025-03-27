@@ -30,7 +30,7 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
   "Registration Failed Rfm View" should {
 
     "have a title" in {
-      val title = "The details you entered did not match our records - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "The details you entered did not match our records - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 

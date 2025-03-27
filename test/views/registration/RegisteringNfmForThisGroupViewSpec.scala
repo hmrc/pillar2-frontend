@@ -37,12 +37,12 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
     "have a heading" in {
       view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
-        be("Check if you need to report Pillar 2 top-up taxes")
+        be("Check if you need to report Pillar 2 Top-up Taxes")
     }
 
     "have a hint" in {
       view.getElementsByClass("govuk-hint").text() must
-        be("The nominated filing member is responsible for managing the group’s Pillar 2 top-up tax returns and keeping business records.")
+        be("The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records.")
     }
 
     "have Yes/No radio buttons" in {

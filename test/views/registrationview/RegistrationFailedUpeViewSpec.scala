@@ -30,7 +30,7 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
   "Registration Failed Upe View" should {
 
     "have a title" in {
-      val title = "Register your group - Report Pillar 2 top-up taxes - GOV.UK"
+      val title = "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.getElementsByTag("title").text must include(title)
     }
 

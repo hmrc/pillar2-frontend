@@ -33,7 +33,7 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
       Jsoup.parse(page()(request, appConfig, messages).toString())
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 top-up taxes - GOV.UK")
+      view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a heading" in {
@@ -43,20 +43,20 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text must include(
         "You have successfully submitted your refund request." +
-          " You can return to report and manage your Pillar 2 top-up taxes ."
+          " You can return to report and manage your Pillar 2 Top-up Taxes ."
       )
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("manage your Pillar 2 top-up taxes")
+      link.text         must include("manage your Pillar 2 Top-up Taxes")
     }
 
     "have the correct banner link" in {
       val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Report Pillar 2 top-up taxes")
+      link.text         must include("Report Pillar 2 Top-up Taxes")
     }
 
   }

@@ -44,7 +44,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
       linkExists mustBe true
 
       view.getElementsByTag("p").text must include(
-        messages("You can go back to") + " " + messages("replace the filing member for a Pillar 2 top-up taxes account to try again")
+        messages("You can go back to") + " " + messages("replace the filing member for a Pillar 2 Top-up Taxes account to try again")
       )
     }
 

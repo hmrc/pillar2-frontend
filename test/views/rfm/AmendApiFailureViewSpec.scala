@@ -41,7 +41,7 @@ class AmendApiFailureViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-body").get(0).text must include("Please try again later")
       view.getElementsByClass("govuk-body").get(1).text must
         include(
-          "You can go back to replace the filing member for a Pillar 2 top-up taxes account to try again."
+          "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
         )
     }
   }

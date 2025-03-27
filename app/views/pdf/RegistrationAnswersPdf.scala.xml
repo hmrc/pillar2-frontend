@@ -85,7 +85,7 @@
                 <fo:block role="H2" id="subscription-caption" color="#505a5f" font-size="18pt" margin-top="2mm">@messages("checkYourAnswers.heading.caption")</fo:block>
                 <fo:block role="H1" id="subscription-title" font-size="24pt" font-weight="bold" margin-bottom="5mm">@messages("checkYourAnswers.heading")</fo:block>
 
-                <!-- ultimate parent entity details-->
+                <!-- Ultimate Parent Entity details-->
                 <fo:block role="H2" id="upe-details" font-size="18pt" font-weight="bold" margin-bottom="5mm">@messages("checkYourAnswers.upe")</fo:block>
 
                 <fo:block-container margin-bottom="10mm">

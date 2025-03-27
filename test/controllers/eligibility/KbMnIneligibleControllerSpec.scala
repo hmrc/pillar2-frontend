@@ -39,7 +39,7 @@ class KbMnIneligibleControllerSpec extends SpecBase with ViewInstances {
       val result = controller.onPageLoad()()(request)
       status(result) shouldBe OK
       contentAsString(result) should include(
-        "Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 top-up taxes"
+        "Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 Top-up Taxes"
       )
 
     }
