@@ -15,8 +15,6 @@
  */
 
 package pages
-
-import org.scalacheck.ScalacheckShapeless.derivedArbitrary
 import pages.behaviours.PageBehaviours
 
 class RepaymentsRefundAmountPageSpec extends PageBehaviours {
