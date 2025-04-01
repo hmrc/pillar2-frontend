@@ -20,21 +20,22 @@ import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 import org.scalacheck.Gen
 import scala.collection.immutable.Seq
+import play.api.data.Form
+class ContactCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
-class SecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
-
-  val requiredKey = "secondaryTelephone.error.required"
-  val lengthKey   = "secondaryTelephone.error.length"
-  val formatKey   = "secondaryTelephone.error.format"
+  val requiredKey = "contactCaptureTelephoneDetails.error.required"
+  val lengthKey   = "contactCaptureTelephoneDetails.error.length"
+  val formatKey   = "contactCaptureTelephoneDetails.error.format"
   val formatReg   = Validation.TELEPHONE_REGEX
 
   val invalidPhoneNumberGen = Gen.oneOf(
-    Gen.const("++44 1234 567890"),
-    Gen.const("123$!abc"),
-    Gen.const("abc123")
+    Gen.const("++44 1234 567890"), 
+    Gen.const("123$!abc"), 
+    Gen.const("abc123") 
   )
 
-  val form = new SecondaryTelephoneFormProvider()("test")
+  val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
+  val form: Form[String] = formProvider("test")
 
   ".value" - {
 

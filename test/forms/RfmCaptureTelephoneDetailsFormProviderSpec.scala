@@ -19,14 +19,19 @@ package forms
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.Form
 import play.api.data.FormError
-
+import org.scalacheck.Gen
 class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "rfmCaptureTelephoneDetails.error.required"
   val lengthKey   = "rfmCaptureTelephoneDetails.error.length"
-  val formatKey   = "rfmCaptureTelephoneDetails.error.format"
-  val maxLength   = 24
-  val formatReg   = """^[A-Z0-9 )/(\-*#+]*$"""
+  val formatKey   = "rfmCaptureTelephoneDetails.messages.error.format"
+  val formatReg   = Validation.TELEPHONE_REGEX
+
+  val invalidPhoneNumberGen = Gen.oneOf(
+    Gen.const("++44 1234 567890"),
+    Gen.const("123$!abc"),
+    Gen.const("abc123")
+  )
 
   val formProvider = new RfmCaptureTelephoneDetailsFormProvider()
   val form: Form[String] = formProvider("test")
@@ -39,6 +44,14 @@ class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey, Seq("test"))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = formatReg,
+      regexViolationGen = invalidPhoneNumberGen,
+      regexError = FormError(fieldName, formatKey)
     )
   }
 }
