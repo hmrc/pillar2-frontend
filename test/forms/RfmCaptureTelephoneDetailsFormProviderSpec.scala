@@ -17,9 +17,9 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import org.scalacheck.Gen
 import play.api.data.Form
 import play.api.data.FormError
-import org.scalacheck.Gen
 class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "rfmCaptureTelephoneDetails.error.required"
@@ -27,7 +27,7 @@ class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
   val formatKey   = "rfmCaptureTelephoneDetails.messages.error.format"
   val formatReg   = Validation.TELEPHONE_REGEX
 
-  val invalidPhoneNumberGen = Gen.oneOf(
+  val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
     Gen.const("++44 1234 567890"),
     Gen.const("123$!abc"),
     Gen.const("abc123")

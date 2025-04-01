@@ -17,9 +17,10 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import play.api.data.FormError
 import org.scalacheck.Gen
 import play.api.data.Form
+import play.api.data.FormError
+
 import scala.collection.immutable.Seq
 
 class RfmSecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
@@ -29,10 +30,10 @@ class RfmSecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
   val formatKey   = "rfm.secondaryTelephone.error.format"
   val formatReg   = Validation.TELEPHONE_REGEX
 
-  val invalidPhoneNumberGen = Gen.oneOf(
-    Gen.const("++44 1234 567890"), 
-    Gen.const("123$!abc"), 
-    Gen.const("abc123") 
+  val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
+    Gen.const("++44 1234 567890"),
+    Gen.const("123$!abc"),
+    Gen.const("abc123")
   )
 
   val formProvider = new RfmSecondaryTelephoneFormProvider()
