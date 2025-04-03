@@ -117,13 +117,13 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     "have an error summary" in {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Enter a telephone number for ABC Limited in the correct format, like 01632 960 001 or +44 808 157 0192"
+        "Enter a telephone number for ABC Limited in the correct format, for example 01632 960 001 or +44 808 157 0192"
       )
     }
 
     "have an input error" in {
       view.getElementsByClass("govuk-error-message").text must include(
-        "Enter a telephone number for ABC Limited in the correct format, like 01632 960 001 or +44 808 157 0192"
+        "Enter a telephone number for ABC Limited in the correct format, for example 01632 960 001 or +44 808 157 0192"
       )
     }
 
