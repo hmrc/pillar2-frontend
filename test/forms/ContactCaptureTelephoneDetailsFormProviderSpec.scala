@@ -31,6 +31,7 @@ class ContactCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviou
 
   val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
     Gen.const("++44 1234 567890"),
+    Gen.const("+44 1234 567890  "),
     Gen.const("123$!abc"),
     Gen.const("abc123")
   )
