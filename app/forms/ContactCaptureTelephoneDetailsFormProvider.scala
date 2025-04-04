@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation.TELEPHONE_REGEX
 import forms.mappings.Mappings
 import play.api.data.Form
 
@@ -23,11 +24,10 @@ import javax.inject.Inject
 
 class ContactCaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24
-  val phoneRegex                = """^[A-Z0-9 )/(\-*#+]*$"""
   def apply(userName: String): Form[String] = Form(
     "value" ->
       text("contactCaptureTelephoneDetails.error.required", Seq(userName))
         .verifying(maxLength(phoneNumberLength, "contactCaptureTelephoneDetails.error.length"))
-        .verifying(regexp(phoneRegex, "contactCaptureTelephoneDetails.error.format", userName))
+        .verifying(regexp(TELEPHONE_REGEX, "contactCaptureTelephoneDetails.error.format", userName))
   )
 }
