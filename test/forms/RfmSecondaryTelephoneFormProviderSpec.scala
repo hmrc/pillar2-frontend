@@ -20,11 +20,14 @@ import forms.behaviours.StringFieldBehaviours
 import org.scalacheck.Gen
 import play.api.data.Form
 import play.api.data.FormError
-class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "rfmCaptureTelephoneDetails.error.required"
-  val lengthKey   = "rfmCaptureTelephoneDetails.error.length"
-  val formatKey   = "rfmCaptureTelephoneDetails.messages.error.format"
+import scala.collection.immutable.Seq
+
+class RfmSecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
+
+  val requiredKey = "rfm.secondaryTelephone.error.required"
+  val lengthKey   = "rfm.secondaryTelephone.error.length"
+  val formatKey   = "rfm.secondaryTelephone.error.format"
   val formatReg   = Validation.TELEPHONE_REGEX
 
   val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
@@ -34,12 +37,12 @@ class RfmCaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
     Gen.const("abc123")
   )
 
-  val formProvider = new RfmCaptureTelephoneDetailsFormProvider()
+  val formProvider = new RfmSecondaryTelephoneFormProvider()
   val form: Form[String] = formProvider("test")
 
   ".value" - {
 
-    val fieldName = "telephoneNumber"
+    val fieldName = "value"
 
     behave like mandatoryField(
       form,

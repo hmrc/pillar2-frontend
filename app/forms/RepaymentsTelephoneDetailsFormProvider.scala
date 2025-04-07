@@ -31,7 +31,7 @@ class RepaymentsTelephoneDetailsFormProvider @Inject() extends Mappings {
           firstError(
             maxLength(Constants.MAX_LENGTH_24, "repayments.telephoneDetails.error.length"),
             regexp(
-              Validation.REPAYMENTS_TELEPHONE_REGEX,
+              Validation.TELEPHONE_REGEX,
               "repayments.telephoneDetails.error.format",
               contactName
             )

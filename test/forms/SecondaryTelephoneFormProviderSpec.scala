@@ -17,6 +17,7 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
+import org.scalacheck.Gen
 import play.api.data.FormError
 
 import scala.collection.immutable.Seq
@@ -26,8 +27,14 @@ class SecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
   val requiredKey = "secondaryTelephone.error.required"
   val lengthKey   = "secondaryTelephone.error.length"
   val formatKey   = "secondaryTelephone.error.format"
-  val maxLength   = 24
-  val formatReg   = """^[A-Z0-9 )/(\-*#+]*$"""
+  val formatReg   = Validation.TELEPHONE_REGEX
+
+  val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
+    Gen.const("++44 1234 567890"),
+    Gen.const("+44 1234 567890  "),
+    Gen.const("123$!abc"),
+    Gen.const("abc123")
+  )
 
   val form = new SecondaryTelephoneFormProvider()("test")
 
@@ -35,25 +42,18 @@ class SecondaryTelephoneFormProviderSpec extends StringFieldBehaviours {
 
     val fieldName = "value"
 
-//    behave like fieldThatBindsValidData(
-//      form,
-//      fieldName,
-//      regexWithMaxLength(maxLength, formatReg)
-//    )
-//
-//    behave like regexFieldWithMaxLength(
-//      form,
-//      fieldName,
-//      maxLength = maxLength,
-//      regex = formatReg,
-//      lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-//      formatError = FormError(fieldName, requiredKey, Seq("test"))
-//    )
-
     behave like mandatoryField(
       form,
       fieldName,
       requiredError = FormError(fieldName, requiredKey, Seq("test"))
+    )
+
+    behave like fieldWithRegex(
+      form,
+      fieldName,
+      regex = formatReg,
+      regexViolationGen = invalidPhoneNumberGen,
+      regexError = FormError(fieldName, formatKey, Seq("test"))
     )
   }
 }
