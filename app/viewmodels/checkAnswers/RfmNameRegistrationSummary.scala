@@ -20,6 +20,7 @@ import models.{CheckMode, UserAnswers}
 import pages.RfmNameRegistrationPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -30,7 +31,7 @@ object RfmNameRegistrationSummary {
     answers.get(RfmNameRegistrationPage).map { answer =>
       SummaryListRowViewModel(
         key = "rfm.nameRegistration.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlFormat.escape(answer).toString),
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer))),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfm.nameRegistration.change.hidden"))
