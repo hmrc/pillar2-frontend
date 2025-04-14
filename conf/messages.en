@@ -1091,7 +1091,7 @@ rfm.secondaryTelephone.hint = For international numbers include the country code
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
 rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
 rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
-rfm.secondaryTelephone.error.format = Enter a telephone number, for example 01632 960 001 or +44 808 157 0192
+rfm.secondaryTelephone.error.format = Enter a telephone number in the correct format, for example 01632 960 001 or +44 808 157 0192
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
