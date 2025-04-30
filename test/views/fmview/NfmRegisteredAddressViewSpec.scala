@@ -88,7 +88,8 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
         "addressLine2" -> "Test & Company",
         "addressLine3" -> "Test City <script>",
         "addressLine4" -> "Test Region >",
-        "countryCode"  -> "Test Country &"
+        "countryCode"  -> "Test Country &",
+        "postalCode"   -> "AB1 2CD<"
       )
 
       val errorView = Jsoup.parse(
@@ -103,6 +104,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
       errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
       errorList must include("The region you enter must not include the following characters <, >, \" or &")
       errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
     }
 
     "show length validation errors when input exceeds maximum length" in {
@@ -115,7 +117,8 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
               "addressLine2" -> longInput,
               "addressLine3" -> longInput,
               "addressLine4" -> longInput,
-              "countryCode"  -> longInput
+              "countryCode"  -> longInput,
+              "postalCode"   -> longInput
             )
           ),
           NormalMode,
@@ -132,6 +135,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
       errorList must include("Town or city must be 35 characters or less")
       errorList must include("Region must be 35 characters or less")
       errorList must include("The country cannot be more than 35 characters")
+      errorList must include("Postcode must be 10 characters or less")
     }
   }
 }

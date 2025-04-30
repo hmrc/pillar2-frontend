@@ -79,7 +79,8 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
             Map(
               "addressLine1" -> "",
               "addressLine3" -> "",
-              "countryCode"  -> ""
+              "countryCode"  -> "",
+              "postalCode"   -> ""
             )
           ),
           NormalMode,
@@ -94,6 +95,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       errorList must include("Enter the first line of the address")
       errorList must include("Enter the town or city")
       errorList must include("Enter the country")
+      errorList must include("Enter the postcode")
     }
 
     "show length validation errors when input exceeds maximum length" in {
@@ -106,7 +108,8 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
               "addressLine2" -> longInput,
               "addressLine3" -> longInput,
               "addressLine4" -> longInput,
-              "countryCode"  -> longInput
+              "countryCode"  -> longInput,
+              "postalCode"   -> longInput
             )
           ),
           NormalMode,
@@ -123,6 +126,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       errorList must include("Town or city must be 35 characters or less")
       errorList must include("Region must be 35 characters or less")
       errorList must include("The country cannot be more than 200 characters")
+      errorList must include("Postcode must be 10 characters or less")
     }
 
     "show XSS validation errors when special characters are entered" in {
@@ -147,6 +151,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
       errorList must include("The region you enter must not include the following characters <, >, \" or &")
       errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
       fieldErrors must include("Error: First line of the address you enter must not include the following characters <, > or \"")
@@ -154,6 +159,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       fieldErrors must include("Error: The town or city you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The region you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
+      fieldErrors must include("Error: The postcode you enter must not include the following characters <, >, \" or &")
     }
   }
 }

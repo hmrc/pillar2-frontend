@@ -98,7 +98,8 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
               "addressLine2" -> longInput,
               "addressLine3" -> longInput,
               "addressLine4" -> longInput,
-              "countryCode"  -> longInput
+              "countryCode"  -> longInput,
+              "postalCode"   -> longInput
             )
           ),
           NormalMode,
@@ -114,6 +115,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
       errorList must include("The Town or city must be 35 characters or less")
       errorList must include("The region must be 35 characters or less")
       errorList must include("Country cannot be more than 200 characters")
+      errorList must include("Postcode must be 10 characters or less")
     }
 
     "show XSS validation errors when special characters are entered" in {
