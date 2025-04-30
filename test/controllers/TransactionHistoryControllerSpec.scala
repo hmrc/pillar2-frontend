@@ -52,8 +52,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
     TransactionHistory(
       PlrReference,
       List(
-        FinancialHistory(LocalDate.now.plusDays(1), "Payment", 100.0, 0.00),
-        FinancialHistory(LocalDate.now.plusDays(2), "Repayment", 0.0, 100.0)
+        FinancialHistory(LocalDate.of(2024, 12, 1), "Payment", 100.0, 0.00),
+        FinancialHistory(LocalDate.of(2025, 1, 31), "Repayment", 0.0, 100.0)
       )
     )
   val transactionHistoryResponsePagination: TransactionHistory =
@@ -300,6 +300,44 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           applicationConfig,
           messages(application)
         ).toString
+      }
+    }
+
+    "return OK and correct view confirming that the dates have been formatted correctly" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[TransactionHistoryConnector].toInstance(mockTransactionHistoryConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockTransactionHistoryConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.successful(transactionHistoryResponse))
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[TransactionHistoryView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          generateTransactionHistoryTable(1, transactionHistoryResponse.financialHistory).get,
+          generatePagination(transactionHistoryResponse.financialHistory, None),
+          isAgent = false
+        )(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+
+        contentAsString(result) must include("1 December 2024")
+        contentAsString(result) must include("31 January 2025")
       }
     }
   }
