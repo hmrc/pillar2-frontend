@@ -203,7 +203,7 @@ object TransactionHistoryController {
 
     Seq(
       TableRow(
-        content = Text(history.date.format(DateTimeFormatter.ofPattern("dd MMM yyyy")))
+        content = Text(history.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
       ),
       TableRow(
         content = Text(history.paymentType)

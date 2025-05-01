@@ -27,9 +27,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   val table: Table = Table(
     List(
-      List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
-      List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
-      List(TableRow(Text("01 Jul 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00")))
+      List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
+      List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
+      List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00")))
     ),
     head = Some(
       Seq(
@@ -103,7 +103,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
       (1 to 3).foreach { int =>
         val tableRow = groupView.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
-        tableRow.first().text must include("01 Jul 2024")
+        tableRow.first().text must include("1 July 2024")
         tableRow.get(1).text  must include("Payment")
         tableRow.get(2).text  must include("£-5000.00")
         tableRow.get(3).text  must include("£0.00")
