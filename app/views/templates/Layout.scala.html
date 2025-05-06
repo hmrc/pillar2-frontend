@@ -33,12 +33,9 @@
     betaBanner: StandardBetaBanner,
     stylesheets: Stylesheets,
     twoThirdsContent: TwoThirdsMainContent
-
 )
 
-
 @(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None, serviceBannerClickable: Boolean = true, pageLayout: Html => Html = twoThirdsContent(_))(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
-
 
 @scripts = {
     @hmrcScripts()
@@ -49,7 +46,6 @@
 }
 
 @head = {
-
     @hmrcHead(
         headBlock = if(timeout) { Some(
             hmrcTimeoutDialog(TimeoutDialog(
@@ -70,7 +66,6 @@
 }
 
 @beforeContent = {
-
     @if(showBackLink) {
         @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
     }
@@ -96,6 +91,6 @@
     )),
     beforeContentBlock = Some(beforeContent),
     footerBlock        = Some(hmrcStandardFooter()),
-    scriptsBlock = Some(scripts),
-    mainContentLayout = Some(pageLayout)
+    scriptsBlock       = Some(scripts),
+    mainContentLayout  = Some(pageLayout)
 )(content)
