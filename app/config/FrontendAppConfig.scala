@@ -97,6 +97,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val opsStartUrl:            String  = configuration.get[String]("microservice.services.ops.startUrl")
   val enablePayByBankAccount: Boolean = configuration.get[Boolean]("features.enablePayByBankAccount")
 
+  val googleAnalyticsTrackingId: String = configuration.get[String]("google-analytics.trackingId")
+
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
 

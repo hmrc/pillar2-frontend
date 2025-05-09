@@ -18,79 +18,100 @@
 @import play.twirl.api.Html
 @import uk.gov.hmrc.hmrcfrontend.views.config.StandardBetaBanner
 @import views.html.helper.CSPNonce
+@import views.html.templates.Stylesheets
+
 @this(
-    govukLayout: GovukLayout,
-    govukBackLink: GovukBackLink,
-    hmrcHead: HmrcHead,
-    hmrcStandardHeader: HmrcStandardHeader,
-    hmrcStandardFooter: HmrcStandardFooter,
-    hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
-    hmrcLanguageSelect: HmrcLanguageSelect,
-    hmrcTimeoutDialog: HmrcTimeoutDialog,
-    hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
-    autocompleteJavascript : HmrcAccessibleAutocompleteJavascript,
-    hmrcScripts: HmrcScripts,
-    betaBanner: StandardBetaBanner,
-    stylesheets: Stylesheets,
-    twoThirdsContent: TwoThirdsMainContent
+        govukLayout: GovukLayout,
+        govukBackLink: GovukBackLink,
+        hmrcHead: HmrcHead,
+        hmrcStandardHeader: HmrcStandardHeader,
+        hmrcStandardFooter: HmrcStandardFooter,
+        hmrcTrackingConsentSnippet: HmrcTrackingConsentSnippet,
+        hmrcLanguageSelect: HmrcLanguageSelect,
+        hmrcTimeoutDialog: HmrcTimeoutDialog,
+        hmrcReportTechnicalIssueHelper: HmrcReportTechnicalIssueHelper,
+        autocompleteJavascript: HmrcAccessibleAutocompleteJavascript,
+        hmrcScripts: HmrcScripts,
+        betaBanner: StandardBetaBanner,
+        stylesheets: Stylesheets,
+        twoThirdsContent: TwoThirdsMainContent
 )
 
 @(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None, serviceBannerClickable: Boolean = true, pageLayout: Html => Html = twoThirdsContent(_))(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
 
 @scripts = {
-    @hmrcScripts()
-    @autocompleteJavascript()
-    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
-    <script @{CSPNonce.attr} src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
-    <script @{CSPNonce.attr}>window.GOVUKFrontend.initAll();</script>
+  @hmrcScripts()
+  @autocompleteJavascript()
+  <script @{
+    CSPNonce.attr
+  } src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
+  <script @{
+    CSPNonce.attr
+  } src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+  <script @{
+    CSPNonce.attr
+  }>window.GOVUKFrontend.initAll();
+  </script>
+  <!-- Google Tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=@{appConfig.googleAnalyticsTrackingId}"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', @{appConfig.googleAnalyticsTrackingId});
+  </script>
 }
 
 @head = {
-    @hmrcHead(
-        headBlock = if(timeout) { Some(
-            hmrcTimeoutDialog(TimeoutDialog(
-                timeout             = Some(appConfig.timeout),
-                countdown           = Some(appConfig.countdown),
-                keepAliveUrl        = Some(routes.KeepAliveController.keepAlive.url),
-                keepAliveButtonText = Some(messages("timeout.keepAlive")),
-                timeoutUrl          = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
-                signOutUrl          = Some(controllers.auth.routes.AuthController.signOut.url),
-                signOutButtonText   = Some(messages("timeout.signOut")),
-                title               = Some(messages("timeout.title")),
-                message             = Some(messages("timeout.message"))
-                )
-            ))
-        } else None
-    )
-    @stylesheets()
+@hmrcHead(
+  headBlock = if(timeout) {
+    Some(
+      hmrcTimeoutDialog(TimeoutDialog(
+        timeout = Some(appConfig.timeout),
+        countdown = Some(appConfig.countdown),
+        keepAliveUrl = Some(routes.KeepAliveController.keepAlive.url),
+        keepAliveButtonText = Some(messages("timeout.keepAlive")),
+        timeoutUrl = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
+        signOutUrl = Some(controllers.auth.routes.AuthController.signOut.url),
+        signOutButtonText = Some(messages("timeout.signOut")),
+        title = Some(messages("timeout.title")),
+        message = Some(messages("timeout.message"))
+      )
+      ))
+  } else None
+)
+@stylesheets()
 }
 
 @beforeContent = {
-    @if(showBackLink) {
-        @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
-    }
+  @if(showBackLink) {
+    @govukBackLink(BackLinkViewModel(href = "#").withCssClass("js-visible").withCssClass("govuk-!-display-none-print").withAttribute("id" -> "back-link"))
+  }
 }
 
 @content = {
-    @contentBlock
+  @contentBlock
 
-    <div class="govuk-!-margin-top-8">
-        @hmrcReportTechnicalIssueHelper()
-    </div>
+  <div class="govuk-!-margin-top-8">
+    @hmrcReportTechnicalIssueHelper()
+  </div>
 }
 
 @govukLayout(
-    pageTitle   = Some(pageTitle),
-    headBlock   = Some(head),
-    headerBlock = Some(hmrcStandardHeader(
-        serviceUrl  = if (serviceBannerClickable) {
-                        if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
-                      } else {None},
-        signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
-        phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
-    )),
-    beforeContentBlock = Some(beforeContent),
-    footerBlock        = Some(hmrcStandardFooter()),
-    scriptsBlock       = Some(scripts),
-    mainContentLayout  = Some(pageLayout)
+  pageTitle = Some(pageTitle),
+  headBlock = Some(head),
+  headerBlock = Some(hmrcStandardHeader(
+    serviceUrl = if(serviceBannerClickable) {
+      if(request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
+    } else {
+      None
+    },
+    signOutUrl = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
+    phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
+  )),
+  beforeContentBlock = Some(beforeContent),
+  footerBlock = Some(hmrcStandardFooter()),
+  scriptsBlock = Some(scripts),
+  mainContentLayout = Some(pageLayout)
 )(content)
