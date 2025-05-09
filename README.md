@@ -17,8 +17,13 @@ sm2 --start PILLAR2_ALL
 Head to the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in) to sign in and create a session for a
 user with your choice of enrolments and tax ID.
 
+To stop all services, run:
+```shell
+sm2 --stop PILLAR2_ALL
+```
 
-## Running Locally
+
+## Making Changes Locally
 Start all the Pillar 2 services from Service Manager as mentioned above:
 ```shell
 sm2 --start PILLAR2_ALL
@@ -44,7 +49,7 @@ user with your choice of enrolments and tax IDs.
 
 
 ## Authority Wizard (GG Sign In)
-When you sign in with the Authority Wizard, provide the following details:
+When you sign in with the [Authority Wizard](http://localhost:9949/auth-login-stub/gg-sign-in), provide the following details:
 
 - **Redirect URL**: http://localhost:10050/report-pillar2-top-up-taxes
 - **Affinity Group**: Organisation
@@ -54,12 +59,12 @@ When you sign in with the Authority Wizard, provide the following details:
 
 Run unit tests with:
 ```shell
-sbt test 
+sbt test
 ```
 
 Check code coverage with:
 ```shell
-sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport   
+sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport
 ```
 
 Run integration tests with:
@@ -67,16 +72,10 @@ Run integration tests with:
 sbt it/test
 ```
 
-To use testonly route locally .
+To use testonly route locally:
 ```shell
 sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
 ```
-
-Test-only route:
-```shell
-sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
-```
-
 
 
 ## Bank Account Reputation (BARS)
@@ -102,31 +101,13 @@ The nominated filing member is responsible for managing the group's tax returns 
 
 ## Eligibility Questions
 
-Eligibility questions journey start with this url `/eligibility/group-in-multiple-territories` and there are four
+Eligibility questions journey starts at `/pillar-two/eligibility/group-in-multiple-territories` and there are four
 different questions to check eligibility. User does not need to be authenticated for this journey.
 
-Endpoint to start eligibility questions.
-
-    /eligibility/group-in-multiple-territories
-
-
 If all question asked in this journey are answered with "Yes", then this means that you need to pay Global Minimum Tax,
-User will be redirected to HMRC online services to register.
-
-To use testonly route locally.
-```shell
-sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
-```
+and User will be redirected to HMRC online services to register.
 
 
 ### License
 
 This code is open source software licensed under the [Apache 2.0 License]("http://www.apache.org/licenses/LICENSE-2.0.html").
-
-
----
-
-To stop services:
-```shell
-sm2 --stop PILLAR2_ALL
-```
