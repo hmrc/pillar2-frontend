@@ -39,49 +39,52 @@
 
 @(pageTitle: String, headBlock: Option[Html] = None, showBackLink: Boolean = true, timeout: Boolean = true, showSignOut: Boolean = true, authorised: Boolean = true, maybeClientPillar2Id: Option[String] = None, bannerUrl: Option[String] = None, serviceBannerClickable: Boolean = true, pageLayout: Html => Html = twoThirdsContent(_))(contentBlock: Html)(implicit request: RequestHeader, appConfig: FrontendAppConfig, messages: Messages)
 
+@trackingConsentGiven: Boolean = @{
+  request.cookies.get("userConsent") match {
+    case Some(cookie) if cookie.value.contains("true")  => true
+    case Some(cookie) if cookie.value.contains("false") => false
+    case _                                              => false
+  }
+}
+
 @scripts = {
   @hmrcScripts()
   @autocompleteJavascript()
-  <script @{
-    CSPNonce.attr
-  } src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
-  <script @{
-    CSPNonce.attr
-  } src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
-  <script @{
-    CSPNonce.attr
-  }>window.GOVUKFrontend.initAll();
-  </script>
-  <!-- Google Tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=@{appConfig.googleAnalyticsTrackingId}"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-
-    gtag('config', @{appConfig.googleAnalyticsTrackingId});
-  </script>
+  <script @{ CSPNonce.attr } src='@controllers.routes.Assets.versioned("javascripts/jquery-3.6.0.min.js")'></script>
+  <script @{ CSPNonce.attr } src='@controllers.routes.Assets.versioned("javascripts/application.min.js")'></script>
+  <script @{ CSPNonce.attr }>window.GOVUKFrontend.initAll();</script>
 }
 
 @head = {
-@hmrcHead(
-  headBlock = if(timeout) {
-    Some(
-      hmrcTimeoutDialog(TimeoutDialog(
-        timeout = Some(appConfig.timeout),
-        countdown = Some(appConfig.countdown),
-        keepAliveUrl = Some(routes.KeepAliveController.keepAlive.url),
-        keepAliveButtonText = Some(messages("timeout.keepAlive")),
-        timeoutUrl = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
-        signOutUrl = Some(controllers.auth.routes.AuthController.signOut.url),
-        signOutButtonText = Some(messages("timeout.signOut")),
-        title = Some(messages("timeout.title")),
-        message = Some(messages("timeout.message"))
-      )
-      ))
-  } else None
-)
-@stylesheets()
+  @if(trackingConsentGiven) {
+    <!-- Google Tag (gtag.js) -->
+    <script async @{ CSPNonce.attr } src="https://www.googletagmanager.com/gtag/js?id=@{appConfig.googleAnalyticsTrackingId}"></script>
+    <script @{ CSPNonce.attr }>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', @{appConfig.googleAnalyticsTrackingId});
+    </script>
+  }
+ @hmrcHead(
+    headBlock = if(timeout) {
+      Some(
+        hmrcTimeoutDialog(TimeoutDialog(
+          timeout = Some(appConfig.timeout),
+          countdown = Some(appConfig.countdown),
+          keepAliveUrl = Some(routes.KeepAliveController.keepAlive.url),
+          keepAliveButtonText = Some(messages("timeout.keepAlive")),
+          timeoutUrl = Some(controllers.auth.routes.SignedOutController.onPageLoad.url),
+          signOutUrl = Some(controllers.auth.routes.AuthController.signOut.url),
+          signOutButtonText = Some(messages("timeout.signOut")),
+          title = Some(messages("timeout.title")),
+          message = Some(messages("timeout.message"))
+        )
+        ))
+    } else None
+  )
+  @stylesheets()
 }
 
 @beforeContent = {
@@ -92,7 +95,6 @@
 
 @content = {
   @contentBlock
-
   <div class="govuk-!-margin-top-8">
     @hmrcReportTechnicalIssueHelper()
   </div>
