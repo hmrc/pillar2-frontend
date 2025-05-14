@@ -204,9 +204,9 @@ payment.legacy.dashboard.message4 = read the guidance to find the methods you ca
 
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
-repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund if you have funds in your Pillar 2 account available for repayment.
+repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund. You can only make a request if there are funds in your group's Pillar 2 account..
 repayment.requestRefundBeforeStart.header3 = Before you start
-repayment.requestRefundBeforeStart.p3 = You will need the following details:
+repayment.requestRefundBeforeStart.p3 = You'll need to provide:
 repayment.requestRefundBeforeStart.li1 = refund amount
 repayment.requestRefundBeforeStart.li2 = reason for your refund request
 repayment.requestRefundBeforeStart.li3 = bank account details
@@ -1564,11 +1564,6 @@ transactionHistory.group.none.p1 = You can find all transactions made by your gr
 transactionHistory.agent.none.p1 = You can find all transactions made by your client during this accounting period and the previous 6 accounting periods.
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
 transactionHistory.none.p3 = No transactions made.
-transactionHistory.none.h2 = Outstanding payments
-transactionHistory.group.none.p4 = You can find details of what your group currently owes on the
-transactionHistory.agent.none.p4 = You can find details of what your client currently owes on the
-transactionHistory.none.link = Outstanding payments
-transactionHistory.none.p5 = page.
 
 manageContact.cannotReturn.title = You cannot return, you have updated your contact details
 manageContact.cannotReturn.heading = You cannot return, you have updated your contact details
