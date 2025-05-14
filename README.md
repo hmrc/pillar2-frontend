@@ -64,7 +64,7 @@ sbt test
 
 Check code coverage with:
 ```shell
-sbt clean scalafmt test:scalafmt it/test coverage test it/test coverageReport
+sbt clean coverage test it/test coverageReport
 ```
 
 Run integration tests with:
