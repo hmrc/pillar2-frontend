@@ -42,11 +42,11 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
     "have following contents" in {
       view.getElementsByClass("govuk-body").text must include(
-        "You can use this service to request a refund. You can only make a request if there are funds in your group's Pillar 2 account."
+        "You can use this service to request a refund. You can only make a request if there are funds in your group’s Pillar 2 account."
       )
 
       view.getElementsByClass("govuk-body").text must include(
-        "You'll need to provide:"
+        "You’ll need to provide:"
       )
       view.getElementsByTag("li").text must include("refund amount")
       view.getElementsByTag("li").text must include("reason for your refund request")
