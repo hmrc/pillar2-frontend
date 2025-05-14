@@ -67,7 +67,7 @@
       gtag('config', @{appConfig.googleAnalyticsTrackingId});
     </script>
   }
- @hmrcHead(
+  @hmrcHead(
     headBlock = if(timeout) {
       Some(
         hmrcTimeoutDialog(TimeoutDialog(
