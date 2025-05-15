@@ -23,9 +23,9 @@ import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
-  val page: RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
-  val view: Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
-  val agentView: Document                = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
+  val page:      RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
+  val view:      Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
+  val agentView: Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
 
   "Request Refund Before Start View" should {
 
