@@ -63,7 +63,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[RequestRefundBeforeStartView]
         status(result) mustEqual OK
         contentAsString(result) must include("Request a refund")
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(agentView = false)(
           request,
           applicationConfig,
           messages(application)

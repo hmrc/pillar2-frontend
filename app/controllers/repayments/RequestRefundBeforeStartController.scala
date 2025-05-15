@@ -36,7 +36,11 @@ class RequestRefundBeforeStartController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      Ok(view())
+      Ok(
+        view(
+          agentView = request.request.isAgent
+        )
+      )
     }
 
 }
