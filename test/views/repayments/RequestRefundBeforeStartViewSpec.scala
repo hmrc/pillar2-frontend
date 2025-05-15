@@ -24,7 +24,8 @@ import views.html.repayments.RequestRefundBeforeStartView
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
   val page: RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
-  val view: Document                     = Jsoup.parse(page()(request, appConfig, messages).toString())
+  val view: Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
+  val agentView: Document                = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
 
   "Request Refund Before Start View" should {
 
@@ -43,6 +44,11 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
     "have following contents" in {
       view.getElementsByClass("govuk-body").text must include(
         "You can use this service to request a refund. You can only make a request if there are funds in your group’s Pillar 2 account."
+      )
+
+      agentView.getElementsByClass("govuk-body").text must include(
+        "You can use this service to request a refund on behalf of your client. " +
+          "You can only make a request if there are funds in your group’s Pillar 2 account."
       )
 
       view.getElementsByClass("govuk-body").text must include(

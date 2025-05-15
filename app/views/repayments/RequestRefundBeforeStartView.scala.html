@@ -30,13 +30,17 @@
     bulletList: bulletList,
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title"))
 ) {
     @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
-    @p(messages("repayment.requestRefundBeforeStart.p1"))
+    @if(agentView) {
+        @p(messages("repayment.requestRefundBeforeStart.agentView.p1"))
+    } else {
+        @p(messages("repayment.requestRefundBeforeStart.p1"))
+    }
     @h2(messages("repayment.requestRefundBeforeStart.header3"), size = "m")
     @p(messages("repayment.requestRefundBeforeStart.p3"))
     @bulletList(items = List(

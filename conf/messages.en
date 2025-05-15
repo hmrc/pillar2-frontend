@@ -205,6 +205,7 @@ payment.legacy.dashboard.message4 = read the guidance to find the methods you ca
 repayment.requestRefundBeforeStart.title = Request a refund
 repayment.requestRefundBeforeStart.header = Request a refund
 repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund. You can only make a request if there are funds in your group’s Pillar 2 account.
+repayment.requestRefundBeforeStart.agentView.p1 = You can use this service to request a refund on behalf of your client. You can only make a request if there are funds in your group’s Pillar 2 account.
 repayment.requestRefundBeforeStart.header3 = Before you start
 repayment.requestRefundBeforeStart.p3 = You’ll need to provide:
 repayment.requestRefundBeforeStart.li1 = refund amount
