@@ -3,10 +3,10 @@ import sbt.*
 object AppDependencies {
   val bootstrapVersion                      = "9.11.0"
   val catsCoreVersion                       = "2.13.0"
-  val commonsIoVersion                      = "2.18.0"
+  val commonsIoVersion                      = "2.19.0"
   val enumeratumPlayJsonVersion             = "1.8.2"
   val fopVersion                            = "2.10"
-  val jsoupVersion                          = "1.18.3"
+  val jsoupVersion                          = "1.20.1"
   val mockitoVersion                        = "3.2.18.0"
   val mockitoScalaVersion                   = "1.17.37"
   val mongoVersion                          = "2.6.0"
