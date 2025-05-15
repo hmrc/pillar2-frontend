@@ -41,9 +41,8 @@
 
 @trackingConsentGiven: Boolean = @{
   request.cookies.get("userConsent") match {
-    case Some(cookie) if cookie.value.contains("true")  => true
-    case Some(cookie) if cookie.value.contains("false") => false
-    case _                                              => false
+    case Some(cookie) if cookie.value.contains("true") => true
+    case _                                             => false
   }
 }
 
