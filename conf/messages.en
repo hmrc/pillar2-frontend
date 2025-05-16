@@ -1437,7 +1437,7 @@ rfmConfirmation.print = Print this page
 reasonForRequestingRefund.title = Why are you requesting a refund?
 reasonForRequestingRefund.heading = Why are you requesting a refund?
 reasonForRequestingRefund.error.required = Enter why you are requesting a refund
-reasonForRequestingRefund.error.hint = For example, if there is an amount left over after a payment was made for an obligation.
+reasonForRequestingRefund.error.hint = For example, if there is an amount leftover after a payment was made for an obligation.
 reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
 reasonForRequestingRefund.error.xss = The reason for your refund request you enter must not include the following characters <, >, " or &
 
