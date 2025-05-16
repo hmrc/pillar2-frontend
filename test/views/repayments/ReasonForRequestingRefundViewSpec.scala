@@ -45,7 +45,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
       "have a hint description" in {
         view.getElementsByClass("govuk-hint").get(0).text must include(
-          "For example, you made a payment that was greater than your actual liability."
+          "For example, if there is an amount leftover after a payment was made for an obligation."
         )
       }
 
