@@ -101,7 +101,7 @@ class CheckYourAnswersController @Inject() (
                       logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to failed call to the backend")
                       FailedWithInternalIssueError
                     case DuplicateSubmissionError =>
-                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Duplicate Submission")
+                      logger.error("Subscription failed due to a Duplicate Submission")
                       FailedWithDuplicatedSubmission
                     case DuplicateSafeIdError =>
                       logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Duplicate SafeId for UPE and NFM")
