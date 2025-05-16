@@ -95,22 +95,22 @@ class CheckYourAnswersController @Inject() (
                 } yield SuccessfullyCompletedSubscription)
                   .recover {
                     case _: GatewayTimeoutException =>
-                      logger.error("Subscription failed due to a Gateway timeout")
+                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Gateway timeout")
                       FailedWithInternalIssueError
                     case InternalIssueError =>
-                      logger.error("Subscription failed due to failed call to the backend")
+                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to failed call to the backend")
                       FailedWithInternalIssueError
                     case DuplicateSubmissionError =>
                       logger.error("Subscription failed due to a Duplicate Submission")
                       FailedWithDuplicatedSubmission
                     case DuplicateSafeIdError =>
-                      logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
                     case error: HttpException =>
-                      logger.error(s"Subscription failed due to HTTP error ${error.responseCode}", error)
+                      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to HTTP error ${error.responseCode}", error)
                       FailedWithInternalIssueError
                     case error: Exception =>
-                      logger.error(s"Subscription failed due to unexpected error", error)
+                      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to unexpected error", error)
                       FailedWithInternalIssueError
                   }
               }
