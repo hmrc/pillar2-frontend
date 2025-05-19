@@ -16,7 +16,7 @@
 
 @import viewmodels.InputWidth._
 @import config.FrontendAppConfig
-@import views.html.components.gds.heading
+@import views.html.components.gds._
 
 @this(
     layout: templates.Layout,
@@ -24,7 +24,8 @@
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
-    heading: heading
+    heading: HeadingWithHint,
+    p: paragraphBody
 )
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -37,15 +38,14 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("repayments.nonUKBank.heading"), "govuk-heading-l")
-
+        @heading(messages("repayments.nonUKBank.heading"), messages("repayments.nonUKBank.hint"))
+        @p(messages("repayments.nonUKBank.information"))
         @govukInput(
             InputViewModel(
                 field = form("bankName"),
                 label = LabelViewModel(messages("repayments.nonUKBank.bankName"))
             )
             .withWidth(Full)
-            .withHint(Hint(content = Text(messages("repayments.nonUKBank.bankName.hint"))))
         )
 
         @govukInput(
@@ -54,7 +54,6 @@
                 label = LabelViewModel(messages("repayments.nonUKBank.nameOnBankAccount"))
             )
             .withWidth(Full)
-            .withHint(Hint(content = Text(messages("repayments.nonUKBank.nameOnBankAccount.hint"))))
         )
 
         @govukInput(
