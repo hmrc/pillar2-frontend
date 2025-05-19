@@ -20,14 +20,12 @@
 
 @(
 heading: String,
-hint: String = "",
+hint: Option[String] = None,
 classes: String = "govuk-heading-l"
 )
 
 
 <h1 class="@classes">
  @heading
- @if(hint.nonEmpty) {
- <div class="govuk-hint">@hint</div>
- }
+ @hint.map{hint => <div class="govuk-hint">@hint</div>}
 </h1>

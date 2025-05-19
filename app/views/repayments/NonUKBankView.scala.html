@@ -38,7 +38,7 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @heading(messages("repayments.nonUKBank.heading"), messages("repayments.nonUKBank.hint"))
+        @heading(messages("repayments.nonUKBank.heading"), Some(messages("repayments.nonUKBank.hint")))
         @p(messages("repayments.nonUKBank.information"))
         @govukInput(
             InputViewModel(

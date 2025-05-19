@@ -36,7 +36,7 @@
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
-            @heading(messages("repayments.bankAccountDetails.heading"), messages("repayments.bankAccountDetails.hint"))
+            @heading(messages("repayments.bankAccountDetails.heading"), Some(messages("repayments.bankAccountDetails.hint")))
             @govukInput(
                 InputViewModel(
                     field = form("bankName"),
