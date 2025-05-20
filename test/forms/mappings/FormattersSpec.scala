@@ -30,7 +30,7 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
 
     "bind successfully when the field has a value" in {
       val data = Map(
-        "field" -> "value",
+        "field"      -> "value",
         "otherField" -> ""
       )
       formatter.bind("field", data) mustBe Right(Some("value"))
@@ -38,7 +38,7 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
 
     "bind successfully when the dependent field has a value" in {
       val data = Map(
-        "field" -> "",
+        "field"      -> "",
         "otherField" -> "value"
       )
       formatter.bind("field", data) mustBe Right(None)
@@ -46,7 +46,7 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
 
     "bind successfully when both fields have values" in {
       val data = Map(
-        "field" -> "value1",
+        "field"      -> "value1",
         "otherField" -> "value2"
       )
       formatter.bind("field", data) mustBe Right(Some("value1"))
@@ -54,7 +54,7 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
 
     "fail to bind when both fields are empty" in {
       val data = Map(
-        "field" -> "",
+        "field"      -> "",
         "otherField" -> ""
       )
       formatter.bind("field", data) mustBe Left(Seq(FormError("field", "error.required")))
@@ -68,4 +68,4 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
       formatter.unbind("field", Some("value")) mustBe Map("field" -> "value")
     }
   }
-} 
+}
