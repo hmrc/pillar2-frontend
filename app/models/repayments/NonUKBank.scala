@@ -18,7 +18,7 @@ package models.repayments
 
 import play.api.libs.json._
 
-case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: String, iban: String)
+case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: Option[String], iban: Option[String])
 object NonUKBank {
   implicit val format: OFormat[NonUKBank] = Json.format[NonUKBank]
 }

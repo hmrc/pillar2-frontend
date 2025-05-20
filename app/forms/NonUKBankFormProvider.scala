@@ -38,7 +38,7 @@ class NonUKBankFormProvider @Inject() extends Mappings {
           maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length"),
           regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.nonUKBank.error.nameOnBankAccount.xss")
         ),
-      "bic" -> bankAccount("repayments.nonUKBank.error.bic.required")
+      "bic" -> bic("repayments.nonUKBank.error.bic.required")
         .verifying(
           firstError(
             minLength(Constants.MIN_LENGTH_8, "repayments.nonUKBank.error.bic.length"),
@@ -46,7 +46,7 @@ class NonUKBankFormProvider @Inject() extends Mappings {
             regexp(Validation.BIC_SWIFT_REGEX, "repayments.nonUKBank.error.bic.format")
           )
         ),
-      "iban" -> bankAccount("repayments.nonUKBank.error.iban.required")
+      "iban" -> iban("repayments.nonUKBank.error.iban.required")
         .verifying(
           firstError(
             maxLength(Constants.MAX_LENGTH_34, "repayments.nonUKBank.error.iban.length"),

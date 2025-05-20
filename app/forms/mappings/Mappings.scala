@@ -32,6 +32,12 @@ trait Mappings extends Formatters with Constraints {
   protected def bankAccount(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(bankAccountFormatter(errorKey, args))
 
+  protected def bic(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Option[String]] =
+    of(dependentFieldFormatter(dependentFieldName = "iban", errorKey, args))
+
+  protected def iban(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Option[String]] =
+    of(dependentFieldFormatter(dependentFieldName = "bic", errorKey, args))
+
   protected def sortCode(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
     of(sortCodeFormatter(errorKey, args))
 

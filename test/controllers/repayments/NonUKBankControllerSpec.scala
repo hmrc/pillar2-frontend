@@ -49,7 +49,7 @@ class NonUKBankControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val ua = emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+      val ua = emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -60,7 +60,7 @@ class NonUKBankControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(formProvider().fill(NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819")), NormalMode)(
+          view(formProvider().fill(NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819"))), NormalMode)(
             request,
             applicationConfig,
             messages(application)

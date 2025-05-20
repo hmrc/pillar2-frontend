@@ -660,8 +660,8 @@ trait UserAnswersFixture extends TryValues {
   private val nonUkBankAccount = NonUKBank(
     nameOnBankAccount = "Paddington",
     bankName = "Bank of Bears",
-    iban = "123132",
-    bic = "11111111"
+    iban = Some("123132"),
+    bic = Some("11111111")
   )
   private val refundAmount: BigDecimal = 10000.1
   val completeRepaymentDataUkBankAccount: UserAnswers = emptyUserAnswers

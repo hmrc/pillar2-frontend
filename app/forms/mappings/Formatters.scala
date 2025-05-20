@@ -79,6 +79,35 @@ trait Formatters extends Transforms with Constraints {
       Map(key -> value)
   }
 
+  /** Creates a formatter for a field that is optional if another field has a value. If both fields are empty, returns an error for the current field.
+    *
+    * @param dependentFieldName
+    *   The name of the field that this field depends on
+    * @param errorKey
+    *   The error message key to use when validation fails
+    * @param args
+    *   Optional arguments for the error message
+    */
+  protected def dependentFieldFormatter(
+    dependentFieldName: String,
+    errorKey:           String,
+    args:               Seq[String] = Seq.empty
+  ): Formatter[Option[String]] = new Formatter[Option[String]] {
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+      val fieldValue     = data.get(key).map(_.trim).filter(_.nonEmpty)
+      val dependentValue = data.get(dependentFieldName).map(_.trim).filter(_.nonEmpty)
+
+      if (fieldValue.isDefined || dependentValue.isDefined) {
+        Right(fieldValue)
+      } else {
+        Left(Seq(FormError(key, errorKey, args)))
+      }
+    }
+
+    override def unbind(key: String, value: Option[String]): Map[String, String] =
+      Map(key -> value.getOrElse(""))
+  }
+
   private[mappings] def booleanFormatter(requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty): Formatter[Boolean] =
     new Formatter[Boolean] {
 

@@ -253,7 +253,7 @@ class RepaymentNavigatorSpec extends SpecBase {
       "go to Repayments CYA page from Bank Account type page if Non-UK bank account page is previously answered" in {
         val ua = emptyUserAnswers
           .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
-          .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+          .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
         navigator.nextPage(UkOrAbroadBankAccountPage, CheckMode, ua) mustBe
           repaymentsQuestionsCYA
       }
@@ -262,7 +262,7 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(
           NonUKBankPage,
           CheckMode,
-          emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+          emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
         ) mustBe
           repaymentsQuestionsCYA
       }

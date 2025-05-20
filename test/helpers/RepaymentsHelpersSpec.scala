@@ -233,8 +233,8 @@ class RepaymentsHelpersSpec extends SpecBase {
     val nonUkBankAccountDetails: NonUKBank = NonUKBank(
       bankName = "BankName",
       nameOnBankAccount = "Name",
-      bic = "HBUKGB4B",
-      iban = "GB29NWBK60161331926819"
+      bic = Some("HBUKGB4B"),
+      iban = Some("GB29NWBK60161331926819")
     )
     val refundAmount: BigDecimal = 10000.1
 

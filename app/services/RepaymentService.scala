@@ -75,8 +75,8 @@ class RepaymentService @Inject() (
               bankName = bankDetails.bankName,
               sortCode = None,
               accountNumber = None,
-              iban = Some(bankDetails.iban),
-              bic = Some(bankDetails.bic),
+              iban = bankDetails.iban,
+              bic = bankDetails.bic,
               countryCode = None
             )
           )
