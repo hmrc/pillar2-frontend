@@ -17,18 +17,29 @@
 package config
 
 import base.SpecBase
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import play.api.inject.Injector
+import play.api.mvc.RequestHeader
+
 
 class FrontendAppConfigSpec extends SpecBase {
 
   def injector: Injector          = app.injector
   val config:   FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  implicit val mockRequestHeader: RequestHeader = mock[RequestHeader]
 
   "FrontendAppConfig" when {
 
     ".btaHomePageUrl" must {
       "return bta homepage URL" in {
         config.btaHomePageUrl mustBe "http://localhost:9020/business-account"
+      }
+    }
+    ".supportUrl" must {
+      "return support URL" in {
+        when(mockRequestHeader.uri).thenReturn("/some/test/uri")
+        config.supportUrl mustBe "http://localhost:9250/contact/report-technical-problem?service=pillar2-frontend&referrerUrl=%2Fsome%2Ftest%2Furi"
       }
     }
     ".howToRegisterPlr2GuidanceUrl" must {

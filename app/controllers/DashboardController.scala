@@ -23,7 +23,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, NoResultFound, UserAnswers}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
