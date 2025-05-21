@@ -497,6 +497,108 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
 
+      "redirect to subscription failed error page in case of a failed subscription with InternalIssueError exception" in {
+
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
+          .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          verify(mockSessionRepository).set(eqTo(sessionData))
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+        }
+      }
+
+      "redirect to subscription failure error page in case of a failed subscription with DuplicateSubmissionError exception" in {
+
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
+          .setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          verify(mockSessionRepository).set(eqTo(sessionData))
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+        }
+      }
+
+      "redirect to subscription failure error page in case of a failed subscription with UnprocessableEntityError exception" in {
+
+        val userAnswer = defaultUserAnswer
+          .setOrException(SubAddSecondaryContactPage, false)
+          .setOrException(SubPrimaryContactNamePage, "name")
+          .setOrException(SubPrimaryEmailPage, "email@hello.com")
+          .setOrException(SubPrimaryPhonePreferencePage, true)
+          .setOrException(SubPrimaryCapturePhonePage, "123213")
+
+        val sessionData = defaultUserAnswer
+          .setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
+
+        val application = applicationBuilder(userAnswers = Some(userAnswer))
+          .overrides(
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors),
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(UnprocessableEntityError))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+          status(result) mustBe SEE_OTHER
+          verify(mockSessionRepository).set(eqTo(sessionData))
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+        }
+      }
+
       "redirect to waiting page and update status when encountering an HttpException" in {
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
