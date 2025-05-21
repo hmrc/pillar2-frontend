@@ -22,10 +22,43 @@ import play.api.data.FormError
 
 class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
 
+  "bankAccountFormatter" - {
+    val formatter = bankAccountFormatter("error.required")
+
+    "bind successfully when value is provided" in {
+      formatter.bind("field", Map("field" -> "value")) mustBe Right("VALUE")
+    }
+
+    "bind successfully when value has spaces" in {
+      formatter.bind("field", Map("field" -> "value with spaces")) mustBe Right("VALUEWITHSPACES")
+    }
+
+    "bind successfully when value has mixed case" in {
+      formatter.bind("field", Map("field" -> "Value With Mixed Case")) mustBe Right("VALUEWITHMIXEDCASE")
+    }
+
+    "fail to bind when value is empty" in {
+      formatter.bind("field", Map("field" -> "")) mustBe Left(Seq(FormError("field", "error.required")))
+    }
+
+    "fail to bind when value is whitespace only" in {
+      formatter.bind("field", Map("field" -> "   ")) mustBe Left(Seq(FormError("field", "error.required")))
+    }
+
+    "fail to bind when value is missing" in {
+      formatter.bind("field", Map.empty) mustBe Left(Seq(FormError("field", "error.required")))
+    }
+
+    "unbind returns the value" in {
+      formatter.unbind("field", "VALUE") mustBe Map("field" -> "VALUE")
+    }
+  }
+
   "dependentFieldFormatter" - {
     val formatter = dependentFieldFormatter(
       dependentFieldName = "otherField",
-      errorKey = "error.required"
+      errorKey = "error.required",
+      formatter = bankAccountFormatter("error.required")
     )
 
     "bind successfully when the field has a value" in {
@@ -33,7 +66,23 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
         "field"      -> "value",
         "otherField" -> ""
       )
-      formatter.bind("field", data) mustBe Right(Some("value"))
+      formatter.bind("field", data) mustBe Right(Some("VALUE"))
+    }
+
+    "bind successfully when the field has a value with spaces" in {
+      val data = Map(
+        "field"      -> "value with spaces",
+        "otherField" -> ""
+      )
+      formatter.bind("field", data) mustBe Right(Some("VALUEWITHSPACES"))
+    }
+
+    "bind successfully when the field has a value with mixed case" in {
+      val data = Map(
+        "field"      -> "Value With Mixed Case",
+        "otherField" -> ""
+      )
+      formatter.bind("field", data) mustBe Right(Some("VALUEWITHMIXEDCASE"))
     }
 
     "bind successfully when the dependent field has a value" in {
@@ -49,7 +98,7 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
         "field"      -> "value1",
         "otherField" -> "value2"
       )
-      formatter.bind("field", data) mustBe Right(Some("value1"))
+      formatter.bind("field", data) mustBe Right(Some("VALUE1"))
     }
 
     "fail to bind when both fields are empty" in {
@@ -60,12 +109,20 @@ class FormattersSpec extends AnyFreeSpec with Matchers with Formatters {
       formatter.bind("field", data) mustBe Left(Seq(FormError("field", "error.required")))
     }
 
+    "fail to bind when both fields are whitespace only" in {
+      val data = Map(
+        "field"      -> "   ",
+        "otherField" -> "  "
+      )
+      formatter.bind("field", data) mustBe Left(Seq(FormError("field", "error.required")))
+    }
+
     "unbind returns empty string for None" in {
       formatter.unbind("field", None) mustBe Map("field" -> "")
     }
 
     "unbind returns the value for Some" in {
-      formatter.unbind("field", Some("value")) mustBe Map("field" -> "value")
+      formatter.unbind("field", Some("VALUE")) mustBe Map("field" -> "VALUE")
     }
   }
 }
