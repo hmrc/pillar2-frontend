@@ -54,9 +54,9 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include("Must be a UK business account.")
-      view.getElementsByClass("govuk-hint").get(1).text must include("Must be 6 digits.")
-      view.getElementsByClass("govuk-hint").get(2).text must include("Must be 8 digits.")
+      view.getElementsByClass("govuk-hint").get(0).text must include("The account must be a UK business account.")
+      view.getElementsByClass("govuk-hint").get(1).text must include("Must be 6 digits long")
+      view.getElementsByClass("govuk-hint").get(2).text must include("Must be between 6 and 8 digits long")
     }
 
     "have a button" in {

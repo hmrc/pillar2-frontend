@@ -42,6 +42,13 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       view.getElementsByTag("h1").text must include("Bank account details")
     }
 
+    "have a paragraph" in {
+      view.getElementsByClass("govuk-body").get(0).text must include(
+        "For BIC or SWIFT codes and IBAN, " +
+          "you can check with your bank to find out what you need to provide for international payments."
+      )
+    }
+
     "have the correct field labels" in {
       view.getElementsByClass("govuk-label").get(0).text must include("Name of the bank")
       view.getElementsByClass("govuk-label").get(1).text must include("Name on the account")
@@ -50,12 +57,13 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have the correct hint text for each field" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include("Must be a business account.")
-      view.getElementsByClass("govuk-hint").get(1).text must include("Must be a business account.")
-      view.getElementsByClass("govuk-hint").get(2).text must include(
+      view.getElementsByClass("govuk-hint").get(0).text must include(
+        "This must be a business account."
+      )
+      view.getElementsByClass("govuk-hint").get(1).text must include(
         "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
       )
-      view.getElementsByClass("govuk-hint").get(3).text must include(
+      view.getElementsByClass("govuk-hint").get(2).text must include(
         "You can ask your bank or check your bank statement."
       )
     }

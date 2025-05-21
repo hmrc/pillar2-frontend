@@ -20,7 +20,7 @@
 
 @this(
         layout: templates.Layout,
-        h: heading,
+        heading: HeadingWithHint,
         govukErrorSummary: GovukErrorSummary,
         govukButton: GovukButton,
         formHelper: FormWithCSRF,
@@ -36,9 +36,7 @@
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form))
             }
-
-            @h(messages("repayments.bankAccountDetails.heading"), classes = "govuk-heading-l")
-
+            @heading(messages("repayments.bankAccountDetails.heading"), Some(messages("repayments.bankAccountDetails.hint")))
             @govukInput(
                 InputViewModel(
                     field = form("bankName"),
@@ -52,7 +50,6 @@
                     label = LabelViewModel(messages("repayments.bankAccountDetails.accountName"))
                 )
                 .withWidth(Full)
-                .withHint(Hint(content = Text(messages("repayments.bankAccountDetails.accountName.hintText"))))
             )
             @govukInput(
                 InputViewModel(

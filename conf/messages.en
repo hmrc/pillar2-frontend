@@ -1282,14 +1282,13 @@ rfmConfirmation.print = Print this page
 
 repayments.bankAccountDetails.title = Bank account details
 repayments.bankAccountDetails.heading = Bank account details
+repayments.bankAccountDetails.hint = The account must be a UK business account.
 repayments.bankAccountDetails.bankName = Name of the bank
 repayments.bankAccountDetails.accountName = Name on the account
-repayments.bankAccountDetails.accountName.hintText = Must be a UK business account.
 repayments.bankAccountDetails.sortCode = Sort Code
-repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits.
+repayments.bankAccountDetails.sortCode.hintText = Must be 6 digits long
 repayments.bankAccountDetails.accountNumber = Account number
-repayments.bankAccountDetails.accountNumber.hintText = Must be 8 digits.
-
+repayments.bankAccountDetails.accountNumber.hintText = Must be between 6 and 8 digits long
 
 repayments.bankAccountDetails.bankError = Enter the name of the bank
 repayments.bankAccountDetails.accountError = Enter the name on the account
@@ -1311,9 +1310,9 @@ repayments.bankAccountDetails.error.sortCode = Enter the sort code as it appears
 repayments.nonUKBank.title = Bank account details
 repayments.nonUKBank.heading = Bank account details
 repayments.nonUKBank.bankName = Name of the bank
-repayments.nonUKBank.bankName.hint = Must be a business account.
+repayments.nonUKBank.hint = This must be a business account.
 repayments.nonUKBank.nameOnBankAccount = Name on the account
-repayments.nonUKBank.nameOnBankAccount.hint = Must be a business account.
+repayments.nonUKBank.information = For BIC or SWIFT codes and IBAN, you can check with your bank to find out what you need to provide for international payments.
 repayments.nonUKBank.bic = BIC or SWIFT code
 repayments.nonUKBank.bic.hint = Must be between 8 and 11 characters. You can ask your bank or check your bank statement.
 repayments.nonUKBank.iban = IBAN
