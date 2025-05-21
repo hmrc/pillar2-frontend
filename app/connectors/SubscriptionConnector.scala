@@ -19,7 +19,7 @@ package connectors
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse, UnprocessableEntityError}
+import models._
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
