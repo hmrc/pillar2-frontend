@@ -17,17 +17,15 @@
 package config
 
 import base.SpecBase
-import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.Injector
 import play.api.mvc.RequestHeader
 
-
 class FrontendAppConfigSpec extends SpecBase {
 
-  def injector: Injector          = app.injector
-  val config:   FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-  implicit val mockRequestHeader: RequestHeader = mock[RequestHeader]
+  def injector:                   Injector          = app.injector
+  val config:                     FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  implicit val mockRequestHeader: RequestHeader     = mock[RequestHeader]
 
   "FrontendAppConfig" when {
 
