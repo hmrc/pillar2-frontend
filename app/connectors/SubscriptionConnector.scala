@@ -18,8 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
-import models.subscription._
 import models._
+import models.subscription._
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
