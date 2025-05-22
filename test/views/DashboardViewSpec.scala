@@ -119,22 +119,22 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element  = organisationDashboardView.getElementsByTag("li")
-      val pargraph = organisationDashboardView.getElementsByTag("p")
+      val element   = organisationDashboardView.getElementsByTag("li")
+      val paragraph = organisationDashboardView.getElementsByTag("p")
       element.text() must not include
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       element.text() must not include
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
 
-      pargraph.get(11).text() must include(
+      paragraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
 
     }
 
     "have pillar 2 information with inActive status false" in {
-      val element  = inActiveOrganisationDashboardView.getElementsByTag("li")
-      val pargraph = inActiveOrganisationDashboardView.getElementsByTag("p")
+      val element   = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val paragraph = inActiveOrganisationDashboardView.getElementsByTag("p")
 
       element.get(0).text() must include(
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
@@ -142,10 +142,10 @@ class DashboardViewSpec extends ViewSpecBase {
       element.get(1).text() must include(
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
       )
-      pargraph.get(10).text() must include(
+      paragraph.get(10).text() must include(
         "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
       )
-      pargraph.get(11).text() must include(
+      paragraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
     }
@@ -260,14 +260,14 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element  = organisationDashboardView.getElementsByTag("li")
-      val pargraph = organisationDashboardView.getElementsByTag("p")
+      val element   = organisationDashboardView.getElementsByTag("li")
+      val paragraph = organisationDashboardView.getElementsByTag("p")
 
       element.text() must not include
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       element.text() must not include
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
-      pargraph.get(11).text() must include(
+      paragraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
 
