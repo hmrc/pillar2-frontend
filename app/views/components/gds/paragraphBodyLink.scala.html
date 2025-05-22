@@ -16,6 +16,13 @@
 
 @this()
 
-@(message: String, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link")
+@(message: String, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link", target: Option[String] = None)
 
-<p class="@classes"><a class="@linkClass" href="@linkUrl">@message</a></p>
+@targetAttrs = @{
+  target.map { t =>
+    val rel = if (t == "_blank") """ rel="noopener noreferrer"""" else ""
+    Html(s"""target="$t"$rel""")
+  }
+}
+
+<p class="@classes"><a class="@linkClass" href="@linkUrl" @targetAttrs>@message</a></p>

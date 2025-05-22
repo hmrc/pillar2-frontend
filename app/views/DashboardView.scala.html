@@ -22,9 +22,10 @@
         govukButton: GovukButton,
         h: heading,
         h2: HeadingH2,
-        p: paragraphBody,
+        paragraphBody: paragraphBody,
         bulletList: bulletList,
         paragraphMessageWithLink: ParagraphMessageWithLink,
+        paragraphBodyLink: paragraphBodyLink,
         sectionBreak: SectionBreak,
         inactiveStatusBanner: InactiveStatusBanner
 )
@@ -43,16 +44,16 @@
 
         @h(if(agentView) messages("dashboard.agent.heading") else messages("dashboard.heading"), "govuk-heading-l govuk-!-margin-bottom-7")
 
-        @p(messages("dashboard.topTaxes", plrReference))
-        @p(messages("dashboard.registrationDate", registrationDate))
-        @p(messages("dashboard.upe", organisationName), classes = "govuk-body govuk-!-margin-bottom-7")
+        @paragraphBody(messages("dashboard.topTaxes", plrReference))
+        @paragraphBody(messages("dashboard.registrationDate", registrationDate))
+        @paragraphBody(messages("dashboard.upe", organisationName), classes = "govuk-body govuk-!-margin-bottom-7")
 
         @if(agentView) {
             @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
         }
         <!--PAY YOUR TUT SECTION-->
         @h2(messages("dashboard.payments"), size = "m")
-        @p(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
+        @paragraphBody(if(agentView) messages("dashboard.agent.noPayment") else messages("dashboard.noPayment"))
         @paragraphMessageWithLink(linkMessage = messages("dashboard.voluntaryPayment"), linkUrl = controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
 
         @paragraphMessageWithLink(linkMessage = if(agentView) messages("dashboard.agent.paymentHistory") else messages("dashboard.paymentHistory"), linkUrl = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
@@ -72,25 +73,36 @@
 
         @if(agentView) {
             @if(!inactiveStatus) {
-                @h2(messages("dashboard.whentoSubmitReturn.agent.h2"), size = "m")
-                @p(messages("dashboard.agent.p1"))
+                @h2(messages("dashboard.whenToSubmitReturn.agent.h2"), size = "m")
+                @paragraphBody(messages("dashboard.agent.p1"))
                 @sectionBreak()
-                @p(messages("dashboard.agent.p2"))
+                @paragraphBody(messages("dashboard.agent.p2"))
                 @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
             }
 
 
         } else {
             @if(!inactiveStatus) {
-                @h2(messages("dashboard.whentoSubmitReturn"), size = "m")
-                @p(messages("dashboard.p3"))
+                @h2(messages("dashboard.whenToSubmitReturn"), size = "m")
+                @paragraphBody(messages("dashboard.p3"))
                 @bulletList(items = List(
-                    Html(messages("dashboard.whentoSubmitReturn.p1")),
-                    Html(messages("dashboard.whentoSubmitReturn.p2"))
+                    Html(messages("dashboard.whenToSubmitReturn.p1")),
+                    Html(messages("dashboard.whenToSubmitReturn.p2"))
                 ), additionalListClasses = Some("govuk-list--spaced"))
                 @sectionBreak()
             }
-            @p(messages("dashboard.p1"))
+            @paragraphBody(messages("dashboard.p1"))
             @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
         }
-    }
+
+  @h2(messages("research.heading"), size = "m", extraClasses = Seq("pillar2-research-heading"))
+  @paragraphBody(message = messages("research.body"), classes = "govuk-body pillar2-research-body")
+  @paragraphBodyLink(
+    message = messages("research.link"),
+    linkUrl = appConfig.pillar2ResearchUrl,
+    classes = "govuk-body",
+    linkClass = "govuk-link pillar2-research-link",
+    target = Some("_blank")
+  )
+
+}

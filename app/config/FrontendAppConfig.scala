@@ -99,6 +99,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val googleAnalyticsTrackingId: String = configuration.get[String]("google-analytics.trackingId")
 
+  val pillar2ResearchUrl: String = configuration.get[String]("urls.pillar2Research")
+
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
 

@@ -21,9 +21,12 @@
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         heading: heading,
+        paragraph: paragraph,
         paragraphBody: paragraphBody,
         link: link,
         printLink: printLink,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        paragraphBodyLink: paragraphBodyLink,
         bulletList: bulletList,
         warningText: warningText,
         govukButton: GovukButton,
@@ -63,5 +66,15 @@
         call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
         fullStop = true
     )))
+
+  @heading(messages("research.heading"), "govuk-heading-m govuk-!-margin-top-5 pillar2-research-heading", "h2")
+  @paragraphBody(message = messages("research.body"), classes = "govuk-body pillar2-research-body")
+  @paragraphBodyLink(
+    message = messages("research.link"),
+    linkUrl = appConfig.pillar2ResearchUrl,
+    classes = "govuk-body",
+    linkClass = "govuk-link pillar2-research-link",
+    target = Some("_blank")
+  )
 
 }
