@@ -35,7 +35,7 @@ class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
   "must remove NonUKBankPage when UkBankAccount is selected" in {
     forAll { userAnswers: UserAnswers =>
       val result = userAnswers
-        .set(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+        .set(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
         .success
         .value
         .set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)

@@ -36,8 +36,8 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
     val nonUkBankAccountDetails = NonUKBank(
       nameOnBankAccount = "Paddington",
       bankName = "Bank of Bears",
-      iban = "123132",
-      bic = "11111111"
+      iban = Some("123132"),
+      bic = Some("11111111")
     )
 
     "UkBankAccount" - {
@@ -168,7 +168,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           reasonForRequestingRefund = "The reason for refund",
           ukOrAbroadBankAccount = ForeignBankAccount,
           bankAccountDetails = None,
-          nonUKBank = Some(NonUKBank("Bank of Bears", "Paddington", "11111111", "123132")),
+          nonUKBank = Some(NonUKBank("Bank of Bears", "Paddington", Some("11111111"), Some("123132"))),
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = true,
@@ -205,7 +205,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           reasonForRequestingRefund = "The reason for refund",
           ukOrAbroadBankAccount = ForeignBankAccount,
           bankAccountDetails = None,
-          nonUKBank = Some(NonUKBank("Bank of Bears", "Paddington", "11111111", "123132")),
+          nonUKBank = Some(NonUKBank("Bank of Bears", "Paddington", Some("11111111"), Some("123132"))),
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = false,

@@ -33,7 +33,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "answer for reason")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
-    .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", "HBUKGB4B", "GB29NWBK60161331926819"))
+    .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
     .setOrException(RepaymentsContactNamePage, "contact name")
     .setOrException(RepaymentsContactEmailPage, "test@test.com")
     .setOrException(RepaymentsContactByTelephonePage, true)

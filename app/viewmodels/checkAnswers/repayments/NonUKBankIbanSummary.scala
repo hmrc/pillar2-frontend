@@ -29,11 +29,13 @@ object NonUKBankIbanSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(NonUKBankPage)
-      .map { answer =>
-        SummaryListRowViewModel(
-          key = "repayments.nonUKBank.summary.iban.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.iban))
-        )
+      .flatMap { answer =>
+        answer.iban.map { iban =>
+          SummaryListRowViewModel(
+            key = "repayments.nonUKBank.summary.iban.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(iban))
+          )
+        }
       }
 
 }

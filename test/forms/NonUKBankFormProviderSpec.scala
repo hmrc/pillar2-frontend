@@ -117,11 +117,41 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+    "bind successfully when IBAN is provided" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "",
+          "iban"              -> "GB82WEST12345698765432"
+        )
+      )
+      result.errors mustBe empty
+    }
+
+    "bind successfully when BIC is provided" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "ABCDEF12",
+          "iban"              -> ""
+        )
+      )
+      result.errors mustBe empty
+    }
+
+    "fail to bind when both BIC and IBAN are empty" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "",
+          "iban"              -> ""
+        )
+      )
+      result.errors must contain(FormError(fieldName, requiredKey))
+    }
   }
 
   ".iban" - {
@@ -146,10 +176,40 @@ class NonUKBankFormProviderSpec extends StringFieldBehaviours {
       generator = Some(longStringsConformingToRegex(regex, maxLength))
     )
 
-    behave like mandatoryField(
-      form,
-      fieldName,
-      requiredError = FormError(fieldName, requiredKey)
-    )
+    "bind successfully when BIC is provided" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "ABCDEF12",
+          "iban"              -> ""
+        )
+      )
+      result.errors mustBe empty
+    }
+
+    "bind successfully when IBAN is provided" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "",
+          "iban"              -> "GB82WEST12345698765432"
+        )
+      )
+      result.errors mustBe empty
+    }
+
+    "fail to bind when both BIC and IBAN are empty" in {
+      val result = form.bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "nameOnBankAccount" -> "Test Account",
+          "bic"               -> "",
+          "iban"              -> ""
+        )
+      )
+      result.errors must contain(FormError(fieldName, requiredKey))
+    }
   }
 }

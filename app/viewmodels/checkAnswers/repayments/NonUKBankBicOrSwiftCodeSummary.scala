@@ -29,11 +29,13 @@ object NonUKBankBicOrSwiftCodeSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers
       .get(NonUKBankPage)
-      .map { answer =>
-        SummaryListRowViewModel(
-          key = "repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel",
-          value = ValueViewModel(HtmlContent(answer.bic))
-        )
+      .flatMap { answer =>
+        answer.bic.map { bic =>
+          SummaryListRowViewModel(
+            key = "repayments.nonUKBank.summary.bicOrSwiftCode.checkYourAnswersLabel",
+            value = ValueViewModel(HtmlContent(bic))
+          )
+        }
       }
 
 }
