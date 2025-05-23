@@ -872,11 +872,11 @@ dashboard.requestRefund = Request a refund
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
-dashboard.whentoSubmitReturn = When to submit your returns
-dashboard.whentoSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024
-dashboard.whentoSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
+dashboard.whenToSubmitReturn = When to submit your returns
+dashboard.whenToSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024
+dashboard.whenToSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
 
-dashboard.whentoSubmitReturn.agent.h2 = When to submit your client’s first returns
+dashboard.whenToSubmitReturn.agent.h2 = When to submit your client’s first returns
 dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 Top-up Taxes returns.
 dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
 
@@ -1576,3 +1576,11 @@ manageContactDetails.heading = Submitting your contact details
 manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
+###############################################
+#
+# Pillar 2 Research
+#
+###############################################
+research.heading = Take part in Pillar 2 research
+research.body = Help us improve this online service by taking part in user research.
+research.link = Register for Pillar 2 user research (opens in a new tab)

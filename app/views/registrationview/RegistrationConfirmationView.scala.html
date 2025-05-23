@@ -21,47 +21,58 @@
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         heading: heading,
+        paragraph: paragraph,
         paragraphBody: paragraphBody,
         link: link,
         printLink: printLink,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        paragraphBodyLink: paragraphBodyLink,
         bulletList: bulletList,
         warningText: warningText,
         govukButton: GovukButton,
         govukPanel: GovukPanel
 )
 
-
 @(pil2Id: String, companyName: String, currentDate: String, currentTime: String, mneOrDomestic: MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false) {
 
-    @govukPanel(Panel(
-        title = Text(messages("registrationConfirmation.registrationComplete")),
-        content = HtmlContent(s"""${messages("registrationConfirmation.topup")}<br><strong>$pil2Id</strong>"""),
-        attributes = Map("id" -> "plr2-banner")
-    ))
+  @govukPanel(Panel(
+    title = Text(messages("registrationConfirmation.registrationComplete")),
+    content = HtmlContent(s"""${messages("registrationConfirmation.topup")}<br><strong>$pil2Id</strong>"""),
+    attributes = Map("id" -> "plr2-banner")
+  ))
 
-    @heading(messages("registrationConfirmation.reg-date", currentDate), "govuk-heading-m govuk-!-margin-top-5", "h2")
+  @heading(messages("registrationConfirmation.reg-date", currentDate), "govuk-heading-m govuk-!-margin-top-5", "h2")
 
-    @paragraphBody(messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), currentDate , currentTime))
+  @paragraphBody(messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), currentDate, currentTime))
 
-    @bulletList(items = List(
-        link(text = messages("registrationConfirmation.downloadPdf"),
-            call = Call("GET", controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url),
-            fullStop = false),
-        printLink(messages("registrationConfirmation.print"))
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+  @bulletList(items = List(
+    link(text = messages("registrationConfirmation.downloadPdf"),
+      call = Call("GET", controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url),
+      fullStop = false),
+    printLink(messages("registrationConfirmation.print"))
+  ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
-    @warningText(Html(messages("registrationConfirmation.p2")))
+  @warningText(Html(messages("registrationConfirmation.p2")))
 
-    @paragraphBody(messages("registrationConfirmation.p3"))
+  @paragraphBody(messages("registrationConfirmation.p3"))
 
-    @heading(messages("registrationConfirmation.next"), "govuk-heading-m govuk-!-margin-top-5", "h2")
+  @heading(messages("registrationConfirmation.next"), "govuk-heading-m govuk-!-margin-top-5", "h2")
 
-    @paragraphBody(messages("registrationConfirmation.now", link(
-        text = messages("registrationConfirmation.link-home"),
-        call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
-        fullStop = true
-    )))
+  @paragraphBody(messages("registrationConfirmation.now", link(
+    text = messages("registrationConfirmation.link-home"),
+    call = Call("GET", controllers.routes.DashboardController.onPageLoad.url),
+    fullStop = true
+  )))
+
+  @heading(messages("research.heading"), "govuk-heading-m govuk-!-margin-top-5 pillar2-research-heading", "h2")
+  @paragraphBody(message = messages("research.body"), classes = "govuk-body pillar2-research-body")
+  @paragraphBodyLink(
+    message = messages("research.link"),
+    linkUrl = appConfig.pillar2ResearchUrl,
+    linkClass = "govuk-link pillar2-research-link",
+    target = Some("_blank")
+  )
 
 }

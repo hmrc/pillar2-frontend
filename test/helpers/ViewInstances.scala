@@ -233,6 +233,7 @@ trait ViewInstances extends StubMessageControllerComponents {
       paragraphBody,
       bulletList,
       paragraphMessageWithLink,
+      paragraphBodyLink,
       sectionBreak,
       inactiveStatusBanner
     )

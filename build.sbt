@@ -74,7 +74,7 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
 )
 
 lazy val scoverageSettings = Seq(
-  coverageMinimumStmtTotal := 90.70,
+  coverageMinimumStmtTotal := 90.72,
   coverageMinimumBranchTotal := 86.79,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
