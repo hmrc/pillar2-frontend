@@ -103,6 +103,9 @@ class CheckYourAnswersController @Inject() (
                     case DuplicateSubmissionError =>
                       logger.error("Subscription failed due to a Duplicate Submission")
                       FailedWithDuplicatedSubmission
+                    case UnprocessableEntityError =>
+                      logger.error("Subscription failed due to a business validation error")
+                      FailedWithUnprocessableEntity
                     case DuplicateSafeIdError =>
                       logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
