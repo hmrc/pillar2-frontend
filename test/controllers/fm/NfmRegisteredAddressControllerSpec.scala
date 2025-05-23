@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class NfmRegisteredAddressControllerSpec extends SpecBase {
   val formProvider = new NfmRegisteredAddressFormProvider()
-  val defaultUserAnswers: UserAnswers = emptyUserAnswers
+  val defaultUa: UserAnswers = emptyUserAnswers
     .set(FmRegisteredInUKPage, true)
     .success
     .value
@@ -44,8 +44,8 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-  def application: Application = applicationBuilder(Some(defaultUserAnswers)).build()
-  def applicationOverride: Application = applicationBuilder(Some(defaultUserAnswers))
+  def application: Application = applicationBuilder(Some(defaultUa)).build()
+  def applicationOverride: Application = applicationBuilder(Some(defaultUa))
     .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
     .build()
 
@@ -80,12 +80,12 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
       }
 
       "return OK and the correct view for a GET if Nfm access is enabled and page has previously been answered" in {
-        val userAnswers = defaultUserAnswers
+        val ua = defaultUa
           .set(FmRegisteredAddressPage, nonUkAddress)
           .success
           .value
 
-        val customApplication = applicationBuilder(Some(userAnswers)).build()
+        val customApplication = applicationBuilder(Some(ua)).build()
 
         running(customApplication) {
           val result = route(customApplication, getRequest).value
@@ -108,7 +108,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
         "not include UK if NfmUkBasedPage is false" in {
 
-          val userAnswers = emptyUserAnswers
+          val ua = emptyUserAnswers
             .set(FmRegisteredInUKPage, false)
             .success
             .value
@@ -116,7 +116,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
             .success
             .value
 
-          val customApplication = applicationBuilder(userAnswers = Some(userAnswers)).build()
+          val customApplication = applicationBuilder(userAnswers = Some(ua)).build()
 
           running(customApplication) {
             val result = route(customApplication, getRequest).value
@@ -155,7 +155,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
         "not include UK if NfmUkBasedPage is false" in {
 
-          val userAnswers = emptyUserAnswers
+          val ua = emptyUserAnswers
             .set(FmRegisteredInUKPage, false)
             .success
             .value
@@ -163,7 +163,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
             .success
             .value
 
-          val customApplication = applicationBuilder(Some(userAnswers))
+          val customApplication = applicationBuilder(Some(ua))
             .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
             .build()
 

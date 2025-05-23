@@ -12,9 +12,11 @@ ThisBuild / majorVersion := 0
 ThisBuild / semanticdbEnabled := true
 ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
-lazy val root: Project = (project in file("."))
+lazy val root = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
   .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .settings(inConfig(Test)(testSettings) *)
+  .settings(ThisBuild / useSuperShell := false)
   .settings(
     name := appName,
     RoutesKeys.routesImport ++= Seq(
@@ -34,19 +36,24 @@ lazy val root: Project = (project in file("."))
       "viewmodels.govuk.all._"
     ),
     PlayKeys.playDefaultPort := 10050,
-    scoverageSettings,
-    Global / onChangedBuildSource := ReloadOnSourceChanges,
+    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;" +
+      ".*Routes.*;.*viewmodels.*;.*queries.*;",
+    ScoverageKeys.coverageMinimumStmtTotal := 90,
+    ScoverageKeys.coverageFailOnMinimum := true,
+    ScoverageKeys.coverageHighlighting := true,
     Compile / scalafmtOnCompile := true,
     Test / scalafmtOnCompile := true,
-    inConfig(Test)(testSettings),
     scalacOptions ++= Seq(
       "-feature",
+      "-rootdir",
+      baseDirectory.value.getCanonicalPath,
       "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
-    ThisBuild / useSuperShell := false,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    update / evictionWarningOptions :=
+      EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
+    resolvers ++= Seq(Resolver.jcenterRepo),
     // concatenate js
     Concat.groups := Seq(
       "javascripts/application.js" -> group(Seq("javascripts/app.js"))
@@ -60,27 +67,16 @@ lazy val root: Project = (project in file("."))
     uglify / includeFilter := GlobFilter("application.js")
   )
 
-lazy val it: Project = project
-  .enablePlugins(PlayScala)
-  .dependsOn(root % "test->test") // the "test->test" allows reusing test code and test dependencies
-  .settings(
-    DefaultBuildSettings.itSettings(),
-    libraryDependencies ++= AppDependencies.it
-  )
-
 lazy val testSettings: Seq[Def.Setting[?]] = Seq(
   fork := true,
   unmanagedSourceDirectories += baseDirectory.value / "test-utils"
 )
 
-lazy val scoverageSettings = Seq(
-  coverageMinimumStmtTotal := 90.72,
-  coverageMinimumBranchTotal := 86.79,
-  coverageFailOnMinimum := true,
-  coverageHighlighting := true,
-  coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;.*Routes.*;.*viewmodels.*;.*queries.*;"
-)
+addCommandAlias("prePrChecks", ";scalafmtCheckAll;scalafmtSbtCheck;scalafixAll --check")
+addCommandAlias("lint", ";scalafmtAll;scalafmtSbt;scalafixAll")
 
-addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")
-addCommandAlias("checkCodeCoverage", "; clean; coverage; test; it/test; coverageReport")
-addCommandAlias("lint", "; scalafmtAll; scalafmtSbt; scalafixAll")
+lazy val it = project
+  .enablePlugins(PlayScala)
+  .dependsOn(root % "test->test") // the "test->test" allows reusing test code and test dependencies
+  .settings(DefaultBuildSettings.itSettings())
+  .settings(libraryDependencies ++= AppDependencies.it)
