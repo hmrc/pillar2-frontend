@@ -64,9 +64,23 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.AlreadyRegisteredController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.onPageLoad.url
       }
     }
+
+    " redirect to error page in case of a unprocessable entity response" in {
+      val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.onPageLoad.url
+      }
+    }
+
     " redirect to registration failed error page in case of any failed api responses" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
       val application = applicationBuilder(Some(ua)).build()

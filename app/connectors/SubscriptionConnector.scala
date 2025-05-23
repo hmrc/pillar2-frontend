@@ -18,8 +18,8 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
+import models._
 import models.subscription._
-import models.{DuplicateSubmissionError, InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status._
@@ -46,7 +46,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case response if is2xx(response.status) =>
           logger.info(s" Subscription request is successful with status ${response.status} ")
           response.json.as[SuccessResponse].success.plrReference.toFuture
-        case conflictResponse if conflictResponse.status.equals(CONFLICT) => Future.failed(DuplicateSubmissionError)
+        case conflictResponse if conflictResponse.status.equals(CONFLICT)                                   => Future.failed(DuplicateSubmissionError)
+        case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) => Future.failed(UnprocessableEntityError)
         case errorResponse =>
           logger.debug(
             s"[Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +

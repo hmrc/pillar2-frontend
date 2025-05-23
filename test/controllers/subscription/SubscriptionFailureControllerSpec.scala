@@ -14,31 +14,31 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.subscription
 
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
-class AlreadyRegisteredControllerSpec extends SpecBase {
+class SubscriptionFailureControllerSpec extends SpecBase {
 
-  "AlreadyRegistered Controller" when {
+  "SubscriptionFailure Controller" when {
 
     "must return OK and the continue view" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.AlreadyRegisteredController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.SubscriptionFailureController.onPageLoad.url)
 
         val result = route(application, request).value
 
         status(result) mustEqual OK
 
         val content = contentAsString(result)
-        content must include(messages(application)("alreadyRegistered.heading"))
-        content must include(messages(application)("alreadyRegistered.message1"))
-        content must include(messages(application)("alreadyRegistered.message2"))
+        content must include(messages(application)("subscriptionFailure.heading"))
+        content must include(messages(application)("subscriptionFailure.message1"))
+        content must include(messages(application)("subscriptionFailure.message2"))
       }
     }
 
@@ -46,12 +46,13 @@ class AlreadyRegisteredControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.AlreadyRegisteredController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.SubscriptionFailureController.onPageLoad.url)
         val result  = route(application, request).value
 
         val content = contentAsString(result)
-        content must include(messages(application)("alreadyRegistered.message1"))
-        content must include(messages(application)("alreadyRegistered.message2"))
+        content must include(messages(application)("subscriptionFailure.message1"))
+        content must include(messages(application)("subscriptionFailure.message2"))
+        content must include(messages(application)("subscriptionFailure.support.linkText"))
       }
     }
   }

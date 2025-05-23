@@ -39,6 +39,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
+  def supportUrl(implicit request: RequestHeader): String =
+    s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier&referrerUrl=${SafeRedirectUrl(request.uri).encodedUrl}"
+
   val loginUrl:                    String = configuration.get[String]("urls.login")
   val loginContinueUrl:            String = configuration.get[String]("urls.loginContinue")
   val rfmLoginContinueUrl:         String = configuration.get[String]("urls.rfmLoginContinue")

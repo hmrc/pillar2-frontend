@@ -24,6 +24,7 @@ object SubscriptionStatus extends Enumerable.Implicits {
 
   case object SuccessfullyCompletedSubscription extends WithName("successfullyCompletedSubscription") with SubscriptionStatus
   case object FailedWithDuplicatedSubmission extends WithName("failedWithDuplicatedSubmission") with SubscriptionStatus
+  case object FailedWithUnprocessableEntity extends WithName("failedWithUnprocessableEntity") with SubscriptionStatus
   case object FailedWithInternalIssueError extends WithName("failedWithInternalIssueError") with SubscriptionStatus
   case object FailedWithNoMneOrDomesticValueFoundError extends WithName("failedWithNoMneOrDomesticValueFoundError") with SubscriptionStatus
   case object FailedWithDuplicatedSafeIdError extends WithName("failedWithDuplicateSafeIdError") with SubscriptionStatus
@@ -31,6 +32,7 @@ object SubscriptionStatus extends Enumerable.Implicits {
   val values: Seq[SubscriptionStatus] = Seq(
     SuccessfullyCompletedSubscription,
     FailedWithDuplicatedSubmission,
+    FailedWithUnprocessableEntity,
     FailedWithInternalIssueError,
     FailedWithNoMneOrDomesticValueFoundError,
     FailedWithDuplicatedSafeIdError
