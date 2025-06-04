@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
-import forms.ContactCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
@@ -37,7 +37,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   navigator:                              AmendSubscriptionNavigator,
-  formProvider:                           ContactCaptureTelephoneDetailsFormProvider,
+  formProvider:                           CaptureTelephoneDetailsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ContactCaptureTelephoneDetailsView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
