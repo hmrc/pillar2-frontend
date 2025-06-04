@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.Ops
-import forms.SecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form = new SecondaryTelephoneFormProvider()
+  val form = new CaptureTelephoneDetailsFormProvider()
   val formProvider: Form[String] = form("test")
   val id:           String       = UUID.randomUUID().toString
   val providerId:   String       = UUID.randomUUID().toString

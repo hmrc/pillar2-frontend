@@ -18,7 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
 
   "ContactCaptureTelephoneDetails Controller" when {
 

@@ -41,7 +41,7 @@ class CaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
   ".value" - {
 
-    val fieldName = "telephoneNumber"
+    val fieldName = "value"
 
     behave like mandatoryField(
       form,

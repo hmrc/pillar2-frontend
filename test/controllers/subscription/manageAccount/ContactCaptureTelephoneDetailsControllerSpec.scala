@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.TestAuthRetrievals.Ops
-import forms.ContactCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -37,7 +37,7 @@ import scala.concurrent.Future
 
 class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
   val id:           String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString

@@ -118,9 +118,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("telephoneNumber", "1234567890")
-            )
+            .withFormUrlEncodedBody(("value", "1234567890"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
