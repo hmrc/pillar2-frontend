@@ -20,9 +20,11 @@ import base.SpecBase
 import models.UserAnswers
 import models.subscription.ManageContactDetailsStatus._
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.Mockito._
 import org.scalatest.BeforeAndAfterEach
 import pages.ManageContactDetailsStatusPage
+import play.api.i18n.Messages
+import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -69,14 +71,37 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
         }
       }
 
-      "show spinner and update status when status is InProgress" in {
+      "show spinner when status is InProgress" in {
         val userAnswers = UserAnswers("id")
           .setOrException(ManageContactDetailsStatusPage, InProgress)
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          val request     = FakeRequest(GET, routes.ManageContactDetailsWaitingRoomController.onPageLoad.url)
+          val result      = route(application, request).value
+          val messagesApi = application.injector.instanceOf[MessagesApi]
+          implicit val messages: Messages = messagesApi.preferred(request)
+
+          status(result) mustEqual OK
+          contentAsString(result) must include(messages("manageContactDetails.h1"))
+          verify(mockSessionRepository, never()).set(any())
+        }
+      }
+
+      "redirect to error page when status is Failed" in {
+        val userAnswers = UserAnswers("id")
+          .setOrException(ManageContactDetailsStatusPage, Failed)
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(
@@ -88,8 +113,8 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val request = FakeRequest(GET, routes.ManageContactDetailsWaitingRoomController.onPageLoad.url)
           val result  = route(application, request).value
 
-          status(result) mustEqual OK
-          verify(mockSessionRepository).set(any())
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
         }
       }
 

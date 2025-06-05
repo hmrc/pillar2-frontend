@@ -118,26 +118,26 @@ class ManageContactCheckYourAnswersController @Inject() (
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
       _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(userId, referenceNumber, subscriptionData))
-      updatedAnswers = userAnswers match {
-                         case Some(answers) =>
-                           answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
-                         case None =>
-                           UserAnswers(userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
-                       }
-      _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+      updatedAnswersOnSuccess = userAnswers match {
+                                  case Some(answers) =>
+                                    answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
+                                  case None =>
+                                    UserAnswers(userId)
+                                      .setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
+                                }
+      _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
     } yield ()
 
     result.value
-      .recover {
-        case InternalIssueError =>
-          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
-          None
-        case UnexpectedResponse =>
-          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to UnexpectedResponse")
-          None
-        case e: Exception =>
-          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}")
-          None
+      .recoverWith { case e @ (_: InternalIssueError.type | _: UnexpectedResponse.type | _: Exception) =>
+        logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}", e)
+        sessionRepository
+          .get(userId)
+          .flatMap { maybeUa =>
+            val userAnswersToUpdate = maybeUa.getOrElse(UserAnswers(userId))
+            sessionRepository.set(userAnswersToUpdate.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Failed))
+          }
+          .map(_ => None)
       }
       .map(_ => ())
   }
