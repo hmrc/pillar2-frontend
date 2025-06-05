@@ -96,9 +96,9 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
         }
       }
 
-      "redirect to error page when status is Failed" in {
+      "redirect to error page when status is FailException" in {
         val userAnswers = UserAnswers("id")
-          .setOrException(ManageContactDetailsStatusPage, Failed)
+          .setOrException(ManageContactDetailsStatusPage, FailException)
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
@@ -118,9 +118,9 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
         }
       }
 
-      "redirect to error page when status is unexpected" in {
+      "redirect to error page when status is FailedInternalIssueError" in {
         val userAnswers = UserAnswers("id")
-          .setOrException(ManageContactDetailsStatusPage, FailException)
+          .setOrException(ManageContactDetailsStatusPage, FailedInternalIssueError)
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))

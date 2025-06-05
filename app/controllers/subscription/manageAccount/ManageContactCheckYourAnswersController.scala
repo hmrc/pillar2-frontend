@@ -129,16 +129,26 @@ class ManageContactCheckYourAnswersController @Inject() (
     } yield ()
 
     result.value
-      .recoverWith { case e @ (_: InternalIssueError.type | _: UnexpectedResponse.type | _: Exception) =>
-        logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}", e)
-        sessionRepository
-          .get(userId)
-          .flatMap { maybeUa =>
-            val userAnswersToUpdate = maybeUa.getOrElse(UserAnswers(userId))
-            sessionRepository.set(userAnswersToUpdate.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Failed))
-          }
-          .map(_ => None)
+      .recoverWith {
+        case InternalIssueError =>
+          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailedInternalIssueError)
+        case UnexpectedResponse =>
+          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to UnexpectedResponse")
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
+        case e: Exception =>
+          logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to generic Exception: ${e.getMessage}", e)
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
       }
       .map(_ => ())
   }
+
+  private def setStatusOnFailure(userId: String, status: ManageContactDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+    sessionRepository
+      .get(userId)
+      .flatMap { maybeUa =>
+        val userAnswersToUpdate = maybeUa.getOrElse(UserAnswers(userId))
+        sessionRepository.set(userAnswersToUpdate.setOrException(ManageContactDetailsStatusPage, status))
+      }
+      .map(_ => None)
 }

@@ -59,10 +59,6 @@ class ManageContactDetailsWaitingRoomController @Inject() (
             logger.info(s"[ManageContactDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
             Future.successful(Ok(view(Some(ManageContactDetailsStatus.InProgress))))
 
-          case Some(ManageContactDetailsStatus.Failed) =>
-            logger.warn(s"[ManageContactDetailsWaitingRoom] Failed status detected for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
-
           case Some(ManageContactDetailsStatus.FailException) =>
             logger.warn(s"[ManageContactDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
             Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))

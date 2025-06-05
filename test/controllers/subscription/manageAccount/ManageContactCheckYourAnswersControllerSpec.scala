@@ -339,17 +339,17 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "handle unexpected exception during submission" in {
-        val mockSessionRepository            = mock[SessionRepository]
-        val userAnswers                      = UserAnswers("id")
-        val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-        val finalUserAnswersWithFailed       = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Failed)
+        val mockSessionRepository             = mock[SessionRepository]
+        val userAnswers                       = UserAnswers("id")
+        val initialUserAnswersWithInProgress  = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val finalUserAnswersWithFailException = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailException)
 
         when(mockSessionRepository.get(userAnswers.id))
-          .thenReturn(Future.successful(Some(userAnswers))) // For onSubmit's initial get
-          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress))) // For the get inside the background recover block
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailed)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
@@ -373,7 +373,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailed))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
       }
 
@@ -381,14 +381,16 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val mockSessionRepository            = mock[SessionRepository]
         val userAnswers                      = UserAnswers("id")
         val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-        val finalUserAnswersWithFailed       = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Failed)
+        // Expect FailedInternalIssueError for InternalIssueError
+        val finalUserAnswersWithFailedInternalIssueError =
+          userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailedInternalIssueError)
 
         when(mockSessionRepository.get(userAnswers.id))
-          .thenReturn(Future.successful(Some(userAnswers))) // For onSubmit's initial get
-          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress))) // For the get inside the background recover block
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailed)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(InternalIssueError))
@@ -412,26 +414,25 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
-          Thread.sleep(200) // Allow time for background processing
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailed))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
         }
       }
 
-      "handle other subscription service errors during submission" in {
-        val mockSessionRepository            = mock[SessionRepository]
-        val userAnswers                      = UserAnswers("id")
-        val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-        val finalUserAnswersWithFailed       = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.Failed)
+      "handle UnexpectedResponse during submission" in {
+        val mockSessionRepository             = mock[SessionRepository]
+        val userAnswers                       = UserAnswers("id")
+        val initialUserAnswersWithInProgress  = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val finalUserAnswersWithFailException = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailException)
 
         when(mockSessionRepository.get(userAnswers.id))
-          .thenReturn(Future.successful(Some(userAnswers))) // For onSubmit's initial get
-          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress))) // For the get inside the background recover block
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
-        when(mockSessionRepository.set(finalUserAnswersWithFailed)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
-          .thenReturn(Future.failed(UnexpectedResponse)) // Example of another error
+          .thenReturn(Future.failed(UnexpectedResponse))
 
         val application = applicationBuilder(
           userAnswers = Some(userAnswers),
@@ -452,8 +453,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
-          Thread.sleep(200) // Allow time for background processing
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailed))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
       }
     }
