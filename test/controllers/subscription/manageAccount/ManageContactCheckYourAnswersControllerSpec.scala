@@ -263,11 +263,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
             result
           ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
-          // Verify initial status update
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
-
-          // Wait for background task and verify final status update
-          Thread.sleep(100) // Give background task time to complete
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
         }
       }
@@ -342,7 +338,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
-      "handle unexpected exception during submission (background processing)" in {
+      "handle unexpected exception during submission" in {
         val mockSessionRepository            = mock[SessionRepository]
         val userAnswers                      = UserAnswers("id")
         val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
@@ -377,12 +373,11 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
-          Thread.sleep(200) // Allow time for background processing
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailed))
         }
       }
 
-      "handle InternalIssueError during submission (background processing)" in {
+      "handle InternalIssueError during submission" in {
         val mockSessionRepository            = mock[SessionRepository]
         val userAnswers                      = UserAnswers("id")
         val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
@@ -422,7 +417,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
-      "handle other subscription service errors during submission (background processing)" in {
+      "handle other subscription service errors during submission" in {
         val mockSessionRepository            = mock[SessionRepository]
         val userAnswers                      = UserAnswers("id")
         val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
