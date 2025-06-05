@@ -27,6 +27,7 @@ class CaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
   val maxLength   = 24
 
   val validNumbers: List[String] = List(
+    "0044 123 456 7890",
     "+441234567890",
     "00441234567890",
     "(0044)1234567890",
