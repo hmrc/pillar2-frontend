@@ -57,10 +57,17 @@ class ManageContactDetailsWaitingRoomController @Inject() (
 
           case Some(ManageContactDetailsStatus.InProgress) =>
             logger.info(s"[ManageContactDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
-            sessionRepository.set(
-              refreshedAnswers.get.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
-            )
             Future.successful(Ok(view(Some(ManageContactDetailsStatus.InProgress))))
+
+          case Some(ManageContactDetailsStatus.FailException) =>
+            logger.warn(s"[ManageContactDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+
+          case Some(ManageContactDetailsStatus.FailedInternalIssueError) =>
+            logger.warn(
+              s"[ManageContactDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page"
+            )
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
 
           case _ =>
             logger.warn(s"[ManageContactDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
