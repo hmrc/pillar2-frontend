@@ -62,8 +62,15 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
 
           case Some(InProgress) =>
             logger.info(s"[ManageGroupDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
-            sessionRepository.set(refreshedAnswers.get.setOrException(ManageGroupDetailsStatusPage, SuccessfullyCompleted))
             Future.successful(Ok(view(Some(InProgress))))
+
+          case Some(FailedInternalIssueError) =>
+            logger.warn(s"[ManageGroupDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page")
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+
+          case Some(FailException) =>
+            logger.warn(s"[ManageGroupDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
 
           case _ =>
             logger.warn(s"[ManageGroupDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")

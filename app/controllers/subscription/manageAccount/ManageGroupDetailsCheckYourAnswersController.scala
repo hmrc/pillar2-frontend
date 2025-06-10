@@ -23,7 +23,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.subscription.ManageGroupDetailsStatus
+import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.subscription.ManageGroupDetailsStatus._
 import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
@@ -32,6 +32,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
+import uk.gov.hmrc.auth.core.Enrolment
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers.manageAccount._
 import viewmodels.govuk.summarylist._
@@ -80,35 +82,59 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
       logger.info(s"[ManageGroupDetailsCheckYourAnswers] Submission started for user ${request.userId}")
-      val result = for {
-        userAnswers <- OptionT.liftF(sessionRepository.get(request.userId))
-        referenceNumber <- OptionT
-                             .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
-                             .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(request.enrolments))))
-        _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(request.userId, referenceNumber, request.subscriptionLocalData))
+
+      for {
+        userAnswers <- sessionRepository.get(request.userId)
         updatedAnswers = userAnswers match {
                            case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
                            case None => UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
                          }
-        _ <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        _ <- sessionRepository.set(updatedAnswers)
       } yield {
+        updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
         logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
         Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
       }
-
-      result.value
-        .recover {
-          case InternalIssueError =>
-            logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId} due to InternalIssueError")
-            Some(Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad))
-          case e: Exception =>
-            logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}: ${e.getMessage}")
-            Some(Redirect(routes.JourneyRecoveryController.onPageLoad()))
-        }
-        .map(_.getOrElse {
-          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Submission failed for ${request.userId}")
-          Redirect(routes.JourneyRecoveryController.onPageLoad())
-        })
     }
+
+  private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
+    hc:                                              HeaderCarrier,
+    ec:                                              ExecutionContext
+  ): Future[Unit] = {
+    val result = for {
+      userAnswers <- OptionT.liftF(sessionRepository.get(userId))
+      referenceNumber <- OptionT
+                           .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
+                           .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
+      _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(userId, referenceNumber, subscriptionData))
+      updatedAnswersOnSuccess = userAnswers match {
+                                  case Some(answers) =>
+                                    answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.SuccessfullyCompleted)
+                                  case None =>
+                                    UserAnswers(userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.SuccessfullyCompleted)
+                                }
+      _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
+    } yield ()
+
+    result.value
+      .recoverWith {
+        case InternalIssueError =>
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
+          setStatusOnFailure(userId, ManageGroupDetailsStatus.FailedInternalIssueError)
+        case e: Exception =>
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}")
+          setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)
+      }
+      .map(_ => ())
+  }
+
+  private def setStatusOnFailure(userId: String, status: ManageGroupDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+    sessionRepository
+      .get(userId)
+      .flatMap { maybeUa =>
+        val userAnswersToUpdate = maybeUa.getOrElse(UserAnswers(userId))
+        sessionRepository.set(userAnswersToUpdate.setOrException(ManageGroupDetailsStatusPage, status))
+      }
+      .map(_ => None)
 
 }
