@@ -122,7 +122,6 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
       "must display the check your answers page for any non-InProgress status" in {
         val userAnswers = emptyUserAnswers
-        // Not setting any status - this tests the default case
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
@@ -140,7 +139,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          // Allow view to be called once or more times (due to potential retries)
+
           verify(mockView, org.mockito.Mockito.atLeastOnce()).apply(any())(any(), any(), any())
         }
       }
@@ -208,7 +207,6 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
 
-          // Verify new UserAnswers with InProgress status was set (using matcher to ignore timestamp differences)
           verify(mockSessionRepository).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.id == emptyUserAnswers.id &&
             userAnswers.get(ManageGroupDetailsStatusPage).contains(ManageGroupDetailsStatus.InProgress)
