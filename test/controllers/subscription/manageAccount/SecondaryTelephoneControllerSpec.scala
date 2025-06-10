@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.Ops
-import forms.SecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
@@ -42,7 +42,7 @@ import scala.concurrent.Future
 
 class SecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form = new SecondaryTelephoneFormProvider()
+  val form = new CaptureTelephoneDetailsFormProvider()
   val formProvider: Form[String] = form("test")
   val id:           String       = UUID.randomUUID().toString
   val providerId:   String       = UUID.randomUUID().toString
@@ -105,9 +105,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url)
-            .withFormUrlEncodedBody(("value", bigString))
+            .withFormUrlEncodedBody(("phoneNumber", bigString))
 
-        val boundForm = formProvider.bind(Map("value" -> bigString))
+        val boundForm = formProvider.bind(Map("phoneNumber" -> bigString))
 
         val view = application.injector.instanceOf[SecondaryTelephoneView]
 
@@ -139,7 +139,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url)
-        .withFormUrlEncodedBody("value" -> "12233444")
+        .withFormUrlEncodedBody("phoneNumber" -> "12233444")
 
       running(application) {
         val result = route(application, request).value
@@ -174,7 +174,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url)
-          .withFormUrlEncodedBody("value" -> "123456")
+          .withFormUrlEncodedBody("phoneNumber" -> "123456")
 
         val result = route(application, request).value
 
@@ -269,8 +269,8 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
             POST,
             controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
           )
-            .withFormUrlEncodedBody(("value", bigString))
-        val boundForm = formProvider.bind(Map("value" -> bigString))
+            .withFormUrlEncodedBody(("phoneNumber", bigString))
+        val boundForm = formProvider.bind(Map("phoneNumber" -> bigString))
         val view      = application.injector.instanceOf[SecondaryTelephoneView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -310,7 +310,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         POST,
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url
       )
-        .withFormUrlEncodedBody("value" -> "12233444")
+        .withFormUrlEncodedBody("phoneNumber" -> "12233444")
       when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
         .thenReturn(
           Future.successful(
@@ -356,7 +356,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
           POST,
           controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onSubmit.url
         )
-          .withFormUrlEncodedBody("value" -> "123456")
+          .withFormUrlEncodedBody("phoneNumber" -> "123456")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url

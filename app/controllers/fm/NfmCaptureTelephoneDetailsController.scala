@@ -19,7 +19,7 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.NfmCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
@@ -39,7 +39,7 @@ class NfmCaptureTelephoneDetailsController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 NominatedFilingMemberNavigator,
-  formProvider:              NfmCaptureTelephoneDetailsFormProvider,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmCaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
