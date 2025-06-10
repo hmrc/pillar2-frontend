@@ -91,7 +91,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("phoneNumber", ""))
 
         val result = route(application, request).value
 
@@ -134,7 +134,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("value", "1234567890")
+              ("phoneNumber", "1234567890")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

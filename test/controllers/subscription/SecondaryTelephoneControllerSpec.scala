@@ -90,9 +90,9 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", bigString))
+            .withFormUrlEncodedBody(("phoneNumber", bigString))
 
-        val boundForm = formProvider.bind(Map("value" -> bigString))
+        val boundForm = formProvider.bind(Map("phoneNumber" -> bigString))
 
         val view = application.injector.instanceOf[SecondaryTelephoneView]
 
@@ -132,7 +132,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("value", "123456")
+              ("phoneNumber", "123456")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -143,7 +143,7 @@ class SecondaryTelephoneControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryTelephoneController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "12233444")
+        .withFormUrlEncodedBody("phoneNumber" -> "12233444")
 
       running(application) {
         val result = route(application, request).value

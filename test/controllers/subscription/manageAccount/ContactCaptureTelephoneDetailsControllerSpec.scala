@@ -100,7 +100,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "33333222" * 100))
+            .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
@@ -130,7 +130,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
-          .withFormUrlEncodedBody("value" -> "34323323333")
+          .withFormUrlEncodedBody("phoneNumber" -> "34323323333")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
@@ -230,7 +230,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
-            .withFormUrlEncodedBody(("value", "33333222" * 100))
+            .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
