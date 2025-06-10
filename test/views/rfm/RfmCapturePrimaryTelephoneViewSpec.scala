@@ -17,7 +17,7 @@
 package views.rfm
 
 import base.ViewSpecBase
-import forms.RfmCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +25,7 @@ import views.html.rfm.RfmCapturePrimaryTelephoneView
 
 class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmCaptureTelephoneDetailsFormProvider
+  val formProvider = new CaptureTelephoneDetailsFormProvider
   val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
 
   val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
@@ -33,23 +33,25 @@ class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
   "Rfm Capture Primary Telephone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the telephone number?")
+      view.getElementsByTag("title").text must include("What is the phone number?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is the telephone number for John Doe")
+      view.getElementsByTag("h1").text mustEqual "What is the phone number for John Doe?"
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include("For international numbers include the country code.")
+      view
+        .getElementsByClass("govuk-hint")
+        .text mustEqual "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustEqual "Save and continue"
     }
   }
 }
