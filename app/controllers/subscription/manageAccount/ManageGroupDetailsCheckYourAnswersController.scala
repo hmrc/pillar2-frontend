@@ -23,8 +23,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.subscription.ManageGroupDetailsStatus._
+import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
