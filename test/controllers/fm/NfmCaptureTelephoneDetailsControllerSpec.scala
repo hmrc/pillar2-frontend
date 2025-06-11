@@ -18,7 +18,7 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.NfmCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new NfmCaptureTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
 
   "NfmCaptureTelephoneDetails Controller" when {
 
@@ -91,7 +91,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("phoneNumber", ""))
 
         val result = route(application, request).value
 
@@ -134,7 +134,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("value", "1234567890")
+              ("phoneNumber", "1234567890")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

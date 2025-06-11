@@ -19,7 +19,7 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.SecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
@@ -39,7 +39,7 @@ class SecondaryTelephoneController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 SubscriptionNavigator,
-  formProvider:              SecondaryTelephoneFormProvider,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
