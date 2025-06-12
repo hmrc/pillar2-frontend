@@ -298,16 +298,8 @@ rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact
 rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
-rfmCaptureTelephoneDetails.title = What is the telephone number?
-rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-rfmCaptureTelephoneDetails.hint = For international numbers include the country code.
-rfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
-rfmCaptureTelephoneDetails.messages.error.length = Telephone number must be 24 characters or less
-rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format, for example 01632 960 001 or +44 808 157 0192
 rfmCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
-
-
 
 under_construction.heading = Under Construction
 under_construction.error.heading = Under Construction Error
@@ -1070,13 +1062,7 @@ rfm.secondaryTelephonePreference.hint = We will call if we have any questions ab
 rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
-rfm.secondaryTelephone.title = What is the telephone number?
-rfm.secondaryTelephone.heading = What is the telephone number for {0}?
-rfm.secondaryTelephone.hint = For international numbers include the country code.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
-rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
-rfm.secondaryTelephone.error.format = Enter a telephone number in the correct format, for example 01632 960 001 or +44 808 157 0192
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
