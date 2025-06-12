@@ -17,44 +17,71 @@
 package forms
 
 import forms.behaviours.StringFieldBehaviours
-import org.scalacheck.Gen
-import play.api.data.Form
+import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.data.FormError
-
-import scala.collection.immutable.Seq
 class CaptureTelephoneDetailsFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey = "captureTelephoneDetails.error.required"
   val lengthKey   = "captureTelephoneDetails.messages.error.length"
   val formatKey   = "captureTelephoneDetails.messages.error.format"
-  val formatReg   = Validation.TELEPHONE_REGEX
+  val maxLength   = 24
 
-  val invalidPhoneNumberGen: Gen[String] = Gen.oneOf(
-    Gen.const("++44 1234 567890"),
-    Gen.const("+44 1234 567890  "),
-    Gen.const("123$!abc"),
-    Gen.const("abc123")
+  val validNumbers: List[String] = List(
+    "0044 123 456 7890",
+    "+441234567890",
+    "00441234567890",
+    "(0044)1234567890",
+    "+44(0)1234567890",
+    "+44 1234567890",
+    "+44/1234567890",
+    "+44-1234567890",
+    "0044 1234567890",
+    "0044/1234567890",
+    "+44 1234567890#123"
   )
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
-  val form: Form[String] = formProvider("test")
+  val numbersViolatingAtLeastOneRegex: List[String] = List(
+    "+1 (800) 12-1 ext 9",
+    "+91-9876543210 ext.42",
+    "11021113751 ext 111",
+    "+61.2.9876.5432 x99",
+    "+44 20 7946.0958",
+    "abc123",
+    "!!"
+  )
+
+  val form = new CaptureTelephoneDetailsFormProvider()("test-user")
 
   ".value" - {
 
-    val fieldName = "telephoneNumber"
+    val fieldName = "phoneNumber"
 
     behave like mandatoryField(
       form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq("test"))
+      requiredError = FormError(fieldName, requiredKey, List("test-user"))
     )
 
-    behave like fieldWithRegex(
+    behave like fieldWithMaxLength(
       form,
       fieldName,
-      regex = formatReg,
-      regexViolationGen = invalidPhoneNumberGen,
-      regexError = FormError(fieldName, formatKey, Seq("test"))
+      maxLength = maxLength,
+      lengthError = FormError(fieldName, lengthKey, List(maxLength)),
+      generator = Some("1234567890123456789012345")
     )
+
+    numbersViolatingAtLeastOneRegex.foreach { num =>
+      s"must not accept invalid number: $num" in {
+        val result = form.bind(Map(fieldName -> num))
+        result.errors shouldEqual Seq(FormError(fieldName, formatKey))
+      }
+    }
+
+    validNumbers.foreach { num =>
+      s"must accept valid number: $num" in {
+        val result = form.bind(Map(fieldName -> num))
+        result.errors shouldEqual Seq()
+      }
+    }
   }
 }

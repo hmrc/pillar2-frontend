@@ -413,12 +413,12 @@ contactUPEByTelephone.error.required = Select yes if we can contact {0} by telep
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden = can we contact the Ultimate Parent Entity by telephone
 captureTelephoneDetails.heading.caption = Group details
-captureTelephoneDetails.title = What is the telephone number?
-captureTelephoneDetails.heading = What is the telephone number for {0}?
-captureTelephoneDetails.hint = For international numbers include the country code.
-captureTelephoneDetails.error.required = Enter the telephone number for {0}
-captureTelephoneDetails.messages.error.length = Telephone number should be 24 characters or less
-captureTelephoneDetails.messages.error.format = Enter the telephone number for {0} in the correct format, for example 01632 960 001 or +44 808 157 0192
+captureTelephoneDetails.title = What is the phone number?
+captureTelephoneDetails.heading = What is the phone number for {0}?
+captureTelephoneDetails.hint = For international numbers include the country code, for example<br>+44 808 157 0192 or 0044 808 157 0192.<br><br>To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123.
+captureTelephoneDetails.error.required = Enter the phone number for {0}
+captureTelephoneDetails.messages.error.length = Phone number should be 24 characters or less
+captureTelephoneDetails.messages.error.format = Enter the phone number using numbers and the allowed symbols, # ( ) + -
 captureTelephoneDetails.change.hidden = the telephone number for the Ultimate Parent Entity contact
 captureTelephoneDetails.checkYourAnswersLabel = Telephone number
 
@@ -635,12 +635,6 @@ contactNfmByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactNfmByTelephone.error.required = Select yes if we can contact {0} by telephone
 
 nfmCaptureTelephoneDetails.heading.caption = Group details
-nfmCaptureTelephoneDetails.title = What is the telephone number?
-nfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-nfmCaptureTelephoneDetails.hint = For international numbers include the country code
-nfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
-nfmCaptureTelephoneDetails.error.length = The telephone number must be 24 characters or less
-nfmCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, for example 01632 960 001 or +44 808 157 0192
 
 nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the telephone number for the nominated filing member
 contactNfmByTelephone.checkYourAnswersLabel.hidden = can we contact the nominated filing member by telephone
@@ -715,13 +709,6 @@ contactByTelephone.error.required = Select yes if we can contact {0} by telephon
 contactByTelephone.change.hidden = can we contact the primary contact by telephone?
 
 contactCaptureTelephoneDetails.heading.caption = Contact details
-contactCaptureTelephoneDetails.title = What is the telephone number?
-contactCaptureTelephoneDetails.heading = What is the telephone number for {0}?
-contactCaptureTelephoneDetails.hint = For international numbers include the country code.
-contactCaptureTelephoneDetails.error.required = Enter telephone number for {0}
-contactCaptureTelephoneDetails.error.length = Telephone number must be 24 characters or less
-contactCaptureTelephoneDetails.error.format = Enter the telephone number for {0} in the correct format, for example 01632 960 001 or +44 808 157 0192
-contactCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the contact telephone number
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
 contactNameCompliance.change.hidden = the primary contact name
@@ -799,13 +786,7 @@ secondaryTelephonePreference.hint = We will only use this to contact you about P
 secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
-secondaryTelephone.title = What is the telephone number?
-secondaryTelephone.heading = What is the telephone number for {0}?
-secondaryTelephone.hint = For international numbers include the country code.
 secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
-secondaryTelephone.error.required = Enter the telephone number for {0}
-secondaryTelephone.error.length = Telephone number must be 24 characters or less
-secondaryTelephone.error.format = Enter the telephone number for {0} in the correct format, for example 01632 960 001 or +44 808 157 0192
 
 checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 Top-up Taxes

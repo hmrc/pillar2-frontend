@@ -18,7 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new ContactCaptureTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
 
   "ContactCaptureTelephoneDetails Controller" when {
 
@@ -94,7 +94,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "33333222" * 100))
+            .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
@@ -117,7 +117,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("value", "123456")
+              ("phoneNumber", "123456")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
-import forms.SecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryCapturePhonePage, SubSecondaryContactNamePage, SubSecondaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
@@ -37,7 +37,7 @@ class SecondaryTelephoneController @Inject() (
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   navigator:                              AmendSubscriptionNavigator,
-  formProvider:                           SecondaryTelephoneFormProvider,
+  formProvider:                           CaptureTelephoneDetailsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   SecondaryTelephoneView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
