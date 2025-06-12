@@ -46,6 +46,8 @@ addressLine2.error.xss = Second line of the address you enter must not include t
 town_city.error.xss = The town or city you enter must not include the following characters <, >, " or &
 region.error.xss = The region you enter must not include the following characters <, >, " or &
 country.error.xss = The country you enter must not include the following characters <, >, " or &
+addressLine.error.xss.with.ampersand = Enter the address using only letters, numbers, and the allowed symbols, / - , . \ &
+addressLine.error.xss = Enter the address using only letters, numbers, and the allowed symbols, / - , . \
 
 ###############################################
 #
