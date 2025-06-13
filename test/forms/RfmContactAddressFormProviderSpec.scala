@@ -22,20 +22,21 @@ import play.api.data.FormError
 
 class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
-  val form                      = new RfmContactAddressFormProvider()()
-  val XSS_REGEX                 = """^[^<>"&]*$"""
-  val XSS_REGEX_ALLOW_AMPERSAND = """^[^<>"]*$"""
+  val form                               = new RfmContactAddressFormProvider()()
+  final val XSS_REGEX                    = Validation.XSS_REGEX
+  final val ADDRESS_REGEX_WITH_AMPERSAND = Validation.ADDRESS_REGEX_WITH_AMPERSAND
+  final val ADDRESS_REGEX                = Validation.ADDRESS_REGEX
 
   ".addressLine1" - {
     val FIELD_NAME   = "addressLine1"
     val REQUIRED_KEY = "rfmContactAddress.error.addressLine1.required"
     val LENGTH_KEY   = "rfmContactAddress.error.addressLine1.length"
-    val XSS_KEY      = "addressLine1.error.xss"
+    val XSS_KEY      = "addressLine.error.xss.with.ampersand"
 
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX_WITH_AMPERSAND, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -43,13 +44,13 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(ADDRESS_REGEX_WITH_AMPERSAND, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regex = ADDRESS_REGEX_WITH_AMPERSAND,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
@@ -64,12 +65,12 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine2" - {
     val FIELD_NAME = "addressLine2"
     val LENGTH_KEY = "rfmContactAddress.error.addressLine2.length"
-    val XSS_KEY    = "addressLine2.error.xss"
+    val XSS_KEY    = "addressLine.error.xss"
 
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -77,13 +78,13 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(ADDRESS_REGEX, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = XSS_REGEX,
+      regex = ADDRESS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
@@ -93,11 +94,11 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "addressLine3"
     val REQUIRED_KEY = "rfmContactAddress.town_city.error.required"
     val LENGTH_KEY   = "rfmContactAddress.town_city.error.length"
-    val XSS_KEY      = "town_city.error.xss"
+    val XSS_KEY      = "addressLine.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -105,13 +106,13 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(ADDRESS_REGEX, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = XSS_REGEX,
+      regex = ADDRESS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
@@ -126,11 +127,11 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
   ".addressLine4" - {
     val FIELD_NAME = "addressLine4"
     val LENGTH_KEY = "rfmContactAddress.region.error.length"
-    val XSS_KEY    = "region.error.xss"
+    val XSS_KEY    = "addressLine.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -138,13 +139,13 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(ADDRESS_REGEX, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = XSS_REGEX,
+      regex = ADDRESS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
