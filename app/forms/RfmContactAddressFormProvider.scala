@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
+import forms.Validation.{XSS_REGEX, ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -64,14 +64,14 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
             )
         ),
       "postalCode" -> optionalPostcode().verifying(
-        regexp(ADDRESS_REGEX, "addressLine.error.xss")
+        regexp(XSS_REGEX, "address.postcode.error.xss")
       ),
       "countryCode" ->
         text("rfmContactAddress.country.error.required")
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfmContactAddress.country.error.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(XSS_REGEX, "country.error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)

@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
+import forms.Validation.{XSS_REGEX, ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -69,7 +69,7 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "subscriptionAddress.country.error.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(XSS_REGEX, "country.error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
