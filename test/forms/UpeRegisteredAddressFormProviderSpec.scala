@@ -148,13 +148,13 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".postalCode" - {
     val FIELD_NAME = "postalCode"
-    val XSS_KEY    = "addressLine.error.xss"
+    val XSS_KEY    = "address.postcode.error.xss"
     behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = ADDRESS_REGEX,
+      regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
