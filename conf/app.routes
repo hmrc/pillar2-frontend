@@ -15,6 +15,7 @@ GET         /error/restart-error                                                
 
 GET         /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onPageLoad
 POST        /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onSubmit
+GET         /registration-in-progress/:plrReference                                                 controllers.RegistrationInProgressController.onPageLoad(plrReference: String)
 GET         /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/change-match-hmrc-records                                             controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)

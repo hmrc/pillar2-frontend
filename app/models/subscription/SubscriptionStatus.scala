@@ -23,6 +23,7 @@ sealed trait SubscriptionStatus
 object SubscriptionStatus extends Enumerable.Implicits {
 
   case object SuccessfullyCompletedSubscription extends WithName("successfullyCompletedSubscription") with SubscriptionStatus
+  case object RegistrationInProgress extends WithName("registrationInProgress") with SubscriptionStatus
   case object FailedWithDuplicatedSubmission extends WithName("failedWithDuplicatedSubmission") with SubscriptionStatus
   case object FailedWithUnprocessableEntity extends WithName("failedWithUnprocessableEntity") with SubscriptionStatus
   case object FailedWithInternalIssueError extends WithName("failedWithInternalIssueError") with SubscriptionStatus
@@ -31,6 +32,7 @@ object SubscriptionStatus extends Enumerable.Implicits {
 
   val values: Seq[SubscriptionStatus] = Seq(
     SuccessfullyCompletedSubscription,
+    RegistrationInProgress,
     FailedWithDuplicatedSubmission,
     FailedWithUnprocessableEntity,
     FailedWithInternalIssueError,

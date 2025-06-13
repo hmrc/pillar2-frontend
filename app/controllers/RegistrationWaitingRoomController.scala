@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.subscription.SubscriptionStatus._
-import pages.SubscriptionStatusPage
+import pages.{PlrReferencePage, SubscriptionStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -42,7 +42,14 @@ class RegistrationWaitingRoomController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(SubscriptionStatusPage) match {
-      case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      case Some(SuccessfullyCompletedSubscription) => Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      case Some(RegistrationInProgress) =>
+        request.userAnswers.get(PlrReferencePage) match {
+          case Some(plrReference) => Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrReference))
+          case None =>
+            logger.warn("RegistrationInProgress status found but no PLR reference available")
+            Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+        }
       case Some(FailedWithDuplicatedSubmission)           => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithUnprocessableEntity)            => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)

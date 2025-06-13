@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import models.UserAnswers
 import models.subscription.SubscriptionStatus._
-import pages.SubscriptionStatusPage
+import pages.{PlrReferencePage, SubscriptionStatusPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.RegistrationWaitingRoomView
@@ -53,6 +53,33 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
+      }
+    }
+    " redirect to registration in progress page when status is RegistrationInProgress and PLR reference is available" in {
+      val plrReference = "XMPLR0012345674"
+      val ua: UserAnswers = emptyUserAnswers
+        .setOrException(SubscriptionStatusPage, RegistrationInProgress)
+        .setOrException(PlrReferencePage, plrReference)
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad(plrReference).url
+      }
+    }
+    " redirect to journey recovery page when status is RegistrationInProgress but PLR reference is missing" in {
+      val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, RegistrationInProgress)
+      val application = applicationBuilder(Some(ua)).build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
     " redirect to error page in case of a duplicated submission response" in {

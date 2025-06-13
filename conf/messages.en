@@ -296,8 +296,16 @@ rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact
 rfmContactByTelephone.change.hidden = can we contact the primary contact by telephone
 
 rfmCaptureTelephoneDetails.heading.caption = Contact details
+rfmCaptureTelephoneDetails.title = What is the telephone number?
+rfmCaptureTelephoneDetails.heading = What is the telephone number for {0}?
+rfmCaptureTelephoneDetails.hint = For international numbers include the country code.
+rfmCaptureTelephoneDetails.error.required = Enter the telephone number for {0}
+rfmCaptureTelephoneDetails.messages.error.length = Telephone number must be 24 characters or less
+rfmCaptureTelephoneDetails.messages.error.format = Enter a telephone number in the correct format, for example 01632 960 001 or +44 808 157 0192
 rfmCaptureTelephoneDetails.change.hidden = the telephone number for the primary contact
 rfmCaptureTelephoneDetails.checkYourAnswersLabel = Telephone number
+
+
 
 under_construction.heading = Under Construction
 under_construction.error.heading = Under Construction Error
@@ -1060,7 +1068,13 @@ rfm.secondaryTelephonePreference.hint = We will call if we have any questions ab
 rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by telephone?
 rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by telephone
 
+rfm.secondaryTelephone.title = What is the telephone number?
+rfm.secondaryTelephone.heading = What is the telephone number for {0}?
+rfm.secondaryTelephone.hint = For international numbers include the country code.
 rfm.secondaryTelephone.checkYourAnswersLabel = Second contact telephone number
+rfm.secondaryTelephone.error.required = You need to enter the telephone for {0}
+rfm.secondaryTelephone.error.length = The telephone number should be 24 characters or less
+rfm.secondaryTelephone.error.format = Enter a telephone number in the correct format, for example 01632 960 001 or +44 808 157 0192
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
@@ -1552,3 +1566,24 @@ manageContactDetails.h2 = Do not press back in your browser or leave this page. 
 research.heading = Take part in Pillar 2 research
 research.body = Help us improve this online service by taking part in user research.
 research.link = Register for Pillar 2 user research (opens in a new tab)
+
+# Registration In Progress Page
+registrationInProgress.title = Registration in progress
+registrationInProgress.notification.title = Important
+registrationInProgress.notification.heading = Your registration is in progress
+registrationInProgress.notification.message = We are processing your registration. This may take a few minutes.
+registrationInProgress.heading = Registration in progress
+registrationInProgress.plrReference = Your reference: {0}
+registrationInProgress.whenToSubmit.heading = When to submit
+registrationInProgress.whenToSubmit.message = You can submit your registration once all required information is provided.
+registrationInProgress.whenToSubmit.bullet1 = Check your details are correct
+registrationInProgress.whenToSubmit.bullet2 = Make sure you have all supporting documents ready
+registrationInProgress.phaseApproach.heading = Phase approach
+registrationInProgress.phaseApproach.message = This service follows a phased approach to implementation.
+registrationInProgress.phaseApproach.bullet1 = Phase 1: Initial registration
+registrationInProgress.phaseApproach.bullet2 = Phase 2: Full compliance reporting
+registrationInProgress.whatHappensNext.heading = What happens next
+registrationInProgress.whatHappensNext.message = We will contact you once your registration is complete.
+registrationInProgress.whatHappensNext.bullet1 = You will receive a confirmation email
+registrationInProgress.whatHappensNext.bullet2 = Your Pillar 2 reference will be activated
+
