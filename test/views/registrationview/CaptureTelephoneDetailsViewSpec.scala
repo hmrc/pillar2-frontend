@@ -14,30 +14,30 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.registrationview
 
 import base.ViewSpecBase
 import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmCapturePrimaryTelephoneView
+import views.html.registrationview.CaptureTelephoneDetailsView
 
-class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
+class CaptureTelephoneDetailsViewSpec extends ViewSpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
+  val page: CaptureTelephoneDetailsView = inject[CaptureTelephoneDetailsView]
 
   val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
-  "Rfm Capture Primary Telephone View" should {
+  "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include("What is the phone number?")
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
+      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
     }
 
     "have a heading" in {

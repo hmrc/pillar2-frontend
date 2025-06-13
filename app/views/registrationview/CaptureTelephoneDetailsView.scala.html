@@ -44,11 +44,11 @@
 
         @govukInput(
             InputViewModel(
-                field = form("telephoneNumber"),
+                field = form("phoneNumber"),
                 label = LabelViewModel(messages("captureTelephoneDetails.heading", UserName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
-            .withHint(Hint(content = Text(messages("captureTelephoneDetails.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.hint"))))
         )
 
         @govukButton(

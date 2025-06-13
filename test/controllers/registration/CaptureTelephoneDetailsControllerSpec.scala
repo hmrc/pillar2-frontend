@@ -86,7 +86,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody("value" -> "adsasd")
+            .withFormUrlEncodedBody("phoneNumber" -> "adsasd")
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
       }
@@ -118,9 +118,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(
-              ("telephoneNumber", "1234567890")
-            )
+            .withFormUrlEncodedBody(("phoneNumber", "1234567890"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url

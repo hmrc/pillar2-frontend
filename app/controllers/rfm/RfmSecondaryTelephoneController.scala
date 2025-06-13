@@ -19,7 +19,7 @@ package controllers.rfm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.RfmSecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmSecondaryCapturePhonePage, RfmSecondaryContactNamePage}
@@ -39,7 +39,7 @@ class RfmSecondaryTelephoneController @Inject() (
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   navigator:                        ReplaceFilingMemberNavigator,
-  formProvider:                     RfmSecondaryTelephoneFormProvider,
+  formProvider:                     CaptureTelephoneDetailsFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmSecondaryTelephoneView
 )(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)

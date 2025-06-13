@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.TELEPHONE_REGEX
+import forms.Validation.{REGISTRATION_TELEPHONE_REGEX, TELEPHONE_REGEX}
 import forms.mappings.Mappings
 import play.api.data.Form
 
@@ -25,9 +25,12 @@ import javax.inject.Inject
 class CaptureTelephoneDetailsFormProvider @Inject() extends Mappings {
   private val phoneNumberLength = 24
   def apply(userName: String): Form[String] = Form(
-    "telephoneNumber" ->
+    "phoneNumber" ->
       text("captureTelephoneDetails.error.required", Seq(userName))
         .verifying(maxLength(phoneNumberLength, "captureTelephoneDetails.messages.error.length"))
-        .verifying(regexp(TELEPHONE_REGEX, "captureTelephoneDetails.messages.error.format", Seq(userName)))
+        .verifying(
+          "captureTelephoneDetails.messages.error.format",
+          value => REGISTRATION_TELEPHONE_REGEX.r.matches(value) && TELEPHONE_REGEX.r.matches(value)
+        )
   )
 }

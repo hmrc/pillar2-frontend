@@ -14,23 +14,22 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import forms.CaptureTelephoneDetailsFormProvider
-import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmCapturePrimaryTelephoneView
+import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsView
 
-class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
+class ContactCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
+  val page: ContactCaptureTelephoneDetailsView = inject[ContactCaptureTelephoneDetailsView]
 
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe")(request, appConfig, messages).toString())
 
-  "Rfm Capture Primary Telephone View" should {
+  "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include("What is the phone number?")
@@ -51,7 +50,7 @@ class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Save and continue"
+      view.getElementsByClass("govuk-button").text mustEqual "Continue"
     }
   }
 }

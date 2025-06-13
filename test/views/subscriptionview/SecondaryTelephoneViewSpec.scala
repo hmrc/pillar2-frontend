@@ -14,23 +14,23 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.subscriptionview
 
 import base.ViewSpecBase
 import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.rfm.RfmCapturePrimaryTelephoneView
+import views.html.subscriptionview.SecondaryTelephoneView
 
-class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
+class SecondaryTelephoneViewSpec extends ViewSpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
+  val page: SecondaryTelephoneView = inject[SecondaryTelephoneView]
 
   val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
 
-  "Rfm Capture Primary Telephone View" should {
+  "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
       view.getElementsByTag("title").text must include("What is the phone number?")

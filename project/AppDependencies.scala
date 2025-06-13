@@ -1,7 +1,6 @@
 import sbt.*
 
 object AppDependencies {
-  val bootstrapVersion                      = "9.12.0"
   val catsCoreVersion                       = "2.13.0"
   val commonsIoVersion                      = "2.19.0"
   val enumeratumPlayJsonVersion             = "1.8.2"
@@ -9,13 +8,15 @@ object AppDependencies {
   val jsoupVersion                          = "1.20.1"
   val mockitoVersion                        = "3.2.18.0"
   val mockitoScalaVersion                   = "1.17.45"
-  val mongoVersion                          = "2.6.0"
   val playConditionalFormMappingPlayVersion = "3.3.0"
   val playFrontendHmrcPlayVersion           = "12.1.0"
   val randomDataGeneratorVersion            = "2.9"
   val scalacheckGenRegexpVersion            = "1.1.0"
   val scalatestplusScalacheckVersion        = "3.1.0.0-RC2"
 
+  val mongoVersion     = "2.6.0"
+  val bootstrapVersion = "9.13.0"
+  
   val compile: Seq[ModuleID] = Seq(
     play.sbt.PlayImport.ws,
     "uk.gov.hmrc"           %% "play-frontend-hmrc-play-30"            % playFrontendHmrcPlayVersion,

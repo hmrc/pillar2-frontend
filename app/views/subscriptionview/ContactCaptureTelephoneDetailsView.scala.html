@@ -32,7 +32,7 @@
 
 @(form: Form[_], mode: Mode, userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactCaptureTelephoneDetails.title"))) {
+@layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
 
     @formHelper(action = controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(mode)) {
@@ -45,11 +45,11 @@
 
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("contactCaptureTelephoneDetails.heading", userName)).asPageHeading(Large)
+                field = form("phoneNumber"),
+                label = LabelViewModel(messages("captureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
-            .withHint(Hint(content = Text(messages("contactCaptureTelephoneDetails.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.hint"))))
         )
 
         @govukButton(

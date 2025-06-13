@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmCaptureTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
 
-  val formProvider = new RfmCaptureTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
 
   "Rfm Capture Telephone Details Controller" when {
 
@@ -91,7 +91,7 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("telephoneNumber", "123456789")
+              ("phoneNumber", "123456789")
             )
 
         val result = route(application, request).value
@@ -110,9 +110,9 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", "abc"))
+            .withFormUrlEncodedBody(("phoneNumber", "abc"))
 
-        val boundForm = formProvider("name").bind(Map("value" -> "abc"))
+        val boundForm = formProvider("name").bind(Map("phoneNumber" -> "abc"))
 
         val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
 
@@ -133,9 +133,9 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", bigString))
+            .withFormUrlEncodedBody(("phoneNumber", bigString))
 
-        val boundForm = formProvider("name").bind(Map("value" -> bigString))
+        val boundForm = formProvider("name").bind(Map("phoneNumber" -> bigString))
 
         val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
 
@@ -154,9 +154,9 @@ class RfmCapturePrimaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", ""))
+            .withFormUrlEncodedBody(("phoneNumber", ""))
 
-        val boundForm = formProvider("name").bind(Map("value" -> ""))
+        val boundForm = formProvider("name").bind(Map("phoneNumber" -> ""))
 
         val view = application.injector.instanceOf[RfmCapturePrimaryTelephoneView]
 

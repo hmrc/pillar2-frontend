@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmSecondaryTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -34,7 +34,7 @@ import scala.concurrent.Future
 
 class RfmSecondaryTelephoneControllerSpec extends SpecBase {
 
-  val form = new RfmSecondaryTelephoneFormProvider()
+  val form = new CaptureTelephoneDetailsFormProvider()
   val formProvider: Form[String] = form("test")
 
   "RFM SecondaryTelephone Controller" when {
@@ -100,7 +100,7 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
 
         val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(NormalMode).url)
-          .withFormUrlEncodedBody(("value", "1234567"))
+          .withFormUrlEncodedBody(("phoneNumber", "1234567"))
 
         val result = route(application, request).value
 
@@ -119,9 +119,9 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
       running(application) {
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("value", bigString))
+            .withFormUrlEncodedBody(("phoneNumber", bigString))
 
-        val boundForm = formProvider.bind(Map("value" -> bigString))
+        val boundForm = formProvider.bind(Map("phoneNumber" -> bigString))
 
         val view = application.injector.instanceOf[RfmSecondaryTelephoneView]
 
@@ -152,7 +152,7 @@ class RfmSecondaryTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(NormalMode).url)
-        .withFormUrlEncodedBody("value" -> "12233444")
+        .withFormUrlEncodedBody("phoneNumber" -> "12233444")
 
       running(application) {
         val result = route(application, request).value

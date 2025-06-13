@@ -30,24 +30,22 @@
 
 @(form: Form[_], mode: Mode, userName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("rfm.secondaryTelephone.title"))) {
-
-    @sectionHeader(messages("rfm.secondaryContactEmail.heading.caption"))
+@layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
     @formHelper(action = controllers.rfm.routes.RfmSecondaryTelephoneController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
-        <!-- <span class="govuk-caption-l">@messages("rfm.secondaryContactEmail.heading.caption")</span> -->
 
+        @sectionHeader(messages("rfm.secondaryContactEmail.heading.caption"))
         @govukInput(
             InputViewModel(
-                field = form("value"),
-                label = LabelViewModel(messages("rfm.secondaryTelephone.heading", userName)).asPageHeading(Large)
+                field = form("phoneNumber"),
+                label = LabelViewModel(messages("captureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
                     .withWidth(TwoThirds)
-                    .withHint(Hint(content = Text(messages("rfm.secondaryTelephone.hint"))))
+                    .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.hint"))))
         )
 
         @govukButton(
