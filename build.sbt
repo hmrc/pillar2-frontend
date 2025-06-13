@@ -45,6 +45,7 @@ lazy val root: Project = (project in file("."))
     ),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
+    ThisBuild / useSuperShell := false,
     update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     // concatenate js
     Concat.groups := Seq(
