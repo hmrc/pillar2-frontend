@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{XSS_REGEX, ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
+import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.UKAddress
@@ -62,7 +62,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               )
             )
         ),
-      "postalCode" -> mandatoryPostcode().verifying(regexp(ADDRESS_REGEX, "addressLine.error.xss")),
+      "postalCode" -> mandatoryPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
           .verifying(

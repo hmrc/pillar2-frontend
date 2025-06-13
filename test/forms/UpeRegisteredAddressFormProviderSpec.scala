@@ -24,6 +24,7 @@ import play.api.data.FormError
 class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form                               = new UpeRegisteredAddressFormProvider()()
+  final val XSS_REGEX                    = Validation.XSS_REGEX
   final val ADDRESS_REGEX_WITH_AMPERSAND = Validation.ADDRESS_REGEX_WITH_AMPERSAND
   final val ADDRESS_REGEX                = Validation.ADDRESS_REGEX
 
@@ -164,11 +165,11 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "countryCode"
     val REQUIRED_KEY = "upeRegisteredAddress.country.error.required"
     val LENGTH_KEY   = "upeRegisteredAddress.country.error.length"
-    val XSS_KEY      = "addressLine.error.xss"
+    val XSS_KEY      = "country.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -181,7 +182,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = ADDRESS_REGEX,
+      regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )

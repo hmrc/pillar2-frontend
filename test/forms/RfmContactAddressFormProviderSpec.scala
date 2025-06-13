@@ -23,6 +23,7 @@ import play.api.data.FormError
 class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form                               = new RfmContactAddressFormProvider()()
+  final val XSS_REGEX                    = Validation.XSS_REGEX
   final val ADDRESS_REGEX_WITH_AMPERSAND = Validation.ADDRESS_REGEX_WITH_AMPERSAND
   final val ADDRESS_REGEX                = Validation.ADDRESS_REGEX
 
@@ -153,14 +154,14 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
   ".postalCode" - {
     val FIELD_NAME = "postalCode"
-    val XSS_KEY    = "addressLine.error.xss"
+    val XSS_KEY    = "address.postcode.error.xss"
 
     behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = ADDRESS_REGEX,
+      regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
@@ -170,11 +171,11 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
     val FIELD_NAME   = "countryCode"
     val REQUIRED_KEY = "rfmContactAddress.country.error.required"
     val LENGTH_KEY   = "rfmContactAddress.country.error.length"
-    val XSS_KEY      = "addressLine.error.xss"
+    val XSS_KEY      = "country.error.xss"
     behave like fieldThatBindsValidData(
       form,
       FIELD_NAME,
-      nonEmptyRegexConformingStringWithMaxLength(ADDRESS_REGEX, maxAddressLineLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX, maxAddressLineLength)
     )
 
     behave like fieldWithMaxLength(
@@ -182,13 +183,13 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
       FIELD_NAME,
       maxLength = maxAddressLineLength,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(maxAddressLineLength)),
-      generator = Some(longStringsConformingToRegex(ADDRESS_REGEX, maxAddressLineLength))
+      generator = Some(longStringsConformingToRegex(XSS_REGEX, maxAddressLineLength))
     )
 
     behave like fieldWithRegex(
       form,
       FIELD_NAME,
-      regex = ADDRESS_REGEX,
+      regex = XSS_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )

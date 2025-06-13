@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{XSS_REGEX, ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND}
+import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress

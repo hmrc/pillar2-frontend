@@ -186,15 +186,19 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
       errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
+      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
+      errorList must include("The country you enter must not include the following characters <, >, \" or &")
       val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
-      addressErrorCount mustBe 6
+      addressErrorCount mustBe 4
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
       fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
       fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
+      errorList   must include("The postcode you enter must not include the following characters <, >, \" or &")
+      errorList   must include("The country you enter must not include the following characters <, >, \" or &")
       val addressFieldCount =
         StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
-      addressFieldCount mustBe 6
+      addressFieldCount mustBe 4
     }
 
   }
