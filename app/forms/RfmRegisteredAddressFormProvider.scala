@@ -16,8 +16,7 @@
 
 package forms
 
-import forms.Validation.XSS_REGEX
-import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
+import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -35,7 +34,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine1.length"),
-              regexp(XSS_REGEX_ALLOW_AMPERSAND, "addressLine1.error.xss")
+              regexp(ADDRESS_REGEX_WITH_AMPERSAND, "addressLine.error.xss.with.ampersand")
             )
           ),
       "addressLine2" -> optional(
@@ -43,7 +42,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine2.length"),
-              regexp(XSS_REGEX, "addressLine2.error.xss")
+              regexp(ADDRESS_REGEX, "addressLine.error.xss")
             )
           )
       ),
@@ -52,7 +51,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.town_city.error.length"),
-              regexp(XSS_REGEX, "town_city.error.xss")
+              regexp(ADDRESS_REGEX, "addressLine.error.xss")
             )
           ),
       "addressLine4" ->
@@ -61,7 +60,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "rfm.registeredAddress.region.error.length"),
-                regexp(XSS_REGEX, "region.error.xss")
+                regexp(ADDRESS_REGEX, "addressLine.error.xss")
               )
             )
         ),
