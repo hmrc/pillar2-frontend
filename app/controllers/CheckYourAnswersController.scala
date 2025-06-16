@@ -25,6 +25,7 @@ import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus._
 import pages._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.SubscriptionStartTimePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -40,6 +41,7 @@ import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
 import scala.concurrent.{ExecutionContext, Future}
+import java.time.LocalDateTime
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -90,6 +92,7 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(PlrReferencePage, plr)
                                  .setOrException(PdfRegistrationDatePage, formattedCurrentDate)
                                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
+                                 .setOrException(SubscriptionStartTimePage, LocalDateTime.now())
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield SuccessfullyCompletedSubscription)

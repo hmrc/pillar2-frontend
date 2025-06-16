@@ -23,12 +23,12 @@
         heading: heading
 )
 
-@(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(subscriptionStatus: Option[SubscriptionStatus], refreshInterval: Option[Int] = Some(2))(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
 
-  @if(subscriptionStatus.isEmpty) {
-    <meta http-equiv="refresh" content="2" />
+  @if(refreshInterval.isDefined && refreshInterval.get > 0) {
+    <meta http-equiv="refresh" content="@refreshInterval.get" />
   }
 
   <div class="hods-loading-spinner">

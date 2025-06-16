@@ -1569,21 +1569,23 @@ research.link = Register for Pillar 2 user research (opens in a new tab)
 
 # Registration In Progress Page
 registrationInProgress.title = Registration in progress
-registrationInProgress.notification.title = Important
-registrationInProgress.notification.heading = Your registration is in progress
-registrationInProgress.notification.message = We are processing your registration. This may take a few minutes.
-registrationInProgress.heading = Registration in progress
-registrationInProgress.plrReference = Your reference: {0}
-registrationInProgress.whenToSubmit.heading = When to submit
-registrationInProgress.whenToSubmit.message = You can submit your registration once all required information is provided.
-registrationInProgress.whenToSubmit.bullet1 = Check your details are correct
-registrationInProgress.whenToSubmit.bullet2 = Make sure you have all supporting documents ready
-registrationInProgress.phaseApproach.heading = Phase approach
-registrationInProgress.phaseApproach.message = This service follows a phased approach to implementation.
-registrationInProgress.phaseApproach.bullet1 = Phase 1: Initial registration
-registrationInProgress.phaseApproach.bullet2 = Phase 2: Full compliance reporting
-registrationInProgress.whatHappensNext.heading = What happens next
-registrationInProgress.whatHappensNext.message = We will contact you once your registration is complete.
-registrationInProgress.whatHappensNext.bullet1 = You will receive a confirmation email
-registrationInProgress.whatHappensNext.bullet2 = Your Pillar 2 reference will be activated
+registrationInProgress.banner.heading = Your registration is in progress
+registrationInProgress.banner.message = We are processing your registration. You can check this page in one hour to see your full group account homepage.
+
+# Dashboard content - matches prototype  
+dashboard.title = Your Pillar 2 Top-up Taxes account
+dashboard.pillar2Id = Group's Pillar 2 Top-up Taxes ID
+dashboard.whenToSubmit.heading = When to submit your returns
+dashboard.whenToSubmit.message = Your group must submit your Pillar 2 Top-up Taxes returns no late than:
+dashboard.whenToSubmit.bullet1 = 18 months after the last day of the group's accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024
+dashboard.whenToSubmit.bullet2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
+
+dashboard.phaseApproach.message = HMRC are currently delivering this service on a phased approach. We'll release the tools that you need to submit your returns before the due date for reporting.
+dashboard.phaseApproach.link = Refer to the Pillar 2 Top-up Taxes manual (opens in new tab)
+
+dashboard.research.heading = Take part in Pillar 2 research  
+dashboard.research.message = Help us improve this online service by taking part in user research.
+dashboard.research.link = Register for Pillar 2 user research
+
+dashboard.feedback.link = Is this page not working properly? (opens in new tab)
 

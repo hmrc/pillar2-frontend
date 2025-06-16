@@ -27,7 +27,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET with PLR reference" in {
       val plrReference = "XMPLR0012345674"
-      val application = applicationBuilder().build()
+      val application  = applicationBuilder().build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.RegistrationInProgressController.onPageLoad(plrReference).url)
@@ -42,4 +42,4 @@ class RegistrationInProgressControllerSpec extends SpecBase {
     }
 
   }
-} 
+}

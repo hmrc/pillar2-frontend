@@ -27,13 +27,13 @@ import javax.inject.Inject
 
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
-  identify: IdentifierAction,
-  view: RegistrationInProgressView
-)(implicit appConfig: FrontendAppConfig)
+  identify:                 IdentifierAction,
+  view:                     RegistrationInProgressView
+)(implicit appConfig:       FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify { implicit request =>
     Ok(view(plrReference))
   }
-} 
+}

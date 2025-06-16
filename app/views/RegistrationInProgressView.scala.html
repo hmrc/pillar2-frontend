@@ -22,7 +22,8 @@
     govukNotificationBanner: GovukNotificationBanner,
     heading: heading,
     bulletList: bulletList,
-    paragraphBody: paragraphBody
+    paragraphBody: paragraphBody,
+    link: link
 )
 
 @(plrReference: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -30,38 +31,56 @@
 @layout(pageTitle = titleNoForm(messages("registrationInProgress.title"))) {
 
     @govukNotificationBanner(NotificationBanner(
-        title = Text(messages("registrationInProgress.notification.title")),
+        title = Text(messages("site.important")),
         content = HtmlContent(s"""
             <h3 class="govuk-notification-banner__heading">
-                ${messages("registrationInProgress.notification.heading")}
+                ${messages("registrationInProgress.banner.heading")}
             </h3>
-            <p class="govuk-body">${messages("registrationInProgress.notification.message")}</p>
+            <p class="govuk-body">${messages("registrationInProgress.banner.message")}</p>
         """),
         bannerType = Some("success")
     ))
 
-    @heading(messages("registrationInProgress.heading"))
+    @heading(messages("dashboard.title"))
+    
+    <p class="govuk-body">
+        <strong>@messages("dashboard.pillar2Id"):</strong> @plrReference
+    </p>
 
-    @paragraphBody(messages("registrationInProgress.plrReference", plrReference))
-
-    @heading(messages("registrationInProgress.whenToSubmit.heading"), "govuk-heading-m", "h2")
-    @paragraphBody(messages("registrationInProgress.whenToSubmit.message"))
+    @heading(messages("dashboard.whenToSubmit.heading"), "govuk-heading-m", "h2")
+    <p class="govuk-body">@messages("dashboard.whenToSubmit.message")</p>
+    
     @bulletList(Seq(
-        Html(messages("registrationInProgress.whenToSubmit.bullet1")),
-        Html(messages("registrationInProgress.whenToSubmit.bullet2"))
+        Html(messages("dashboard.whenToSubmit.bullet1")),
+        Html(messages("dashboard.whenToSubmit.bullet2"))
     ))
 
-    @heading(messages("registrationInProgress.phaseApproach.heading"), "govuk-heading-m", "h2")
-    @paragraphBody(messages("registrationInProgress.phaseApproach.message"))
-    @bulletList(Seq(
-        Html(messages("registrationInProgress.phaseApproach.bullet1")),
-        Html(messages("registrationInProgress.phaseApproach.bullet2"))
-    ))
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-    @heading(messages("registrationInProgress.whatHappensNext.heading"), "govuk-heading-m", "h2")
-    @paragraphBody(messages("registrationInProgress.whatHappensNext.message"))
-    @bulletList(Seq(
-        Html(messages("registrationInProgress.whatHappensNext.bullet1")),
-        Html(messages("registrationInProgress.whatHappensNext.bullet2"))
-    ))
+    <p class="govuk-body">@messages("dashboard.phaseApproach.message")</p>
+    <p class="govuk-body">
+        @link(
+            text = messages("dashboard.phaseApproach.link"),
+            call = Call("GET", appConfig.pillar2ManualUrl),
+            target = Some("_blank")
+        )
+    </p>
+
+    @heading(messages("dashboard.research.heading"), "govuk-heading-m", "h2")
+    <p class="govuk-body">@messages("dashboard.research.message")</p>
+    <p class="govuk-body">
+        @link(
+            text = messages("dashboard.research.link"),
+            call = Call("GET", appConfig.pillar2ResearchUrl),
+            target = Some("_blank")
+        )
+    </p>
+
+    <p class="govuk-body">
+        @link(
+            text = messages("dashboard.feedback.link"),
+            call = Call("GET", "#"),
+            target = Some("_blank")
+        )
+    </p>
 } 
