@@ -19,8 +19,8 @@ package views.fmview
 import base.ViewSpecBase
 import forms.NfmRegisteredAddressFormProvider
 import models.NonUKAddress
-import org.apache.commons.lang3.StringUtils
 import models.NormalMode
+import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
