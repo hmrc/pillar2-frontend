@@ -23,4 +23,4 @@ case object SubscriptionAttemptCountPage extends QuestionPage[Int] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "subscriptionAttemptCount"
-} 
+}

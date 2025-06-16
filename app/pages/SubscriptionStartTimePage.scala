@@ -25,4 +25,4 @@ case object SubscriptionStartTimePage extends QuestionPage[LocalDateTime] {
   override def path: JsPath = JsPath \ toString
 
   override def toString: String = "subscriptionStartTime"
-} 
+}

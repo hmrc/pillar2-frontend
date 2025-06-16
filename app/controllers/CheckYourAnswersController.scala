@@ -23,9 +23,9 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import models._
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus._
+import pages.SubscriptionStartTimePage
 import pages._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
-import pages.SubscriptionStartTimePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.json.Json
@@ -40,8 +40,8 @@ import viewmodels.govuk.summarylist._
 import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
-import scala.concurrent.{ExecutionContext, Future}
 import java.time.LocalDateTime
+import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
