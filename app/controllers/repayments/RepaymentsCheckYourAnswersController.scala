@@ -66,56 +66,51 @@ class RepaymentsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       if (request.userAnswers.isRepaymentsJourneyCompleted) {
         for {
           optionalSessionData <- sessionRepository.get(request.userAnswers.id)
           sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
           updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsStatusPage, InProgress))
           _              <- sessionRepository.set(updatedAnswers)
-        } yield (): Unit
-        val repaymentsStatus = (for {
-          repaymentData      <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
-          _                  <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
-          repaymentAuditData <- fromOption[Future](request.userAnswers.getRepaymentAuditDetail)
-          _                  <- OptionT.liftF(auditService.auditRepayments(repaymentAuditData))
-        } yield SuccessfullyCompleted).value
-          .flatMap {
-            case Some(result) => Future.successful(result)
-            case _            => Future.successful(UnexpectedResponseError)
-          }
-          .recover {
-            case UnexpectedResponse => UnexpectedResponseError
-            case _: Exception => IncompleteDataError
-          }
-        for {
-          updatedStatus <- repaymentsStatus
-          success = (updatedStatus == SuccessfullyCompleted)
-          optionalSessionData <- sessionRepository.get(request.userAnswers.id)
-          sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-          updatedAnswers  <- Future.fromTry(sessionData.set(RepaymentsStatusPage, updatedStatus))
-          updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
-          updatedAnswers1 <-
-            if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
-          updatedAnswers2 <-
-            if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByTelephonePage)) else Future.successful(updatedAnswers1)
-          updatedAnswers3 <- if (success) Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
-          updatedAnswers4 <- if (success) Future.fromTry(updatedAnswers3.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers3)
-          updatedAnswers5 <- if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
-          updatedAnswers6 <-
-            if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsTelephoneDetailsPage)) else Future.successful(updatedAnswers5)
-          updatedAnswers7 <- if (success) Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
-          updatedAnswers8 <-
-            if (success) Future.fromTry(updatedAnswers7.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers7)
-          updatedAnswers9  <- if (success) Future.fromTry(updatedAnswers8.remove(NonUKBankPage)) else Future.successful(updatedAnswers8)
-          updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
-          _                <- sessionRepository.set(updatedAnswers10)
-        } yield (): Unit
-        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+          repaymentsStatus <- (for {
+                                repaymentData      <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
+                                _                  <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
+                                repaymentAuditData <- fromOption[Future](request.userAnswers.getRepaymentAuditDetail)
+                                _                  <- OptionT.liftF(auditService.auditRepayments(repaymentAuditData))
+                              } yield SuccessfullyCompleted).value
+                                .flatMap {
+                                  case Some(result) => Future.successful(result)
+                                  case _            => Future.successful(UnexpectedResponseError)
+                                }
+                                .recover {
+                                  case UnexpectedResponse => UnexpectedResponseError
+                                  case _: Exception => IncompleteDataError
+                                }
+          success = (repaymentsStatus == SuccessfullyCompleted)
+          optionalSessionData2 <- sessionRepository.get(request.userAnswers.id)
+          sessionData2 = optionalSessionData2.getOrElse(UserAnswers(request.userId))
+          updatedAnswers2 <- Future.fromTry(sessionData2.set(RepaymentsStatusPage, repaymentsStatus))
+          updatedAnswers3 <- if (success) Future.fromTry(updatedAnswers2.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers2)
+          updatedAnswers4 <-
+            if (success) Future.fromTry(updatedAnswers3.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers3)
+          updatedAnswers5 <-
+            if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsContactByTelephonePage)) else Future.successful(updatedAnswers4)
+          updatedAnswers6 <- if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers5)
+          updatedAnswers7 <- if (success) Future.fromTry(updatedAnswers6.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers6)
+          updatedAnswers8 <- if (success) Future.fromTry(updatedAnswers7.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers7)
+          updatedAnswers9 <-
+            if (success) Future.fromTry(updatedAnswers8.remove(RepaymentsTelephoneDetailsPage)) else Future.successful(updatedAnswers8)
+          updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers9)
+          updatedAnswers11 <-
+            if (success) Future.fromTry(updatedAnswers10.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers10)
+          updatedAnswers12 <- if (success) Future.fromTry(updatedAnswers11.remove(NonUKBankPage)) else Future.successful(updatedAnswers11)
+          updatedAnswers13 <- if (success) Future.fromTry(updatedAnswers12.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers12)
+          _                <- sessionRepository.set(updatedAnswers13)
+        } yield Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
       } else {
-        Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
       }
-
     }
 
   private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =

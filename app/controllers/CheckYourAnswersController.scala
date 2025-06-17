@@ -75,10 +75,10 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.finalStatusCheck) {
       subscriptionService.getCompanyName(request.userAnswers) match {
-        case Left(errorRedirect) => errorRedirect
+        case Left(errorRedirect) => Future.successful(errorRedirect)
         case Right(companyName) =>
           val subscriptionStatus: Future[WithName with SubscriptionStatus] =
             request.userAnswers
@@ -128,12 +128,10 @@ class CheckYourAnswersController @Inject() (
             sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
             updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
             _                  <- sessionRepository.set(updatedSessionData)
-          } yield (): Unit
-
-          Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+          } yield Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
       }
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
 
