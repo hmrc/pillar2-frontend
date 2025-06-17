@@ -376,6 +376,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
@@ -439,6 +440,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
         ).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)
@@ -471,6 +473,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit.url)

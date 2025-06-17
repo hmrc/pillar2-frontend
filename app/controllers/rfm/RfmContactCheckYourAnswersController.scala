@@ -93,50 +93,49 @@ class RfmContactCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
     if (request.userAnswers.isRfmJourneyCompleted) {
-      updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
-      val rfmStatus = (for {
-        newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
-        subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-        amendData <-
-          liftF(
-            subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
-          )
-        _ <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-        _ <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
-        upeEnrolmentInfo <- liftF(
-                              subscriptionService.getUltimateParentEnrolmentInformation(
-                                subscriptionData = subscriptionData,
-                                pillar2Reference = newFilingMemberInformation.plrReference,
-                                request.userIdForEnrolment
-                              )
-                            )
-        groupId <- fromOption[Future](request.groupId)
-        _ <- liftF(subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo))
-        _ <- liftF(userAnswersConnectors.remove(request.userId))
-        _ <- liftF(updateSessionData(request.userAnswers, PlrReferencePage, newFilingMemberInformation.plrReference))
-        _ <- if (isNewNfmNonUkBased(newFilingMemberInformation)) { liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) }
-             else { liftF(Future.unit) }
-      } yield SuccessfullyCompleted).value
-        .flatMap {
-          case Some(result) => Future.successful(result)
-          case _            => Future.successful(FailException)
-        }
-        .recover {
-          case InternalIssueError | UnexpectedResponse => FailedInternalIssueError
-          case _: Exception => FailException
-        }
       for {
-        updatedRfmStatus    <- rfmStatus
-        optionalSessionData <- sessionRepository.get(request.userAnswers.id)
-        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, updatedRfmStatus))
-        _                  <- sessionRepository.set(updatedSessionData)
-      } yield (): Unit
-      Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
+        _ <- updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
+        rfmStatus <- (for {
+                       newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
+                       subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
+                       amendData <-
+                         liftF(
+                           subscriptionService
+                             .createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
+                         )
+                       _ <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+                       _ <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+                       upeEnrolmentInfo <- liftF(
+                                             subscriptionService.getUltimateParentEnrolmentInformation(
+                                               subscriptionData = subscriptionData,
+                                               pillar2Reference = newFilingMemberInformation.plrReference,
+                                               request.userIdForEnrolment
+                                             )
+                                           )
+                       groupId <- fromOption[Future](request.groupId)
+                       _ <- liftF(
+                              subscriptionService
+                                .allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo)
+                            )
+                       _ <- liftF(userAnswersConnectors.remove(request.userId))
+                       _ <- liftF(updateSessionData(request.userAnswers, PlrReferencePage, newFilingMemberInformation.plrReference))
+                       _ <- if (isNewNfmNonUkBased(newFilingMemberInformation)) {
+                              liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation))
+                            } else { liftF(Future.unit) }
+                     } yield SuccessfullyCompleted).value
+                       .flatMap {
+                         case Some(result) => Future.successful(result)
+                         case _            => Future.successful(FailException)
+                       }
+                       .recover {
+                         case InternalIssueError | UnexpectedResponse => FailedInternalIssueError
+                         case _: Exception => FailException
+                       }
+        _ <- updateSessionData(request.userAnswers, RfmStatusPage, rfmStatus)
+      } yield Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
     } else {
       Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }
-
   }
 
   private def isNewNfmNonUkBased(newFilingMemberInformation: NewFilingMemberDetail): Boolean =
