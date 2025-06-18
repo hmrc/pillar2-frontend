@@ -22,79 +22,96 @@
     h: heading,
     h2: HeadingH2,
     paragraphBody: paragraphBody,
+    paragraph: paragraph,
     bulletList: bulletList,
     paragraphMessageWithLink: ParagraphMessageWithLink,
+    paragraphBodyLink: paragraphBodyLink,
     link: link,
-    sectionBreak: SectionBreak
+    sectionBreak: SectionBreak,
+    govukNotificationBanner: GovukNotificationBanner,
+    govukDetails: GovukDetails
 )
 
 @(plrReference: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
 @layout(pageTitle = titleNoForm(messages("registrationInProgress.title"))) {
 
-    <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
-        <div class="govuk-notification-banner__header">
-            <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
-                @messages("site.important")
-            </h2>
-        </div>
-        <div class="govuk-notification-banner__content">
-            <h3 class="govuk-notification-banner__heading">
-                @messages("registrationInProgress.banner.heading")
-            </h3>
-            <p class="govuk-body">
-                @messages("registrationInProgress.banner.message")
-            </p>
-        </div>
-    </div>
+    @govukNotificationBanner(NotificationBanner(
+        title = Text(messages("site.important")),
+        content = HtmlContent(s"""
+            ${messages("registrationInProgress.banner.heading")}
+            ${messages("registrationInProgress.banner.message")}
+        """)
+    ))
 
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
+    @h(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
+    
+    @paragraphBody(messages("dashboard.topTaxes", plrReference), classes = "govuk-body govuk-!-margin-bottom-7")
 
-            @h(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
-            
-            @paragraphBody(messages("dashboard.topTaxes", plrReference))
-            <br>
-            <br>
+    @h2(messages("dashboard.whenToSubmit.heading"), size = "m")
+    @paragraphBody(messages("dashboard.whenToSubmit.message"))
+    @bulletList(items = List(
+        Html(messages("dashboard.whenToSubmit.bullet1")),
+        Html(messages("dashboard.whenToSubmit.bullet2"))
+    ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+    @sectionBreak()
 
-            @h2(messages("dashboard.whenToSubmit.heading"), size = "m")
-            @paragraphBody(messages("dashboard.whenToSubmit.message"))
-            
-            @bulletList(items = Seq(
-                Html(messages("dashboard.whenToSubmit.bullet1")),
-                Html(messages("dashboard.whenToSubmit.bullet2"))
-            ), additionalListClasses = Some("govuk-list--spaced"))
+    @paragraphBody(messages("dashboard.phaseApproach.message"))
+    @paragraphMessageWithLink(
+        linkMessage = messages("dashboard.phaseApproach.link"),
+        message2 = Some("for more details."),
+        linkUrl = appConfig.pillar2ManualUrl,
+        target = "_blank"
+    )
 
-            @sectionBreak()
+    @sectionBreak()
 
-            @paragraphBody(messages("dashboard.phaseApproach.message"))
-            @paragraphMessageWithLink(
-                linkMessage = messages("dashboard.phaseApproach.link"),
-                linkUrl = appConfig.pillar2ManualUrl,
-                linkClass = "govuk-link",
-                linkRel = "noopener noreferrer", 
-                target = "_blank"
-            )
+    @h2(messages("dashboard.research.heading"), size = "m", extraClasses = Seq("govuk-!-margin-top-5"))
+    @paragraphBody(messages("dashboard.research.message"))
+    @paragraphMessageWithLink(
+        linkMessage = messages("dashboard.research.link"),
+        linkUrl = appConfig.pillar2ResearchUrl,
+        target = "_blank"
+    )
 
-            @sectionBreak()
+    @sectionBreak()
 
-            @h2(messages("dashboard.research.heading"), size = "m", extraClasses = Seq("govuk-!-margin-top-5"))
-            @paragraphBody(messages("dashboard.research.message"))
-            @paragraphMessageWithLink(
-                linkMessage = messages("dashboard.research.link"),
-                linkUrl = appConfig.pillar2ResearchUrl,
-                linkClass = "govuk-link",
-                target = "_blank"
-            )
+    @paragraphBodyLink(messages("dashboard.feedback.link"), "#", classes = "govuk-body")
 
-            <br>
-            @paragraphMessageWithLink(
-                linkMessage = messages("dashboard.feedback.link"),
-                linkUrl = "#",
-                linkClass = "govuk-link",
-                target = "_blank"
-            )
+    @govukDetails(Details(
+        summary = Text("Page Scenarios"),
+        content = HtmlContent(s"""
+            ${h2("Scenarios", size = "l").toString}
+            ${bulletList(items = List(
+                link(
+                    text = "Full home",
+                    call = Call("GET", "/current/pillar2-top-up-tax-home"),
+                    fullStop = false
+                ),
+                link(
+                    text = "No details: ETMP Asynchronous Subscription Changes",
+                    call = Call("GET", "/current/pillar2-top-up-tax-home-no-details"),
+                    fullStop = false
+                ),
+                link(
+                    text = "Inactive",
+                    call = Call("GET", "/current/pillar2-top-up-tax-home-inactive"),
+                    fullStop = false
+                ),
+                link(
+                    text = "No Payments",
+                    call = Call("GET", "/current/pillar2-top-up-tax-home-no-payments"),
+                    fullStop = false
+                ),
+                Html(s"${link(
+                    text = "[See Release 2 homepage]",
+                    call = Call("GET", "/current/home/index"),
+                    fullStop = false,
+                    classes = Some("govuk-!-font-weight-bold")
+                )}")
+            ), additionalListClasses = Some("govuk-list govuk-list--bullet")).toString}
+        """),
+        attributes = Map("class" -> "govuk-!-margin-top-4")
+    ))
 
-        </div>
-    </div>
 } 
