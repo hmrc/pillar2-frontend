@@ -30,56 +30,65 @@
 
 @layout(pageTitle = titleNoForm(messages("registrationInProgress.title"))) {
 
-    @govukNotificationBanner(NotificationBanner(
-        title = Text(messages("site.important")),
-        content = HtmlContent(s"""
-            <h3 class="govuk-notification-banner__heading">
-                ${messages("registrationInProgress.banner.heading")}
-            </h3>
-            <p class="govuk-body">${messages("registrationInProgress.banner.message")}</p>
-        """)
-    ))
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
 
-    @heading(messages("dashboard.title"))
-    
-    <p class="govuk-body">
-        <strong>@messages("dashboard.pillar2Id"):</strong> @plrReference
-    </p>
+            @govukNotificationBanner(NotificationBanner(
+                title = Text(messages("site.important")),
+                content = HtmlContent(s"""
+                    <h3 class="govuk-notification-banner__heading">
+                        ${messages("registrationInProgress.banner.heading")}
+                    </h3>
+                    <p class="govuk-body">${messages("registrationInProgress.banner.message")}</p>
+                """)
+            ))
 
-    @heading(messages("dashboard.whenToSubmit.heading"), "govuk-heading-m", "h2")
-    <p class="govuk-body">@messages("dashboard.whenToSubmit.message")</p>
-    
-    @bulletList(Seq(
-        Html(messages("dashboard.whenToSubmit.bullet1")),
-        Html(messages("dashboard.whenToSubmit.bullet2"))
-    ))
+            @heading(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
+            
+            <p class="govuk-body"><strong>@messages("dashboard.pillar2Id"):</strong> @plrReference</p>
+            <br>
+            <br>
 
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            @heading(messages("dashboard.whenToSubmit.heading"), "govuk-heading-m", "h2")
+            <p class="govuk-body">@messages("dashboard.whenToSubmit.message")</p>
+            
+            @bulletList(Seq(
+                Html(messages("dashboard.whenToSubmit.bullet1")),
+                Html(messages("dashboard.whenToSubmit.bullet2"))
+            ))
 
-    <p class="govuk-body">@messages("dashboard.phaseApproach.message")</p>
-    <p class="govuk-body">
-        @link(
-            text = messages("dashboard.phaseApproach.link"),
-            call = Call("GET", appConfig.pillar2ManualUrl),
-            target = Some("_blank")
-        )
-    </p>
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-    @heading(messages("dashboard.research.heading"), "govuk-heading-m", "h2")
-    <p class="govuk-body">@messages("dashboard.research.message")</p>
-    <p class="govuk-body">
-        @link(
-            text = messages("dashboard.research.link"),
-            call = Call("GET", appConfig.pillar2ResearchUrl),
-            target = Some("_blank")
-        )
-    </p>
+            <p class="govuk-body">@messages("dashboard.phaseApproach.message")</p>
+            <p class="govuk-body">
+                @link(
+                    text = messages("dashboard.phaseApproach.link"),
+                    call = Call("GET", appConfig.pillar2ManualUrl),
+                    target = Some("_blank")
+                )
+            </p>
 
-    <p class="govuk-body">
-        @link(
-            text = messages("dashboard.feedback.link"),
-            call = Call("GET", "#"),
-            target = Some("_blank")
-        )
-    </p>
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+            @heading(messages("dashboard.research.heading"), "govuk-heading-m govuk-!-margin-top-5", "h2")
+            <p class="govuk-body">@messages("dashboard.research.message")</p>
+            <p class="govuk-body">
+                @link(
+                    text = messages("dashboard.research.link"),
+                    call = Call("GET", appConfig.pillar2ResearchUrl),
+                    target = Some("_blank")
+                )
+            </p>
+
+            <br>
+            <p class="govuk-body">
+                @link(
+                    text = messages("dashboard.feedback.link"),
+                    call = Call("GET", "#"),
+                    target = Some("_blank")
+                )
+            </p>
+
+        </div>
+    </div>
 } 
