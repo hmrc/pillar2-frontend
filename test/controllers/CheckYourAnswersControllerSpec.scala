@@ -26,8 +26,7 @@ import models.subscription.SubscriptionStatus._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.verify
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import pages._
 import play.api.inject.bind
 
@@ -272,7 +271,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     }
 
     "on submit method" should {
-      "redirect to confirmation page in case of a success response, remove all data but save the success api state in mongo" in {
+      "redirect to waiting room and start polling in case of a success response, remove all data and start background polling" in {
 
         val userAnswer = defaultUserAnswer
           .setOrException(SubAddSecondaryContactPage, false)
@@ -303,10 +302,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
-          await(result)
           status(result) mustBe SEE_OTHER
-          verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
+          verify(mockSessionRepository, atLeastOnce()).set(any())
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 

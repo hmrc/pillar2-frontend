@@ -83,7 +83,7 @@ class CheckYourAnswersController @Inject() (
       subscriptionService.getCompanyName(request.userAnswers) match {
         case Left(errorRedirect) => errorRedirect
         case Right(companyName) =>
-          val subscriptionAndPolling: Future[WithName with SubscriptionStatus] =
+          val subscriptionStatus: Future[WithName with SubscriptionStatus] =
             request.userAnswers
               .get(SubMneOrDomesticPage)
               .map { mneOrDom =>
@@ -99,23 +99,24 @@ class CheckYourAnswersController @Inject() (
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield {
-                  pollForSubscriptionData(plr, request.userId)
-                    .map { _ =>
-                      for {
-                        optionalSessionData <- sessionRepository.get(request.userId)
-                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
-                        _                  <- sessionRepository.set(updatedSessionData)
-                      } yield ()
-                    }
-                    .recover { case _ =>
-                      for {
-                        optionalSessionData <- sessionRepository.get(request.userId)
-                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, RegistrationInProgress))
-                        _                  <- sessionRepository.set(updatedSessionData)
-                      } yield ()
-                    }
+                  // Start polling in background (fire-and-forget) - this does not block the response
+                  pollForSubscriptionData(plr, request.userId).map { _ =>
+                    // When polling succeeds, update session to SuccessfullyCompletedSubscription
+                    for {
+                      optionalSessionData <- sessionRepository.get(request.userId)
+                      sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+                      updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
+                      _ <- sessionRepository.set(updatedSessionData)
+                    } yield ()
+                  }.recover { case _ =>
+                    // When polling times out, update session to RegistrationInProgress
+                    for {
+                      optionalSessionData <- sessionRepository.get(request.userId)
+                      sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+                      updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, RegistrationInProgress))
+                      _ <- sessionRepository.set(updatedSessionData)
+                    } yield ()
+                  }
                   SuccessfullyCompletedSubscription
                 })
                   .recover {
@@ -145,7 +146,7 @@ class CheckYourAnswersController @Inject() (
               .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
 
           for {
-            updatedSubscriptionStatus <- subscriptionAndPolling
+            updatedSubscriptionStatus <- subscriptionStatus
             optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
             sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
             updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
