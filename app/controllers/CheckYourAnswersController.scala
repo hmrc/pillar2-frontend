@@ -28,6 +28,7 @@ import pages._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.concurrent.Futures
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -41,6 +42,7 @@ import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
 import java.time.LocalDateTime
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
@@ -53,7 +55,8 @@ class CheckYourAnswersController @Inject() (
   userAnswersConnectors:    UserAnswersConnectors,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
-  countryOptions:           CountryOptions
+  countryOptions:           CountryOptions,
+  futures:                  Futures
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -95,6 +98,7 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(SubscriptionStartTimePage, LocalDateTime.now())
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
+                  _ <- pollForSubscriptionData(plr, request.userId)
                 } yield SuccessfullyCompletedSubscription)
                   .recover {
                     case _: GatewayTimeoutException =>
@@ -109,17 +113,12 @@ class CheckYourAnswersController @Inject() (
                     case UnprocessableEntityError =>
                       logger.error("Subscription failed due to a business validation error")
                       FailedWithUnprocessableEntity
-                    case SubscriptionProcessingError =>
-                      logger.info("Subscription processing in progress - starting progressive retry logic")
-                      val tempPlrRef = s"PIL2105-${java.util.UUID.randomUUID().toString.take(8)}"
-                      val updatedAnswers = request.userAnswers
-                        .setOrException(PlrReferencePage, tempPlrRef)
-                        .setOrException(SubscriptionStartTimePage, LocalDateTime.now())
-                      sessionRepository.set(updatedAnswers)
-                      RegistrationInProgress
                     case DuplicateSafeIdError =>
                       logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
+                    case error: RuntimeException if error.getMessage == "Subscription polling timeout" =>
+                      logger.info("Subscription polling timeout - redirecting to registration in progress page")
+                      RegistrationInProgress
                     case error: HttpException =>
                       logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to HTTP error ${error.responseCode}", error)
                       FailedWithInternalIssueError
@@ -136,7 +135,17 @@ class CheckYourAnswersController @Inject() (
             sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
             updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
             _                  <- sessionRepository.set(updatedSessionData)
-          } yield Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+          } yield updatedSubscriptionStatus match {
+            case SuccessfullyCompletedSubscription =>
+              Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad)
+            case RegistrationInProgress =>
+              sessionData.get(PlrReferencePage) match {
+                case Some(plrRef) => Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
+                case None         => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+              }
+            case _ =>
+              Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+          }
       }
     } else {
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
@@ -225,4 +234,29 @@ class CheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def pollForSubscriptionData(plrReference: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val maxAttempts  = appConfig.subscriptionPollingTimeoutSeconds / appConfig.subscriptionPollingIntervalSeconds
+    val delaySeconds = appConfig.subscriptionPollingIntervalSeconds
+
+    def attemptRead(attempt: Int): Future[Unit] =
+      if (attempt >= maxAttempts) {
+        Future.failed(new RuntimeException("Subscription polling timeout"))
+      } else {
+        subscriptionService
+          .readSubscription(plrReference)
+          .map(_ => ())
+          .recoverWith { case _ =>
+            if (attempt + 1 < maxAttempts) {
+              logger.info(s"Subscription data not ready, waiting $delaySeconds seconds before retry (attempt ${attempt + 1})")
+              futures.delayed(delaySeconds.seconds)(attemptRead(attempt + 1))
+            } else {
+              Future.failed(new RuntimeException("Subscription polling timeout"))
+            }
+          }
+      }
+
+    attemptRead(0)
+  }
+
 }

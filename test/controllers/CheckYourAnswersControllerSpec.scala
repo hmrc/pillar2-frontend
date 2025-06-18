@@ -26,9 +26,11 @@ import models.subscription.SubscriptionStatus._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.verify
+import org.mockito.Mockito.when
 import pages._
 import play.api.inject.bind
+
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -292,6 +294,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
@@ -303,7 +306,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           await(result)
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
         }
       }
 

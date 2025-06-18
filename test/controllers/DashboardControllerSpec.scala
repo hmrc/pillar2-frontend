@@ -31,7 +31,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import views.html.DashboardView
+import views.html.{DashboardView, RegistrationInProgressView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -102,7 +102,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "redirect to error page if no valid Js value is found from read subscription api" in {
+    "show registration in progress page if no valid Js value is found from read subscription api" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(
@@ -116,9 +116,11 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        val result = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        val result                     = route(application, request).value
+        val registrationInProgressView = application.injector.instanceOf[RegistrationInProgressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual registrationInProgressView("12345678")(request, messages(application), applicationConfig).toString
 
       }
     }
@@ -145,7 +147,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     }
 
-    "redirect to error page if no valid Js value is found from read subscription api when agent" in {
+    "show registration in progress page if no valid Js value is found from read subscription api when agent" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
           .overrides(
@@ -165,10 +167,12 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        val result  = route(application, request).value
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        val request                    = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val result                     = route(application, request).value
+        val registrationInProgressView = application.injector.instanceOf[RegistrationInProgressView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual registrationInProgressView("XMPLR0123456789")(request, messages(application), applicationConfig).toString
       }
     }
 

@@ -29,7 +29,8 @@
     link: link,
     sectionBreak: SectionBreak,
     govukNotificationBanner: GovukNotificationBanner,
-    govukDetails: GovukDetails
+    govukDetails: GovukDetails,
+    govukTabs: GovukTabs
 )
 
 @(plrReference: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -80,38 +81,49 @@
 
     @govukDetails(Details(
         summary = Text("Page Scenarios"),
-        content = HtmlContent(s"""
-            ${h2("Scenarios", size = "l").toString}
-            ${bulletList(items = List(
-                link(
-                    text = "Full home",
-                    call = Call("GET", "/current/pillar2-top-up-tax-home"),
-                    fullStop = false
-                ),
-                link(
-                    text = "No details: ETMP Asynchronous Subscription Changes",
-                    call = Call("GET", "/current/pillar2-top-up-tax-home-no-details"),
-                    fullStop = false
-                ),
-                link(
-                    text = "Inactive",
-                    call = Call("GET", "/current/pillar2-top-up-tax-home-inactive"),
-                    fullStop = false
-                ),
-                link(
-                    text = "No Payments",
-                    call = Call("GET", "/current/pillar2-top-up-tax-home-no-payments"),
-                    fullStop = false
-                ),
-                Html(s"${link(
-                    text = "[See Release 2 homepage]",
-                    call = Call("GET", "/current/home/index"),
-                    fullStop = false,
-                    classes = Some("govuk-!-font-weight-bold")
-                )}")
-            ), additionalListClasses = Some("govuk-list govuk-list--bullet")).toString}
-        """),
-        attributes = Map("class" -> "govuk-!-margin-top-4")
+        content = HtmlContent("")
+    ))
+
+    @govukTabs(Tabs(
+        items = Seq(
+            TabItem(
+                id = Some("scenarios"),
+                label = "Scenarios",
+                panel = TabPanel(
+                    content = HtmlContent(s"""
+                        ${h2("Scenarios", size = "l").toString}
+                        ${bulletList(items = List(
+                            link(
+                                text = "Full home",
+                                call = Call("GET", "/current/pillar2-top-up-tax-home"),
+                                fullStop = false
+                            ),
+                            link(
+                                text = "No details: ETMP Asynchronous Subscription Changes",
+                                call = Call("GET", "/current/pillar2-top-up-tax-home-no-details"),
+                                fullStop = false
+                            ),
+                            link(
+                                text = "Inactive",
+                                call = Call("GET", "/current/pillar2-top-up-tax-home-inactive"),
+                                fullStop = false
+                            ),
+                            link(
+                                text = "No Payments",
+                                call = Call("GET", "/current/pillar2-top-up-tax-home-no-payments"),
+                                fullStop = false
+                            ),
+                            Html(s"${link(
+                                text = "[See Release 2 homepage]",
+                                call = Call("GET", "/current/home/index"),
+                                fullStop = false,
+                                classes = Some("govuk-!-font-weight-bold")
+                            )}")
+                        ), additionalListClasses = Some("govuk-list govuk-list--bullet")).toString}
+                    """)
+                )
+            )
+        )
     ))
 
 } 

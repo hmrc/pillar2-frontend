@@ -1573,7 +1573,7 @@ registrationInProgress.title = Registration in progress
 registrationInProgress.banner.heading = Your registration is in progress
 registrationInProgress.banner.message = We are processing your registration. You can check this page in one hour to see your full group account homepage.
 
-# Dashboard content - matches prototype  
+# No Details Dashboard content 
 dashboard.title = Your Pillar 2 Top-up Taxes account
 dashboard.pillar2Id = Group's Pillar 2 Top-up Taxes ID
 dashboard.whenToSubmit.heading = When to submit your returns

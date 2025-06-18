@@ -107,4 +107,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
     if (date == "now") LocalDate.now() else LocalDate.parse(date)
   }
+
+  val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
+  val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
 }
