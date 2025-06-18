@@ -19,7 +19,6 @@
 
 @this(
     layout: templates.Layout,
-    govukNotificationBanner: GovukNotificationBanner,
     heading: heading,
     bulletList: bulletList,
     paragraphBody: paragraphBody,
@@ -33,15 +32,21 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @govukNotificationBanner(NotificationBanner(
-                title = Text(messages("site.important")),
-                content = HtmlContent(s"""
+            <div class="govuk-notification-banner" role="region" aria-labelledby="govuk-notification-banner-title" data-module="govuk-notification-banner">
+                <div class="govuk-notification-banner__header">
+                    <h2 class="govuk-notification-banner__title" id="govuk-notification-banner-title">
+                        @messages("site.important")
+                    </h2>
+                </div>
+                <div class="govuk-notification-banner__content">
                     <h3 class="govuk-notification-banner__heading">
-                        ${messages("registrationInProgress.banner.heading")}
+                        @messages("registrationInProgress.banner.heading")
                     </h3>
-                    <p class="govuk-body">${messages("registrationInProgress.banner.message")}</p>
-                """)
-            ))
+                    <p class="govuk-body">
+                        @messages("registrationInProgress.banner.message")
+                    </p>
+                </div>
+            </div>
 
             @heading(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
             
