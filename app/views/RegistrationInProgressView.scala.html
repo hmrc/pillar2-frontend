@@ -19,10 +19,13 @@
 
 @this(
     layout: templates.Layout,
-    heading: heading,
-    bulletList: bulletList,
+    h: heading,
+    h2: HeadingH2,
     paragraphBody: paragraphBody,
-    link: link
+    bulletList: bulletList,
+    paragraphMessageWithLink: ParagraphMessageWithLink,
+    link: link,
+    sectionBreak: SectionBreak
 )
 
 @(plrReference: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
@@ -48,51 +51,49 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
 
-            @heading(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
+            @h(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
             
-            <p class="govuk-body"><strong>@messages("dashboard.pillar2Id"):</strong> @plrReference</p>
+            @paragraphBody(messages("dashboard.topTaxes", plrReference))
             <br>
             <br>
 
-            @heading(messages("dashboard.whenToSubmit.heading"), "govuk-heading-m", "h2")
-            <p class="govuk-body">@messages("dashboard.whenToSubmit.message")</p>
+            @h2(messages("dashboard.whenToSubmit.heading"), size = "m")
+            @paragraphBody(messages("dashboard.whenToSubmit.message"))
             
-            @bulletList(Seq(
+            @bulletList(items = Seq(
                 Html(messages("dashboard.whenToSubmit.bullet1")),
                 Html(messages("dashboard.whenToSubmit.bullet2"))
-            ))
+            ), additionalListClasses = Some("govuk-list--spaced"))
 
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            @sectionBreak()
 
-            <p class="govuk-body">@messages("dashboard.phaseApproach.message")</p>
-            <p class="govuk-body">
-                @link(
-                    text = messages("dashboard.phaseApproach.link"),
-                    call = Call("GET", appConfig.pillar2ManualUrl),
-                    target = Some("_blank")
-                )
-            </p>
+            @paragraphBody(messages("dashboard.phaseApproach.message"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("dashboard.phaseApproach.link"),
+                linkUrl = appConfig.pillar2ManualUrl,
+                linkClass = "govuk-link",
+                linkRel = "noopener noreferrer", 
+                target = "_blank"
+            )
 
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            @sectionBreak()
 
-            @heading(messages("dashboard.research.heading"), "govuk-heading-m govuk-!-margin-top-5", "h2")
-            <p class="govuk-body">@messages("dashboard.research.message")</p>
-            <p class="govuk-body">
-                @link(
-                    text = messages("dashboard.research.link"),
-                    call = Call("GET", appConfig.pillar2ResearchUrl),
-                    target = Some("_blank")
-                )
-            </p>
+            @h2(messages("dashboard.research.heading"), size = "m", extraClasses = Seq("govuk-!-margin-top-5"))
+            @paragraphBody(messages("dashboard.research.message"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("dashboard.research.link"),
+                linkUrl = appConfig.pillar2ResearchUrl,
+                linkClass = "govuk-link",
+                target = "_blank"
+            )
 
             <br>
-            <p class="govuk-body">
-                @link(
-                    text = messages("dashboard.feedback.link"),
-                    call = Call("GET", "#"),
-                    target = Some("_blank")
-                )
-            </p>
+            @paragraphMessageWithLink(
+                linkMessage = messages("dashboard.feedback.link"),
+                linkUrl = "#",
+                linkClass = "govuk-link",
+                target = "_blank"
+            )
 
         </div>
     </div>
