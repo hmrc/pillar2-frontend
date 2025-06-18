@@ -27,6 +27,7 @@ import pages._
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
+import play.api.libs.concurrent.Futures
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -39,6 +40,7 @@ import viewmodels.govuk.summarylist._
 import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
+import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
@@ -51,7 +53,8 @@ class CheckYourAnswersController @Inject() (
   userAnswersConnectors:    UserAnswersConnectors,
   sessionRepository:        SessionRepository,
   view:                     CheckYourAnswersView,
-  countryOptions:           CountryOptions
+  countryOptions:           CountryOptions,
+  futures:                  Futures
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -92,7 +95,26 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
-                } yield SuccessfullyCompletedSubscription)
+                } yield {
+                  pollForSubscriptionData(plr, request.userId)
+                    .map { _ =>
+                      for {
+                        optionalSessionData <- sessionRepository.get(request.userId)
+                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
+                        _                  <- sessionRepository.set(updatedSessionData)
+                      } yield ()
+                    }
+                    .recover { case _ =>
+                      for {
+                        optionalSessionData <- sessionRepository.get(request.userId)
+                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
+                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, RegistrationInProgress))
+                        _                  <- sessionRepository.set(updatedSessionData)
+                      } yield ()
+                    }
+                  SuccessfullyCompletedSubscription
+                })
                   .recover {
                     case _: GatewayTimeoutException =>
                       logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Gateway timeout")
@@ -216,4 +238,27 @@ class CheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
+
+  private def pollForSubscriptionData(plrReference: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+    val maxAttempts  = appConfig.subscriptionPollingTimeoutSeconds / appConfig.subscriptionPollingIntervalSeconds
+    val delaySeconds = appConfig.subscriptionPollingIntervalSeconds
+
+    def attemptRead(attempt: Int): Future[Unit] =
+      if (attempt >= maxAttempts) {
+        Future.failed(new RuntimeException("Subscription polling timeout"))
+      } else {
+        subscriptionService
+          .readSubscription(plrReference)
+          .map(_ => ())
+          .recoverWith { case _ =>
+            if (attempt + 1 < maxAttempts) {
+              futures.delayed(delaySeconds.seconds)(attemptRead(attempt + 1))
+            } else {
+              Future.failed(new RuntimeException("Subscription polling timeout"))
+            }
+          }
+      }
+
+    attemptRead(0)
+  }
 }
