@@ -24,3 +24,4 @@ case object UnexpectedJsResult extends ApiError
 case object DuplicateSubmissionError extends ApiError
 case object UnprocessableEntityError extends ApiError
 case object DuplicateSafeIdError extends ApiError
+case object SubscriptionProcessingError extends ApiError

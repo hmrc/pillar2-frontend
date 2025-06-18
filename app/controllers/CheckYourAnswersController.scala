@@ -109,6 +109,14 @@ class CheckYourAnswersController @Inject() (
                     case UnprocessableEntityError =>
                       logger.error("Subscription failed due to a business validation error")
                       FailedWithUnprocessableEntity
+                    case SubscriptionProcessingError =>
+                      logger.info("Subscription processing in progress - starting progressive retry logic")
+                      val tempPlrRef = s"PIL2105-${java.util.UUID.randomUUID().toString.take(8)}"
+                      val updatedAnswers = request.userAnswers
+                        .setOrException(PlrReferencePage, tempPlrRef)
+                        .setOrException(SubscriptionStartTimePage, LocalDateTime.now())
+                      sessionRepository.set(updatedAnswers)
+                      RegistrationInProgress
                     case DuplicateSafeIdError =>
                       logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
                       FailedWithDuplicatedSafeIdError
