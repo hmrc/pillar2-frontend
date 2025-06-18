@@ -23,6 +23,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.requests.OptionalDataRequest
 import models.subscription.ReadSubscriptionRequestParameters
+import models.subscription.SubscriptionStatus._
 import models.{InternalIssueError, UserAnswers}
 import pages._
 import play.api.Logging
@@ -31,7 +32,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
+import views.html.{DashboardView, RegistrationInProgressView}
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
@@ -45,7 +46,8 @@ class DashboardController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   DashboardView,
   referenceNumberService:                 ReferenceNumberService,
-  sessionRepository:                      SessionRepository
+  sessionRepository:                      SessionRepository,
+  registrationInProgressView:             RegistrationInProgressView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -75,11 +77,21 @@ class DashboardController @Inject() (
           inactiveStatus = dashboard.accountStatus.exists(_.inactive),
           agentView = request.isAgent
         )
-      )).recover { case InternalIssueError =>
+      )).recoverWith { case InternalIssueError =>
         logger.error(
           "DashboardController - read subscription failed as no valid Json was returned from the controller"
         )
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        OptionT.liftF(sessionRepository.get(request.userId).map { maybeUserAnswers =>
+          maybeUserAnswers.flatMap(_.get(SubscriptionStatusPage)) match {
+            case Some(RegistrationInProgress) =>
+              maybeUserAnswers.flatMap(_.get(PlrReferencePage)) match {
+                case Some(plrRef) => Ok(registrationInProgressView(plrRef))
+                case None         => Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+              }
+            case _ =>
+              Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+          }
+        })
       }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
     }

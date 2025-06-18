@@ -98,20 +98,10 @@ class CheckYourAnswersController @Inject() (
                 } yield {
                   pollForSubscriptionData(plr, request.userId)
                     .map { _ =>
-                      for {
-                        optionalSessionData <- sessionRepository.get(request.userId)
-                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
-                        _                  <- sessionRepository.set(updatedSessionData)
-                      } yield ()
+                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad)
                     }
                     .recover { case _ =>
-                      for {
-                        optionalSessionData <- sessionRepository.get(request.userId)
-                        sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-                        updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, RegistrationInProgress))
-                        _                  <- sessionRepository.set(updatedSessionData)
-                      } yield ()
+                      Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plr))
                     }
                   SuccessfullyCompletedSubscription
                 })
