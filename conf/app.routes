@@ -554,3 +554,10 @@ GET        /manage-account/contact/waiting-room                                 
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 
 GET       /manage-account/details/waiting-room                                                      controllers.subscription.manageAccount.ManageGroupDetailsWaitingRoomController.onPageLoad
+
+POST       /pillar2/subscription                                                                    uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.createSubscription
+GET        /pillar2/subscription/:plrReference                                                     uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.retrieveSubscription(plrReference: String)  
+GET        /pillar2/subscription/read-subscription/:id/:plrReference                               uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.readSubscriptionAndCache(id: String, plrReference: String)
+PUT        /pillar2/subscription/amend-subscription/:userId                                         uk.gov.hmrc.pillar2stubs.controllers.SubscriptionController.amendSubscription
+
+GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)

@@ -68,7 +68,13 @@ class DashboardController @Inject() (
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
-        dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
+        dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+          .recover {
+            case InternalIssueError =>
+              logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
+              throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
+            case other => throw other
+          })
       } yield Ok(
         view(
           dashboard.upeDetails.organisationName,
@@ -77,21 +83,13 @@ class DashboardController @Inject() (
           inactiveStatus = dashboard.accountStatus.exists(_.inactive),
           agentView = request.isAgent
         )
-      )).recoverWith { case InternalIssueError =>
-        logger.error(
-          "DashboardController - read subscription failed as no valid Json was returned from the controller"
-        )
-        OptionT.liftF(sessionRepository.get(request.userId).map { maybeUserAnswers =>
-          maybeUserAnswers.flatMap(_.get(SubscriptionStatusPage)) match {
-            case Some(RegistrationInProgress) =>
-              maybeUserAnswers.flatMap(_.get(PlrReferencePage)) match {
-                case Some(plrRef) => Ok(registrationInProgressView(plrRef))
-                case None         => Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-              }
-            case _ =>
-              Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-          }
-        })
+      )).recover { 
+        case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
+          val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
+          Redirect(routes.RegistrationInProgressController.onPageLoad(plrRef))
+        case _ =>
+          logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
       }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
 
     }
