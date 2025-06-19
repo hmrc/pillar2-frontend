@@ -102,7 +102,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "redirect to error page if no valid Js value is found from read subscription api" in {
+    "redirect to registration in progress page when subscription is still processing" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(
@@ -118,7 +118,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .thenReturn(Future.successful(true))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("12345678").url
 
       }
     }
@@ -145,7 +145,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
     }
 
-    "redirect to error page if no valid Js value is found from read subscription api when agent" in {
+    "redirect to registration in progress page when subscription is still processing for agent" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), agentEnrolment)
           .overrides(
@@ -168,7 +168,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("XMPLR0123456789").url
       }
     }
 
