@@ -1543,12 +1543,3 @@ manageContactDetails.title = Submitting your contact details
 manageContactDetails.heading = Submitting your contact details
 manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
-
-###############################################
-#
-# Pillar 2 Research
-#
-###############################################
-research.heading = Take part in Pillar 2 research
-research.body = Help us improve this online service by taking part in user research.
-research.link = Register for Pillar 2 user research (opens in a new tab)
