@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.UpeRegisteredAddressFormProvider
 import models.NormalMode
 import models.UKAddress
+import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -146,20 +147,22 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("First line of the address you enter must not include the following characters <, > or \"")
-      errorList must include("Second line of the address you enter must not include the following characters <, >, \" or &")
-      errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
-      errorList must include("The region you enter must not include the following characters <, >, \" or &")
+      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
+      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
       errorList must include("The country you enter must not include the following characters <, >, \" or &")
       errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
+      val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
+      addressErrorCount mustBe 4
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: First line of the address you enter must not include the following characters <, > or \"")
-      fieldErrors must include("Error: Second line of the address you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: The town or city you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: The region you enter must not include the following characters <, >, \" or &")
+      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
+      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
       fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
       fieldErrors must include("Error: The postcode you enter must not include the following characters <, >, \" or &")
+      val addressFieldCount =
+        StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
+      addressFieldCount mustBe 4
+
     }
   }
 }

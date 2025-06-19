@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.NfmRegisteredAddressFormProvider
 import models.NonUKAddress
 import models.NormalMode
+import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.data.Form
@@ -99,12 +100,12 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
       errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("First line of the address you enter must not include the following characters <, > or \"")
-      errorList must include("Second line of the address you enter must not include the following characters <, >, \" or &")
-      errorList must include("The town or city you enter must not include the following characters <, >, \" or &")
-      errorList must include("The region you enter must not include the following characters <, >, \" or &")
-      errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
+      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
       errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
+      errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
+      addressErrorCount mustBe 4
     }
 
     "show length validation errors when input exceeds maximum length" in {
