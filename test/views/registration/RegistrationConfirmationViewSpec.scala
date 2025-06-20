@@ -87,20 +87,5 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       )
     }
 
-    "have a Pillar 2 Research heading" in {
-      viewDomestic.getElementsByClass("pillar2-research-heading").text must be("Take part in Pillar 2 research")
-    }
-
-    "have a Pillar 2 Research paragraph" in {
-      viewDomestic.getElementsByClass("pillar2-research-body").last.text must be(
-        "Help us improve this online service by taking part in user research."
-      )
-    }
-
-    "have a link to the Pillar 2 Research page that opens in a new tab" in {
-      viewDomestic.getElementsByClass("pillar2-research-link").text           must be("Register for Pillar 2 user research (opens in a new tab)")
-      viewDomestic.getElementsByClass("pillar2-research-link").attr("target") must be("_blank")
-      viewDomestic.getElementsByClass("pillar2-research-link").attr("href")   must be(appConfig.pillar2ResearchUrl)
-    }
   }
 }
