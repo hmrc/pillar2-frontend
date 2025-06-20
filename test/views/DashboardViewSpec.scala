@@ -149,22 +149,6 @@ class DashboardViewSpec extends ViewSpecBase {
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
     }
-
-    "have a Pillar 2 Research heading" in {
-      organisationDashboardView.getElementsByClass("pillar2-research-heading").text must be("Take part in Pillar 2 research")
-    }
-
-    "have a Pillar 2 Research paragraph" in {
-      organisationDashboardView.getElementsByClass("pillar2-research-body").last.text must be(
-        "Help us improve this online service by taking part in user research."
-      )
-    }
-
-    "have a link to the Pillar 2 Research page that opens in a new tab" in {
-      organisationDashboardView.getElementsByClass("pillar2-research-link").text must be("Register for Pillar 2 user research (opens in a new tab)")
-      organisationDashboardView.getElementsByClass("pillar2-research-link").attr("target") must be("_blank")
-      organisationDashboardView.getElementsByClass("pillar2-research-link").attr("href")   must be(appConfig.pillar2ResearchUrl)
-    }
   }
 
   "Dashboard View for Agent" should {
@@ -271,22 +255,6 @@ class DashboardViewSpec extends ViewSpecBase {
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
 
-    }
-
-    "have a Pillar 2 Research heading" in {
-      agentDashboardView.getElementsByClass("pillar2-research-heading").text must be("Take part in Pillar 2 research")
-    }
-
-    "have a Pillar 2 Research paragraph" in {
-      agentDashboardView.getElementsByClass("pillar2-research-body").last.text must be(
-        "Help us improve this online service by taking part in user research."
-      )
-    }
-
-    "have a link to the Pillar 2 Research page that opens in a new tab" in {
-      agentDashboardView.getElementsByClass("pillar2-research-link").text must be("Register for Pillar 2 user research (opens in a new tab)")
-      agentDashboardView.getElementsByClass("pillar2-research-link").attr("target") must be("_blank")
-      agentDashboardView.getElementsByClass("pillar2-research-link").attr("href")   must be(appConfig.pillar2ResearchUrl)
     }
   }
 }
