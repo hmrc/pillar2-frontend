@@ -832,6 +832,39 @@ subscriptionAddress.change.hidden = the registered contact address
 
 ###############################################
 #
+# Homepage
+#
+###############################################
+homepage.title = Pillar 2 Top-up Taxes
+homepage.group = Group
+homepage.id = ID
+
+homepage.returns.title = Returns
+homepage.returns.dueOverdueReturns.linkText = View all due and overdue returns
+homepage.returns.submissionHistory.linkText = View submission history
+
+homepage.payments.title = Payments
+homepage.payments.transactionHistory.linkText = View transaction history
+homepage.payments.outstandingPayments.linkText = View outstanding payments
+homepage.payments.repayments.linkText = Request a repayment
+
+homepage.manageAccount.title = Manage account
+homepage.manageAccount.registrationDate = Registration date
+homepage.manageAccount.manageContactDetails.linkText = Manage contact details
+homepage.manageAccount.manageContactDetails.body = Edit the details we use to contact you about Pillar 2 Top-up Taxes.
+homepage.manageAccount.agent.manageContactDetails.body = Edit the details we use to contact your client about Pillar 2 Top-up Taxes.
+homepage.manageAccount.manageGroupDetails.linkText = Manage group details
+homepage.manageAccount.manageGroupDetails.body = Amend your group''s accounting period or update changes to your entity''s locations.
+homepage.manageAccount.agent.manageGroupDetails.body = Amend your client''s accounting period or update changes to entity locations.
+homepage.manageAccount.rfm.linkText = Replace filing member
+homepage.manageAccount.rfm.body = Change the filing member for your group''s Pillar 2 Top-up Taxes account.
+homepage.manageAccount.agent.rfm.body = As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this.
+homepage.manageAccount.btn.linkText = Submit a Below-Threshold Notification
+homepage.manageAccount.btn.body = If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification.
+homepage.manageAccount.agent.btn.body = Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.
+
+###############################################
+#
 # Dashboard
 #
 ###############################################

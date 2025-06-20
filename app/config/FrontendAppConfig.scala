@@ -27,8 +27,9 @@ import java.time.LocalDate
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  val host:    String = configuration.get[String]("host")
-  val appName: String = configuration.get[String]("appName")
+  val host:                   String = configuration.get[String]("host")
+  val submissionFrontendHost: String = configuration.get[String]("submissionFrontendHost")
+  val appName:                String = configuration.get[String]("appName")
 
   private def loadConfig(key: String): String =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -85,6 +86,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   //Enable Disable
   val grsStubEnabled: Boolean = configuration.get[Boolean]("features.grsStubEnabled")
+
+  val newHomepageEnabled: Boolean = configuration.get[Boolean]("features.newHomepageEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 

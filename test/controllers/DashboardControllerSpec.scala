@@ -31,7 +31,7 @@ import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import views.html.DashboardView
+import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -67,38 +67,73 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
   "Dashboard Controller" should {
 
-    "return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" when {
+      "newHomepageEnabled is true" in {
+        val application =
+          applicationBuilder(userAnswers = None, enrolments)
+            .configure("features.newHomepageEnabled" -> true)
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[SubscriptionService].toInstance(mockSubscriptionService)
+            )
+            .build()
 
-      val application =
-        applicationBuilder(userAnswers = None, enrolments)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService)
-          )
-          .build()
+        running(application) {
+          val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+          when(mockSessionRepository.get(any()))
+            .thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSessionRepository.set(any()))
+            .thenReturn(Future.successful(true))
+          when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          val result = route(application, request).value
+          val view   = application.injector.instanceOf[HomepageView]
 
-      running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any()))
-          .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        val result = route(application, request).value
-        val view   = application.injector.instanceOf[DashboardView]
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            subscriptionData.upeDetails.organisationName,
+            subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            "12345678",
+            agentView = false
+          )(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
 
-        status(result) mustEqual OK
-        contentAsString(result) mustEqual view(
-          subscriptionData.upeDetails.organisationName,
-          subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-          "12345678",
-          inactiveStatus = false,
-          agentView = false
-        )(
-          request,
-          applicationConfig,
-          messages(application)
-        ).toString
+      "newHomepageEnabled is false" in {
+        val application =
+          applicationBuilder(userAnswers = None, enrolments)
+            .overrides(
+              bind[SessionRepository].toInstance(mockSessionRepository),
+              bind[SubscriptionService].toInstance(mockSubscriptionService)
+            )
+            .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+          when(mockSessionRepository.get(any()))
+            .thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockSessionRepository.set(any()))
+            .thenReturn(Future.successful(true))
+          when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          val result = route(application, request).value
+          val view   = application.injector.instanceOf[DashboardView]
+
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(
+            subscriptionData.upeDetails.organisationName,
+            subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            "12345678",
+            inactiveStatus = false,
+            agentView = false
+          )(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
       }
     }
 

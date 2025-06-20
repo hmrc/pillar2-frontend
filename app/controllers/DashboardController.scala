@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
+import views.html.{DashboardView, HomepageView}
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
@@ -43,7 +43,8 @@ class DashboardController @Inject() (
   getData:                                DataRetrievalAction,
   val subscriptionService:                SubscriptionService,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   DashboardView,
+  dashboardView:                          DashboardView,
+  homepageView:                           HomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -68,13 +69,22 @@ class DashboardController @Inject() (
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
         dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
       } yield Ok(
-        view(
-          dashboard.upeDetails.organisationName,
-          dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-          referenceNumber,
-          inactiveStatus = dashboard.accountStatus.exists(_.inactive),
-          agentView = request.isAgent
-        )
+        if (appConfig.newHomepageEnabled) {
+          homepageView(
+            dashboard.upeDetails.organisationName,
+            dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            referenceNumber,
+            agentView = request.isAgent
+          )
+        } else {
+          dashboardView(
+            dashboard.upeDetails.organisationName,
+            dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            referenceNumber,
+            inactiveStatus = dashboard.accountStatus.exists(_.inactive),
+            agentView = request.isAgent
+          )
+        }
       )).recover { case InternalIssueError =>
         logger.error(
           "DashboardController - read subscription failed as no valid Json was returned from the controller"

@@ -1,0 +1,99 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+@import views.html.templates.Layout
+
+
+@this(layout: Layout, heading: heading, card: HomepageCard)
+
+@(organisationName: String, registrationDate: String, plrReference: String, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
+
+@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
+
+ @heading(messages("homepage.title"), "govuk-heading-l")
+
+ <p class="govuk-body" style="display: flex; flex-wrap: wrap; gap: 0.5em;">
+  <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
+  <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
+ </p>
+
+ <div class="card-group">
+   @card(
+    title = messages("homepage.returns.title"),
+    links = Seq(
+     (messages("homepage.returns.dueOverdueReturns.linkText"), s"$submissionFrontendPath/due-and-overdue-returns", None),
+     (messages("homepage.returns.submissionHistory.linkText"), s"$submissionFrontendPath/submission-history", None),
+    )
+   )
+
+   @card(
+    title = messages("homepage.payments.title"),
+    links = Seq(
+     (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
+     (messages("homepage.payments.outstandingPayments.linkText"), controllers.routes.UnderConstructionController.onPageLoad.url, None),
+     (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url, None),
+    )
+   )
+
+   @{
+    val registrationContent = Html(
+     s"""
+       <p class="govuk-body">
+           <b>${messages("homepage.manageAccount.registrationDate")}:</b> $registrationDate
+       </p>
+     """
+    )
+
+    card(
+     title = messages("homepage.manageAccount.title"),
+     links = manageAccountLinks(agentView),
+     extraContent = Some(registrationContent),
+     cardClass = "card-full-width"
+    )
+   }
+ </div>
+}
+
+@manageAccountLinks(isAgent: Boolean) = @{
+ val ifAgentKey = if(isAgent) ".agent" else ""
+
+ Seq(
+  (
+          messages("homepage.manageAccount.manageContactDetails.linkText"),
+          controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url,
+          Some(messages(s"homepage.manageAccount$ifAgentKey.manageContactDetails.body"))
+  ),
+  (
+          messages("homepage.manageAccount.manageGroupDetails.linkText"),
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url,
+          Some(messages(s"homepage.manageAccount$ifAgentKey.manageGroupDetails.body"))
+  ),
+  (
+          messages("homepage.manageAccount.rfm.linkText"),
+          controllers.rfm.routes.StartPageController.onPageLoad.url,
+          Some(messages(s"homepage.manageAccount$ifAgentKey.rfm.body"))
+  ),
+  (
+          messages("homepage.manageAccount.btn.linkText"),
+          s"$submissionFrontendPath/below-threshold-notification/start",
+          Some(messages(s"homepage.manageAccount$ifAgentKey.btn.body"))
+  )
+ )
+}
