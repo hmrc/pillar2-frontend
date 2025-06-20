@@ -72,7 +72,7 @@ class DashboardController @Inject() (
                          .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
                          .recover {
                            case InternalIssueError =>
-                             logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
+                             logger.error(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
                              throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
                            case other => throw other
                          }
