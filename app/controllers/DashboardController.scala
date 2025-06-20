@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.DashboardView
+import views.html.{DashboardView, RegistrationInProgressView}
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
@@ -45,7 +45,8 @@ class DashboardController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   DashboardView,
   referenceNumberService:                 ReferenceNumberService,
-  sessionRepository:                      SessionRepository
+  sessionRepository:                      SessionRepository,
+  registrationInProgressView:             RegistrationInProgressView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -66,7 +67,16 @@ class DashboardController @Inject() (
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
-        dashboard <- OptionT.liftF(subscriptionService.readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber)))
+        dashboard <- OptionT.liftF(
+                       subscriptionService
+                         .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                         .recover {
+                           case InternalIssueError =>
+                             logger.error(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
+                             throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
+                           case other => throw other
+                         }
+                     )
       } yield Ok(
         view(
           dashboard.upeDetails.organisationName,
@@ -75,12 +85,14 @@ class DashboardController @Inject() (
           inactiveStatus = dashboard.accountStatus.exists(_.inactive),
           agentView = request.isAgent
         )
-      )).recover { case InternalIssueError =>
-        logger.error(
-          "DashboardController - read subscription failed as no valid Json was returned from the controller"
-        )
-        Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-      }.getOrElse(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+      )).recover {
+        case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
+          val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
+          Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
+        case _ =>
+          logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
+          Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
+      }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
     }
 }
