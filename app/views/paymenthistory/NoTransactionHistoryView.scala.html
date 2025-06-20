@@ -27,11 +27,7 @@
 
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@pageLayout(contentBlock: Html) = {
-    @contentBlock
-}
-
-@layout(pageTitle = titleNoForm(messages("transactionHistory.none.title")), pageLayout = pageLayout) {
+@layout(pageTitle = titleNoForm(messages("transactionHistory.none.title")), twoThirdsPagelayout = false) {
 
     @heading(messages("transactionHistory.none.heading"))
 

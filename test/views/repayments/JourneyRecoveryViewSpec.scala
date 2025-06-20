@@ -46,7 +46,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
     }
 
     "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
+      val expectedLink = "/report-pillar2-top-up-taxes/home"
 
       val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
       linkExists mustBe true
