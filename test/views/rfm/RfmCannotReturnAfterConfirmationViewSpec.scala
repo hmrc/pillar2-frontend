@@ -48,7 +48,7 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.text         must include("report and manage your Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/home")
+      link.attr("href") must include("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
     }
 
   }
