@@ -32,7 +32,8 @@
     hmrcScripts: HmrcScripts,
     betaBanner: StandardBetaBanner,
     stylesheets: Stylesheets,
-    twoThirdsContent: TwoThirdsMainContent
+    twoThirdsContent: TwoThirdsMainContent,
+    minimalFooter: components.MinimalFooter
 
 )
 
@@ -95,7 +96,7 @@
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),
     beforeContentBlock = Some(beforeContent),
-    footerBlock        = Some(hmrcStandardFooter()),
+    footerBlock        = Some(minimalFooter()),
     scriptsBlock = Some(scripts),
     mainContentLayout = Some(pageLayout)
 )(content)

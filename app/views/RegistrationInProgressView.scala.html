@@ -35,14 +35,14 @@
 
 @(plrReference: String)(implicit request: Request[_], messages: Messages, appConfig: FrontendAppConfig)
 
-@layout(pageTitle = titleNoForm(messages("registrationInProgress.title"))) {
+@layout(pageTitle = titleNoForm(messages("registrationInProgress.title")), showBackLink = false) {
 
     @govukNotificationBanner(NotificationBanner(
         title = Text(messages("site.important")),
-        content = HtmlContent(s"""
-            ${messages("registrationInProgress.banner.heading")}
-            ${messages("registrationInProgress.banner.message")}
-        """)
+        content = HtmlContent(Html(
+            h(messages("registrationInProgress.banner.heading"), "govuk-notification-banner__heading").toString +
+            paragraphBody(messages("registrationInProgress.banner.message")).toString
+        ))
     ))
 
     @h(messages("dashboard.title"), "govuk-heading-l govuk-!-margin-bottom-7")
@@ -77,53 +77,5 @@
 
     @sectionBreak()
 
-    @paragraphBodyLink(messages("dashboard.feedback.link"), "#", classes = "govuk-body")
-
-    @govukDetails(Details(
-        summary = Text("Page Scenarios"),
-        content = HtmlContent("")
-    ))
-
-    @govukTabs(Tabs(
-        items = Seq(
-            TabItem(
-                id = Some("scenarios"),
-                label = "Scenarios",
-                panel = TabPanel(
-                    content = HtmlContent(s"""
-                        ${h2("Scenarios", size = "l").toString}
-                        ${bulletList(items = List(
-                            link(
-                                text = "Full home",
-                                call = Call("GET", "/current/pillar2-top-up-tax-home"),
-                                fullStop = false
-                            ),
-                            link(
-                                text = "No details: ETMP Asynchronous Subscription Changes",
-                                call = Call("GET", "/current/pillar2-top-up-tax-home-no-details"),
-                                fullStop = false
-                            ),
-                            link(
-                                text = "Inactive",
-                                call = Call("GET", "/current/pillar2-top-up-tax-home-inactive"),
-                                fullStop = false
-                            ),
-                            link(
-                                text = "No Payments",
-                                call = Call("GET", "/current/pillar2-top-up-tax-home-no-payments"),
-                                fullStop = false
-                            ),
-                            Html(s"${link(
-                                text = "[See Release 2 homepage]",
-                                call = Call("GET", "/current/home/index"),
-                                fullStop = false,
-                                classes = Some("govuk-!-font-weight-bold")
-                            )}")
-                        ), additionalListClasses = Some("govuk-list govuk-list--bullet")).toString}
-                    """)
-                )
-            )
-        )
-    ))
 
 } 
