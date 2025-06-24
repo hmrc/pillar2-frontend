@@ -10,8 +10,8 @@ object AppDependencies {
     "uk.gov.hmrc"           %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                    % mongoVersion,
     "org.typelevel"         %% "cats-core"                             % "2.13.0",
-    "org.apache.xmlgraphics" % "fop"                                   % "2.11",
-    "commons-io"             % "commons-io"                            % "2.19.0",
+    "org.apache.xmlgraphics" % "fop"                                   % "2.10",
+    "commons-io"             % "commons-io"                            % "2.18.0",
     "com.beachape"          %% "enumeratum-play-json"                  % "1.9.0"
   )
 
