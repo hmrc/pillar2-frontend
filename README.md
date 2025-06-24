@@ -65,7 +65,7 @@ if all question asked in this journey answered with 'yes' then this mean you nee
 
 To use testonly route locally .
 
-    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050'
+    sbt 'run -Dplay.http.router=testOnlyDoNotUseInAppConf.Routes 10050' 
 
 
 ### License

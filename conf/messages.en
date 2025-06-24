@@ -46,6 +46,8 @@ addressLine2.error.xss = Second line of the address you enter must not include t
 town_city.error.xss = The town or city you enter must not include the following characters <, >, " or &
 region.error.xss = The region you enter must not include the following characters <, >, " or &
 country.error.xss = The country you enter must not include the following characters <, >, " or &
+addressLine.error.xss.with.ampersand = Enter the address using only letters, numbers, and the allowed symbols, / - , . \ &
+addressLine.error.xss = Enter the address using only letters, numbers, and the allowed symbols, / - , . \\
 
 ###############################################
 #
@@ -1543,12 +1545,3 @@ manageContactDetails.title = Submitting your contact details
 manageContactDetails.heading = Submitting your contact details
 manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
-
-###############################################
-#
-# Pillar 2 Research
-#
-###############################################
-research.heading = Take part in Pillar 2 research
-research.body = Help us improve this online service by taking part in user research.
-research.link = Register for Pillar 2 user research (opens in a new tab)
