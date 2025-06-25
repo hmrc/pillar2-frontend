@@ -42,7 +42,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
       val link = linkSection.getElementsByClass("govuk-link").first()
       link.text() mustBe "report and manage your Pillar 2 Top-up Taxes."
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/home"
+      link.attr("href") mustBe "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
     }
   }
 
