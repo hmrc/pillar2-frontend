@@ -423,6 +423,59 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
+    "maybeReadAndCacheSubscription" when {
+
+      "return Some(SubscriptionData) when the connector returns valid data" in {
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(Some(subscriptionData)))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+
+          result mustBe Some(subscriptionData)
+        }
+      }
+
+      "return None when the connector returns None" in {
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(None))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val result = service.maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+
+          result mustBe None
+        }
+      }
+
+      "handle exceptions thrown by the connector" in {
+        val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
+        val application = applicationBuilder()
+          .overrides(
+            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+          )
+          .build()
+
+        running(application) {
+          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(new RuntimeException("Connection error")))
+          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+          val resultFuture = service.maybeReadAndCacheSubscription(requestParameters)
+
+          resultFuture.failed.futureValue shouldBe a[RuntimeException]
+        }
+      }
+    }
+
     "amendSubscription" when {
       "call read subscription and create the required amend object to submit when no secondary contact" in {
 

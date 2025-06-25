@@ -22,10 +22,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressView
-import cats.data.OptionT
 import services.SubscriptionService
 import models.subscription.ReadSubscriptionRequestParameters
-import models.InternalIssueError
 import play.api.Logging
 
 import javax.inject.Inject
@@ -42,16 +40,18 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
-    (for {
-      maybeData <-
-        subscriptionService
-          .maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, plrReference))
-
-    } yield
-      if (maybeData.isDefined) {
-        Redirect(controllers.routes.DashboardController.onPageLoad)
-      } else {
-        Ok(view(plrReference))
-      })
+    subscriptionService
+      .maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, plrReference))
+      .map { maybeData =>
+        if (maybeData.isDefined) {
+          Redirect(controllers.routes.DashboardController.onPageLoad)
+        } else {
+          Ok(view(plrReference))
+        }
+      }
+      .recover { case ex =>
+        logger.error(s"RegistrationInProgressController - error retrieving subscription data for PLR reference: $plrReference", ex)
+        InternalServerError("Error retrieving subscription data")
+      }
   }
 }
