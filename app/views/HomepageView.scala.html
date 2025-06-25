@@ -87,7 +87,7 @@
   ),
   (
           messages("homepage.manageAccount.rfm.linkText"),
-          controllers.rfm.routes.StartPageController.onPageLoad.url,
+          if(isAgent) "" else controllers.rfm.routes.StartPageController.onPageLoad.url,
           Some(messages(s"homepage.manageAccount$ifAgentKey.rfm.body"))
   ),
   (
