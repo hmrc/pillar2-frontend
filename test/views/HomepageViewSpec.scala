@@ -34,7 +34,7 @@ class HomepageViewSpec extends ViewSpecBase {
   val agentView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, agentView = true)(request, appConfig, messages).toString())
 
-  "HomepageView" should {
+  "HomepageView for a group" should {
     "display page header correctly" in {
       organisationView.getElementsByTag("h1").first().text() mustBe "Pillar 2 Top-up Taxes"
     }
@@ -79,7 +79,7 @@ class HomepageViewSpec extends ViewSpecBase {
       links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
     }
 
-    "display correct help text for standard user" in {
+    "display correct help text" in {
       val manageCard = organisationView.getElementsByClass("card-full-width").first()
       manageCard.text() must include("Edit the details we use to contact you about Pillar 2 Top-up Taxes.")
       manageCard.text() must include("Amend your group's accounting period or update changes to your entity's locations.")
@@ -88,15 +88,81 @@ class HomepageViewSpec extends ViewSpecBase {
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
       )
     }
+
+    "have correct structure" in {
+      val cardGroup = organisationView.getElementsByClass("card-group")
+      cardGroup.size() mustBe 1
+
+      val mainCards = organisationView.getElementsByClass("card-half-width")
+      mainCards.size() mustBe 2
+
+      val fullWidthCards = organisationView.getElementsByClass("card-full-width")
+      fullWidthCards.size() mustBe 1
+    }
   }
 
-  "HomepageView for agents" should {
-    "display agent-specific help text" in {
+  "HomepageView for an agent" should {
+    "display page header correctly" in {
+      agentView.getElementsByTag("h1").first().text() mustBe "Pillar 2 Top-up Taxes"
+    }
+
+    "display organisation information correctly" in {
+      val infoText = agentView.getElementsByClass("govuk-body").first().text()
+      infoText must include(s"Group: $organisationName")
+      infoText must include(s"ID: $plrRef")
+    }
+
+    "display returns card with correct content" in {
+      val returnsCard = agentView.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
+    "display payments card with correct content" in {
+      val paymentsCard = agentView.getElementsByClass("card-half-width").get(1)
+
+      paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
+
+      val links = paymentsCard.getElementsByTag("a")
+      links.get(0).text() mustBe "View transaction history"
+      links.get(1).text() mustBe "View outstanding payments"
+      links.get(2).text() mustBe "Request a repayment"
+    }
+
+    "display manage account card with correct content" in {
+      val manageCard = agentView.getElementsByClass("card-full-width").first()
+
+      manageCard.getElementsByTag("h2").text() mustBe "Manage account"
+      manageCard.text() must include(s"Registration date: $date")
+
+      val links = manageCard.getElementsByTag("a")
+      links.exists(_.text() == "Manage contact details") mustBe true
+      links.exists(_.text() == "Manage group details") mustBe true
+      links.exists(_.text() == "Replace filing member") mustBe false
+      links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
+    }
+
+    "display correct help text" in {
       val manageCard = agentView.getElementsByClass("card-full-width").first()
       manageCard.text() must include("Edit the details we use to contact your client about Pillar 2 Top-up Taxes.")
       manageCard.text() must include("Amend your client's accounting period or update changes to entity locations.")
       manageCard.text() must include("As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this.")
       manageCard.text() must include("Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.")
+    }
+
+    "have correct structure" in {
+      val cardGroup = agentView.getElementsByClass("card-group")
+      cardGroup.size() mustBe 1
+
+      val mainCards = agentView.getElementsByClass("card-half-width")
+      mainCards.size() mustBe 2
+
+      val fullWidthCards = agentView.getElementsByClass("card-full-width")
+      fullWidthCards.size() mustBe 1
     }
   }
 
