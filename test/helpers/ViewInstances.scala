@@ -118,6 +118,8 @@ trait ViewInstances extends StubMessageControllerComponents {
     fixedWidthPageLayout = new FixedWidthPageLayout
   )
 
+  val minimalFooter = new components.MinimalFooter()
+  
   val pillar2layout = new Layout(
     govukLayout,
     new GovukBackLink,
@@ -132,7 +134,8 @@ trait ViewInstances extends StubMessageControllerComponents {
     hmrcScripts,
     new StandardBetaBanner,
     new Stylesheets(new HmrcAccessibleAutocompleteCss(assetsConfig)),
-    new TwoThirdsMainContent()
+    new TwoThirdsMainContent(),
+    minimalFooter
   )
 
   val viewGroupTerritories: GroupTerritoriesView =
