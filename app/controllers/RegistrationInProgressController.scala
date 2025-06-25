@@ -22,18 +22,36 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressView
+import cats.data.OptionT
+import services.SubscriptionService
+import models.subscription.ReadSubscriptionRequestParameters
+import models.InternalIssueError
+import play.api.Logging
 
 import javax.inject.Inject
+import scala.concurrent.ExecutionContext
 
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  view:                     RegistrationInProgressView
-)(implicit appConfig:       FrontendAppConfig)
+  view:                     RegistrationInProgressView,
+  subscriptionService:      SubscriptionService
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  def onPageLoad(plrReference: String): Action[AnyContent] = identify { implicit request =>
-    Ok(view(plrReference))
+  def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
+    (for {
+      maybeData <-
+        subscriptionService
+          .maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, plrReference))
+
+    } yield
+      if (maybeData.isDefined) {
+        Redirect(controllers.routes.DashboardController.onPageLoad)
+      } else {
+        Ok(view(plrReference))
+      })
   }
 }
