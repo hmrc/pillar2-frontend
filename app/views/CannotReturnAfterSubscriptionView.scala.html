@@ -22,18 +22,14 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(
-    pageTitle    = titleNoForm(messages("task-list.title")),
-    showBackLink = false
-) {
+@layout(pageTitle = titleNoForm(messages("task-list.title")), showBackLink = false) {
 
         <h1 class="govuk-heading-l">@messages("cannotReturnAfterSubscriptionError.heading")</h1>
         <p class="govuk-body govuk-!-margin-bottom-5">@messages("cannotReturnAfterSubscriptionError.message")</p>
-                    <p class="govuk-body">
-                        <a> @messages("cannotReturnAfterSubscriptionError.message2")</a>
-             <a href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home" class="govuk-link govuk-link--no-visited-state"> @messages("cannotReturnAfterSubscriptionError.link")</a>
-
-            </p>
+        <p class="govuk-body">
+            <a> @messages("cannotReturnAfterSubscriptionError.message2")</a>
+            <a href="/report-pillar2-top-up-taxes/pillar2-top-up-tax-home" class="govuk-link govuk-link--no-visited-state"> @messages("cannotReturnAfterSubscriptionError.link")</a>
+        </p>
 
 
 

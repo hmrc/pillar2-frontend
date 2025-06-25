@@ -31,7 +31,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{DashboardView, RegistrationInProgressView}
+import views.html.{DashboardView, HomepageView, RegistrationInProgressView}
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
@@ -43,7 +43,8 @@ class DashboardController @Inject() (
   getData:                                DataRetrievalAction,
   val subscriptionService:                SubscriptionService,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   DashboardView,
+  dashboardView:                          DashboardView,
+  homepageView:                           HomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   registrationInProgressView:             RegistrationInProgressView
@@ -78,17 +79,31 @@ class DashboardController @Inject() (
                          }
                      )
       } yield Ok(
-        view(
-          dashboard.upeDetails.organisationName,
-          dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-          referenceNumber,
-          inactiveStatus = dashboard.accountStatus.exists(_.inactive),
-          agentView = request.isAgent
-        )
+        if (appConfig.newHomepageEnabled) {
+          homepageView(
+            dashboard.upeDetails.organisationName,
+            dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            referenceNumber,
+            agentView = request.isAgent
+          )
+        } else {
+          dashboardView(
+            dashboard.upeDetails.organisationName,
+            dashboard.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            referenceNumber,
+            inactiveStatus = dashboard.accountStatus.exists(_.inactive),
+            agentView = request.isAgent
+          )
+        }
       )).recover {
         case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
           val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
           Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
+        case InternalIssueError =>
+          logger.error(
+            "DashboardController - read subscription failed as no valid Json was returned from the controller"
+          )
+          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
         case _ =>
           logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
           Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)

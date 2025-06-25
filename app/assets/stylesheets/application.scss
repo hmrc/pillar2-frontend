@@ -106,3 +106,61 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
   margin-bottom: 0;
 }
 
+.card-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  width: 100%;
+}
+
+.card-half-width {
+  flex: 1;
+  min-width: 300px;
+  border: solid #b1b4b6 1px;
+}
+
+.card-full-width {
+  width: 100%;
+  min-width: 300px;
+  border: solid #b1b4b6 1px;
+  margin-top: 0.2rem;
+}
+
+.card-label {
+  background-color: #f3f2f1;
+  padding: 10px 0 1px 15px;
+  margin: 0 0 10px 0;
+}
+
+.card-content {
+  padding: 15px 15px 0 15px;
+}
+
+.card-links {
+  padding: 0 0 15px 0;
+}
+
+.columns .manage-acc-li {
+  float: left;
+  width: 50%;
+}
+
+.columns .mng-acc-body-text-width {
+  width: 95%;
+}
+
+/* ----- Responsive ----- */
+@media screen and (max-width: 997px) {
+  .card-half-width {
+    width: 100%;
+  }
+
+  .columns .manage-acc-li {
+    float: none;
+    width: 80%;
+  }
+
+  .columns .mng-acc-body-text-width {
+    width: 95%;
+  }
+}
