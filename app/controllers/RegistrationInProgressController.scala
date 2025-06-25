@@ -18,13 +18,13 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationInProgressView
-import services.SubscriptionService
 import models.subscription.ReadSubscriptionRequestParameters
 import play.api.Logging
+import play.api.i18n.I18nSupport
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import services.SubscriptionService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.RegistrationInProgressView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext

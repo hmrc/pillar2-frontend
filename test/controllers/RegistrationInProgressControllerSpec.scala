@@ -17,15 +17,13 @@
 package controllers
 
 import base.SpecBase
-import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
+import models.subscription.ReadSubscriptionRequestParameters
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.SubscriptionService
-import views.html.RegistrationInProgressView
 
 import scala.concurrent.Future
 
@@ -86,4 +84,4 @@ class RegistrationInProgressControllerSpec extends SpecBase {
       }
     }
   }
-} 
+}
