@@ -119,7 +119,7 @@ trait ViewInstances extends StubMessageControllerComponents {
   )
 
   val minimalFooter = new components.MinimalFooter()
-  
+
   val pillar2layout = new Layout(
     govukLayout,
     new GovukBackLink,
