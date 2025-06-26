@@ -45,7 +45,8 @@ class SubscriptionService @Inject() (
 )(implicit ec:                  ExecutionContext)
     extends Logging {
 
-  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] = {
+    logger.info(s"createSubscription - userAnswers: - ${Json.toJson(userAnswers)}")
     for {
       upeSafeId     <- registerUpe(userAnswers)
       latestAnswers <- userAnswersConnectors.getUserAnswer(userAnswers.id)
@@ -58,6 +59,7 @@ class SubscriptionService @Inject() (
       enrolmentInfo = updatedAnswers.createEnrolmentInfo(plrRef)
       _ <- enrolmentConnector.enrolAndActivate(enrolmentInfo)
     } yield plrRef
+  }
 
   private def enrolmentExists(plrReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
@@ -71,6 +73,13 @@ class SubscriptionService @Inject() (
         Future.successful(readSubscriptionResponse)
       case _ =>
         Future.failed(InternalIssueError)
+    }
+  def maybeReadAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Option[SubscriptionData]] =
+    subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(Some(readSubscriptionResponse))
+      case _ =>
+        Future.successful(None)
     }
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =

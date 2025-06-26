@@ -78,10 +78,30 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
 
       }
 
-      "return None when the backend has returned a non-success status code" in {
+      "return None when the backend has returned 404 Not Found" in {
         server.stubFor(
           get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(errorCodes.sample.value).withBody(unsuccessfulResponseJson))
+            .willReturn(aResponse().withStatus(NOT_FOUND).withBody(unsuccessfulNotFoundJson))
+        )
+
+        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+        result mustBe None
+      }
+
+      "return None when the backend has returned 422 Unprocessable Entity" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(UNPROCESSABLE_ENTITY).withBody(unsuccessfulResponseJson))
+        )
+
+        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+        result mustBe None
+      }
+
+      "return None when the backend has returned other error status codes" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR).withBody(unsuccessfulResponseJson))
         )
 
         val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue

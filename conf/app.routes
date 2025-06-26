@@ -537,6 +537,7 @@ GET        /repayment/error/return                                              
 GET        /repayment/processing-refund                                                             controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
 GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
 GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
+GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)
 
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
@@ -553,3 +554,5 @@ GET        /manage-account/contact/waiting-room                                 
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 
 GET       /manage-account/details/waiting-room                                                      controllers.subscription.manageAccount.ManageGroupDetailsWaitingRoomController.onPageLoad
+
+GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)
