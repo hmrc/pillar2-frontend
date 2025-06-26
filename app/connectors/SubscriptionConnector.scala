@@ -68,9 +68,6 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .map {
         case response if response.status == 200 =>
           Some(Json.parse(response.body).as[SubscriptionData])
-        case response if response.status == 404 || response.status == 422 =>
-          logger.info(s"Subscription not found or in progress, received status: ${response.status}")
-          None
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           None
