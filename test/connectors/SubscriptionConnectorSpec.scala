@@ -87,6 +87,16 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
         result mustBe None
       }
+
+      "return None when the backend has returned 422" in {
+        server.stubFor(
+          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
+            .willReturn(aResponse().withStatus(UNPROCESSABLE_ENTITY).withBody(unsuccessfulResponseJson))
+        )
+
+        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+        result mustBe None
+      }
     }
 
     "readSubscription" should {
