@@ -9,7 +9,7 @@ object AppDependencies {
   val mockitoVersion                        = "3.2.18.0"
   val mockitoScalaVersion                   = "1.17.45"
   val playConditionalFormMappingPlayVersion = "3.3.0"
-  val playFrontendHmrcPlayVersion           = "12.5.0"
+  val playFrontendHmrcPlayVersion           = "12.6.0"
   val randomDataGeneratorVersion            = "2.9"
   val scalacheckGenRegexpVersion            = "1.1.0"
   val scalatestplusScalacheckVersion        = "3.1.0.0-RC2"
