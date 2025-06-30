@@ -11,7 +11,7 @@ object AppDependencies {
   val mockitoScalaVersion                   = "1.17.45"
   val mongoVersion                          = "2.7.0"
   val playConditionalFormMappingPlayVersion = "3.3.0"
-  val playFrontendHmrcPlayVersion           = "12.5.0"
+  val playFrontendHmrcPlayVersion           = "12.6.0"
   val randomDataGeneratorVersion            = "2.9"
   val scalacheckGenRegexpVersion            = "1.1.0"
   val scalatestplusScalacheckVersion        = "3.1.0.0-RC2"
