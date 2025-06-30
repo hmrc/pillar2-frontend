@@ -10,6 +10,7 @@ object AppDependencies {
   val mockitoVersion                        = "3.2.18.0"
   val mockitoScalaVersion                   = "1.17.45"
   val mongoVersion                          = "2.7.0"
+  val pdfBoxVersion                         = "3.0.5"
   val playConditionalFormMappingPlayVersion = "3.3.0"
   val playFrontendHmrcPlayVersion           = "12.6.0"
   val randomDataGeneratorVersion            = "2.9"
@@ -23,6 +24,7 @@ object AppDependencies {
     "uk.gov.hmrc"           %% "bootstrap-frontend-play-30"            % bootstrapVersion,
     "uk.gov.hmrc.mongo"     %% "hmrc-mongo-play-30"                    % mongoVersion,
     "org.typelevel"         %% "cats-core"                             % catsCoreVersion,
+    "org.apache.pdfbox"      % "pdfbox"                                % pdfBoxVersion,
     "org.apache.xmlgraphics" % "fop"                                   % fopVersion,
     "commons-io"             % "commons-io"                            % commonsIoVersion,
     "com.beachape"          %% "enumeratum-play-json"                  % enumeratumPlayJsonVersion
