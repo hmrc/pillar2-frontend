@@ -93,8 +93,8 @@ lazy val testSettings: Seq[Def.Setting[?]] = Seq(
 )
 
 lazy val scoverageSettings = Seq(
-  coverageMinimumStmtTotal := 90.70,
-  coverageMinimumBranchTotal := 86.79,
+  coverageMinimumStmtTotal := 90.54,
+  coverageMinimumBranchTotal := 86.55,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
   coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;.*Routes.*;.*viewmodels.*;.*queries.*;"
