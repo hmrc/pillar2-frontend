@@ -45,7 +45,18 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual OK
-        contentAsString(result) must include("PLRREF123")
+        val content = contentAsString(result)
+        content must include("PLRREF123")
+        content must include("Registration in progress")
+        content must include("Your registration is in progress")
+        content must include("We are processing your registration")
+        content must include("Your Pillar 2 Top-up Taxes account")
+        content must include("When to submit your returns")
+        content must include("Your group must submit your Pillar 2 Top-up Taxes returns no later than:")
+        content must include("18 months after the last day of the groups accounting period")
+        content must include("30 June 2026")
+        content must include("HMRC are currently delivering this service on a phased approach")
+        content must include("Refer to the Pillar 2 Top-up Taxes manual")
       }
     }
 
