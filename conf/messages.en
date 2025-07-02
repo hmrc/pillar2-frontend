@@ -1588,4 +1588,5 @@ dashboard.whenToSubmit.bullet1 = 18 months after the last day of the group''s ac
 dashboard.whenToSubmit.bullet2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
 dashboard.phaseApproach.message = HMRC are currently delivering this service on a phased approach. We''ll release the tools that you need to submit your returns before the due date for reporting.
 dashboard.phaseApproach.link = Refer to the Pillar 2 Top-up Taxes manual (opens in new tab)
+dashboard.phaseApproach.linkSuffix = for more details.
 site.important = Important

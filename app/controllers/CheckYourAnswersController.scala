@@ -230,7 +230,13 @@ class CheckYourAnswersController @Inject() (
     ).withCssClass("govuk-!-margin-bottom-9")
 
   private def pollForSubscriptionData(plrReference: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val maxAttempts  = appConfig.subscriptionPollingTimeoutSeconds / appConfig.subscriptionPollingIntervalSeconds
+    val maxAttempts = {
+      if (appConfig.subscriptionPollingIntervalSeconds <= 0) {
+        logger.error("Invalid subscriptionPollingIntervalSeconds configuration: must be greater than 0")
+        throw new IllegalArgumentException("subscriptionPollingIntervalSeconds must be greater than 0")
+      }
+      appConfig.subscriptionPollingTimeoutSeconds / appConfig.subscriptionPollingIntervalSeconds
+    }
     val delaySeconds = appConfig.subscriptionPollingIntervalSeconds
 
     def attemptRead(attempt: Int): Future[Unit] =
