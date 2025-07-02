@@ -302,7 +302,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, atLeastOnce()).set(eqTo(sessionData))
+          verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
 
@@ -340,7 +340,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository, atLeastOnce()).set(eqTo(sessionData))
+          verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
 

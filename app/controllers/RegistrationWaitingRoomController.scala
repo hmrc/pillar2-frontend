@@ -43,6 +43,7 @@ class RegistrationWaitingRoomController @Inject() (
     request.userAnswers
       .get(SubscriptionStatusPage) match {
       case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      case Some(RegistrationInProgress)                   => Ok(view(Some(RegistrationInProgress)))
       case Some(FailedWithDuplicatedSubmission)           => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithUnprocessableEntity)            => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
