@@ -27,7 +27,7 @@ class SecondaryTelephoneViewSpec extends ViewSpecBase {
   val formProvider = new CaptureTelephoneDetailsFormProvider
   val page: SecondaryTelephoneView = inject[SecondaryTelephoneView]
 
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe")(request, appConfig, messages).toString())
+  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", isAgent = false, "OrgName")(request, appConfig, messages).toString())
 
   "CaptureTelephoneDetailsView" should {
 

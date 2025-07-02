@@ -55,7 +55,7 @@ class SecondaryTelephoneController @Inject() (
           case Some(v) => form.fill(v)
           case None    => form
         }
-        Ok(view(preparedForm, contactName))
+        Ok(view(preparedForm, contactName, request.isAgent, request.organisationName))
 
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -71,7 +71,7 @@ class SecondaryTelephoneController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, request.organisationName))),
               value =>
                 for {
                   updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubSecondaryCapturePhonePage, value))

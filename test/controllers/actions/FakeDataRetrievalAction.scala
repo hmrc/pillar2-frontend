@@ -31,10 +31,22 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
     scala.concurrent.ExecutionContext.Implicits.global
 }
 
-class FakeSubscriptionDataRetrievalAction(dataToReturn: Option[SubscriptionLocalData]) extends SubscriptionDataRetrievalAction {
+class FakeSubscriptionDataRetrievalAction(
+  subscriptionData: Option[SubscriptionLocalData],
+  organisationName: Option[String]
+) extends SubscriptionDataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalSubscriptionDataRequest[A]] =
-    Future(OptionalSubscriptionDataRequest(request.request, request.userId, dataToReturn, request.enrolments))
+    Future(
+      OptionalSubscriptionDataRequest(
+        request.request,
+        request.userId,
+        subscriptionData,
+        request.enrolments,
+        request.isAgent,
+        organisationName
+      )
+    )
 
   override protected implicit val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global

@@ -30,7 +30,7 @@
 )
 
 
-@(form: Form[_], userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
@@ -41,7 +41,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("contactCaptureTelephoneDetails.heading.caption"))
+        @if(isAgent) {
+            @sectionHeader(organisationName.getOrElse(messages("contactCaptureTelephoneDetails.heading.caption")))
+        } else {
+            @sectionHeader(messages("contactCaptureTelephoneDetails.heading.caption"))
+        }
 
         @govukInput(
             InputViewModel(
