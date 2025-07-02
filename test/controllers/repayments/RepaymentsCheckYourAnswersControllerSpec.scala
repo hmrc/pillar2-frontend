@@ -149,7 +149,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
