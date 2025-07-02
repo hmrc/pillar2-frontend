@@ -83,29 +83,6 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
   padding-bottom: 0;
 }
 
-.hmrc-report-technical-issue {
-  font-size: 19px !important;
-  font-weight: 400 !important;
-}
-
-.hmrc-report-technical-issue a {
-  font-size: 19px !important;
-  font-weight: 400 !important;
-}
-
-.pillar2-blue-separator {
-  height: 10px;
-  background-color: #1d70b8;
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  right: 50%;
-  margin-left: -50vw;
-  margin-right: -50vw;
-  margin-top: 0;
-  margin-bottom: 0;
-}
-
 .card-group {
   display: flex;
   flex-wrap: wrap;
