@@ -50,7 +50,7 @@
                 label = LabelViewModel(messages("captureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
-            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.sub.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.sub.hint", userName))))
         )
 
         @govukButton(
