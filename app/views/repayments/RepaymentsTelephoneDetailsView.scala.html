@@ -17,31 +17,36 @@
 @import viewmodels.InputWidth._
 @import viewmodels.LabelSize.Large
 @import config.FrontendAppConfig
+@import views.html.components.gds._
+
 @this(
     layout: templates.Layout,
     formHelper: FormWithCSRF,
     govukErrorSummary: GovukErrorSummary,
     govukInput: GovukInput,
     govukButton: GovukButton,
+    sectionHeader: sectionHeader
 )
 
 
 @(form: Form[_], mode: Mode, contactName:String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("repayments.telephoneDetails.title"))) {
+@layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
     @formHelper(action = controllers.repayments.routes.RepaymentsTelephoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
+
+        @sectionHeader(messages("repayments.telephoneDetails.heading.caption"))
         @govukInput(
             InputViewModel(
-                field = form("telephoneNumber"),
-                label = LabelViewModel(messages("repayments.telephoneDetails.heading",contactName)).asPageHeading(Large)
+                field = form("phoneNumber"),
+                label = LabelViewModel(messages("captureTelephoneDetails.heading",contactName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
-            .withHint(Hint(content = Text(messages("repayments.telephoneDetails.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.hint"))))
         )
 
 
