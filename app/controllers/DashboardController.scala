@@ -34,7 +34,7 @@ import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.{DashboardView, HomepageView, RegistrationInProgressView}
+import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -52,8 +52,7 @@ class DashboardController @Inject() (
   homepageView:                           HomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
-  osService:                              ObligationsAndSubmissionsService,
-  registrationInProgressView:             RegistrationInProgressView
+  osService:                              ObligationsAndSubmissionsService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -75,34 +74,33 @@ class DashboardController @Inject() (
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
         subscriptionData <- OptionT.liftF(
-          subscriptionService
-            .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-            .recover {
-              case InternalIssueError =>
-                logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
-                throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
-              case other => throw other
-            }
-        )
+                              subscriptionService
+                                .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                                .recover {
+                                  case InternalIssueError =>
+                                    logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
+                                    throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
+                                  case other => throw other
+                                }
+                            )
         result <- OptionT.liftF(displayHomepage(subscriptionData, referenceNumber))
       } yield result)
         .recover {
-        case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
-          val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
-          Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
-        case InternalIssueError =>
-          logger.error(
-            "DashboardController - read subscription failed as no valid Json was returned from the controller"
-          )
-          Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-        case _ =>
-          logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
-          Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
-      }.getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
+            val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
+            Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
+          case InternalIssueError =>
+            logger.error(
+              "DashboardController - read subscription failed as no valid Json was returned from the controller"
+            )
+            Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
+          case _ =>
+            logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
+            Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        }
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
     }
-}
-
 
   private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
     request:                                    OptionalDataRequest[_],
