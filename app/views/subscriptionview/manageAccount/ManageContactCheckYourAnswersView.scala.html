@@ -28,7 +28,7 @@
 
 @(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = true) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
 
             @h1(messages("manageContactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
