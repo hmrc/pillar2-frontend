@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
 import models.UserAnswers
+import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,10 +28,11 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.SubscriptionService
+import services.{ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
+import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -74,7 +76,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             .configure("features.newHomepageEnabled" -> true)
             .overrides(
               bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SubscriptionService].toInstance(mockSubscriptionService)
+              bind[SubscriptionService].toInstance(mockSubscriptionService),
+              bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
             )
             .build()
 
@@ -85,6 +88,9 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           when(mockSessionRepository.set(any()))
             .thenReturn(Future.successful(true))
           when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+
           val result = route(application, request).value
           val view   = application.injector.instanceOf[HomepageView]
 
@@ -92,8 +98,9 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            None,
             "12345678",
-            agentView = false
+            isAgent = false
           )(
             request,
             applicationConfig,
