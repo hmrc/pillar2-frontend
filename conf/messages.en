@@ -408,6 +408,7 @@ captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the phone number?
 captureTelephoneDetails.heading = What is the phone number for {0}?
 captureTelephoneDetails.hint = For international numbers include the country code, for example<br>+44 808 157 0192 or 0044 808 157 0192.<br><br>To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123.
+captureTelephoneDetails.sub.hint = Enter the phone number for {0}, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192.
 captureTelephoneDetails.error.required = Enter the phone number for {0}
 captureTelephoneDetails.messages.error.length = Phone number should be 24 characters or less
 captureTelephoneDetails.messages.error.format = Enter the phone number using numbers and the allowed symbols, # ( ) + -

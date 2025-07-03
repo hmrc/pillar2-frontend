@@ -47,7 +47,7 @@ class ContactCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
     "have a hint description" in {
       view
         .getElementsByClass("govuk-hint")
-        .text mustEqual "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
+        .text mustEqual "Enter the phone number for John Doe, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
     }
 
     "have a button" in {
