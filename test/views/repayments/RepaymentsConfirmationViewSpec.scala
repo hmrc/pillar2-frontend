@@ -35,45 +35,44 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     val view: Document =
       Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 
-    "have a panel" in {
-      view.getElementsByClass("govuk-panel__title").text must include("Refund request submitted")
+    "have a page title" in {
+      view.title() mustBe "Repayment request submitted - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Refund request submitted" +
-          " - Report Pillar 2 Top-up Taxes - GOV.UK"
-      )
-    }
-
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Refund request submitted"
-      )
-    }
-
-    "have a paragraphs" in {
-      view.getElementsByClass("govuk-body").text must include(
-        s"You have successfully submitted your refund request on ${currentDate.toString()}"
-      )
-      view.getElementsByClass("govuk-body").text must include(
-        "What happens next If we require more information relating to your refund request, we will get in touch."
-      )
-      view.getElementsByClass("govuk-body").text must include(
-        "You can return to manage your Pillar 2 Top-up Taxes ."
-      )
-    }
-
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("manage your Pillar 2 Top-up Taxes")
-    }
-
-    "have the correct banner link" in {
+    "have the correct header link to Pillar 2 home" in {
       val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
       link.attr("href") must include(routes.DashboardController.onPageLoad.url)
       link.text         must include("Report Pillar 2 Top-up Taxes")
+    }
+
+    "have one H1 banner-panel heading" in {
+      val heading = view.getElementsByTag("h1")
+
+      heading.size() mustBe 1
+      heading.hasClass("govuk-panel__title") mustBe true
+      heading.text() mustBe "Repayment request submitted"
+    }
+
+    "have a confirmation message" in {
+      view.getElementsByClass("govuk-body").text must include(
+        s"You have successfully submitted your repayment request on ${currentDate.toString()}."
+      )
+    }
+
+    "have a 'What happens next' heading" in {
+      view.getElementsByTag("h2").first().text mustBe "What happens next"
+    }
+
+    "have a paragraph" in {
+      view.getElementsByClass("govuk-body").text must include(
+        "We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided."
+      )
+    }
+
+    "have a return link" in {
+      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.text         must include("Back to group homepage")
     }
 
   }
