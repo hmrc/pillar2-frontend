@@ -21,42 +21,47 @@
         layout: templates.Layout,
         formHelper: FormWithCSRF,
         govukPanel: GovukPanel,
-        paragraph: paragraphBody,
+        h2: HeadingH2,
+        paragraph: paragraph,
+        paragraphBody: paragraphBody,
         bulletList: bulletList,
         printLink: printLink,
         pdfLink: pdfLink,
         paragraphMessageWithLink: ParagraphMessageWithLink,
+        link: link,
         heading: heading
 )
 
 @(currentDate: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle = titleNoForm(messages("repayments.refundConfirmation.title")),
-    showBackLink = false,
-    showSignOut = true,
-    timeout = false,
-    authorised = false,
-    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
+  pageTitle = titleNoForm(messages("repayments.confirmation.title")),
+  showBackLink = false,
+  showSignOut = true,
+  timeout = false,
+  authorised = false,
+  bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
 
-    @govukPanel(Panel(
-        title = Text(messages("repayments.refundConfirmation.panelText"))
-    ))
+  @govukPanel(Panel(
+    title = Text(messages("repayments.confirmation.bannerText"))
+  ))
 
-    <p class="govuk-body">@messages("repayments.refundConfirmation.paragraphText.one") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span></p>
-    @bulletList(items = List(
-        printLink(messages("site.print")),
-        pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
-    ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
-    @paragraph(messages("repayments.refundConfirmation.paragraphText.two"), isBold = true)
-    @paragraph(messages("repayments.refundConfirmation.paragraphText.three"))
+  <p class="govuk-body">
+    @messages("repayments.confirmation.message") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span>.
+  </p>
 
-    @paragraphMessageWithLink(message1 = Some(messages("repayments.refundConfirmation.paragraphText.four")),
-        linkMessage = messages("repayments.refundConfirmation.paragraphText.returnLink"),
-        linkUrl = routes.DashboardController.onPageLoad.url,
-        message2 = Some(".")
-    )
+  @bulletList(items = List(
+    printLink(messages("site.print")),
+    pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
+  ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
 
+  @h2(messages("repayments.confirmation.heading"))
+  @paragraphBody(messages("repayments.confirmation.paragraph"))
+
+  @paragraph(link(
+    text = messages("repayments.confirmation.back"),
+    call = Call("GET", routes.DashboardController.onPageLoad.url)
+  ))
 
 }

@@ -1473,15 +1473,12 @@ repaymentsContactByTelephone.change.hidden = can we contact by telephone?
 repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
 repaymentsTelephoneDetails.change.hidden = the telephone number
 
-repayments.refundConfirmation.title = Refund request submitted
-repayments.refundConfirmation.panelText = Refund request submitted
-repayments.refundConfirmation.paragraphText.one = You have successfully submitted your refund request on
-repayments.refundConfirmation.printLink.text = Print this page
-repayments.refundConfirmation.saveLink.text = Save as PDF
-repayments.refundConfirmation.paragraphText.two = What happens next
-repayments.refundConfirmation.paragraphText.three = If we require more information relating to your refund request, we will get in touch.
-repayments.refundConfirmation.paragraphText.four = You can return to
-repayments.refundConfirmation.paragraphText.returnLink = manage your Pillar 2 Top-up Taxes
+repayments.confirmation.title = Repayment request submitted
+repayments.confirmation.bannerText = Repayment request submitted
+repayments.confirmation.message = You have successfully submitted your repayment request on
+repayments.confirmation.heading = What happens next
+repayments.confirmation.paragraph = We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided.
+repayments.confirmation.back = Back to group homepage
 
 repayments.refundErrorConfirmation.title = You cannot return, your refund request is complete
 repayments.refundErrorConfirmation.heading = You cannot return, your refund request is complete
