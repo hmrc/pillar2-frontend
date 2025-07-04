@@ -27,12 +27,18 @@ import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersVi
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
   implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
-    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false, "ABC Intl")
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false, "OrgName")
 
   val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
 
   val view: Document = Jsoup.parse(
-    page(subscriptionDataPrimaryContactList(), subscriptionDataSecondaryContactList(), subscriptionDataAddress(inject[CountryOptions]))(
+    page(
+      subscriptionDataPrimaryContactList(),
+      subscriptionDataSecondaryContactList(),
+      subscriptionDataAddress(inject[CountryOptions]),
+      isAgent = false,
+      "OrgName"
+    )(
       request,
       appConfig,
       messages
@@ -43,7 +49,9 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
-      subscriptionDataAddress(inject[CountryOptions])
+      subscriptionDataAddress(inject[CountryOptions]),
+      isAgent = false,
+      "OrgName"
     )(request, appConfig, messages).toString()
   )
 
