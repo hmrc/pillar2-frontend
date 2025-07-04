@@ -56,7 +56,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(
+        contentAsString(result) mustEqual view(formProvider(), isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -77,7 +77,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[ContactNameComplianceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"))(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -102,7 +102,11 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isAgent = false, Some("OrgName"))(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -146,7 +150,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(
+        contentAsString(result) mustEqual view(formProvider(), isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -173,7 +177,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill("name"))(
+        contentAsString(result) mustEqual view(formProvider().fill("name"), isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -202,7 +206,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[ContactNameComplianceView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(
+        contentAsString(result) mustEqual view(boundForm, isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)

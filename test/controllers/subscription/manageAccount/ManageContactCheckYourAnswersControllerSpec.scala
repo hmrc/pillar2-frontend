@@ -129,7 +129,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
         contentAsString(result) must include("Second contact")
-        contentAsString(result) must include("Contact address")
+        contentAsString(result) must include("Filing member contact address")
       }
     }
 
@@ -158,7 +158,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
         contentAsString(result) must include("Second contact")
-        contentAsString(result) must include("Contact address")
+        contentAsString(result) must include("Filing member contact address")
       }
     }
 

@@ -121,7 +121,8 @@ trait SpecBase
     enrolments:            Set[Enrolment] = Set.empty,
     groupID:               Option[String] = None,
     subscriptionLocalData: Option[SubscriptionLocalData] = None,
-    additionalData:        Map[String, Any] = Map.empty
+    additionalData:        Map[String, Any] = Map.empty,
+    organisationName:      Option[String] = Some("OrgName")
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(
@@ -141,7 +142,7 @@ trait SpecBase
         bind[IdentifierAction].qualifiedWith("EnrolmentIdentifier").to[FakeIdentifierAction],
         bind[IdentifierAction].qualifiedWith("ASAEnrolmentIdentifier").to[FakeIdentifierAction],
         bind[DataRetrievalAction].toInstance(new FakeDataRetrievalAction(userAnswers)),
-        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData)),
+        bind[SubscriptionDataRetrievalAction].toInstance(new FakeSubscriptionDataRetrievalAction(subscriptionLocalData, organisationName)),
         bind[SessionDataRetrievalAction].toInstance(new FakeSessionDataRetrievalAction(userAnswers))
       )
 

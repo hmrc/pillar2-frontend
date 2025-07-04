@@ -51,7 +51,7 @@ class ContactEmailAddressController @Inject() (
             .get(SubPrimaryContactNamePage)
             .map { contactName =>
               val form = formProvider(contactName)
-              Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), contactName))
+              Ok(view(form.fill(subscriptionLocalData.subPrimaryEmail), contactName, request.isAgent, request.organisationName))
             }
         }
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -67,7 +67,7 @@ class ContactEmailAddressController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, Some(request.organisationName)))),
               value =>
                 for {
                   updatedAnswers <-
