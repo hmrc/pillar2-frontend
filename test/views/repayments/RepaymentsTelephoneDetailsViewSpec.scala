@@ -17,7 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
-import forms.RepaymentsTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +25,7 @@ import views.html.repayments.RepaymentsTelephoneDetailsView
 
 class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider = new RepaymentsTelephoneDetailsFormProvider
+  val formProvider = new CaptureTelephoneDetailsFormProvider
   val page: RepaymentsTelephoneDetailsView = inject[RepaymentsTelephoneDetailsView]
   val mode: Mode                           = NormalMode
   val contactName = "ABC Limited"
@@ -38,15 +38,21 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("What is the telephone number?")
+        view.getElementsByTag("title").text must include("What is the phone number?")
+      }
+
+      "have a caption" in {
+        view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("What is the telephone number for ABC Limited?")
+        view.getElementsByTag("h1").text must include("What is the phone number for ABC Limited?")
       }
 
       "have a hint description" in {
-        view.getElementsByClass("govuk-hint").get(0).text must include("For international numbers include the country code.")
+        view.getElementsByClass("govuk-hint").get(0).text must include(
+          "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
+        )
       }
 
       "have a button" in {
@@ -59,19 +65,19 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> "")), mode, contactName)(request, appConfig, messages)
+        page(formProvider(contactName).bind(Map("phoneNumber" -> "")), mode, contactName)(request, appConfig, messages)
           .toString()
       )
 
     "have an error summary" in {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Enter a telephone number for ABC Limited"
+        "Enter the phone number for ABC Limited"
       )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Enter a telephone number for ABC Limited")
+      view.getElementsByClass("govuk-error-message").text must include("Enter the phone number for ABC Limited")
     }
 
   }
@@ -81,7 +87,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     val telephoneNumber = "+".padTo(51, '1')
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), mode, contactName)(
+        page(formProvider(contactName).bind(Map("phoneNumber" -> telephoneNumber)), mode, contactName)(
           request,
           appConfig,
           messages
@@ -91,12 +97,12 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     "have an error summary" in {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Telephone number must be 24 characters or less"
+        "Phone number should be 24 characters or less"
       )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Telephone number must be 24 characters or less")
+      view.getElementsByClass("govuk-error-message").text must include("Phone number should be 24 characters or less")
     }
 
   }
@@ -107,7 +113,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
     val view: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("telephoneNumber" -> telephoneNumber)), mode, contactName)(
+        page(formProvider(contactName).bind(Map("phoneNumber" -> telephoneNumber)), mode, contactName)(
           request,
           appConfig,
           messages
@@ -117,13 +123,13 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     "have an error summary" in {
       view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
       view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Enter a telephone number for ABC Limited in the correct format, for example 01632 960 001 or +44 808 157 0192"
+        "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
       )
     }
 
     "have an input error" in {
       view.getElementsByClass("govuk-error-message").text must include(
-        "Enter a telephone number for ABC Limited in the correct format, for example 01632 960 001 or +44 808 157 0192"
+        "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
       )
     }
 
