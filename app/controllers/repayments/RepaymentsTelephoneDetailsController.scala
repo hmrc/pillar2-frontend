@@ -18,7 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.RepaymentsTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
 import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage, RepaymentsTelephoneDetailsPage}
@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class RepaymentsTelephoneDetailsController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  formProvider:                           RepaymentsTelephoneDetailsFormProvider,
+  formProvider:                           CaptureTelephoneDetailsFormProvider,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,

@@ -404,6 +404,7 @@ contactUPEByTelephone.no = No
 contactUPEByTelephone.error.required = Select yes if we can contact {0} by telephone
 contactUPEByTelephone.checkYourAnswersLabel = Can we contact by telephone?
 contactUPEByTelephone.change.hidden = can we contact the Ultimate Parent Entity by telephone
+
 captureTelephoneDetails.heading.caption = Group details
 captureTelephoneDetails.title = What is the phone number?
 captureTelephoneDetails.heading = What is the phone number for {0}?
@@ -1395,12 +1396,7 @@ repayments.contactByTelephone.heading = Can we contact {0} by telephone?
 repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
 repayments.contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 
-repayments.telephoneDetails.title = What is the telephone number?
-repayments.telephoneDetails.heading = What is the telephone number for {0}?
-repayments.telephoneDetails.hint = For international numbers include the country code.
-repayments.telephoneDetails.error.required = Enter a telephone number for {0}
-repayments.telephoneDetails.error.length = Telephone number must be 24 characters or less
-repayments.telephoneDetails.error.format = Enter a telephone number for {0} in the correct format, for example 01632 960 001 or +44 808 157 0192
+repayments.telephoneDetails.heading.caption = Contact details
 
 repayments.incompleteDataView.title = Refund request has missing information
 repayments.incompleteDataView.heading = Refund request has missing information

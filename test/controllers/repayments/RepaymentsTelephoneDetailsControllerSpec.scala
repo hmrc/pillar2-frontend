@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.RepaymentsTelephoneDetailsFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 
 class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new RepaymentsTelephoneDetailsFormProvider()
+  val formProvider = new CaptureTelephoneDetailsFormProvider()
   val form: Form[String] = formProvider("ABC Limited")
 
   "Repayments Telephone Details Controller" when {
@@ -112,7 +112,7 @@ class RepaymentsTelephoneDetailsControllerSpec extends SpecBase {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
           FakeRequest(POST, controllers.repayments.routes.RepaymentsTelephoneDetailsController.onSubmit(NormalMode).url)
-            .withFormUrlEncodedBody(("telephoneNumber", "12345"))
+            .withFormUrlEncodedBody(("phoneNumber", "12345"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
