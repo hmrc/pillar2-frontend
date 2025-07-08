@@ -21,6 +21,7 @@ import controllers.actions._
 import generators.StringGenerators
 import helpers._
 import models.UserAnswers
+import models.obligationsandsubmissions._
 import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
 import org.apache.pekko.actor.ActorSystem
@@ -42,6 +43,7 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
 trait SpecBase
@@ -87,6 +89,26 @@ trait SpecBase
 
   val pillar2OrganisationEnrolment: Enrolments = Enrolments(
     Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
+  )
+
+  def obligationsAndSubmissionsSuccessResponse(status: ObligationStatus): ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
+    processingDate = ZonedDateTime.now(),
+    accountingPeriodDetails = Seq(
+      AccountingPeriodDetails(
+        startDate = LocalDate.now(),
+        endDate = LocalDate.now().plusMonths(12),
+        dueDate = LocalDate.now().plusMonths(12),
+        underEnquiry = false,
+        obligations = Seq(
+          Obligation(
+            obligationType = ObligationType.UKTR,
+            status = status,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+      )
+    )
   )
 
   def countOccurrences(src: String, tgt: String): Int =

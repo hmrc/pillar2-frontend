@@ -22,17 +22,21 @@ import org.jsoup.nodes.Document
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import views.html.HomepageView
 
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+
 class HomepageViewSpec extends ViewSpecBase {
   private val page: HomepageView = inject[HomepageView]
   private val organisationName = "Some Org name"
   private val plrRef           = "XMPLR0012345678"
   private val date             = "1 June 2020"
+  private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
 
   val organisationView: Document =
-    Jsoup.parse(page(organisationName, date, plrRef, agentView = false)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
 
   val agentView: Document =
-    Jsoup.parse(page(organisationName, date, plrRef, agentView = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
   "HomepageView for a group" should {
     "display page header correctly" in {
@@ -99,6 +103,23 @@ class HomepageViewSpec extends ViewSpecBase {
       val fullWidthCards = organisationView.getElementsByClass("card-full-width")
       fullWidthCards.size() mustBe 1
     }
+
+    "not display notification banner if no date is found" in {
+      organisationView.getElementsByClass("govuk-notification-banner").isEmpty mustBe true
+    }
+
+    "display notification banner" in {
+      val accountInactiveOrgView: Document =
+        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = false)(request, appConfig, messages).toString())
+
+      val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
+
+      bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe "Your account has a Below-Threshold Notification."
+      bannerContent
+        .text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
+        .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+    }
   }
 
   "HomepageView for an agent" should {
@@ -163,6 +184,23 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val fullWidthCards = agentView.getElementsByClass("card-full-width")
       fullWidthCards.size() mustBe 1
+    }
+
+    "not display notification banner if no date is found" in {
+      agentView.getElementsByClass("govuk-notification-banner").isEmpty mustBe true
+    }
+
+    "display notification banner" in {
+      val accountInactiveAgentView: Document =
+        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = true)(request, appConfig, messages).toString())
+
+      val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
+
+      bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe s"$organisationName has a Below-Threshold Notification."
+      bannerContent.text() mustBe
+        s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
+          .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
   }
 

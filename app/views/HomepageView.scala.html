@@ -15,17 +15,38 @@
  *@
 
 @import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 @import views.html.components.gds._
 @import views.html.templates.Layout
 
+@import java.time.LocalDate
+@import java.time.format.DateTimeFormatter
 
-@this(layout: Layout, heading: heading, card: HomepageCard)
 
-@(organisationName: String, registrationDate: String, plrReference: String, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
+
+@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
+@maybeAgentKey = @{if(isAgent) ".agent" else ""}
+
+@bannerHtml = {
+ <div style="max-width: fit-content">
+  @paragraphBody(messages("homepage.btnActiveBanner.title", if(isAgent) organisationName else "Your account"), "govuk-notification-banner__heading")
+  @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body", maybeBTNBannerDate.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
+  @link(
+   text = messages("homepage.btnActiveBanner.linkText"),
+   call = Call("GET", s"$submissionFrontendPath/below-threshold-notification/start"),
+   classes = Some("govuk-notification-banner__link")
+  )
+ </div>
+}
 
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
+
+ @if(maybeBTNBannerDate.isDefined) {
+  @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
+ }
 
  @heading(messages("homepage.title"), "govuk-heading-l")
 
@@ -63,7 +84,7 @@
 
     card(
      title = messages("homepage.manageAccount.title"),
-     links = manageAccountLinks(agentView),
+     links = manageAccountLinks(isAgent),
      extraContent = Some(registrationContent),
      cardClass = "card-full-width"
     )
@@ -72,28 +93,26 @@
 }
 
 @manageAccountLinks(isAgent: Boolean) = @{
- val ifAgentKey = if(isAgent) ".agent" else ""
-
  Seq(
   (
           messages("homepage.manageAccount.manageContactDetails.linkText"),
           controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url,
-          Some(messages(s"homepage.manageAccount$ifAgentKey.manageContactDetails.body"))
+          Some(messages(s"homepage.manageAccount$maybeAgentKey.manageContactDetails.body"))
   ),
   (
           messages("homepage.manageAccount.manageGroupDetails.linkText"),
           controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url,
-          Some(messages(s"homepage.manageAccount$ifAgentKey.manageGroupDetails.body"))
+          Some(messages(s"homepage.manageAccount$maybeAgentKey.manageGroupDetails.body"))
   ),
   (
           messages("homepage.manageAccount.rfm.linkText"),
           if(isAgent) "" else controllers.rfm.routes.StartPageController.onPageLoad.url,
-          Some(messages(s"homepage.manageAccount$ifAgentKey.rfm.body"))
+          Some(messages(s"homepage.manageAccount$maybeAgentKey.rfm.body"))
   ),
   (
           messages("homepage.manageAccount.btn.linkText"),
           s"$submissionFrontendPath/below-threshold-notification/start",
-          Some(messages(s"homepage.manageAccount$ifAgentKey.btn.body"))
+          Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
   )
  )
 }
