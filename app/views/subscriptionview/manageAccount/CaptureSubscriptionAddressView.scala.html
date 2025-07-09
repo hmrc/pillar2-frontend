@@ -45,7 +45,7 @@
         }
 
         @if(isAgent) {
-            @sectionHeader(organisationName.get)
+            @sectionHeader(organisationName.getOrElse(messages("subscriptionAddress.heading.caption")))
         } else {
             @sectionHeader(messages("subscriptionAddress.heading.caption"))
         }
