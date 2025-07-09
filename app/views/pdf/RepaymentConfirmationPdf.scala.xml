@@ -63,7 +63,7 @@
                 <!-- submission date -->
                 <fo:block id="repayment-submission-date" margin-bottom="5mm">
                     <fo:inline>@messages("repayments.confirmation.message")</fo:inline>
-                    <fo:inline font-weight="bold">@currentDate</fo:inline>
+                    <fo:inline font-weight="bold">@currentDate</fo:inline>.
                 </fo:block>
 
                 <fo:block role="H2" id="what-happens-next" font-size="14pt" font-weight="bold" margin-bottom="5mm">@messages("repayments.confirmation.heading")</fo:block>
