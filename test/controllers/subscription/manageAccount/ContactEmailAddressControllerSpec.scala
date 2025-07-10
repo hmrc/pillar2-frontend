@@ -59,7 +59,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -83,7 +83,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -168,7 +168,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(""), "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -198,7 +198,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactEmailAddressView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill("hello@goodbye.com"), "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)

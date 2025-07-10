@@ -64,7 +64,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -89,7 +89,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryTelephonePreferenceView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -114,7 +114,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -252,7 +252,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryTelephonePreferenceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(false), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(false), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -283,7 +283,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryTelephonePreferenceView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider.fill(true), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -314,7 +314,7 @@ class SecondaryTelephonePreferenceControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[SecondaryTelephonePreferenceView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)

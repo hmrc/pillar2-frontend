@@ -29,7 +29,7 @@
 )
 
 
-@(form: Form[_], userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
 
@@ -40,13 +40,18 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @sectionHeader(messages("contactByTelephone.heading.caption"))
+        @if(isAgent) {
+            @sectionHeader(organisationName)
+        } else {
+            @sectionHeader(messages("contactByTelephone.heading.caption"))
+        }
 
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
                 legend = LegendViewModel(messages("contactByTelephone.heading", userName)).asPageHeading(Large)
             )
+            .withHint(Hint(content = Text(messages("contactByTelephone.hint"))))
         )
         @govukButton(
             ButtonViewModel(messages("site.continue")).withAttribute("id", "submit")

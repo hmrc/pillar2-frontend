@@ -45,6 +45,7 @@ trait SubscriptionLocalDataFixture {
   lazy val currentDate: LocalDate = LocalDate.now()
 
   val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "",
@@ -60,6 +61,7 @@ trait SubscriptionLocalDataFixture {
   )
 
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "John",

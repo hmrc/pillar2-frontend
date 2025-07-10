@@ -27,7 +27,8 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
   val formProvider = new AddSecondaryContactFormProvider
   val page: AddSecondaryContactView = inject[AddSecondaryContactView]
 
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe")(request, appConfig, messages).toString())
+  val view: Document =
+    Jsoup.parse(page(formProvider("John Doe"), "John Doe", isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
 
   "AddSecondaryContactView" should {
 

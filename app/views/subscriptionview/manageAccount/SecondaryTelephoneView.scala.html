@@ -28,7 +28,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
@@ -38,7 +38,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("secondaryContactEmail.heading.caption"))
+        @if(isAgent) {
+            @sectionHeader(organisationName)
+        } else {
+            @sectionHeader(messages("secondaryContactEmail.heading.caption"))
+        }
 
         @govukInput(
             InputViewModel(
@@ -46,7 +50,7 @@
                 label = LabelViewModel(messages("captureTelephoneDetails.heading", userName)).asPageHeading(Large)
             )
             .withWidth(TwoThirds)
-            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.hint"))))
+            .withHint(Hint(content = HtmlContent(messages("captureTelephoneDetails.sub.hint", userName))))
         )
 
         @govukButton(

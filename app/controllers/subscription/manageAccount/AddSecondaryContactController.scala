@@ -53,7 +53,7 @@ class AddSecondaryContactController @Inject() (
         contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
       } yield {
         val form: Form[Boolean] = formProvider(contactName)
-        Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName))
+        Ok(view(form.fill(subscriptionLocalData.subAddSecondaryContact), contactName, request.isAgent, request.organisationName))
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
@@ -67,7 +67,7 @@ class AddSecondaryContactController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
+              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, Some(request.organisationName)))),
               {
                 case wantsToNominateSecondaryContact @ true =>
                   for {

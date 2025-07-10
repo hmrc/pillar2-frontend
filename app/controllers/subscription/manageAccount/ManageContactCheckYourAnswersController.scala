@@ -86,7 +86,7 @@ class ManageContactCheckYourAnswersController @Inject() (
               rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
             )
 
-            Future.successful(Ok(view(primaryContactList, secondaryContactList, address)))
+            Future.successful(Ok(view(primaryContactList, secondaryContactList, address, request.isAgent, request.organisationName)))
         }
     }
   }

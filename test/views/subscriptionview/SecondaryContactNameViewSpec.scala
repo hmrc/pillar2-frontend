@@ -37,7 +37,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "display the correct page title" in {
       view.getElementsByTag("title").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
+        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -47,13 +47,13 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "display the main heading asking for alternative contact details" in {
       view.getElementsByTag("h1").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
+        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
     "include a helpful hint with examples" in {
       view.getElementsByClass("govuk-hint").text must include(
-        "For example, ‘Tax team’ or ‘Ashley Smith’."
+        "You can enter a person or team name."
       )
     }
 

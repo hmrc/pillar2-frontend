@@ -24,6 +24,7 @@ import queries.{Gettable, Settable}
 import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
+  plrReference:                String,
   subMneOrDomestic:            MneOrDomestic,
   subAccountingPeriod:         AccountingPeriod,
   subPrimaryContactName:       String,
