@@ -58,20 +58,20 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-fieldset__legend").get(0).text must equal("Start date")
       view.getElementById("startDate-hint").text                    must equal("For example 27 3 2024")
       view.getElementsByClass("govuk-date-input__item").get(0).text must equal("Day")
-      view.getElementById("startDate.day")                          must not be null
+      Option(view.getElementById("startDate.day")) mustBe defined
       view.getElementsByClass("govuk-date-input__item").get(1).text must equal("Month")
-      view.getElementById("startDate.month")                        must not be null
+      Option(view.getElementById("startDate.month")) mustBe defined
       view.getElementsByClass("govuk-date-input__item").get(2).text must equal("Year")
-      view.getElementById("startDate.year")                         must not be null
+      Option(view.getElementById("startDate.year")) mustBe defined
 
       view.getElementsByClass("govuk-fieldset__legend").get(1).text must equal("End date")
       view.getElementById("endDate-hint").text                      must equal("For example 28 3 2025")
       view.getElementsByClass("govuk-date-input__item").get(3).text must equal("Day")
-      view.getElementById("endDate.day")                            must not be null
+      Option(view.getElementById("endDate.day")) mustBe defined
       view.getElementsByClass("govuk-date-input__item").get(4).text must equal("Month")
-      view.getElementById("endDate.month")                          must not be null
+      Option(view.getElementById("endDate.month")) mustBe defined
       view.getElementsByClass("govuk-date-input__item").get(5).text must equal("Year")
-      view.getElementById("endDate.month")                          must not be null
+      Option(view.getElementById("endDate.year")) mustBe defined
     }
 
     "have a button" in {
