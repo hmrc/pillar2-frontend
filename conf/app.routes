@@ -184,8 +184,8 @@ POST        /further-details/change-group-status                                
 
 GET         /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onPageLoad
 POST        /manage-account/further-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit
-GET         /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad
-POST        /manage-account/further-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit
+GET         /manage-account/account-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad
+POST        /manage-account/account-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit
 
 
 GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
