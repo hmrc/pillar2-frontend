@@ -27,13 +27,13 @@
         h2: HeadingH2
 )
 
-@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = true) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
 
-            @if(isAgent) {
-                @sectionHeader(organisationName)
+            @if(isAgent && organisationName.isDefined) {
+                @sectionHeader(organisationName.get)
             }
             @h1(messages("manageContactCheckYourAnswers.heading.caption"), classes = "govuk-heading-l")
 
