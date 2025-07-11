@@ -28,7 +28,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], secondaryContactName: String, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], secondaryContactName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondaryContactEmail.title"))) {
 
@@ -39,8 +39,8 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @if(isAgent) {
-            @sectionHeader(organisationName)
+        @if(isAgent && organisationName.isDefined) {
+            @sectionHeader(organisationName.get)
         } else {
             @sectionHeader(messages("secondaryContactEmail.heading.caption"))
         }

@@ -37,16 +37,12 @@ class SubscriptionDataRetrievalActionImpl @Inject() (
 
     for {
       maybeSubscriptionLocalData <- subscriptionConnector.getSubscriptionCache(request.userId)
-      organisationName <- subscriptionConnector
-                            .readSubscription(maybeSubscriptionLocalData.map(_.plrReference).getOrElse(""))
-                            .map(_.map(_.upeDetails.organisationName))
     } yield OptionalSubscriptionDataRequest(
       request.request,
       request.userId,
       maybeSubscriptionLocalData,
       request.enrolments,
-      request.isAgent,
-      organisationName
+      request.isAgent
     )
   }
 }

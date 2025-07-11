@@ -29,7 +29,7 @@
 )
 
 
-@(form: Form[_], userName: String, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("contactByTelephone.title"))) {
 
@@ -41,7 +41,7 @@
         }
 
         @if(isAgent) {
-            @sectionHeader(organisationName)
+            @sectionHeader(organisationName.getOrElse(messages("contactByTelephone.heading.caption")))
         } else {
             @sectionHeader(messages("contactByTelephone.heading.caption"))
         }
