@@ -28,7 +28,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], userName: String, isAgent: Boolean, organisationName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
@@ -39,7 +39,7 @@
         }
 
         @if(isAgent) {
-            @sectionHeader(organisationName)
+            @sectionHeader(organisationName.getOrElse(messages("secondaryContactEmail.heading.caption")))
         } else {
             @sectionHeader(messages("secondaryContactEmail.heading.caption"))
         }

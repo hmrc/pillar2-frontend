@@ -29,8 +29,8 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
     with Logging {
 
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-    (request.maybeSubscriptionLocalData, request.organisationName) match {
-      case (Some(subscriptionData), Some(organisationName)) =>
+    request.maybeSubscriptionLocalData match {
+      case Some(subscriptionData) =>
         Future.successful(
           Right(
             SubscriptionDataRequest(
@@ -38,16 +38,12 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
               request.userId,
               subscriptionData,
               request.enrolments,
-              request.isAgent,
-              organisationName
+              request.isAgent
             )
           )
         )
-      case (None, _) =>
+      case None =>
         logger.warn(s"subscription data not found")
-        Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      case (_, None) =>
-        logger.warn(s"organisation name not found")
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     }
 

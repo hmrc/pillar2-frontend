@@ -56,7 +56,7 @@ class ContactCaptureTelephoneDetailsController @Inject() (
           case Some(v) => form.fill(v)
           case None    => form
         }
-        Ok(view(preparedForm, contactName, request.isAgent, request.organisationName))
+        Ok(view(preparedForm, contactName, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
 
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -72,7 +72,8 @@ class ContactCaptureTelephoneDetailsController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, Some(request.organisationName)))),
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, request.subscriptionLocalData.organisationName))),
               value =>
                 for {
                   updatedAnswers <-

@@ -57,7 +57,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = None,
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
-    subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+    subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+    organisationName = None
   )
 
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
@@ -73,7 +74,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = Some("doe@email.com"),
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
-    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    organisationName = Some("ABC Intl")
   )
 
   val subscriptionData: SubscriptionData = SubscriptionData(

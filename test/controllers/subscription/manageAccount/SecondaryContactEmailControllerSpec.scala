@@ -62,7 +62,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -89,7 +89,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[SecondaryContactEmailView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -114,7 +114,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result    = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -210,7 +210,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryContactEmailView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(formProvider, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -246,7 +246,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryContactEmailView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(formProvider.fill("my@my.com"), "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
@@ -279,7 +279,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val boundForm = formProvider.bind(Map("emailAddress" -> "12345"))
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, "ABC Intl")(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("ABC Intl"))(
           request,
           applicationConfig,
           messages(application)
