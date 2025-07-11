@@ -42,6 +42,10 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       agentView.getElementsByTag("title").text must include(title)
     }
 
+    "display back link" in {
+      view.getElementsByClass("govuk-back-link").size() mustBe 1
+    }
+
     "have a heading" in {
       view.getElementsByTag("h1").text      must include("Group details")
       agentView.getElementsByTag("h1").text must include("Group details")
@@ -62,7 +66,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
       )
 
-      val ap      = "Group’s current consolidated accounting period"
+      val ap      = "Group accounting period"
       val apValue = ""
       view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
       view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
