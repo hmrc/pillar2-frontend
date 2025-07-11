@@ -578,8 +578,11 @@ nfmCaptureTelephoneDetails.change.hidden = the telephone number for the nominate
 
 groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = When did the group’s first accounting period start and end after 31 December 2023?
-groupAccountingPeriod.amend.title = When did the group’s first accounting period start and end after 31 December 2023?
-groupAccountingPeriod.title.desc = This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in the UK, on or after 31 December 2023.
+groupAccountingPeriod.amend.title = What is the group accounting period?
+groupAccountingPeriod.amend.heading = What is the group accounting period?
+groupAccountingPeriod.p1 = This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in the UK, on or after 31 December 2023.
+groupAccountingPeriod.amend.p1 = The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity.
+groupAccountingPeriod.amend.p2 = Accounting periods are usually 12 months, but can be longer or shorter.
 groupAccountingPeriod.startDate.heading = Start date
 groupAccountingPeriod.startDate.hint = For example 27 3 2024
 groupAccountingPeriod.endDate.heading = End date
