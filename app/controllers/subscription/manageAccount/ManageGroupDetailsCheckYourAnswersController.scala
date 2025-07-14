@@ -74,7 +74,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                   GroupAccountingPeriodEndDateSummary.row
                 ).flatten
               )
-              Future.successful(Ok(view(list)))
+              Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
           }
       }
     }

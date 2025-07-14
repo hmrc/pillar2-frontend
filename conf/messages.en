@@ -647,6 +647,7 @@ mneOrDomestic.everywhere = In the UK and other countries
 mneOrDomestic.uk = Only in the UK
 mneOrDomestic.group-operate = Where are the entities in your group located?
 mneOrDomestic.checkYourAnswersLabel = Where are the entities in your group located?
+mneOrDomestic.agent.checkYourAnswersLabel = Where are the group entities located?
 mneOrDomestic.error.required = Select if the group has entities located only in the UK or in the UK and outside the UK
 mneOrDomestic.change.hidden = where are the entities in your group located
 mneOrDomestic.ukAndOther = In the UK and outside the UK
