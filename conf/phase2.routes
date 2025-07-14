@@ -1,0 +1,3 @@
+GET         /submission-history           controllers.submissionhistory.SubmissionHistoryController.onPageLoad
+
+GET         /due-and-overdue-returns                                              controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad
