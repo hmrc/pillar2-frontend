@@ -22,6 +22,7 @@ import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
+import play.api.data.validation.{Constraint, Invalid, Valid}
 
 import javax.inject.Inject
 
@@ -63,7 +64,8 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
               )
             )
         ),
-      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
+      "postalCode" -> optionalPostcode()
+        .verifying(optionalStringXssConstraint("address.postcode.error.xss")),
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
           .verifying(
@@ -74,4 +76,11 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
+
+  private def optionalStringXssConstraint(errorKey: String): Constraint[Option[String]] = Constraint { value =>
+    value match {
+      case Some(str) if str.trim.nonEmpty && !str.matches(XSS_REGEX) => Invalid(errorKey)
+      case _                                                         => Valid
+    }
+  }
 }
