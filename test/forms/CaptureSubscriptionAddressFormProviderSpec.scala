@@ -168,13 +168,13 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
     )
 
     "prioritize XSS validation over postcode format validation" in {
-   
+
       val result = form.bind(
         Map(
           "addressLine1" -> "123 Test Street",
           "addressLine3" -> "Test City",
           "countryCode"  -> "GB",
-          "postalCode"   -> "SW1A <test" 
+          "postalCode"   -> "SW1A <test"
         )
       )
 

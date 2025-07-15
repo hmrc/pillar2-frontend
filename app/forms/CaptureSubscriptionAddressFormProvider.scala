@@ -77,7 +77,6 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 
-
   private def xssFirstOptionalPostcode(): FieldMapping[Option[String]] =
     of(new Formatter[Option[String]] {
       private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
@@ -88,15 +87,14 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
 
         (rawPostcode, country) match {
           case (Some(postcode), _) =>
-           
             if (!postcode.matches(XSS_REGEX)) {
               Left(Seq(FormError(key, "address.postcode.error.xss")))
             } else {
-         
+
               val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
 
               (normalizedPostcode, country) match {
-                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>    
+                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>
                   val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
                   Right(Some(formatted))
                 case (_, Some("GB")) =>
