@@ -652,7 +652,7 @@ mneOrDomestic.agent.checkYourAnswersLabel = Where are the group entities located
 mneOrDomestic.error.required = Select if the group has entities located only in the UK or in the UK and outside the UK
 mneOrDomestic.change.hidden = where are the entities in your group located
 mneOrDomestic.ukAndOther = In the UK and outside the UK
-mneOrDomesticSubscription.p1 = You must consider the locations of all the entities within your group.
+mneOrDomestic.subscription.p1 = You must consider the locations of all the entities within your group.
 mneOrDomestic.p1 = You must inform HMRC of the entity locations in the group.
 mneOrDomestic.p2 = The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for.
 mneOrDomestic.agent.p2 = The entity locations determine which Pillar 2 Top-up Taxes the group needs to report for.
@@ -661,7 +661,7 @@ mneOrDomestic.l1 = Domestic Top-up Tax
 mneOrDomestic.l2 = Multinational Top-up Tax
 mneOrDomestic.p4 = Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax.
 mneOrDomestic.p5 = Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax.
-mneOrDomesticSubscription.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
+mneOrDomestic.subscription.p6 = If any future changes occur that affect the location of the entities within your group, you must amend these details within your account.
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
