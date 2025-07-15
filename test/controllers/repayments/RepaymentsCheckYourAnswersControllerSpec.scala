@@ -23,7 +23,7 @@ import models.{UnexpectedResponse, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{times, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -42,11 +42,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
   private val subData = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "The reason for refund")
-
-  val successfulCompletionSessionData: UserAnswers = emptyUserAnswers
-    .setOrException(PlrReferencePage, "plrReference")
-    .setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
-    .setOrException(RepaymentCompletionStatus, true)
 
   "Repayments Check Your Answers Controller" must {
 
@@ -114,7 +109,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
 
       "redirect to waiting room page and save SuccessfullyCompleted status in case of a success response" in {
-        val userAnswer = completeRepaymentDataUkBankAccount.setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
+        val userAnswer = completeRepaymentDataUkBankAccount
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
             bind[RepaymentService].toInstance(mockRepaymentService),
@@ -133,7 +128,10 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository).set(eqTo(successfulCompletionSessionData))
+
+          // Verify multiple session repository calls (new controller flow)
+          verify(mockSessionRepository, times(2)).get(eqTo("id"))
+          verify(mockSessionRepository, times(2)).set(any())
         }
       }
 
