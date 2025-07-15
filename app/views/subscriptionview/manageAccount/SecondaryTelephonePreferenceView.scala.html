@@ -27,7 +27,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_], userName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("secondaryTelephonePreference.title"))) {
 
@@ -37,8 +37,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @sectionHeader(messages("secondaryContactEmail.heading.caption"))
-
+        @if(isAgent) {
+            @sectionHeader(organisationName.getOrElse(messages("secondaryContactEmail.heading.caption")))
+        } else {
+            @sectionHeader(messages("secondaryContactEmail.heading.caption"))
+        }
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),

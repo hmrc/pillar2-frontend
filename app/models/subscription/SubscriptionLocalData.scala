@@ -24,6 +24,7 @@ import queries.{Gettable, Settable}
 import scala.util.{Failure, Success, Try}
 
 case class SubscriptionLocalData(
+  plrReference:                String,
   subMneOrDomestic:            MneOrDomestic,
   subAccountingPeriod:         AccountingPeriod,
   subPrimaryContactName:       String,
@@ -35,7 +36,8 @@ case class SubscriptionLocalData(
   subSecondaryEmail:           Option[String],
   subSecondaryCapturePhone:    Option[String],
   subSecondaryPhonePreference: Option[Boolean],
-  subRegisteredAddress:        NonUKAddress
+  subRegisteredAddress:        NonUKAddress,
+  organisationName:            Option[String]
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)

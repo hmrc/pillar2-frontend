@@ -52,7 +52,7 @@ class CaptureSubscriptionAddressController @Inject() (
     (identify andThen getData) { implicit request =>
       val preparedForm =
         request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
-      Ok(view(preparedForm, countryOptions.options()))
+      Ok(view(preparedForm, countryOptions.options(), request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -60,7 +60,10 @@ class CaptureSubscriptionAddressController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, countryOptions.options()))),
+          formWithErrors =>
+            Future.successful(
+              BadRequest(view(formWithErrors, countryOptions.options(), request.isAgent, request.subscriptionLocalData.organisationName))
+            ),
           value =>
             for {
               updatedAnswers <-

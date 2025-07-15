@@ -65,7 +65,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[AddSecondaryContactView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name", false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -92,7 +92,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name", false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -228,7 +228,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AddSecondaryContactView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name")(
+        contentAsString(result) mustEqual view(formProvider("name").fill(true), "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)
@@ -261,7 +261,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[AddSecondaryContactView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm, "name")(
+        contentAsString(result) mustEqual view(boundForm, "name", isAgent = false, Some("OrgName"))(
           request,
           applicationConfig,
           messages(application)

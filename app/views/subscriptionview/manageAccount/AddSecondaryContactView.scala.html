@@ -29,7 +29,7 @@
         h1: heading,
 )
 
-@(form: Form[_], contactName: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], contactName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
 
@@ -40,7 +40,13 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
-        @sectionHeader(messages("taskList.task.contact.heading"))
+        @if(isAgent) {
+            @sectionHeader(organisationName.getOrElse(messages("taskList.task.contact.heading")))
+        } else {
+            @sectionHeader(messages("taskList.task.contact.heading"))
+        }
+
+
         @h1(messages("addSecondaryContact.title"), classes = "govuk-heading-l")
 
         @paragraphBody(messages("addSecondaryContact.p1"))

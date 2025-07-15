@@ -27,12 +27,18 @@ import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersVi
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
   implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
-    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
   val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
 
   val view: Document = Jsoup.parse(
-    page(subscriptionDataPrimaryContactList(), subscriptionDataSecondaryContactList(), subscriptionDataAddress(inject[CountryOptions]))(
+    page(
+      subscriptionDataPrimaryContactList(),
+      subscriptionDataSecondaryContactList(),
+      subscriptionDataAddress(inject[CountryOptions]),
+      isAgent = false,
+      Some("OrgName")
+    )(
       request,
       appConfig,
       messages
@@ -43,7 +49,9 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
-      subscriptionDataAddress(inject[CountryOptions])
+      subscriptionDataAddress(inject[CountryOptions]),
+      isAgent = false,
+      Some("OrgName")
     )(request, appConfig, messages).toString()
   )
 
@@ -94,7 +102,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
       )
 
-      val contactTelephone      = "Can we contact the primary contact by telephone?"
+      val contactTelephone      = "Can we contact the primary contact by phone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
@@ -108,7 +116,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
       )
 
-      val telephone      = "Telephone number"
+      val telephone      = "Phone number"
       val telephoneValue = "123"
       view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
@@ -143,7 +151,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
       )
 
-      val secondContact      = "Secondary contact name"
+      val secondContact      = "Second contact name"
       val secondContactValue = "Doe"
       view.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       view.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
@@ -171,7 +179,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
       )
 
-      val contactTelephone      = "Can we contact the secondary contact by telephone?"
+      val contactTelephone      = "Can we contact the secondary contact by phone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
@@ -185,7 +193,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
       )
 
-      val telephone      = "Second contact telephone number"
+      val telephone      = "Second contact phone number"
       val telephoneValue = "123"
       view.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(8).text() mustBe telephoneValue
@@ -201,8 +209,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     }
 
     "have a contact address header" in {
-      view.getElementsByTag("h2").get(2).text      must include("Contact address")
-      agentView.getElementsByTag("h2").get(2).text must include("Contact address")
+      view.getElementsByTag("h2").get(2).text      must include("Filing member contact address")
+      agentView.getElementsByTag("h2").get(2).text must include("Filing member contact address")
     }
 
     "have a address summary list" in {

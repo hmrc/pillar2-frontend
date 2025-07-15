@@ -56,7 +56,7 @@ class SecondaryTelephonePreferenceController @Inject() (
           case Some(v) => form.fill(v)
           case None    => form
         }
-        Ok(view(preparedForm, contactName))
+        Ok(view(preparedForm, contactName, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
 
       })
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
@@ -72,7 +72,8 @@ class SecondaryTelephonePreferenceController @Inject() (
           form
             .bindFromRequest()
             .fold(
-              formWithErrors => Future.successful(BadRequest(view(formWithErrors, contactName))),
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, contactName, request.isAgent, request.subscriptionLocalData.organisationName))),
               {
                 case nominatedSecondaryContactNumber @ true =>
                   for {

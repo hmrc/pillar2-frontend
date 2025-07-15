@@ -143,7 +143,8 @@ trait SpecBase
     enrolments:            Set[Enrolment] = Set.empty,
     groupID:               Option[String] = None,
     subscriptionLocalData: Option[SubscriptionLocalData] = None,
-    additionalData:        Map[String, Any] = Map.empty
+    additionalData:        Map[String, Any] = Map.empty,
+    organisationName:      Option[String] = Some("OrgName")
   ): GuiceApplicationBuilder =
     new GuiceApplicationBuilder()
       .configure(

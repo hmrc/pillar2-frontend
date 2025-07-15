@@ -33,7 +33,7 @@
 )
 
 
-@(form: Form[_], countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], countryOptions: Seq[InputOption], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("subscriptionAddress.title"))) {
 
@@ -44,7 +44,11 @@
             @govukErrorSummary(ErrorSummaryViewModel(form))
         }
 
-        @sectionHeader(messages("subscriptionAddress.heading.caption"))
+        @if(isAgent) {
+            @sectionHeader(organisationName.getOrElse(messages("subscriptionAddress.heading.caption")))
+        } else {
+            @sectionHeader(messages("subscriptionAddress.heading.caption"))
+        }
 
         @heading(messages("subscriptionAddress.heading"), "govuk-heading-l long-word")
 

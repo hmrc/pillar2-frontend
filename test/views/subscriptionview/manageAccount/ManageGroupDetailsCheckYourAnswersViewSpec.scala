@@ -27,7 +27,7 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
   implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
-    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
   val page: ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
 

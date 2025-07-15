@@ -45,6 +45,7 @@ trait SubscriptionLocalDataFixture {
   lazy val currentDate: LocalDate = LocalDate.now()
 
   val emptySubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "",
@@ -56,10 +57,12 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = None,
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
-    subRegisteredAddress = NonUKAddress("", None, "", None, None, "")
+    subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+    organisationName = None
   )
 
   val someSubscriptionLocalData: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
     subMneOrDomestic = MneOrDomestic.Uk,
     subAccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1)),
     subPrimaryContactName = "John",
@@ -71,7 +74,8 @@ trait SubscriptionLocalDataFixture {
     subSecondaryEmail = Some("doe@email.com"),
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
-    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB")
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    organisationName = Some("ABC Intl")
   )
 
   val subscriptionData: SubscriptionData = SubscriptionData(

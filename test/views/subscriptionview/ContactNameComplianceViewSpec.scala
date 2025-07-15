@@ -37,7 +37,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
       view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
       )
     }
 
@@ -46,7 +46,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
       view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
+        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
       )
     }
 
@@ -54,7 +54,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
+      view.getElementsByClass("govuk-hint").text must include("You can enter a person or team name.")
     }
 
     "display the submit button" in {
