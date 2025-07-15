@@ -174,13 +174,16 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
       running(application) {
         val boundForm =
-          formProvider().bind(Map(
-            "startDate.day"   -> "1",
-            "startDate.month" -> "month",
-            "startDate.year"  -> "2024",
-            "endDate.day"     -> "1",
-            "endDate.month"   -> "month",
-            "endDate.year"    -> "2024"))
+          formProvider().bind(
+            Map(
+              "startDate.day"   -> "1",
+              "startDate.month" -> "month",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "1",
+              "endDate.month"   -> "month",
+              "endDate.year"    -> "2024"
+            )
+          )
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
