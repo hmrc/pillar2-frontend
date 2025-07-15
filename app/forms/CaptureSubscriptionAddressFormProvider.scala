@@ -77,8 +77,7 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
 
-  /** Custom optional postcode mapping that validates XSS characters FIRST, then applies postcode format validation only if XSS check passes.
-    */
+
   private def xssFirstOptionalPostcode(): FieldMapping[Option[String]] =
     of(new Formatter[Option[String]] {
       private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
@@ -89,16 +88,15 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
 
         (rawPostcode, country) match {
           case (Some(postcode), _) =>
-            // STEP 1: Check XSS characters FIRST
+           
             if (!postcode.matches(XSS_REGEX)) {
               Left(Seq(FormError(key, "address.postcode.error.xss")))
             } else {
-              // STEP 2: Apply postcode format validation (only if XSS check passed)
+         
               val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
 
               (normalizedPostcode, country) match {
-                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>
-                  // Format UK postcode with space if needed
+                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>    
                   val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
                   Right(Some(formatted))
                 case (_, Some("GB")) =>
@@ -112,10 +110,8 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
               }
             }
           case (None, Some("GB")) =>
-            // Empty postcode for GB should return error
             Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
           case (None, _) =>
-            // Empty postcode for non-GB countries is allowed
             Right(None)
         }
       }
