@@ -97,6 +97,33 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url
       }
     }
+
+    "must redirect to next page accounting period when valid data with string month is submitted" in {
+      val ua = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "TestName")
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "1",
+              "startDate.month" -> "Jan",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "1",
+              "endDate.month"   -> "June",
+              "endDate.year"    -> "2024"
+            )
+
+        val result = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url
+      }
+    }
+
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -129,5 +156,39 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must return a Bad Request and errors when invalid string month is submitted" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      val request =
+        FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "month",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "1",
+            "endDate.month"   -> "month",
+            "endDate.year"    -> "2024"
+          )
+
+      running(application) {
+        val boundForm =
+          formProvider().bind(Map(
+            "startDate.day"   -> "1",
+            "startDate.month" -> "month",
+            "startDate.year"  -> "2024",
+            "endDate.day"     -> "1",
+            "endDate.month"   -> "month",
+            "endDate.year"    -> "2024"))
+
+        val view = application.injector.instanceOf[GroupAccountingPeriodView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
+      }
+    }
   }
 }
