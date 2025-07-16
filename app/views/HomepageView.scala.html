@@ -48,7 +48,7 @@
   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.${maybeUktrBannerScenario.get}.body"))
   @link(
    text = messages("homepage.uktrBanner.linkText"),
-   call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns"),
+   call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${maybeUktrBannerScenario.get.toLowerCase}"),
    classes = Some("govuk-notification-banner__link")
   )
  </div>
@@ -72,13 +72,41 @@
  </p>
 
  <div class="card-group">
-   @card(
-    title = messages("homepage.returns.title"),
-    links = Seq(
-     (messages("homepage.returns.dueOverdueReturns.linkText"), s"$submissionFrontendPath/due-and-overdue-returns", None),
-     (messages("homepage.returns.submissionHistory.linkText"), s"$submissionFrontendPath/submission-history", None),
+   @if(maybeUktrBannerScenario.isDefined) {
+    <div class="card-half-width">
+     <div>
+      <div class="card-label card-label-with-tag">
+       <h2 class="govuk-heading-m">@messages("homepage.returns.title")</h2>
+       <span class="govuk-tag @{
+         maybeUktrBannerScenario.get match {
+           case "Due" => "govuk-tag--blue"
+           case "Overdue" => "govuk-tag--red"  
+           case "Incomplete" => "govuk-tag--blue"
+           case _ => "govuk-tag--blue"
+         }
+       }">@maybeUktrBannerScenario.get</span>
+      </div>
+      <div class="card-content">
+       <ul class="govuk-list">
+        <li class="card-links">
+         <a href="@{s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${maybeUktrBannerScenario.get.toLowerCase}"}" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
+        </li>
+        <li class="card-links">
+         <a href="@{s"$submissionFrontendPath/submission-history"}" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
+        </li>
+       </ul>
+      </div>
+     </div>
+    </div>
+   } else {
+    @card(
+     title = messages("homepage.returns.title"),
+     links = Seq(
+      (messages("homepage.returns.dueOverdueReturns.linkText"), s"$submissionFrontendPath/due-and-overdue-returns", None),
+      (messages("homepage.returns.submissionHistory.linkText"), s"$submissionFrontendPath/submission-history", None),
+     )
     )
-   )
+   }
 
    @card(
     title = messages("homepage.payments.title"),
