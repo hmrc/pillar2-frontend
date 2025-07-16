@@ -57,7 +57,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
         )
 
-        val ap      = "Group accounting period"
+        val ap      = "Group’s accounting period"
         val apValue = ""
         view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
         view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
@@ -106,7 +106,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
         )
 
-        val ap      = "Group accounting period"
+        val ap      = "Group’s accounting period"
         val apValue = ""
         agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
         agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
