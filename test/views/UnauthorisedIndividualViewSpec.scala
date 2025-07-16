@@ -45,7 +45,7 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
 
     "have a paragraph with link" in {
       val paragraphWithLink = view.getElementsByClass("govuk-body").get(1)
-      paragraphWithLink.text must include("If the group still needs to register,")
+      paragraphWithLink.text                     must include("If the group still needs to register,")
       paragraphWithLink.select("a").text         must include("sign in to Government Gateway with an organisation account.")
       paragraphWithLink.select("a").attr("href") must include(appConfig.loginUrl)
     }
