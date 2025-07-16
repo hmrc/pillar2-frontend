@@ -25,7 +25,7 @@
 
 @this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
 
-@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
@@ -42,10 +42,26 @@
  </div>
 }
 
+@uktrBannerHtml = {
+ <div style="max-width: fit-content">
+  @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.${maybeUktrBannerScenario.get}.title"), "govuk-notification-banner__heading")
+  @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.${maybeUktrBannerScenario.get}.body"))
+  @link(
+   text = messages("homepage.uktrBanner.linkText"),
+   call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns"),
+   classes = Some("govuk-notification-banner__link")
+  )
+ </div>
+}
+
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
 
  @if(maybeBTNBannerDate.isDefined) {
   @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
+ }
+
+ @if(maybeUktrBannerScenario.isDefined) {
+  @govukNotificationBanner(NotificationBanner(content = HtmlContent(uktrBannerHtml)))
  }
 
  @heading(messages("homepage.title"), "govuk-heading-l")

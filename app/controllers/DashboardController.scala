@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.obligationsandsubmissions.{ObligationStatus, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{InternalIssueError, UserAnswers}
@@ -116,6 +116,11 @@ class DashboardController @Inject() (
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
+              uktrBannerScenario(response).map {
+                case UktrDue        => "due"
+                case UktrOverdue    => "overdue"
+                case UktrIncomplete => "incomplete"
+              },
               plrReference,
               isAgent = request.isAgent
             )
@@ -148,6 +153,57 @@ class DashboardController @Inject() (
       Some(accountingPeriods.head.endDate)
     } else {
       accountingPeriods.find(_.obligations.head.submissions.nonEmpty).map(_.endDate)
+    }
+  }
+
+  // UKTR Banner scenarios following exact same pattern as BTN
+  private sealed trait UktrBannerScenario
+  private case object UktrDue extends UktrBannerScenario
+  private case object UktrOverdue extends UktrBannerScenario
+  private case object UktrIncomplete extends UktrBannerScenario
+
+  private def uktrBannerScenario(response: ObligationsAndSubmissionsSuccess): Option[UktrBannerScenario] = {
+    val today             = LocalDate.now()
+    val accountingPeriods = response.accountingPeriodDetails
+
+    // Find all Open UKTR obligations across all accounting periods
+    val openUktrObligations = accountingPeriods.flatMap { period =>
+      period.obligations
+        .filter(obligation => obligation.obligationType == UKTR && obligation.status == ObligationStatus.Open)
+        .map(obligation => (period, obligation))
+    }
+
+    if (openUktrObligations.isEmpty) {
+      None
+    } else {
+      // Check for incomplete returns first (Scenario 3 - highest priority)
+      val incompleteReturns = openUktrObligations.filter { case (_, obligation) =>
+        obligation.submissions.nonEmpty
+      }
+
+      if (incompleteReturns.nonEmpty) {
+        Some(UktrIncomplete)
+      } else {
+        // Check for overdue returns (Scenario 2)
+        val overdueReturns = openUktrObligations.filter { case (period, _) =>
+          period.dueDate.isBefore(today)
+        }
+
+        if (overdueReturns.nonEmpty) {
+          Some(UktrOverdue)
+        } else {
+          // Check for due returns within 60 days (Scenario 1)
+          val dueReturns = openUktrObligations.filter { case (period, _) =>
+            !period.dueDate.isBefore(today) && period.dueDate.isBefore(today.plusDays(60))
+          }
+
+          if (dueReturns.nonEmpty) {
+            Some(UktrDue)
+          } else {
+            None
+          }
+        }
+      }
     }
   }
 }

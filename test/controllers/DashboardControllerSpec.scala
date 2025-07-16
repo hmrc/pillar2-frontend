@@ -99,6 +99,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
             None,
+            None,
             "12345678",
             isAgent = false
           )(

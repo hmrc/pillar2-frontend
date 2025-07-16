@@ -33,10 +33,10 @@ class HomepageViewSpec extends ViewSpecBase {
   private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
 
   val organisationView: Document =
-    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
 
   val agentView: Document =
-    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
   "HomepageView for a group" should {
     "display page header correctly" in {
@@ -110,7 +110,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display notification banner" in {
       val accountInactiveOrgView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = false)(request, appConfig, messages).toString())
+        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
 
       val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
 
@@ -192,7 +192,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display notification banner" in {
       val accountInactiveAgentView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = true)(request, appConfig, messages).toString())
+        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
 
