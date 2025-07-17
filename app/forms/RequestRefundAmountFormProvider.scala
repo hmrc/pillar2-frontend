@@ -26,9 +26,9 @@ class RequestRefundAmountFormProvider @Inject() extends Mappings {
   def apply(): Form[BigDecimal] =
     Form(
       "value" -> currency(
-        requiredKey = "repayment.requestRefundAmount.error.required",
-        invalidCurrency = "repayment.requestRefundAmount.error.format"
-      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRefundAmount.error.minValue"))
-        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRefundAmount.error.maxValue"))
+        requiredKey = "repayment.requestRepaymentAmount.error.required",
+        invalidCurrency = "repayment.requestRepaymentAmount.error.format"
+      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRepaymentAmount.error.minValue"))
+        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRepaymentAmount.error.maxValue"))
     )
 }

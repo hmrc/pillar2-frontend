@@ -27,14 +27,14 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
   val view:      Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
   val agentView: Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
 
-  "Request Refund Before Start View" should {
+  "Request Repayment Before Start View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Request a refund")
+      view.getElementsByTag("title").text must include("Request a repayment")
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Request a refund")
+      view.getElementsByTag("h1").text must include("Request a repayment")
     }
 
     "have two h2 headings" in {
@@ -43,25 +43,25 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
     "have following contents" in {
       view.getElementsByClass("govuk-body").text must include(
-        "You can use this service to request a refund. You can only make a request if there are funds in your group’s Pillar 2 account."
+        "You can use this service to request a repayment. You can only make a request if there are funds in your group’s Pillar 2 account."
       )
 
       agentView.getElementsByClass("govuk-body").text must include(
-        "You can use this service to request a refund on behalf of your client. " +
+        "You can use this service to request a repayment on behalf of your client. " +
           "You can only make a request if there are funds in your group’s Pillar 2 account."
       )
 
       view.getElementsByClass("govuk-body").text must include(
         "You’ll need to provide:"
       )
-      view.getElementsByTag("li").text must include("refund amount")
-      view.getElementsByTag("li").text must include("reason for your refund request")
+      view.getElementsByTag("li").text must include("repayment amount")
+      view.getElementsByTag("li").text must include("reason for your repayment request")
       view.getElementsByTag("li").text must include("bank account details")
       view.getElementsByTag("li").text must include("contact details for someone we can contact about this request")
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Request a refund")
+      view.getElementsByClass("govuk-button").text must include("Request a repayment")
     }
 
   }

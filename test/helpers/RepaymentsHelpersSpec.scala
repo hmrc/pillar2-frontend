@@ -49,7 +49,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         ua.isRepaymentsJourneyCompleted mustEqual true
       }
 
-      "return false for all repayment details but refund amount is not provided " in {
+      "return false for all repayment details but repayment amount is not provided " in {
         val ua = completeRepaymentDataUkBankAccount
           .remove(RepaymentsRefundAmountPage)
           .success
@@ -57,7 +57,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but reason for refund is not provided " in {
+      "return false for all repayment details but reason for repayment is not provided " in {
         val ua = completeRepaymentDataUkBankAccount
           .remove(ReasonForRequestingRefundPage)
           .success
@@ -146,7 +146,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         ua.isRepaymentsJourneyCompleted mustEqual true
       }
 
-      "return false for all repayment details but refund amount is not provided " in {
+      "return false for all repayment details but repayment amount is not provided " in {
         val ua = completeRepaymentDataNonUkBankAccount
           .remove(RepaymentsRefundAmountPage)
           .success
@@ -154,7 +154,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but reason for refund is not provided " in {
+      "return false for all repayment details but reason for repayment is not provided " in {
         val ua = completeRepaymentDataNonUkBankAccount
           .remove(ReasonForRequestingRefundPage)
           .success

@@ -85,7 +85,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
-            "Check your answers before submitting your refund request"
+            "Check your answers before submitting your repayment request"
           )
           contentAsString(result) must include(
             "Request details"
