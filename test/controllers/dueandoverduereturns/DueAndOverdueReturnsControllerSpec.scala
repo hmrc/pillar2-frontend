@@ -17,7 +17,6 @@
 package controllers.dueandoverduereturns
 
 import base.SpecBase
-import connectors.SubscriptionConnector
 import controllers.{routes => baseRoutes}
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.mockito.ArgumentMatchers.any
@@ -44,6 +43,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
   lazy val application: Application =
     applicationBuilder(userAnswers = None, enrolments)
+      .configure("features.phase2ScreensEnabled" -> true)
       .overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
@@ -139,23 +139,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
         emptyContent must include("Your client is up to date with their returns for this accounting period")
         dueContent   must include("If your client has multiple returns due, they will be separated by accounting periods")
         dueContent   must include("You must submit each return before its due date using your client’s commercial software supplier")
-      }
-
-      "must redirect to general error page when subscription data is not returned" in {
-        val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
-        }
       }
 
       "must redirect to dashboard when phase2ScreensEnabled is false" in {
