@@ -17,7 +17,7 @@
 package views.dueandoverduereturns
 
 import base.ViewSpecBase
-import helpers.DueAndOverdueReturnsDataFixture
+import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
@@ -25,7 +25,7 @@ import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturnsDataFixture {
+class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
   val currentDate: LocalDate = LocalDate.now()
 

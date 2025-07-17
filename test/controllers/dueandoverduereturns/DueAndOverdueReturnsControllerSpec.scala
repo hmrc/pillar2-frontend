@@ -19,7 +19,7 @@ package controllers.dueandoverduereturns
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.{routes => baseRoutes}
-import helpers.DueAndOverdueReturnsDataFixture
+import helpers.ObligationsAndSubmissionsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
@@ -36,7 +36,7 @@ import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import scala.concurrent.Future
 
-class DueAndOverdueReturnsControllerSpec extends SpecBase with DueAndOverdueReturnsDataFixture {
+class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixture {
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))

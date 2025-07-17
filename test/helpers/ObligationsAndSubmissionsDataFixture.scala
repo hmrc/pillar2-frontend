@@ -21,7 +21,7 @@ import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 
 import java.time.{LocalDate, ZonedDateTime}
 
-trait DueAndOverdueReturnsDataFixture {
+trait ObligationsAndSubmissionsDataFixture {
 
   // Use the current date as the base for our tests
   val fromDate: LocalDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
@@ -73,6 +73,11 @@ trait DueAndOverdueReturnsDataFixture {
           createObligation(
             status = ObligationStatus.Fulfilled,
             submissions = Seq(
+              Submission(
+                submissionType = SubmissionType.UKTR_AMEND,
+                receivedDate = ZonedDateTime.now(),
+                country = None
+              ),
               Submission(
                 submissionType = SubmissionType.UKTR_CREATE,
                 receivedDate = ZonedDateTime.now(),

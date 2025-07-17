@@ -17,7 +17,7 @@
 package views.submissionhistory
 
 import base.ViewSpecBase
-import controllers.helpers.SubmissionHistoryDataFixture
+import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.submissionhistory.SubmissionHistoryView
@@ -25,14 +25,14 @@ import views.html.submissionhistory.SubmissionHistoryView
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
-class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataFixture {
+class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
   val page: SubmissionHistoryView = inject[SubmissionHistoryView]
 
   val organisationView: Document =
-    Jsoup.parse(page(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
   val agentView: Document =
-    Jsoup.parse(page(submissionHistoryResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
 
   "Submisison History Organisation View" should {
 
@@ -62,9 +62,9 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with SubmissionHistoryDataF
     }
 
     "have a table" in {
-      val fromDate:       String = LocalDate.now.minusDays(1).minusYears(7).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val fromDate:       String = LocalDate.now.minusYears(7).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
       val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-      val submissionDate: String = ZonedDateTime.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val submissionDate: String = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
       val captions = organisationView.getElementsByClass("govuk-table__caption")
       captions.first().text must include(s"$fromDate to $toDate")

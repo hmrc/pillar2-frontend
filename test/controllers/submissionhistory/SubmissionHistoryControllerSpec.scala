@@ -17,7 +17,7 @@
 package controllers.submissionhistory
 
 import base.SpecBase
-import helpers.DueAndOverdueReturnsDataFixture
+import helpers.ObligationsAndSubmissionsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -31,7 +31,7 @@ import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, Submiss
 
 import scala.concurrent.Future
 
-class SubmissionHistoryControllerSpec extends SpecBase with DueAndOverdueReturnsDataFixture {
+class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmissionsDataFixture {
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
