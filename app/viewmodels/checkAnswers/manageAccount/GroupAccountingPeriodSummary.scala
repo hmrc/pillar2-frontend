@@ -30,7 +30,14 @@ object GroupAccountingPeriodSummary {
     request.subscriptionLocalData.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.amend.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(""))
+        value = ValueViewModel(HtmlContent("")),
+        actions = Seq(
+          ActionItemViewModel(
+            "site.change",
+            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+          )
+            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+        )
       ).withCssClass("no-border-bottom")
 
     }
