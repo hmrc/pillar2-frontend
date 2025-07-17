@@ -47,7 +47,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
     "have the following paragraph and list content" in {
       view.getElementsByClass("govuk-body").get(0).text must equal(
-        "You must inform HMRC of the entity locations in the group."
+        "You must consider the locations of all the entities within your group."
       )
 
       view.getElementsByClass("govuk-body").get(1).text must equal(
@@ -72,6 +72,10 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
       view.getElementsByClass("govuk-body").get(4).text must equal(
         "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
+      )
+
+      view.getElementsByClass("govuk-body").get(5).text must equal(
+        "If any future changes occur that affect the location of the entities within your group, you must amend these details within your account."
       )
     }
 

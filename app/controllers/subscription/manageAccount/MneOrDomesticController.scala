@@ -54,7 +54,7 @@ class MneOrDomesticController @Inject() (
         case Some(value) => form.fill(value)
         case None        => form
       }
-      Ok(view(preparedForm))
+      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -62,7 +62,7 @@ class MneOrDomesticController @Inject() (
       form
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
           value =>
             for {
               updatedAnswers <-
