@@ -554,3 +554,7 @@ GET        /manage-account/contact/waiting-room                                 
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 
 GET       /manage-account/details/waiting-room                                                      controllers.subscription.manageAccount.ManageGroupDetailsWaitingRoomController.onPageLoad
+
+GET       /submission-history                                                                       controllers.submissionhistory.SubmissionHistoryController.onPageLoad
+GET       /due-and-overdue-returns                                                                  controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad
+

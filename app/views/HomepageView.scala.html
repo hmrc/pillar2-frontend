@@ -59,8 +59,8 @@
    @card(
     title = messages("homepage.returns.title"),
     links = Seq(
-     (messages("homepage.returns.dueOverdueReturns.linkText"), s"$submissionFrontendPath/due-and-overdue-returns", None),
-     (messages("homepage.returns.submissionHistory.linkText"), s"$submissionFrontendPath/submission-history", None),
+     (messages("homepage.returns.dueOverdueReturns.linkText"), controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url, None),
+     (messages("homepage.returns.submissionHistory.linkText"), controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url, None),
     )
    )
 
