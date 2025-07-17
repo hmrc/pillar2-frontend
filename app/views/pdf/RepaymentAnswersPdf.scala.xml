@@ -85,7 +85,7 @@
                     <!-- Refund Amount -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("requestRefundAmount.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("requestRepaymentAmount.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
                                 <fo:block>£@model.refundAmount</fo:block>
                             </fo:list-item-body>
@@ -95,7 +95,7 @@
                     <!-- Refund Reason -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("reasonForRequestingRefund.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("reasonForRequestingRepayment.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
                                 <fo:block>@model.reasonForRequestingRefund</fo:block>
                             </fo:list-item-body>
