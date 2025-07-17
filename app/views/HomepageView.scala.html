@@ -77,14 +77,14 @@
      <div>
       <div class="card-label card-label-with-tag">
        <h2 class="govuk-heading-m">@messages("homepage.returns.title")</h2>
-       <span class="govuk-tag @{
-         maybeUktrBannerScenario.get match {
-           case "Due" => "govuk-tag--blue"
-           case "Overdue" => "govuk-tag--red"  
-           case "Incomplete" => "govuk-tag--blue"
-           case _ => "govuk-tag--blue"
-         }
-       }">@maybeUktrBannerScenario.get</span>
+       @defining(maybeUktrBannerScenario.get match {
+         case "Due" => "background-color: #bfdbfe; color: #1e40af;"
+         case "Overdue" => "background-color: #fecaca; color: #dc2626;"
+         case "Incomplete" => "background-color: #e9d5ff; color: #7c3aed;"
+         case _ => "background-color: #bfdbfe; color: #1e40af;"
+       }) { style =>
+         <span class="govuk-tag" style="@style">@maybeUktrBannerScenario.get</span>
+       }
       </div>
       <div class="card-content">
        <ul class="govuk-list">
