@@ -1,7 +1,10 @@
-{
-  "error": {
-    "code": "404",
-    "message": "No&#x20;channel&#x20;found&#x20;to&#x20;handle&#x20;&quot;POST&quot;&#x20;request&#x20;to&#x20;&quot;&#x2f;plr&#x2f;below-threshold-notification&quot;",
-    "logID": "C0000AB8190F13C60000000100005F9B"
-  }
-}
+[
+  [
+    "United Kingdom",
+    "country:GB"
+  ],
+  [
+    "Spain",
+    "country:ES"
+  ]
+]
