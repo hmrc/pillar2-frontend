@@ -35,11 +35,11 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("What type of account will the refund be sent to?")
+        view.getElementsByTag("title").text must include("What type of account will the repayment be sent to?")
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("What type of account will the refund be sent to?")
+        view.getElementsByTag("h1").text must include("What type of account will the repayment be sent to?")
       }
 
       "have radio items" in {
@@ -58,11 +58,11 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Select what type of account the refund will be sent to")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Select what type of account the repayment will be sent to")
       }
 
       "have a select error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Select what type of account the refund will be sent to")
+        view.getElementsByClass("govuk-error-message").text must include("Select what type of account the repayment will be sent to")
       }
 
     }

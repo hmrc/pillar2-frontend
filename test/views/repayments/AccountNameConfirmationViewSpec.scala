@@ -49,7 +49,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
 
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").first().text must include(
-        "Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again."
+        "Is this who you want the repayment to be sent to? If not, check the account details on your bank statement and try again."
       )
       view.getElementsByClass("govuk-body").get(1).text must include("We may not be able to recover your money if it goes to the wrong account.")
     }

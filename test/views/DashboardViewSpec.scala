@@ -210,7 +210,7 @@ class DashboardViewSpec extends ViewSpecBase {
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
 
-      elements.get(10).text() must include("Request a refund")
+      elements.get(10).text() must include("Request a repayment")
       elements.get(10).attr("href") must include(
         controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
       )

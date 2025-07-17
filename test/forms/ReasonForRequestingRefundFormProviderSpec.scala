@@ -21,10 +21,10 @@ import play.api.data.FormError
 
 class ReasonForRequestingRefundFormProviderSpec extends StringFieldBehaviours {
 
-  val REQUIRED_KEY = "reasonForRequestingRefund.error.required"
-  val LENGTH_KEY   = "reasonForRequestingRefund.error.length"
+  val REQUIRED_KEY = "reasonForRequestingRepayment.error.required"
+  val LENGTH_KEY   = "reasonForRequestingRepayment.error.length"
   val MAX_LENGTH   = 250
-  val XSS_KEY      = "reasonForRequestingRefund.error.xss"
+  val XSS_KEY      = "reasonForRequestingRepayment.error.xss"
   val XSS_REGEX    = """^[^<>"&]*$"""
 
   val form = new ReasonForRequestingRefundFormProvider()()
