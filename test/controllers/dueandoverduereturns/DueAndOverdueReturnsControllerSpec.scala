@@ -159,6 +159,26 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with DueAndOverdueRetu
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
         }
       }
+
+      "must redirect to dashboard when phase2ScreensEnabled is false" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
+          .configure("features.phase2ScreensEnabled" -> false)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+          val result = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        }
+      }
     }
   }
 }

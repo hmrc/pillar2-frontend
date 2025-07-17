@@ -24,8 +24,8 @@ import java.time.{LocalDate, ZonedDateTime}
 trait DueAndOverdueReturnsDataFixture {
 
   // Use the current date as the base for our tests
-  val fromDate:    LocalDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
-  val toDate:      LocalDate = LocalDate.now()
+  val fromDate: LocalDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+  val toDate:   LocalDate = LocalDate.now()
 
   // Calculate dates that will always be in the past or future
   val pastDueDate:   LocalDate = LocalDate.now().minusDays(30) // Always overdue
@@ -34,13 +34,14 @@ trait DueAndOverdueReturnsDataFixture {
   def createObligation(
     obligationType: ObligationType = ObligationType.UKTR,
     status:         ObligationStatus = ObligationStatus.Open,
-    canAmend:       Boolean = true
+    canAmend:       Boolean = true,
+    submissions:    Seq[Submission] = Seq.empty
   ): Obligation =
     Obligation(
       obligationType = obligationType,
       status = status,
       canAmend = canAmend,
-      submissions = Seq.empty
+      submissions = submissions
     )
 
   def createAccountingPeriod(
@@ -69,7 +70,16 @@ trait DueAndOverdueReturnsDataFixture {
       createAccountingPeriod(
         dueDate = pastDueDate,
         obligations = Seq(
-          createObligation(status = ObligationStatus.Fulfilled),
+          createObligation(
+            status = ObligationStatus.Fulfilled,
+            submissions = Seq(
+              Submission(
+                submissionType = SubmissionType.UKTR_CREATE,
+                receivedDate = ZonedDateTime.now(),
+                country = None
+              )
+            )
+          ),
           createObligation(
             obligationType = ObligationType.GIR,
             status = ObligationStatus.Fulfilled

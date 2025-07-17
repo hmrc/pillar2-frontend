@@ -42,6 +42,7 @@ class DueAndOverdueReturnsController @Inject() (
   referenceNumberService:           ReferenceNumberService,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
+  checkPhase2Screens:               Phase2ScreensAction,
   obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
   view:                             DueAndOverdueReturnsView,
   sessionRepository:                SessionRepository,
@@ -54,7 +55,7 @@ class DueAndOverdueReturnsController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData andThen checkPhase2Screens).async { implicit request =>
       implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))

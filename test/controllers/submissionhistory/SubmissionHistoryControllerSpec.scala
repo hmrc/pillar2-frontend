@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,89 +17,103 @@
 package controllers.submissionhistory
 
 import base.SpecBase
-import controllers.helpers.SubmissionHistoryDataFixture
+import helpers.DueAndOverdueReturnsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
-import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SubscriptionService
+import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
+import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
-import java.time.LocalDate
 import scala.concurrent.Future
-import repositories.SessionRepository
-import uk.gov.hmrc.auth.core.Enrolment
-import uk.gov.hmrc.auth.core.EnrolmentIdentifier
 
-class SubmissionHistoryControllerSpec extends SpecBase with MockitoSugar with ScalaFutures with SubmissionHistoryDataFixture {
+class SubmissionHistoryControllerSpec extends SpecBase with DueAndOverdueReturnsDataFixture {
 
   val enrolments: Set[Enrolment] = Set(
     Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
   )
 
-  lazy val application: Application =
-    applicationBuilder(userAnswers = None, enrolments)
-      .overrides(
-        bind[SessionRepository].toInstance(mockSessionRepository),
-        bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-        bind[SubscriptionService].toInstance(mockSubscriptionService)
-      )
-      .build()
+  "SubmissionHistoryController" when {
+    "phase2ScreensEnabled is true" should {
+      "return OK and display the correct view for a GET with no submissions" in {
+        val application = applicationBuilder(userAnswers = None, enrolments)
+          .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
 
-  lazy val view:              SubmissionHistoryView              = application.injector.instanceOf[SubmissionHistoryView]
-  lazy val noSubmissionsView: SubmissionHistoryNoSubmissionsView = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
+        running(application) {
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(emptyResponse))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-  "SubmissionHistoryController" must {
+          val request           = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+          val result            = route(application, request).value
+          val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
-    "return OK and render the SubmissionHistoryView when submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(submissionHistoryResponse))
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual viewNoSubmissions(false)(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
 
-      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+      "return OK and display the correct view for a GET with submissions" in {
+        val application = applicationBuilder(userAnswers = None, enrolments)
+          .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
 
-      val result = route(application, request).value
+        running(application) {
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(allFulfilledResponse))
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-      status(result) mustEqual OK
+          val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+          val result  = route(application, request).value
+          val view    = application.injector.instanceOf[SubmissionHistoryView]
 
-      contentAsString(result) mustEqual view(submissionHistoryResponse.accountingPeriodDetails, isAgent = false)(
-        request,
-        applicationConfig,
-        messages(application)
-      ).toString
+          status(result) mustEqual OK
+          contentAsString(result) mustEqual view(allFulfilledResponse.accountingPeriodDetails, false)(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
     }
 
-    "return OK and render the submissionHistoryNoSubmissionsView when no submissions are present" in {
-      when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-        .thenReturn(Future.successful(submissionHistoryResponse.copy(accountingPeriodDetails = Seq.empty)))
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+    "phase2ScreensEnabled is false" should {
+      "redirect to dashboard" in {
+        val application = applicationBuilder(userAnswers = None, enrolments)
+          .configure("features.phase2ScreensEnabled" -> false)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
 
-      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-      val result = route(application, request).value
+          val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+          val result  = route(application, request).value
 
-      status(result) mustEqual OK
-
-      contentAsString(result) mustEqual noSubmissionsView(isAgent = false)(request, applicationConfig, messages(application)).toString
-    }
-
-    "redirect to JourneyRecoveryController on exception" in {
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
-        .thenReturn(Future.failed(new Exception("something went wrong")))
-      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-      
-      val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
-
-      val result = route(application, request).value
-
-      status(result) mustBe SEE_OTHER
-      redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad(None).url)
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        }
+      }
     }
   }
 }
