@@ -25,7 +25,7 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.obligationsandsubmissions.ObligationsAndSubmissionsService
+import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -62,8 +62,8 @@ class DueAndOverdueReturnsController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        fromDate  = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
-        toDate    = LocalDate.now()
+        fromDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+        toDate   = LocalDate.now()
         data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
       } yield Ok(view(data, fromDate, toDate, request.isAgent))).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))

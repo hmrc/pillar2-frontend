@@ -1,3 +1,2 @@
-->         /report-pillar2-top-up-taxes                   phase1.Routes
-->         /report-pillar2-submission-top-up-taxes        phase2.Routes
+->         /report-pillar2-top-up-taxes                   app.Routes
 ->         /                          health.Routes
