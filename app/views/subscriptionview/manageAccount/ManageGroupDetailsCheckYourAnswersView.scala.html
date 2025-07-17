@@ -27,7 +27,7 @@
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
         @heading(messages("manageFurtherGroupDetails.checkYourAnswers.heading"), classes = "govuk-heading-l")
 
