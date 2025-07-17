@@ -117,16 +117,17 @@ class HomepageViewSpec extends ViewSpecBase {
       organisationView.getElementsByClass("govuk-notification-banner").isEmpty mustBe true
     }
 
-    "display UKTR Due status tag with light blue background when Due scenario is provided" in {
+    "display UKTR Due status tag with blue style when Due scenario is provided" in {
       val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
       val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--blue")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Due"
-      statusTag.first().attr("style") must include("background-color: #bfdbfe")
+      statusTag.first().attr("aria-label") mustBe "Due returns"
+      statusTag.first().attr("title") mustBe "Due returns"
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).attr("href") must include("?activeTab=due")
@@ -134,16 +135,17 @@ class HomepageViewSpec extends ViewSpecBase {
       links.get(1).text() mustBe "View submission history"
     }
 
-    "display UKTR Overdue status tag with light pink background when Overdue scenario is provided" in {
+    "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
       val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
       val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--red")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Overdue"
-      statusTag.first().attr("style") must include("background-color: #fecaca")
+      statusTag.first().attr("aria-label") mustBe "Overdue returns"
+      statusTag.first().attr("title") mustBe "Overdue returns"
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).attr("href") must include("?activeTab=overdue")
@@ -151,16 +153,17 @@ class HomepageViewSpec extends ViewSpecBase {
       links.get(1).text() mustBe "View submission history"
     }
 
-    "display UKTR Incomplete status tag with purple background when Incomplete scenario is provided" in {
+    "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
       val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--purple")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Incomplete"
-      statusTag.first().attr("style") must include("background-color: #e9d5ff")
+      statusTag.first().attr("aria-label") mustBe "Incomplete returns"
+      statusTag.first().attr("title") mustBe "Incomplete returns"
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).attr("href") must include("?activeTab=incomplete")
