@@ -88,7 +88,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
               "startDate.month" -> "1",
               "startDate.year"  -> "2024",
               "endDate.day"     -> "1",
-              "endDate.month"   -> "6",
+              "endDate.month"   -> "06",
               "endDate.year"    -> "2024"
             )
 

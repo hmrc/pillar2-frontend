@@ -98,9 +98,12 @@ private[mappings] class LocalDateFormatter(
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] = {
 
       val months = Month.values.toList
-
+      val updatedData = data.map {
+        case (key, value) if (key.contains("month")) => key -> value.replaceFirst("^0+(?!$)", "")
+        case other            => other
+      }
       baseFormatter
-        .bind(key, data)
+        .bind(key, updatedData)
         .flatMap { str =>
           months
             .find(m => m.getValue.toString == str || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
