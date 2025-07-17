@@ -27,65 +27,124 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
   val formProvider = new MneOrDomesticFormProvider
   val page: MneOrDomesticView = inject[MneOrDomesticView]
 
-  val view: Document =
-    Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  def view(isAgent: Boolean = false): Document =
+    Jsoup.parse(page(formProvider(), isAgent, Some("orgName"))(request, appConfig, messages).toString())
 
-  "MneOrDomesticView" should {
+  "MneOrDomesticView" when {
+    "it's an organisation" should {
+      "have a title" in {
+        view().getElementsByTag("title").text must include("Entity locations")
+      }
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include("Entity locations")
+      "have a caption" in {
+        view().getElementsByClass("govuk-caption-l").text must equal("Group details")
+      }
+
+      "have a heading" in {
+        view().getElementsByTag("h1").get(0).text must equal("Entity locations")
+      }
+
+      "have the following paragraph and list content" in {
+        view().getElementsByClass("govuk-body").get(0).text must equal(
+          "You must inform HMRC of the entity locations in the group."
+        )
+
+        view().getElementsByClass("govuk-body").get(1).text must equal(
+          "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
+        )
+
+        view().getElementsByClass("govuk-body").get(2).text must equal(
+          "There are two Pillar 2 Top-up Taxes in the UK:"
+        )
+
+        view().getElementsByTag("li").get(0).text must equal(
+          "Domestic Top-up Tax"
+        )
+
+        view().getElementsByTag("li").get(1).text must equal(
+          "Multinational Top-up Tax"
+        )
+
+        view().getElementsByClass("govuk-body").get(3).text must equal(
+          "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
+        )
+
+        view().getElementsByClass("govuk-body").get(4).text must equal(
+          "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
+        )
+      }
+
+      "have a legend heading" in {
+        view().getElementsByClass("govuk-fieldset__heading").text must equal("Where are the entities in your group located?")
+      }
+
+      "have a radio options" in {
+        view().getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
+
+        view().getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
+      }
+
+      "have a button" in {
+        view().getElementsByClass("govuk-button").text must equal("Continue")
+      }
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must equal("Group details")
-    }
+    "it's an agent" should {
+      "have a title" in {
+        view(isAgent = true).getElementsByTag("title").text must include("Entity locations")
+      }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("Entity locations")
-    }
+      "have a caption" in {
+        view(isAgent = true).getElementsByClass("govuk-caption-l").text must equal("orgName")
+      }
 
-    "have the following paragraph and list content" in {
-      view.getElementsByClass("govuk-body").get(0).text must equal(
-        "You must inform HMRC of the entity locations in the group."
-      )
+      "have a heading" in {
+        view(isAgent = true).getElementsByTag("h1").get(0).text must equal("Entity locations")
+      }
 
-      view.getElementsByClass("govuk-body").get(1).text must equal(
-        "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
-      )
+      "have the following paragraph and list content" in {
+        view(isAgent = true).getElementsByClass("govuk-body").get(0).text must equal(
+          "You must inform HMRC of the entity locations in the group."
+        )
 
-      view.getElementsByClass("govuk-body").get(2).text must equal(
-        "There are two Pillar 2 Top-up Taxes in the UK:"
-      )
+        view(isAgent = true).getElementsByClass("govuk-body").get(1).text must equal(
+          "The entity locations determine which Pillar 2 Top-up Taxes the group needs to report for."
+        )
 
-      view.getElementsByTag("li").get(0).text must equal(
-        "Domestic Top-up Tax"
-      )
+        view(isAgent = true).getElementsByClass("govuk-body").get(2).text must equal(
+          "There are two Pillar 2 Top-up Taxes in the UK:"
+        )
 
-      view.getElementsByTag("li").get(1).text must equal(
-        "Multinational Top-up Tax"
-      )
+        view(isAgent = true).getElementsByTag("li").get(0).text must equal(
+          "Domestic Top-up Tax"
+        )
 
-      view.getElementsByClass("govuk-body").get(3).text must equal(
-        "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
-      )
+        view(isAgent = true).getElementsByTag("li").get(1).text must equal(
+          "Multinational Top-up Tax"
+        )
 
-      view.getElementsByClass("govuk-body").get(4).text must equal(
-        "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
-      )
-    }
+        view(isAgent = true).getElementsByClass("govuk-body").get(3).text must equal(
+          "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
+        )
 
-    "have a legend heading" in {
-      view.getElementsByClass("govuk-fieldset__heading").text must equal("Where are the entities in your group located?")
-    }
+        view(isAgent = true).getElementsByClass("govuk-body").get(4).text must equal(
+          "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
+        )
+      }
 
-    "have a radio options" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
+      "have a legend heading" in {
+        view(isAgent = true).getElementsByClass("govuk-fieldset__heading").text must equal("Where are the entities in the group located?")
+      }
 
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
-    }
+      "have a radio options" in {
+        view(isAgent = true).getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Continue")
+        view(isAgent = true).getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
+      }
+
+      "have a button" in {
+        view(isAgent = true).getElementsByClass("govuk-button").text must equal("Continue")
+      }
     }
   }
 }

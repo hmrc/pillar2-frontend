@@ -30,7 +30,7 @@
         govukButton: GovukButton
 )
 
-@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
     @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {
 
@@ -40,11 +40,21 @@
                 @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
             }
 
-            @sectionHeader(messages("mneOrDomestic.heading.caption"))
+            @if(isAgent && organisationName.isDefined) {
+                @sectionHeader(organisationName.get)
+            } else {
+                @sectionHeader(messages("mneOrDomestic.heading.caption"))
+            }
 
             @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
             @paragraphBody(messages("mneOrDomestic.p1"))
-            @paragraphBody(messages("mneOrDomestic.p2"))
+
+            @if(isAgent) {
+                @paragraphBody(messages("mneOrDomestic.agent.p2"))
+            } else {
+                @paragraphBody(messages("mneOrDomestic.p2"))
+            }
+
             @paragraphBody(messages("mneOrDomestic.p3"))
             @bulletList(items = List(
                 Html(messages("mneOrDomestic.l1")),
@@ -53,13 +63,23 @@
             @paragraphBody(messages("mneOrDomestic.p4"))
             @paragraphBody(messages("mneOrDomestic.p5"))
 
-            @govukRadios(
-                RadiosViewModel(
-                    field = form("value"),
-                    legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
-                    items = MneOrDomestic.options
+            @if(isAgent) {
+                @govukRadios(
+                    RadiosViewModel(
+                        field = form("value"),
+                        legend = LegendViewModel(messages("mneOrDomestic.agent.group-operate")).asPageHeading(Medium),
+                        items = MneOrDomestic.options
+                    )
                 )
-            )
+            } else {
+                @govukRadios(
+                    RadiosViewModel(
+                        field = form("value"),
+                        legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
+                        items = MneOrDomestic.options
+                    )
+                )
+            }
 
             @govukButton(
                 ButtonViewModel(messages("site.continue"))

@@ -29,13 +29,15 @@ object MneOrDomesticSummary {
 
   def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubMneOrDomesticPage).map { answer =>
+      val key = if (request.isAgent) "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
+
       val value = ValueViewModel(
         HtmlContent(
           HtmlFormat.escape(messages(s"mneOrDomestic.${answer.toString}"))
         )
       )
       SummaryListRowViewModel(
-        key = "mneOrDomestic.checkYourAnswersLabel",
+        key = key,
         value = value,
         actions = Seq(
           ActionItemViewModel(
