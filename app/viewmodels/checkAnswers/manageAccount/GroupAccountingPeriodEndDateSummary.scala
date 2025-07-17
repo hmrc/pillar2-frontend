@@ -33,14 +33,7 @@ object GroupAccountingPeriodEndDateSummary {
       val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate)),
-        actions = Seq(
-          ActionItemViewModel(
-            "site.change",
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
-          )
-            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
-        )
+        value = ValueViewModel(HtmlContent(startDate))
       )
 
     }

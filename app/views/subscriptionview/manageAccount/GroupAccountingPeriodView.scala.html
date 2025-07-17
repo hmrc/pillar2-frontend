@@ -26,7 +26,8 @@
         heading: heading,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        paragraphBody: paragraphBody
 )
 
 @(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -42,7 +43,10 @@
 
         @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
 
-        @heading(messages("groupAccountingPeriod.amend.title"), "govuk-heading-l")
+        @heading(messages("groupAccountingPeriod.amend.heading"), "govuk-heading-l")
+
+        @paragraphBody(messages("groupAccountingPeriod.amend.p1"))
+        @paragraphBody(messages("groupAccountingPeriod.amend.p2"))
 
         @govukDateInput(
             DateViewModel(
