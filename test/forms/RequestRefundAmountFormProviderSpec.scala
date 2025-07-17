@@ -23,10 +23,10 @@ import play.api.data.{Form, FormError}
 class RequestRefundAmountFormProviderSpec extends DecimalFieldBehaviours with StringFieldBehaviours {
 
   val fieldName   = "value"
-  val requiredKey = "repayment.requestRefundAmount.error.required"
-  val invalidKey  = "repayment.requestRefundAmount.error.format"
-  val minValueKey = "repayment.requestRefundAmount.error.minValue"
-  val maxValueKey = "repayment.requestRefundAmount.error.maxValue"
+  val requiredKey = "repayment.requestRepaymentAmount.error.required"
+  val invalidKey  = "repayment.requestRepaymentAmount.error.format"
+  val minValueKey = "repayment.requestRepaymentAmount.error.minValue"
+  val maxValueKey = "repayment.requestRepaymentAmount.error.maxValue"
   val maximum     = 99999999999.99
   val minimum     = 0.0
 

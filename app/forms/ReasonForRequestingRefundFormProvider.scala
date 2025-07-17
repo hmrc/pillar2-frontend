@@ -28,11 +28,11 @@ class ReasonForRequestingRefundFormProvider @Inject() extends Mappings {
 
   def apply(): Form[String] =
     Form(
-      "value" -> text("reasonForRequestingRefund.error.required")
+      "value" -> text("reasonForRequestingRepayment.error.required")
         .verifying(
           firstError(
-            maxLength(MAX_LENGTH_250, "reasonForRequestingRefund.error.length"),
-            regexp(XSS_REGEX, "reasonForRequestingRefund.error.xss")
+            maxLength(MAX_LENGTH_250, "reasonForRequestingRepayment.error.length"),
+            regexp(XSS_REGEX, "reasonForRequestingRepayment.error.xss")
           )
         )
     )

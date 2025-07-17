@@ -29,11 +29,11 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   "Repayments incomplete data view" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("Refund request has missing information")
+      view.getElementsByTag("title").text must include("Repayment request has missing information")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Refund request has missing information")
+      view.getElementsByTag("h1").text must include("Repayment request has missing information")
     }
 
     "have a paragraph with the correct text" in {
@@ -52,7 +52,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with the correct stop text" in {
-      view.getElementsByTag("p").text must include("before submitting your refund request.")
+      view.getElementsByTag("p").text must include("before submitting your repayment request.")
     }
 
   }

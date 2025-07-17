@@ -102,7 +102,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
             .withFormUrlEncodedBody(("contactName", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Enter name of the person or team we should contact for this refund request")
+        contentAsString(result) must include("Enter name of the person or team we should contact for this repayment request")
       }
     }
   }
