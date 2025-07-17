@@ -23,20 +23,20 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.Future
 
 class Phase2ScreensActionSpec extends SpecBase {
 
   class TestController(
-    identify: IdentifierAction,
-    getData: DataRetrievalAction,
-    requireData: DataRequiredAction,
-    checkPhase2Screens: Phase2ScreensAction,
+    identify:                 IdentifierAction,
+    getData:                  DataRetrievalAction,
+    requireData:              DataRequiredAction,
+    checkPhase2Screens:       Phase2ScreensAction,
     val controllerComponents: MessagesControllerComponents
-  )(implicit ec: ExecutionContext) extends FrontendBaseController {
-    
-    def testAction(): Action[AnyContent] = 
-      (identify andThen getData andThen requireData andThen checkPhase2Screens).async { implicit request =>
+  ) extends FrontendBaseController {
+
+    def testAction(): Action[AnyContent] =
+      (identify andThen getData andThen requireData andThen checkPhase2Screens).async { _ =>
         Future.successful(Ok("Success"))
       }
   }
@@ -49,16 +49,16 @@ class Phase2ScreensActionSpec extends SpecBase {
           .build()
 
         running(application) {
-          val identify = application.injector.instanceOf[IdentifierAction]
-          val getData = application.injector.instanceOf[DataRetrievalAction]
-          val requireData = application.injector.instanceOf[DataRequiredAction]
-          val checkPhase2Screens = application.injector.instanceOf[Phase2ScreensAction]
+          val identify             = application.injector.instanceOf[IdentifierAction]
+          val getData              = application.injector.instanceOf[DataRetrievalAction]
+          val requireData          = application.injector.instanceOf[DataRequiredAction]
+          val checkPhase2Screens   = application.injector.instanceOf[Phase2ScreensAction]
           val controllerComponents = application.injector.instanceOf[MessagesControllerComponents]
-          
+
           val controller = new TestController(identify, getData, requireData, checkPhase2Screens, controllerComponents)
 
           val request = FakeRequest("GET", "/test")
-          val result = controller.testAction()(request)
+          val result  = controller.testAction()(request)
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual "Success"
@@ -73,16 +73,16 @@ class Phase2ScreensActionSpec extends SpecBase {
           .build()
 
         running(application) {
-          val identify = application.injector.instanceOf[IdentifierAction]
-          val getData = application.injector.instanceOf[DataRetrievalAction]
-          val requireData = application.injector.instanceOf[DataRequiredAction]
-          val checkPhase2Screens = application.injector.instanceOf[Phase2ScreensAction]
+          val identify             = application.injector.instanceOf[IdentifierAction]
+          val getData              = application.injector.instanceOf[DataRetrievalAction]
+          val requireData          = application.injector.instanceOf[DataRequiredAction]
+          val checkPhase2Screens   = application.injector.instanceOf[Phase2ScreensAction]
           val controllerComponents = application.injector.instanceOf[MessagesControllerComponents]
-          
+
           val controller = new TestController(identify, getData, requireData, checkPhase2Screens, controllerComponents)
 
           val request = FakeRequest("GET", "/test")
-          val result = controller.testAction()(request)
+          val result  = controller.testAction()(request)
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result) mustEqual Some(controllers.routes.DashboardController.onPageLoad.url)
@@ -90,4 +90,4 @@ class Phase2ScreensActionSpec extends SpecBase {
       }
     }
   }
-} 
+}

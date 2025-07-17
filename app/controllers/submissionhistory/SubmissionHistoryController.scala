@@ -17,15 +17,16 @@
 package controllers.submissionhistory
 
 import cats.data.OptionT
-import pages.AgentClientPillar2ReferencePage
 import config.FrontendAppConfig
 import controllers.actions._
 import models.UserAnswers
+import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
+import services.ReferenceNumberService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
@@ -33,7 +34,6 @@ import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, Submiss
 import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
-import services.ReferenceNumberService
 
 class SubmissionHistoryController @Inject() (
   val controllerComponents:         MessagesControllerComponents,

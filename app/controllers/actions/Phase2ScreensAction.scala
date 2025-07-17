@@ -24,16 +24,16 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class Phase2ScreensActionImpl @Inject() (
-  config: FrontendAppConfig
-)(implicit val executionContext: ExecutionContext) extends Phase2ScreensAction {
+  config:                        FrontendAppConfig
+)(implicit val executionContext: ExecutionContext)
+    extends Phase2ScreensAction {
 
-  override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] = {
+  override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
     if (config.phase2ScreensEnabled) {
       Future.successful(Right(request))
     } else {
       Future.successful(Left(Results.Redirect(controllers.routes.DashboardController.onPageLoad)))
     }
-  }
 }
 
-trait Phase2ScreensAction extends ActionRefiner[DataRequest, DataRequest] 
+trait Phase2ScreensAction extends ActionRefiner[DataRequest, DataRequest]

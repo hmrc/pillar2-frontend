@@ -22,19 +22,17 @@ import controllers.{routes => baseRoutes}
 import helpers.DueAndOverdueReturnsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.concurrent.ScalaFutures
-import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import services.SubscriptionService
+import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
-import uk.gov.hmrc.http.HeaderCarrier
-import views.html.dueandoverduereturns.DueAndOverdueReturnsView
+import services.SubscriptionService
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.auth.core.EnrolmentIdentifier
-import repositories.SessionRepository
+import uk.gov.hmrc.http.HeaderCarrier
+import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import scala.concurrent.Future
 

@@ -22,8 +22,8 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
-import java.time.format.DateTimeFormatter
 import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 class DueAndOverdueReturnsViewSpec extends ViewSpecBase with DueAndOverdueReturnsDataFixture {
 
