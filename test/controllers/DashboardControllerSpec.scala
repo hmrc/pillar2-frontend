@@ -35,8 +35,8 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{DashboardView, HomepageView}
 
-import java.time.{LocalDate, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.Future
 
@@ -113,6 +113,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       "newHomepageEnabled is false" in {
         val application =
           applicationBuilder(userAnswers = None, enrolments)
+            .configure("features.newHomepageEnabled" -> false)
             .overrides(
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[SubscriptionService].toInstance(mockSubscriptionService)
