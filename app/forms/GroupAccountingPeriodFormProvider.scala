@@ -42,7 +42,8 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
         invalidMonthLength = "groupAccountingPeriod.error.startDate.month.length",
         invalidYear = "groupAccountingPeriod.error.startDate.year.nan",
         invalidYearLength = "groupAccountingPeriod.error.startDate.year.length",
-        messageKeyPart = "groupAccountingPeriod"
+        messageKeyPart = "groupAccountingPeriod",
+        validateMonthInStringFormat = Some(true)
       ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.dayMonthYear.minimum")),
       "endDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.endDate.format",
@@ -55,7 +56,8 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
         invalidMonthLength = "groupAccountingPeriod.error.endDate.month.length",
         invalidYear = "groupAccountingPeriod.error.endDate.year.nan",
         invalidYearLength = "groupAccountingPeriod.error.endDate.year.length",
-        messageKeyPart = "groupAccountingPeriod"
+        messageKeyPart = "groupAccountingPeriod",
+        validateMonthInStringFormat = Some(true)
       )
     )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
       Some((accountingPeriod.startDate, accountingPeriod.endDate))

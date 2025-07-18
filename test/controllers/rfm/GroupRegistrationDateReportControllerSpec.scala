@@ -98,6 +98,54 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     }
 
+    "must redirect to the group check your answers page when valid data with Month in string short format is submitted" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            "rfmRegistrationDate.day"   -> "31",
+            "rfmRegistrationDate.month" -> "Dec",
+            "rfmRegistrationDate.year"  -> "2023"
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url
+      }
+
+    }
+
+    "must redirect to the group check your answers page when valid data with Month in string format is submitted" in {
+
+      val application = applicationBuilder()
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+
+        val request = FakeRequest(POST, controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            "rfmRegistrationDate.day"   -> "31",
+            "rfmRegistrationDate.month" -> "December",
+            "rfmRegistrationDate.year"  -> "2023"
+          )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+
+        redirectLocation(result).value mustEqual controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode).url
+      }
+
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
@@ -109,6 +157,32 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
       running(application) {
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
+
+        val view = application.injector.instanceOf[GroupRegistrationDateReportView]
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
+      }
+    }
+
+    "must return a Bad Request and errors when invalid string month is submitted" in {
+
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .build()
+
+      val request =
+        FakeRequest(POST, controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(
+            "rfmRegistrationDate.day"   -> "31",
+            "rfmRegistrationDate.month" -> "month",
+            "rfmRegistrationDate.year"  -> "2023"
+          )
+
+      running(application) {
+        val boundForm =
+          formProvider().bind(Map("rfmRegistrationDate.day" -> "31", "rfmRegistrationDate.month" -> "month", "rfmRegistrationDate.year" -> "2023"))
 
         val view = application.injector.instanceOf[GroupRegistrationDateReportView]
 
