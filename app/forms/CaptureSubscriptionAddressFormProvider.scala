@@ -17,13 +17,11 @@
 package forms
 
 import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
-import forms.mappings.AddressMappings.{maxAddressLineLength, maxPostCodeLength}
+import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
 import play.api.data.Form
-import play.api.data.Forms.{mapping, of, optional}
-import play.api.data.format.Formatter
-import play.api.data.{FieldMapping, FormError}
+import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
 
@@ -76,45 +74,4 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)
   )
-
-  private def xssFirstOptionalPostcode(): FieldMapping[Option[String]] =
-    of(new Formatter[Option[String]] {
-      private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
-
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-        val rawPostcode = data.get(key).map(_.trim).filter(_.nonEmpty)
-        val country     = data.get("countryCode").map(_.trim).filter(_.nonEmpty)
-
-        (rawPostcode, country) match {
-          case (Some(postcode), _) =>
-            if (!postcode.matches(XSS_REGEX)) {
-              Left(Seq(FormError(key, "address.postcode.error.xss")))
-            } else {
-
-              val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
-
-              (normalizedPostcode, country) match {
-                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>
-                  val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
-                  Right(Some(formatted))
-                case (_, Some("GB")) =>
-                  Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-                case (zip, Some(_)) if zip.length <= maxPostCodeLength =>
-                  Right(Some(zip))
-                case (_, Some(_)) =>
-                  Left(Seq(FormError(key, "address.postcode.error.length")))
-                case (zip, None) =>
-                  Right(Some(zip))
-              }
-            }
-          case (None, Some("GB")) =>
-            Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-          case (None, _) =>
-            Right(None)
-        }
-      }
-
-      override def unbind(key: String, value: Option[String]): Map[String, String] =
-        Map(key -> value.getOrElse(""))
-    })
 }
