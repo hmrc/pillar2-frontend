@@ -26,72 +26,105 @@ import viewmodels.checkAnswers.manageAccount.GroupAccountingPeriodStartDateSumma
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
-  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
-    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
   val page: ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
 
-  val view:      Document = Jsoup.parse(page(subscriptionDataGroupSummaryList())(request, appConfig, messages).toString())
-  val agentView: Document = Jsoup.parse(page(subscriptionDataGroupSummaryList())(request, appConfig, messages).toString())
+  "Manage Group Details Check Your Answers View" when {
+    "it's an organisation view" must {
+      implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+        SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+      val view: Document = Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = false, None)(request, appConfig, messages).toString())
 
-  "Manage Group Details Check Your Answers View" should {
+      "have a title" in {
+        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.getElementsByTag("title").text must include(title)
+      }
 
-    "have a title" in {
-      val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text      must include(title)
-      agentView.getElementsByTag("title").text must include(title)
+      "display back link" in {
+        view.getElementsByClass("govuk-back-link").size() mustBe 1
+      }
+
+      "have a heading" in {
+        view.getElementsByTag("h1").text must include("Group details")
+      }
+
+      "have a summary list" in {
+        val mne      = "Where are the entities in your group located?"
+        val mneValue = "Only in the UK"
+        view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
+        view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
+        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+        )
+
+        val ap      = "Group’s accounting period"
+        val apValue = ""
+        view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
+        view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
+        view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+        )
+
+        val startDate = "Start date"
+        val endDate   = "End date"
+        view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
+        view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+        view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
+        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+      }
+
+      "have a button" in {
+        view.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+      }
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text      must include("Group details")
-      agentView.getElementsByTag("h1").text must include("Group details")
-    }
+    "when it's an agent view" must {
+      implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+        SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = true)
+      val agentView: Document =
+        Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = true, Some("orgName"))(request, appConfig, messages).toString())
 
-    "have a summary list" in {
-      val mne      = "Where are the entities in your group located?"
-      val mneValue = "Only in the UK"
-      view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
-      view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-      view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
-      )
+      "have a title" in {
+        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
+        agentView.getElementsByTag("title").text must include(title)
+      }
 
-      agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
-      agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
-      )
+      "display back link" in {
+        agentView.getElementsByClass("govuk-back-link").size() mustBe 1
+      }
 
-      val ap      = "Group’s current consolidated accounting period"
-      val apValue = ""
-      view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
-      view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-      view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
-      )
+      "have a heading" in {
+        agentView.getElementsByTag("h1").text must include("Group details")
+      }
 
-      agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
-      agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
-        controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
-      )
+      "have a summary list" in {
+        val mne      = "Where are the group entities located?"
+        val mneValue = "Only in the UK"
+        agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
+        agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
+        agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+        )
 
-      val startDate = "Start date"
-      val endDate   = "End date"
-      view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-      view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
-      view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-      view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+        val ap      = "Group’s accounting period"
+        val apValue = ""
+        agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
+        agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
+        agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+        )
 
-      agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-      agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
-      agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-      agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
-    }
+        val startDate = "Start date"
+        val endDate   = "End date"
+        agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
+        agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+        agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
+        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+      }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text      must include("Save and return to homepage")
-      agentView.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+      "have a button" in {
+        agentView.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+      }
     }
   }
 }
