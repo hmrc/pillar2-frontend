@@ -16,15 +16,23 @@
 
 package forms
 
-import forms.mappings.Mappings
-import play.api.data.Form
+import forms.behaviours.BooleanFieldBehaviours
+import play.api.data.FormError
 
-import javax.inject.Inject
+class GroupTerritoriesFormProviderSpec extends BooleanFieldBehaviours {
 
-class GroupTerritoriesFormProvider @Inject() extends Mappings {
+  val requiredKey = "groupTerritories.error.required"
 
-  def apply(): Form[Boolean] =
-    Form(
-      "value" -> boolean("groupTerritories.error.required")
+  val form = new GroupTerritoriesFormProvider()()
+
+  ".value" - {
+
+    val fieldName = "value"
+
+    behave like mandatoryField(
+      form,
+      fieldName,
+      requiredError = FormError(fieldName, requiredKey)
     )
+  }
 }
