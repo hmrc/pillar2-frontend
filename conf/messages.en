@@ -1595,3 +1595,10 @@ dashboard.phaseApproach.message = HMRC are currently delivering this service on 
 dashboard.phaseApproach.link = Refer to the Pillar 2 Top-up Taxes manual (opens in new tab)
 dashboard.phaseApproach.linkSuffix = for more details.
 site.important = Important
+
+# ---------------------------------------------
+# Pillar 2 Research
+# ---------------------------------------------
+research.heading = Take part in Pillar 2 research
+research.body = Help us improve this online service by taking part in user research.
+research.link = Register for Pillar 2 user research (opens in a new tab)
