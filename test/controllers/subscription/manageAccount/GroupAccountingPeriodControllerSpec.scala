@@ -65,7 +65,11 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true))(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(true), isAgent = false, organisationName = None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -81,7 +85,11 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod))(
+        contentAsString(result) mustEqual view(
+          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod),
+          isAgent = false,
+          organisationName = None
+        )(
           request,
           applicationConfig,
           messages(application)
@@ -102,7 +110,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(date))(
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
@@ -126,7 +134,11 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(boundForm, isAgent = false, organisationName = None)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -194,7 +206,9 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[GroupAccountingPeriodView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(
-          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod)
+          formProvider(true).fill(emptySubscriptionLocalData.subAccountingPeriod),
+          isAgent = false,
+          organisationName = None
         )(
           request,
           applicationConfig,
@@ -225,7 +239,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[GroupAccountingPeriodView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(true).fill(date))(
+        contentAsString(result) mustEqual view(formProvider(true).fill(date), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
@@ -256,7 +270,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val view      = application.injector.instanceOf[GroupAccountingPeriodView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) mustEqual view(boundForm)(
+        contentAsString(result) mustEqual view(boundForm, isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)

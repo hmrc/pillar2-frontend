@@ -32,6 +32,7 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
   val testMne:      MneOrDomestic = UkAndOther
 
   val page: RegistrationConfirmationView = inject[RegistrationConfirmationView]
+
   val viewDomestic: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
   val viewMne: Document =
@@ -87,5 +88,21 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       )
     }
 
+    "have a Pillar 2 research heading" in {
+      val researchHeading = viewDomestic.getElementsByClass("research-heading")
+      researchHeading.text mustBe "Take part in Pillar 2 research"
+    }
+
+    "have a Pillar 2 research paragraph" in {
+      val researchParagraph = viewDomestic.getElementsByClass("research-body")
+      researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
+    }
+
+    "have a Pillar 2 link to the research page" in {
+      val researchLink = viewDomestic.getElementsByClass("research-link")
+      researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
+      researchLink.attr("target") mustBe "_blank"
+      researchLink.attr("href") mustBe appConfig.researchUrl
+    }
   }
 }

@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds.heading
+@import views.html.components.gds.{heading, sectionHeader}
 
 @this(
         layout: templates.Layout,
@@ -23,12 +23,17 @@
         govukButton: GovukButton,
         heading: heading,
         formHelper: FormWithCSRF,
+        sectionHeader: sectionHeader
 )
 
-@(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
+        @if(isAgent && organisationName.isDefined) {
+            @sectionHeader(organisationName.get)
+        }
+
         @heading(messages("manageFurtherGroupDetails.checkYourAnswers.heading"), classes = "govuk-heading-l")
 
         @govukSummaryList(list)
