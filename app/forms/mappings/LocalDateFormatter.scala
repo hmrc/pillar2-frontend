@@ -99,8 +99,8 @@ private[mappings] class LocalDateFormatter(
 
       val months = Month.values.toList
       val updatedData = data.map {
-        case (key, value) if (key.contains("month")) => key -> value.replaceFirst("^0+(?!$)", "")
-        case other            => other
+        case (key, value) if key.contains("month") => key -> value.replaceFirst("^0+(?!$)", "")
+        case other                                 => other
       }
       baseFormatter
         .bind(key, updatedData)
