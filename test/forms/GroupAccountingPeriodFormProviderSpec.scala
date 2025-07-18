@@ -214,7 +214,7 @@ class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", List("groupAccountingPeriod.error.startDate.month.length")),
+      FormError("startDate", List("groupAccountingPeriod.error.startDate.month.nan")),
       FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
     )
   }
@@ -402,7 +402,7 @@ class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
 
     form.bind(data).errors shouldEqual Seq(
       FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
-      FormError("endDate", List("groupAccountingPeriod.error.endDate.month.length"))
+      FormError("endDate", List("groupAccountingPeriod.error.endDate.month.nan"))
     )
   }
 
@@ -452,8 +452,8 @@ class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
 
     form.bind(data).errors shouldEqual Seq(
-      FormError("startDate", "groupAccountingPeriod.error.startDate.month.length"),
-      FormError("endDate", "groupAccountingPeriod.error.endDate.month.length")
+      FormError("startDate", "groupAccountingPeriod.error.startDate.month.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.month.nan")
     )
   }
 
