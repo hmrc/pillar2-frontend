@@ -69,18 +69,19 @@ trait Mappings extends Formatters with Constraints {
     of(enumerableFormatter[A](requiredKey, invalidKey, args))
 
   protected def localDate(
-    invalidKey:         String,
-    allRequiredKey:     String,
-    twoRequiredKey:     String,
-    requiredKey:        String,
-    invalidDay:         String,
-    invalidDayLength:   String,
-    invalidMonth:       String,
-    invalidMonthLength: String,
-    invalidYear:        String,
-    invalidYearLength:  String,
-    args:               Seq[String] = Seq.empty,
-    messageKeyPart:     String
+    invalidKey:                  String,
+    allRequiredKey:              String,
+    twoRequiredKey:              String,
+    requiredKey:                 String,
+    invalidDay:                  String,
+    invalidDayLength:            String,
+    invalidMonth:                String,
+    invalidMonthLength:          String,
+    invalidYear:                 String,
+    invalidYearLength:           String,
+    args:                        Seq[String] = Seq.empty,
+    messageKeyPart:              String,
+    validateMonthInStringFormat: Option[Boolean] = Some(false)
   ): FieldMapping[LocalDate] =
     of(
       new LocalDateFormatter(
@@ -95,7 +96,8 @@ trait Mappings extends Formatters with Constraints {
         invalidYear,
         invalidYearLength,
         args,
-        messageKeyPart
+        messageKeyPart,
+        validateMonthInStringFormat
       )
     )
 

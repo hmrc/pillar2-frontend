@@ -66,4 +66,13 @@
     fullStop = true
   )))
 
+  @heading(messages("research.heading"), "govuk-heading-m govuk-!-margin-top-5 research-heading", "h2")
+  @paragraphBody(messages("research.body"), classes = "govuk-body research-body")
+  @paragraphBodyLink(
+    message = messages("research.link"),
+    linkUrl = appConfig.researchUrl,
+    linkClass = "govuk-link research-link",
+    target = Some("_blank")
+  )
+
 }
