@@ -21,7 +21,7 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import viewmodels.checkAnswers.{GroupAccountingPeriodEndDateSummary, GroupAccountingPeriodStartDateSummary, GroupAccountingPeriodSummary, MneOrDomesticSummary}
+import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
 
