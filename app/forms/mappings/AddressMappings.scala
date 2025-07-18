@@ -17,9 +17,9 @@
 package forms.mappings
 
 import forms.Validation.XSS_REGEX
-import play.api.data.{FieldMapping, FormError}
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
+import play.api.data.{FieldMapping, FormError}
 
 trait AddressMappings extends Mappings with Constraints with Transforms {
 
