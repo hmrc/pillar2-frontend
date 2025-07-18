@@ -157,7 +157,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
   ".postalCode" - {
     val FIELD_NAME = "postalCode"
     val XSS_KEY    = "address.postcode.error.xss"
-    behave like postcodeField(form, maxLength = maxAddressLineLength)
+    behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
       form,
@@ -166,6 +166,20 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
+
+    "prioritize XSS validation over postcode format validation" in {
+
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A <test"
+        )
+      )
+
+      result.errors.filter(_.key == "postalCode") mustBe List(FormError("postalCode", "address.postcode.error.xss"))
+    }
   }
 
   ".countryCode" - {

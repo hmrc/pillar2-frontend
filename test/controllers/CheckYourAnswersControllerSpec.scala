@@ -278,6 +278,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubRegisteredAddressPage, nonUkAddress)
 
         val expectedSessionData = UserAnswers(userAnswer.id)
           .setOrException(UpeNameRegistrationPage, "Company Name")
