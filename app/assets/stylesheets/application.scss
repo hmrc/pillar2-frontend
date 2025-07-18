@@ -109,6 +109,22 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
   margin: 0 0 10px 0;
 }
 
+.card-label-with-tag {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 10px 15px 1px 15px;
+}
+
+.card-label-with-tag .govuk-tag {
+  margin: 0;
+  margin-top: 2px;
+}
+
+.card-label-with-tag .govuk-heading-m {
+  margin-bottom: 0;
+}
+
 .card-content {
   padding: 15px 15px 0 15px;
 }

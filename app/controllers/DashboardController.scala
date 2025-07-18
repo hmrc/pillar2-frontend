@@ -117,9 +117,9 @@ class DashboardController @Inject() (
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
               uktrBannerScenario(response).map {
-                case UktrDue        => "due"
-                case UktrOverdue    => "overdue"
-                case UktrIncomplete => "incomplete"
+                case UktrDue        => "Due"
+                case UktrOverdue    => "Overdue"
+                case UktrIncomplete => "Incomplete"
               },
               plrReference,
               isAgent = request.isAgent
