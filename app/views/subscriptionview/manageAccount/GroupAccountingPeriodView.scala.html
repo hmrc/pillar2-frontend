@@ -26,10 +26,11 @@
         heading: heading,
         govukErrorSummary: GovukErrorSummary,
         govukDateInput: GovukDateInput,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        paragraphBody: paragraphBody
 )
 
-@(form: Form[_])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title"))) {
 
@@ -40,9 +41,16 @@
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))
         }
 
-        @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
+        @if(isAgent && organisationName.isDefined) {
+            @sectionHeader(organisationName.get)
+        } else {
+            @sectionHeader(messages("groupAccountingPeriod.heading.caption"))
+        }
 
-        @heading(messages("groupAccountingPeriod.amend.title"), "govuk-heading-l")
+        @heading(messages("groupAccountingPeriod.amend.heading"), "govuk-heading-l")
+
+        @paragraphBody(messages("groupAccountingPeriod.amend.p1"))
+        @paragraphBody(messages("groupAccountingPeriod.amend.p2"))
 
         @govukDateInput(
             DateViewModel(

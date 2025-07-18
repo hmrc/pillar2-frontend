@@ -54,7 +54,7 @@ class GroupAccountingPeriodController @Inject() (
         case Some(v) => form.fill(v)
         case None    => form
       }
-      Ok(view(preparedForm))
+      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
     }
 
   def onSubmit(): Action[AnyContent] =
@@ -64,7 +64,7 @@ class GroupAccountingPeriodController @Inject() (
           .bindFromRequest()
       )
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors))),
+          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
           value =>
             for {
               updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubAccountingPeriodPage, value))

@@ -65,7 +65,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val view = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
@@ -82,7 +82,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(
+        contentAsString(result) mustEqual view(formProvider(), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
@@ -161,7 +161,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MneOrDomesticView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk))(
+        contentAsString(result) mustEqual view(formProvider().fill(MneOrDomestic.Uk), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
@@ -187,7 +187,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MneOrDomesticView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider())(
+        contentAsString(result) mustEqual view(formProvider(), isAgent = false, organisationName = None)(
           request,
           applicationConfig,
           messages(application)
