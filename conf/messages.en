@@ -876,6 +876,23 @@ homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
 homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return.
 homepage.btnActiveBanner.agent.body = You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted.
 homepage.btnActiveBanner.linkText = Find out more about Below-Threshold Notification
+
+homepage.uktrBanner.Due.title = You have one or more returns due
+homepage.uktrBanner.Due.body = Submit your returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Due.title = You have one or more returns due
+homepage.uktrBanner.agent.Due.body = Submit your returns before the due date to avoid penalties.
+
+homepage.uktrBanner.Overdue.title = You have one or more returns due
+homepage.uktrBanner.Overdue.body = Submit your returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Overdue.title = You have one or more returns due
+homepage.uktrBanner.agent.Overdue.body = Submit your returns before the due date to avoid penalties.
+
+homepage.uktrBanner.Incomplete.title = You have overdue or incomplete returns
+homepage.uktrBanner.Incomplete.body = You must submit or complete these returns as soon as possible.
+homepage.uktrBanner.agent.Incomplete.title = You have overdue or incomplete returns
+homepage.uktrBanner.agent.Incomplete.body = You must submit or complete these returns as soon as possible.
+
+homepage.uktrBanner.linkText = View all due and overdue returns
 ###############################################
 #
 # Dashboard

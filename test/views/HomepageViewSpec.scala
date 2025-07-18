@@ -33,10 +33,19 @@ class HomepageViewSpec extends ViewSpecBase {
   private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
 
   val organisationView: Document =
-    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
+
+  val organisationViewWithDueScenario: Document =
+    Jsoup.parse(page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages).toString())
+
+  val organisationViewWithOverdueScenario: Document =
+    Jsoup.parse(page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages).toString())
+
+  val organisationViewWithIncompleteScenario: Document =
+    Jsoup.parse(page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages).toString())
 
   val agentView: Document =
-    Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
   "HomepageView for a group" should {
     "display page header correctly" in {
@@ -108,9 +117,63 @@ class HomepageViewSpec extends ViewSpecBase {
       organisationView.getElementsByClass("govuk-notification-banner").isEmpty mustBe true
     }
 
+    "display UKTR Due status tag with blue style when Due scenario is provided" in {
+      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+
+      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--blue")
+      statusTag.size() mustBe 1
+      statusTag.first().text() mustBe "Due"
+      statusTag.first().attr("aria-label") mustBe "Due returns"
+      statusTag.first().attr("title") mustBe "Due returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("?activeTab=due")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
+    "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
+      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+
+      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--red")
+      statusTag.size() mustBe 1
+      statusTag.first().text() mustBe "Overdue"
+      statusTag.first().attr("aria-label") mustBe "Overdue returns"
+      statusTag.first().attr("title") mustBe "Overdue returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("?activeTab=overdue")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
+    "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
+      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+
+      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--purple")
+      statusTag.size() mustBe 1
+      statusTag.first().text() mustBe "Incomplete"
+      statusTag.first().attr("aria-label") mustBe "Incomplete returns"
+      statusTag.first().attr("title") mustBe "Incomplete returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("?activeTab=incomplete")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
     "display notification banner" in {
       val accountInactiveOrgView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = false)(request, appConfig, messages).toString())
+        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
 
       val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
 
@@ -192,7 +255,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display notification banner" in {
       val accountInactiveAgentView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, plrRef, isAgent = true)(request, appConfig, messages).toString())
+        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
 

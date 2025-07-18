@@ -133,7 +133,10 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
-          verify(mockSessionRepository).set(eqTo(successfulCompletionSessionData))
+
+          val inOrderVerifier = org.mockito.Mockito.inOrder(mockSessionRepository)
+          inOrderVerifier.verify(mockSessionRepository).set(any()) // First call with InProgress status
+          inOrderVerifier.verify(mockSessionRepository).set(eqTo(successfulCompletionSessionData)) // Final call with SuccessfullyCompleted
         }
       }
 

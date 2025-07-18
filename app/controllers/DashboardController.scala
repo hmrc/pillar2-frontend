@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models.obligationsandsubmissions.{ObligationStatus, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{InternalIssueError, UserAnswers}
@@ -116,6 +116,11 @@ class DashboardController @Inject() (
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
+              uktrBannerScenario(response).map {
+                case UktrDue        => "Due"
+                case UktrOverdue    => "Overdue"
+                case UktrIncomplete => "Incomplete"
+              },
               plrReference,
               isAgent = request.isAgent
             )
@@ -148,6 +153,55 @@ class DashboardController @Inject() (
       Some(accountingPeriods.head.endDate)
     } else {
       accountingPeriods.find(_.obligations.head.submissions.nonEmpty).map(_.endDate)
+    }
+  }
+
+  sealed trait UktrBannerScenario
+  case object UktrDue extends UktrBannerScenario
+  case object UktrOverdue extends UktrBannerScenario
+  case object UktrIncomplete extends UktrBannerScenario
+
+  def uktrBannerScenario(response: ObligationsAndSubmissionsSuccess): Option[UktrBannerScenario] = {
+    val today             = LocalDate.now()
+    val accountingPeriods = response.accountingPeriodDetails
+
+    val openUktrObligations = accountingPeriods.flatMap { period =>
+      period.obligations
+        .filter(obligation => obligation.obligationType == UKTR && obligation.status == ObligationStatus.Open)
+        .map(obligation => (period, obligation))
+    }
+
+    if (openUktrObligations.isEmpty) {
+      None
+    } else {
+
+      val incompleteReturns = openUktrObligations.filter { case (_, obligation) =>
+        obligation.submissions.nonEmpty
+      }
+
+      if (incompleteReturns.nonEmpty) {
+        Some(UktrIncomplete)
+      } else {
+
+        val overdueReturns = openUktrObligations.filter { case (period, _) =>
+          period.dueDate.isBefore(today)
+        }
+
+        if (overdueReturns.nonEmpty) {
+          Some(UktrOverdue)
+        } else {
+
+          val dueReturns = openUktrObligations.filter { case (period, _) =>
+            !period.dueDate.isBefore(today) && period.dueDate.isBefore(today.plusDays(60))
+          }
+
+          if (dueReturns.nonEmpty) {
+            Some(UktrDue)
+          } else {
+            None
+          }
+        }
+      }
     }
   }
 }
