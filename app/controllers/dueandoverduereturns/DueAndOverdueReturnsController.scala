@@ -35,19 +35,19 @@ import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class DueAndOverdueReturnsController @Inject() (
-  val controllerComponents:         MessagesControllerComponents,
-  referenceNumberService:           ReferenceNumberService,
-  getData:                          DataRetrievalAction,
-  requireData:                      DataRequiredAction,
-  checkPhase2Screens:               Phase2ScreensAction,
-  obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
-  view:                             DueAndOverdueReturnsView,
-  sessionRepository:                SessionRepository,
-  identify:                         IdentifierAction
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  val controllerComponents:               MessagesControllerComponents,
+  referenceNumberService:                 ReferenceNumberService,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  checkPhase2Screens:                     Phase2ScreensAction,
+  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
+  view:                                   DueAndOverdueReturnsView,
+  sessionRepository:                      SessionRepository
 )(implicit
   appConfig: FrontendAppConfig,
   ec:        ExecutionContext

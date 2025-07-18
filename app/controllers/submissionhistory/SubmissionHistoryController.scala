@@ -32,21 +32,21 @@ import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubmissionHistoryController @Inject() (
-  val controllerComponents:         MessagesControllerComponents,
-  referenceNumberService:           ReferenceNumberService,
-  obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
-  getData:                          DataRetrievalAction,
-  requireData:                      DataRequiredAction,
-  checkPhase2Screens:               Phase2ScreensAction,
-  view:                             SubmissionHistoryView,
-  viewNoSubmissions:                SubmissionHistoryNoSubmissionsView,
-  sessionRepository:                SessionRepository,
-  identify:                         IdentifierAction
-)(implicit ec:                      ExecutionContext, config: FrontendAppConfig)
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  val controllerComponents:               MessagesControllerComponents,
+  referenceNumberService:                 ReferenceNumberService,
+  obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
+  getData:                                DataRetrievalAction,
+  requireData:                            DataRequiredAction,
+  checkPhase2Screens:                     Phase2ScreensAction,
+  view:                                   SubmissionHistoryView,
+  viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
+  sessionRepository:                      SessionRepository
+)(implicit ec:                            ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
