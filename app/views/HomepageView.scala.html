@@ -25,10 +25,35 @@
 
 @this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
 
-@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean, agentHasClientSetup: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
+
+@* Agent routing logic: If agent hasn't completed client setup, send to ASA first *@
+@dueAndOverdueReturnsUrl = @{
+  if (isAgent && !agentHasClientSetup) {
+    s"$submissionFrontendPath/asa/input-pillar-2-id"
+  } else {
+    s"$submissionFrontendPath/due-and-overdue-returns"
+  }
+}
+
+@submissionHistoryUrl = @{
+  if (isAgent && !agentHasClientSetup) {
+    s"$submissionFrontendPath/asa/input-pillar-2-id"  
+  } else {
+    s"$submissionFrontendPath/submission-history"
+  }
+}
+
+@btnUrl = @{
+  if (isAgent && !agentHasClientSetup) {
+    s"$submissionFrontendPath/asa/input-pillar-2-id"
+  } else {
+    s"$submissionFrontendPath/below-threshold-notification/start"
+  }
+}
 
 @bannerHtml = {
  <div style="max-width: fit-content">
@@ -36,25 +61,13 @@
   @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body", maybeBTNBannerDate.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
   @link(
    text = messages("homepage.btnActiveBanner.linkText"),
-   call = Call("GET", s"$submissionFrontendPath/below-threshold-notification/start"),
+   call = Call("GET", btnUrl),
    classes = Some("govuk-notification-banner__link")
   )
  </div>
 }
 
-@uktrBannerHtml = {
- @maybeUktrBannerScenario.map { scenario =>
-  <div class="notification-banner-content">
-   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title"), "govuk-notification-banner__heading")
-   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body"))
-   @link(
-    text = messages("homepage.uktrBanner.linkText"),
-    call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns"),
-    classes = Some("govuk-notification-banner__link")
-   )
-  </div>
- }
-}
+
 
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
 
@@ -62,18 +75,31 @@
   @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
  }
 
- @if(maybeUktrBannerScenario.isDefined) {
-  @govukNotificationBanner(NotificationBanner(content = HtmlContent(uktrBannerHtml)))
- }
+
 
  @heading(messages("homepage.title"), "govuk-heading-l")
 
- <p class="govuk-body homepage-info">
+ <p class="govuk-body homepage-info" style="margin-bottom: 2em;">
   <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
   <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
  </p>
 
- <div class="card-group">
+
+ @maybeUktrBannerScenario.map { scenario =>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  <div style="margin: 2em 0; padding: 1em 0;">
+   @heading(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title"), "govuk-heading-m")
+   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body"))
+   @link(
+    text = messages("homepage.uktrBanner.linkText"),
+    call = Call("GET", dueAndOverdueReturnsUrl),
+    classes = Some("govuk-link")
+   )
+  </div>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+ }
+
+ <div class="card-group" style="margin-top: 2em;">
    @if(maybeUktrBannerScenario.isDefined) {
     <div class="card-half-width">
      <div>
@@ -92,10 +118,10 @@
       <div class="card-content">
        <ul class="govuk-list">
         <li class="card-links">
-         <a href="@{s"$submissionFrontendPath/due-and-overdue-returns"}" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
+         <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
         </li>
         <li class="card-links">
-         <a href="@{s"$submissionFrontendPath/submission-history"}" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
+         <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
         </li>
        </ul>
       </div>
@@ -105,8 +131,8 @@
     @card(
      title = messages("homepage.returns.title"),
      links = Seq(
-      (messages("homepage.returns.dueOverdueReturns.linkText"), s"$submissionFrontendPath/due-and-overdue-returns", None),
-      (messages("homepage.returns.submissionHistory.linkText"), s"$submissionFrontendPath/submission-history", None),
+      (messages("homepage.returns.dueOverdueReturns.linkText"), dueAndOverdueReturnsUrl, None),
+      (messages("homepage.returns.submissionHistory.linkText"), submissionHistoryUrl, None),
      )
     )
    }
@@ -158,7 +184,7 @@
   ),
   (
           messages("homepage.manageAccount.btn.linkText"),
-          s"$submissionFrontendPath/below-threshold-notification/start",
+          btnUrl,
           Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
   )
  )

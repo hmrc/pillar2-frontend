@@ -101,7 +101,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             None,
             None,
             "12345678",
-            isAgent = false
+            isAgent = false,
+            agentHasClientSetup = false
           )(
             request,
             applicationConfig,

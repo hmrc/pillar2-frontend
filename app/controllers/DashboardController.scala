@@ -109,24 +109,30 @@ class DashboardController @Inject() (
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
       val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
-      osService
-        .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
-        .map { response =>
-          Ok(
-            homepageView(
-              subscriptionData.upeDetails.organisationName,
-              subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-              if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
-              uktrBannerScenario(response).map {
-                case UktrDue        => "Due"
-                case UktrOverdue    => "Overdue"
-                case UktrIncomplete => "Incomplete"
-              },
-              plrReference,
-              isAgent = request.isAgent
+      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+        val userAnswers         = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+        val agentHasClientSetup = userAnswers.get(AgentClientPillar2ReferencePage).isDefined
+
+        osService
+          .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
+          .map { response =>
+            Ok(
+              homepageView(
+                subscriptionData.upeDetails.organisationName,
+                subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
+                uktrBannerScenario(response).map {
+                  case UktrDue        => "Due"
+                  case UktrOverdue    => "Overdue"
+                  case UktrIncomplete => "Incomplete"
+                },
+                plrReference,
+                isAgent = request.isAgent,
+                agentHasClientSetup = agentHasClientSetup
+              )
             )
-          )
-        }
+          }
+      }
     } else {
       Future.successful(
         Ok(

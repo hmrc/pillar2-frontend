@@ -33,19 +33,29 @@ class HomepageViewSpec extends ViewSpecBase {
   private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
 
   val organisationView: Document =
-    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+    )
 
   val organisationViewWithDueScenario: Document =
-    Jsoup.parse(page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(organisationName, date, None, Some("Due"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+    )
 
   val organisationViewWithOverdueScenario: Document =
-    Jsoup.parse(page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+        .toString()
+    )
 
   val organisationViewWithIncompleteScenario: Document =
-    Jsoup.parse(page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+        .toString()
+    )
 
   val agentView: Document =
-    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(page(organisationName, date, None, None, plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages).toString())
 
   "HomepageView for a group" should {
     "display page header correctly" in {
@@ -173,7 +183,9 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display notification banner" in {
       val accountInactiveOrgView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
+        Jsoup.parse(
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
 
       val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
 
@@ -255,7 +267,9 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display notification banner" in {
       val accountInactiveAgentView: Document =
-        Jsoup.parse(page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
+        Jsoup.parse(
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages).toString()
+        )
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
 
@@ -264,6 +278,37 @@ class HomepageViewSpec extends ViewSpecBase {
         s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
           .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+    }
+  }
+
+  "HomepageView agent routing" should {
+    "redirect agent without client setup to ASA route for all submission links" in {
+      val agentViewWithoutClientSetup: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = true, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-half-width").first()
+      val links       = returnsCard.getElementsByTag("a")
+
+      // All links should point to ASA input page when agent hasn't completed client setup
+      links.get(0).attr("href") must include("asa/input-pillar-2-id")
+      links.get(1).attr("href") must include("asa/input-pillar-2-id")
+    }
+
+    "link agent with client setup directly to submission frontend" in {
+      val agentViewWithClientSetup: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages).toString()
+        )
+
+      val returnsCard = agentViewWithClientSetup.getElementsByClass("card-half-width").first()
+      val links       = returnsCard.getElementsByTag("a")
+
+      // Links should point directly to submission frontend when agent has completed client setup
+      links.get(0).attr("href") must include("due-and-overdue-returns")
+      links.get(1).attr("href") must include("submission-history")
     }
   }
 
