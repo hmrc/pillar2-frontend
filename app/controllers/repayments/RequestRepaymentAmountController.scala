@@ -33,7 +33,7 @@ import views.html.repayments.RequestRefundAmountView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestRefundAmountController @Inject() (
+class RequestRepaymentAmountController @Inject() (
   formProvider:                           RequestRefundAmountFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RequestRefundAmountView,

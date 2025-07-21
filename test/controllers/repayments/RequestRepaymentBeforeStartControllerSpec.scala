@@ -34,7 +34,7 @@ import views.html.repayments.RequestRefundBeforeStartView
 import java.util.UUID
 import scala.concurrent.Future
 
-class RequestRefundBeforeStartControllerSpec extends SpecBase {
+class RequestRepaymentBeforeStartControllerSpec extends SpecBase {
 
   val id:           String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
@@ -58,7 +58,7 @@ class RequestRefundBeforeStartControllerSpec extends SpecBase {
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RequestRefundBeforeStartView]
         status(result) mustEqual OK

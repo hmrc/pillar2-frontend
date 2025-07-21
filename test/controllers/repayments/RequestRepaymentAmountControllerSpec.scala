@@ -30,7 +30,7 @@ import views.html.repayments.RequestRefundAmountView
 
 import scala.concurrent.Future
 
-class RequestRefundAmountControllerSpec extends SpecBase {
+class RequestRepaymentAmountControllerSpec extends SpecBase {
 
   val formProvider = new RequestRefundAmountFormProvider()
 
@@ -39,7 +39,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -60,7 +60,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(ua)))
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RequestRefundAmountView]
         status(result) mustEqual OK
@@ -76,13 +76,13 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRepaymentAmountController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               "value" -> "99.9"
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.ReasonForRequestingRefundController
+        redirectLocation(result).value mustEqual controllers.repayments.routes.ReasonForRequestingRepaymentController
           .onPageLoad(NormalMode)
           .url
       }
@@ -92,7 +92,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = formProvider().bind(Map("value" -> "invalid value"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]
@@ -109,7 +109,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "-9"))
         val boundForm = formProvider().bind(Map("value" -> "-9"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]
@@ -127,7 +127,7 @@ class RequestRefundAmountControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "99,999,9999,999.99.99"))
         val boundForm = formProvider().bind(Map("value" -> "99,999,9999,999.99.99"))
         val view      = application.injector.instanceOf[RequestRefundAmountView]

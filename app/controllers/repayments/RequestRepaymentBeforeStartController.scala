@@ -24,7 +24,7 @@ import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundBeforeStartView
 
 import javax.inject.{Inject, Named}
-class RequestRefundBeforeStartController @Inject() (
+class RequestRepaymentBeforeStartController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RequestRefundBeforeStartView,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,

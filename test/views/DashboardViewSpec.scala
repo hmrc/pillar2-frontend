@@ -228,7 +228,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       elements.get(10).text() must include("Request a repayment")
       elements.get(10).attr("href") must include(
-        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
       )
       elements.get(11).text() must include("View and amend contact details")
       elements.get(11).attr("href") must include(

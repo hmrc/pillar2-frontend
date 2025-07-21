@@ -36,7 +36,7 @@ object ReasonForRequestingRefundSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(CheckMode).url
+            controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(CheckMode).url
           )
             .withVisuallyHiddenText(messages("reasonForRequestingRepayment.change.hidden"))
             .withCssClass("govuk-!-display-none-print")

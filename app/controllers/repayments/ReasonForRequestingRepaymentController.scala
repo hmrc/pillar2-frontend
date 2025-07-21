@@ -33,7 +33,7 @@ import views.html.repayments.ReasonForRequestingRefundView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonForRequestingRefundController @Inject() (
+class ReasonForRequestingRepaymentController @Inject() (
   val sessionRepository:                  SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
