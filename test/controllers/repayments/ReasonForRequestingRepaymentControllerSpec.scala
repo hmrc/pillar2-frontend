@@ -33,7 +33,7 @@ import views.html.repayments.ReasonForRequestingRefundView
 
 import scala.concurrent.Future
 
-class ReasonForRequestingRefundControllerSpec extends SpecBase {
+class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
   val formProvider = new ReasonForRequestingRefundFormProvider()
 
@@ -45,7 +45,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -64,7 +64,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[ReasonForRequestingRefundView]
 
@@ -85,7 +85,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -117,7 +117,7 @@ class ReasonForRequestingRefundControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "valid reason"))
 
         val result = route(application, request).value
