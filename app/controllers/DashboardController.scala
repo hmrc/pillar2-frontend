@@ -170,7 +170,7 @@ class DashboardController @Inject() (
       openUktrObligations.exists { case (_, obligation) => obligation.submissions.nonEmpty }
 
     def hasOverdueReturns: Boolean =
-      openUktrObligations.exists { case (accountingPeriod, _) => accountingPeriod.dueDate.isBefore(LocalDate.now()) }
+      openUktrObligations.exists { case (period, _) => period.dueDate.isBefore(LocalDate.now()) }
 
     def hasDueReturns: Boolean =
       openUktrObligations.exists { case (period, _) =>

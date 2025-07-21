@@ -44,7 +44,7 @@
 
 @uktrBannerHtml = {
  @maybeUktrBannerScenario.map { scenario =>
-  <div style="max-width: fit-content">
+  <div class="notification-banner-content">
    @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title"), "govuk-notification-banner__heading")
    @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body"))
    @link(
@@ -68,7 +68,7 @@
 
  @heading(messages("homepage.title"), "govuk-heading-l")
 
- <p class="govuk-body" style="display: flex; flex-wrap: wrap; gap: 0.5em;">
+ <p class="govuk-body homepage-info">
   <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
   <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
  </p>
@@ -82,7 +82,6 @@
        @maybeUktrBannerScenario.map { scenario =>
          <span class="govuk-tag @{
            scenario match {
-             case "Due" => "govuk-tag--blue"
              case "Overdue" => "govuk-tag--red"  
              case "Incomplete" => "govuk-tag--purple"
              case _ => "govuk-tag--blue"
