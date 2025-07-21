@@ -90,4 +90,13 @@
     @paragraphMessageWithLink(linkMessage = messages("dashboard.link"), linkUrl = "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax", linkClass = "govuk-link", linkRel = "noopener noreferrer", target = "_blank", message2 = Some(messages("dashboard.p2")))
   }
 
+  @h2(messages("research.heading"), size = "m", extraClasses = Seq("research-heading"))
+  @paragraphBody(messages("research.body"), classes = "govuk-body research-body")
+  @paragraphBodyLink(
+    message = messages("research.link"),
+    linkUrl = appConfig.researchUrl,
+    linkClass = "govuk-link research-link",
+    target = Some("_blank")
+  )
+
 }
