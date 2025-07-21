@@ -20,4 +20,4 @@ sealed trait UktrBannerScenario
 
 case object UktrDue extends UktrBannerScenario
 case object UktrOverdue extends UktrBannerScenario
-case object UktrIncomplete extends UktrBannerScenario 
+case object UktrIncomplete extends UktrBannerScenario

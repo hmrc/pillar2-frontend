@@ -21,9 +21,9 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models._
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess}
-import models.{UktrBannerScenario, UktrDue, UktrIncomplete, UktrOverdue}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{InternalIssueError, UserAnswers}
