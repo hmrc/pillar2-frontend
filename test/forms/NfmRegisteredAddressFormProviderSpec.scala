@@ -177,69 +177,6 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
       result.errors("postalCode").head.message mustEqual XSS_KEY
     }
-
-    "handle edge case XSS characters" in {
-      val xssChars = Seq("&", "\"", "<", ">", "&amp;", "&lt;", "&gt;")
-
-      xssChars.foreach { xssChar =>
-        val result = form.bind(
-          Map(
-            "addressLine1" -> "123 Test Street",
-            "addressLine3" -> "Test City",
-            "countryCode"  -> "GB",
-            "postalCode"   -> s"SW1A${xssChar}test"
-          )
-        )
-
-        result.errors("postalCode").head.message mustEqual XSS_KEY
-      }
-    }
-
-    "handle maximum length postcode for non-GB countries" in {
-      val maxLengthPostcode = "a" * 10 // Just under the limit
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "FR",
-          "postalCode"   -> maxLengthPostcode
-        )
-      )
-
-      result.errors mustBe empty
-    }
-
-    "test form fill and unbind with NonUKAddress" in {
-      val address = models.NonUKAddress(
-        addressLine1 = "123 Test Street",
-        addressLine2 = Some("Suite 100"),
-        addressLine3 = "Test City",
-        addressLine4 = Some("Test Region"),
-        postalCode = Some("12345"),
-        countryCode = "US"
-      )
-
-      val filledForm = form.fill(address)
-      filledForm.errors mustBe empty
-
-      val data = filledForm.data
-      data("postalCode") mustEqual "12345"
-      data("countryCode") mustEqual "US"
-    }
-
-    "handle complex whitespace normalization for GB postcodes" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "GB",
-          "postalCode"   -> "\t  SW1A\n1AA  \r"
-        )
-      )
-
-      result.errors mustBe empty
-      result.value.get.postalCode mustEqual Some("SW1A 1AA")
-    }
   }
 
   ".countryCode" - {

@@ -162,6 +162,19 @@ class RfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
+
+    "prioritize XSS validation over postcode format validation" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A <test"
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual XSS_KEY
+    }
   }
 
   ".countryCode" - {
