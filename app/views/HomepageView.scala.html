@@ -42,7 +42,7 @@
  </div>
 }
 
-@layout(pageTitle = noTitle, showBackLink = false, serviceBannerClickable = true, twoThirdsPagelayout = false) {
+@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
 
  @if(maybeBTNBannerDate.isDefined) {
   @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))

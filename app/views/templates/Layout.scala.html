@@ -88,8 +88,6 @@
     pageTitle   = Some(pageTitle),
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
-        // serviceBannerClickable should default to true for backward compatibility
-        // Only disable banner for specific scenarios (waiting rooms, error pages, etc.)
         serviceUrl  = if (serviceBannerClickable) {
                         if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
                       } else {None},

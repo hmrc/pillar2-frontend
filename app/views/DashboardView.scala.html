@@ -32,7 +32,7 @@
 
 @(organisationName: String, registrationDate: String, plrReference: String, inactiveStatus: Boolean, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(if(agentView) messages("dashboard.agent.title") else messages("dashboard.title")), showBackLink = false, serviceBannerClickable = true, maybeClientPillar2Id = if(agentView) Some(plrReference) else None) {
+@layout(pageTitle = titleNoForm(if(agentView) messages("dashboard.agent.title") else messages("dashboard.title")), showBackLink = false, maybeClientPillar2Id = if(agentView) Some(plrReference) else None) {
 
   @if(inactiveStatus) {
     @inactiveStatusBanner()
