@@ -76,7 +76,6 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
         Map(key -> value.getOrElse(""))
     })
 
-
   protected def xssFirstMandatoryPostcode(): FieldMapping[String] =
     of(new Formatter[String] {
       private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
@@ -87,11 +86,10 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
 
         rawPostcode match {
           case Some(postcode) =>
-
             if (!postcode.matches(XSS_REGEX)) {
               Left(Seq(FormError(key, "address.postcode.error.xss")))
             } else {
-       
+
               val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
 
               (normalizedPostcode, country) match {
