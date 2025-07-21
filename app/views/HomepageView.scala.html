@@ -43,15 +43,17 @@
 }
 
 @uktrBannerHtml = {
- <div style="max-width: fit-content">
-  @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.${maybeUktrBannerScenario.get}.title"), "govuk-notification-banner__heading")
-  @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.${maybeUktrBannerScenario.get}.body"))
-  @link(
-   text = messages("homepage.uktrBanner.linkText"),
-   call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${maybeUktrBannerScenario.get.toLowerCase}"),
-   classes = Some("govuk-notification-banner__link")
-  )
- </div>
+ @maybeUktrBannerScenario.map { scenario =>
+  <div style="max-width: fit-content">
+   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title"), "govuk-notification-banner__heading")
+   @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body"))
+   @link(
+    text = messages("homepage.uktrBanner.linkText"),
+    call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${scenario.toLowerCase}"),
+    classes = Some("govuk-notification-banner__link")
+   )
+  </div>
+ }
 }
 
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
@@ -77,14 +79,16 @@
      <div>
       <div class="card-label card-label-with-tag">
        <h2 class="govuk-heading-m">@messages("homepage.returns.title")</h2>
-       <span class="govuk-tag @{
-         maybeUktrBannerScenario.get match {
-           case "Due" => "govuk-tag--blue"
-           case "Overdue" => "govuk-tag--red"  
-           case "Incomplete" => "govuk-tag--purple"
-           case _ => "govuk-tag--blue"
-         }
-       }" aria-label="@{maybeUktrBannerScenario.get} returns" title="@{maybeUktrBannerScenario.get} returns">@maybeUktrBannerScenario.get</span>
+       @maybeUktrBannerScenario.map { scenario =>
+         <span class="govuk-tag @{
+           scenario match {
+             case "Due" => "govuk-tag--blue"
+             case "Overdue" => "govuk-tag--red"  
+             case "Incomplete" => "govuk-tag--purple"
+             case _ => "govuk-tag--blue"
+           }
+         }" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
+       }
       </div>
       <div class="card-content">
        <ul class="govuk-list">
