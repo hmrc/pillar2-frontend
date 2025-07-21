@@ -129,7 +129,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
 
-          // Verify multiple session repository calls (new controller flow)
           verify(mockSessionRepository, times(2)).get(eqTo("id"))
           verify(mockSessionRepository, times(2)).set(any())
         }
