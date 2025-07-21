@@ -180,6 +180,76 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
       result.errors.filter(_.key == "postalCode") mustBe List(FormError("postalCode", "address.postcode.error.xss"))
     }
+
+    "format UK postcodes when valid" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A1AA"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some("SW1A 1AA")
+    }
+
+    "accept empty postcode for non-GB countries" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "FR",
+          "postalCode"   -> ""
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual None
+    }
+
+    "handle non-GB countries with valid postcodes" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "US",
+          "postalCode"   -> "12345"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some("12345")
+    }
+
+    "reject long postcodes for non-GB countries" in {
+      val longPostcode = "a" * 15
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "FR",
+          "postalCode"   -> longPostcode
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.length"
+    }
+
+          "handle non-GB country with valid postcode" in {
+        val result = form.bind(
+          Map(
+            "addressLine1" -> "123 Test Street",
+            "addressLine3" -> "Test City",
+            "countryCode"  -> "CA",
+            "postalCode"   -> "K1A 0A6"
+          )
+        )
+
+        result.errors mustBe empty
+        result.value.get.postalCode mustEqual Some("K1A 0A6")
+      }
   }
 
   ".countryCode" - {
