@@ -91,9 +91,8 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
 }
 
 .card-half-width {
-  flex: 1;
-  min-width: 300px;
-  max-width: 400px;
+  width: 350px;
+  flex: 0 0 350px;
   border: solid #b1b4b6 1px;
 }
 
