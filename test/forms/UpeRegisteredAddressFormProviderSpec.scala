@@ -214,6 +214,46 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       result.errors("postalCode").head.message mustEqual XSS_KEY
     }
 
+    "format UK postcodes when no space exists" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "M11AA"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual "M1 1AA"
+    }
+
+    "handle missing postcode with no country" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "postalCode"   -> ""
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.required"
+    }
+
+    "test mandatory postcode unbind" in {
+      val address = models.UKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = None,
+        addressLine3 = "Test City",
+        addressLine4 = None,
+        postalCode = "SW1A 1AA",
+        countryCode = "GB"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.data("postalCode") mustEqual "SW1A 1AA"
+    }
+
   }
 
   ".countryCode" - {

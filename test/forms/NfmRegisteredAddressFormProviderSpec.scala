@@ -177,6 +177,32 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
 
       result.errors("postalCode").head.message mustEqual XSS_KEY
     }
+
+    "handle postcode with no country provided" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "postalCode"   -> "12345"
+        )
+      )
+
+      result.errors("countryCode").head.message mustEqual "nfmRegisteredAddress.country.error.required"
+    }
+
+    "preserve existing spacing in UK postcodes" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A 1AA"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some("SW1A 1AA")
+    }
   }
 
   ".countryCode" - {
