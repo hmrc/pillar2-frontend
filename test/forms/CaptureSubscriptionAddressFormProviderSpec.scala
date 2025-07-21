@@ -237,19 +237,19 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       result.errors("postalCode").head.message mustEqual "address.postcode.error.length"
     }
 
-          "handle non-GB country with valid postcode" in {
-        val result = form.bind(
-          Map(
-            "addressLine1" -> "123 Test Street",
-            "addressLine3" -> "Test City",
-            "countryCode"  -> "CA",
-            "postalCode"   -> "K1A 0A6"
-          )
+    "handle non-GB country with valid postcode" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "CA",
+          "postalCode"   -> "K1A 0A6"
         )
+      )
 
-        result.errors mustBe empty
-        result.value.get.postalCode mustEqual Some("K1A 0A6")
-      }
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some("K1A 0A6")
+    }
   }
 
   ".countryCode" - {
