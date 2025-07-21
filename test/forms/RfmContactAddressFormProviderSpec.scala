@@ -178,6 +178,33 @@ class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
       result.errors("postalCode").head.message mustEqual XSS_KEY
     }
+
+    "test form fill with empty postcode option" in {
+      val address = models.NonUKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = None,
+        addressLine3 = "Test City",
+        addressLine4 = None,
+        postalCode = None,
+        countryCode = "FR"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.data("postalCode") mustEqual ""
+    }
+
+    "handle edge case with special regex chars that pass XSS but fail UK validation" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A 1AA+"
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.invalid.GB"
+    }
   }
 
   ".countryCode" - {

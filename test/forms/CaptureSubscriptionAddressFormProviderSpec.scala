@@ -250,6 +250,130 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       result.errors mustBe empty
       result.value.get.postalCode mustEqual Some("K1A 0A6")
     }
+
+    "handle postcode with only whitespace for non-GB countries" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "FR",
+          "postalCode"   -> "   "
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual None
+    }
+
+    "prioritize XSS over length validation for non-GB countries" in {
+      val longPostcodeWithXSS = ("a" * 15) + "<script>"
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "FR",
+          "postalCode"   -> longPostcodeWithXSS
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.xss"
+    }
+
+    "format UK postcode with various spacing" in {
+      val testCases = Seq(
+        ("SW1A1AA", Some("SW1A 1AA")),
+        ("M11AA", Some("M1 1AA")),
+        ("B338TH", Some("B33 8TH"))
+      )
+
+      testCases.foreach { case (input, expected) =>
+        val result = form.bind(
+          Map(
+            "addressLine1" -> "123 Test Street",
+            "addressLine3" -> "Test City",
+            "countryCode"  -> "GB",
+            "postalCode"   -> input
+          )
+        )
+
+        result.errors mustBe empty
+        result.value.get.postalCode mustEqual expected
+      }
+    }
+
+    "handle edge case with no country provided - should require country" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "postalCode"   -> "SW1A 1AA"
+        )
+      )
+
+      result.errors("countryCode").head.message mustEqual "subscriptionAddress.country.error.required"
+    }
+
+    "handle very short valid UK postcode" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "M1 1AA"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some("M1 1AA")
+    }
+
+    "handle postcode exactly at maximum length for non-GB" in {
+      val maxLengthPostcode = "a" * 10
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "FR",
+          "postalCode"   -> maxLengthPostcode
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual Some(maxLengthPostcode.toUpperCase)
+    }
+
+    "test form fill and unbind operations" in {
+      val address = models.NonUKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = Some("Suite 100"),
+        addressLine3 = "Test City",
+        addressLine4 = Some("Test Region"),
+        postalCode = Some("SW1A 1AA"),
+        countryCode = "GB"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.errors mustBe empty
+
+      val data = filledForm.data
+      data("postalCode") mustEqual "SW1A 1AA"
+      data("addressLine1") mustEqual "123 Test Street"
+      data("countryCode") mustEqual "GB"
+    }
+
+    "test unbind with None postcode" in {
+      val address = models.NonUKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = None,
+        addressLine3 = "Test City",
+        addressLine4 = None,
+        postalCode = None,
+        countryCode = "US"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.data("postalCode") mustEqual ""
+    }
   }
 
   ".countryCode" - {

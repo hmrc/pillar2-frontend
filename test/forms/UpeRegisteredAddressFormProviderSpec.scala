@@ -186,7 +186,104 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       result.value.get.postalCode mustEqual "SW1A 1AA"
     }
 
-    
+    "preserve existing spacing in UK postcodes" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A 1AA"
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual "SW1A 1AA"
+    }
+
+    "normalize uppercase and whitespace for UK postcodes" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "  sw1a1aa  "
+        )
+      )
+
+      result.errors mustBe empty
+      result.value.get.postalCode mustEqual "SW1A 1AA"
+    }
+
+    "handle postcode with only whitespace for GB" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "   "
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.invalid.GB"
+    }
+
+    "handle missing postcode with no country" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "postalCode"   -> ""
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.required"
+    }
+
+    "handle edge case postcode with regex-like characters that pass XSS" in {
+      val result = form.bind(
+        Map(
+          "addressLine1" -> "123 Test Street",
+          "addressLine3" -> "Test City",
+          "countryCode"  -> "GB",
+          "postalCode"   -> "SW1A 1AA."
+        )
+      )
+
+      result.errors("postalCode").head.message mustEqual "address.postcode.error.invalid.GB"
+    }
+
+    "test form fill and unbind operations for UKAddress" in {
+      val address = models.UKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = Some("Suite 100"),
+        addressLine3 = "Test City",
+        addressLine4 = Some("Test Region"),
+        postalCode = "SW1A 1AA",
+        countryCode = "GB"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.errors mustBe empty
+
+      val data = filledForm.data
+      data("postalCode") mustEqual "SW1A 1AA"
+      data("addressLine1") mustEqual "123 Test Street"
+      data("countryCode") mustEqual "GB"
+    }
+
+    "test mandatory postcode unbind with empty string" in {
+      val address = models.UKAddress(
+        addressLine1 = "123 Test Street",
+        addressLine2 = None,
+        addressLine3 = "Test City",
+        addressLine4 = None,
+        postalCode = "",
+        countryCode = "GB"
+      )
+
+      val filledForm = form.fill(address)
+      filledForm.data("postalCode") mustEqual ""
+    }
 
   }
 
