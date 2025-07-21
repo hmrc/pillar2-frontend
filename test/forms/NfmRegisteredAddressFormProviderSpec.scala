@@ -153,9 +153,90 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   }
 
   ".postalCode" - {
-    val FIELD_NAME = "postalCode"
-    val XSS_KEY    = "address.postcode.error.xss"
-    behave like postcodeField(form, maxAddressLineLength)
+    val FIELD_NAME           = "postalCode"
+    val XSS_KEY              = "address.postcode.error.xss"
+    val countryFieldName     = "countryCode"
+    val postcodeFieldName    = "postalCode"
+    val invalidFormatGBError = FormError(postcodeFieldName, "address.postcode.error.invalid.GB")
+
+    // Use custom postcode tests to handle XSS-first validation for NonUK addresses
+    "when country code is GB" - {
+      "not bind empty postal code" in {
+        val data = Map(
+          countryFieldName  -> "GB",
+          postcodeFieldName -> ""
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.errors must contain only invalidFormatGBError
+      }
+
+      "not bind invalid formatted postal code" in {
+        val data = Map(
+          countryFieldName  -> "GB",
+          postcodeFieldName -> "INVALID"
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.errors must contain only invalidFormatGBError
+      }
+
+      "not bind postal code exceeding maximum length" in {
+        val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
+        val data = Map(
+          countryFieldName  -> "GB",
+          postcodeFieldName -> longPostcode
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.errors must contain only invalidFormatGBError
+      }
+
+      "bind valid postal code" in {
+        val data = Map(
+          countryFieldName  -> "GB",
+          postcodeFieldName -> "AA1 1AA"
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.value mustBe Some("AA1 1AA")
+      }
+    }
+
+    "when country code is not GB" - {
+      "bind empty postal code" in {
+        val data = Map(
+          countryFieldName  -> "US",
+          postcodeFieldName -> ""
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.value mustBe Some("")
+      }
+
+      "not bind postal code exceeding maximum length" in {
+        val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
+        val data = Map(
+          countryFieldName  -> "US",
+          postcodeFieldName -> longPostcode
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.errors must contain only FormError(postcodeFieldName, "address.postcode.error.length")
+      }
+
+      "bind postal code even if it violates the postcode regex" in {
+        val data = Map(
+          countryFieldName  -> "US",
+          postcodeFieldName -> "INVALID"
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.value mustBe Some("INVALID")
+      }
+
+      "bind valid postal code" in {
+        val data = Map(
+          countryFieldName  -> "US",
+          postcodeFieldName -> "12345"
+        )
+        val result = form.bind(data).apply(postcodeFieldName)
+        result.value mustBe Some("12345")
+      }
+    }
 
     behave like fieldWithRegex(
       form,
