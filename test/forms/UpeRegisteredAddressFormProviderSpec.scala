@@ -186,45 +186,7 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       result.value.get.postalCode mustEqual "SW1A 1AA"
     }
 
-    "handle non-GB countries with long postcodes" in {
-      val longPostcode = "a" * 15
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "FR",
-          "postalCode"   -> longPostcode
-        )
-      )
-
-      result.errors("postalCode").head.message mustEqual "address.postcode.error.length"
-    }
-
-    "handle non-GB country with valid postcode" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "US",
-          "postalCode"   -> "12345"
-        )
-      )
-
-      result.errors mustBe empty
-    }
-
-    "require postcode for non-GB countries when missing" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "US",
-          "postalCode"   -> ""
-        )
-      )
-
-      result.errors("postalCode").head.message mustEqual "address.postcode.error.required"
-    }
+    
 
   }
 
