@@ -130,7 +130,7 @@ class HomepageViewSpec extends ViewSpecBase {
       statusTag.first().attr("title") mustBe "Due returns"
 
       val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") must include("?activeTab=due")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
       links.get(0).text() mustBe "View all due and overdue returns"
       links.get(1).text() mustBe "View submission history"
     }
@@ -148,7 +148,7 @@ class HomepageViewSpec extends ViewSpecBase {
       statusTag.first().attr("title") mustBe "Overdue returns"
 
       val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") must include("?activeTab=overdue")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
       links.get(0).text() mustBe "View all due and overdue returns"
       links.get(1).text() mustBe "View submission history"
     }
@@ -166,7 +166,7 @@ class HomepageViewSpec extends ViewSpecBase {
       statusTag.first().attr("title") mustBe "Incomplete returns"
 
       val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") must include("?activeTab=incomplete")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
       links.get(0).text() mustBe "View all due and overdue returns"
       links.get(1).text() mustBe "View submission history"
     }

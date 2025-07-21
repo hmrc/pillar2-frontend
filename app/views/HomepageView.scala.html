@@ -49,7 +49,7 @@
    @paragraphBody(messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body"))
    @link(
     text = messages("homepage.uktrBanner.linkText"),
-    call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${scenario.toLowerCase}"),
+    call = Call("GET", s"$submissionFrontendPath/due-and-overdue-returns"),
     classes = Some("govuk-notification-banner__link")
    )
   </div>
@@ -92,7 +92,7 @@
       <div class="card-content">
        <ul class="govuk-list">
         <li class="card-links">
-         <a href="@{s"$submissionFrontendPath/due-and-overdue-returns?activeTab=${maybeUktrBannerScenario.get.toLowerCase}"}" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
+         <a href="@{s"$submissionFrontendPath/due-and-overdue-returns"}" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
         </li>
         <li class="card-links">
          <a href="@{s"$submissionFrontendPath/submission-history"}" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
