@@ -147,51 +147,9 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   }
 
   ".postalCode" - {
-    val FIELD_NAME           = "postalCode"
-    val XSS_KEY              = "address.postcode.error.xss"
-    val countryFieldName     = "countryCode"
-    val postcodeFieldName    = "postalCode"
-    val invalidFormatGBError = FormError(postcodeFieldName, "address.postcode.error.invalid.GB")
-
-    // Use custom postcode tests to handle XSS-first validation for UK addresses
-    "when country code is GB" - {
-      "not bind empty postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> ""
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "not bind invalid formatted postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> "INVALID"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "not bind postal code exceeding maximum length" in {
-        val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> longPostcode
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "bind valid postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> "AA1 1AA"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.value mustBe Some("AA1 1AA")
-      }
-    }
+    val FIELD_NAME = "postalCode"
+    val XSS_KEY    = "address.postcode.error.xss"
+    behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
       form,
@@ -200,59 +158,6 @@ class UpeRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
-
-    "prioritize XSS validation over postcode format validation" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "GB",
-          "postalCode"   -> "SW1A <test"
-        )
-      )
-
-      result.errors("postalCode").head.message mustEqual XSS_KEY
-    }
-
-    "format UK postcodes when no space exists" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "GB",
-          "postalCode"   -> "M11AA"
-        )
-      )
-
-      result.errors mustBe empty
-      result.value.get.postalCode mustEqual "M1 1AA"
-    }
-
-    "handle missing postcode with no country" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "postalCode"   -> ""
-        )
-      )
-
-      result.errors("postalCode").head.message mustEqual "address.postcode.error.required"
-    }
-
-    "test mandatory postcode unbind" in {
-      val address = models.UKAddress(
-        addressLine1 = "123 Test Street",
-        addressLine2 = None,
-        addressLine3 = "Test City",
-        addressLine4 = None,
-        postalCode = "SW1A 1AA",
-        countryCode = "GB"
-      )
-
-      val filledForm = form.fill(address)
-      filledForm.data("postalCode") mustEqual "SW1A 1AA"
-    }
 
   }
 

@@ -153,90 +153,9 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
   }
 
   ".postalCode" - {
-    val FIELD_NAME           = "postalCode"
-    val XSS_KEY              = "address.postcode.error.xss"
-    val countryFieldName     = "countryCode"
-    val postcodeFieldName    = "postalCode"
-    val invalidFormatGBError = FormError(postcodeFieldName, "address.postcode.error.invalid.GB")
-
-    // Use custom postcode tests to handle XSS-first validation for NonUK addresses
-    "when country code is GB" - {
-      "not bind empty postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> ""
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "not bind invalid formatted postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> "INVALID"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "not bind postal code exceeding maximum length" in {
-        val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> longPostcode
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only invalidFormatGBError
-      }
-
-      "bind valid postal code" in {
-        val data = Map(
-          countryFieldName  -> "GB",
-          postcodeFieldName -> "AA1 1AA"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.value mustBe Some("AA1 1AA")
-      }
-    }
-
-    "when country code is not GB" - {
-      "bind empty postal code" in {
-        val data = Map(
-          countryFieldName  -> "US",
-          postcodeFieldName -> ""
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.value mustBe Some("")
-      }
-
-      "not bind postal code exceeding maximum length" in {
-        val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
-        val data = Map(
-          countryFieldName  -> "US",
-          postcodeFieldName -> longPostcode
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.errors must contain only FormError(postcodeFieldName, "address.postcode.error.length")
-      }
-
-      "bind postal code even if it violates the postcode regex" in {
-        val data = Map(
-          countryFieldName  -> "US",
-          postcodeFieldName -> "INVALID"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.value mustBe Some("INVALID")
-      }
-
-      "bind valid postal code" in {
-        val data = Map(
-          countryFieldName  -> "US",
-          postcodeFieldName -> "12345"
-        )
-        val result = form.bind(data).apply(postcodeFieldName)
-        result.value mustBe Some("12345")
-      }
-    }
+    val FIELD_NAME = "postalCode"
+    val XSS_KEY    = "address.postcode.error.xss"
+    behave like postcodeField(form, maxAddressLineLength)
 
     behave like fieldWithRegex(
       form,
@@ -245,45 +164,6 @@ class NfmRegisteredAddressFormProviderSpec extends StringFieldBehaviours {
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"&", maxAddressLineLength),
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
-
-    "prioritize XSS validation over postcode format validation" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "GB",
-          "postalCode"   -> "SW1A <test"
-        )
-      )
-
-      result.errors("postalCode").head.message mustEqual XSS_KEY
-    }
-
-    "handle postcode with no country provided" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "postalCode"   -> "12345"
-        )
-      )
-
-      result.errors("countryCode").head.message mustEqual "nfmRegisteredAddress.country.error.required"
-    }
-
-    "preserve existing spacing in UK postcodes" in {
-      val result = form.bind(
-        Map(
-          "addressLine1" -> "123 Test Street",
-          "addressLine3" -> "Test City",
-          "countryCode"  -> "GB",
-          "postalCode"   -> "SW1A 1AA"
-        )
-      )
-
-      result.errors mustBe empty
-      result.value.get.postalCode mustEqual Some("SW1A 1AA")
-    }
   }
 
   ".countryCode" - {

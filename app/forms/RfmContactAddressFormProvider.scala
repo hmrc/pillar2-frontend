@@ -63,7 +63,9 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
               )
             )
         ),
-      "postalCode" -> xssFirstOptionalPostcode(),
+      "postalCode" -> optionalPostcode().verifying(
+        regexp(XSS_REGEX, "address.postcode.error.xss")
+      ),
       "countryCode" ->
         text("rfmContactAddress.country.error.required")
           .verifying(
