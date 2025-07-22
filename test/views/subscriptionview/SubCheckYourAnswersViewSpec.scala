@@ -21,12 +21,9 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
-
-import java.time.LocalDate
 
 class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
@@ -73,7 +70,6 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
       )
-
 
       val accountingPeriod = "Group’s consolidated accounting period"
       val startDate        = "Start date"
