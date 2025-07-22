@@ -77,11 +77,11 @@
 
   <h1 class="govuk-heading-l" style="margin-top: -8px;">@messages("homepage.title")</h1>
 
- <p class="govuk-body homepage-info" style="margin-bottom: 1.5em;">
-  <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
-  <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
- </p>
- <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+  <p class="govuk-body homepage-info" style="margin-bottom: 2.5em;">
+   <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
+   <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
+  </p>
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
 
  @maybeUktrBannerScenario.map { scenario =>
