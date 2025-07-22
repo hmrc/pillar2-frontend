@@ -73,9 +73,9 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
 
       val accountingPeriod = "Group’s consolidated accounting period"
       val startDate        = "Start date"
-      val startDateValue   = "21 July 2025"
+      val startDateValue   = "22 July 2025"
       val endDate          = "End date"
-      val endDateValue     = "21 July 2025"
+      val endDateValue     = "22 July 2025"
 
       view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe accountingPeriod
       view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe ""

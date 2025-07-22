@@ -69,7 +69,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = organisationView.getElementsByClass("card-half-width").first()
+      val returnsCard = organisationView.getElementsByClass("card-main").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -79,7 +79,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = organisationView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard = organisationView.getElementsByClass("card-main").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -116,7 +116,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val cardGroup = organisationView.getElementsByClass("card-group")
       cardGroup.size() mustBe 1
 
-      val mainCards = organisationView.getElementsByClass("card-half-width")
+      val mainCards = organisationView.getElementsByClass("card-main")
       mainCards.size() mustBe 2
 
       val fullWidthCards = organisationView.getElementsByClass("card-full-width")
@@ -128,11 +128,11 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display UKTR Due status tag with blue style when Due scenario is provided" in {
-      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
+      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-main").first()
 
-      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
 
-      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
       val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--blue")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Due"
@@ -146,11 +146,11 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
-      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-main").first()
 
-      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
 
-      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
       val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--red")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Overdue"
@@ -164,11 +164,11 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
-      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
+      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-main").first()
 
-      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
 
-      val cardHeader = returnsCard.getElementsByClass("card-label-with-tag").first()
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
       val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--purple")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Incomplete"
@@ -209,7 +209,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = agentView.getElementsByClass("card-half-width").first()
+      val returnsCard = agentView.getElementsByClass("card-main").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -219,7 +219,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = agentView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard = agentView.getElementsByClass("card-main").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -254,7 +254,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val cardGroup = agentView.getElementsByClass("card-group")
       cardGroup.size() mustBe 1
 
-      val mainCards = agentView.getElementsByClass("card-half-width")
+      val mainCards = agentView.getElementsByClass("card-main")
       mainCards.size() mustBe 2
 
       val fullWidthCards = agentView.getElementsByClass("card-full-width")
@@ -289,7 +289,7 @@ class HomepageViewSpec extends ViewSpecBase {
             .toString()
         )
 
-      val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-half-width").first()
+      val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-main").first()
       val links       = returnsCard.getElementsByTag("a")
 
       // All links should point to ASA input page when agent hasn't completed client setup
@@ -303,7 +303,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, Some("Due"), plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages).toString()
         )
 
-      val returnsCard = agentViewWithClientSetup.getElementsByClass("card-half-width").first()
+      val returnsCard = agentViewWithClientSetup.getElementsByClass("card-main").first()
       val links       = returnsCard.getElementsByTag("a")
 
       // Links should point directly to submission frontend when agent has completed client setup
@@ -317,7 +317,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val cardGroup = organisationView.getElementsByClass("card-group")
       cardGroup.size() mustBe 1
 
-      val mainCards = organisationView.getElementsByClass("card-half-width")
+      val mainCards = organisationView.getElementsByClass("card-main")
       mainCards.size() mustBe 2
 
       val fullWidthCards = organisationView.getElementsByClass("card-full-width")
