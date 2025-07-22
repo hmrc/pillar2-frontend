@@ -884,13 +884,13 @@ homepage.uktrBanner.agent.Due.body = Submit returns before the due date to avoid
 
 homepage.uktrBanner.Overdue.title = You have one or more returns due
 homepage.uktrBanner.Overdue.body = Submit your returns before the due date to avoid penalties.
-homepage.uktrBanner.agent.Overdue.title = One or more returns are now due
-homepage.uktrBanner.agent.Overdue.body = Submit returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Overdue.title = Overdue or incomplete returns
+homepage.uktrBanner.agent.Overdue.body = Submit or complete these returns as soon as possible.
 
 homepage.uktrBanner.Incomplete.title = You have overdue or incomplete returns
 homepage.uktrBanner.Incomplete.body = You must submit or complete these returns as soon as possible.
-homepage.uktrBanner.agent.Incomplete.title = You have overdue or incomplete returns
-homepage.uktrBanner.agent.Incomplete.body = You must submit or complete these returns as soon as possible.
+homepage.uktrBanner.agent.Incomplete.title = Overdue or incomplete returns
+homepage.uktrBanner.agent.Incomplete.body = Submit or complete these returns as soon as possible.
 
 homepage.uktrBanner.linkText = View all due and overdue returns
 ###############################################
