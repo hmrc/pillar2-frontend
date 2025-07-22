@@ -879,13 +879,13 @@ homepage.btnActiveBanner.linkText = Find out more about Below-Threshold Notifica
 
 homepage.uktrBanner.Due.title = You have one or more returns due
 homepage.uktrBanner.Due.body = Submit your returns before the due date to avoid penalties.
-homepage.uktrBanner.agent.Due.title = You have one or more returns due
-homepage.uktrBanner.agent.Due.body = Submit your returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Due.title = One or more returns are now due
+homepage.uktrBanner.agent.Due.body = Submit returns before the due date to avoid penalties.
 
 homepage.uktrBanner.Overdue.title = You have one or more returns due
 homepage.uktrBanner.Overdue.body = Submit your returns before the due date to avoid penalties.
-homepage.uktrBanner.agent.Overdue.title = You have one or more returns due
-homepage.uktrBanner.agent.Overdue.body = Submit your returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Overdue.title = One or more returns are now due
+homepage.uktrBanner.agent.Overdue.body = Submit returns before the due date to avoid penalties.
 
 homepage.uktrBanner.Incomplete.title = You have overdue or incomplete returns
 homepage.uktrBanner.Incomplete.body = You must submit or complete these returns as soon as possible.
