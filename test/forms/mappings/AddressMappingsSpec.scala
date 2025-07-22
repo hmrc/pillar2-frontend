@@ -22,6 +22,87 @@ import play.api.data.Forms.mapping
 
 class AddressMappingsSpec extends SpecBase with AddressMappings {
 
+  "Transformation utility methods" must {
+
+    "noTransform should return input unchanged" in {
+      noTransform("test") mustEqual "test"
+      noTransform("") mustEqual ""
+      noTransform("Test 123") mustEqual "Test 123"
+    }
+
+    "strip should remove all spaces" in {
+      strip("test value") mustEqual "testvalue"
+      strip(" test ") mustEqual "test"
+      strip("") mustEqual ""
+      strip("a b c d") mustEqual "abcd"
+    }
+
+    "toUpperCaseAlphaOnly should convert lowercase to uppercase" in {
+      toUpperCaseAlphaOnly("test") mustEqual "TEST"
+      toUpperCaseAlphaOnly("Test123") mustEqual "TEST123"
+      toUpperCaseAlphaOnly("") mustEqual ""
+      toUpperCaseAlphaOnly("abc-def_123") mustEqual "ABC-DEF_123"
+    }
+
+    "noSpaceWithUpperCaseTransform should strip spaces and convert to uppercase" in {
+      noSpaceWithUpperCaseTransform("test value") mustEqual "TESTVALUE"
+      noSpaceWithUpperCaseTransform(" abc ") mustEqual "ABC"
+      noSpaceWithUpperCaseTransform("") mustEqual ""
+    }
+
+    "minimiseSpace should replace multiple spaces with single space" in {
+      minimiseSpace("test  value") mustEqual "test value"
+      minimiseSpace("a   b    c") mustEqual "a b c"
+      minimiseSpace("  test  ") mustEqual " test "
+      minimiseSpace("test") mustEqual "test"
+    }
+
+    "standardiseText should replace whitespace and trim" in {
+      standardiseText("  test   value  ") mustEqual "test value"
+      standardiseText("\t\ntest\r\nvalue\t") mustEqual "test value"
+      standardiseText("") mustEqual ""
+      standardiseText("   ") mustEqual ""
+    }
+
+    "standardTextTransform should trim input" in {
+      standardTextTransform("  test  ") mustEqual "test"
+      standardTextTransform("test") mustEqual "test"
+      standardTextTransform("") mustEqual ""
+      standardTextTransform("   ") mustEqual ""
+    }
+
+    "postCodeTransform should strip, minimize, trim and uppercase" in {
+      postCodeTransform("  sw1a   1aa  ") mustEqual "SW1A1AA"
+      postCodeTransform("test") mustEqual "TEST"
+      postCodeTransform("") mustEqual ""
+    }
+
+    "postCodeDataTransform should transform and filter non-empty" in {
+      postCodeDataTransform(Some("  sw1a  1aa  ")) mustEqual Some("SW1A1AA")
+      postCodeDataTransform(Some("")) mustEqual None
+      postCodeDataTransform(Some("   ")) mustEqual None
+      postCodeDataTransform(None) mustEqual None
+    }
+
+    "postCodeValidTransform should format valid UK postcodes" in {
+      // Valid postcode without space - should add space
+      postCodeValidTransform("SW1A1AA") mustEqual "SW1A 1AA"
+      // Valid postcode with space - should preserve
+      postCodeValidTransform("SW1A 1AA") mustEqual "SW1A 1AA"
+      // Invalid postcode - should return unchanged
+      postCodeValidTransform("INVALID") mustEqual "INVALID"
+      postCodeValidTransform("") mustEqual ""
+    }
+
+    "countryDataTransform should transform and filter country codes" in {
+      countryDataTransform(Some("  gb  ")) mustEqual Some("GB")
+      countryDataTransform(Some("us")) mustEqual Some("US")
+      countryDataTransform(Some("")) mustEqual None
+      countryDataTransform(Some("   ")) mustEqual None
+      countryDataTransform(None) mustEqual None
+    }
+  }
+
   "xssFirstOptionalPostcode" must {
 
     val form = Form(
