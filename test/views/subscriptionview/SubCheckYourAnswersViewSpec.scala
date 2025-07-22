@@ -74,7 +74,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
       )
 
-      val formattedDate    = dateHelper.formatDateGDS(LocalDate.now())
+
       val accountingPeriod = "Group’s consolidated accounting period"
       val startDate        = "Start date"
       val startDateValue   = "22 July 2025"
