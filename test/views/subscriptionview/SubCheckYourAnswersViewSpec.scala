@@ -21,9 +21,12 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
+
+import java.time.LocalDate
 
 class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
@@ -71,11 +74,12 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
       )
 
+      val formattedDate    = dateHelper.formatDateGDS(LocalDate.now())
       val accountingPeriod = "Group’s consolidated accounting period"
       val startDate        = "Start date"
-      val startDateValue   = "18 July 2025"
+      val startDateValue   = formattedDate
       val endDate          = "End date"
-      val endDateValue     = "18 July 2025"
+      val endDateValue     = formattedDate
 
       view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe accountingPeriod
       view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe ""
