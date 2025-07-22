@@ -17,7 +17,7 @@
 package forms.mappings
 
 import base.SpecBase
-import play.api.data.{Form, FormError}
+import play.api.data.Form
 import play.api.data.Forms.mapping
 
 class AddressMappingsSpec extends SpecBase with AddressMappings {
