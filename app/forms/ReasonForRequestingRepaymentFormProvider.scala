@@ -17,18 +17,23 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants.{MAX_AMOUNT, MIN_AMOUNT}
+import mapping.Constants.MAX_LENGTH_250
 import play.api.data.Form
 
 import javax.inject.Inject
 
-class RequestRefundAmountFormProvider @Inject() extends Mappings {
-  def apply(): Form[BigDecimal] =
+import Validation.XSS_REGEX
+
+class ReasonForRequestingRepaymentFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[String] =
     Form(
-      "value" -> currency(
-        requiredKey = "repayment.requestRepaymentAmount.error.required",
-        invalidCurrency = "repayment.requestRepaymentAmount.error.format"
-      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRepaymentAmount.error.minValue"))
-        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRepaymentAmount.error.maxValue"))
+      "value" -> text("reasonForRequestingRepayment.error.required")
+        .verifying(
+          firstError(
+            maxLength(MAX_LENGTH_250, "reasonForRequestingRepayment.error.length"),
+            regexp(XSS_REGEX, "reasonForRequestingRepayment.error.xss")
+          )
+        )
     )
 }

@@ -18,7 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.RequestRefundAmountFormProvider
+import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.RepaymentsRefundAmountPage
@@ -34,14 +34,14 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class RequestRepaymentAmountController @Inject() (
-  formProvider:                           RequestRefundAmountFormProvider,
-  val controllerComponents:               MessagesControllerComponents,
-  view:                                   RequestRefundAmountView,
-  navigator:                              RepaymentNavigator,
-  getSessionData:                         SessionDataRetrievalAction,
-  requireSessionData:                     SessionDataRequiredAction,
-  sessionRepository:                      SessionRepository,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction
+                                                   formProvider:                           RequestRepaymentAmountFormProvider,
+                                                   val controllerComponents:               MessagesControllerComponents,
+                                                   view:                                   RequestRefundAmountView,
+                                                   navigator:                              RepaymentNavigator,
+                                                   getSessionData:                         SessionDataRetrievalAction,
+                                                   requireSessionData:                     SessionDataRequiredAction,
+                                                   sessionRepository:                      SessionRepository,
+                                                   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

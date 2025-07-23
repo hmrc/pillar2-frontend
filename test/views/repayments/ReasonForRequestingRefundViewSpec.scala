@@ -17,7 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
-import forms.ReasonForRequestingRefundFormProvider
+import forms.ReasonForRequestingRepaymentFormProvider
 import generators.Generators
 import models.NormalMode
 import org.jsoup.Jsoup
@@ -26,7 +26,7 @@ import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
-  val formProvider = new ReasonForRequestingRefundFormProvider
+  val formProvider = new ReasonForRequestingRepaymentFormProvider
   val page: ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
 
   "Reason For Requesting Repayment View" when {
