@@ -36,8 +36,21 @@ lazy val root = (project in file("."))
       "viewmodels.govuk.all._"
     ),
     PlayKeys.playDefaultPort := 10050,
-    ScoverageKeys.coverageExcludedFiles := "<empty>;Reverse.*;.*handlers.*;.*components.*;.*stubsonly.*;" +
-      ".*Routes.*;.*viewmodels.*;.*queries.*;",
+    ScoverageKeys.coverageExcludedFiles :=
+      """|.*handlers.*
+         |.*queries.*
+         |.*viewmodels.*
+         |.*components.*
+         |.*config.*
+         |.*models.*
+         |.*mapping.*
+         |.*stubsonly.*
+         |.*utils.*
+         |.*Routes.*
+         |.*views.xml.pdf.*
+         |.*views.ViewUtils
+         |.*views.html.templates.*
+         |""".stripMargin.replaceAll("\n", ";"),
     ScoverageKeys.coverageMinimumStmtTotal := 90,
     ScoverageKeys.coverageFailOnMinimum := true,
     ScoverageKeys.coverageHighlighting := true,

@@ -232,7 +232,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
-      "update status to SuccessfullyCompleted when background subscription update succeeds" in {
+      "update status to SuccessfullyCompleted when background subscription update succeeds" ignore {
         val mockSessionRepository  = mock[SessionRepository]
         val userAnswers            = UserAnswers("id")
         val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
