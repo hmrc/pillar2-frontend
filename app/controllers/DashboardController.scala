@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
-import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
@@ -173,7 +173,28 @@ class DashboardController @Inject() (
     }
 
     def hasIncompleteReturns: Boolean =
-      openUktrObligations.exists { case (_, obligation) => obligation.submissions.nonEmpty }
+      accountingPeriods.exists { period =>
+        if (period.dueDate.isBefore(LocalDate.now())) {
+          val uktrObligation = period.obligations.find(_.obligationType == UKTR)
+          val girObligation  = period.obligations.find(_.obligationType == GIR)
+
+          (uktrObligation, girObligation) match {
+            case (Some(uktr), Some(gir)) =>
+              val uktrFulfilled = uktr.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || uktr.submissions.nonEmpty
+              val girFulfilled  = gir.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || gir.submissions.nonEmpty
+
+              uktrFulfilled != girFulfilled
+
+            case (Some(uktr), None) =>
+              uktr.submissions.nonEmpty
+
+            case _ =>
+              false
+          }
+        } else {
+          false
+        }
+      }
 
     def hasOverdueReturns: Boolean =
       openUktrObligations.exists { case (period, _) => period.dueDate.isBefore(LocalDate.now()) }

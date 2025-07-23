@@ -239,7 +239,136 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "return UktrIncomplete for obligations with submissions" in {
+    "return UktrIncomplete when only UKTR is fulfilled and due date is in the past" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            AccountingPeriodDetails(
+              startDate = LocalDate.now().minusMonths(12),
+              endDate = LocalDate.now(),
+              dueDate = LocalDate.now().minusDays(10),
+              underEnquiry = false,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open,
+                  canAmend = false,
+                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq.empty
+                )
+              )
+            )
+          )
+        )
+
+        val result = controller.uktrBannerScenario(responseWithSubmissions)
+        result.map(_.toString) mustBe Some("UktrIncomplete")
+      }
+    }
+
+    "return UktrIncomplete when only GIR is fulfilled and due date is in the past" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            AccountingPeriodDetails(
+              startDate = LocalDate.now().minusMonths(12),
+              endDate = LocalDate.now(),
+              dueDate = LocalDate.now().minusDays(10),
+              underEnquiry = false,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open,
+                  canAmend = false,
+                  submissions = Seq.empty
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Fulfilled,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
+                )
+              )
+            )
+          )
+        )
+
+        val result = controller.uktrBannerScenario(responseWithSubmissions)
+        result.map(_.toString) mustBe Some("UktrIncomplete")
+      }
+    }
+
+    "not return UktrIncomplete when both UKTR and GIR are fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            AccountingPeriodDetails(
+              startDate = LocalDate.now().minusMonths(12),
+              endDate = LocalDate.now(),
+              dueDate = LocalDate.now().minusDays(10),
+              underEnquiry = false,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Fulfilled,
+                  canAmend = false,
+                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Fulfilled,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
+                )
+              )
+            )
+          )
+        )
+
+        val result = controller.uktrBannerScenario(responseWithSubmissions)
+        result mustBe None
+      }
+    }
+
+    "not return UktrIncomplete when neither UKTR nor GIR are fulfilled but due date is future" in {
       val application = applicationBuilder(userAnswers = None, enrolments)
         .configure("features.newHomepageEnabled" -> true)
         .overrides(
@@ -265,6 +394,12 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
                   status = ObligationStatus.Open,
                   canAmend = false,
                   submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq.empty
                 )
               )
             )
@@ -272,7 +407,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         )
 
         val result = controller.uktrBannerScenario(responseWithSubmissions)
-        result.map(_.toString) mustBe Some("UktrIncomplete")
+        result.map(_.toString) mustBe Some("UktrDue")
       }
     }
 
