@@ -34,14 +34,14 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class ReasonForRequestingRepaymentController @Inject() (
-                                                         val sessionRepository:                  SessionRepository,
-                                                         @Named("EnrolmentIdentifier") identify: IdentifierAction,
-                                                         getData:                                SessionDataRetrievalAction,
-                                                         navigator:                              RepaymentNavigator,
-                                                         requireData:                            SessionDataRequiredAction,
-                                                         formProvider:                           ReasonForRequestingRepaymentFormProvider,
-                                                         val controllerComponents:               MessagesControllerComponents,
-                                                         view:                                   ReasonForRequestingRefundView
+  val sessionRepository:                  SessionRepository,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  getData:                                SessionDataRetrievalAction,
+  navigator:                              RepaymentNavigator,
+  requireData:                            SessionDataRequiredAction,
+  formProvider:                           ReasonForRequestingRepaymentFormProvider,
+  val controllerComponents:               MessagesControllerComponents,
+  view:                                   ReasonForRequestingRefundView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
