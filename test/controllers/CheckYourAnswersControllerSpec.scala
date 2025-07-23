@@ -45,7 +45,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   private val plrReference = "XE1111123456789"
 
-  private val date = LocalDate.now()
+  private val date = LocalDate.of(2025, 7, 18)
   private val grsResponse = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(
@@ -278,6 +278,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
+          .setOrException(SubRegisteredAddressPage, nonUkAddress)
 
         val expectedSessionData = UserAnswers(userAnswer.id)
           .setOrException(UpeNameRegistrationPage, "Company Name")
