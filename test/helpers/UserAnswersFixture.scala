@@ -59,7 +59,7 @@ trait UserAnswersFixture extends TryValues {
   )
 
   private val email            = "hello@darkness.myoldFriend"
-  private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
+  private val accountingPeriod = AccountingPeriod(LocalDate.of(2025, 7, 22), LocalDate.of(2025, 7, 22))
 
   private val grsResponse = GrsResponse(
     Some(
@@ -67,7 +67,7 @@ trait UserAnswersFixture extends TryValues {
         companyProfile = CompanyProfile(
           companyName = "ABC Limited",
           companyNumber = "1234",
-          dateOfIncorporation = Some(LocalDate.now()),
+          dateOfIncorporation = Some(LocalDate.of(2025, 7, 22)),
           unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
         ),
         ctutr = "1234567890",
@@ -85,7 +85,7 @@ trait UserAnswersFixture extends TryValues {
     companyProfile = CompanyProfile(
       companyName = "ABC Limited",
       companyNumber = "1234",
-      dateOfIncorporation = Some(LocalDate.now()),
+      dateOfIncorporation = Some(LocalDate.of(2025, 7, 22)),
       unsanitisedCHROAddress = IncorporatedEntityAddress(address_line_1 = Some("line 1"), None, None, None, None, None, None, None)
     ),
     ctutr = "1234567890",
