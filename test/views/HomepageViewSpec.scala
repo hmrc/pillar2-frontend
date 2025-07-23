@@ -252,7 +252,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "have correct structure" in {
       val cardGroup = agentView.getElementsByClass("card-group")
-      cardGroup.size() mustBe 0
+      cardGroup.size() mustBe 1
 
       val mainCards = agentView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
@@ -315,7 +315,7 @@ class HomepageViewSpec extends ViewSpecBase {
   "HomepageView layout" should {
     "have correct structure" in {
       val cardGroup = organisationView.getElementsByClass("card-group")
-      cardGroup.size() mustBe 0
+      cardGroup.size() mustBe 1
 
       val mainCards = organisationView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2

@@ -97,9 +97,12 @@
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
  }
 
- <div class="card-group" style="display: flex; flex-wrap: wrap; margin-top: 2em;">
+ <div class="card-group" style="display: flex; flex-wrap: wrap; margin-top: 2em; margin-bottom: 0; gap: 1.5rem;">
+   <style>
+     .card-group > div { margin-bottom: 0 !important; }
+   </style>
       @if(maybeUktrBannerScenario.isDefined) {
-    <div class="govuk-!-margin-right-5 govuk-!-margin-bottom-4 card-half-width" style="width: 450px; height: auto; display: flex; flex-direction: column;">
+    <div class="card-half-width" style="width: 450px; height: auto; display: flex; flex-direction: column; margin-bottom: 0;">
       <div>
         <div class="card-label" style="padding: 10px 25px 1px 15px;">
           <h2 class="govuk-heading-m">
@@ -162,6 +165,12 @@
      cardClass = "card-full-width"
     )
    }
+   <style>
+     div[class*="card-full-width"] { 
+       margin-top: -0.3rem !important; 
+       margin-bottom: 0 !important;
+     }
+   </style>
  </div>
 }
 
