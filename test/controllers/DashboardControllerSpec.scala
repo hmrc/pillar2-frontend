@@ -411,6 +411,92 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
+    "not return UktrIncomplete when both UKTR and GIR are fulfilled with past due date" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+        val responseWithBothFulfilled = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            AccountingPeriodDetails(
+              startDate = LocalDate.now().minusMonths(12),
+              endDate = LocalDate.now(),
+              dueDate = LocalDate.now().minusDays(10),
+              underEnquiry = false,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Fulfilled,
+                  canAmend = false,
+                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Fulfilled,
+                  canAmend = true,
+                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
+                )
+              )
+            )
+          )
+        )
+
+        val result = controller.uktrBannerScenario(responseWithBothFulfilled)
+        result mustBe None
+      }
+    }
+
+    "return UktrOverdue when neither UKTR nor GIR are fulfilled with past due date" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionService].toInstance(mockSubscriptionService),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+        val responseWithNeitherFulfilled = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(
+            AccountingPeriodDetails(
+              startDate = LocalDate.now().minusMonths(12),
+              endDate = LocalDate.now(),
+              dueDate = LocalDate.now().minusDays(10),
+              underEnquiry = false,
+              obligations = Seq(
+                Obligation(
+                  obligationType = ObligationType.UKTR,
+                  status = ObligationStatus.Open,
+                  canAmend = false,
+                  submissions = Seq.empty
+                ),
+                Obligation(
+                  obligationType = ObligationType.GIR,
+                  status = ObligationStatus.Open,
+                  canAmend = true,
+                  submissions = Seq.empty
+                )
+              )
+            )
+          )
+        )
+
+        val result = controller.uktrBannerScenario(responseWithNeitherFulfilled)
+        result.map(_.toString) mustBe Some("UktrOverdue")
+      }
+    }
+
     "return UktrOverdue for overdue obligations" in {
       val application = applicationBuilder(userAnswers = None, enrolments)
         .configure("features.newHomepageEnabled" -> true)
