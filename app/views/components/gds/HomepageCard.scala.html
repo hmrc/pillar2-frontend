@@ -17,10 +17,10 @@
 @this()
 
 @(
- title: String,
- links: Seq[(String, String, Option[String])],
- extraContent: Option[Html] = None,
- cardClass: String = "card-main"
+  title: String,
+  links: Seq[(String, String, Option[String])],
+  extraContent: Option[Html] = None,
+  cardClass: String = "card-half-width"
 )(implicit messages: Messages)
 
 @isManageAccountCard = @{cardClass == "card-full-width"}
