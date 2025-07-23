@@ -36,7 +36,8 @@ class GroupRegistrationDateReportFormProvider @Inject() extends Mappings {
       invalidMonthLength = "groupRegistrationDateReport.error.startDate.month.length",
       invalidYear = "groupRegistrationDateReport.error.startDate.year.nan",
       invalidYearLength = "groupRegistrationDateReport.error.startDate.year.length",
-      messageKeyPart = "groupRegistrationDateReport"
+      messageKeyPart = "groupRegistrationDateReport",
+      validateMonthInStringFormat = Some(true)
     )
       .verifying(
         maxDate(LocalDate.now(), "groupRegistrationDateReport.error.startDate.dayMonthYear.maximum")

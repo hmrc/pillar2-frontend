@@ -29,7 +29,6 @@ class DashboardViewSpec extends ViewSpecBase {
 
   val organisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
-
   val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
   val inActiveOrganisationDashboardView: Document =
@@ -149,6 +148,23 @@ class DashboardViewSpec extends ViewSpecBase {
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
     }
+
+    "have a Pillar 2 research heading" in {
+      val researchHeading = organisationDashboardView.getElementsByClass("research-heading")
+      researchHeading.text mustBe "Take part in Pillar 2 research"
+    }
+
+    "have a Pillar 2 research paragraph" in {
+      val researchParagraph = organisationDashboardView.getElementsByClass("research-body")
+      researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
+    }
+
+    "have a Pillar 2 link to the research page" in {
+      val researchLink = organisationDashboardView.getElementsByClass("research-link")
+      researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
+      researchLink.attr("target") mustBe "_blank"
+      researchLink.attr("href") mustBe appConfig.researchUrl
+    }
   }
 
   "Dashboard View for Agent" should {
@@ -254,7 +270,23 @@ class DashboardViewSpec extends ViewSpecBase {
       paragraph.get(11).text() must include(
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
       )
+    }
 
+    "have a Pillar 2 research heading" in {
+      val researchHeading = agentDashboardView.getElementsByClass("research-heading")
+      researchHeading.text mustBe "Take part in Pillar 2 research"
+    }
+
+    "have a Pillar 2 research paragraph" in {
+      val researchParagraph = agentDashboardView.getElementsByClass("research-body")
+      researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
+    }
+
+    "have a Pillar 2 link to the research page" in {
+      val researchLink = agentDashboardView.getElementsByClass("research-link")
+      researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
+      researchLink.attr("target") mustBe "_blank"
+      researchLink.attr("href") mustBe appConfig.researchUrl
     }
   }
 }

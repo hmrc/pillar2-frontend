@@ -326,7 +326,7 @@ groupTerritories.heading = Are you registering as the group’s Ultimate Parent 
 groupTerritories.yes = Yes
 groupTerritories.no = No
 groupTerritories.hint = An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one Ultimate Parent Entity needs to register.
-GroupTerritories.error.required = Select yes if you are registering as the group’s ultimate parent
+groupTerritories.error.required = Select yes if you are registering as the group’s ultimate parent
 KBMnIneligible.title = Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes
 KBMnIneligible.heading = Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes
 KBMnIneligible.p1 = Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 Top-up Taxes.
@@ -1657,3 +1657,9 @@ dueAndOverdueReturns.agent.commercialSoftware = You must submit each return befo
 dueAndOverdueReturns.agent.noReturns = Your client is up to date with their returns for this accounting period.
 dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full details of your client’s submitted returns on the
 
+# ---------------------------------------------
+# Pillar 2 Research
+# ---------------------------------------------
+research.heading = Take part in Pillar 2 research
+research.body = Help us improve this online service by taking part in user research.
+research.link = Register for Pillar 2 user research (opens in a new tab)

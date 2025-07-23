@@ -19,22 +19,23 @@ package forms.mappings
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import java.time.LocalDate
+import java.time.{LocalDate, Month}
 import scala.util.{Failure, Success, Try}
 
 private[mappings] class LocalDateFormatter(
-  invalidKey:         String,
-  allRequiredKey:     String,
-  twoRequiredKey:     String,
-  requiredKey:        String,
-  invalidDay:         String,
-  invalidDayLength:   String,
-  invalidMonth:       String,
-  invalidMonthLength: String,
-  invalidYear:        String,
-  invalidYearLength:  String,
-  args:               Seq[String] = Seq.empty,
-  messageKeyPart:     String = "messageKeyPart"
+  invalidKey:                  String,
+  allRequiredKey:              String,
+  twoRequiredKey:              String,
+  requiredKey:                 String,
+  invalidDay:                  String,
+  invalidDayLength:            String,
+  invalidMonth:                String,
+  invalidMonthLength:          String,
+  invalidYear:                 String,
+  invalidYearLength:           String,
+  args:                        Seq[String] = Seq.empty,
+  messageKeyPart:              String = "messageKeyPart",
+  validateMonthInStringFormat: Option[Boolean]
 ) extends Formatter[LocalDate]
     with Formatters {
 
@@ -59,9 +60,12 @@ private[mappings] class LocalDateFormatter(
     val intYear =
       intFormatter(requiredKey = invalidYear, wholeNumberKey = invalidYear, nonNumericKey = invalidYear, invalidLength = invalidYearLength, args)
 
-    val bindedDay:   Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
-    val bindedMonth: Either[Seq[FormError], Int] = intMonth.bind(s"$key.month", data)
-    val bindedYear:  Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
+    val month = new MonthFormatter(invalidMonth, args)
+
+    val bindedDay: Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
+    val bindedMonth: Either[Seq[FormError], Int] =
+      if (validateMonthInStringFormat.getOrElse(false))(month.bind(s"$key.month", data)) else intMonth.bind(s"$key.month", data)
+    val bindedYear: Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
 
     (bindedDay, bindedMonth, bindedYear) match {
       case (Left(_), Left(_), Left(_)) =>
@@ -85,6 +89,31 @@ private[mappings] class LocalDateFormatter(
   private def isRealDate(day: Int, month: Int, year: Int): Boolean = {
     val dateStr = s"""${"%04d".format(year)}-${"%02d".format(month)}-${"%02d".format(day)}"""
     Try(LocalDate.parse(dateStr)).isSuccess
+  }
+
+  private class MonthFormatter(invalidMonth: String, args: Seq[String] = Seq.empty) extends Formatter[Int] with Formatters {
+
+    private val baseFormatter = stringFormatter(invalidMonth, args)
+
+    override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] = {
+
+      val months = Month.values.toList
+      val updatedData = data.map {
+        case (key, value) if key.contains("month") => key -> value.replaceFirst("^0+(?!$)", "")
+        case other                                 => other
+      }
+      baseFormatter
+        .bind(key, updatedData)
+        .flatMap { str =>
+          months
+            .find(m => m.getValue.toString == str || m.toString == str.toUpperCase || m.toString.take(3) == str.toUpperCase)
+            .map(x => Right(x.getValue))
+            .getOrElse(Left(List(FormError(key, invalidMonth, args))))
+        }
+    }
+
+    override def unbind(key: String, value: Int): Map[String, String] =
+      Map(key -> value.toString)
   }
 
   override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], LocalDate] = {
