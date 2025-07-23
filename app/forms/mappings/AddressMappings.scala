@@ -131,3 +131,4 @@ object AddressMappings {
   val maxAddressLineLength = 35
   val maxPostCodeLength    = 10
 }
+
