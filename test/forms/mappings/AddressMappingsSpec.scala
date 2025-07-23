@@ -148,7 +148,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.errors.head.message mustEqual "address.postcode.error.length"
     }
 
-            "must accept postcode with whitespace normalisation" in {
+    "must accept postcode with whitespace normalisation" in {
       val data   = Map("postcode" -> "  12345  ", "countryCode" -> "US")
       val result = form.bind(data)
       result.value mustEqual Some((Some("12345"), "US"))
@@ -334,7 +334,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.value mustEqual Some(("M1 1AA", "GB"))
     }
 
-            "must handle mixed case normalisation" in {
+    "must handle mixed case normalisation" in {
       val data   = Map("postcode" -> "sw1a1aA", "countryCode" -> "GB")
       val result = form.bind(data)
       result.value mustEqual Some(("SW1A 1AA", "GB"))

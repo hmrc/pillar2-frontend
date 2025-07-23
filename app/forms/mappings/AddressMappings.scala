@@ -26,6 +26,12 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
   private def extractTrimmedValue(data: Map[String, String], key: String): Option[String] =
     data.get(key).map(_.trim).filter(_.nonEmpty)
 
+  private def validateXss(postcode: String, key: String): Option[FormError] =
+    if (!postcode.matches(XSS_REGEX)) Some(FormError(key, "address.postcode.error.xss")) else None
+
+  private def formatErrors(errors: Seq[FormError], key: String): Seq[FormError] =
+    errors.map(error => FormError(key, error.message, error.args))
+
   private def validateAndFormatPostcode(postcode: String, country: Option[String], isOptional: Boolean = false): Either[Seq[FormError], String] = {
     val normalisedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
 
@@ -46,6 +52,39 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
     }
   }
 
+  private def handleOptionalPostcodeLogic(key: String, rawPostcode: Option[String], country: Option[String]): Either[Seq[FormError], Option[String]] =
+    (rawPostcode, country) match {
+      case (Some(postcode), _) =>
+        validateXss(postcode, key) match {
+          case Some(xssError) => Left(Seq(xssError))
+          case None =>
+            validateAndFormatPostcode(postcode, country, isOptional = true) match {
+              case Right(formatted) => Right(Some(formatted))
+              case Left(errors)     => Left(formatErrors(errors, key))
+            }
+        }
+      case (None, Some("GB")) => Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
+      case (None, _)          => Right(None)
+    }
+
+  private def handleMandatoryPostcodeLogic(key: String, rawPostcode: Option[String], country: Option[String]): Either[Seq[FormError], String] =
+    rawPostcode match {
+      case Some(postcode) =>
+        validateXss(postcode, key) match {
+          case Some(xssError) => Left(Seq(xssError))
+          case None =>
+            validateAndFormatPostcode(postcode, country) match {
+              case Right(formatted) => Right(formatted)
+              case Left(errors)     => Left(formatErrors(errors, key))
+            }
+        }
+      case None =>
+        country match {
+          case Some("GB") => Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
+          case _          => Left(Seq(FormError(key, "address.postcode.error.required")))
+        }
+    }
+
   protected def optionalPostcode(
     requiredKeyGB:    String = "address.postcode.error.invalid.GB",
     invalidLengthKey: String = "address.postcode.error.length",
@@ -65,21 +104,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
         val rawPostcode = extractTrimmedValue(data, key)
         val country     = extractTrimmedValue(data, "countryCode")
 
-        (rawPostcode, country) match {
-          case (Some(postcode), _) =>
-            if (!postcode.matches(XSS_REGEX)) {
-              Left(Seq(FormError(key, "address.postcode.error.xss")))
-            } else {
-              validateAndFormatPostcode(postcode, country, isOptional = true) match {
-                case Right(formatted) => Right(Some(formatted))
-                case Left(errors)     => Left(errors.map(error => FormError(key, error.message, error.args)))
-              }
-            }
-          case (None, Some("GB")) =>
-            Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-          case (None, _) =>
-            Right(None)
-        }
+        handleOptionalPostcodeLogic(key, rawPostcode, country)
       }
 
       override def unbind(key: String, value: Option[String]): Map[String, String] =
@@ -93,22 +118,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
         val rawPostcode = extractTrimmedValue(data, key)
         val country     = extractTrimmedValue(data, "countryCode")
 
-        rawPostcode match {
-          case Some(postcode) =>
-            if (!postcode.matches(XSS_REGEX)) {
-              Left(Seq(FormError(key, "address.postcode.error.xss")))
-            } else {
-              validateAndFormatPostcode(postcode, country) match {
-                case Right(formatted) => Right(formatted)
-                case Left(errors)     => Left(errors.map(error => FormError(key, error.message, error.args)))
-              }
-            }
-          case None =>
-            country match {
-              case Some("GB") => Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-              case _          => Left(Seq(FormError(key, "address.postcode.error.required")))
-            }
-        }
+        handleMandatoryPostcodeLogic(key, rawPostcode, country)
       }
 
       override def unbind(key: String, value: String): Map[String, String] =
