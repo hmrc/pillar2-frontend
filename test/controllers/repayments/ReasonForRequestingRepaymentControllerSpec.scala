@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.ReasonForRequestingRefundFormProvider
+import forms.ReasonForRequestingRepaymentFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.RepaymentNavigator
 import org.mockito.ArgumentMatchers.any
@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
-  val formProvider = new ReasonForRequestingRefundFormProvider()
+  val formProvider = new ReasonForRequestingRepaymentFormProvider()
 
   "ReasonForRequestingRefund Controller" when {
 

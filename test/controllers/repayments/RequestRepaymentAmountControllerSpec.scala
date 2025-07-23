@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.RequestRefundAmountFormProvider
+import forms.RequestRepaymentAmountFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -32,7 +32,7 @@ import scala.concurrent.Future
 
 class RequestRepaymentAmountControllerSpec extends SpecBase {
 
-  val formProvider = new RequestRefundAmountFormProvider()
+  val formProvider = new RequestRepaymentAmountFormProvider()
 
   "RequestRefundAmount Controller" when {
 

@@ -17,7 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
-import forms.RequestRefundAmountFormProvider
+import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,7 +25,7 @@ import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
-  val formProvider = new RequestRefundAmountFormProvider
+  val formProvider = new RequestRepaymentAmountFormProvider
   val mode: Mode                    = NormalMode
   val page: RequestRefundAmountView = inject[RequestRefundAmountView]
 

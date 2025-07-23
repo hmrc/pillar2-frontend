@@ -20,7 +20,7 @@ import forms.behaviours.{DecimalFieldBehaviours, StringFieldBehaviours}
 import org.scalacheck.Gen
 import play.api.data.{Form, FormError}
 
-class RequestRefundAmountFormProviderSpec extends DecimalFieldBehaviours with StringFieldBehaviours {
+class RequestRepaymentAmountFormProviderSpec extends DecimalFieldBehaviours with StringFieldBehaviours {
 
   val fieldName   = "value"
   val requiredKey = "repayment.requestRepaymentAmount.error.required"
@@ -32,7 +32,7 @@ class RequestRefundAmountFormProviderSpec extends DecimalFieldBehaviours with St
 
   val validDataGenerator: Gen[String] = decimalInRangeWithCommas(minimum, maximum)
 
-  val formProvider = new RequestRefundAmountFormProvider()
+  val formProvider = new RequestRepaymentAmountFormProvider()
   private val form: Form[BigDecimal] = formProvider()
 
   ".value" - {
