@@ -23,6 +23,29 @@ import play.api.data.{FieldMapping, FormError}
 
 trait AddressMappings extends Mappings with Constraints with Transforms {
 
+  private def extractTrimmedValue(data: Map[String, String], key: String): Option[String] =
+    data.get(key).map(_.trim).filter(_.nonEmpty)
+
+  private def validateAndFormatPostcode(postcode: String, country: Option[String], isOptional: Boolean = false): Either[Seq[FormError], String] = {
+    val normalisedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
+
+    (normalisedPostcode, country) match {
+      case (zip, Some("GB")) if zip.matches(regexPostcode) =>
+        val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
+        Right(formatted)
+      case (_, Some("GB")) =>
+        Left(Seq(FormError("", "address.postcode.error.invalid.GB")))
+      case (zip, Some(_)) if zip.length <= AddressMappings.maxPostCodeLength =>
+        Right(zip)
+      case (_, Some(_)) =>
+        Left(Seq(FormError("", "address.postcode.error.length")))
+      case (zip, None) if isOptional =>
+        Right(zip)
+      case (_, None) =>
+        Left(Seq(FormError("", "address.postcode.error.required")))
+    }
+  }
+
   protected def optionalPostcode(
     requiredKeyGB:    String = "address.postcode.error.invalid.GB",
     invalidLengthKey: String = "address.postcode.error.length",
@@ -37,32 +60,19 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
 
   protected def xssFirstOptionalPostcode(): FieldMapping[Option[String]] =
     of(new Formatter[Option[String]] {
-      private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-        val rawPostcode = data.get(key).map(_.trim).filter(_.nonEmpty)
-        val country     = data.get("countryCode").map(_.trim).filter(_.nonEmpty)
+        val rawPostcode = extractTrimmedValue(data, key)
+        val country     = extractTrimmedValue(data, "countryCode")
 
         (rawPostcode, country) match {
           case (Some(postcode), _) =>
             if (!postcode.matches(XSS_REGEX)) {
               Left(Seq(FormError(key, "address.postcode.error.xss")))
             } else {
-
-              val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
-
-              (normalizedPostcode, country) match {
-                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>
-                  val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
-                  Right(Some(formatted))
-                case (_, Some("GB")) =>
-                  Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-                case (zip, Some(_)) if zip.length <= AddressMappings.maxPostCodeLength =>
-                  Right(Some(zip))
-                case (_, Some(_)) =>
-                  Left(Seq(FormError(key, "address.postcode.error.length")))
-                case (zip, None) =>
-                  Right(Some(zip))
+              validateAndFormatPostcode(postcode, country, isOptional = true) match {
+                case Right(formatted) => Right(Some(formatted))
+                case Left(errors)     => Left(errors.map(error => FormError(key, error.message, error.args)))
               }
             }
           case (None, Some("GB")) =>
@@ -78,32 +88,19 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
 
   protected def xssFirstMandatoryPostcode(): FieldMapping[String] =
     of(new Formatter[String] {
-      private val postcodeRegex = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-        val rawPostcode = data.get(key).map(_.trim).filter(_.nonEmpty)
-        val country     = data.get("countryCode").map(_.trim).filter(_.nonEmpty)
+        val rawPostcode = extractTrimmedValue(data, key)
+        val country     = extractTrimmedValue(data, "countryCode")
 
         rawPostcode match {
           case Some(postcode) =>
             if (!postcode.matches(XSS_REGEX)) {
               Left(Seq(FormError(key, "address.postcode.error.xss")))
             } else {
-
-              val normalizedPostcode = postcode.toUpperCase.replaceAll("""\s+""", " ").trim
-
-              (normalizedPostcode, country) match {
-                case (zip, Some("GB")) if zip.matches(postcodeRegex) =>
-                  val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
-                  Right(formatted)
-                case (_, Some("GB")) =>
-                  Left(Seq(FormError(key, "address.postcode.error.invalid.GB")))
-                case (zip, Some(_)) if zip.length <= AddressMappings.maxPostCodeLength =>
-                  Right(zip)
-                case (_, Some(_)) =>
-                  Left(Seq(FormError(key, "address.postcode.error.length")))
-                case (zip, None) =>
-                  Right(zip)
+              validateAndFormatPostcode(postcode, country) match {
+                case Right(formatted) => Right(formatted)
+                case Left(errors)     => Left(errors.map(error => FormError(key, error.message, error.args)))
               }
             }
           case None =>

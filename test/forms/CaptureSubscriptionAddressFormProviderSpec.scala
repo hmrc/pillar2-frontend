@@ -248,7 +248,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
       regexError = FormError(FIELD_NAME, XSS_KEY)
     )
 
-    "prioritize XSS validation over postcode format validation" in {
+    "prioritise XSS validation over postcode format validation" in {
       val result = form.bind(
         Map(
           "addressLine1" -> "123 Test Street",

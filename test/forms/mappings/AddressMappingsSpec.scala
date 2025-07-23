@@ -71,7 +71,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       standardTextTransform("   ") mustEqual ""
     }
 
-    "postCodeTransform should strip, minimize, trim and uppercase" in {
+    "postCodeTransform should strip, minimise, trim and uppercase" in {
       postCodeTransform("  sw1a   1aa  ") mustEqual "SW1A1AA"
       postCodeTransform("test") mustEqual "TEST"
       postCodeTransform("") mustEqual ""
@@ -148,7 +148,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.errors.head.message mustEqual "address.postcode.error.length"
     }
 
-    "must accept postcode with whitespace normalization" in {
+            "must accept postcode with whitespace normalisation" in {
       val data   = Map("postcode" -> "  12345  ", "countryCode" -> "US")
       val result = form.bind(data)
       result.value mustEqual Some((Some("12345"), "US"))
@@ -172,7 +172,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
     }
 
-    "must handle normalization of postcode case and spaces" in {
+    "must handle normalisation of postcode case and spaces" in {
       val data   = Map("postcode" -> "  sw1a   1aa  ", "countryCode" -> "GB")
       val result = form.bind(data)
       result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
@@ -285,7 +285,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.errors.head.message mustEqual "address.postcode.error.required"
     }
 
-    "must handle normalization of postcode case and spaces" in {
+    "must handle normalisation of postcode case and spaces" in {
       val data   = Map("postcode" -> "  sw1a   1aa  ", "countryCode" -> "GB")
       val result = form.bind(data)
       result.value mustEqual Some(("SW1A 1AA", "GB"))
@@ -334,7 +334,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       result.value mustEqual Some(("M1 1AA", "GB"))
     }
 
-    "must handle mixed case normalization" in {
+            "must handle mixed case normalisation" in {
       val data   = Map("postcode" -> "sw1a1aA", "countryCode" -> "GB")
       val result = form.bind(data)
       result.value mustEqual Some(("SW1A 1AA", "GB"))
