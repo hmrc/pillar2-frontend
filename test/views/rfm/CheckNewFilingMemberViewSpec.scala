@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.CheckNewFilingMemberView
 
 class CheckNewFilingMemberViewSpec extends ViewSpecBase {
@@ -39,8 +40,9 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must
-        include("We need to match the details of the new nominated filing member to HMRC records")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "We need to match the details of the new nominated filing member to HMRC records"
     }
 
     "have a paragraph body" in {

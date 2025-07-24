@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.CannotReturnAfterSubscriptionView
 
 class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
@@ -28,7 +29,9 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
   "CannotReturnAfterSubscriptionView" should {
     "display page header correctly" in {
-      doc.getElementsByTag("h1").first().text() mustBe "You cannot return, your registration is complete"
+      val h1Elements: Elements = doc.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, your registration is complete"
     }
 
     "display error message correctly" in {
@@ -48,7 +51,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
   "CannotReturnAfterSubscriptionView layout" should {
     "have correct page title" in {
-      doc.title() mustEqual "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
+      doc.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "not display back link" in {
