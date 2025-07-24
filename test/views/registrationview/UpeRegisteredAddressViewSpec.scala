@@ -39,7 +39,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the registered office address?")
+      view.title() mustBe "What is the registered office address?"
     }
 
     "have the correct caption" in {

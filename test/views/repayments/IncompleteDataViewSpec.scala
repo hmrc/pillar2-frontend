@@ -29,7 +29,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   "Repayments incomplete data view" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("Repayment request has missing information")
+      view.title() mustBe "Repayment request has missing information"
     }
 
     "have a heading" in {

@@ -31,7 +31,7 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "You need a Pillar 2 Top-up Taxes ID to access this service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

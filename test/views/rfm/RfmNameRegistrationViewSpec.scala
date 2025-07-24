@@ -33,9 +33,7 @@ class RfmNameRegistrationViewSpec extends ViewSpecBase {
   "Rfm Name Registration View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the new nominated filing member?"
-      )
+      view.title() mustBe "What is the name of the new nominated filing member?"
     }
 
     "have a caption" in {

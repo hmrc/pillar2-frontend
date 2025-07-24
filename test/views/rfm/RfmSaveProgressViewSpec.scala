@@ -30,7 +30,7 @@ class RfmSaveProgressViewSpec extends ViewSpecBase {
   "Rfm Save Progress inform View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Saving progress")
+      view.title() mustBe "Saving progress"
     }
 
     "have a heading" in {

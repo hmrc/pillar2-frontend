@@ -37,6 +37,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
       "have a title" in {
         view.getElementsByTag("title").text must include("Enter your requested repayment amount in pounds")
+        view.title() mustBe "Enter your requested repayment amount in pounds"
       }
 
       "have a h1 heading" in {

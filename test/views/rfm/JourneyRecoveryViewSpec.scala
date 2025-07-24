@@ -30,7 +30,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
   "Replace filing member journey recovery view" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("There has been an error")
+      view.title() mustBe "There has been an error"
     }
 
     "have a heading" in {

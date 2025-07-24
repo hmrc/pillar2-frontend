@@ -33,7 +33,7 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
   "Rfm Secondary Telephone Preference View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by telephone?")
+      view.title() mustBe "Can we contact by telephone?"
     }
 
     "have a caption" in {

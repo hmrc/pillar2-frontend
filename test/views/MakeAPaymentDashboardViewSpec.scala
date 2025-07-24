@@ -32,7 +32,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
-      makePaymentDashboardView.getElementsByTag("title").text must include("Make a payment")
+      makePaymentDashboardView.title() mustBe "Make a payment"
     }
 
     "have a heading" in {

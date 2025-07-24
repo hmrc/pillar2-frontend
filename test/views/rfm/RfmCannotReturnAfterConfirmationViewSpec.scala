@@ -29,7 +29,7 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
   "Rfm Cannot Return After Confirmation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe "Register your group"
     }
 
     "have a heading" in {

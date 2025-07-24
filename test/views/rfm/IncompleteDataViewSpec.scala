@@ -31,7 +31,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   "Replace filing member incomplete data view" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("You have an incomplete task")
+      view.title() mustBe "You have an incomplete task"
     }
 
     "have a heading" in {

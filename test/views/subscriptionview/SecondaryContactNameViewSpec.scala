@@ -36,9 +36,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "display the correct page title" in {
-      view.getElementsByTag("title").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      view.title() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
     }
 
     "show 'Contact details' as the section header" in {

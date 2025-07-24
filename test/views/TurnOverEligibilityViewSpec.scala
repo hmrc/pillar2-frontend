@@ -32,9 +32,8 @@ class TurnOverEligibilityViewSpec extends ViewSpecBase {
   "Turn Over Eligibility View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-      )
+      view
+        .title() mustBe "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
     }
 
     "have a caption" in {

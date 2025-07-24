@@ -33,7 +33,7 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
   "Agent Client Confirm Details View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Confirm your client’s details")
+      view.title() mustBe "Confirm your client’s details"
     }
 
     "have a h1 heading" in {

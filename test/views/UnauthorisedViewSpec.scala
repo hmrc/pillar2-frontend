@@ -30,7 +30,7 @@ class UnauthorisedViewSpec extends ViewSpecBase {
   "Unauthorised View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You do not have access to this service")
+      view.title() mustBe "You do not have access to this service"
     }
 
     "have a heading" in {

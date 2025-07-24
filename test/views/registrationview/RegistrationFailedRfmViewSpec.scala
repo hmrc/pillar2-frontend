@@ -31,7 +31,7 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "The details you entered did not match our records - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a headings" in {

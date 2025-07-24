@@ -33,7 +33,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
   "Corporate Position View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is your position in the corporate structure of the group?")
+      view.title() mustBe "What is your position in the corporate structure of the group?"
     }
 
     "have a caption" in {

@@ -34,7 +34,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
   "MneOrDomesticView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Entity locations")
+      view.title() mustBe "Entity locations"
     }
 
     "have a caption" in {

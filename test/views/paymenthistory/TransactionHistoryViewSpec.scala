@@ -68,7 +68,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Transaction history - Report Pillar 2 Top-up Taxes - GOV.UK"
-      groupView.getElementsByTag("title").text must include(title)
+      groupView.title() mustBe title
     }
 
     "have a heading" in {

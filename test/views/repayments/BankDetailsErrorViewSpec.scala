@@ -32,7 +32,7 @@ class BankDetailsErrorViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "We could not confirm your bank details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

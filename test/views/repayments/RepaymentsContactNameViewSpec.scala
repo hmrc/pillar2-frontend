@@ -36,10 +36,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include(
-          "What is the name of the person or team we should contact " +
-            "about the repayment request?"
-        )
+        view.title() mustBe "What is the name of the person or team we should contact about the repayment request?"
       }
 
       "have a heading" in {

@@ -30,7 +30,7 @@ class EligibilityConfirmationViewSpec extends ViewSpecBase {
   "Eligibility Confirmation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You need to register this group to report Pillar 2 Top-up Taxes")
+      view.title() mustBe "You need to register this group to report Pillar 2 Top-up Taxes"
     }
 
     "have a heading" in {

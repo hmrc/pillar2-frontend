@@ -35,7 +35,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("What type of account will the repayment be sent to?")
+        view.title() mustBe "What type of account will the repayment be sent to?"
       }
 
       "have a heading" in {

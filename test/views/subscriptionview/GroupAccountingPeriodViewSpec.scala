@@ -34,7 +34,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
   "GroupAccountingPeriodView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("When did the group’s first accounting period start and end after 31 December 2023?")
+      view.title() mustBe "When did the group’s first accounting period start and end after 31 December 2023?"
     }
 
     "have a caption" in {

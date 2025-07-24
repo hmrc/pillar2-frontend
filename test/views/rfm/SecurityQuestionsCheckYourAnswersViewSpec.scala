@@ -48,7 +48,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
   "Security Questions Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check Your Answers")
+      view.title() mustBe "Check Your Answers"
     }
 
     "have a caption" in {

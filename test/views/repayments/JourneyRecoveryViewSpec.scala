@@ -30,7 +30,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
   "Repayments journey recovery view" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Sorry, there is a problem with the service")
+      view.title() mustBe "Sorry, there is a problem with the service"
     }
 
     "have a heading" in {

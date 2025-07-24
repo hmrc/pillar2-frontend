@@ -36,9 +36,7 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("title").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
-      )
+      view.title() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display the correct heading" in {

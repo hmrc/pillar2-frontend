@@ -30,7 +30,7 @@ class StartPageViewSpec extends ViewSpecBase {
   "Start Page View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+      view.title() mustBe "Replace the filing member for a Pillar 2 Top-up Taxes account"
     }
 
     "have a caption" in {

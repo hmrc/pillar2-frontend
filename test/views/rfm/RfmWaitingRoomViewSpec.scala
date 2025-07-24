@@ -30,7 +30,7 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
   "Rfm Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Submitting...")
+      view.title() mustBe "Submitting..."
     }
 
     "have a heading" in {

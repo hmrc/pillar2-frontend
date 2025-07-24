@@ -31,7 +31,7 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a headings" in {
