@@ -1,0 +1,65 @@
+@*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
+@import views.html.components.gds._
+@import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+@import views.html.components.gds.ScrollWrapper
+@import views.html.styles.tableScrollStyles
+@import models.obligationsandsubmissions.AccountingPeriodDetails
+@import views.helpers.SubmissionHistoryHelper
+
+@this(
+        layout: templates.Layout,
+        heading: heading,
+        p: paragraphBody,
+        h2: HeadingH2,
+        govukInsetText: GovukInsetText,
+        paragraphMessageWithLink : ParagraphMessageWithLink,
+        govukTable: GovukTable
+)
+
+@(accountPeriods: Seq[AccountingPeriodDetails],isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@layout(
+    pageTitle    = titleNoForm(messages("submissionHistory.title"))
+) {
+    @heading(messages("submissionHistory.heading"), classes = "govuk-heading-l")
+    @if(isAgent) {
+    @p(messages("submissionHistory.agent.p1"))
+    @p(messages("submissionHistory.agent.p2"))
+    } else {
+    @p(messages("submissionHistory.group.p1"))
+    @p(messages("submissionHistory.group.p2"))
+    }
+
+    @govukInsetText(InsetText(content = Text(messages("submissionHistory.insetText"))))
+    <br>
+    @tableScrollStyles()
+    @for(table <- SubmissionHistoryHelper.generateSubmissionHistoryTable(accountPeriods)) {
+        @ScrollWrapper {
+            @govukTable(table)
+        }
+    }
+    <br>
+    @h2(messages("submissionHistory.h2"), size = "m")
+    @if(isAgent){
+    @paragraphMessageWithLink(Some(messages("submissionHistory.agent.p3")), linkMessage = messages("submissionHistory.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url, linkFullStop = true)
+    } else {
+    @paragraphMessageWithLink(Some(messages("submissionHistory.group.p3")), linkMessage = messages("submissionHistory.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url, linkFullStop = true)
+    }
+
+}
