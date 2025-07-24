@@ -174,25 +174,21 @@ class DashboardController @Inject() (
 
     def hasIncompleteReturns: Boolean =
       accountingPeriods.exists { period =>
-        if (period.dueDate.isBefore(LocalDate.now())) {
-          val uktrObligation = period.obligations.find(_.obligationType == UKTR)
-          val girObligation  = period.obligations.find(_.obligationType == GIR)
+        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
+        val girObligation  = period.obligations.find(_.obligationType == GIR)
 
-          (uktrObligation, girObligation) match {
-            case (Some(uktr), Some(gir)) =>
-              val uktrFulfilled = uktr.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || uktr.submissions.nonEmpty
-              val girFulfilled  = gir.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || gir.submissions.nonEmpty
+        (uktrObligation, girObligation) match {
+          case (Some(uktr), Some(gir)) =>
+            val uktrFulfilled = uktr.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || uktr.submissions.nonEmpty
+            val girFulfilled  = gir.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || gir.submissions.nonEmpty
 
-              uktrFulfilled != girFulfilled
+            uktrFulfilled != girFulfilled
 
-            case (Some(uktr), None) =>
-              uktr.submissions.nonEmpty
+          case (Some(uktr), None) =>
+            uktr.submissions.nonEmpty
 
-            case _ =>
-              false
-          }
-        } else {
-          false
+          case _ =>
+            false
         }
       }
 

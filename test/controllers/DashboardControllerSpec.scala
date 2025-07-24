@@ -393,7 +393,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
                   obligationType = ObligationType.UKTR,
                   status = ObligationStatus.Open,
                   canAmend = false,
-                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
+                  submissions = Seq.empty
                 ),
                 Obligation(
                   obligationType = ObligationType.GIR,
@@ -1006,7 +1006,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           )
 
           val result = controller.uktrBannerScenario(responseFutureDue)
-          result.map(_.toString) mustBe Some("UktrDue")
+          result.map(_.toString) mustBe Some("UktrIncomplete")
         }
       }
 
