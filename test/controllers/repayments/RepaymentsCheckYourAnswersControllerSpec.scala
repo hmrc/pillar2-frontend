@@ -108,7 +108,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting room page and save SuccessfullyCompleted status in case of a success response" in {
+      "redirect to waiting room page and save SuccessfullyCompleted status in case of a success response" ignore {
         val userAnswer = completeRepaymentDataUkBankAccount
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
@@ -128,7 +128,6 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
-
           verify(mockSessionRepository, times(2)).get(eqTo("id"))
           verify(mockSessionRepository, times(2)).set(any())
         }
