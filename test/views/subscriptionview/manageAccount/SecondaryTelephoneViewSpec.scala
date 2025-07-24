@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.CaptureTelephoneDetailsFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.SecondaryTelephoneView
 
 class SecondaryTelephoneViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class SecondaryTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text mustEqual "What is the phone number for John Doe?"
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is the phone number for John Doe?"
     }
 
     "have a hint description" in {

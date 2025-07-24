@@ -19,6 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class RfmSaveProgressViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Saving progress")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Saving progress"
     }
 
     "have a p1 " in {

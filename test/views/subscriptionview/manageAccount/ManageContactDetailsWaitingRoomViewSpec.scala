@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.subscription.ManageContactDetailsStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.ManageContactDetailsWaitingRoomView
 
 class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
@@ -38,7 +39,9 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have correct heading" in {
-        inProgressView.getElementsByTag("h1").text must include("Submitting your contact details")
+        val h1Elements: Elements = inProgressView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "Submitting your contact details"
       }
 
       "have a sub heading" in {
@@ -66,7 +69,9 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have correct heading" in {
-        completedView.getElementsByTag("h1").text must include("Submitting your contact details")
+        val h1Elements: Elements = completedView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "Submitting your contact details"
       }
 
       "have a sub heading" in {

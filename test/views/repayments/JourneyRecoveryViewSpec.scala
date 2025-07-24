@@ -19,6 +19,7 @@ package views.repayments
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, there is a problem with the service")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Sorry, there is a problem with the service"
     }
 
     "have the first paragraph with the correct text" in {

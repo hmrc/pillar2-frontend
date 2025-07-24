@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -60,7 +61,9 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers for filing member details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Check your answers for filing member details"
     }
 
     "have a summary list keys" in {

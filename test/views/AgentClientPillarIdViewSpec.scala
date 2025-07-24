@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientPillarIdView
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class AgentClientPillarIdViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your client’s Pillar 2 Top-up Taxes ID?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is your client’s Pillar 2 Top-up Taxes ID?"
     }
 
     "have a hint" in {

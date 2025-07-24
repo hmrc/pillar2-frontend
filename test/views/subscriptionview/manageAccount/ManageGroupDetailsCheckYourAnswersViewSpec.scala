@@ -21,6 +21,7 @@ import helpers.SubscriptionLocalDataFixture
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import viewmodels.checkAnswers.manageAccount.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
@@ -45,7 +46,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("Group details")
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "Group details"
       }
 
       "have a summary list" in {
@@ -94,7 +97,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a heading" in {
-        agentView.getElementsByTag("h1").text must include("Group details")
+        val h1Elements: Elements = agentView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "Group details"
       }
 
       "have a summary list" in {

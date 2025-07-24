@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.Kb750IneligibleView
 
 class Kb750IneligibleViewSpec extends ViewSpecBase {
@@ -34,9 +35,9 @@ class Kb750IneligibleViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
     }
 
     "have paragraph content" in {

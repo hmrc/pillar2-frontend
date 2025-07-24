@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.DuplicateSafeIdFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.DuplicateSafeIdView
 
 class DuplicateSafeIdViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("There is a problem with your registration")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "There is a problem with your registration"
     }
 
     "have a paragraph body" in {

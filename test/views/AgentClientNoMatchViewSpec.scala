@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientNoMatch
 
 class AgentClientNoMatchViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class AgentClientNoMatchViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Your client’s details did not match HMRC records")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Your client’s details did not match HMRC records"
     }
 
     "have a paragraph body" in {

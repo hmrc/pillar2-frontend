@@ -21,6 +21,7 @@ import forms.NFMRegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.UkBasedFilingMemberView
 
 class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Is the new nominated filing member registered in the UK?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Is the new nominated filing member registered in the UK?"
     }
 
     "have a button" in {
