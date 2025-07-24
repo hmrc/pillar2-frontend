@@ -59,7 +59,7 @@ trait UserAnswersFixture extends TryValues {
   )
 
   private val email            = "hello@darkness.myoldFriend"
-  private val accountingPeriod = AccountingPeriod(LocalDate.of(2025, 7, 22), LocalDate.of(2025, 7, 22))
+  private val accountingPeriod = AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2025, 7, 18))
 
   private val grsResponse = GrsResponse(
     Some(
