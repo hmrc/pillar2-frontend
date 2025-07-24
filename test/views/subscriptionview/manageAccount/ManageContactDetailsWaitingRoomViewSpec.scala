@@ -35,15 +35,17 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
       "have correct title" in {
 
-        inProgressView.getElementsByTag("title").text must include(messages("manageContactDetails.title"))
+        inProgressView.getElementsByTag("title").text must include("Submitting your contact details")
       }
 
       "have correct heading" in {
-        inProgressView.getElementsByTag("h1").text must include(messages("manageContactDetails.h1"))
+        inProgressView.getElementsByTag("h1").text must include("Submitting your contact details")
       }
 
       "have a sub heading" in {
-        inProgressView.getElementsByTag("h2").text must include(messages("manageContactDetails.h2"))
+        inProgressView.getElementsByTag("h2").text must include(
+          "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
+        )
       }
 
       "display spinner" in {
@@ -61,15 +63,17 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is SuccessfullyCompleted" must {
 
       "have correct title" in {
-        completedView.getElementsByTag("title").text must include(messages("manageContactDetails.title"))
+        completedView.getElementsByTag("title").text must include("Submitting your contact details")
       }
 
       "have correct heading" in {
-        completedView.getElementsByTag("h1").text must include(messages("manageContactDetails.h1"))
+        completedView.getElementsByTag("h1").text must include("Submitting your contact details")
       }
 
       "have a sub heading" in {
-        completedView.getElementsByTag("h2").text must include(messages("manageContactDetails.h2"))
+        completedView.getElementsByTag("h2").text must include(
+          "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
+        )
       }
 
       "have a meta refresh tag" in {

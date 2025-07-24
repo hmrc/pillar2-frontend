@@ -91,7 +91,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           implicit val messages: Messages = messagesApi.preferred(request)
 
           status(result) mustEqual OK
-          contentAsString(result) must include(messages("manageContactDetails.h1"))
+          contentAsString(result) must include("Submitting your contact details")
           verify(mockSessionRepository, never()).set(any())
         }
       }
