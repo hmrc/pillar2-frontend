@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 
 import java.time.LocalDate
 
-class TransactionHistoryConnectorSpec extends SpecBase with WireMockServerHandler {
+class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
 
   override def fakeApplication(): Application = new GuiceApplicationBuilder()
     .configure(
@@ -32,7 +32,7 @@ class TransactionHistoryConnectorSpec extends SpecBase with WireMockServerHandle
     )
     .build()
 
-  lazy val connector: TransactionHistoryConnector = app.injector.instanceOf[TransactionHistoryConnector]
+  lazy val connector: FinancialDataConnector = app.injector.instanceOf[FinancialDataConnector]
 
   val dateFrom: LocalDate = LocalDate.now()
   val dateTo:   LocalDate = LocalDate.now.plusYears(1)

@@ -17,7 +17,7 @@
 package connectors
 
 import config.FrontendAppConfig
-import models.{NoResultFound, TransactionHistory, UnexpectedResponse}
+import models._
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
@@ -29,7 +29,7 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
+class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
 
   def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                                        HeaderCarrier
@@ -44,6 +44,22 @@ class TransactionHistoryConnector @Inject() (implicit val config: FrontendAppCon
           Future failed NoResultFound
         case e @ _ =>
           logger.error(s"Payment History error for $plrReference - status=${e.status} - error=${e.body}")
+          Future failed UnexpectedResponse
+      }
+
+  def retrieveFinancialData(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
+    hc:                                   HeaderCarrier
+  ): Future[FinancialData] =
+    http
+      .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/financial-data/$plrReference/${dateFrom.toString}/${dateTo.toString}")
+      .execute[HttpResponse]
+      .flatMap {
+        case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialData]
+        case response if response.status == NOT_FOUND =>
+          logger.warn(s"Financial data not found for $plrReference")
+          Future failed NoResultFound
+        case e @ _ =>
+          logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse
       }
 
