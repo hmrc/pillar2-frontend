@@ -21,6 +21,7 @@ import forms.RepaymentAccountNameConfirmationForm
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.AccountNameConfirmationView
 
 class AccountNameConfirmationViewSpec extends ViewSpecBase {
@@ -38,8 +39,9 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a heading with the account holder's name" in {
-      val heading = "This account belongs to James"
-      view.getElementsByTag("h1").first().text must include(heading)
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "This account belongs to James"
     }
 
     "have a subheading" in {

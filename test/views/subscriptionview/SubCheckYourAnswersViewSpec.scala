@@ -21,6 +21,8 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
@@ -59,7 +61,9 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").first().text must include("Check your answers for further group details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Check your answers for further group details"
     }
 
     "have a group details summary list" in {

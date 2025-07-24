@@ -21,6 +21,7 @@ import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
@@ -42,7 +43,10 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("When did the group’s first accounting period start and end after 31 December 2023?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      // FIXME: this page has 3 H1 headings!!!
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "When did the group’s first accounting period start and end after 31 December 2023?"
     }
 
     "have the following paragraph content" in {

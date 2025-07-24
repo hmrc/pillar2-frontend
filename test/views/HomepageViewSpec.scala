@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import views.html.HomepageView
 
@@ -26,28 +27,27 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HomepageViewSpec extends ViewSpecBase {
-  private val page: HomepageView = inject[HomepageView]
-  private val organisationName = "Some Org name"
-  private val plrRef           = "XMPLR0012345678"
-  private val date             = "1 June 2020"
-  private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
+  private lazy val page:             HomepageView      = inject[HomepageView]
+  private lazy val organisationName: String            = "Some Org name"
+  private lazy val plrRef:           String            = "XMPLR0012345678"
+  private lazy val date:             String            = "1 June 2020"
+  private lazy val apEndDate:        Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
 
-  val organisationView: Document =
+  lazy val organisationView: Document =
     Jsoup.parse(
       page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
     )
 
-  val agentView: Document =
+  lazy val agentView: Document =
     Jsoup.parse(
       page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
     )
 
-  val btnUrl: String = s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes/below-threshold-notification/start"
+  lazy val btnUrl: String = s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes/below-threshold-notification/start"
 
   "HomepageView for a group" should {
     "display page header correctly" in {
-      val h1Elements = organisationView.getElementsByTag("h1")
-
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Pillar 2 Top-up Taxes"
     }
@@ -215,7 +215,9 @@ class HomepageViewSpec extends ViewSpecBase {
 
   "HomepageView for an agent" should {
     "display page header correctly" in {
-      agentView.getElementsByTag("h1").first().text() mustBe "Pillar 2 Top-up Taxes"
+      val h1Elements: Elements = agentView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Pillar 2 Top-up Taxes"
     }
 
     "display organisation information correctly" in {

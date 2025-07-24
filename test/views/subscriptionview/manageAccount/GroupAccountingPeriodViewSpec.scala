@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
@@ -41,7 +42,10 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a heading" in {
-        view().getElementsByTag("h1").get(0).text must equal("What is the group accounting period?")
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        // FIXME: this page has 3 H1 headings!!!
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "What is the group accounting period?"
       }
 
       "have the following paragraph content" in {
@@ -89,7 +93,10 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a heading" in {
-        view(isAgent = true).getElementsByTag("h1").get(0).text must equal("What is the group accounting period?")
+        val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
+        // FIXME: this page has 3 H1 headings!!!
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "What is the group accounting period?"
       }
 
       "have the following paragraph content" in {
