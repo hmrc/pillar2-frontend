@@ -37,13 +37,12 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
       "have a title" in {
         view
-          .title() mustBe "What is the name of the person or team we should contact about the refund request - Report Pillar 2 Top-up Taxes - GOV.UK"
+          .title() mustBe "What is the name of the person or team we should contact about the refund request? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a heading" in {
         view.getElementsByTag("h1").text must include(
-          "What is the name of the person or team we should contact " +
-            "about the refund request?"
+          "What is the name of the person or team we should contact about the refund request?"
         )
       }
 

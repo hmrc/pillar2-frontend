@@ -62,7 +62,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is SuccessfullyCompleted" must {
 
       "have correct title" in {
-        completedView.title() mustBe "Submitting your contact details"
+        completedView.title() mustBe "Submitting your contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have correct heading" in {

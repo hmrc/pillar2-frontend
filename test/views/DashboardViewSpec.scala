@@ -169,7 +169,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
   "Dashboard View for Agent" should {
     "have a title" in {
-      agentDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account"
+      agentDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {
