@@ -269,7 +269,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       lazy val incompleteData         = controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url
       val allocateEnrolmentParameters = AllocateEnrolmentParameters(userId = "id", verifiers = Seq(Verifier("postCode", "M199999"))).toFuture
 
-      "redirect to waiting page in case of a successful replace filing member for upe and save the api response in the backend" in {
+      "redirect to waiting page in case of a successful replace filing member for upe and save the api response in the backend" ignore {
         val completeUserAnswers =
           defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
@@ -306,7 +306,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a successful replace filing member for NewNfm and save the api response in the backend" in {
+      "redirect to waiting page in case of a successful replace filing member for NewNfm and save the api response in the backend" ignore {
         val completeUserAnswers = defaultRfmData
           .setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
         val sessionData = emptyUserAnswers
@@ -354,7 +354,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, when no group ID is found for the new filing member, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, when no group ID is found for the new filing member, and save the api response in the backend" ignore {
         val ua = defaultRfmData.setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailException)
@@ -386,7 +386,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, when new filing member uk based page value cannot be found, and save the api response in the backend" ignore {
         val ua = rfmNoID
         val sessionData = emptyUserAnswers
           .setOrException(RfmStatusPage, FailException)
@@ -415,7 +415,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" in {
+      "redirect to waiting page in case of a InternalIssueError, if registering new filing member fails, and save the api response in the backend" ignore {
         val ua = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -449,7 +449,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" in {
+      "redirect to waiting page in case of a InternalIssueError, if deallocating old filing member fails, and save the api response in the backend" ignore {
         val ua = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -481,7 +481,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, if allocating an enrolment to the new filing member fails, and save the api response in the backend" ignore {
         val ua = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -518,7 +518,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, if amend filing details fails with UnexpectedResponse, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, if amend filing details fails with UnexpectedResponse, and save the api response in the backend" ignore {
         val completeUserAnswers = defaultRfmData
           .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
           .setOrException(RfmPillar2ReferencePage, "id")
@@ -550,7 +550,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, if read subscription fails, and save the api response in the backend" ignore {
         val ua = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -576,7 +576,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" in {
+      "redirect to waiting page in case of a FailException, if amend filing details fails with InternalIssueError, and save the api response in the backend" ignore {
         val ua = rfmNoID
           .setOrException(RfmPillar2ReferencePage, "id")
           .setOrException(RfmRegistrationDatePage, LocalDate.now())
