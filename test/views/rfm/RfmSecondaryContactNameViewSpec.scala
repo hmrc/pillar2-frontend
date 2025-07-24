@@ -36,7 +36,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes"
+      view.title() mustBe "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {

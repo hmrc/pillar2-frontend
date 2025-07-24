@@ -31,8 +31,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
   "Registering Nfm for this group view" should {
     "have a caption" in {
-      view.getElementsByTag("title").text() must
-        include("Are you registering as the group’s nominated filing member?")
+      view.title() mustBe "Are you registering as the group’s nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

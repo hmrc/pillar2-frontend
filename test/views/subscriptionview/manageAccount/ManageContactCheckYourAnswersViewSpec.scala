@@ -45,6 +45,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     )
       .toString()
   )
+
   val agentView: Document = Jsoup.parse(
     page(
       subscriptionDataPrimaryContactList(),
@@ -59,7 +60,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
 
     "have a title" in {
       val title = "Contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
       agentView.title() mustBe title
     }
 
