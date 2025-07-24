@@ -21,6 +21,7 @@ import forms.NominateFilingMemberYesNoFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.fmview.NominateFilingMemberYesNoView
 
 class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Nominated filing member")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Nominated filing member"
     }
 
     "have a paragraph body" in {

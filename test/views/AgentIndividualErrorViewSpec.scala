@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentIndividualErrorView
 
 class AgentIndividualErrorViewSpec extends ViewSpecBase {
@@ -35,7 +36,9 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, you’re unable to use this service")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Sorry, you’re unable to use this service"
     }
 
     "have a paragraph body" in {

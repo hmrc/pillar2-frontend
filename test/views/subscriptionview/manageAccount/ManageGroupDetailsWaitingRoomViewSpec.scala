@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.subscription.ManageGroupDetailsStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
 
 class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting your group details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Submitting your group details"
     }
 
     "have a sub heading" in {

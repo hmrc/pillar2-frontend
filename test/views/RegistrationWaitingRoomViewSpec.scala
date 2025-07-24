@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.subscription.SubscriptionStatus.SuccessfullyCompletedSubscription
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting your registration")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Submitting your registration"
     }
 
     "have a sub heading" in {

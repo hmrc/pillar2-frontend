@@ -21,6 +21,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsTelephoneDetailsView
 
 class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
@@ -46,7 +47,9 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("What is the phone number for ABC Limited?")
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "What is the phone number for ABC Limited?"
       }
 
       "have a hint description" in {

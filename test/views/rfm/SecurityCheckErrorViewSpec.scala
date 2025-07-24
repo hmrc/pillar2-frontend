@@ -19,6 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.SecurityCheckErrorView
 
 class SecurityCheckErrorViewSpec extends ViewSpecBase {
@@ -35,7 +36,9 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot replace the current filing member for this group")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot replace the current filing member for this group"
     }
 
     "have a paragraph body" in {

@@ -21,6 +21,7 @@ import forms.RfmContactByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmContactByTelephoneView
 
 class RfmContactByTelephoneViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Can we contact John Doe by telephone?"
     }
 
     "have radio items" in {

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.CouldNotConfirmDetailsView
 
 class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("We could not confirm your bank details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "We could not confirm your bank details"
     }
 
     "have a paragraph body" in {
