@@ -571,7 +571,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "return None for obligations due beyond 60 days" in {
+    "return UktrDue for obligations due beyond 60 days to match prototype behavior" in {
       val application = applicationBuilder(userAnswers = None, enrolments)
         .configure("features.newHomepageEnabled" -> true)
         .overrides(
@@ -604,7 +604,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         )
 
         val result = controller.uktrBannerScenario(responseFuture)
-        result mustBe None
+        result.map(_.toString) mustBe Some("UktrDue")
       }
     }
 
@@ -698,7 +698,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     }
 
     "NEGATIVE TESTS - Scenario 1: UKTR Due Banner" should {
-      "NOT show Due banner when returns are due beyond 60 days" in {
+      "SHOW Due banner when returns are due beyond 60 days to match prototype behavior" in {
         val application = applicationBuilder(userAnswers = None, enrolments)
           .configure("features.newHomepageEnabled" -> true)
           .overrides(
@@ -731,7 +731,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           )
 
           val result = controller.uktrBannerScenario(responseBeyond60Days)
-          result mustBe None
+          result.map(_.toString) mustBe Some("UktrDue")
         }
       }
 

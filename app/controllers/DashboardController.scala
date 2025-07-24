@@ -197,13 +197,27 @@ class DashboardController @Inject() (
 
     def hasDueReturns: Boolean =
       openUktrObligations.exists { case (period, _) =>
-        !period.dueDate.isBefore(LocalDate.now()) && period.dueDate.isBefore(LocalDate.now().plusDays(60))
+        !period.dueDate.isBefore(LocalDate.now())
       }
+
+    def getOldestPeriodStatus: String =
+      openUktrObligations
+        .map { case (period, _) => period }
+        .minByOption(_.endDate)
+        .map { period =>
+          if (period.dueDate.isBefore(LocalDate.now())) "overdue" else "due"
+        }
+        .getOrElse("due")
 
     openUktrObligations.headOption.flatMap { _ =>
       if (hasIncompleteReturns) Some(UktrIncomplete)
+      else if (hasOverdueReturns && hasDueReturns) {
+        getOldestPeriodStatus match {
+          case "overdue" => Some(UktrOverdue)
+          case _         => Some(UktrDue)
+        }
+      } else if (hasDueReturns) Some(UktrDue)
       else if (hasOverdueReturns) Some(UktrOverdue)
-      else if (hasDueReturns) Some(UktrDue)
       else None
     }
   }
