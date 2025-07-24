@@ -91,7 +91,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
     "it's an agent" should {
       "have a title" in {
-        view(isAgent = true).getElementsByTag("title").text must include("Entity locations")
+        view(isAgent = true).title() mustBe "Entity locations - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {

@@ -30,7 +30,7 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
   "Unauthorised Agent View" should {
 
     "have a title" in {
-      view.title() mustBe "Register your group"
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display back link" in {

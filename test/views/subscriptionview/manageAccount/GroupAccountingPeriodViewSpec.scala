@@ -81,7 +81,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
     "it's an agent" must {
       "have a title" in {
-        view(isAgent = true).getElementsByTag("title").text must include("What is the group accounting period?")
+        view(isAgent = true).title() mustBe "What is the group accounting period? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
