@@ -31,7 +31,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   "Replace filing member incomplete data view" should {
     "have a title" in {
-      view.title() mustBe "You have an incomplete task"
+      view.title() mustBe "You have an incomplete task - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

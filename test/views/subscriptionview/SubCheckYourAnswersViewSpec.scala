@@ -50,7 +50,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
   "Manage Contact Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Check your answers for further group details"
+      val title = "Check your answers for further group details - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.title() mustBe title
     }
 

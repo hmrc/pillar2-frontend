@@ -30,7 +30,7 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
   "KbMn Ineligible View" should {
 
     "have a title" in {
-      view.title() mustBe "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
+      view.title() mustBe "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

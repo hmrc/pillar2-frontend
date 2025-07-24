@@ -29,7 +29,7 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
   "Rfm Cannot Return After Confirmation View" should {
 
     "have a title" in {
-      view.title() mustBe "Register your group"
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

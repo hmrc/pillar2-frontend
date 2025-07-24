@@ -30,7 +30,7 @@ class RfmSaveProgressViewSpec extends ViewSpecBase {
   "Rfm Save Progress inform View" should {
 
     "have a title" in {
-      view.title() mustBe "Saving progress"
+      view.title() mustBe "Saving progress - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

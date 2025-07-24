@@ -38,7 +38,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What address do you want to use as the filing member’s contact address?"
+      view.title() mustBe "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {

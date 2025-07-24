@@ -30,7 +30,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
   "Repayments journey recovery view" should {
 
     "have a title" in {
-      view.title() mustBe "Sorry, there is a problem with the service"
+      view.title() mustBe "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

@@ -33,7 +33,7 @@ class RfmNameRegistrationViewSpec extends ViewSpecBase {
   "Rfm Name Registration View" should {
 
     "have a title" in {
-      view.title() mustBe "What is the name of the new nominated filing member?"
+      view.title() mustBe "What is the name of the new nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

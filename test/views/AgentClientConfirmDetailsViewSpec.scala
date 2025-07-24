@@ -33,7 +33,7 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
   "Agent Client Confirm Details View" should {
 
     "have a title" in {
-      view.title() mustBe "Confirm your client’s details"
+      view.title() mustBe "Confirm your client’s details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {

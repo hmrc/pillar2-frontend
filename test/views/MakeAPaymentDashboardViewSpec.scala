@@ -32,7 +32,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
-      makePaymentDashboardView.title() mustBe "Make a payment"
+      makePaymentDashboardView.title() mustBe "Make a payment - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

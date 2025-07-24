@@ -36,7 +36,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the name of the Ultimate Parent Entity?"
+      view.title() mustBe "What is the name of the Ultimate Parent Entity? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {

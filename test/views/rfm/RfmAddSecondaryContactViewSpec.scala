@@ -33,7 +33,7 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
   "Rfm Add Secondary Contact View" should {
 
     "have a title" in {
-      view.title() mustBe "Add a secondary contact"
+      view.title() mustBe "Add a secondary contact - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

@@ -39,7 +39,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have a title" in {
-      view.title() mustBe "Bank account details"
+      view.title() mustBe "Bank account details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

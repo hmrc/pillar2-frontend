@@ -33,7 +33,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
   "Corporate Position View" should {
 
     "have a title" in {
-      view.title() mustBe "What is your position in the corporate structure of the group?"
+      view.title() mustBe "What is your position in the corporate structure of the group? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

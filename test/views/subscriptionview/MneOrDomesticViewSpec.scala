@@ -34,7 +34,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
   "MneOrDomesticView" should {
 
     "have a title" in {
-      view.title() mustBe "Entity locations"
+      view.title() mustBe "Entity locations - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

@@ -30,7 +30,7 @@ class KbUKIneligibleViewSpec extends ViewSpecBase {
   "KbUK Ineligible View" should {
 
     "have a title" in {
-      view.title() mustBe "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK"
+      view.title() mustBe "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

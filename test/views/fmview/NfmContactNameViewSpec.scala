@@ -35,7 +35,7 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.title() mustBe "What is the name of the person or team from the nominated filing member to keep on record?"
+      view.title() mustBe "What is the name of the person or team from the nominated filing member to keep on record? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display the correct heading" in {

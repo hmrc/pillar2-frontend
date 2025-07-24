@@ -70,7 +70,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
   "Repayments Check Your Answers View" should {
     "have a title" in {
-      view.title() mustBe "Check your answers before submitting your repayment request"
+      view.title() mustBe "Check your answers before submitting your repayment request - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

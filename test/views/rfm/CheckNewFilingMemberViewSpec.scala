@@ -32,7 +32,7 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
 
     "have a title" in {
       view.getElementsByTag("title").text must
-        include("We need to match the details of the new nominated filing member to HMRC records")
+        include("We need to match the details of the new nominated filing member to HMRC records - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a caption" in {

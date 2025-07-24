@@ -34,7 +34,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
   "GroupAccountingPeriodView" should {
 
     "have a title" in {
-      view.title() mustBe "When did the group’s first accounting period start and end after 31 December 2023?"
+      view.title() mustBe "When did the group’s first accounting period start and end after 31 December 2023? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
