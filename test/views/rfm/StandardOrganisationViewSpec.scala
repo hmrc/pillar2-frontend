@@ -30,7 +30,7 @@ class StandardOrganisationViewSpec extends ViewSpecBase {
   "Standard Organisation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Sorry, you’re unable to use this service")
+      view.title() mustBe "Sorry, you’re unable to use this service"
     }
 
     "have a heading" in {

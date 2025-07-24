@@ -36,7 +36,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Why are you requesting a refund?")
+        view.title() mustBe "Why are you requesting a refund?"
       }
 
       "have a heading" in {

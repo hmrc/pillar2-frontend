@@ -70,7 +70,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
   "Repayments Check Your Answers View" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers before submitting your refund request")
+      view.title() mustBe "Check your answers before submitting your refund request"
     }
 
     "have a heading" in {

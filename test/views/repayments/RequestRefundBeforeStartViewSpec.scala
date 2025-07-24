@@ -30,7 +30,7 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
   "Request Refund Before Start View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Request a refund")
+      view.title() mustBe "Request a refund"
     }
 
     "have a h1 heading" in {

@@ -36,7 +36,7 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the name of the nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.title() mustBe "What is the name of the nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {

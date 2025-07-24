@@ -54,7 +54,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
 
     "have a title" in {
       val title = "Check your answers for further group details"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a caption" in {

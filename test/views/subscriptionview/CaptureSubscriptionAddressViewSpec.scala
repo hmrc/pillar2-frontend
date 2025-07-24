@@ -38,9 +38,7 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("title").text must include(
-        "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
-      )
+      view.title() mustBe "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display the correct heading" in {

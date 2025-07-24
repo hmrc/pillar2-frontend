@@ -33,7 +33,7 @@ class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
   "Rfm Primary Contact Email View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the email address?")
+      view.title() mustBe "What is the email address?"
     }
 
     "have a caption" in {

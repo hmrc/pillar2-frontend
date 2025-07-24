@@ -52,7 +52,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers for filing member details")
+      view.title() mustBe "Check your answers for filing member details"
     }
 
     "have a caption" in {

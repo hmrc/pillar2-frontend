@@ -31,7 +31,7 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "You cannot replace the current filing member for this group - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

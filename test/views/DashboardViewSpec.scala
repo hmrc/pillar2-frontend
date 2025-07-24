@@ -37,7 +37,7 @@ class DashboardViewSpec extends ViewSpecBase {
   "Dashboard View for Organisation" should {
 
     "have a title" in {
-      organisationDashboardView.getElementsByTag("title").text must include("Your Pillar 2 Top-up Taxes account")
+      organisationDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account"
     }
 
     "have a heading" in {
@@ -169,7 +169,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
   "Dashboard View for Agent" should {
     "have a title" in {
-      agentDashboardView.getElementsByTag("title").text must include("Your Pillar 2 Top-up Taxes account")
+      agentDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account"
     }
 
     "have a heading" in {

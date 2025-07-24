@@ -36,7 +36,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Enter your requested refund amount in pounds")
+        view.title() mustBe "Enter your requested refund amount in pounds"
       }
 
       "have a h1 heading" in {

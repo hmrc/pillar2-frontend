@@ -30,7 +30,7 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
   "Unauthorised Agent View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe "Register your group"
     }
 
     "display back link" in {

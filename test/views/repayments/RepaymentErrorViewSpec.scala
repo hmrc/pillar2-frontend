@@ -32,7 +32,7 @@ class RepaymentErrorViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

@@ -39,7 +39,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Bank account details")
+      view.title() mustBe "Bank account details"
     }
 
     "have a heading" in {

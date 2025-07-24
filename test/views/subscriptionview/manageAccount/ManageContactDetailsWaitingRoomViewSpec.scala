@@ -34,8 +34,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is InProgress" must {
 
       "have correct title" in {
-
-        inProgressView.getElementsByTag("title").text must include("Submitting your contact details")
+        inProgressView.title() mustBe "Submitting your contact details"
       }
 
       "have correct heading" in {
@@ -63,7 +62,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is SuccessfullyCompleted" must {
 
       "have correct title" in {
-        completedView.getElementsByTag("title").text must include("Submitting your contact details")
+        completedView.title() mustBe "Submitting your contact details"
       }
 
       "have correct heading" in {

@@ -31,7 +31,7 @@ class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "You have not been authorised to report this client’s Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

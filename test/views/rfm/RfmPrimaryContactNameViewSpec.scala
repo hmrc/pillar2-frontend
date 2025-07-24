@@ -36,9 +36,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      view.title() mustBe "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
     }
 
     "have a caption" in {
