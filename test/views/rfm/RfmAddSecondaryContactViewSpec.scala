@@ -21,6 +21,7 @@ import forms.RfmAddSecondaryContactFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmAddSecondaryContactView
 
 class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
@@ -41,7 +42,10 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("Add a secondary contact")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      // FIXME: this page has 2 H1 headings!!!
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Add a secondary contact"
     }
 
     "have two description paragraphs" in {
