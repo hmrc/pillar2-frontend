@@ -127,17 +127,14 @@ class HomepageViewSpec extends ViewSpecBase {
       organisationView.getElementsByClass("govuk-notification-banner").isEmpty mustBe true
     }
 
-    "display UKTR Due status tag with blue style when Due scenario is provided" in {
+    "show clean Returns card with no tag when Due scenario is provided" in {
       val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
       val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--blue")
-      statusTag.size() mustBe 1
-      statusTag.first().text() mustBe "Due"
-      statusTag.first().attr("aria-label") mustBe "Due returns"
-      statusTag.first().attr("title") mustBe "Due returns"
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
+      statusTag.size() mustBe 0
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).attr("href") must include("due-and-overdue-returns")
@@ -473,8 +470,9 @@ class HomepageViewSpec extends ViewSpecBase {
       val overdueTags = viewDue.select(".govuk-tag--red:contains(Overdue)")
       overdueTags.size() mustBe 0
 
-      val dueTags = viewDue.select(".govuk-tag--blue:contains(Due)")
-      dueTags.size() mustBe 1
+      val returnsCard          = viewDue.select(".card-half-width, .card-main").first()
+      val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
+      anyTagsInReturnsCard.size() mustBe 0
     }
 
     "NOT display Overdue banner content when scenario is Incomplete instead" in {
@@ -531,8 +529,9 @@ class HomepageViewSpec extends ViewSpecBase {
       val incompleteTags = viewDue.select(".govuk-tag--purple:contains(Incomplete)")
       incompleteTags.size() mustBe 0
 
-      val dueTags = viewDue.select(".govuk-tag--blue:contains(Due)")
-      dueTags.size() mustBe 1
+      val returnsCard          = viewDue.select(".card-half-width, .card-main").first()
+      val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
+      anyTagsInReturnsCard.size() mustBe 0
     }
 
     "NOT display Incomplete banner content when scenario is Overdue instead" in {

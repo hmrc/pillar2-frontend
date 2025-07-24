@@ -108,13 +108,14 @@
           <h2 class="govuk-heading-m">
             @messages("homepage.returns.title")
             @maybeUktrBannerScenario.map { scenario =>
-              <span class="govuk-tag @{
-                scenario match {
-                  case "Overdue" => "govuk-tag--red"
-                  case "Incomplete" => "govuk-tag--purple"
-                  case _ => "govuk-tag--blue"
-                }
-              }" aria-label="@{scenario} returns" title="@{scenario} returns" style="float: right;">@scenario</span>
+              @if(scenario == "Overdue" || scenario == "Incomplete") {
+                <span class="govuk-tag @{
+                  scenario match {
+                    case "Overdue" => "govuk-tag--red"
+                    case "Incomplete" => "govuk-tag--purple"
+                  }
+                }" aria-label="@{scenario} returns" title="@{scenario} returns" style="float: right;">@scenario</span>
+              }
             }
           </h2>
         </div>
