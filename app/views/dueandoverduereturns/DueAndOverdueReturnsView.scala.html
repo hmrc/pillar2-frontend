@@ -1,0 +1,130 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import models.obligationsandsubmissions._
+@import java.time.LocalDate
+@import java.time.format.DateTimeFormatter
+@import views.html.templates.Layout
+@import views.ViewUtils._
+@import views.html.styles.tableScrollStyles
+@import views.html.components.gds.ScrollWrapper
+
+@this(
+    layout: Layout,
+    govukBackLink: GovukBackLink,
+    govukTable: GovukTable,
+    govukWarningText: GovukWarningText,
+    govukInsetText: GovukInsetText,
+    govukButton: GovukButton
+)
+
+@(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+
+@dateFormatter = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
+
+@hasOpenObligations = @{
+  data.accountingPeriodDetails.exists(period => 
+    period.obligations.exists(_.status == ObligationStatus.Open)
+  )
+}
+
+@layout(pageTitle = titleNoForm(messages("dueAndOverdueReturns.title"))) {
+    @tableScrollStyles()
+    
+        <h1 class="govuk-heading-l">@messages("dueAndOverdueReturns.heading")</h1>
+    
+        @if(data.accountingPeriodDetails.isEmpty || !hasOpenObligations) {
+            <p class="govuk-body">
+                @if(agentView) {
+                    @messages("dueAndOverdueReturns.agent.noReturns")
+                } else {
+                    @messages("dueAndOverdueReturns.noReturns")
+                }
+            </p>
+        } else {
+            <p class="govuk-body">
+                @if(agentView) {
+                    @messages("dueAndOverdueReturns.agent.multipleReturns")
+                } else {
+                    @messages("dueAndOverdueReturns.multipleReturns")
+                }
+            </p>
+            <p class="govuk-body">
+                @if(agentView) {
+                    @messages("dueAndOverdueReturns.agent.commercialSoftware")
+                } else {
+                    @messages("dueAndOverdueReturns.commercialSoftware")
+                }
+            </p>
+            
+            @for(period <- data.accountingPeriodDetails) {
+                @if(period.obligations.exists(_.status == ObligationStatus.Open)) {
+                    <h2 class="govuk-heading-s">
+                        @messages("dueAndOverdueReturns.accountingPeriod", 
+                            period.startDate.format(dateFormatter), 
+                            period.endDate.format(dateFormatter))
+                    </h2>
+    
+                    @ScrollWrapper {
+                    @govukTable(Table(
+                        head = Some(Seq(
+                            HeadCell(content = Text(messages("dueAndOverdueReturns.table.returnType"))),
+                            HeadCell(content = Text(messages("dueAndOverdueReturns.table.dueDate")), classes = "govuk-!-width-one-third"),
+                            HeadCell(content = Text(messages("dueAndOverdueReturns.table.status")), classes = "govuk-!-width-one-quarter")
+                        )),
+                        rows = period.obligations.filter(_.status == ObligationStatus.Open).map { obligation =>
+                            Seq(
+                                TableRow(content = Text(messages(s"dueAndOverdueReturns.obligationType.${obligation.obligationType}"))),
+                                TableRow(content = Text(period.dueDate.format(dateFormatter))),
+                                TableRow(content = 
+                                    if(period.dueDate.isBefore(LocalDate.now())) {
+                                        HtmlContent(
+                                            s"""<p class="govuk-tag govuk-tag--red">
+                                                ${messages("dueAndOverdueReturns.status.overdue")}
+                                            </p>"""
+                                        )
+                                    } else {
+                                        HtmlContent(
+                                            s"""<p class="govuk-tag govuk-tag--blue">
+                                                ${messages("dueAndOverdueReturns.status.due")}
+                                            </p>"""
+                                        )
+                                    }
+                                )
+                            )
+                            },
+                            caption = Some(messages("dueAndOverdueReturns.table.caption")),
+                            captionClasses = "govuk-visually-hidden",
+                            classes = "govuk-grid-column-full"
+                        ))
+                    }
+                }
+            }
+        }
+        <h2 class="govuk-heading-m">@messages("dueAndOverdueReturns.submissionHistory")</h2>
+        <p class="govuk-body">
+            @if(agentView) {
+                @messages("dueAndOverdueReturns.agent.submissionHistory.description1")
+            } else {
+                @messages("dueAndOverdueReturns.submissionHistory.description1")
+            }
+            <a href="@controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad" class="govuk-link">@messages("dueAndOverdueReturns.submissionHistory.link")</a>
+            @messages("dueAndOverdueReturns.submissionHistory.description2")
+        </p>
+    }
+

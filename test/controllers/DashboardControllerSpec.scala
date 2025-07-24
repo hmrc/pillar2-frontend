@@ -112,6 +112,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       "newHomepageEnabled is false" in {
         val application =
           applicationBuilder(userAnswers = None, enrolments)
+            .configure("features.newHomepageEnabled" -> false)
             .overrides(
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[SubscriptionService].toInstance(mockSubscriptionService)

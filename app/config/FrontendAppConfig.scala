@@ -87,7 +87,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   //Enable Disable
   val grsStubEnabled: Boolean = configuration.get[Boolean]("features.grsStubEnabled")
 
-  val newHomepageEnabled: Boolean = configuration.get[Boolean]("features.newHomepageEnabled")
+  val newHomepageEnabled:   Boolean = configuration.get[Boolean]("features.newHomepageEnabled")
+  val phase2ScreensEnabled: Boolean = configuration.get[Boolean]("features.phase2ScreensEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
 
