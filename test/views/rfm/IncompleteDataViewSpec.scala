@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
@@ -35,7 +36,9 @@ class IncompleteDataViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You have an incomplete task")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You have an incomplete task"
     }
 
     "have a link with the correct text and url" in {

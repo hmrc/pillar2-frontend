@@ -19,6 +19,7 @@ package views.paymenthistory
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      groupView.getElementsByTag("h1").text must include("Transaction history")
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Transaction history"
     }
 
     "have paragraph 1 for a group" in {

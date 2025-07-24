@@ -19,6 +19,7 @@ package views.bta
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.bta.NoPlrIdGuidanceView
 
 class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
@@ -35,7 +36,9 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You need a Pillar 2 Top-up Taxes ID to access this service")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You need a Pillar 2 Top-up Taxes ID to access this service"
     }
 
     "have a paragraph body" in {

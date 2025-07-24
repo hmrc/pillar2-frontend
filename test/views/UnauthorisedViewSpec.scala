@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.UnauthorisedView
 
 class UnauthorisedViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class UnauthorisedViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You do not have access to this service")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You do not have access to this service"
     }
 
     "have a paragraph body" in {

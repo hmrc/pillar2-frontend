@@ -21,6 +21,7 @@ import forms.RepaymentsContactNameFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactNameView
 
 class RepaymentsContactNameViewSpec extends ViewSpecBase {
@@ -40,9 +41,9 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include(
-          "What is the name of the person or team we should contact about the repayment request?"
-        )
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "What is the name of the person or team we should contact about the repayment request?"
       }
 
       "have a hint" in {

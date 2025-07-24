@@ -21,6 +21,7 @@ import forms.UpeNameRegistrationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.registrationview.UpeNameRegistrationView
 
@@ -40,7 +41,9 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include("What is the name of the Ultimate Parent Entity?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is the name of the Ultimate Parent Entity?"
     }
 
     "have the correct section caption" in {

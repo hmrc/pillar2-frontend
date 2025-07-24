@@ -21,6 +21,7 @@ import forms.GroupRegistrationDateReportFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.GroupRegistrationDateReportView
 
 class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
@@ -41,10 +42,9 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Enter the group’s registration date to the Report Pillar 2 " +
-          "Top-up Taxes service"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service"
     }
 
     "have a hint description" in {

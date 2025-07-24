@@ -19,6 +19,7 @@ package views.paymenthistory
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.html.paymenthistory.TransactionHistoryView
@@ -72,7 +73,9 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      groupView.getElementsByTag("h1").text must include("Transaction history")
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Transaction history"
     }
 
     "have correct paragraph 1 for a group" in {

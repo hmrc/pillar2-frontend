@@ -23,6 +23,7 @@ import models.NormalMode
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmRegisteredAddressView
 
@@ -43,7 +44,9 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include(s"What is the registered office address of $userName?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"What is the registered office address of $userName?"
     }
 
     "have the correct section caption" in {

@@ -22,6 +22,7 @@ import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.BankAccountDetailsView
 
 class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
@@ -43,7 +44,12 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Bank account details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      println(h1Elements.text())
+      h1Elements.size() mustBe 1
+      // FIXME: this title contains a hint. Full H1 text is "Bank account details The account must be a UK business account."
+      h1Elements.text() must startWith("Bank account details")
+      h1Elements.text() mustBe "Bank account details The account must be a UK business account."
     }
 
     "have a label" in {

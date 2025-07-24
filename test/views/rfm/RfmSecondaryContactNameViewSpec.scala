@@ -21,6 +21,7 @@ import forms.RfmSecondaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.rfm.RfmSecondaryContactNameView
 
@@ -44,9 +45,9 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
     }
 
     "have the correct hint text" in {

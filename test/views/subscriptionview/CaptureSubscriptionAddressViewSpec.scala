@@ -23,6 +23,7 @@ import models.NormalMode
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
@@ -45,7 +46,9 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("h1").text must include("What address do you want to use as the filing member’s contact address?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What address do you want to use as the filing member’s contact address?"
     }
 
     "display the address line 1 label" in {

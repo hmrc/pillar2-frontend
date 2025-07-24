@@ -21,6 +21,7 @@ import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.CorporatePositionView
 
 class CorporatePositionViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class CorporatePositionViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your position in the corporate structure of the group?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is your position in the corporate structure of the group?"
     }
 
     "have radio items" in {

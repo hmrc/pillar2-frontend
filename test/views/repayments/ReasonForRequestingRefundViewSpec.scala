@@ -22,6 +22,7 @@ import generators.Generators
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
@@ -40,7 +41,9 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("Why are you requesting a repayment?")
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "Why are you requesting a repayment?"
       }
 
       "have a hint description" in {

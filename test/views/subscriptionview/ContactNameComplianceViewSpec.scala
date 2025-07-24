@@ -21,6 +21,7 @@ import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.ContactNameComplianceView
 
@@ -43,9 +44,9 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("h1").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
     }
 
     "display the hint text" in {

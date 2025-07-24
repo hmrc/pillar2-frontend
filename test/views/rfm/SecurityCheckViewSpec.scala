@@ -21,6 +21,7 @@ import forms.RfmSecurityCheckFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Enter the group’s Pillar 2 Top-up Taxes ID"
     }
 
     "have a hint description" in {

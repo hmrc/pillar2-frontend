@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
@@ -36,7 +37,9 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot return, your repayment request is complete")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, your repayment request is complete"
     }
 
     "have a paragraph" in {

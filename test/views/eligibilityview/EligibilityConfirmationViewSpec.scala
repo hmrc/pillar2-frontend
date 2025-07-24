@@ -19,6 +19,7 @@ package views.eligibilityview
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class EligibilityConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You need to register this group to report Pillar 2 Top-up Taxes")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You need to register this group to report Pillar 2 Top-up Taxes"
     }
 
     "have a paragraph body" in {

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.rfm.RfmStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmWaitingRoomView
 
 class RfmWaitingRoomViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting...")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Submitting..."
     }
 
     "have a sub heading" in {

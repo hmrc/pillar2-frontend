@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.repayments.RepaymentsStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsWaitingRoomView
 
 class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting your repayment request")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Submitting your repayment request"
     }
 
     "have a sub heading" in {

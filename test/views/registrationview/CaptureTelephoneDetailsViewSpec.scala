@@ -21,6 +21,7 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.CaptureTelephoneDetailsView
 
 class CaptureTelephoneDetailsViewSpec extends ViewSpecBase {
@@ -41,7 +42,9 @@ class CaptureTelephoneDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text mustEqual "What is the phone number for John Doe?"
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "What is the phone number for John Doe?"
     }
 
     "have a hint description" in {

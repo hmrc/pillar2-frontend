@@ -19,6 +19,7 @@ package views.registrationview
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationFailedNfmView
 
 class RegistrationFailedNfmViewSpec extends ViewSpecBase {
@@ -35,7 +36,9 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     }
 
     "have a headings" in {
-      view.getElementsByTag("h1").text must include("The details you entered did not match our records")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "The details you entered did not match our records"
       view.getElementsByTag("h2").text must include("How to confirm your details")
 
     }

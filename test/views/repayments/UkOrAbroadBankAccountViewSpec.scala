@@ -21,6 +21,7 @@ import forms.UkOrAbroadBankAccountFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.UkOrAbroadBankAccountView
 
 class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
@@ -39,7 +40,9 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("What type of account will the repayment be sent to?")
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe "What type of account will the repayment be sent to?"
       }
 
       "have radio items" in {

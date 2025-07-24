@@ -19,6 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.StartPageView
 
 class StartPageViewSpec extends ViewSpecBase {
@@ -38,7 +39,9 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Replace the filing member for a Pillar 2 Top-up Taxes account"
     }
 
     "have sub headings" in {

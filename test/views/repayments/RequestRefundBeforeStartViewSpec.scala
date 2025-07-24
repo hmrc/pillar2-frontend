@@ -19,6 +19,7 @@ package views.repayments
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
@@ -34,7 +35,9 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Request a repayment")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Request a repayment"
     }
 
     "have two h2 headings" in {

@@ -21,6 +21,7 @@ import models.repayments.NonUKBank
 import models.{UkOrAbroadBankAccount, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import pages._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.repayments._
@@ -74,7 +75,9 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers before submitting your repayment request")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Check your answers before submitting your repayment request"
     }
 
     "have a sub heading" in {

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientConfirmDetailsView
 
 class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
@@ -37,7 +38,9 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Confirm your client’s details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Confirm your client’s details"
     }
 
     "have two h2 headings" in {
