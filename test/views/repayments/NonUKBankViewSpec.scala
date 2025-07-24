@@ -35,7 +35,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have the correct title" in {
-      view.title() mustBe "Bank account details"
+      view.title() mustBe "Bank account details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {

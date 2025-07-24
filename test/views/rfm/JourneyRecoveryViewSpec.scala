@@ -30,7 +30,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
   "Replace filing member journey recovery view" should {
 
     "have a title" in {
-      view.title() mustBe "There has been an error"
+      view.title() mustBe "There has been an error - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

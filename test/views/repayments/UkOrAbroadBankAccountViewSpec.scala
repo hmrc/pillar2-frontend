@@ -35,7 +35,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "What type of account will the repayment be sent to?"
+        view.title() mustBe "What type of account will the repayment be sent to? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a heading" in {

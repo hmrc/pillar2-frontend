@@ -30,7 +30,7 @@ class UnauthorisedViewSpec extends ViewSpecBase {
   "Unauthorised View" should {
 
     "have a title" in {
-      view.title() mustBe "You do not have access to this service"
+      view.title() mustBe "You do not have access to this service - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

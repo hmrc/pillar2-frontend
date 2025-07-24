@@ -29,7 +29,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   "Repayments incomplete data view" should {
     "have a title" in {
-      view.title() mustBe "Repayment request has missing information"
+      view.title() mustBe "Repayment request has missing information - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

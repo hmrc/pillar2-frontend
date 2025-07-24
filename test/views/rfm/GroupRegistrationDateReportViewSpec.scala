@@ -33,7 +33,7 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
   "Group Registration Date Report View" should {
 
     "have a title" in {
-      view.title() mustBe "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service"
+      view.title() mustBe "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

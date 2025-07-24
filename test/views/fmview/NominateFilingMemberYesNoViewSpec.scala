@@ -33,7 +33,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
   "Nominate Filing Member Yes No View" should {
 
     "have a title" in {
-      view.title() mustBe "Nominated filing member"
+      view.title() mustBe "Nominated filing member - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

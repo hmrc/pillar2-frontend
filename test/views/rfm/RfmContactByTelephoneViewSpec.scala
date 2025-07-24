@@ -33,7 +33,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
-      view.title() mustBe "Can we contact by telephone?"
+      view.title() mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

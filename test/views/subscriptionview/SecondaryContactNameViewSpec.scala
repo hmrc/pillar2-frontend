@@ -36,7 +36,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "display the correct page title" in {
-      view.title() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
+      view.title() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "show 'Contact details' as the section header" in {

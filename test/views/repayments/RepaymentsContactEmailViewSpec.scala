@@ -38,7 +38,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "What is the email address?"
+        view.title() mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a heading" in {

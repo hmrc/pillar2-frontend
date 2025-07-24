@@ -30,7 +30,7 @@ class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
   "Repayments Waiting Room View" should {
 
     "have a title" in {
-      view.title() mustBe "Submitting your repayment request"
+      view.title() mustBe "Submitting your repayment request - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

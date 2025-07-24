@@ -30,7 +30,7 @@ class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
   "Manage Group Details Waiting Room View" should {
 
     "have a title" in {
-      view.title() mustBe "Submitting your group details"
+      view.title() mustBe "Submitting your group details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

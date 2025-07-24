@@ -37,7 +37,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider("John Doe"), mode, "John Doe")(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "Can we contact by telephone?"
+        view.title() mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a heading" in {
