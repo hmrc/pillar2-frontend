@@ -30,7 +30,7 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
   "Rfm Waiting Room View" should {
 
     "have a title" in {
-      view.title() mustBe "Submitting your registration"
+      view.title() mustBe "Submitting your registration - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

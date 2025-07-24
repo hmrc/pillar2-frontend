@@ -39,7 +39,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the registered office address?"
+      view.title() mustBe "What is the registered office address? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {

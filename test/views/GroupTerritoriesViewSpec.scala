@@ -32,7 +32,7 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
   "Group Territories View" should {
 
     "have a title" in {
-      view.title() mustBe "Are you registering as the group’s Ultimate Parent Entity?"
+      view.title() mustBe "Are you registering as the group’s Ultimate Parent Entity? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

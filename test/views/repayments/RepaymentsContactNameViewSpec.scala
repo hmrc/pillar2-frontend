@@ -36,7 +36,8 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "What is the name of the person or team we should contact about the refund request?"
+        view
+          .title() mustBe "What is the name of the person or team we should contact about the refund request - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a heading" in {

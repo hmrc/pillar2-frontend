@@ -32,7 +32,7 @@ class AgentClientPillarIdViewSpec extends ViewSpecBase {
   "Agent Client PillarId View" should {
 
     "have a title" in {
-      view.title() mustBe "What is your client’s Pillar 2 Top-up Taxes ID?"
+      view.title() mustBe "What is your client’s Pillar 2 Top-up Taxes ID? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

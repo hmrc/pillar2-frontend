@@ -52,7 +52,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.title() mustBe "Check your answers for filing member details"
+      view.title() mustBe "Check your answers for filing member details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

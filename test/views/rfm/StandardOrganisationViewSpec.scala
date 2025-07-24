@@ -30,7 +30,7 @@ class StandardOrganisationViewSpec extends ViewSpecBase {
   "Standard Organisation View" should {
 
     "have a title" in {
-      view.title() mustBe "Sorry, you’re unable to use this service"
+      view.title() mustBe "Sorry, you’re unable to use this service - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

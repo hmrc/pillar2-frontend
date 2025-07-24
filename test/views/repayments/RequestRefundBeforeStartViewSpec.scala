@@ -30,7 +30,7 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
   "Request Refund Before Start View" should {
 
     "have a title" in {
-      view.title() mustBe "Request a refund"
+      view.title() mustBe "Request a refund - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {

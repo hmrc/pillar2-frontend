@@ -48,7 +48,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
   "Security Questions Check Your Answers View" should {
 
     "have a title" in {
-      view.title() mustBe "Check Your Answers"
+      view.title() mustBe "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

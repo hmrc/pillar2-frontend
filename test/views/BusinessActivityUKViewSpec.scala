@@ -32,7 +32,7 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
   "Business Activity UK View" should {
 
     "have a title" in {
-      view.title() mustBe "Does the group have an entity located in the UK?"
+      view.title() mustBe "Does the group have an entity located in the UK? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {

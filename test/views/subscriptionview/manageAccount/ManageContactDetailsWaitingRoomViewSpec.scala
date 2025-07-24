@@ -34,7 +34,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is InProgress" must {
 
       "have correct title" in {
-        inProgressView.title() mustBe "Submitting your contact details"
+        inProgressView.title() mustBe "Submitting your contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have correct heading" in {

@@ -33,7 +33,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
   "GroupAccountingPeriodView" when {
     "it's an organisation" must {
       "have a title" in {
-        view().title() mustBe "What is the group accounting period?"
+        view().title() mustBe "What is the group accounting period? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {

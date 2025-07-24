@@ -37,7 +37,7 @@ class DashboardViewSpec extends ViewSpecBase {
   "Dashboard View for Organisation" should {
 
     "have a title" in {
-      organisationDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account"
+      organisationDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {

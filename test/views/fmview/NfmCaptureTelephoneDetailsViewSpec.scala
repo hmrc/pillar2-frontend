@@ -33,7 +33,7 @@ class NfmCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
   "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
-      view.title() mustBe "What is the phone number?"
+      view.title() mustBe "What is the phone number? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
