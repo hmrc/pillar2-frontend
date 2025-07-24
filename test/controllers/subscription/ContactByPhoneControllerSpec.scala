@@ -32,7 +32,7 @@ import views.html.subscriptionview.ContactByTelephoneView
 
 import scala.concurrent.Future
 
-class ContactByTelephoneControllerSpec extends SpecBase {
+class ContactByPhoneControllerSpec extends SpecBase {
 
   val form = new ContactByTelephoneFormProvider()
   val formProvider: Form[Boolean] = form("name")

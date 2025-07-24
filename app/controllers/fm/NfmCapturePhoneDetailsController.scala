@@ -19,40 +19,40 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.ContactNfmByTelephoneFormProvider
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
-import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
+import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.fmview.ContactNfmByTelephoneView
+import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNfmByTelephoneController @Inject() (
+class NfmCapturePhoneDetailsController @Inject()(
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 NominatedFilingMemberNavigator,
-  formProvider:              ContactNfmByTelephoneFormProvider,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactNfmByTelephoneView
+  view:                      NfmCaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _    <- request.userAnswers.get(FmContactEmailPage)
+      _    <- request.userAnswers.get(FmPhonePreferencePage)
       name <- request.userAnswers.get(FmContactNamePage)
     } yield {
       val form = formProvider(name)
-      val preparedForm = request.userAnswers.get(FmPhonePreferencePage) match {
+      val preparedForm = request.userAnswers.get(FmCapturePhonePage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -70,15 +70,13 @@ class ContactNfmByTelephoneController @Inject() (
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
-            nominatedPhoneNumber =>
+            value =>
               for {
-                updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(FmPhonePreferencePage, nominatedPhoneNumber))
-                _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(FmPhonePreferencePage, mode, updatedAnswers))
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmCapturePhonePage, value))
+                _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+              } yield Redirect(navigator.nextPage(FmCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
-
 }

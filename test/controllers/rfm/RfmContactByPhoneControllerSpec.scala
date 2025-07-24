@@ -32,7 +32,7 @@ import views.html.rfm.RfmContactByTelephoneView
 
 import scala.concurrent.Future
 
-class RfmContactByTelephoneControllerSpec extends SpecBase {
+class RfmContactByPhoneControllerSpec extends SpecBase {
 
   val form = new RfmContactByTelephoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")

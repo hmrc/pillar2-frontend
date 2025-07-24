@@ -14,50 +14,50 @@
  * limitations under the License.
  */
 
-package controllers.registration
+package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.ContactUPEByTelephoneFormProvider
+import controllers.actions._
+import forms.CaptureTelephoneDetailsFormProvider
 import models.Mode
-import navigation.UltimateParentNavigator
-import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
+import navigation.SubscriptionNavigator
+import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.ContactUPEByTelephoneView
+import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactUPEByTelephoneController @Inject() (
+class ContactCapturePhoneDetailsController @Inject()(
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactUPEByTelephoneFormProvider,
+  navigator:                 SubscriptionNavigator,
+  formProvider:              CaptureTelephoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  navigator:                 UltimateParentNavigator,
-  view:                      ContactUPEByTelephoneView
+  view:                      ContactCaptureTelephoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     (for {
-      _           <- request.userAnswers.get(UpeContactEmailPage)
-      contactName <- request.userAnswers.get(UpeContactNamePage)
+      _           <- request.userAnswers.get(SubPrimaryPhonePreferencePage)
+      contactName <- request.userAnswers.get(SubPrimaryContactNamePage)
     } yield {
       val form = formProvider(contactName)
-      val preparedForm = request.userAnswers.get(UpePhonePreferencePage) match {
-        case None        => form
-        case Some(value) => form.fill(value)
+      val preparedForm = request.userAnswers.get(SubPrimaryCapturePhonePage) match {
+        case Some(v) => form.fill(v)
+        case None    => form
       }
-
       Ok(view(preparedForm, mode, contactName))
+
     })
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
@@ -65,18 +65,19 @@ class ContactUPEByTelephoneController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(UpeContactNamePage)
+      .get(SubPrimaryContactNamePage)
       .map { contactName =>
-        formProvider(contactName)
+        val form = formProvider(contactName)
+        form
           .bindFromRequest()
           .fold(
             formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominated =>
+            value =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(UpePhonePreferencePage, nominated))
+                  Future.fromTry(request.userAnswers.set(SubPrimaryCapturePhonePage, value))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(UpePhonePreferencePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(SubPrimaryCapturePhonePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

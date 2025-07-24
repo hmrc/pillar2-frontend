@@ -31,7 +31,7 @@ import views.html.fmview.ContactNfmByTelephoneView
 
 import scala.concurrent.Future
 
-class ContactNfmByTelephoneControllerSpec extends SpecBase {
+class ContactNfmByPhoneControllerSpec extends SpecBase {
 
   val formProvider = new ContactNfmByTelephoneFormProvider()
 

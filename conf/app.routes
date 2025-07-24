@@ -54,18 +54,18 @@ GET         /business-matching/filing-member/change-nominate                    
 POST        /business-matching/filing-member/change-nominate                                         controllers.fm.NominateFilingMemberYesNoController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /business-matching/filing-member/no-id/check-answers                                     controllers.fm.NfmCheckYourAnswersController.onPageLoad
 
 
-GET         /business-matching/ultimate-parent/no-id/input-phone                                 controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/ultimate-parent/no-id/input-phone                                 controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-input-telephone                          controllers.registration.CaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-input-telephone                          controllers.registration.CaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/input-phone                                 controllers.registration.CapturePhoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/ultimate-parent/no-id/input-phone                                 controllers.registration.CapturePhoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/ultimate-parent/no-id/change-input-phone                          controllers.registration.CapturePhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-input-phone                          controllers.registration.CapturePhoneDetailsController.onSubmit(mode: Mode = CheckMode)
 GET         /business-matching/ultimate-parent/no-id/check-answers                                   controllers.registration.UpeCheckYourAnswersController.onPageLoad
 
 
@@ -160,15 +160,15 @@ POST        /business-matching/filing-member/uk-based/entity-type               
 GET         /business-matching/filing-member/uk-based/change-entity-type                             controllers.fm.NfmEntityTypeController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/filing-member/uk-based/change-entity-type                             controllers.fm.NfmEntityTypeController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/filing-member/no-id/phone                                         controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/no-id/phone                                         controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/no-id/change-telephone                                  controllers.fm.ContactNfmByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/no-id/change-telephone                                  controllers.fm.ContactNfmByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/phone                                         controllers.fm.ContactNfmByPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/phone                                         controllers.fm.ContactNfmByPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-phone                                  controllers.fm.ContactNfmByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-phone                                  controllers.fm.ContactNfmByPhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /business-matching/filing-member/no-id/input-phone                                   controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /business-matching/filing-member/no-id/input-phone                                   controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/filing-member/no-id/change-input-telephone                            controllers.fm.NfmCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/filing-member/no-id/change-input-telephone                            controllers.fm.NfmCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/filing-member/no-id/input-phone                                   controllers.fm.NfmCapturePhoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /business-matching/filing-member/no-id/input-phone                                   controllers.fm.NfmCapturePhoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /business-matching/filing-member/no-id/change-input-phone                            controllers.fm.NfmCapturePhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/filing-member/no-id/change-input-phone                            controllers.fm.NfmCapturePhoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 
 GET         /further-details/accounting-period                                                       controllers.subscription.GroupAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
@@ -242,19 +242,19 @@ POST        /contact-details/change-input-email                                 
 GET         /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onPageLoad
 POST        /manage-account/contact-details/change-input-email                                       controllers.subscription.manageAccount.ContactEmailAddressController.onSubmit
 
-GET         /contact-details/phone                                                               controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/phone                                                               controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-telephone                                                        controllers.subscription.ContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/phone                                                               controllers.subscription.ContactByPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/phone                                                               controllers.subscription.ContactByPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-phone                                                        controllers.subscription.ContactByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-phone                                                        controllers.subscription.ContactByPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad
 POST        /manage-account/contact-details/change-telephone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit
 
 
-GET         /contact-details/input-phone                                                         controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/input-phone                                                         controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-input-telephone                                                  controllers.subscription.ContactCaptureTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/input-phone                                                         controllers.subscription.ContactCapturePhoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/input-phone                                                         controllers.subscription.ContactCapturePhoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-input-phone                                                  controllers.subscription.ContactCapturePhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-input-phone                                                  controllers.subscription.ContactCapturePhoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET         /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad
 POST        /manage-account/contact-details/change-input-telephone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit

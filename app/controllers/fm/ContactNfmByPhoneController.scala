@@ -14,70 +14,68 @@
  * limitations under the License.
  */
 
-package controllers.subscription
+package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.ContactByTelephoneFormProvider
+import forms.ContactNfmByTelephoneFormProvider
 import models.Mode
-import navigation.SubscriptionNavigator
-import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
-import play.api.data.Form
+import navigation.NominatedFilingMemberNavigator
+import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.ContactByTelephoneView
+import views.html.fmview.ContactNfmByTelephoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactByTelephoneController @Inject() (
+class ContactNfmByPhoneController @Inject()(
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  navigator:                 SubscriptionNavigator,
-  formProvider:              ContactByTelephoneFormProvider,
+  navigator:                 NominatedFilingMemberNavigator,
+  formProvider:              ContactNfmByTelephoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactByTelephoneView
+  view:                      ContactNfmByTelephoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    request.userAnswers
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        val preparedForm: Form[Boolean] = request.userAnswers.get(SubPrimaryPhonePreferencePage) match {
-          case Some(v) => form.fill(v)
-          case None    => form
-        }
-        Ok(view(preparedForm, mode, contactName))
-
+    (for {
+      _    <- request.userAnswers.get(FmContactEmailPage)
+      name <- request.userAnswers.get(FmContactNamePage)
+    } yield {
+      val form = formProvider(name)
+      val preparedForm = request.userAnswers.get(FmPhonePreferencePage) match {
+        case Some(value) => form.fill(value)
+        case None        => form
       }
+      Ok(view(preparedForm, mode, name))
+    })
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
   }
 
   def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     request.userAnswers
-      .get(SubPrimaryContactNamePage)
-      .map { contactName =>
-        val form = formProvider(contactName)
-        form
+      .get(FmContactNamePage)
+      .map { userName =>
+        formProvider(userName)
           .bindFromRequest()
           .fold(
-            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, contactName))),
-            nominatePrimaryContactNumber =>
+            formWithErrors => Future.successful(BadRequest(view(formWithErrors, mode, userName))),
+            nominatedPhoneNumber =>
               for {
                 updatedAnswers <-
-                  Future.fromTry(request.userAnswers.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
+                  Future.fromTry(request.userAnswers.set(FmPhonePreferencePage, nominatedPhoneNumber))
                 _ <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
-              } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, mode, updatedAnswers))
+              } yield Redirect(navigator.nextPage(FmPhonePreferencePage, mode, updatedAnswers))
           )
       }
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))

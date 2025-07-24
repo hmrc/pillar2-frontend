@@ -31,7 +31,7 @@ import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
-class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 

@@ -31,7 +31,7 @@ import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
-class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 
