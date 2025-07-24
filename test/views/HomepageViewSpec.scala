@@ -329,4 +329,228 @@ class HomepageViewSpec extends ViewSpecBase {
       organisationView.getElementsByClass("govuk-back-link").size() mustBe 0
     }
   }
+
+  "HomepageView UKTR Banner Negative Tests" should {
+    "not display UKTR banner when maybeUktrBannerScenario is None" in {
+      val viewWithNoBanner: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      // Should not contain any UKTR banner headings
+      val uktrHeadings = viewWithNoBanner.select("h2:contains(You have one or more returns due), h2:contains(You have overdue or incomplete returns)")
+      uktrHeadings.size() mustBe 0
+
+      // Should not contain UKTR banner text
+      val bodyText = viewWithNoBanner.text()
+      bodyText must not include "Submit your returns before the due date to avoid penalties"
+      bodyText must not include "You must submit or complete these returns as soon as possible"
+
+      // Should not contain UKTR submission link
+      val submissionLinks = viewWithNoBanner.select("a[id=submission-link]")
+      submissionLinks.size() mustBe 0
+    }
+
+    "not display scenario tags when no UKTR banner scenario is present" in {
+      val viewWithNoBanner: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      // Should not contain any scenario tags (Due, Overdue, Incomplete)
+      val scenarioTags = viewWithNoBanner.select(".govuk-tag--red, .govuk-tag--purple, .govuk-tag--blue")
+      scenarioTags.size() mustBe 0
+
+      // Verify no "Due", "Overdue", or "Incomplete" tags exist
+      val tagText = viewWithNoBanner.select(".govuk-tag").text()
+      tagText must not include "Due"
+      tagText must not include "Overdue"
+      tagText must not include "Incomplete"
+    }
+
+    "use standard card layout when no UKTR banner present" in {
+      val viewWithNoBanner: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      val returnsSection = viewWithNoBanner.select("h2:contains(Returns)")
+      returnsSection.size() mustBe 1
+
+      val cardLabel = viewWithNoBanner.select(".card-label")
+      cardLabel.size() mustBe 3
+
+      val uktrSpecificDiv = viewWithNoBanner.select("div[style*='width: 450px']")
+      uktrSpecificDiv.size() mustBe 0
+    }
+  }
+
+  "HomepageView NEGATIVE TESTS - Scenario 1: UKTR Due Banner" should {
+    "NOT display Due banner content when no Due scenario" in {
+      val viewNoDue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      val dueHeadings = viewNoDue.select("h2:contains(You have one or more returns due)")
+      dueHeadings.size() mustBe 0
+
+      val bodyText = viewNoDue.text()
+      bodyText must not include "Submit your returns before the due date to avoid penalties"
+
+      val dueTags = viewNoDue.select(".govuk-tag--blue:contains(Due)")
+      dueTags.size() mustBe 0
+    }
+
+    "NOT display Due banner content when scenario is Overdue instead" in {
+      val viewOverdue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val dueHeadings = viewOverdue.select("h2:contains(You have one or more returns due)")
+      dueHeadings.size() mustBe 0
+
+      val overdueHeadings = viewOverdue.select("h2:contains(You have overdue or incomplete returns)")
+      overdueHeadings.size() mustBe 1
+
+      val dueTags = viewOverdue.select(".govuk-tag--blue:contains(Due)")
+      dueTags.size() mustBe 0
+
+      val overdueTags = viewOverdue.select(".govuk-tag--red:contains(Overdue)")
+      overdueTags.size() mustBe 1
+    }
+
+    "NOT display Due banner content when scenario is Incomplete instead" in {
+      val viewIncomplete: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val dueHeadings = viewIncomplete.select("h2:contains(You have one or more returns due)")
+      dueHeadings.size() mustBe 0
+
+      val bodyText = viewIncomplete.text()
+      bodyText must not include "Submit your returns before the due date to avoid penalties"
+
+      val dueTags = viewIncomplete.select(".govuk-tag--blue:contains(Due)")
+      dueTags.size() mustBe 0
+    }
+  }
+
+  "HomepageView NEGATIVE TESTS - Scenario 2: UKTR Overdue Banner" should {
+    "NOT display Overdue banner content when no Overdue scenario" in {
+      val viewNoOverdue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      val overdueHeadings = viewNoOverdue.select("h2:contains(You have overdue or incomplete returns)")
+      overdueHeadings.size() mustBe 0
+
+      val bodyText = viewNoOverdue.text()
+      bodyText must not include "You must submit or complete these returns as soon as possible"
+
+      val overdueTags = viewNoOverdue.select(".govuk-tag--red:contains(Overdue)")
+      overdueTags.size() mustBe 0
+    }
+
+    "NOT display Overdue banner content when scenario is Due instead" in {
+      val viewDue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val overdueHeadings = viewDue.select("h2:contains(You have overdue or incomplete returns)")
+      overdueHeadings.size() mustBe 0
+
+      val dueHeadings = viewDue.select("h2:contains(You have one or more returns due)")
+      dueHeadings.size() mustBe 1
+
+      val overdueTags = viewDue.select(".govuk-tag--red:contains(Overdue)")
+      overdueTags.size() mustBe 0
+
+      val dueTags = viewDue.select(".govuk-tag--blue:contains(Due)")
+      dueTags.size() mustBe 1
+    }
+
+    "NOT display Overdue banner content when scenario is Incomplete instead" in {
+      val viewIncomplete: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val overdueIncompleteHeadings = viewIncomplete.select("h2:contains(You have overdue or incomplete returns)")
+      overdueIncompleteHeadings.size() mustBe 1
+
+      val bodyText = viewIncomplete.text()
+      bodyText must not include "Submit your returns before the due date to avoid penalties"
+
+      val overdueTags = viewIncomplete.select(".govuk-tag--red:contains(Overdue)")
+      overdueTags.size() mustBe 0
+
+      val incompleteTags = viewIncomplete.select(".govuk-tag--purple:contains(Incomplete)")
+      incompleteTags.size() mustBe 1
+    }
+  }
+
+  "HomepageView NEGATIVE TESTS - Scenario 3: UKTR Incomplete Banner" should {
+    "NOT display Incomplete banner content when no Incomplete scenario" in {
+      val viewNoIncomplete: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+        )
+
+      val incompleteHeadings = viewNoIncomplete.select("h2:contains(You have overdue or incomplete returns)")
+      incompleteHeadings.size() mustBe 0
+
+      val bodyText = viewNoIncomplete.text()
+      bodyText must not include "You must submit or complete these returns as soon as possible"
+
+      val incompleteTags = viewNoIncomplete.select(".govuk-tag--purple:contains(Incomplete)")
+      incompleteTags.size() mustBe 0
+    }
+
+    "NOT display Incomplete banner content when scenario is Due instead" in {
+      val viewDue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      val incompleteHeadings = viewDue.select("h2:contains(You have overdue or incomplete returns)")
+      incompleteHeadings.size() mustBe 0
+
+      val dueHeadings = viewDue.select("h2:contains(You have one or more returns due)")
+      dueHeadings.size() mustBe 1
+
+      val incompleteTags = viewDue.select(".govuk-tag--purple:contains(Incomplete)")
+      incompleteTags.size() mustBe 0
+
+      val dueTags = viewDue.select(".govuk-tag--blue:contains(Due)")
+      dueTags.size() mustBe 1
+    }
+
+    "NOT display Incomplete banner content when scenario is Overdue instead" in {
+      val viewOverdue: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
+        )
+
+      // Should contain Overdue heading (same text as Incomplete)
+      val overdueHeadings = viewOverdue.select("h2:contains(You have overdue or incomplete returns)")
+      overdueHeadings.size() mustBe 1
+
+      val incompleteTags = viewOverdue.select(".govuk-tag--purple:contains(Incomplete)")
+      incompleteTags.size() mustBe 0
+
+      val overdueTags = viewOverdue.select(".govuk-tag--red:contains(Overdue)")
+      overdueTags.size() mustBe 1
+    }
+  }
 }
