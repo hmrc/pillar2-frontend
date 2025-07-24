@@ -30,11 +30,11 @@ class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
   "Manage Group Details Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("Submitting your group details"))
+      view.getElementsByTag("title").text must include("Submitting your group details")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("Submitting your group details"))
+      view.getElementsByTag("h1").text must include("Submitting your group details")
     }
 
     "have a sub heading" in {
