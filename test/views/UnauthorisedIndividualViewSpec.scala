@@ -30,7 +30,7 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
   "Unauthorised Individual View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe "Register your group"
     }
 
     "have a heading" in {

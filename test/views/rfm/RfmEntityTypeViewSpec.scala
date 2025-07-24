@@ -33,7 +33,7 @@ class RfmEntityTypeViewSpec extends ViewSpecBase {
   "Rfm Entity Type View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What entity type is the new nominated filing member?")
+      view.title() mustBe "What entity type is the new nominated filing member?"
     }
 
     "have a caption" in {

@@ -33,7 +33,7 @@ class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
   "Uk Based Filing Member View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Is the new nominated filing member registered in the UK?")
+      view.title() mustBe "Is the new nominated filing member registered in the UK?"
     }
 
     "have a caption" in {

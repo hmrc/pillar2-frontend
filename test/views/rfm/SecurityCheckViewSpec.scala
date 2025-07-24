@@ -33,7 +33,7 @@ class SecurityCheckViewSpec extends ViewSpecBase {
   "Security Check View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
+      view.title() mustBe "Enter the group’s Pillar 2 Top-up Taxes ID"
     }
 
     "have a caption" in {

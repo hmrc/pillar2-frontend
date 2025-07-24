@@ -30,7 +30,7 @@ class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
   "Repayments Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Submitting your repayment request")
+      view.title() mustBe "Submitting your repayment request"
     }
 
     "have a heading" in {

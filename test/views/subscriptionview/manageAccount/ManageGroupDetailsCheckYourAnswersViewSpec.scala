@@ -37,7 +37,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
 
       "have a title" in {
         val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        view.getElementsByTag("title").text must include(title)
+        view.title() mustBe title
       }
 
       "display back link" in {
@@ -86,7 +86,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
 
       "have a title" in {
         val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        agentView.getElementsByTag("title").text must include(title)
+        agentView.title() mustBe title
       }
 
       "display back link" in {

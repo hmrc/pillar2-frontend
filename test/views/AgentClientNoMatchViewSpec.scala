@@ -32,7 +32,7 @@ class AgentClientNoMatchViewSpec extends ViewSpecBase {
 
     "have a title" in {
       val title = "Your client’s details did not match HMRC records - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe title
     }
 
     "have a heading" in {

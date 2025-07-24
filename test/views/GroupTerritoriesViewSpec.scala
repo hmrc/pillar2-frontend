@@ -32,7 +32,7 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
   "Group Territories View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Are you registering as the group’s Ultimate Parent Entity?")
+      view.title() mustBe "Are you registering as the group’s Ultimate Parent Entity?"
     }
 
     "have a caption" in {

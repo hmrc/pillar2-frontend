@@ -33,7 +33,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
   "AddSecondaryContactView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Add a secondary contact")
+      view.title() mustBe "Add a secondary contact"
     }
 
     "have a caption" in {

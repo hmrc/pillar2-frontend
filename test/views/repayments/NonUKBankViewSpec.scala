@@ -35,7 +35,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("Bank account details")
+      view.title() mustBe "Bank account details"
     }
 
     "have the correct heading" in {

@@ -30,9 +30,7 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
   "KbMn Ineligible View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
-      )
+      view.title() mustBe "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
     }
 
     "have a heading" in {

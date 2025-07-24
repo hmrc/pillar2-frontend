@@ -32,7 +32,7 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
   "Business Activity UK View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Does the group have an entity located in the UK?")
+      view.title() mustBe "Does the group have an entity located in the UK?"
     }
 
     "have a caption" in {

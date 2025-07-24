@@ -40,7 +40,7 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
 
   "Registration Confirmation View" should {
     "have a title" in {
-      viewDomestic.getElementsByTag("title").text must include("Registration complete - Report Pillar 2 Top-up Taxes - GOV.UK")
+      viewDomestic.title() mustBe "Registration complete - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a panel" in {

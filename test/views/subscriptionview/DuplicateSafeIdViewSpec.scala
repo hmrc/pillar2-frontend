@@ -32,7 +32,7 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
   "Duplicate SafeId View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("There is a problem with your registration")
+      view.title() mustBe "There is a problem with your registration"
     }
 
     "have a heading" in {

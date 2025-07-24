@@ -33,7 +33,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
   "Nominate Filing Member Yes No View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Nominated filing member")
+      view.title() mustBe "Nominated filing member"
     }
 
     "have a caption" in {
