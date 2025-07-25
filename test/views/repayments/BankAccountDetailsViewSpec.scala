@@ -27,8 +27,9 @@ import views.html.repayments.BankAccountDetailsView
 
 class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
-  val formProvider = new BankAccountDetailsFormProvider
-  val page: BankAccountDetailsView = inject[BankAccountDetailsView]
+  lazy val formProvider = new BankAccountDetailsFormProvider
+  lazy val page:      BankAccountDetailsView = inject[BankAccountDetailsView]
+  lazy val pageTitle: String                 = "Bank account details"
 
   "Non UK Bank View" should {
     val view: Document = Jsoup.parse(
@@ -40,16 +41,15 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have a title" in {
-      view.title() mustBe "Bank account details - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
-      println(h1Elements.text())
       h1Elements.size() mustBe 1
       // FIXME: this title contains a hint. Full H1 text is "Bank account details The account must be a UK business account."
-      h1Elements.text() must startWith("Bank account details")
-      h1Elements.text() mustBe "Bank account details The account must be a UK business account."
+      h1Elements.text() must startWith(pageTitle)
+      h1Elements.text() mustBe s"$pageTitle The account must be a UK business account."
     }
 
     "have a label" in {

@@ -26,15 +26,16 @@ import views.html.rfm.RfmCapturePrimaryTelephoneView
 
 class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: RfmCapturePrimaryTelephoneView = inject[RfmCapturePrimaryTelephoneView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         RfmCapturePrimaryTelephoneView      = inject[RfmCapturePrimaryTelephoneView]
+  lazy val username:     String                              = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the phone number"
 
   "Rfm Capture Primary Telephone View" should {
 
     "have a title" in {
-      view.title() mustBe "What is the phone number? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +45,7 @@ class RfmCapturePrimaryTelephoneViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the phone number for John Doe?"
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint description" in {

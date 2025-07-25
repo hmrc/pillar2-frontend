@@ -28,7 +28,8 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnsw
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
-  val page: ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
+  lazy val page:      ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
+  lazy val pageTitle: String                                 = "Group details"
 
   "Manage Group Details Check Your Answers View" when {
     "it's an organisation view" must {
@@ -37,8 +38,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       val view: Document = Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = false, None)(request, appConfig, messages).toString())
 
       "have a title" in {
-        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        view.title() mustBe title
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "display back link" in {
@@ -48,7 +48,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Group details"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a summary list" in {
@@ -88,8 +88,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = true, Some("orgName"))(request, appConfig, messages).toString())
 
       "have a title" in {
-        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        agentView.title() mustBe title
+        agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "display back link" in {
@@ -99,7 +98,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       "have a unique H1 heading" in {
         val h1Elements: Elements = agentView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Group details"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a summary list" in {

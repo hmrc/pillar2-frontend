@@ -26,15 +26,15 @@ import views.html.rfm.RfmNameRegistrationView
 
 class RfmNameRegistrationViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactNameFormProvider
-  val page: RfmNameRegistrationView = inject[RfmNameRegistrationView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmPrimaryContactNameFormProvider = new RfmPrimaryContactNameFormProvider
+  lazy val page:         RfmNameRegistrationView           = inject[RfmNameRegistrationView]
+  lazy val view:         Document                          = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                            = "What is the name of the new nominated filing member?"
 
   "Rfm Name Registration View" should {
 
     "have a title" in {
-      view.title() mustBe "What is the name of the new nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class RfmNameRegistrationViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the name of the new nominated filing member?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a button" in {

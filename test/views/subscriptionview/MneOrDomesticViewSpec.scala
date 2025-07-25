@@ -26,16 +26,16 @@ import views.html.subscriptionview.MneOrDomesticView
 
 class MneOrDomesticViewSpec extends ViewSpecBase {
 
-  val formProvider = new MneOrDomesticFormProvider
-  val page: MneOrDomesticView = inject[MneOrDomesticView]
-
-  val view: Document =
+  lazy val formProvider: MneOrDomesticFormProvider = new MneOrDomesticFormProvider
+  lazy val page:         MneOrDomesticView         = inject[MneOrDomesticView]
+  lazy val view: Document =
     Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Entity locations"
 
   "MneOrDomesticView" should {
 
     "have a title" in {
-      view.title() mustBe "Entity locations - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -46,7 +46,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       val h1Elements: Elements = view.getElementsByTag("h1")
       // FIXME: this page has 2 H1 headings!!!
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Entity locations"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the following paragraph and list content" in {

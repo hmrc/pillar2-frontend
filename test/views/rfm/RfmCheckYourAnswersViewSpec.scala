@@ -29,31 +29,31 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  val userName    = "John Doe"
-  val countryCode = "US"
-  val country     = "United States"
+  lazy val userName    = "John Doe"
+  lazy val countryCode = "US"
+  lazy val country     = "United States"
 
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
 
-  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
-
-  val list: SummaryList = SummaryListViewModel(
+  lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmNameRegistrationSummary.row(userAnswer)(messages),
       RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(messages)
     ).flatten
   )
 
-  val page: RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
+  lazy val page:      RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
+  lazy val view:      Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                  = "Check your answers for filing member details"
 
-  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.title() mustBe "Check your answers for filing member details - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -63,7 +63,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers for filing member details"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a summary list keys" in {

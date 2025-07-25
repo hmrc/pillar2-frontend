@@ -26,15 +26,15 @@ import views.html.fmview.NominateFilingMemberYesNoView
 
 class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
-  val formProvider = new NominateFilingMemberYesNoFormProvider
-  val page: NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider = new NominateFilingMemberYesNoFormProvider
+  lazy val page:      NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
+  lazy val view:      Document                      = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                        = "Nominated filing member"
 
   "Nominate Filing Member Yes No View" should {
 
     "have a title" in {
-      view.title() mustBe "Nominated filing member - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Nominated filing member"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

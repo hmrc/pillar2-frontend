@@ -27,11 +27,12 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HomepageViewSpec extends ViewSpecBase {
-  private val page: HomepageView = inject[HomepageView]
-  private val organisationName = "Some Org name"
-  private val plrRef           = "XMPLR0012345678"
-  private val date             = "1 June 2020"
-  private val apEndDate        = Option(LocalDate.of(2024, 1, 1))
+  private val page:             HomepageView      = inject[HomepageView]
+  private val organisationName: String            = "Some Org name"
+  private val plrRef:           String            = "XMPLR0012345678"
+  private val date:             String            = "1 June 2020"
+  private val apEndDate:        Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
+  lazy val pageTitle:           String            = "Pillar 2 Top-up Taxes"
 
   val organisationView: Document =
     Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
@@ -40,10 +41,16 @@ class HomepageViewSpec extends ViewSpecBase {
     Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
   "HomepageView for a group" should {
-    "display page header correctly" in {
+
+    // TODO: test for title was missing!
+    "have a title" in {
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Pillar 2 Top-up Taxes"
+      h1Elements.text() mustBe pageTitle
     }
 
     "display organisation information correctly" in {
@@ -126,10 +133,15 @@ class HomepageViewSpec extends ViewSpecBase {
   }
 
   "HomepageView for an agent" should {
-    "display page header correctly" in {
+    // TODO: test for title was missing!
+    "have a title" in {
+      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
       val h1Elements: Elements = agentView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Pillar 2 Top-up Taxes"
+      h1Elements.text() mustBe pageTitle
     }
 
     "display organisation information correctly" in {

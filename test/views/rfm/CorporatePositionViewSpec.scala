@@ -26,15 +26,15 @@ import views.html.rfm.CorporatePositionView
 
 class CorporatePositionViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmCorporatePositionFormProvider
-  val page: CorporatePositionView = inject[CorporatePositionView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmCorporatePositionFormProvider = new RfmCorporatePositionFormProvider
+  lazy val page:         CorporatePositionView            = inject[CorporatePositionView]
+  lazy val view:         Document                         = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                           = "What is your position in the corporate structure of the group?"
 
   "Corporate Position View" should {
 
     "have a title" in {
-      view.title() mustBe "What is your position in the corporate structure of the group? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is your position in the corporate structure of the group?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have radio items" in {

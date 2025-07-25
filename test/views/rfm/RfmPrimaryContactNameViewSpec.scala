@@ -27,9 +27,10 @@ import views.html.rfm.RfmPrimaryContactNameView
 
 class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactNameFormProvider
-  val form: Form[String]              = formProvider()
-  val page: RfmPrimaryContactNameView = inject[RfmPrimaryContactNameView]
+  lazy val formProvider: RfmPrimaryContactNameFormProvider = new RfmPrimaryContactNameFormProvider
+  lazy val form:         Form[String]                      = formProvider()
+  lazy val page:         RfmPrimaryContactNameView         = inject[RfmPrimaryContactNameView]
+  lazy val pageTitle: String = "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
 
   "RFM Primary Contact Name View" should {
     val view: Document = Jsoup.parse(
@@ -37,7 +38,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -47,7 +48,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint" in {

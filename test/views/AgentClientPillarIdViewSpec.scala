@@ -25,21 +25,21 @@ import views.html.AgentClientPillarIdView
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {
 
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page: AgentClientPillarIdView = inject[AgentClientPillarIdView]
-
-  val view: Document = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val formProvider: AgentClientPillar2ReferenceFormProvider = new AgentClientPillar2ReferenceFormProvider
+  lazy val page:         AgentClientPillarIdView                 = inject[AgentClientPillarIdView]
+  lazy val view:         Document                                = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                                  = "What is your client’s Pillar 2 Top-up Taxes ID?"
 
   "Agent Client PillarId View" should {
 
     "have a title" in {
-      view.title() mustBe "What is your client’s Pillar 2 Top-up Taxes ID? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is your client’s Pillar 2 Top-up Taxes ID?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint" in {

@@ -27,9 +27,10 @@ import views.html.subscriptionview.SecondaryContactNameView
 
 class SecondaryContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new SecondaryContactNameFormProvider
-  val form: Form[String]             = formProvider()
-  val page: SecondaryContactNameView = inject[SecondaryContactNameView]
+  lazy val formProvider: SecondaryContactNameFormProvider = new SecondaryContactNameFormProvider
+  lazy val form:         Form[String]                     = formProvider()
+  lazy val page:         SecondaryContactNameView         = inject[SecondaryContactNameView]
+  lazy val pageTitle:    String                           = "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
 
   "Secondary Contact Name page" should {
     val view: Document = Jsoup.parse(
@@ -37,7 +38,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "display the correct page title" in {
-      view.title() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "show 'Contact details' as the section header" in {
@@ -47,7 +48,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     "display the main heading asking for alternative contact details" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "include a helpful hint with examples" in {

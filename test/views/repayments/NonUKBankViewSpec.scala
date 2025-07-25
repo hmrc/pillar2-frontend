@@ -27,8 +27,9 @@ import views.html.repayments.NonUKBankView
 
 class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
-  val formProvider = new NonUKBankFormProvider
-  val page: NonUKBankView = inject[NonUKBankView]
+  lazy val formProvider = new NonUKBankFormProvider
+  lazy val page:      NonUKBankView = inject[NonUKBankView]
+  lazy val pageTitle: String        = "Bank account details"
 
   "Non UK Bank View" should {
     val view: Document = Jsoup.parse(
@@ -36,7 +37,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have the correct title" in {
-      view.title() mustBe "Bank account details - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {
@@ -44,7 +45,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       h1Elements.size() mustBe 1
       // FIXME: this title contains a hint. Full H1 text is "Bank account details This must be a business account."
       h1Elements.text() must startWith("Bank account details")
-      h1Elements.text() mustBe "Bank account details This must be a business account."
+      h1Elements.text() mustBe s"$pageTitle This must be a business account." // FIXME: inconsistency between title and H1
     }
 
     "have a paragraph" in {

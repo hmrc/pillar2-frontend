@@ -24,21 +24,20 @@ import views.html.AgentErrorView
 
 class AgentErrorViewSpec extends ViewSpecBase {
 
-  val page: AgentErrorView = inject[AgentErrorView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      AgentErrorView = inject[AgentErrorView]
+  lazy val view:      Document       = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String         = "Sorry, there is a problem with the service"
 
   "Agent Error View" should {
 
     "have a title" in {
-      val title = "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Sorry, there is a problem with the service"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
