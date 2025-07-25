@@ -126,6 +126,70 @@ class HomepageViewSpec extends ViewSpecBase {
         .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
+
+    "show clean Returns card with no tag when Due scenario is provided" in {
+      val organisationViewWithDueScenario: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+        )
+      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
+
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
+      statusTag.size() mustBe 0
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
+    "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
+      val organisationViewWithOverdueScenario: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages)
+            .toString()
+        )
+      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
+
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag--red")
+      statusTag.size() mustBe 1
+      statusTag.first().text() mustBe "Overdue"
+      statusTag.first().attr("aria-label") mustBe "Overdue returns"
+      statusTag.first().attr("title") mustBe "Overdue returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
+
+    "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
+      val organisationViewWithIncompleteScenario: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+        )
+      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
+
+      returnsCard.getElementsByTag("h2").text() must include("Returns")
+
+      val cardHeader = returnsCard.getElementsByClass("card-label").first()
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag--purple")
+      statusTag.size() mustBe 1
+      statusTag.first().text() mustBe "Incomplete"
+      statusTag.first().attr("aria-label") mustBe "Incomplete returns"
+      statusTag.first().attr("title") mustBe "Incomplete returns"
+
+      val links = returnsCard.getElementsByTag("a")
+      links.get(0).attr("href") must include("due-and-overdue-returns")
+      links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(1).text() mustBe "View submission history"
+    }
   }
 
   "HomepageView for an agent" should {
