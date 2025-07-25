@@ -32,7 +32,9 @@ class HomepageViewSpec extends ViewSpecBase {
   private val plrRef:           String            = "XMPLR0012345678"
   private val date:             String            = "1 June 2020"
   private val apEndDate:        Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
-  lazy val pageTitle:           String            = "Pillar 2 Top-up Taxes"
+  // FIXME: the title on the homepage is inconsistent - Check if allowed here (Report Pillar 2 Top-up Taxes - GOV.UK)
+  // FIXME: title is "Report Pillar 2 Top-up Taxes - GOV.UK" and H1 is "Pillar 2 Top-up Taxes" (missing "Report")
+  lazy val pageTitle: String = "Pillar 2 Top-up Taxes"
 
   val organisationView: Document =
     Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = false)(request, appConfig, messages).toString())
