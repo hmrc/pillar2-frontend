@@ -26,10 +26,11 @@ import views.html.repayments.RepaymentsTelephoneDetailsView
 
 class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: RepaymentsTelephoneDetailsView = inject[RepaymentsTelephoneDetailsView]
-  val mode: Mode                           = NormalMode
-  val contactName = "ABC Limited"
+  lazy val formProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:        RepaymentsTelephoneDetailsView = inject[RepaymentsTelephoneDetailsView]
+  lazy val mode:        Mode                           = NormalMode
+  lazy val contactName: String                         = "ABC Limited"
+  lazy val pageTitle:   String                         = "What is the phone number"
 
   "Repayments Telephone Details View" should {
 
@@ -39,7 +40,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "What is the phone number? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
@@ -49,7 +50,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "What is the phone number for ABC Limited?"
+        h1Elements.text() mustBe s"$pageTitle for ABC Limited?"
       }
 
       "have a hint description" in {

@@ -29,8 +29,8 @@ import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
 class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
-  val amount: BigDecimal = BigDecimal(9.99)
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val amount: BigDecimal = BigDecimal(9.99)
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "answer for reason")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
@@ -40,14 +40,14 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     .setOrException(RepaymentsContactByTelephonePage, true)
     .setOrException(RepaymentsTelephoneDetailsPage, "1234567")
 
-  val listRefund: SummaryList = SummaryListViewModel(
+  lazy val listRefund: SummaryList = SummaryListViewModel(
     rows = Seq(
       RequestRefundAmountSummary.row(userAnswer)(messages),
       ReasonForRequestingRefundSummary.row(userAnswer)(messages)
     ).flatten
   )
 
-  val listBankAccountDetails: SummaryList = SummaryListViewModel(
+  lazy val listBankAccountDetails: SummaryList = SummaryListViewModel(
     rows = Seq(
       UkOrAbroadBankAccountSummary.row(userAnswer)(messages),
       NonUKBankNameSummary.row(userAnswer)(messages),
@@ -57,7 +57,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     ).flatten
   )
 
-  val contactDetailsList: SummaryList = SummaryListViewModel(
+  lazy val contactDetailsList: SummaryList = SummaryListViewModel(
     rows = Seq(
       RepaymentsContactNameSummary.row(userAnswer)(messages),
       RepaymentsContactEmailSummary.row(userAnswer)(messages),
@@ -66,18 +66,20 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     ).flatten
   )
 
-  val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
-  val view: Document =
+  lazy val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
+  lazy val view: Document =
     Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Check your answers before submitting your refund request"
+
   "Repayments Check Your Answers View" should {
     "have a title" in {
-      view.title() mustBe "Check your answers before submitting your repayment request - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers before submitting your repayment request"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a sub heading" in {

@@ -25,14 +25,14 @@ import views.html.rfm.CheckNewFilingMemberView
 
 class CheckNewFilingMemberViewSpec extends ViewSpecBase {
 
-  val page: CheckNewFilingMemberView = inject[CheckNewFilingMemberView]
-
-  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:      CheckNewFilingMemberView = inject[CheckNewFilingMemberView]
+  lazy val view:      Document                 = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                   = "We need to match the details of the new nominated filing member to HMRC records"
 
   "Check New Filing Member View" should {
 
     "have a title" in {
-      view.title() mustBe "We need to match the details of the new nominated filing member to HMRC records - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -42,7 +42,7 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "We need to match the details of the new nominated filing member to HMRC records"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

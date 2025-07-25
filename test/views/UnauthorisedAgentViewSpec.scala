@@ -24,14 +24,14 @@ import views.html.UnauthorisedAgentView
 
 class UnauthorisedAgentViewSpec extends ViewSpecBase {
 
-  val page: UnauthorisedAgentView = inject[UnauthorisedAgentView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      UnauthorisedAgentView = inject[UnauthorisedAgentView]
+  lazy val view:      Document              = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                = "Register your group"
 
   "Unauthorised Agent View" should {
 
     "have a title" in {
-      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display back link" in {
@@ -41,7 +41,7 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Sorry, you’re unable to use this service"
+      h1Elements.text() mustBe "Sorry, you’re unable to use this service" // FIXME: inconsistency between title and H1
     }
 
     "have a paragraph body" in {

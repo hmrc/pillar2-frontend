@@ -29,9 +29,10 @@ import views.html.rfm.RfmContactAddressView
 
 class RfmContactAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmContactAddressFormProvider
-  val form: Form[NonUKAddress]    = formProvider()
-  val page: RfmContactAddressView = inject[RfmContactAddressView]
+  lazy val formProvider: RfmContactAddressFormProvider = new RfmContactAddressFormProvider
+  lazy val form:         Form[NonUKAddress]            = formProvider()
+  lazy val page:         RfmContactAddressView         = inject[RfmContactAddressView]
+  lazy val pageTitle:    String                        = "What address do you want to use as the filing member’s contact address?"
 
   "Rfm Contact Address View" should {
     val view: Document = Jsoup.parse(
@@ -39,7 +40,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {
@@ -49,7 +50,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     "have the correct heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What address do you want to use as the filing member’s contact address?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the correct field labels" in {

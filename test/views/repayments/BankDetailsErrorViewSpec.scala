@@ -25,21 +25,20 @@ import views.html.repayments.BankDetailsErrorView
 
 class BankDetailsErrorViewSpec extends ViewSpecBase {
 
-  val page: BankDetailsErrorView = inject[BankDetailsErrorView]
-
-  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:      BankDetailsErrorView = inject[BankDetailsErrorView]
+  lazy val view:      Document             = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String               = "We could not confirm your bank details"
 
   "Bank Details Error View" should {
 
     "have a title" in {
-      val title = "We could not confirm your bank details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "We could not confirm your bank details"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

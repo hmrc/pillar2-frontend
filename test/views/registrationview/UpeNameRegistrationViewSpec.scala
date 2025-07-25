@@ -27,9 +27,10 @@ import views.html.registrationview.UpeNameRegistrationView
 
 class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
-  val formProvider = new UpeNameRegistrationFormProvider
-  val form: Form[String]            = formProvider()
-  val page: UpeNameRegistrationView = inject[UpeNameRegistrationView]
+  lazy val formProvider: UpeNameRegistrationFormProvider = new UpeNameRegistrationFormProvider
+  lazy val form:         Form[String]                    = formProvider()
+  lazy val page:         UpeNameRegistrationView         = inject[UpeNameRegistrationView]
+  lazy val pageTitle:    String                          = "What is the name of the Ultimate Parent Entity?"
 
   "UPE Name Registration View" should {
     val view: Document = Jsoup.parse(
@@ -37,13 +38,13 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the name of the Ultimate Parent Entity? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the name of the Ultimate Parent Entity?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the correct section caption" in {

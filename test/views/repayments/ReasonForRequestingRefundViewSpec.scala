@@ -27,23 +27,23 @@ import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
-  val formProvider = new ReasonForRequestingRepaymentFormProvider
-  val page: ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
+  lazy val formProvider = new ReasonForRequestingRefundFormProvider
+  lazy val page:      ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
+  lazy val pageTitle: String                        = "Why are you requesting a refund?"
 
   "Reason For Requesting Repayment View" when {
 
     "page loaded" should {
-
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "Why are you requesting a repayment? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Why are you requesting a repayment?"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a hint description" in {

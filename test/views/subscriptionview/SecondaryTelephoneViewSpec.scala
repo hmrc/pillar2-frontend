@@ -26,15 +26,16 @@ import views.html.subscriptionview.SecondaryTelephoneView
 
 class SecondaryTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: SecondaryTelephoneView = inject[SecondaryTelephoneView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         SecondaryTelephoneView              = inject[SecondaryTelephoneView]
+  lazy val username:     String                              = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the phone number"
 
   "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
-      view.title() mustBe "What is the phone number? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,13 +45,14 @@ class SecondaryTelephoneViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the phone number for John Doe?"
+      // FIXME: page title and H1 are different
+      h1Elements.text() mustBe s"$pageTitle for $username?" // FIXME: inconsistency between title and H1
     }
 
     "have a hint description" in {
       view
         .getElementsByClass("govuk-hint")
-        .text mustEqual "Enter the phone number for John Doe, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
+        .text mustEqual s"Enter the phone number for $username, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
     }
 
     "have a button" in {

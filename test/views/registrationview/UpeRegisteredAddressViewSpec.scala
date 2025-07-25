@@ -29,10 +29,11 @@ import views.html.registrationview.UpeRegisteredAddressView
 
 class UpeRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new UpeRegisteredAddressFormProvider
-  val form: Form[UKAddress]          = formProvider()
-  val page: UpeRegisteredAddressView = inject[UpeRegisteredAddressView]
-  val userName = "Test Company"
+  lazy val formProvider: UpeRegisteredAddressFormProvider = new UpeRegisteredAddressFormProvider
+  lazy val form:         Form[UKAddress]                  = formProvider()
+  lazy val page:         UpeRegisteredAddressView         = inject[UpeRegisteredAddressView]
+  lazy val userName:     String                           = "Test Company"
+  lazy val pageTitle:    String                           = "What is the registered office address"
 
   "UPE Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -40,7 +41,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the registered office address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {
@@ -50,7 +51,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     "have the correct heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"What is the registered office address of $userName?"
+      h1Elements.text() mustBe s"$pageTitle of $userName?"
     }
 
     "display the warning text" in {

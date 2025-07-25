@@ -24,20 +24,20 @@ import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationViewSpec extends ViewSpecBase {
 
-  val page: EligibilityConfirmationView = inject[EligibilityConfirmationView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      EligibilityConfirmationView = inject[EligibilityConfirmationView]
+  lazy val view:      Document                    = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                      = "You need to register this group to report Pillar 2 Top-up Taxes"
 
   "Eligibility Confirmation View" should {
 
     "have a title" in {
-      view.title() mustBe "You need to register this group to report Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You need to register this group to report Pillar 2 Top-up Taxes"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

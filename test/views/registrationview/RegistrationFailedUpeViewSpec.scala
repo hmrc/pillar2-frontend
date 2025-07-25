@@ -24,21 +24,20 @@ import views.html.registrationview.RegistrationFailedUpeView
 
 class RegistrationFailedUpeViewSpec extends ViewSpecBase {
 
-  val page: RegistrationFailedUpeView = inject[RegistrationFailedUpeView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RegistrationFailedUpeView = inject[RegistrationFailedUpeView]
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                    = "Register your group"
 
   "Registration Failed Upe View" should {
 
     "have a title" in {
-      val title = "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a headings" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "The details you entered did not match our records"
+      h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
       view.getElementsByTag("h2").text must include("How to confirm your details")
 
     }

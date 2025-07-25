@@ -26,15 +26,15 @@ import views.html.rfm.RfmEntityTypeView
 
 class RfmEntityTypeViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmEntityTypeFormProvider
-  val page: RfmEntityTypeView = inject[RfmEntityTypeView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmEntityTypeFormProvider = new RfmEntityTypeFormProvider
+  lazy val page:         RfmEntityTypeView         = inject[RfmEntityTypeView]
+  lazy val view:         Document                  = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                    = "What entity type is the new nominated filing member?"
 
   "Rfm Entity Type View" should {
 
     "have a title" in {
-      view.title() mustBe "What entity type is the new nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class RfmEntityTypeViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What entity type is the new nominated filing member?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a button" in {

@@ -25,19 +25,20 @@ import views.html.rfm.RfmWaitingRoomView
 
 class RfmWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page: RfmWaitingRoomView = inject[RfmWaitingRoomView]
-  val view: Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val page:      RfmWaitingRoomView = inject[RfmWaitingRoomView]
+  lazy val view:      Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Submitting..."
 
   "Rfm Waiting Room View" should {
 
     "have a title" in {
-      view.title() mustBe "Submitting... - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Submitting..."
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a sub heading" in {

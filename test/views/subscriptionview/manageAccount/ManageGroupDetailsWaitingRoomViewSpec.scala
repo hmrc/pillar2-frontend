@@ -25,19 +25,20 @@ import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomVi
 
 class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page: ManageGroupDetailsWaitingRoomView = inject[ManageGroupDetailsWaitingRoomView]
-  val view: Document                          = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val page:      ManageGroupDetailsWaitingRoomView = inject[ManageGroupDetailsWaitingRoomView]
+  lazy val view:      Document                          = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val pageTitle: String                            = "Submitting your group details"
 
   "Manage Group Details Waiting Room View" should {
 
     "have a title" in {
-      view.title() mustBe "Submitting your group details - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Submitting your group details"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a sub heading" in {

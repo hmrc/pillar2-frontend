@@ -20,19 +20,22 @@ import base.ViewSpecBase
 import forms.TurnOverEligibilityFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import play.api.data.Form
 import views.html.TurnOverEligibilityView
 
 class TurnOverEligibilityViewSpec extends ViewSpecBase {
 
-  val formProvider = new TurnOverEligibilityFormProvider()()
-  val page: TurnOverEligibilityView = inject[TurnOverEligibilityView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider: Form[Boolean]           = new TurnOverEligibilityFormProvider()()
+  lazy val page:         TurnOverEligibilityView = inject[TurnOverEligibilityView]
+  lazy val view:         Document                = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle: String =
+    "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
 
   "Turn Over Eligibility View" should {
 
     "have a title" in {
-      view.title() mustBe "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -40,9 +43,10 @@ class TurnOverEligibilityViewSpec extends ViewSpecBase {
     }
 
     "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {

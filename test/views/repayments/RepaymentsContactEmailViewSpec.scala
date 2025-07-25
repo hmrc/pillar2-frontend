@@ -26,10 +26,11 @@ import views.html.repayments.RepaymentsContactEmailView
 
 class RepaymentsContactEmailViewSpec extends ViewSpecBase {
 
-  val formProvider = new RepaymentsContactEmailFormProvider
-  val mode: Mode                       = NormalMode
-  val page: RepaymentsContactEmailView = inject[RepaymentsContactEmailView]
-  val contactName = "ABC Limited"
+  lazy val formProvider = new RepaymentsContactEmailFormProvider
+  lazy val mode:        Mode                       = NormalMode
+  lazy val page:        RepaymentsContactEmailView = inject[RepaymentsContactEmailView]
+  lazy val contactName: String                     = "ABC Limited"
+  lazy val pageTitle:   String                     = "What is the email address"
 
   "Repayments Contact Email View" should {
 
@@ -39,13 +40,13 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "What is the email address for ABC Limited?"
+        h1Elements.text() mustBe s"$pageTitle for ABC Limited?"
       }
 
       "have a hint" in {
