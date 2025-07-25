@@ -289,7 +289,6 @@ class HomepageViewSpec extends ViewSpecBase {
       val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-half-width").first()
       val links       = returnsCard.getElementsByTag("a")
 
-      // All links should point to ASA input page when agent hasn't completed client setup
       links.get(0).attr("href") must include("asa/input-pillar-2-id")
       links.get(1).attr("href") must include("asa/input-pillar-2-id")
     }
@@ -303,7 +302,6 @@ class HomepageViewSpec extends ViewSpecBase {
       val returnsCard = agentViewWithClientSetup.getElementsByClass("card-half-width").first()
       val links       = returnsCard.getElementsByTag("a")
 
-      // Links should point directly to submission frontend when agent has completed client setup
       links.get(0).attr("href") must include("due-and-overdue-returns")
       links.get(1).attr("href") must include("submission-history")
     }
@@ -334,16 +332,13 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
         )
 
-      // Should not contain any UKTR banner headings
       val uktrHeadings = viewWithNoBanner.select("h2:contains(You have one or more returns due), h2:contains(You have overdue or incomplete returns)")
       uktrHeadings.size() mustBe 0
 
-      // Should not contain UKTR banner text
       val bodyText = viewWithNoBanner.text()
       bodyText must not include "Submit your returns before the due date to avoid penalties"
       bodyText must not include "You must submit or complete these returns as soon as possible"
 
-      // Should not contain UKTR submission link
       val submissionLinks = viewWithNoBanner.select("a[id=submission-link]")
       submissionLinks.size() mustBe 0
     }
@@ -354,11 +349,9 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
         )
 
-      // Should not contain any scenario tags (Due, Overdue, Incomplete)
       val scenarioTags = viewWithNoBanner.select(".govuk-tag--red, .govuk-tag--purple, .govuk-tag--blue")
       scenarioTags.size() mustBe 0
 
-      // Verify no "Due", "Overdue", or "Incomplete" tags exist
       val tagText = viewWithNoBanner.select(".govuk-tag").text()
       tagText must not include "Due"
       tagText must not include "Overdue"
@@ -541,7 +534,6 @@ class HomepageViewSpec extends ViewSpecBase {
             .toString()
         )
 
-      // Should contain Overdue heading (same text as Incomplete)
       val overdueHeadings = viewOverdue.select("h2:contains(You have overdue or incomplete returns)")
       overdueHeadings.size() mustBe 1
 

@@ -1664,6 +1664,7 @@ dueAndOverdueReturns.obligationType.UKTR = UK Tax Return
 dueAndOverdueReturns.obligationType.GIR = Information return
 dueAndOverdueReturns.status.overdue = Overdue
 dueAndOverdueReturns.status.due = Due
+dueAndOverdueReturns.status.incomplete = Incomplete
 dueAndOverdueReturns.submissionHistory = Submission history
 dueAndOverdueReturns.submissionHistory.description1 = You can find full details of your group’s submitted returns on the
 dueAndOverdueReturns.submissionHistory.link = submission history
