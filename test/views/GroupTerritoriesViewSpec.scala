@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.GroupTerritoriesFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.GroupTerritoriesView
 
 class GroupTerritoriesViewSpec extends ViewSpecBase {
@@ -39,10 +40,11 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
       view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
     }
 
-    "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Are you registering as the group’s Ultimate Parent Entity?"
-      )
+    "have a legend with a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Are you registering as the group’s Ultimate Parent Entity?"
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {
