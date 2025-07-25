@@ -34,12 +34,12 @@ class HomepageViewSpec extends ViewSpecBase {
 
   val organisationView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+      page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
     )
 
   val agentView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = true, agentHasClientSetup = false)(request, appConfig, messages).toString()
+      page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
     )
 
   "HomepageView for a group" should {
@@ -115,7 +115,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveOrgView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
         )
 
       val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
@@ -199,7 +199,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveAgentView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = true, agentHasClientSetup = false)(request, appConfig, messages).toString()
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
         )
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()

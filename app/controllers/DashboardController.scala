@@ -111,9 +111,7 @@ class DashboardController @Inject() (
     if (appConfig.newHomepageEnabled) {
       val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-        val userAnswers         = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-        val agentHasClientSetup = userAnswers.get(AgentClientPillar2ReferencePage).isDefined
-
+        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         osService
           .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
           .map { response =>
@@ -132,8 +130,7 @@ class DashboardController @Inject() (
                     }
                 },
                 plrReference,
-                isAgent = request.isAgent,
-                agentHasClientSetup = agentHasClientSetup
+                isAgent = request.isAgent
               )
             )
           }
