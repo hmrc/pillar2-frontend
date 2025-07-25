@@ -33,7 +33,7 @@ import views.html.registrationview.ContactUPEByTelephoneView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactUPEByPhoneController @Inject()(
+class ContactUPEByPhoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,

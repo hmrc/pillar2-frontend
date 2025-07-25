@@ -45,7 +45,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -70,7 +70,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -91,7 +91,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -103,7 +103,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode).url)
+          FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -117,7 +117,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -134,13 +134,13 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("value", "true")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
 

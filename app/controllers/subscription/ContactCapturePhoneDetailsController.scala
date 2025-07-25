@@ -33,7 +33,7 @@ import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactCapturePhoneDetailsController @Inject()(
+class ContactCapturePhoneDetailsController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,

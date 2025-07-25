@@ -33,7 +33,7 @@ import views.html.fmview.ContactNfmByTelephoneView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactNfmByPhoneController @Inject()(
+class ContactNfmByPhoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,

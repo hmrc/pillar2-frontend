@@ -112,7 +112,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactByPhoneController.onPageLoad(NormalMode).url
       }
     }
 

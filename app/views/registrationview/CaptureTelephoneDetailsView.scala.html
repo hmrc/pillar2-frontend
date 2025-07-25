@@ -34,7 +34,7 @@
 @layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
 
-    @formHelper(action = controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(mode)) {
+    @formHelper(action = controllers.registration.routes.CapturePhoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

@@ -43,7 +43,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -67,7 +67,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -93,7 +93,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -115,7 +115,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("phoneNumber", "123456")
             )
@@ -128,7 +128,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -139,7 +139,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
     "must redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
