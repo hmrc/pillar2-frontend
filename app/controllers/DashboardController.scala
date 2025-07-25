@@ -197,11 +197,17 @@ class DashboardController @Inject() (
         case _ => None
       }
     }
+
     obligationsAndSubmissions.accountingPeriodDetails
-      .map(period => (period, periodStatus(period)))
-      .filter(_._2.isDefined)
-      .minByOption(_._1.endDate)
-      .flatMap(_._2)
+      .flatMap(period => periodStatus(period))
+      .foldLeft[Option[DueAndOverdueReturnBannerScenario]](None) { (acc, status) =>
+        status match {
+          case Overdue                                                                  => Some(Overdue)
+          case Incomplete if acc.isEmpty || acc == Some(Due) || acc == Some(Incomplete) => Some(Incomplete)
+          case Due if acc.isEmpty                                                       => Some(Due)
+          case _                                                                        => acc
+        }
+      }
 
   }
 }
