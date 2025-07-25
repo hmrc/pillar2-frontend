@@ -57,7 +57,7 @@ class OutstandingPaymentsController @Inject() (
   def onPageLoad: Action[AnyContent] =
     (identify andThen getData andThen requireData andThen checkPhase2Screens).async { implicit request =>
       implicit val hc:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      implicit val isAgent: Boolean       = true
+      implicit val isAgent: Boolean       = request.isAgent
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
