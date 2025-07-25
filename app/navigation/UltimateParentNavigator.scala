@@ -39,7 +39,7 @@ class UltimateParentNavigator @Inject() {
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
-    case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
+    case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode)
     case UpePhonePreferencePage   => telephonePreferenceLogic
     case UpeCapturePhonePage      => _ => upeCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
@@ -62,7 +62,7 @@ class UltimateParentNavigator @Inject() {
       .get(UpePhonePreferencePage)
       .map { provided =>
         if (provided) {
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode)
         } else {
           upeCheckYourAnswers
         }
@@ -87,7 +87,7 @@ class UltimateParentNavigator @Inject() {
       .get(UpePhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(UpeCapturePhonePage).isEmpty) {
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {

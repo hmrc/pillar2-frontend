@@ -33,7 +33,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by telephone?")
+      view.getElementsByTag("title").text must include("Can we contact by phone?")
     }
 
     "have a caption" in {
@@ -41,7 +41,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
+      view.getElementsByTag("h1").text must include("Can we contact John Doe by phone?")
     }
 
     "have radio items" in {

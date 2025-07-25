@@ -54,7 +54,7 @@ object ContactCaptureTelephoneDetailsSummary {
         key = "contactCaptureTelephoneDetails.checkYourAnswersLabel",
         value = value,
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactCaptureTelephoneDetails.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )

@@ -33,7 +33,7 @@
 @layout(pageTitle = title(form, messages("captureTelephoneDetails.title"))) {
 
 
-    @formHelper(action = controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(mode)) {
+    @formHelper(action = controllers.fm.routes.NfmCapturePhoneDetailsController.onSubmit(mode)) {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

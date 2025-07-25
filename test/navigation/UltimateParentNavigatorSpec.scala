@@ -62,11 +62,11 @@ class UltimateParentNavigatorSpec extends SpecBase {
       }
       "go to telephone preference page from contact email page" in {
         navigator.nextPage(UpeContactEmailPage, NormalMode, emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")) mustBe
-          controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode)
+          controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode)
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode)
       }
       "go to journey recovery if no answer for UpePhonePreference page can be found" in {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers) mustBe
@@ -119,7 +119,7 @@ class UltimateParentNavigatorSpec extends SpecBase {
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
-          controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode)
       }
       "go to UPE CYA page if they have chosen to nominate a phone number but have provided on already" in {
         val ua = emptyUserAnswers.setOrException(UpePhonePreferencePage, true).setOrException(UpeCapturePhonePage, "1231")
