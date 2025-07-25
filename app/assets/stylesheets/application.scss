@@ -128,6 +128,10 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
 
 /* ----- Responsive ----- */
 @media screen and (max-width: 997px) {
+  .card-main {
+    width: 100%;
+  }
+
   .card-half-width {
     width: 100%;
   }
