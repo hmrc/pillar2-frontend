@@ -24,20 +24,20 @@ import views.html.rfm.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
 
-  val page: JourneyRecoveryView = inject[JourneyRecoveryView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      JourneyRecoveryView = inject[JourneyRecoveryView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "There has been an error"
 
   "Replace filing member journey recovery view" should {
 
     "have a title" in {
-      view.title() mustBe "There has been an error - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "There has been an error"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a link with the correct text and url" in {

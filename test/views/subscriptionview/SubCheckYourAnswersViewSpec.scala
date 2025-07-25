@@ -29,9 +29,9 @@ import views.html.subscriptionview.SubCheckYourAnswersView
 
 class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
-  val page: SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
+  lazy val page: SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
 
-  val view: Document = Jsoup.parse(
+  lazy val view: Document = Jsoup.parse(
     page(
       SummaryListViewModel(
         Seq(
@@ -49,11 +49,12 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       .toString()
   )
 
+  lazy val pageTitle: String = "Check your answers for further group details"
+
   "Manage Contact Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Check your answers for further group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -63,7 +64,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers for further group details"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a group details summary list" in {

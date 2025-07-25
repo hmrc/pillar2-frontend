@@ -26,16 +26,15 @@ import views.html.subscriptionview.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupAccountingPeriodFormProvider
-  val page: GroupAccountingPeriodView = inject[GroupAccountingPeriodView]
-
-  val view: Document =
-    Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: GroupAccountingPeriodFormProvider = new GroupAccountingPeriodFormProvider
+  lazy val page:         GroupAccountingPeriodView         = inject[GroupAccountingPeriodView]
+  lazy val view:         Document                          = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                            = "When did the group’s first accounting period start and end after 31 December 2023?"
 
   "GroupAccountingPeriodView" should {
 
     "have a title" in {
-      view.title() mustBe "When did the group’s first accounting period start and end after 31 December 2023? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -46,7 +45,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       val h1Elements: Elements = view.getElementsByTag("h1")
       // FIXME: this page has 3 H1 headings!!!
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "When did the group’s first accounting period start and end after 31 December 2023?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the following paragraph content" in {

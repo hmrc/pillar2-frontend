@@ -29,10 +29,11 @@ import views.html.fmview.NfmRegisteredAddressView
 
 class NfmRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmRegisteredAddressFormProvider
-  val form: Form[NonUKAddress]       = formProvider()
-  val page: NfmRegisteredAddressView = inject[NfmRegisteredAddressView]
-  val userName = "Test Company"
+  lazy val formProvider: NfmRegisteredAddressFormProvider = new NfmRegisteredAddressFormProvider
+  lazy val form:         Form[NonUKAddress]               = formProvider()
+  lazy val page:         NfmRegisteredAddressView         = inject[NfmRegisteredAddressView]
+  lazy val userName:     String                           = "Test Company"
+  lazy val pageTitle:    String                           = "What is the registered office address"
 
   "NFM Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -40,13 +41,13 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the registered office address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"What is the registered office address of $userName?"
+      h1Elements.text() mustBe s"$pageTitle of $userName?"
     }
 
     "have the correct section caption" in {

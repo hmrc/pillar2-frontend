@@ -24,20 +24,20 @@ import views.html.UnauthorisedView
 
 class UnauthorisedViewSpec extends ViewSpecBase {
 
-  val page: UnauthorisedView = inject[UnauthorisedView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      UnauthorisedView = inject[UnauthorisedView]
+  lazy val view:      Document         = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String           = "You do not have access to this service"
 
   "Unauthorised View" should {
 
     "have a title" in {
-      view.title() mustBe "You do not have access to this service - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You do not have access to this service"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

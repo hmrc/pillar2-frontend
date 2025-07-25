@@ -23,24 +23,28 @@ import org.jsoup.select.Elements
 import views.html.CannotReturnAfterSubscriptionView
 
 class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
-  private val page: CannotReturnAfterSubscriptionView = inject[CannotReturnAfterSubscriptionView]
-
-  val doc: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  private lazy val page: CannotReturnAfterSubscriptionView = inject[CannotReturnAfterSubscriptionView]
+  lazy val view:         Document                          = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                            = "You cannot return, your registration is complete"
 
   "CannotReturnAfterSubscriptionView" should {
-    "display page header correctly" in {
-      val h1Elements: Elements = doc.getElementsByTag("h1")
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You cannot return, your registration is complete"
+      h1Elements.text() mustBe pageTitle
     }
 
     "display error message correctly" in {
-      val message = doc.getElementsByClass("govuk-body").first()
+      val message = view.getElementsByClass("govuk-body").first()
       message.text() mustBe "You have successfully registered to report Pillar 2 Top-up Taxes."
     }
 
     "display link section correctly" in {
-      val linkSection = doc.getElementsByClass("govuk-body").last()
+      val linkSection = view.getElementsByClass("govuk-body").last()
       linkSection.text() mustEqual "You can now report and manage your Pillar 2 Top-up Taxes."
 
       val link = linkSection.getElementsByClass("govuk-link").first()
@@ -51,11 +55,11 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
   "CannotReturnAfterSubscriptionView layout" should {
     "have correct page title" in {
-      doc.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "not display back link" in {
-      doc.getElementsByClass("govuk-back-link").size() mustBe 0
+      view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
   }
 }

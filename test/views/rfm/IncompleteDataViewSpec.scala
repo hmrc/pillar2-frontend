@@ -25,20 +25,20 @@ import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page: IncompleteDataView = inject[IncompleteDataView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val formProvider: AgentClientPillar2ReferenceFormProvider = new AgentClientPillar2ReferenceFormProvider
+  lazy val page:         IncompleteDataView                      = inject[IncompleteDataView]
+  lazy val view:         Document                                = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                                  = "You have an incomplete task"
 
   "Replace filing member incomplete data view" should {
     "have a title" in {
-      view.title() mustBe "You have an incomplete task - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You have an incomplete task"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a link with the correct text and url" in {

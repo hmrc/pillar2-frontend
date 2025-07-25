@@ -26,15 +26,15 @@ import views.html.rfm.GroupRegistrationDateReportView
 
 class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupRegistrationDateReportFormProvider
-  val page: GroupRegistrationDateReportView = inject[GroupRegistrationDateReportView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: GroupRegistrationDateReportFormProvider = new GroupRegistrationDateReportFormProvider
+  lazy val page:         GroupRegistrationDateReportView         = inject[GroupRegistrationDateReportView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service"
 
   "Group Registration Date Report View" should {
 
     "have a title" in {
-      view.title() mustBe "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint description" in {

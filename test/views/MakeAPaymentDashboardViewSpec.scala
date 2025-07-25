@@ -25,21 +25,21 @@ import views.html.MakeAPaymentDashboardView
 import scala.jdk.CollectionConverters._
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
-  private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
-  val testPlr2Id = "12345678"
-
-  val makePaymentDashboardView: Document =
+  private val page:    MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
+  lazy val testPlr2Id: String                    = "12345678"
+  lazy val makePaymentDashboardView: Document =
     Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Make a payment"
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
-      makePaymentDashboardView.title() mustBe "Make a payment - Report Pillar 2 Top-up Taxes - GOV.UK"
+      makePaymentDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = makePaymentDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Make a payment"
+      h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-heading-l") mustBe true
     }
 

@@ -30,9 +30,9 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
   implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
     SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
-  val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
+  lazy val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
 
-  val view: Document = Jsoup.parse(
+  lazy val view: Document = Jsoup.parse(
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
@@ -47,7 +47,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       .toString()
   )
 
-  val agentView: Document = Jsoup.parse(
+  lazy val agentView: Document = Jsoup.parse(
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
@@ -57,12 +57,13 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     )(request, appConfig, messages).toString()
   )
 
+  lazy val pageTitle: String = "Contact details"
+
   "Manage Contact Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
-      agentView.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
@@ -70,8 +71,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       val agentViewH1Elements: Elements = agentView.getElementsByTag("h1")
       viewH1Elements.size() mustBe 1
       agentViewH1Elements.size() mustBe 1
-      viewH1Elements.text() mustBe "Contact details"
-      agentViewH1Elements.text() mustBe "Contact details"
+      viewH1Elements.text() mustBe pageTitle
+      agentViewH1Elements.text() mustBe pageTitle
     }
 
     "have first contact header" in {

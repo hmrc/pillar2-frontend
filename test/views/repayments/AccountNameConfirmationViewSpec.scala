@@ -26,22 +26,21 @@ import views.html.repayments.AccountNameConfirmationView
 
 class AccountNameConfirmationViewSpec extends ViewSpecBase {
 
-  val page: AccountNameConfirmationView = inject[AccountNameConfirmationView]
-  val formProvider = new RepaymentAccountNameConfirmationForm
-
-  val view: Document = Jsoup.parse(page(formProvider(), "James", NormalMode)(request, appConfig, messages).toString())
+  lazy val page:         AccountNameConfirmationView          = inject[AccountNameConfirmationView]
+  lazy val formProvider: RepaymentAccountNameConfirmationForm = new RepaymentAccountNameConfirmationForm
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), "James", NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Do you want to continue with these bank details?"
 
   "Account Name Confirmation View" should {
 
     "have a title" in {
-      val title = "Do you want to continue with these bank details? - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading with the account holder's name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "This account belongs to James"
+      h1Elements.text() mustBe "This account belongs to James" // FIXME: inconsistency between title and H1
     }
 
     "have a subheading" in {

@@ -24,19 +24,19 @@ import views.html.repayments.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  val page: IncompleteDataView = inject[IncompleteDataView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      IncompleteDataView = inject[IncompleteDataView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Refund request has missing information"
 
   "Repayments incomplete data view" should {
     "have a title" in {
-      view.title() mustBe "Repayment request has missing information - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Repayment request has missing information"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph with the correct text" in {

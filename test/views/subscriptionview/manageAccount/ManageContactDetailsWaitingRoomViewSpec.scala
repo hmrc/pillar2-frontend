@@ -25,23 +25,24 @@ import views.html.subscriptionview.manageAccount.ManageContactDetailsWaitingRoom
 
 class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page: ManageContactDetailsWaitingRoomView = inject[ManageContactDetailsWaitingRoomView]
-
-  val inProgressView: Document = Jsoup.parse(page(Some(ManageContactDetailsStatus.InProgress))(request, appConfig, messages).toString())
-  val completedView:  Document = Jsoup.parse(page(Some(ManageContactDetailsStatus.SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val page: ManageContactDetailsWaitingRoomView = inject[ManageContactDetailsWaitingRoomView]
+  lazy val inProgressView: Document = Jsoup.parse(page(Some(ManageContactDetailsStatus.InProgress))(request, appConfig, messages).toString())
+  lazy val completedView: Document =
+    Jsoup.parse(page(Some(ManageContactDetailsStatus.SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Submitting your contact details"
 
   "Manage Contact Details Waiting Room View" should {
 
     "when status is InProgress" must {
 
       "have correct title" in {
-        inProgressView.title() mustBe "Submitting your contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
+        inProgressView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have correct heading" in {
         val h1Elements: Elements = inProgressView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Submitting your contact details"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a sub heading" in {
@@ -65,13 +66,13 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
     "when status is SuccessfullyCompleted" must {
 
       "have correct title" in {
-        completedView.title() mustBe "Submitting your contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
+        completedView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have correct heading" in {
         val h1Elements: Elements = completedView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Submitting your contact details"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a sub heading" in {

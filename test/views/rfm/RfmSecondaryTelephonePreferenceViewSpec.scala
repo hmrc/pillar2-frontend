@@ -26,15 +26,15 @@ import views.html.rfm.RfmSecondaryTelephonePreferenceView
 
 class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmSecondaryTelephonePreferenceFormProvider
-  val page: RfmSecondaryTelephonePreferenceView = inject[RfmSecondaryTelephonePreferenceView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider = new RfmSecondaryTelephonePreferenceFormProvider
+  lazy val page: RfmSecondaryTelephonePreferenceView = inject[RfmSecondaryTelephonePreferenceView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Can we contact by telephone"
 
   "Rfm Secondary Telephone Preference View" should {
 
     "have a title" in {
-      view.title() mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Can we contact John Doe by telephone?"
+      h1Elements.text() mustBe "Can we contact John Doe by telephone?" // FIXME: inconsistency with other H1s -  not using the pageTitle
     }
 
     "have a button" in {

@@ -27,9 +27,10 @@ import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  val page: RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
-  val testPillar2Ref = "XMPLR0012345674"
-  val dateHelper     = new ViewHelpers()
+  lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
+  lazy val testPillar2Ref: String                     = "XMPLR0012345674"
+  lazy val dateHelper:     ViewHelpers                = new ViewHelpers()
+  lazy val pageTitle:      String                     = "Repayment request submitted"
 
   "Repayments confirmation view" should {
     val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
@@ -37,7 +38,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 
     "have a page title" in {
-      view.title() mustBe "Repayment request submitted - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct header link to Pillar 2 home" in {
@@ -49,7 +50,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Repayment request submitted"
+      h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-panel__title") mustBe true
     }
 

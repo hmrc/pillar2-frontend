@@ -26,9 +26,10 @@ import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
-  val formProvider = new RequestRepaymentAmountFormProvider
-  val mode: Mode                    = NormalMode
-  val page: RequestRefundAmountView = inject[RequestRefundAmountView]
+  lazy val formProvider: RequestRepaymentAmountFormProvider = new RequestRepaymentAmountFormProvider
+  lazy val mode:         Mode                               = NormalMode
+  lazy val page:         RequestRefundAmountView            = inject[RequestRefundAmountView]
+  lazy val pageTitle:    String                             = "Enter your requested refund amount in pounds"
 
   "Request Repayment Amount View" should {
 
@@ -37,13 +38,13 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "Enter your requested repayment amount in pounds - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Enter your requested repayment amount in pounds"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a button" in {

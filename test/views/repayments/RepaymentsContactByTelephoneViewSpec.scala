@@ -26,9 +26,10 @@ import views.html.repayments.RepaymentsContactByTelephoneView
 
 class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new RepaymentsContactByTelephoneFormProvider
-  val mode: Mode                             = NormalMode
-  val page: RepaymentsContactByTelephoneView = inject[RepaymentsContactByTelephoneView]
+  lazy val formProvider = new RepaymentsContactByTelephoneFormProvider
+  lazy val mode:      Mode                             = NormalMode
+  lazy val page:      RepaymentsContactByTelephoneView = inject[RepaymentsContactByTelephoneView]
+  lazy val pageTitle: String                           = "Can we contact by telephone"
 
   "Repayments Contact By Telephone View" should {
 
@@ -38,13 +39,13 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider("John Doe"), mode, "John Doe")(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Can we contact John Doe by telephone?"
+        h1Elements.text() mustBe "Can we contact John Doe by telephone?" // FIXME: inconsistency between title and heading
       }
 
       "have a hint" in {

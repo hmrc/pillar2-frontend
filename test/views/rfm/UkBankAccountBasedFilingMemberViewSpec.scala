@@ -26,15 +26,15 @@ import views.html.rfm.UkBasedFilingMemberView
 
 class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
 
-  val formProvider = new NFMRegisteredInUKConfirmationFormProvider
-  val page: UkBasedFilingMemberView = inject[UkBasedFilingMemberView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: NFMRegisteredInUKConfirmationFormProvider = new NFMRegisteredInUKConfirmationFormProvider
+  lazy val page:         UkBasedFilingMemberView                   = inject[UkBasedFilingMemberView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Is the new nominated filing member registered in the UK?"
 
   "Uk Based Filing Member View" should {
 
     "have a title" in {
-      view.title() mustBe "Is the new nominated filing member registered in the UK? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class UkBankAccountBasedFilingMemberViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Is the new nominated filing member registered in the UK?"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a button" in {

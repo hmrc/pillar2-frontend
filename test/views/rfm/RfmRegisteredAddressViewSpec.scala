@@ -29,10 +29,11 @@ import views.html.rfm.RfmRegisteredAddressView
 
 class RfmRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmRegisteredAddressFormProvider
-  val form: Form[NonUKAddress]       = formProvider()
-  val page: RfmRegisteredAddressView = inject[RfmRegisteredAddressView]
-  val userName = "Test Company"
+  lazy val formProvider: RfmRegisteredAddressFormProvider = new RfmRegisteredAddressFormProvider
+  lazy val form:         Form[NonUKAddress]               = formProvider()
+  lazy val page:         RfmRegisteredAddressView         = inject[RfmRegisteredAddressView]
+  lazy val userName = "Test Company"
+  lazy val pageTitle: String = "What is the registered office address"
 
   "RFM Registered Address View" should {
     val countryOptions = Seq.empty[utils.InputOption]
@@ -41,13 +42,13 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.title() mustBe "What is the registered office address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading with interpolated company name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"What is the registered office address of $userName?"
+      h1Elements.text() mustBe s"$pageTitle of $userName?" // FIXME: inconsistency between title and H1
     }
 
     "have the correct caption" in {

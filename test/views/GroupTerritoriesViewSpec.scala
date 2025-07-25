@@ -25,15 +25,15 @@ import views.html.GroupTerritoriesView
 
 class GroupTerritoriesViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupTerritoriesFormProvider()()
-  val page: GroupTerritoriesView = inject[GroupTerritoriesView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider = new GroupTerritoriesFormProvider()()
+  lazy val page:      GroupTerritoriesView = inject[GroupTerritoriesView]
+  lazy val view:      Document             = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle: String               = "Are you registering as the group’s Ultimate Parent Entity?"
 
   "Group Territories View" should {
 
     "have a title" in {
-      view.title() mustBe "Are you registering as the group’s Ultimate Parent Entity? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -43,7 +43,7 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
     "have a legend with a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Are you registering as the group’s Ultimate Parent Entity?"
+      h1Elements.text() mustBe pageTitle
       h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 

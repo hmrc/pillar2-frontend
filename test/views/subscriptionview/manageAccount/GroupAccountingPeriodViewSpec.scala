@@ -25,8 +25,9 @@ import views.html.subscriptionview.manageAccount.GroupAccountingPeriodView
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupAccountingPeriodFormProvider
-  val page: GroupAccountingPeriodView = inject[GroupAccountingPeriodView]
+  lazy val formProvider: GroupAccountingPeriodFormProvider = new GroupAccountingPeriodFormProvider
+  lazy val page:         GroupAccountingPeriodView         = inject[GroupAccountingPeriodView]
+  lazy val pageTitle:    String                            = "What is the group accounting period?"
 
   def view(isAgent: Boolean = false): Document =
     Jsoup.parse(page(formProvider(), isAgent, Some("orgName"))(request, appConfig, messages).toString())
@@ -34,7 +35,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
   "GroupAccountingPeriodView" when {
     "it's an organisation" must {
       "have a title" in {
-        view().title() mustBe "What is the group accounting period? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
@@ -45,7 +46,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         val h1Elements: Elements = view().getElementsByTag("h1")
         // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "What is the group accounting period?"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph content" in {
@@ -85,7 +86,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
     "it's an agent" must {
       "have a title" in {
-        view(isAgent = true).title() mustBe "What is the group accounting period? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view(isAgent = true).title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
@@ -96,7 +97,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
         // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "What is the group accounting period?"
+        h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph content" in {

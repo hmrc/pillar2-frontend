@@ -26,15 +26,15 @@ import views.html.subscriptionview.AddSecondaryContactView
 
 class AddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new AddSecondaryContactFormProvider
-  val page: AddSecondaryContactView = inject[AddSecondaryContactView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider = new AddSecondaryContactFormProvider
+  lazy val page: AddSecondaryContactView = inject[AddSecondaryContactView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Add a secondary contact"
 
   "AddSecondaryContactView" should {
 
     "have a title and a heading" in {
-      view.title() mustBe "Add a secondary contact - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Add a secondary contact"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {

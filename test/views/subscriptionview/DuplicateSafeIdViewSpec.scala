@@ -25,21 +25,21 @@ import views.html.subscriptionview.DuplicateSafeIdView
 
 class DuplicateSafeIdViewSpec extends ViewSpecBase {
 
-  val formProvider = new DuplicateSafeIdFormProvider
-  val page: DuplicateSafeIdView = inject[DuplicateSafeIdView]
-
-  val view: Document = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val formProvider: DuplicateSafeIdFormProvider = new DuplicateSafeIdFormProvider
+  lazy val page:         DuplicateSafeIdView         = inject[DuplicateSafeIdView]
+  lazy val view:         Document                    = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                      = "There is a problem with your registration"
 
   "Duplicate SafeId View" should {
 
     "have a title" in {
-      view.title() mustBe "There is a problem with your registration - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "There is a problem with your registration"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

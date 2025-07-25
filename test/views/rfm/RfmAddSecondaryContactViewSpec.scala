@@ -26,15 +26,15 @@ import views.html.rfm.RfmAddSecondaryContactView
 
 class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmAddSecondaryContactFormProvider
-  val page: RfmAddSecondaryContactView = inject[RfmAddSecondaryContactView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmAddSecondaryContactFormProvider = new RfmAddSecondaryContactFormProvider
+  lazy val page:         RfmAddSecondaryContactView         = inject[RfmAddSecondaryContactView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Add a secondary contact"
 
   "Rfm Add Secondary Contact View" should {
 
     "have a title" in {
-      view.title() mustBe "Add a secondary contact - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -45,7 +45,7 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
       val h1Elements: Elements = view.getElementsByTag("h1")
       // FIXME: this page has 2 H1 headings!!!
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Add a secondary contact"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {

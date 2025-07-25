@@ -26,15 +26,15 @@ import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmSecurityCheckFormProvider
-  val page: SecurityCheckView = inject[SecurityCheckView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmSecurityCheckFormProvider = new RfmSecurityCheckFormProvider
+  lazy val page:         SecurityCheckView            = inject[SecurityCheckView]
+  lazy val view:         Document                     = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                       = "Enter the group’s Pillar 2 Top-up Taxes ID"
 
   "Security Check View" should {
 
     "have a title" in {
-      view.title() mustBe "Enter the group’s Pillar 2 Top-up Taxes ID - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +44,7 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Enter the group’s Pillar 2 Top-up Taxes ID"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint description" in {

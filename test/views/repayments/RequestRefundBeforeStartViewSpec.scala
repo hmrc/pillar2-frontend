@@ -24,20 +24,21 @@ import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
-  val page:      RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
-  val view:      Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
-  val agentView: Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
+  val page:           RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
+  val view:           Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
+  val agentView:      Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                       = "Request a refund"
 
   "Request Repayment Before Start View" should {
 
     "have a title" in {
-      view.title() mustBe "Request a repayment - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Request a repayment"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two h2 headings" in {

@@ -24,20 +24,20 @@ import views.html.Kb750IneligibleView
 
 class Kb750IneligibleViewSpec extends ViewSpecBase {
 
-  val page: Kb750IneligibleView = inject[Kb750IneligibleView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      Kb750IneligibleView = inject[Kb750IneligibleView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
 
   "Kb750 Ineligible View" should {
 
     "have a title" in {
-      view.title() mustBe "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {

@@ -26,15 +26,16 @@ import views.html.rfm.RfmPrimaryContactEmailView
 
 class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactEmailFormProvider
-  val page: RfmPrimaryContactEmailView = inject[RfmPrimaryContactEmailView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: RfmPrimaryContactEmailFormProvider = new RfmPrimaryContactEmailFormProvider
+  lazy val page:         RfmPrimaryContactEmailView         = inject[RfmPrimaryContactEmailView]
+  lazy val username:     String                             = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the email address"
 
   "Rfm Primary Contact Email View" should {
 
     "have a title" in {
-      view.title() mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -44,7 +45,7 @@ class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "What is the email address for John Doe?"
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint" in {

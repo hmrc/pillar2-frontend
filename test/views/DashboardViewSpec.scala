@@ -23,28 +23,29 @@ import org.jsoup.select.Elements
 import views.html.DashboardView
 
 class DashboardViewSpec extends ViewSpecBase {
-  private val page: DashboardView = inject[DashboardView]
-  private val organisationName = "Some Org name"
-  private val plrRef           = "XMPLR0012345678"
-  private val date             = "1 June 2020"
+  private lazy val page:             DashboardView = inject[DashboardView]
+  private lazy val organisationName: String        = "Some Org name"
+  private lazy val plrRef:           String        = "XMPLR0012345678"
+  private lazy val date:             String        = "1 June 2020"
 
-  val organisationDashboardView: Document =
+  lazy val organisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
-  val agentDashboardView: Document =
+  lazy val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
-  val inActiveOrganisationDashboardView: Document =
+  lazy val inActiveOrganisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Your Pillar 2 Top-up Taxes account"
 
   "Dashboard View for Organisation" should {
 
     "have a title" in {
-      organisationDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = organisationDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
+      h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
@@ -171,13 +172,13 @@ class DashboardViewSpec extends ViewSpecBase {
 
   "Dashboard View for Agent" should {
     "have a title" in {
-      agentDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = agentDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
+      h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 

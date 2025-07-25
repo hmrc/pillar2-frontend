@@ -24,16 +24,19 @@ import views.html.registrationview.RegisteringNfmForThisGroupView
 
 class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
-  val formProvider: RegisteringNfmForThisGroupFormProvider = new RegisteringNfmForThisGroupFormProvider
-  val page:         RegisteringNfmForThisGroupView         = inject[RegisteringNfmForThisGroupView]
-  val view:         Document                               = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
-  val viewWithErrors: Document = Jsoup.parse(page(formProvider().bind(Map("registeringNfmGroup" -> "")))(request, appConfig, messages).toString())
+  lazy val formProvider: RegisteringNfmForThisGroupFormProvider = new RegisteringNfmForThisGroupFormProvider
+  lazy val page:         RegisteringNfmForThisGroupView         = inject[RegisteringNfmForThisGroupView]
+  lazy val view:         Document                               = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val viewWithErrors: Document =
+    Jsoup.parse(page(formProvider().bind(Map("registeringNfmGroup" -> "")))(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Are you registering as the group’s nominated filing member?"
 
   "Registering Nfm for this group view" should {
-    "have a caption" in {
-      view.title() mustBe "Are you registering as the group’s nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
+    // FIXME: this test is not properly testing H1 - it is testing some classes
     "have a unique H1 heading" in {
       view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
         be("Check if you need to report Pillar 2 Top-up Taxes")

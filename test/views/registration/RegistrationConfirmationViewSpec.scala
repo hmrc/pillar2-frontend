@@ -21,6 +21,7 @@ import models.MneOrDomestic
 import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationConfirmationView
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
@@ -37,12 +38,22 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
   val viewMne: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testMne)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Registration complete"
 
   "Registration Confirmation View" should {
     "have a title" in {
-      viewDomestic.title() mustBe "Registration complete - Report Pillar 2 Top-up Taxes - GOV.UK"
+      viewDomestic.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
+    // TODO: check if this is correct
+    "have a panel with a unique H1 heading" in {
+      val h1Elements: Elements = viewDomestic.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.hasClass("govuk-panel__title") mustBe true
+    }
+
+    // FIXME: the getElementsByClass("govuk-panel__title") has been moved above - check if correct and adjust the panel__body test
     "have a panel" in {
       viewDomestic.getElementsByClass("govuk-panel__title").text must include("Registration complete")
       viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 Top-up Taxes ID PLR2ID123")

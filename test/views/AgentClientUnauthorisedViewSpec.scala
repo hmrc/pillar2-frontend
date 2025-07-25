@@ -24,21 +24,20 @@ import views.html.AgentClientUnauthorisedView
 
 class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
 
-  val page: AgentClientUnauthorisedView = inject[AgentClientUnauthorisedView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      AgentClientUnauthorisedView = inject[AgentClientUnauthorisedView]
+  lazy val view:      Document                    = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                      = "You have not been authorised to report this client’s Pillar 2 Top-up Taxes"
 
   "Agent Error View" should {
 
     "have a title" in {
-      val title = "You have not been authorised to report this client’s Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You have not been authorised to report this client’s Pillar 2 Top-up Taxes"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

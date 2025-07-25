@@ -29,27 +29,28 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
 class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
-  val plrReference = "XE1111123456789"
 
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val plrReference: String = "XE1111123456789"
+
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmPillar2ReferencePage, plrReference)
     .setOrException(RfmRegistrationDatePage, registrationDate)
 
-  val list: SummaryList = SummaryListViewModel(
+  lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmSecurityCheckSummary.row(userAnswer)(messages),
       RfmRegistrationDateSummary.row(userAnswer)(messages)
     ).flatten
   )
 
-  val page: SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
-
-  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val page:      SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
+  lazy val view:      Document                              = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                                = "Check Your Answers"
 
   "Security Questions Check Your Answers View" should {
 
     "have a title" in {
-      view.title() mustBe "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -59,7 +60,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a summary list keys" in {
