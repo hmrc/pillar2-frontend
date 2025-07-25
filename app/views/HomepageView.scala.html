@@ -97,34 +97,39 @@
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
  }
 
- <div style="display: flex; flex-wrap: wrap; margin-top: 2em;">
+ <div class="card-group" style="display: flex; flex-wrap: wrap; margin-top: 2em; margin-bottom: 0; gap: 1.5rem;">
+   <style>
+     .card-group > div { margin-bottom: 0 !important; }
+   </style>
       @if(maybeUktrBannerScenario.isDefined) {
-    <div class="govuk-!-margin-right-5 govuk-!-margin-bottom-4 card-main">
-      <div class="card-label">
-        <h2 class="govuk-heading-m">
-          @messages("homepage.returns.title")
-          @maybeUktrBannerScenario.map { scenario =>
-            @if(scenario == "Overdue" || scenario == "Incomplete") {
-              <span class="govuk-tag @{
-                scenario match {
-                  case "Overdue" => "govuk-tag--red"
-                  case "Incomplete" => "govuk-tag--purple"
-                }
-              } govuk-!-margin-right-5" aria-label="@{scenario} returns" title="@{scenario} returns" style="float: right;">@scenario</span>
+    <div class="card-half-width" style="width: 450px; height: auto; display: flex; flex-direction: column; margin-bottom: 0;">
+      <div style="border: solid #b1b4b6 1px; height: 100%; display: flex; flex-direction: column;">
+        <div class="card-label" style="background-color: #f3f2f1; padding: 10px 0 1px 15px; margin: 0 0 10px 0;">
+          <h2 class="govuk-heading-m">
+            @messages("homepage.returns.title")
+            @maybeUktrBannerScenario.map { scenario =>
+              @if(scenario == "Overdue" || scenario == "Incomplete") {
+                <span class="govuk-tag @{
+                  scenario match {
+                    case "Overdue" => "govuk-tag--red"
+                    case "Incomplete" => "govuk-tag--purple"
+                  }
+                } govuk-!-margin-right-5" aria-label="@{scenario} returns" title="@{scenario} returns" style="float: right;">@scenario</span>
+              }
             }
-          }
-        </h2>
-      </div>
-      <div class="card-content">
+          </h2>
+        </div>
+      <div class="card-content" style="padding: 15px 15px 0 15px; flex-grow: 1;">
        <ul class="govuk-list">
-        <li class="card-links">
+        <li class="card-links" style="padding: 0 0 15px 0;">
          <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
         </li>
-        <li class="card-links">
+        <li class="card-links" style="padding: 0 0 15px 0;">
          <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
         </li>
        </ul>
       </div>
+     </div>
     </div>
    } else {
     @card(
@@ -133,7 +138,7 @@
       (messages("homepage.returns.dueOverdueReturns.linkText"), dueAndOverdueReturnsUrl, None),
       (messages("homepage.returns.submissionHistory.linkText"), submissionHistoryUrl, None),
      ),
-     cardClass = "card-main"
+     cardClass = "card-half-width"
     )
    }
 
@@ -144,7 +149,7 @@
      (messages("homepage.payments.outstandingPayments.linkText"), controllers.routes.UnderConstructionController.onPageLoad.url, None),
      (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url, None),
     ),
-    cardClass = "card-main"
+    cardClass = "card-half-width"
    )
 
    @{
@@ -164,12 +169,6 @@
     )
    }
    <style>
-     .card-main {
-       height: auto; 
-       width: 450px;
-       border: solid #b1b4b6 1px;
-     }
-
      div[class*="card-full-width"] { 
        margin-top: -0.3rem !important; 
        margin-bottom: 0 !important;

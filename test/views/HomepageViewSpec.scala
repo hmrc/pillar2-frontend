@@ -69,7 +69,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = organisationView.getElementsByClass("card-main").first()
+      val returnsCard = organisationView.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -79,7 +79,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = organisationView.getElementsByClass("card-main").get(1)
+      val paymentsCard = organisationView.getElementsByClass("card-half-width").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -113,10 +113,10 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "have correct structure" in {
-      val flexContainer = organisationView.select("div[style*='display: flex']")
-      flexContainer.size() mustBe 1
+      val cardGroup = organisationView.getElementsByClass("card-group")
+      cardGroup.size() mustBe 1
 
-      val mainCards = organisationView.getElementsByClass("card-main")
+      val mainCards = organisationView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
 
       val fullWidthCards = organisationView.getElementsByClass("card-full-width")
@@ -128,7 +128,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "show clean Returns card with no tag when Due scenario is provided" in {
-      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-main").first()
+      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
@@ -143,7 +143,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
-      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-main").first()
+      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
@@ -161,7 +161,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
-      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-main").first()
+      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
@@ -206,7 +206,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = agentView.getElementsByClass("card-main").first()
+      val returnsCard = agentView.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -216,7 +216,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = agentView.getElementsByClass("card-main").get(1)
+      val paymentsCard = agentView.getElementsByClass("card-half-width").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -248,10 +248,10 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "have correct structure" in {
-      val flexContainer = agentView.select("div[style*='display: flex']")
-      flexContainer.size() mustBe 1
+      val cardGroup = agentView.getElementsByClass("card-group")
+      cardGroup.size() mustBe 1
 
-      val mainCards = agentView.getElementsByClass("card-main")
+      val mainCards = agentView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
 
       val fullWidthCards = agentView.getElementsByClass("card-full-width")
@@ -286,7 +286,7 @@ class HomepageViewSpec extends ViewSpecBase {
             .toString()
         )
 
-      val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-main").first()
+      val returnsCard = agentViewWithoutClientSetup.getElementsByClass("card-half-width").first()
       val links       = returnsCard.getElementsByTag("a")
 
       links.get(0).attr("href") must include("asa/input-pillar-2-id")
@@ -299,7 +299,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, Some("Due"), plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages).toString()
         )
 
-      val returnsCard = agentViewWithClientSetup.getElementsByClass("card-main").first()
+      val returnsCard = agentViewWithClientSetup.getElementsByClass("card-half-width").first()
       val links       = returnsCard.getElementsByTag("a")
 
       links.get(0).attr("href") must include("due-and-overdue-returns")
@@ -309,10 +309,10 @@ class HomepageViewSpec extends ViewSpecBase {
 
   "HomepageView layout" should {
     "have correct structure" in {
-      val flexContainer = organisationView.select("div[style*='display: flex']")
-      flexContainer.size() mustBe 1
+      val cardGroup = organisationView.getElementsByClass("card-group")
+      cardGroup.size() mustBe 1
 
-      val mainCards = organisationView.getElementsByClass("card-main")
+      val mainCards = organisationView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
 
       val fullWidthCards = organisationView.getElementsByClass("card-full-width")
@@ -463,7 +463,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val overdueTags = viewDue.select(".govuk-tag--red:contains(Overdue)")
       overdueTags.size() mustBe 0
 
-      val returnsCard          = viewDue.select(".card-main").first()
+      val returnsCard          = viewDue.select(".card-half-width").first()
       val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
       anyTagsInReturnsCard.size() mustBe 0
     }
@@ -522,7 +522,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val incompleteTags = viewDue.select(".govuk-tag--purple:contains(Incomplete)")
       incompleteTags.size() mustBe 0
 
-      val returnsCard          = viewDue.select(".card-main").first()
+      val returnsCard          = viewDue.select(".card-half-width").first()
       val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
       anyTagsInReturnsCard.size() mustBe 0
     }
