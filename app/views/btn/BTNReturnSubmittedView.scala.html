@@ -1,0 +1,69 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import java.time.format.DateTimeFormatter
+@import java.time.LocalDate
+@import models.obligationsandsubmissions.AccountingPeriodDetails
+@import views.html.components.gds._
+
+@this(
+        layout: templates.Layout,
+        govukButton: GovukButton,
+        p: paragraphBody,
+        heading: heading,
+        govukInsetText: GovukInsetText,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        formHelper: FormWithCSRF
+)
+
+@(isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@formatDate = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
+
+@layout(
+    pageTitle = if(isAgent) {
+        titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
+    } else {
+        titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
+    }
+) {
+    @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
+        @if(isAgent) {
+            @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+        } else {
+            @heading(messages("btn.returnSubmitted.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+        }
+
+        @if(isAgent) {
+            @p(messages("btn.returnSubmitted.agent.p1"))
+        } else {
+            @p(messages("btn.returnSubmitted.p1"))
+        }
+
+        @if(isAgent) {
+            @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.agent.insetText"))))
+        } else {
+            @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.insetText"))))
+        }
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+
+        @paragraphMessageWithLink(linkMessage = messages("btn.returnSubmitted.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+    }
+}

@@ -58,6 +58,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+    accountStatus = Some(AccountStatus(false)),
     organisationName = None
   )
 
@@ -75,6 +76,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
     subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false)),
     organisationName = Some("ABC Intl")
   )
 

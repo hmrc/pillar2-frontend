@@ -20,6 +20,7 @@ import models.requests.{OptionalSubscriptionDataRequest, SubscriptionDataRequest
 import play.api.Logging
 import play.api.mvc.Results.Redirect
 import play.api.mvc.{ActionRefiner, Result}
+import utils.JourneyCheck
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,22 +30,30 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
     with Logging {
 
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-    request.maybeSubscriptionLocalData match {
-      case Some(subscriptionData) =>
+    (request.maybeSubscriptionLocalData, request.maybeUserAnswers) match {
+      case (Some(subscriptionData), Some(userAnswers)) =>
         Future.successful(
           Right(
             SubscriptionDataRequest(
               request.request,
               request.userId,
               subscriptionData,
+              userAnswers,
               request.enrolments,
               request.isAgent
             )
           )
         )
-      case None =>
+      case (None, _) =>
         logger.warn(s"subscription data not found")
         Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      case (_, None) =>
+        logger.warn(s"user answers not found")
+        if (JourneyCheck.isBTNJourney(request.path)) {
+          Future.successful(Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
+        } else {
+          Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+        }
     }
 
 }

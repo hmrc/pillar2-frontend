@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-package utils
+package models.btn
 
-object Constants {
-  final val SUBMISSION_ACCOUNTING_PERIODS = 7
-  final val BTN_PATH                      = "/below-threshold-notification"
-  final val SITE_YES                      = "site.yes"
-  final val SITE_NO                       = "site.no"
-  final val SITE_CHANGE                   = "site.change"
+import play.api.libs.json.JsPath
+import queries.{Gettable, Settable}
+
+case object BTNStatus extends Gettable[String] with Settable[String] {
+  val submitted  = "submitted"
+  val processing = "processing"
+  val error      = "error"
+
+  override def path:     JsPath = JsPath \ toString
+  override def toString: String = "status"
 }

@@ -1,0 +1,64 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import models.obligationsandsubmissions.AccountingPeriodDetails
+@import views.helpers.BTNChooseAccountingPeriodHelper
+@import views.html.components.gds._
+@import viewmodels.LegendSize.Large
+
+@this(
+    layout: templates.Layout,
+    formHelper: FormWithCSRF,
+    govukErrorSummary: GovukErrorSummary,
+    govukRadios: GovukRadios,
+    govukButton: GovukButton,
+    heading: heading,
+    paragraphBody: paragraphBody
+)
+
+
+@(form: Form[Int], mode: Mode, isAgent: Boolean, organisationName: Option[String], accountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = title(form, messages("btn.chooseAccountingPeriod.title"))) {
+
+    @formHelper(action = controllers.btn.routes.BTNChooseAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
+
+        @if(form.errors.nonEmpty) {
+            @govukErrorSummary(ErrorSummaryViewModel(form))
+        }
+
+        @if(isAgent && organisationName.isDefined) {
+          <span class="govuk-caption-m">@organisationName.get</span>
+        }
+
+        @heading(messages("btn.chooseAccountingPeriod.heading"), classes = "govuk-heading-l")
+
+        @paragraphBody(messages("btn.chooseAccountingPeriod.p1"))
+
+        @govukRadios(
+            Radios(
+                name = form("value").name,
+                items = BTNChooseAccountingPeriodHelper.radioButtons(form, accountingPeriodDetails),
+                errorMessage = form("value").error.map(err => ErrorMessage(content = Text(messages(err.message, err.args:_*))))
+            )
+        )
+
+        @govukButton(
+            ButtonViewModel(messages("site.continue"))
+        )
+    }
+}

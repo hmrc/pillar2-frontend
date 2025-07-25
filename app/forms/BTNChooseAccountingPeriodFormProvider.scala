@@ -14,12 +14,17 @@
  * limitations under the License.
  */
 
-package utils
+package forms
 
-object Constants {
-  final val SUBMISSION_ACCOUNTING_PERIODS = 7
-  final val BTN_PATH                      = "/below-threshold-notification"
-  final val SITE_YES                      = "site.yes"
-  final val SITE_NO                       = "site.no"
-  final val SITE_CHANGE                   = "site.change"
+import forms.mappings.Mappings
+import play.api.data.Form
+
+import javax.inject.Inject
+
+class BTNChooseAccountingPeriodFormProvider @Inject() extends Mappings {
+
+  def apply(): Form[Int] =
+    Form(
+      "value" -> int("btn.chooseAccountingPeriod.error.required")
+    )
 }

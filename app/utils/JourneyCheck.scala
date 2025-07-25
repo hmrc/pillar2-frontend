@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -16,10 +16,7 @@
 
 package utils
 
-object Constants {
-  final val SUBMISSION_ACCOUNTING_PERIODS = 7
-  final val BTN_PATH                      = "/below-threshold-notification"
-  final val SITE_YES                      = "site.yes"
-  final val SITE_NO                       = "site.no"
-  final val SITE_CHANGE                   = "site.change"
+object JourneyCheck {
+  def isBTNJourney(path: String): Boolean =
+    path.contains(Constants.BTN_PATH)
 }

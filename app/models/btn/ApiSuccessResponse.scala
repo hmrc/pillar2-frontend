@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,12 +14,12 @@
  * limitations under the License.
  */
 
-package utils
+package models.btn
 
-object Constants {
-  final val SUBMISSION_ACCOUNTING_PERIODS = 7
-  final val BTN_PATH                      = "/below-threshold-notification"
-  final val SITE_YES                      = "site.yes"
-  final val SITE_NO                       = "site.no"
-  final val SITE_CHANGE                   = "site.change"
+import play.api.libs.json.{Json, OFormat}
+
+case class ApiSuccessResponse(success: ApiSuccess)
+
+object ApiSuccessResponse {
+  implicit val format: OFormat[ApiSuccessResponse] = Json.format[ApiSuccessResponse]
 }
