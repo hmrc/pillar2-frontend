@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.DashboardView
 
 class DashboardViewSpec extends ViewSpecBase {
@@ -41,9 +42,10 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      val h1 = organisationDashboardView.getElementsByTag("h1")
-      h1.text must include("Your Pillar 2 Top-up Taxes account")
-      h1.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
+      val h1Elements: Elements = organisationDashboardView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
+      h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
     "have an inactive status banner if the there is an inactive status" in {
@@ -173,9 +175,10 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      val h1 = agentDashboardView.getElementsByTag("h1")
-      h1.text must include("Your Pillar 2 Top-up Taxes account")
-      h1.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
+      val h1Elements: Elements = agentDashboardView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
+      h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
     "have an inactive status banner if the there is an inactive status" in {

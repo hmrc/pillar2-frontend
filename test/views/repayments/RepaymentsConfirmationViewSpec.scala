@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
 import utils.ViewHelpers
 import views.html.repayments.RepaymentsConfirmationView
@@ -45,12 +46,11 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       link.text         must include("Report Pillar 2 Top-up Taxes")
     }
 
-    "have one H1 banner-panel heading" in {
-      val heading = view.getElementsByTag("h1")
-
-      heading.size() mustBe 1
-      heading.hasClass("govuk-panel__title") mustBe true
-      heading.text() mustBe "Repayment request submitted"
+    "have a panel with a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Repayment request submitted"
+      h1Elements.hasClass("govuk-panel__title") mustBe true
     }
 
     "have a confirmation message" in {
