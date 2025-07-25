@@ -69,7 +69,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = organisationView.getElementsByClass("card-main").first()
+      val returnsCard = organisationView.getElementsByClass("card-half-width").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -79,7 +79,8 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = organisationView.getElementsByClass("card-main").get(1)
+      val cards        = organisationView.getElementsByClass("card-half-width")
+      val paymentsCard = if (cards.size() > 1) cards.get(1) else cards.first()
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -148,7 +149,7 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
       val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--red")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag--red")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Overdue"
       statusTag.first().attr("aria-label") mustBe "Overdue returns"
@@ -166,7 +167,7 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
       val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--purple")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag--purple")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Incomplete"
       statusTag.first().attr("aria-label") mustBe "Incomplete returns"
