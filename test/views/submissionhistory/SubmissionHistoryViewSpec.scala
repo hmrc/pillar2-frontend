@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.format.DateTimeFormatter
@@ -27,22 +28,22 @@ import java.time.{LocalDate, ZonedDateTime}
 
 class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
-  val page: SubmissionHistoryView = inject[SubmissionHistoryView]
-
-  val organisationView: Document =
+  lazy val page: SubmissionHistoryView = inject[SubmissionHistoryView]
+  lazy val organisationView: Document =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
-  val agentView: Document =
+  lazy val agentView: Document =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Submission history"
 
-  "Submisison History Organisation View" should {
-
+  "Submission History Organisation View" should {
     "have a title" in {
-      val title = "Submission history - Report Pillar 2 Top-up Taxes - GOV.UK"
-      organisationView.getElementsByTag("title").text must include(title)
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      organisationView.getElementsByTag("h1").text must include("Submission history")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph detailing submission details" in {
@@ -95,7 +96,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
   }
 
-  "Submisison History Agent View" should {
+  "Submission History Agent View" should {
 
     "have a paragraph detailing submission details" in {
       val paragraph = agentView.getElementsByTag("p")

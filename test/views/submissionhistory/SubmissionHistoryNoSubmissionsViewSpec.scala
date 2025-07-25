@@ -19,24 +19,25 @@ package views.submissionhistory
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.submissionhistory.SubmissionHistoryNoSubmissionsView
 
 class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
-  val page: SubmissionHistoryNoSubmissionsView = inject[SubmissionHistoryNoSubmissionsView]
+  lazy val page:             SubmissionHistoryNoSubmissionsView = inject[SubmissionHistoryNoSubmissionsView]
+  lazy val organisationView: Document                           = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView:        Document                           = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle:        String                             = "Submission history"
 
-  val organisationView: Document = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
-  val agentView:        Document = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
-
-  "Submisison History with no submission organisation view" should {
-
+  "Submission History with no submission organisation view" should {
     "have a title" in {
-      val title = "Submission history - Report Pillar 2 Top-up Taxes - GOV.UK"
-      organisationView.getElementsByTag("title").text must include(title)
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      organisationView.getElementsByTag("h1").text must include("Submission history")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a first paragraph" in {
@@ -65,8 +66,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
     }
   }
 
-  "Submisison History with no submission agent view" should {
-
+  "Submission History with no submission agent view" should {
     "have a first paragraph" in {
       agentView.getElementsByTag("p").text must include(
         "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
