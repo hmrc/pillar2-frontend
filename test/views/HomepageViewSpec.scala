@@ -34,12 +34,13 @@ class HomepageViewSpec extends ViewSpecBase {
 
   val organisationView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
+      page(organisationName, date, None, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
     )
 
   val agentView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
+      page(organisationName, date, None, None, plrRef, isAgent = true, agentHasClientSetup = true)(request, appConfig, messages)
+        .toString()
     )
 
   "HomepageView for a group" should {
@@ -115,7 +116,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveOrgView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages).toString()
         )
 
       val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
@@ -130,7 +131,8 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Returns card with no tag when Due scenario is provided" in {
       val organisationViewWithDueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
         )
       val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
 
@@ -149,7 +151,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
@@ -172,7 +174,8 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val organisationViewWithIncompleteScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false, agentHasClientSetup = false)(request, appConfig, messages)
+            .toString()
         )
       val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
 
@@ -263,7 +266,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveAgentView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
+          page(organisationName, date, apEndDate, None, plrRef, isAgent = true, agentHasClientSetup = true)(
+            request,
+            appConfig,
+            messages
+          ).toString()
         )
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
