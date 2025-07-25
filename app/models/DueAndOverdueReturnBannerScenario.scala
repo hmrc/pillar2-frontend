@@ -16,8 +16,8 @@
 
 package models
 
-sealed trait UktrBannerScenario
+sealed trait DueAndOverdueReturnBannerScenario
 
-case object UktrDue extends UktrBannerScenario
-case object UktrOverdue extends UktrBannerScenario
-case object UktrIncomplete extends UktrBannerScenario
+case object Due extends DueAndOverdueReturnBannerScenario
+case object Overdue extends DueAndOverdueReturnBannerScenario
+case object Incomplete extends DueAndOverdueReturnBannerScenario

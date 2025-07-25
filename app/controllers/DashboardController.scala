@@ -22,8 +22,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
+import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{InternalIssueError, UserAnswers}
@@ -110,9 +111,7 @@ class DashboardController @Inject() (
     if (appConfig.newHomepageEnabled) {
       val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-        val userAnswers         = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-        val agentHasClientSetup = userAnswers.get(AgentClientPillar2ReferencePage).isDefined
-
+        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         osService
           .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
           .map { response =>
@@ -121,14 +120,17 @@ class DashboardController @Inject() (
                 subscriptionData.upeDetails.organisationName,
                 subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
                 if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
-                uktrBannerScenario(response).map {
-                  case UktrDue        => "Due"
-                  case UktrOverdue    => "Overdue"
-                  case UktrIncomplete => "Incomplete"
+                getDueOrOverdueReturnsStatus(response) match {
+                  case None => None
+                  case Some(value) =>
+                    value match {
+                      case Due        => Some("Due")
+                      case Overdue    => Some("Overdue")
+                      case Incomplete => Some("Incomplete")
+                    }
                 },
                 plrReference,
-                isAgent = request.isAgent,
-                agentHasClientSetup = agentHasClientSetup
+                isAgent = request.isAgent
               )
             )
           }
@@ -163,62 +165,43 @@ class DashboardController @Inject() (
     }
   }
 
-  def uktrBannerScenario(response: ObligationsAndSubmissionsSuccess): Option[UktrBannerScenario] = {
-    val accountingPeriods: Seq[AccountingPeriodDetails] = response.accountingPeriodDetails
+  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
-    val openUktrObligations: Seq[(AccountingPeriodDetails, Obligation)] = accountingPeriods.flatMap { period =>
-      period.obligations
-        .filter(obligation => obligation.obligationType == UKTR && obligation.status == models.obligationsandsubmissions.ObligationStatus.Open)
-        .map(obligation => (period, obligation))
-    }
+    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] = {
+      val uktrObligation = period.obligations.find(_.obligationType == UKTR)
+      val girObligation  = period.obligations.find(_.obligationType == GIR)
+      val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
 
-    def hasIncompleteReturns: Boolean =
-      accountingPeriods.exists { period =>
-        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
-        val girObligation  = period.obligations.find(_.obligationType == GIR)
-
-        (uktrObligation, girObligation) match {
-          case (Some(uktr), Some(gir)) =>
-            val uktrFulfilled = uktr.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || uktr.submissions.nonEmpty
-            val girFulfilled  = gir.status == models.obligationsandsubmissions.ObligationStatus.Fulfilled || gir.submissions.nonEmpty
-
-            uktrFulfilled != girFulfilled
-
-          case (Some(uktr), None) =>
-            uktr.submissions.nonEmpty
-
-          case _ =>
-            false
-        }
+      (uktrObligation, girObligation) match {
+        case (Some(uktr), Some(gir)) =>
+          (uktr.status, gir.status, dueDatePassed) match {
+            case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
+            case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
+            case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
+            case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
+            case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
+            case _                                                          => None
+          }
+        case (Some(uktr), None) =>
+          (uktr.status, dueDatePassed) match {
+            case (ObligationStatus.Open, false) => Some(Due)
+            case (ObligationStatus.Open, true)  => Some(Overdue)
+            case _                              => None
+          }
+        case (None, Some(gir)) =>
+          (gir.status, dueDatePassed) match {
+            case (ObligationStatus.Open, false) => Some(Due)
+            case (ObligationStatus.Open, true)  => Some(Overdue)
+            case _                              => None
+          }
+        case _ => None
       }
-
-    def hasOverdueReturns: Boolean =
-      openUktrObligations.exists { case (period, _) => period.dueDate.isBefore(LocalDate.now()) }
-
-    def hasDueReturns: Boolean =
-      openUktrObligations.exists { case (period, _) =>
-        !period.dueDate.isBefore(LocalDate.now())
-      }
-
-    def getOldestPeriodStatus: String =
-      openUktrObligations
-        .map { case (period, _) => period }
-        .minByOption(_.endDate)
-        .map { period =>
-          if (period.dueDate.isBefore(LocalDate.now())) "overdue" else "due"
-        }
-        .getOrElse("due")
-
-    openUktrObligations.headOption.flatMap { _ =>
-      if (hasIncompleteReturns) Some(UktrIncomplete)
-      else if (hasOverdueReturns && hasDueReturns) {
-        getOldestPeriodStatus match {
-          case "overdue" => Some(UktrOverdue)
-          case _         => Some(UktrDue)
-        }
-      } else if (hasDueReturns) Some(UktrDue)
-      else if (hasOverdueReturns) Some(UktrOverdue)
-      else None
     }
+    obligationsAndSubmissions.accountingPeriodDetails
+      .map(period => (period, periodStatus(period)))
+      .filter(_._2.isDefined)
+      .minByOption(_._1.endDate)
+      .flatMap(_._2)
+
   }
 }

@@ -20,8 +20,9 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
 import models.UserAnswers
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
+import models.{Due, Incomplete, Overdue}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -35,8 +36,8 @@ import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.{DashboardView, HomepageView}
 
+import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZonedDateTime}
 import java.util.UUID
 import scala.concurrent.Future
 
@@ -101,8 +102,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             None,
             None,
             "12345678",
-            isAgent = false,
-            agentHasClientSetup = false
+            isAgent = false
           )(
             request,
             applicationConfig,
@@ -219,875 +219,555 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
   }
 
-  "UKTR Banner Logic" should {
-    "return None when no open UKTR obligations exist" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
+  "getDueOrOverdueReturnsStatus" should {
 
+    "return Due when UKTR obligation is open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val response   = obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)
 
-        val result = controller.uktrBannerScenario(response)
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Overdue when UKTR obligation is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
+
+    "return None when both UKTR and GIR obligations are fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
         result mustBe None
       }
     }
 
-    "return UktrIncomplete when only UKTR is fulfilled and due date is in the past" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return Due when both UKTR and GIR obligations are open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(10),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Open,
-                  canAmend = true,
-                  submissions = Seq.empty
-                )
-              )
-            )
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
 
-        val result = controller.uktrBannerScenario(responseWithSubmissions)
-        result.map(_.toString) mustBe Some("UktrIncomplete")
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
       }
     }
 
-    "return UktrIncomplete when only GIR is fulfilled and due date is in the past" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return Due when UKTR is open, GIR is fulfilled and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(10),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Fulfilled,
-                  canAmend = true,
-                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
-                )
-              )
-            )
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
 
-        val result = controller.uktrBannerScenario(responseWithSubmissions)
-        result.map(_.toString) mustBe Some("UktrIncomplete")
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
       }
     }
 
-    "not return UktrIncomplete when both UKTR and GIR are fulfilled" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return Overdue when both UKTR and GIR obligations are open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(10),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Fulfilled,
-                  canAmend = false,
-                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Fulfilled,
-                  canAmend = true,
-                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
-                )
-              )
-            )
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
 
-        val result = controller.uktrBannerScenario(responseWithSubmissions)
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
+
+    "return Incomplete when UKTR is open, GIR is fulfilled and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Incomplete)
+      }
+    }
+
+    "return Incomplete when UKTR is fulfilled, GIR is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Incomplete)
+      }
+    }
+
+    "return None when UKTR is fulfilled and GIR is open but due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
         result mustBe None
       }
     }
 
-    "not return UktrIncomplete when neither UKTR nor GIR are fulfilled but due date is future" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return None when only UKTR obligation is fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseWithSubmissions = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now(),
-              endDate = LocalDate.now().plusMonths(12),
-              dueDate = LocalDate.now().plusDays(30),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Open,
-                  canAmend = true,
-                  submissions = Seq.empty
-                )
-              )
-            )
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
-
-        val result = controller.uktrBannerScenario(responseWithSubmissions)
-        result.map(_.toString) mustBe Some("UktrDue")
-      }
-    }
-
-    "not return UktrIncomplete when both UKTR and GIR are fulfilled with past due date" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
         )
-        .build()
-
-      running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
-        val responseWithBothFulfilled = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(10),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Fulfilled,
-                  canAmend = false,
-                  submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Fulfilled,
-                  canAmend = true,
-                  submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
-                )
-              )
-            )
-          )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
         )
 
-        val result = controller.uktrBannerScenario(responseWithBothFulfilled)
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
         result mustBe None
       }
     }
 
-    "return UktrOverdue when neither UKTR nor GIR are fulfilled with past due date" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return Due when only GIR obligation is open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseWithNeitherFulfilled = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(10),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                ),
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Open,
-                  canAmend = true,
-                  submissions = Seq.empty
-                )
-              )
-            )
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
 
-        val result = controller.uktrBannerScenario(responseWithNeitherFulfilled)
-        result.map(_.toString) mustBe Some("UktrOverdue")
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
       }
     }
 
-    "return UktrOverdue for overdue obligations" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return Overdue when only GIR obligation is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseOverdue = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now().minusMonths(12),
-              endDate = LocalDate.now(),
-              dueDate = LocalDate.now().minusDays(1),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                )
-              )
-            )
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
 
-        val result = controller.uktrBannerScenario(responseOverdue)
-        result.map(_.toString) mustBe Some("UktrOverdue")
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
       }
     }
 
-    "return UktrDue for obligations due within 60 days" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return None when only GIR obligation is fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseDue = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now(),
-              endDate = LocalDate.now().plusMonths(12),
-              dueDate = LocalDate.now().plusDays(30), // Due within 60 days
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                )
-              )
-            )
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
           )
         )
-
-        val result = controller.uktrBannerScenario(responseDue)
-        result.map(_.toString) mustBe Some("UktrDue")
-      }
-    }
-
-    "return UktrDue for obligations due beyond 60 days to match prototype behavior" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
         )
-        .build()
-
-      running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
-        val responseFuture = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now(),
-              endDate = LocalDate.now().plusMonths(12),
-              dueDate = LocalDate.now().plusDays(70),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.UKTR,
-                  status = ObligationStatus.Open,
-                  canAmend = false,
-                  submissions = Seq.empty
-                )
-              )
-            )
-          )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
         )
 
-        val result = controller.uktrBannerScenario(responseFuture)
-        result.map(_.toString) mustBe Some("UktrDue")
-      }
-    }
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
-    "return None when organization has no UKTR obligations at all" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
-      running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
-        val responseNoUktr = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now(),
-              endDate = LocalDate.now().plusMonths(12),
-              dueDate = LocalDate.now().plusDays(30),
-              underEnquiry = false,
-              obligations = Seq(
-                Obligation(
-                  obligationType = ObligationType.GIR,
-                  status = ObligationStatus.Open,
-                  canAmend = true,
-                  submissions = Seq.empty
-                )
-              )
-            )
-          )
-        )
-
-        val result = controller.uktrBannerScenario(responseNoUktr)
         result mustBe None
       }
     }
 
-    "return None when organization has empty obligations list" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return None when no accounting periods exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseNoObligations = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(
-            AccountingPeriodDetails(
-              startDate = LocalDate.now(),
-              endDate = LocalDate.now().plusMonths(12),
-              dueDate = LocalDate.now().plusDays(30),
-              underEnquiry = false,
-              obligations = Seq.empty // No obligations at all
-            )
-          )
+
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq.empty
         )
 
-        val result = controller.uktrBannerScenario(responseNoObligations)
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
         result mustBe None
       }
     }
 
-    "return None when all accounting periods are empty" in {
-      val application = applicationBuilder(userAnswers = None, enrolments)
-        .configure("features.newHomepageEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionService].toInstance(mockSubscriptionService),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
+    "return None when accounting periods exist but no obligations exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
-        val responseEmptyPeriods = ObligationsAndSubmissionsSuccess(
-          processingDate = ZonedDateTime.now(),
-          accountingPeriodDetails = Seq.empty // No accounting periods at all
+
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = LocalDate.now().plusDays(7),
+          underEnquiry = false,
+          obligations = Seq.empty
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
         )
 
-        val result = controller.uktrBannerScenario(responseEmptyPeriods)
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
         result mustBe None
       }
     }
 
-    "NEGATIVE TESTS - Scenario 1: UKTR Due Banner" should {
-      "SHOW Due banner when returns are due beyond 60 days to match prototype behavior" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+    "return the earliest period status when multiple accounting periods exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val pastDueDate   = LocalDate.now().minusDays(7)
+
+        // First period (earlier end date) - Due
+        val firstPeriodObligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
-          .build()
+        )
+        val firstPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(24),
+          endDate = LocalDate.now().minusDays(10), // Earlier end date
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = firstPeriodObligations
+        )
 
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseBeyond60Days = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(12),
-                dueDate = LocalDate.now().plusDays(70),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Open,
-                    canAmend = false,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
+        // Second period (later end date) - Overdue
+        val secondPeriodObligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
           )
+        )
+        val secondPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now().minusDays(5), // Later end date
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = secondPeriodObligations
+        )
 
-          val result = controller.uktrBannerScenario(responseBeyond60Days)
-          result.map(_.toString) mustBe Some("UktrDue")
-        }
-      }
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(secondPeriod, firstPeriod) // Order shouldn't matter
+        )
 
-      "NOT show Due banner when all UKTR returns are already fulfilled" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseAllFulfilled = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(12),
-                dueDate = LocalDate.now().plusDays(30),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Fulfilled,
-                    canAmend = false,
-                    submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseAllFulfilled)
-          result mustBe None
-        }
-      }
-
-      "NOT show Due banner when no UKTR obligations exist within 60 days" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseNoUktr = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(12),
-                dueDate = LocalDate.now().plusDays(30), // Within 60 days
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.GIR,
-                    status = ObligationStatus.Open,
-                    canAmend = true,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseNoUktr)
-          result mustBe None
-        }
-      }
-    }
-
-    "NEGATIVE TESTS - Scenario 2: UKTR Overdue Banner" should {
-      "NOT show Overdue banner when all overdue returns are fulfilled" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseOverdueFulfilled = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now().minusMonths(12),
-                endDate = LocalDate.now(),
-                dueDate = LocalDate.now().minusDays(10),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Fulfilled,
-                    canAmend = false,
-                    submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseOverdueFulfilled)
-          result mustBe None
-        }
-      }
-
-      "NOT show Overdue banner when all due dates are in the future" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseFutureDates = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(12),
-                dueDate = LocalDate.now().plusDays(30),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Open,
-                    canAmend = false,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseFutureDates)
-          result.map(_.toString) mustBe Some("UktrDue")
-        }
-      }
-
-      "NOT show Overdue banner when no UKTR obligations exist" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseNoUktr = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now().minusMonths(12),
-                endDate = LocalDate.now(),
-                dueDate = LocalDate.now().minusDays(10),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.GIR,
-                    status = ObligationStatus.Open,
-                    canAmend = true,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseNoUktr)
-          result mustBe None
-        }
-      }
-    }
-
-    "NEGATIVE TESTS - Scenario 3: UKTR Incomplete Banner" should {
-      "NOT show Incomplete banner when both UKTR and GIR are fulfilled" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseBothFulfilled = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now().minusMonths(12),
-                endDate = LocalDate.now(),
-                dueDate = LocalDate.now().minusDays(10),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Fulfilled,
-                    canAmend = false,
-                    submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                  ),
-                  Obligation(
-                    obligationType = ObligationType.GIR,
-                    status = ObligationStatus.Fulfilled,
-                    canAmend = true,
-                    submissions = Seq(Submission(SubmissionType.GIR, ZonedDateTime.now(), None))
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseBothFulfilled)
-          result mustBe None
-        }
-      }
-
-      "NOT show Incomplete banner when due date is in the future" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseFutureDue = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now(),
-                endDate = LocalDate.now().plusMonths(12),
-                dueDate = LocalDate.now().plusDays(30),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Open,
-                    canAmend = false,
-                    submissions = Seq(Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now(), None))
-                  ),
-                  Obligation(
-                    obligationType = ObligationType.GIR,
-                    status = ObligationStatus.Open,
-                    canAmend = true,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseFutureDue)
-          result.map(_.toString) mustBe Some("UktrIncomplete")
-        }
-      }
-
-      "NOT show Incomplete banner when only one type of obligation exists without submissions" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseOnlyUktrNoSubmissions = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now().minusMonths(12),
-                endDate = LocalDate.now(),
-                dueDate = LocalDate.now().minusDays(10),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Open,
-                    canAmend = false,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseOnlyUktrNoSubmissions)
-          result.map(_.toString) mustBe Some("UktrOverdue")
-        }
-      }
-
-      "NOT show Incomplete banner when neither UKTR nor GIR are fulfilled" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.newHomepageEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[SubscriptionService].toInstance(mockSubscriptionService),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val controller = application.injector.instanceOf[DashboardController]
-          val responseNeitherFulfilled = ObligationsAndSubmissionsSuccess(
-            processingDate = ZonedDateTime.now(),
-            accountingPeriodDetails = Seq(
-              AccountingPeriodDetails(
-                startDate = LocalDate.now().minusMonths(12),
-                endDate = LocalDate.now(),
-                dueDate = LocalDate.now().minusDays(10),
-                underEnquiry = false,
-                obligations = Seq(
-                  Obligation(
-                    obligationType = ObligationType.UKTR,
-                    status = ObligationStatus.Open,
-                    canAmend = false,
-                    submissions = Seq.empty
-                  ),
-                  Obligation(
-                    obligationType = ObligationType.GIR,
-                    status = ObligationStatus.Open,
-                    canAmend = true,
-                    submissions = Seq.empty
-                  )
-                )
-              )
-            )
-          )
-
-          val result = controller.uktrBannerScenario(responseNeitherFulfilled)
-          result.map(_.toString) mustBe Some("UktrOverdue")
-        }
+        result mustBe Some(Due) // Should return the status from the earliest period (firstPeriod)
       }
     }
   }
