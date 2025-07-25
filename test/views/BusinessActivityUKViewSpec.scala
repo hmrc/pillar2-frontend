@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.BusinessActivityUKFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.BusinessActivityUKView
 
 class BusinessActivityUKViewSpec extends ViewSpecBase {
@@ -40,9 +41,10 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
     }
 
     "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Does the group have an entity located in the UK?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Does the group have an entity located in the UK?"
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {

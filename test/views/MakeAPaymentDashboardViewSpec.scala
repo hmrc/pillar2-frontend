@@ -19,6 +19,7 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.MakeAPaymentDashboardView
 
 import scala.jdk.CollectionConverters._
@@ -36,10 +37,10 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      val h1 = makePaymentDashboardView.getElementsByTag("h1")
-      h1.listIterator().asScala.toList must have size 1
-      h1.text                          must equal("Make a payment")
-      h1.hasClass("govuk-heading-l") mustBe true
+      val h1Elements: Elements = makePaymentDashboardView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Make a payment"
+      h1Elements.hasClass("govuk-heading-l") mustBe true
     }
 
     "have the correct paragraphs" in {
