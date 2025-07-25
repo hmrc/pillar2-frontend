@@ -88,10 +88,9 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val request     = FakeRequest(GET, routes.ManageContactDetailsWaitingRoomController.onPageLoad.url)
           val result      = route(application, request).value
           val messagesApi = application.injector.instanceOf[MessagesApi]
-          implicit val messages: Messages = messagesApi.preferred(request)
 
           status(result) mustEqual OK
-          contentAsString(result) must include(messages("manageContactDetails.h1"))
+          contentAsString(result) must include("Submitting your contact details")
           verify(mockSessionRepository, never()).set(any())
         }
       }

@@ -19,26 +19,25 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.KbUKIneligibleView
 
 class KbUKIneligibleViewSpec extends ViewSpecBase {
 
-  val page: KbUKIneligibleView = inject[KbUKIneligibleView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      KbUKIneligibleView = inject[KbUKIneligibleView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK"
 
   "KbUK Ineligible View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes in the UK"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {

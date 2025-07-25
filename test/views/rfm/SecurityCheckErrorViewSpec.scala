@@ -19,23 +19,26 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.SecurityCheckErrorView
 
 class SecurityCheckErrorViewSpec extends ViewSpecBase {
 
-  val page: SecurityCheckErrorView = inject[SecurityCheckErrorView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      SecurityCheckErrorView = inject[SecurityCheckErrorView]
+  lazy val view:      Document               = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                 = "You cannot replace the current filing member for this group"
 
   "Security Check Error View" should {
 
     "have a title" in {
-      val title = "You cannot replace the current filing member for this group - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      val title = s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe title
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot replace the current filing member for this group")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

@@ -21,27 +21,30 @@ import forms.NominateFilingMemberYesNoFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.fmview.NominateFilingMemberYesNoView
 
 class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
-  val formProvider = new NominateFilingMemberYesNoFormProvider
-  val page: NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider = new NominateFilingMemberYesNoFormProvider
+  lazy val page:      NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
+  lazy val view:      Document                      = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                        = "Nominated filing member"
 
   "Nominate Filing Member Yes No View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Nominated filing member")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Nominated filing member")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

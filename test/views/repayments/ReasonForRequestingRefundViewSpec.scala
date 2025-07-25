@@ -22,25 +22,28 @@ import generators.Generators
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
-  val formProvider = new ReasonForRequestingRefundFormProvider
-  val page: ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
+  lazy val formProvider = new ReasonForRequestingRefundFormProvider
+  lazy val page:      ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
+  lazy val pageTitle: String                        = "Why are you requesting a refund?"
 
   "Reason For Requesting Refund View" when {
 
     "page loaded" should {
-
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Why are you requesting a refund?")
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include("Why are you requesting a refund?")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a hint description" in {

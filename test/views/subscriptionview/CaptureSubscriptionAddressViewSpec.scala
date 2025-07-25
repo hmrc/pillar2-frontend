@@ -23,14 +23,16 @@ import models.NormalMode
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.CaptureSubscriptionAddressView
 
 class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureSubscriptionAddressFormProvider
-  val form: Form[NonUKAddress]             = formProvider()
-  val page: CaptureSubscriptionAddressView = inject[CaptureSubscriptionAddressView]
+  lazy val formProvider: CaptureSubscriptionAddressFormProvider = new CaptureSubscriptionAddressFormProvider
+  lazy val form:         Form[NonUKAddress]                     = formProvider()
+  lazy val page:         CaptureSubscriptionAddressView         = inject[CaptureSubscriptionAddressView]
+  lazy val pageTitle:    String                                 = "What address do you want to use as the filing member’s contact address?"
 
   "Capture Subscription Address View" should {
 
@@ -38,16 +40,16 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("title").text must include(
-        "What address do you want to use as the filing member’s contact address? - Report Pillar 2 Top-up Taxes - GOV.UK"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display the correct heading" in {
       val view: Document = Jsoup.parse(
         page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("h1").text must include("What address do you want to use as the filing member’s contact address?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "display the address line 1 label" in {

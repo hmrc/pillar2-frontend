@@ -20,12 +20,14 @@ import base.ViewSpecBase
 import forms.MneOrDomesticFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
 class MneOrDomesticViewSpec extends ViewSpecBase {
 
-  val formProvider = new MneOrDomesticFormProvider
-  val page: MneOrDomesticView = inject[MneOrDomesticView]
+  lazy val formProvider: MneOrDomesticFormProvider = new MneOrDomesticFormProvider
+  lazy val page:         MneOrDomesticView         = inject[MneOrDomesticView]
+  lazy val pageTitle:    String                    = "Entity locations"
 
   def view(isAgent: Boolean = false): Document =
     Jsoup.parse(page(formProvider(), isAgent, Some("orgName"))(request, appConfig, messages).toString())
@@ -33,15 +35,18 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
   "MneOrDomesticView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include("Entity locations")
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
         view().getElementsByClass("govuk-caption-l").text must equal("Group details")
       }
 
-      "have a heading" in {
-        view().getElementsByTag("h1").get(0).text must equal("Entity locations")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        // FIXME: this page has 2 H1 headings!!!
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph and list content" in {
@@ -91,15 +96,18 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
     "it's an agent" should {
       "have a title" in {
-        view(isAgent = true).getElementsByTag("title").text must include("Entity locations")
+        view(isAgent = true).title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a caption" in {
         view(isAgent = true).getElementsByClass("govuk-caption-l").text must equal("orgName")
       }
 
-      "have a heading" in {
-        view(isAgent = true).getElementsByTag("h1").get(0).text must equal("Entity locations")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
+        // FIXME: this page has 2 H1 headings!!!
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph and list content" in {

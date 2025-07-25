@@ -19,22 +19,25 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.StandardOrganisationView
 
 class StandardOrganisationViewSpec extends ViewSpecBase {
 
-  val page: StandardOrganisationView = inject[StandardOrganisationView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      StandardOrganisationView = inject[StandardOrganisationView]
+  lazy val view:      Document                 = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                   = "Sorry, you’re unable to use this service"
 
   "Standard Organisation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Sorry, you’re unable to use this service")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, you’re unable to use this service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a body" in {

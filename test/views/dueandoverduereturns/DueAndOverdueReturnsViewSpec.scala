@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
@@ -27,14 +28,18 @@ import java.time.format.DateTimeFormatter
 
 class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
-  val currentDate: LocalDate = LocalDate.now()
-
-  lazy val page:     DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
-  val dateFormatter: DateTimeFormatter        = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  lazy val currentDate:   LocalDate                = LocalDate.now()
+  lazy val page:          DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
+  lazy val dateFormatter: DateTimeFormatter        = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  lazy val pageTitle:     String                   = "Due and overdue returns"
 
   def verifyCommonPageElements(view: Document): Unit = {
-    view.getElementsByTag("title").get(0).text mustEqual "Due and overdue returns - Report Pillar 2 Top-up Taxes - GOV.UK"
-    view.getElementsByTag("h1").get(0).text mustEqual "Due and overdue returns"
+
+    view.title mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+
+    val h1Elements: Elements = view.getElementsByTag("h1")
+    h1Elements.size() mustBe 1
+    h1Elements.text() mustBe pageTitle
 
     val headings = view.getElementsByTag("h2")
     val submissionHistoryHeading =

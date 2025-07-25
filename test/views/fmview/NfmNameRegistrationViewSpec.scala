@@ -21,14 +21,16 @@ import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmNameRegistrationView
 
 class NfmNameRegistrationViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmNameRegistrationFormProvider
-  val form: Form[String]            = formProvider()
-  val page: NfmNameRegistrationView = inject[NfmNameRegistrationView]
+  lazy val formProvider: NfmNameRegistrationFormProvider = new NfmNameRegistrationFormProvider
+  lazy val form:         Form[String]                    = formProvider()
+  lazy val page:         NfmNameRegistrationView         = inject[NfmNameRegistrationView]
+  lazy val pageTitle:    String                          = "What is the name of the nominated filing member?"
 
   "NFM Name Registration View" should {
     val view: Document = Jsoup.parse(
@@ -36,11 +38,13 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the name of the nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include("What is the name of the nominated filing member?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the correct section caption" in {

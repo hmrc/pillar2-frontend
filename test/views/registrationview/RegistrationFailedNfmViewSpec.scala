@@ -19,25 +19,29 @@ package views.registrationview
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationFailedNfmView
 
 class RegistrationFailedNfmViewSpec extends ViewSpecBase {
 
-  val page: RegistrationFailedNfmView = inject[RegistrationFailedNfmView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RegistrationFailedNfmView = inject[RegistrationFailedNfmView]
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                    = "Register your group"
 
   "Registration Failed Nfm View" should {
 
     "have a title" in {
-      val title = "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a headings" in {
-      view.getElementsByTag("h1").text must include("The details you entered did not match our records")
-      view.getElementsByTag("h2").text must include("How to confirm your details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
+    }
 
+    "have a H2 heading" in {
+      view.getElementsByTag("h2").text must include("How to confirm your details")
     }
 
     "have a paragraph body" in {

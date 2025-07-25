@@ -20,24 +20,27 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientConfirmDetailsView
 
 class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
 
-  val page: AgentClientConfirmDetailsView = inject[AgentClientConfirmDetailsView]
-
-  private val clientUpe = "Some Corp Inc"
-  private val pillar2Id = "XMPLR0123456789"
-  val view: Document = Jsoup.parse(page(clientUpe, pillar2Id)(request, appConfig, messages).toString())
+  lazy val page:              AgentClientConfirmDetailsView = inject[AgentClientConfirmDetailsView]
+  private lazy val clientUpe: String                        = "Some Corp Inc"
+  private lazy val pillar2Id: String                        = "XMPLR0123456789"
+  lazy val view:              Document                      = Jsoup.parse(page(clientUpe, pillar2Id)(request, appConfig, messages).toString())
+  lazy val pageTitle:         String                        = "Confirm your client’s details"
 
   "Agent Client Confirm Details View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Confirm your client’s details")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {
-      view.getElementsByTag("h1").text must include("Confirm your client’s details")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two h2 headings" in {

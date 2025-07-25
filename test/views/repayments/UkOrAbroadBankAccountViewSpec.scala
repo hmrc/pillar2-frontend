@@ -21,12 +21,14 @@ import forms.UkOrAbroadBankAccountFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.UkOrAbroadBankAccountView
 
 class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
-  val formProvider = new UkOrAbroadBankAccountFormProvider
-  val page: UkOrAbroadBankAccountView = inject[UkOrAbroadBankAccountView]
+  lazy val formProvider = new UkOrAbroadBankAccountFormProvider
+  lazy val page:      UkOrAbroadBankAccountView = inject[UkOrAbroadBankAccountView]
+  lazy val pageTitle: String                    = "What type of account will the refund be sent to?"
 
   "UK or Abroad Bank Account View" when {
 
@@ -35,11 +37,13 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("What type of account will the refund be sent to?")
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include("What type of account will the refund be sent to?")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have radio items" in {

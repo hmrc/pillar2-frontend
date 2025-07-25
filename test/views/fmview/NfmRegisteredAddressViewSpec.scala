@@ -23,15 +23,17 @@ import models.NormalMode
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmRegisteredAddressView
 
 class NfmRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmRegisteredAddressFormProvider
-  val form: Form[NonUKAddress]       = formProvider()
-  val page: NfmRegisteredAddressView = inject[NfmRegisteredAddressView]
-  val userName = "Test Company"
+  lazy val formProvider: NfmRegisteredAddressFormProvider = new NfmRegisteredAddressFormProvider
+  lazy val form:         Form[NonUKAddress]               = formProvider()
+  lazy val page:         NfmRegisteredAddressView         = inject[NfmRegisteredAddressView]
+  lazy val userName:     String                           = "Test Company"
+  lazy val pageTitle:    String                           = "What is the registered office address"
 
   "NFM Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -39,11 +41,13 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the registered office address?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include(s"What is the registered office address of $userName?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"$pageTitle of $userName?"
     }
 
     "have the correct section caption" in {

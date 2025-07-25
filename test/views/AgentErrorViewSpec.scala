@@ -19,23 +19,25 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentErrorView
 
 class AgentErrorViewSpec extends ViewSpecBase {
 
-  val page: AgentErrorView = inject[AgentErrorView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      AgentErrorView = inject[AgentErrorView]
+  lazy val view:      Document       = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String         = "Sorry, there is a problem with the service"
 
   "Agent Error View" should {
 
     "have a title" in {
-      val title = "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, there is a problem with the service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

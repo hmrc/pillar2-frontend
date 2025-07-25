@@ -20,23 +20,25 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
 
-  val page: RepaymentsErrorReturnView = inject[RepaymentsErrorReturnView]
-  val testPillar2Ref = "XMPLR0012345674"
+  lazy val page:           RepaymentsErrorReturnView = inject[RepaymentsErrorReturnView]
+  lazy val view:           Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val testPillar2Ref: String                    = "XMPLR0012345674"
+  lazy val pageTitle:      String                    = "You cannot return, your refund request is complete"
 
   "Repayments error return view" should {
-
-    val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
-
     "have a title" in {
-      view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot return, your refund request is complete")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph" in {

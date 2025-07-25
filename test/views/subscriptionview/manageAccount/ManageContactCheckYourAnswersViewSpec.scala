@@ -21,6 +21,7 @@ import helpers.SubscriptionLocalDataFixture
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
@@ -29,9 +30,9 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
   implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
     SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
-  val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
+  lazy val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]
 
-  val view: Document = Jsoup.parse(
+  lazy val view: Document = Jsoup.parse(
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
@@ -45,7 +46,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     )
       .toString()
   )
-  val agentView: Document = Jsoup.parse(
+
+  lazy val agentView: Document = Jsoup.parse(
     page(
       subscriptionDataPrimaryContactList(),
       subscriptionDataSecondaryContactList(),
@@ -55,17 +57,22 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     )(request, appConfig, messages).toString()
   )
 
+  lazy val pageTitle: String = "Contact details"
+
   "Manage Contact Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Contact details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text      must include(title)
-      agentView.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").first().text      must include("Contact details")
-      agentView.getElementsByTag("h1").first().text must include("Contact details")
+    "have a unique H1 heading" in {
+      val viewH1Elements:      Elements = view.getElementsByTag("h1")
+      val agentViewH1Elements: Elements = agentView.getElementsByTag("h1")
+      viewH1Elements.size() mustBe 1
+      agentViewH1Elements.size() mustBe 1
+      viewH1Elements.text() mustBe pageTitle
+      agentViewH1Elements.text() mustBe pageTitle
     }
 
     "have first contact header" in {

@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.RfmRegistrationDateSummary.dateHelper
@@ -28,35 +29,38 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
 class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
-  val plrReference = "XE1111123456789"
 
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val plrReference: String = "XE1111123456789"
+
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmPillar2ReferencePage, plrReference)
     .setOrException(RfmRegistrationDatePage, registrationDate)
 
-  val list: SummaryList = SummaryListViewModel(
+  lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmSecurityCheckSummary.row(userAnswer)(messages),
       RfmRegistrationDateSummary.row(userAnswer)(messages)
     ).flatten
   )
 
-  val page: SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
-
-  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val page:      SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
+  lazy val view:      Document                              = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                                = "Check Your Answers" // FIXME: we are using a title with Capital initials in the view
 
   "Security Questions Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check Your Answers")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a summary list keys" in {

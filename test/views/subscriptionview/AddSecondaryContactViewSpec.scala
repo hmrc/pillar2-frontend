@@ -21,27 +21,30 @@ import forms.AddSecondaryContactFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.AddSecondaryContactView
 
 class AddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new AddSecondaryContactFormProvider
-  val page: AddSecondaryContactView = inject[AddSecondaryContactView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider = new AddSecondaryContactFormProvider
+  lazy val page: AddSecondaryContactView = inject[AddSecondaryContactView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Add a secondary contact"
 
   "AddSecondaryContactView" should {
 
     "have a title and a heading" in {
-      view.getElementsByTag("title").text must include("Add a secondary contact")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must equal("Contact details")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("Add a secondary contact")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {

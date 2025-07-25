@@ -20,19 +20,21 @@ import base.ViewSpecBase
 import forms.BusinessActivityUKFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import play.api.data.Form
 import views.html.BusinessActivityUKView
 
 class BusinessActivityUKViewSpec extends ViewSpecBase {
 
-  val formProvider = new BusinessActivityUKFormProvider()()
-  val page: BusinessActivityUKView = inject[BusinessActivityUKView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider: Form[Boolean]          = new BusinessActivityUKFormProvider()()
+  lazy val page:         BusinessActivityUKView = inject[BusinessActivityUKView]
+  lazy val view:         Document               = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                 = "Does the group have an entity located in the UK?"
 
   "Business Activity UK View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Does the group have an entity located in the UK?")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
@@ -40,9 +42,10 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
     }
 
     "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Does the group have an entity located in the UK?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {

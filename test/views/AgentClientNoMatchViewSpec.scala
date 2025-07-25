@@ -20,23 +20,25 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientNoMatch
 
 class AgentClientNoMatchViewSpec extends ViewSpecBase {
 
-  val page: AgentClientNoMatch = inject[AgentClientNoMatch]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      AgentClientNoMatch = inject[AgentClientNoMatch]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Your client’s details did not match HMRC records"
 
   "Agent Client No Match View" should {
 
     "have a title" in {
-      val title = "Your client’s details did not match HMRC records - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Your client’s details did not match HMRC records")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {

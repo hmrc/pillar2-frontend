@@ -21,32 +21,32 @@ import forms.NfmContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmContactNameView
 
 class NfmContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmContactNameFormProvider
-  val form: Form[String]       = formProvider()
-  val page: NfmContactNameView = inject[NfmContactNameView]
+  lazy val formProvider: NfmContactNameFormProvider = new NfmContactNameFormProvider
+  lazy val form:         Form[String]               = formProvider()
+  lazy val page:         NfmContactNameView         = inject[NfmContactNameView]
+  lazy val pageTitle:    String                     = "What is the name of the person or team from the nominated filing member to keep on record?"
 
   "NFM Contact Name View" should {
     "display the correct title" in {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team from the nominated filing member to keep on record?"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "display the correct heading" in {
       val view: Document = Jsoup.parse(
         page(form, NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team from the nominated filing member to keep on record?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "display the correct caption" in {

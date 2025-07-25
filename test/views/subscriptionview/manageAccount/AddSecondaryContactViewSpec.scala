@@ -20,28 +20,33 @@ import base.ViewSpecBase
 import forms.AddSecondaryContactFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
 class AddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new AddSecondaryContactFormProvider
-  val page: AddSecondaryContactView = inject[AddSecondaryContactView]
-
-  val view: Document =
-    Jsoup.parse(page(formProvider("John Doe"), "John Doe", isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
+  lazy val formProvider: AddSecondaryContactFormProvider = new AddSecondaryContactFormProvider
+  lazy val page:         AddSecondaryContactView         = inject[AddSecondaryContactView]
+  lazy val username:     String                          = "John Doe"
+  lazy val view: Document =
+    Jsoup.parse(page(formProvider(username), username, isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Add a secondary contact"
 
   "AddSecondaryContactView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Add a secondary contact")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must equal("Contact details")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("Add a secondary contact")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      // FIXME: this page has 2 H1 headings!!!
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {

@@ -19,21 +19,25 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmCannotReturnAfterConfirmationView
 
 class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
 
-  val page: RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
-  val view: Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
+  lazy val view:      Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                               = "Register your group"
 
   "Rfm Cannot Return After Confirmation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot return, you have replaced the filing member")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, you have replaced the filing member" // FIXME: inconsistency between title and H1
     }
 
     "have a paragraph body" in {

@@ -21,13 +21,15 @@ import helpers.SubscriptionLocalDataFixture
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import viewmodels.checkAnswers.manageAccount.GroupAccountingPeriodStartDateSummary.dateHelper
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
-  val page: ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
+  lazy val page:      ManageGroupDetailsCheckYourAnswersView = inject[ManageGroupDetailsCheckYourAnswersView]
+  lazy val pageTitle: String                                 = "Group details"
 
   "Manage Group Details Check Your Answers View" when {
     "it's an organisation view" must {
@@ -36,16 +38,17 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       val view: Document = Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = false, None)(request, appConfig, messages).toString())
 
       "have a title" in {
-        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        view.getElementsByTag("title").text must include(title)
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "display back link" in {
         view.getElementsByClass("govuk-back-link").size() mustBe 1
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include("Group details")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a summary list" in {
@@ -85,16 +88,17 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = true, Some("orgName"))(request, appConfig, messages).toString())
 
       "have a title" in {
-        val title = "Group details - Report Pillar 2 Top-up Taxes - GOV.UK"
-        agentView.getElementsByTag("title").text must include(title)
+        agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "display back link" in {
         agentView.getElementsByClass("govuk-back-link").size() mustBe 1
       }
 
-      "have a heading" in {
-        agentView.getElementsByTag("h1").text must include("Group details")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = agentView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a summary list" in {

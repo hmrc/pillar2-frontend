@@ -19,32 +19,34 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.StartPageView
 
 class StartPageViewSpec extends ViewSpecBase {
 
-  val page: StartPageView = inject[StartPageView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      StartPageView = inject[StartPageView]
+  lazy val view:      Document      = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String        = "Replace the filing member for a Pillar 2 Top-up Taxes account"
 
   "Start Page View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have sub headings" in {
       view.getElementsByClass("govuk-heading-m").get(0).text must include(
-        "Tell HMRC when you have replaced your " +
-          "filing member"
+        "Tell HMRC when you have replaced your filing member"
       )
       view.getElementsByClass("govuk-heading-m").get(1).text must include("Who can replace a filing member")
       view.getElementsByClass("govuk-heading-m").get(2).text must include("Obligations as the filing member")

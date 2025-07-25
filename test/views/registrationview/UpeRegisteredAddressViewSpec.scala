@@ -23,15 +23,17 @@ import models.UKAddress
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.registrationview.UpeRegisteredAddressView
 
 class UpeRegisteredAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new UpeRegisteredAddressFormProvider
-  val form: Form[UKAddress]          = formProvider()
-  val page: UpeRegisteredAddressView = inject[UpeRegisteredAddressView]
-  val userName = "Test Company"
+  lazy val formProvider: UpeRegisteredAddressFormProvider = new UpeRegisteredAddressFormProvider
+  lazy val form:         Form[UKAddress]                  = formProvider()
+  lazy val page:         UpeRegisteredAddressView         = inject[UpeRegisteredAddressView]
+  lazy val userName:     String                           = "Test Company"
+  lazy val pageTitle:    String                           = "What is the registered office address"
 
   "UPE Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -39,7 +41,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the registered office address?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct caption" in {
@@ -47,7 +49,9 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct heading" in {
-      view.getElementsByTag("h1").text must include(s"What is the registered office address of $userName?")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"$pageTitle of $userName?"
     }
 
     "display the warning text" in {

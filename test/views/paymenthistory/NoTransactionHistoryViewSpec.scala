@@ -19,24 +19,26 @@ package views.paymenthistory
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
-  val page: NoTransactionHistoryView = inject[NoTransactionHistoryView]
-
-  val groupView: Document = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
-  val agentView: Document = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+  lazy val page:      NoTransactionHistoryView = inject[NoTransactionHistoryView]
+  lazy val groupView: Document                 = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView: Document                 = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                   = "Transaction history"
 
   "No Transaction History View" should {
 
     "have a title" in {
-      val title = "Transaction history - Report Pillar 2 Top-up Taxes - GOV.UK"
-      groupView.getElementsByTag("title").text must include(title)
+      groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      groupView.getElementsByTag("h1").text must include("Transaction history")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph 1 for a group" in {

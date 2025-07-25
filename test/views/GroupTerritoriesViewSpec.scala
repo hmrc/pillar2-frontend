@@ -20,29 +20,31 @@ import base.ViewSpecBase
 import forms.GroupTerritoriesFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.GroupTerritoriesView
 
 class GroupTerritoriesViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupTerritoriesFormProvider()()
-  val page: GroupTerritoriesView = inject[GroupTerritoriesView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider = new GroupTerritoriesFormProvider()()
+  lazy val page:      GroupTerritoriesView = inject[GroupTerritoriesView]
+  lazy val view:      Document             = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle: String               = "Are you registering as the group’s Ultimate Parent Entity?"
 
   "Group Territories View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Are you registering as the group’s Ultimate Parent Entity?")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
     }
 
-    "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Are you registering as the group’s Ultimate Parent Entity?"
-      )
+    "have a legend with a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {

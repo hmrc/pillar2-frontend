@@ -19,22 +19,25 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressViewSpec extends ViewSpecBase {
 
-  val page: RfmSaveProgressInformView = inject[RfmSaveProgressInformView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RfmSaveProgressInformView = inject[RfmSaveProgressInformView]
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                    = "Saving progress"
 
   "Rfm Save Progress inform View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Saving progress")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Saving progress")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a p1 " in {

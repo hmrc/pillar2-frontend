@@ -21,33 +21,30 @@ import forms.GroupRegistrationDateReportFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.GroupRegistrationDateReportView
 
 class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupRegistrationDateReportFormProvider
-  val page: GroupRegistrationDateReportView = inject[GroupRegistrationDateReportView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: GroupRegistrationDateReportFormProvider = new GroupRegistrationDateReportFormProvider
+  lazy val page:         GroupRegistrationDateReportView         = inject[GroupRegistrationDateReportView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Enter the group’s registration date to the Report Pillar 2 Top-up Taxes service"
 
   "Group Registration Date Report View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Enter the group’s registration date to the Report Pillar 2 " +
-          "Top-up Taxes service"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementById("section-header").text must include("Replace filing member")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Enter the group’s registration date to the Report Pillar 2 " +
-          "Top-up Taxes service"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint description" in {

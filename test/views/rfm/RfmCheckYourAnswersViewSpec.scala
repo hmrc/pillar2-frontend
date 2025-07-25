@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -28,39 +29,41 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  val userName    = "John Doe"
-  val countryCode = "US"
-  val country     = "United States"
+  lazy val userName:    String = "John Doe"
+  lazy val countryCode: String = "US"
+  lazy val country:     String = "United States"
 
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
 
   when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
-  val list: SummaryList = SummaryListViewModel(
+  lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmNameRegistrationSummary.row(userAnswer)(messages),
       RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(messages)
     ).flatten
   )
 
-  val page: RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
-
-  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val page:      RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
+  val view:           Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                  = "Check your answers for filing member details"
 
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers for filing member details")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must include("Group details")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers for filing member details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a summary list keys" in {

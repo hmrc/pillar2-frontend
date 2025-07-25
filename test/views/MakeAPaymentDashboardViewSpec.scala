@@ -19,27 +19,28 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.MakeAPaymentDashboardView
 
 import scala.jdk.CollectionConverters._
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
-  private val page: MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
-  val testPlr2Id = "12345678"
-
-  val makePaymentDashboardView: Document =
+  private val page:    MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
+  lazy val testPlr2Id: String                    = "12345678"
+  lazy val makePaymentDashboardView: Document =
     Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Make a payment"
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
-      makePaymentDashboardView.getElementsByTag("title").text must include("Make a payment")
+      makePaymentDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      val h1 = makePaymentDashboardView.getElementsByTag("h1")
-      h1.listIterator().asScala.toList must have size 1
-      h1.text                          must equal("Make a payment")
-      h1.hasClass("govuk-heading-l") mustBe true
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = makePaymentDashboardView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.hasClass("govuk-heading-l") mustBe true
     }
 
     "have the correct paragraphs" in {

@@ -21,13 +21,15 @@ import forms.RequestRefundAmountFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
-  val formProvider = new RequestRefundAmountFormProvider
-  val mode: Mode                    = NormalMode
-  val page: RequestRefundAmountView = inject[RequestRefundAmountView]
+  lazy val formProvider = new RequestRefundAmountFormProvider
+  lazy val mode:      Mode                    = NormalMode
+  lazy val page:      RequestRefundAmountView = inject[RequestRefundAmountView]
+  lazy val pageTitle: String                  = "Enter your requested refund amount in pounds"
 
   "Request Refund Amount View" should {
 
@@ -36,11 +38,13 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Enter your requested refund amount in pounds")
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        view.getElementsByTag("h1").text must include("Enter your requested refund amount in pounds")
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a button" in {

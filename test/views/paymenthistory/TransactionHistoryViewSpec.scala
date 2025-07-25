@@ -19,13 +19,14 @@ package views.paymenthistory
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.html.paymenthistory.TransactionHistoryView
 
 class TransactionHistoryViewSpec extends ViewSpecBase {
 
-  val table: Table = Table(
+  lazy val table: Table = Table(
     List(
       List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
       List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
@@ -41,7 +42,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  val pagination: Some[Pagination] = Some(
+  lazy val pagination: Some[Pagination] = Some(
     Pagination(
       Some(
         Vector(
@@ -59,20 +60,21 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     )
   )
 
-  val page: TransactionHistoryView = inject[TransactionHistoryView]
-
-  val groupView: Document = Jsoup.parse(page(table, pagination, isAgent = false)(request, appConfig, messages).toString())
-  val agentView: Document = Jsoup.parse(page(table, pagination, isAgent = true)(request, appConfig, messages).toString())
+  lazy val page:      TransactionHistoryView = inject[TransactionHistoryView]
+  lazy val groupView: Document               = Jsoup.parse(page(table, pagination, isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView: Document               = Jsoup.parse(page(table, pagination, isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                 = "Transaction history"
 
   "Transaction History View" should {
 
     "have a title" in {
-      val title = "Transaction history - Report Pillar 2 Top-up Taxes - GOV.UK"
-      groupView.getElementsByTag("title").text must include(title)
+      groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      groupView.getElementsByTag("h1").text must include("Transaction history")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have correct paragraph 1 for a group" in {

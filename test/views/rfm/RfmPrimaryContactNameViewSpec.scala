@@ -21,14 +21,16 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.rfm.RfmPrimaryContactNameView
 
 class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactNameFormProvider
-  val form: Form[String]              = formProvider()
-  val page: RfmPrimaryContactNameView = inject[RfmPrimaryContactNameView]
+  lazy val formProvider: RfmPrimaryContactNameFormProvider = new RfmPrimaryContactNameFormProvider
+  lazy val form:         Form[String]                      = formProvider()
+  lazy val page:         RfmPrimaryContactNameView         = inject[RfmPrimaryContactNameView]
+  lazy val pageTitle: String = "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
 
   "RFM Primary Contact Name View" should {
     val view: Document = Jsoup.parse(
@@ -36,19 +38,17 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "have the correct title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint" in {

@@ -21,13 +21,15 @@ import forms.RepaymentsContactNameFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactNameView
 
 class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new RepaymentsContactNameFormProvider
-  val mode: Mode                      = NormalMode
-  val page: RepaymentsContactNameView = inject[RepaymentsContactNameView]
+  lazy val formProvider: RepaymentsContactNameFormProvider = new RepaymentsContactNameFormProvider
+  lazy val mode:         Mode                              = NormalMode
+  lazy val page:         RepaymentsContactNameView         = inject[RepaymentsContactNameView]
+  lazy val pageTitle:    String                            = "What is the name of the person or team we should contact about the refund request?"
 
   "Repayments Contact Name View" should {
 
@@ -36,17 +38,13 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include(
-          "What is the name of the person or team we should contact " +
-            "about the refund request?"
-        )
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include(
-          "What is the name of the person or team we should contact " +
-            "about the refund request?"
-        )
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a hint" in {
