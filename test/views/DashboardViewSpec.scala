@@ -41,7 +41,7 @@ class DashboardViewSpec extends ViewSpecBase {
       organisationDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = organisationDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
@@ -174,7 +174,7 @@ class DashboardViewSpec extends ViewSpecBase {
       agentDashboardView.title() mustBe "Your Pillar 2 Top-up Taxes account - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = agentDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"

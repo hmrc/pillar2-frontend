@@ -34,7 +34,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
       view.title() mustBe "Are you registering as the group’s nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
         be("Check if you need to report Pillar 2 Top-up Taxes")
     }

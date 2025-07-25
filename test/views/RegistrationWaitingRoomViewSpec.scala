@@ -34,7 +34,7 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
       view.title() mustBe "Submitting your registration - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Submitting your registration"

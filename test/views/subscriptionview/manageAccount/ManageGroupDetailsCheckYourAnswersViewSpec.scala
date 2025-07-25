@@ -45,7 +45,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         view.getElementsByClass("govuk-back-link").size() mustBe 1
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe "Group details"
@@ -96,7 +96,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         agentView.getElementsByClass("govuk-back-link").size() mustBe 1
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = agentView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe "Group details"

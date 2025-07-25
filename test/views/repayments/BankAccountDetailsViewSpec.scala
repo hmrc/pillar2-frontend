@@ -43,7 +43,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       view.title() mustBe "Bank account details - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       println(h1Elements.text())
       h1Elements.size() mustBe 1

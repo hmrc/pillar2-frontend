@@ -35,7 +35,7 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
       view.title() mustBe title
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Sorry, you’re unable to use this service"

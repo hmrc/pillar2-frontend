@@ -56,7 +56,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Check your answers"

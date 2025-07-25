@@ -36,7 +36,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       makePaymentDashboardView.title() mustBe "Make a payment - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = makePaymentDashboardView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Make a payment"

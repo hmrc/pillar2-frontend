@@ -34,7 +34,7 @@ class EligibilityConfirmationViewSpec extends ViewSpecBase {
       view.title() mustBe "You need to register this group to report Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "You need to register this group to report Pillar 2 Top-up Taxes"

@@ -41,7 +41,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
         view.title() mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe "Can we contact John Doe by telephone?"

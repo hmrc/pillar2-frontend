@@ -41,7 +41,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         view().getElementsByClass("govuk-caption-l").text must equal("Group details")
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view().getElementsByTag("h1")
         // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
@@ -92,7 +92,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         view(isAgent = true).getElementsByClass("govuk-caption-l").text must equal("orgName")
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
         // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
