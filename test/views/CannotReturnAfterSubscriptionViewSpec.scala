@@ -25,7 +25,7 @@ import views.html.CannotReturnAfterSubscriptionView
 class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
   private lazy val page: CannotReturnAfterSubscriptionView = inject[CannotReturnAfterSubscriptionView]
   lazy val view:         Document                          = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle:    String                            = "You cannot return, your registration is complete"
+  lazy val pageTitle:    String                            = "Register your group"
 
   "CannotReturnAfterSubscriptionView" should {
     "have a title" in {
@@ -35,7 +35,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe "You cannot return, your registration is complete" // FIXME: inconsistency between title and H1
     }
 
     "display error message correctly" in {

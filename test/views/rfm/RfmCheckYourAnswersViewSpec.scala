@@ -29,13 +29,15 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  lazy val userName    = "John Doe"
-  lazy val countryCode = "US"
-  lazy val country     = "United States"
+  lazy val userName:    String = "John Doe"
+  lazy val countryCode: String = "US"
+  lazy val country:     String = "United States"
 
   lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
+
+  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
   lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
@@ -45,10 +47,8 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   )
 
   lazy val page:      RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
-  lazy val view:      Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  val view:           Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
   lazy val pageTitle: String                  = "Check your answers for filing member details"
-
-  when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
   "Rfm Check Your Answers View" should {
 
