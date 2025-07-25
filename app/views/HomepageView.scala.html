@@ -35,7 +35,7 @@
   if (isAgent && !agentHasClientSetup) {
     s"$submissionFrontendPath/asa/input-pillar-2-id"
   } else {
-    s"$submissionFrontendPath/due-and-overdue-returns"
+    controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
   }
 }
 
@@ -43,7 +43,7 @@
   if (isAgent && !agentHasClientSetup) {
     s"$submissionFrontendPath/asa/input-pillar-2-id"  
   } else {
-    s"$submissionFrontendPath/submission-history"
+    controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
   }
 }
 

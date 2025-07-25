@@ -69,7 +69,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard = organisationView.getElementsByClass("card-half-width").first()
+      val returnsCard = organisationView.getElementsByClass("card-main").first()
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
@@ -79,7 +79,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = organisationView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard = organisationView.getElementsByClass("card-main").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -113,8 +113,8 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "have correct structure" in {
-      val cardGroup = organisationView.getElementsByClass("card-group")
-      cardGroup.size() mustBe 1
+      val flexContainer = organisationView.select("div[style*='display: flex']")
+      flexContainer.size() mustBe 1
 
       val mainCards = organisationView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
@@ -148,7 +148,7 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
       val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag--red")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--red")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Overdue"
       statusTag.first().attr("aria-label") mustBe "Overdue returns"
@@ -166,7 +166,7 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() must include("Returns")
 
       val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag--purple")
+      val statusTag  = cardHeader.getElementsByClass("govuk-tag govuk-tag--purple")
       statusTag.size() mustBe 1
       statusTag.first().text() mustBe "Incomplete"
       statusTag.first().attr("aria-label") mustBe "Incomplete returns"
@@ -463,7 +463,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val overdueTags = viewDue.select(".govuk-tag--red:contains(Overdue)")
       overdueTags.size() mustBe 0
 
-      val returnsCard          = viewDue.select(".card-half-width").first()
+      val returnsCard          = viewDue.select(".card-half-width, .card-main").first()
       val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
       anyTagsInReturnsCard.size() mustBe 0
     }
@@ -522,7 +522,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val incompleteTags = viewDue.select(".govuk-tag--purple:contains(Incomplete)")
       incompleteTags.size() mustBe 0
 
-      val returnsCard          = viewDue.select(".card-half-width").first()
+      val returnsCard          = viewDue.select(".card-half-width, .card-main").first()
       val anyTagsInReturnsCard = returnsCard.select(".govuk-tag")
       anyTagsInReturnsCard.size() mustBe 0
     }
