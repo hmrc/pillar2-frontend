@@ -30,11 +30,11 @@ class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
   "Repayments Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Submitting your refund request")
+      view.getElementsByTag("title").text must include("Submitting your repayment request")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting your refund request")
+      view.getElementsByTag("h1").text must include("Submitting your repayment request")
     }
 
     "have a sub heading" in {

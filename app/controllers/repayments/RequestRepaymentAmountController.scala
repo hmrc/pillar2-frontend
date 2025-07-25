@@ -18,7 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.RequestRefundAmountFormProvider
+import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
 import pages.RepaymentsRefundAmountPage
@@ -33,8 +33,8 @@ import views.html.repayments.RequestRefundAmountView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class RequestRefundAmountController @Inject() (
-  formProvider:                           RequestRefundAmountFormProvider,
+class RequestRepaymentAmountController @Inject() (
+  formProvider:                           RequestRepaymentAmountFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RequestRefundAmountView,
   navigator:                              RepaymentNavigator,

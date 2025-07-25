@@ -17,7 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
-import forms.RequestRefundAmountFormProvider
+import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,22 +25,22 @@ import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
-  val formProvider = new RequestRefundAmountFormProvider
+  val formProvider = new RequestRepaymentAmountFormProvider
   val mode: Mode                    = NormalMode
   val page: RequestRefundAmountView = inject[RequestRefundAmountView]
 
-  "Request Refund Amount View" should {
+  "Request Repayment Amount View" should {
 
     "page loaded" should {
 
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Enter your requested refund amount in pounds")
+        view.getElementsByTag("title").text must include("Enter your requested repayment amount in pounds")
       }
 
       "have a h1 heading" in {
-        view.getElementsByTag("h1").text must include("Enter your requested refund amount in pounds")
+        view.getElementsByTag("h1").text must include("Enter your requested repayment amount in pounds")
       }
 
       "have a button" in {
@@ -56,11 +56,11 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter your requested refund amount in pounds")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter your requested repayment amount in pounds")
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter your requested refund amount in pounds")
+        view.getElementsByClass("govuk-error-message").text must include("Enter your requested repayment amount in pounds")
       }
 
     }
@@ -109,12 +109,12 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Refund amount must only use numbers 0-9, commas and full stops"
+          "Repayment amount must only use numbers 0-9, commas and full stops"
         )
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Refund amount must only use numbers 0-9, commas and full stops")
+        view.getElementsByClass("govuk-error-message").text must include("Repayment amount must only use numbers 0-9, commas and full stops")
       }
 
     }

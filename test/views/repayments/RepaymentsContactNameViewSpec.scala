@@ -38,14 +38,14 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       "have a title" in {
         view.getElementsByTag("title").text must include(
           "What is the name of the person or team we should contact " +
-            "about the refund request?"
+            "about the repayment request?"
         )
       }
 
       "have a heading" in {
         view.getElementsByTag("h1").text must include(
           "What is the name of the person or team we should contact " +
-            "about the refund request?"
+            "about the repayment request?"
         )
       }
 
@@ -67,12 +67,14 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       "have an error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Enter name of the person or team we should contact for this refund request"
+          "Enter name of the person or team we should contact for this repayment request"
         )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter name of the person or team we should contact for this refund request")
+        view.getElementsByClass("govuk-error-message").text must include(
+          "Enter name of the person or team we should contact for this repayment request"
+        )
       }
 
     }

@@ -32,16 +32,18 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You cannot return, your refund request is complete - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.getElementsByTag("title").text must include(
+        "You cannot return, your repayment request is complete - Report Pillar 2 Top-up Taxes - GOV.UK"
+      )
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot return, your refund request is complete")
+      view.getElementsByTag("h1").text must include("You cannot return, your repayment request is complete")
     }
 
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text must include(
-        "You have successfully submitted your refund request." +
+        "You have successfully submitted your repayment request." +
           " You can return to report and manage your Pillar 2 Top-up Taxes ."
       )
     }

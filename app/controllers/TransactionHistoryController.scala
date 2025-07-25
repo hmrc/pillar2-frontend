@@ -190,7 +190,7 @@ object TransactionHistoryController {
           HeadCell(Text(messages("transactionHistory.date")), attributes = Map("scope" -> "col")),
           HeadCell(Text(messages("transactionHistory.description")), attributes = Map("scope" -> "col")),
           HeadCell(Text(messages("transactionHistory.amountPaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col")),
-          HeadCell(Text(messages("transactionHistory.amountRefunded")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
+          HeadCell(Text(messages("transactionHistory.amountRepaid")), classes = "govuk-table__header--numeric", attributes = Map("scope" -> "col"))
         )
       )
     )

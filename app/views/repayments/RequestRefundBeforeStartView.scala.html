@@ -33,24 +33,24 @@
 @(agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("repayment.requestRefundBeforeStart.title"))
+    pageTitle    = titleNoForm(messages("repayment.requestRepaymentBeforeStart.title"))
 ) {
-    @heading(messages("repayment.requestRefundBeforeStart.header"), classes = "govuk-heading-l")
+    @heading(messages("repayment.requestRepaymentBeforeStart.header"), classes = "govuk-heading-l")
     @if(agentView) {
-        @p(messages("repayment.requestRefundBeforeStart.agentView.p1"))
+        @p(messages("repayment.requestRepaymentBeforeStart.agentView.p1"))
     } else {
-        @p(messages("repayment.requestRefundBeforeStart.p1"))
+        @p(messages("repayment.requestRepaymentBeforeStart.p1"))
     }
-    @h2(messages("repayment.requestRefundBeforeStart.header3"), size = "m")
-    @p(messages("repayment.requestRefundBeforeStart.p3"))
+    @h2(messages("repayment.requestRepaymentBeforeStart.header3"), size = "m")
+    @p(messages("repayment.requestRepaymentBeforeStart.p3"))
     @bulletList(items = List(
-        Html(messages("repayment.requestRefundBeforeStart.li1")),
-        Html(messages("repayment.requestRefundBeforeStart.li2")),
-        Html(messages("repayment.requestRefundBeforeStart.li3")),
-        Html(messages("repayment.requestRefundBeforeStart.li4"))
+        Html(messages("repayment.requestRepaymentBeforeStart.li1")),
+        Html(messages("repayment.requestRepaymentBeforeStart.li2")),
+        Html(messages("repayment.requestRepaymentBeforeStart.li3")),
+        Html(messages("repayment.requestRepaymentBeforeStart.li4"))
     ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 
     @govukButton(
-        ButtonViewModel(messages("repayment.requestRefundBeforeStart.header")).asLink(controllers.repayments.routes.RequestRefundAmountController.onPageLoad(NormalMode).url)
+        ButtonViewModel(messages("repayment.requestRepaymentBeforeStart.header")).asLink(controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
     )
 }

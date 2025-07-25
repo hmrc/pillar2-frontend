@@ -17,7 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
-import forms.ReasonForRequestingRefundFormProvider
+import forms.ReasonForRequestingRepaymentFormProvider
 import generators.Generators
 import models.NormalMode
 import org.jsoup.Jsoup
@@ -26,21 +26,21 @@ import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
-  val formProvider = new ReasonForRequestingRefundFormProvider
+  val formProvider = new ReasonForRequestingRepaymentFormProvider
   val page: ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
 
-  "Reason For Requesting Refund View" when {
+  "Reason For Requesting Repayment View" when {
 
     "page loaded" should {
 
       val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Why are you requesting a refund?")
+        view.getElementsByTag("title").text must include("Why are you requesting a repayment?")
       }
 
       "have a heading" in {
-        view.getElementsByTag("h1").text must include("Why are you requesting a refund?")
+        view.getElementsByTag("h1").text must include("Why are you requesting a repayment?")
       }
 
       "have a hint description" in {
@@ -64,11 +64,11 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
       "have a error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter why you are requesting a refund")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter why you are requesting a repayment")
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter why you are requesting a refund")
+        view.getElementsByClass("govuk-error-message").text must include("Enter why you are requesting a repayment")
       }
     }
 
@@ -78,12 +78,14 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
         Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), NormalMode)(request, appConfig, messages).toString())
 
       "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Reason for refund request must be 250 characters or less")
+        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+          "Reason for repayment request must be 250 characters or less"
+        )
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Reason for refund request must be 250 characters or less")
+        view.getElementsByClass("govuk-error-message").text must include("Reason for repayment request must be 250 characters or less")
       }
     }
 
@@ -100,12 +102,12 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
       errorList must include(
-        "The reason for your refund request you enter must not include the following characters <, >, \" or &"
+        "The reason for your repayment request you enter must not include the following characters <, >, \" or &"
       )
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
       fieldErrors must include(
-        "Error: The reason for your refund request you enter must not include the following characters <, >, \" or &"
+        "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
       )
     }
 

@@ -36,7 +36,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
         HeadCell(Text(messages("transactionHistory.date"))),
         HeadCell(Text(messages("transactionHistory.description"))),
         HeadCell(Text(messages("transactionHistory.amountPaid"))),
-        HeadCell(Text(messages("transactionHistory.amountRefunded")))
+        HeadCell(Text(messages("transactionHistory.amountRepaid")))
       )
     )
   )

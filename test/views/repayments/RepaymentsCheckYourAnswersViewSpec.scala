@@ -70,11 +70,11 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
   "Repayments Check Your Answers View" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers before submitting your refund request")
+      view.getElementsByTag("title").text must include("Check your answers before submitting your repayment request")
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers before submitting your refund request")
+      view.getElementsByTag("h1").text must include("Check your answers before submitting your repayment request")
     }
 
     "have a sub heading" in {
@@ -82,13 +82,13 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByTag("h2").get(1).text must include("Bank account details")
       view.getElementsByTag("h2").get(2).text must include("Contact details")
       view.getElementsByTag("h2").get(3).text must include("Do you need to keep a record of your answers?")
-      view.getElementsByTag("h2").get(4).text must include("Now submit your details to request for a refund")
+      view.getElementsByTag("h2").get(4).text must include("Now submit your details to request for a repayment")
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text  must include("Refund amount")
-      view.getElementsByClass("govuk-summary-list__key").get(1).text  must include("Reason for refund request")
-      view.getElementsByClass("govuk-summary-list__key").get(2).text  must include("What type of account will the refund be sent to?")
+      view.getElementsByClass("govuk-summary-list__key").get(0).text  must include("Repayment amount")
+      view.getElementsByClass("govuk-summary-list__key").get(1).text  must include("Reason for repayment request")
+      view.getElementsByClass("govuk-summary-list__key").get(2).text  must include("What type of account will the repayment be sent to?")
       view.getElementsByClass("govuk-summary-list__key").get(3).text  must include("Name of the bank")
       view.getElementsByClass("govuk-summary-list__key").get(4).text  must include("Name on account")
       view.getElementsByClass("govuk-summary-list__key").get(5).text  must include("BIC or SWIFT code")
