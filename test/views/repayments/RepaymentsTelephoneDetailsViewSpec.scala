@@ -46,7 +46,7 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
         view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
       }
 
-      "have a heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe "What is the phone number for ABC Limited?"

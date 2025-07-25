@@ -65,7 +65,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       agentView.title() mustBe title
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val viewH1Elements:      Elements = view.getElementsByTag("h1")
       val agentViewH1Elements: Elements = agentView.getElementsByTag("h1")
       viewH1Elements.size() mustBe 1

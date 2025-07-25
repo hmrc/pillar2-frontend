@@ -41,7 +41,7 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-caption-l").text must include("Contact details")
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       // FIXME: this page has 2 H1 headings!!!
       h1Elements.size() mustBe 1

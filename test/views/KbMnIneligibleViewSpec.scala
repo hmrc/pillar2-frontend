@@ -34,7 +34,7 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
       view.title() mustBe "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
