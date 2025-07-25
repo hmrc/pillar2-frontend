@@ -89,4 +89,7 @@ object ViewUtils {
       case n if n.scale <= 0 => f"$n%,.0f"
       case n                 => f"$n%,.2f"
     }
+
+  def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
+    if (isAgent) agentText else groupText
 }

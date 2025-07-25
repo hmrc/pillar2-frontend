@@ -18,12 +18,15 @@ package helpers
 
 object FinancialDataHelper {
 
-  val ETMP_UKTR = "6500"
+  val ETMP_UKTR     = "6500"
+  val ETMP_INTEREST = "6503"
 
-  val PILLAR2_UKTR = "UK tax return"
+  val PILLAR2_UKTR     = "UK tax return"
+  val PILLAR2_INTEREST = "UK tax return interest"
 
   def toPillar2Transaction(mainType: String): String =
     Map(
-      ETMP_UKTR -> PILLAR2_UKTR
+      ETMP_UKTR     -> PILLAR2_UKTR,
+      ETMP_INTEREST -> PILLAR2_INTEREST
     ).getOrElse(mainType, mainType)
 }

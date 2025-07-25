@@ -30,7 +30,7 @@
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
-@(data: Seq[FinancialSummary], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(data: Seq[FinancialSummary], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
 @totalDue = @{data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)}
 
@@ -41,13 +41,29 @@
             @h1(messages("payments.outstanding.title"))
             @h2(messages("payments.outstanding.amountDue", formattedCurrency(totalDue)), size = "m")
             @paragraphBody(messages("payments.outstanding.p1"))
-            @paragraphBody(messages("payments.outstanding.p2"))
-
-            @govukButton(ButtonViewModel(messages("payments.outstanding.pay.buttonText")).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url))
+            @paragraphBody(userTypeDependentText(
+                messages("payments.outstanding.p2"),
+                messages("payments.outstanding.agent.p2")
+                )
+            )
+            @govukButton(
+                ButtonViewModel(
+                    messages("payments.outstanding.pay.buttonText")
+                ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url))
 
             @h2(messages("payments.outstanding.otherWaysToPay.heading"), size = "m")
-            @paragraphBody(messages("payments.outstanding.otherWaysToPay.p1", plrReference))
-            @paragraphBody(messages("payments.outstanding.otherWaysToPay.p2"))
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.otherWaysToPay.p1", plrReference),
+                    messages("payments.outstanding.otherWaysToPay.agent.p1", plrReference)
+                )
+            )
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.otherWaysToPay.p2"),
+                    messages("payments.outstanding.otherWaysToPay.agent.p2")
+                )
+            )
             @paragraphMessageWithLink(
                 linkMessage = messages("payments.outstanding.otherWaysToPay.linkText"),
                 linkUrl = appConfig.howToPayPillar2TaxesUrl
@@ -96,7 +112,12 @@
             )
 
             @h2(messages("payments.outstanding.penaltiesAndCharges.heading"))
-            @paragraphBody(messages("payments.outstanding.penaltiesAndCharges.p1"))
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.penaltiesAndCharges.p1"),
+                    messages("payments.outstanding.penaltiesAndCharges.agent.p1")
+                )
+            )
             @paragraphMessageWithLink(
                 linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
                 linkUrl = routes.UnderConstructionController.onPageLoad.url
