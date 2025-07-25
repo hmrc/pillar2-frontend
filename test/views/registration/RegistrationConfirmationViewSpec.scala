@@ -48,7 +48,7 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 Top-up Taxes ID PLR2ID123")
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       viewDomestic.getElementsByTag("h2").first.text must include(s"Registration date: ")
     }
 

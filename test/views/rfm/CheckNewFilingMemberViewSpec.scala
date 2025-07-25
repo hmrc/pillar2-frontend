@@ -39,7 +39,7 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
       view.getElementById("section-header").text must include("Group details")
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "We need to match the details of the new nominated filing member to HMRC records"

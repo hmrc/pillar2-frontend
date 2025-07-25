@@ -72,7 +72,7 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       groupView.title() mustBe title
     }
 
-    "have a heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = groupView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "Transaction history"
