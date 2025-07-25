@@ -168,7 +168,7 @@ class DashboardController @Inject() (
     }
   }
 
-  private def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
+  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
     def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] = {
       val uktrObligation = period.obligations.find(_.obligationType == UKTR)
