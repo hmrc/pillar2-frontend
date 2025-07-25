@@ -26,10 +26,10 @@ import views.html.repayments.RepaymentsContactNameView
 
 class RepaymentsContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new RepaymentsContactNameFormProvider
-  val mode:           Mode                      = NormalMode
-  val page:           RepaymentsContactNameView = inject[RepaymentsContactNameView]
-  lazy val pageTitle: String                    = "What is the name of the person or team we should contact about the refund request?"
+  lazy val formProvider: RepaymentsContactNameFormProvider = new RepaymentsContactNameFormProvider
+  lazy val mode:         Mode                              = NormalMode
+  lazy val page:         RepaymentsContactNameView         = inject[RepaymentsContactNameView]
+  lazy val pageTitle:    String                            = "What is the name of the person or team we should contact about the refund request?"
 
   "Repayments Contact Name View" should {
 
@@ -38,7 +38,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe " - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
