@@ -28,7 +28,6 @@ object FinancialData {
 }
 
 case class FinancialTransaction(
-  mainType:          Option[String],
   mainTransaction:   Option[String],
   subTransaction:    Option[String],
   taxPeriodFrom:     Option[LocalDate],

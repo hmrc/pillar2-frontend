@@ -29,33 +29,33 @@ import scala.concurrent.{ExecutionContext, Future}
 class OutstandingPaymentsService @Inject() (financialDataConnector: FinancialDataConnector)(implicit ec: ExecutionContext) {
 
   def retrieveData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[Seq[FinancialSummary]] =
-    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate).map { data =>
-      data.financialTransactions
-        .filter { tx =>
-          tx.taxPeriodFrom.isDefined &&
-          tx.taxPeriodTo.isDefined &&
-          tx.outstandingAmount.exists(_ > 0)
+    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate).map {
+      _.financialTransactions
+        .filter { transaction =>
+          transaction.taxPeriodFrom.isDefined &&
+          transaction.taxPeriodTo.isDefined &&
+          transaction.mainTransaction.isDefined &&
+          transaction.outstandingAmount.exists(_ > 0) &&
+          transaction.items.headOption.exists(_.dueDate.isDefined)
         }
-        .groupBy(tx => (tx.taxPeriodFrom.get, tx.taxPeriodTo.get))
+        .groupBy(transaction => (transaction.taxPeriodFrom.get, transaction.taxPeriodTo.get))
         .toSeq
         .sortBy(_._1)
         .reverse
         .map { case ((periodFrom, periodTo), transactions) =>
-          val transactionSummaries = transactions
-            .groupBy(tx => FinancialDataHelper.toPillar2Transaction(tx.mainTransaction.get))
-            .map { case (parentTransaction, groupedTxs) =>
-              TransactionSummary(
-                name = parentTransaction,
-                outstandingAmount = groupedTxs.flatMap(_.outstandingAmount).sum,
-                dueDate = groupedTxs.head.items.head.dueDate.get
-              )
-            }
-            .toSeq
+          val transactionSummaries =
+            transactions
+              .groupBy(transaction => FinancialDataHelper.toPillar2Transaction(transaction.mainTransaction.get))
+              .map { case (parentTransaction, groupedTransactions) =>
+                TransactionSummary(
+                  parentTransaction,
+                  groupedTransactions.flatMap(_.outstandingAmount).sum,
+                  groupedTransactions.head.items.head.dueDate.get
+                )
+              }
+              .toSeq
 
-          FinancialSummary(
-            accountingPeriod = AccountingPeriod(periodFrom, periodTo),
-            transactions = transactionSummaries.sortBy(_.dueDate).reverse
-          )
+          FinancialSummary(AccountingPeriod(periodFrom, periodTo), transactionSummaries.sortBy(_.dueDate).reverse)
         }
     }
 }

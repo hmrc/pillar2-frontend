@@ -24,9 +24,9 @@ object FinancialDataHelper {
   val PILLAR2_UKTR     = "UK tax return"
   val PILLAR2_INTEREST = "UK tax return interest"
 
-  def toPillar2Transaction(mainType: String): String =
+  def toPillar2Transaction(mainTransaction: String): String =
     Map(
       ETMP_UKTR     -> PILLAR2_UKTR,
       ETMP_INTEREST -> PILLAR2_INTEREST
-    ).getOrElse(mainType, mainType)
+    ).getOrElse(mainTransaction, mainTransaction)
 }
