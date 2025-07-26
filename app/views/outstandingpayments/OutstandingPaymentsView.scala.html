@@ -1,0 +1,127 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.ViewUtils._
+@import views.html.components.gds._
+@import views.html.templates.Layout
+
+@this(
+        layout: Layout,
+        govukBackLink: GovukBackLink,
+        govukTable: GovukTable,
+        govukButton: GovukButton,
+        h1: heading,
+        h2: HeadingH2,
+        paragraphBody: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink
+)
+
+@(data: Seq[FinancialSummary], plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
+
+@totalDue = @{data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)}
+
+@layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false) {
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @h1(messages("payments.outstanding.title"))
+            @h2(messages("payments.outstanding.amountDue", formattedCurrency(totalDue)), size = "m")
+            @paragraphBody(messages("payments.outstanding.p1"))
+            @paragraphBody(userTypeDependentText(
+                messages("payments.outstanding.p2"),
+                messages("payments.outstanding.agent.p2")
+                )
+            )
+            @govukButton(
+                ButtonViewModel(
+                    messages("payments.outstanding.pay.buttonText")
+                ).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url))
+
+            @h2(messages("payments.outstanding.otherWaysToPay.heading"), size = "m")
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.otherWaysToPay.p1", plrReference),
+                    messages("payments.outstanding.otherWaysToPay.agent.p1", plrReference)
+                )
+            )
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.otherWaysToPay.p2"),
+                    messages("payments.outstanding.otherWaysToPay.agent.p2")
+                )
+            )
+            @paragraphMessageWithLink(
+                linkMessage = messages("payments.outstanding.otherWaysToPay.linkText"),
+                linkUrl = appConfig.howToPayPillar2TaxesUrl
+            )
+        </div>
+    </div>
+
+    @h2(messages("payments.outstanding.details.heading"), size = "m")
+    @paragraphBody(messages("payments.outstanding.details.p1"))
+
+    @{
+        if(totalDue <= 0) {
+            paragraphBody(messages("payments.outstanding.details.nothingDue"))
+        } else {
+            data.map { summary =>
+                govukTable(Table(
+                    head = Some(
+                        Seq(
+                            HeadCell(Text("Description"), classes = "govuk-!-width-one-half"),
+                            HeadCell(Text("Amount"), format = Some("numeric"), classes = "govuk-!-width-one-quarter"),
+                            HeadCell(Text("Due date"), classes = "govuk-!-width-one-quarter"),
+                        )
+                    ),
+                    rows =  summary.transactions.map { tx =>
+                        Seq(
+                            TableRow(content = Text(tx.name)),
+                            TableRow(content = Text(s"£${formattedCurrency(tx.outstandingAmount)}"), format = Some("numeric")),
+                            TableRow(content = Text(tx.dueDate.format(dateFormatter)))
+                        )
+                    },
+                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.format(dateFormatter)} to ${summary.accountingPeriod.endDate.format(dateFormatter)}"),
+                    captionClasses = "govuk-table__caption--s",
+                ))
+            }
+        }
+    }
+
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @h2(messages("transactionHistory.title"))
+            @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
+            @paragraphBody(messages("payments.outstanding.transactionHistory.p2"))
+            @paragraphMessageWithLink(
+                linkMessage = messages("homepage.payments.transactionHistory.linkText"),
+                linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+            )
+
+            @h2(messages("payments.outstanding.penaltiesAndCharges.heading"))
+            @paragraphBody(
+                userTypeDependentText(
+                    messages("payments.outstanding.penaltiesAndCharges.p1"),
+                    messages("payments.outstanding.penaltiesAndCharges.agent.p1")
+                )
+            )
+            @paragraphMessageWithLink(
+                linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
+                linkUrl = routes.UnderConstructionController.onPageLoad.url
+            )
+        </div>
+    </div>
+}

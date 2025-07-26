@@ -1,4 +1,4 @@
-@*
+/*
  * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,12 +12,21 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *@
+ */
 
-@this()
+package helpers
 
-@(message: String, classes: String = "govuk-body", id: Option[String] = None, isBold: Boolean = false)
+object FinancialDataHelper {
 
-<p class="@classes" @id.map{id => id="@id" }>
-@{ if(isBold) { <b> {Html(message)} </b>} else Html(message)}
-</p>
+  val ETMP_UKTR     = "6500"
+  val ETMP_INTEREST = "6503"
+
+  val PILLAR2_UKTR     = "UK tax return"
+  val PILLAR2_INTEREST = "UK tax return interest"
+
+  def toPillar2Transaction(mainTransaction: String): String =
+    Map(
+      ETMP_UKTR     -> PILLAR2_UKTR,
+      ETMP_INTEREST -> PILLAR2_INTEREST
+    ).getOrElse(mainTransaction, mainTransaction)
+}

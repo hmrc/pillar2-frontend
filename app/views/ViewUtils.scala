@@ -18,12 +18,13 @@ package views
 
 import play.api.data.Form
 import play.api.i18n.Messages
-import play.twirl.api.Html
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
 object ViewUtils {
+
+  val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def title(form: Form[_], title: String, section: Option[String] = None)(implicit messages: Messages): String =
     titleNoForm(
@@ -74,10 +75,7 @@ object ViewUtils {
     extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
   }
 
-  def formattedCurrentDate: String = {
-    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
-    LocalDate.now().format(formatter)
-  }
+  def formattedCurrentDate: String = LocalDate.now().format(dateFormatter)
 
   def currentTimeGMT: String = {
     val zonedTime     = ZonedDateTime.now(ZoneId.of("GMT"))
@@ -86,9 +84,12 @@ object ViewUtils {
     formattedTime
   }
 
-  def hideForScreenReader(visualKey: String, screenReaderKey: Option[String]): Html =
-    screenReaderKey.fold(
-      Html(s"<span aria-hidden='true'>$visualKey</span>")
-    )(screenReaderAlt => Html(s"<span aria-hidden='true'>$visualKey</span> <span class='govuk-visually-hidden'>$screenReaderAlt</span>"))
+  def formattedCurrency(amount: BigDecimal): String =
+    amount match {
+      case n if n.scale <= 0 => f"$n%,.0f"
+      case n                 => f"$n%,.2f"
+    }
 
+  def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
+    if (isAgent) agentText else groupText
 }

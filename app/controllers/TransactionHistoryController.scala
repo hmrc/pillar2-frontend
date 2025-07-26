@@ -18,7 +18,7 @@ package controllers
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import connectors.TransactionHistoryConnector
+import connectors.FinancialDataConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
@@ -40,7 +40,7 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val transactionHistoryConnector:        TransactionHistoryConnector,
+  val financialDataConnector:             FinancialDataConnector,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   val controllerComponents:               MessagesControllerComponents,
@@ -69,7 +69,7 @@ class TransactionHistoryController @Inject() (
             .fromOption[Future](mayBeUserAnswer.flatMap(_.get(TransactionHistoryPage)))
             .orElse(
               OptionT.liftF(
-                transactionHistoryConnector
+                financialDataConnector
                   .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
               )
             )
