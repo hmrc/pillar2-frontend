@@ -130,7 +130,8 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Returns card with no tag when Due scenario is provided" in {
       val organisationViewWithDueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages)
+            .toString()
         )
       val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
 
@@ -172,7 +173,8 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val organisationViewWithIncompleteScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages)
+            .toString()
         )
       val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
 
