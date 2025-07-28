@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
 
