@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
 
@@ -43,7 +43,6 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
-      // FIXME: this page has 3 H1 headings!!!
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
