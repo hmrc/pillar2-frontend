@@ -22,11 +22,11 @@ package object controllers {
   private val now = LocalDate.now
 
   /** @param accountingDetails
-   *   is a sequence of AccountingPeriodDetails
-   * @return
-   *   a filtered sequence of AccountingPeriodDetails, sorted in reverse chronological order, ensuring that we remove any periods where the start
-   *   date is after today and any periods where the due date is before today
-   */
+    *   is a sequence of AccountingPeriodDetails
+    * @return
+    *   a filtered sequence of AccountingPeriodDetails, sorted in reverse chronological order, ensuring that we remove any periods where the start
+    *   date is after today and any periods where the due date is before today
+    */
   def filteredAccountingPeriodDetails(accountingDetails: Seq[AccountingPeriodDetails]): Seq[AccountingPeriodDetails] =
     accountingDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).sortBy(_.startDate).reverse
 }

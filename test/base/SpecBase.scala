@@ -39,6 +39,7 @@ import play.api.mvc._
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test._
 import play.api.{Application, Configuration}
+import play.i18n.MessagesApi
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -66,6 +67,7 @@ trait SpecBase
     with GuiceOneAppPerSuite
     with UserAnswersFixture
     with SubscriptionLocalDataFixture
+    with ObligationsAndSubmissionsDataFixture
     with StringGenerators {
 
   implicit lazy val ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

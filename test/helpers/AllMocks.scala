@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{AgentAccessFilterAction, DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -73,6 +73,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockRepaymentConnector:                         RepaymentConnector                         = mock[RepaymentConnector]
   val mockRepaymentService:                           RepaymentService                           = mock[RepaymentService]
   val mockTransactionHistoryConnector:                TransactionHistoryConnector                = mock[TransactionHistoryConnector]
+  val mockAgentAccessFilterAction:                    AgentAccessFilterAction                    = mock[AgentAccessFilterAction]
+  val mockBTNService:                                 BTNService                                 = mock[BTNService]
+  val mockBTNConnector:                               BTNConnector                               = mock[BTNConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
