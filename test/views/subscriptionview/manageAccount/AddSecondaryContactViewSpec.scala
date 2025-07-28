@@ -44,16 +44,17 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
-      // FIXME: this page has 2 H1 headings!!!
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text must equal(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+
+      paragraphs.get(0).text must equal(
         "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
       )
-      view.getElementsByClass("govuk-body").get(1).text must equal(
+      paragraphs.get(1).text must equal(
         "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
       )
     }
