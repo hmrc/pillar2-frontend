@@ -48,10 +48,12 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
     }
 
     "have two description paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text must equal(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+
+      paragraphs.get(0).text must equal(
         "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
       )
-      view.getElementsByClass("govuk-body").get(1).text must equal(
+      paragraphs.get(1).text must equal(
         "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
       )
     }
