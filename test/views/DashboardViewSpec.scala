@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.DashboardView
 
@@ -27,6 +27,8 @@ class DashboardViewSpec extends ViewSpecBase {
   private lazy val organisationName: String        = "Some Org name"
   private lazy val plrRef:           String        = "XMPLR0012345678"
   private lazy val date:             String        = "1 June 2020"
+  private lazy val govUkGuidanceUrl: String =
+    "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
 
   lazy val organisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
@@ -34,9 +36,14 @@ class DashboardViewSpec extends ViewSpecBase {
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
   lazy val inActiveOrganisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
+
   lazy val pageTitle: String = "Your Pillar 2 Top-up Taxes account"
 
   "Dashboard View for Organisation" should {
+
+    val organisationViewParagraphs: Elements = organisationDashboardView.getElementsByTag("p")
+    val organisationViewH2Headings: Elements = organisationDashboardView.getElementsByTag("h2")
+    val organisationViewLinks:      Elements = organisationDashboardView.getElementsByTag("a")
 
     "have a title" in {
       organisationDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -49,54 +56,53 @@ class DashboardViewSpec extends ViewSpecBase {
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
-    "have an inactive status banner if the there is an inactive status" in {
-      val bannerLink = organisationDashboardView.getElementsByClass("govuk-notification-banner__link")
+    "have an inactive status banner if there is an inactive status" in {
+      val bannerHeading: Elements = organisationDashboardView.getElementsByClass("govuk-notification-banner__heading")
+      val bannerLink:    Elements = bannerHeading.first().getElementsByClass("govuk-notification-banner__link")
 
-      organisationDashboardView.getElementsByClass("govuk-notification-banner__heading").text() must include(
-        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
-      )
-      bannerLink.attr("href") must include(
-        "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
-      )
-      bannerLink.text() must include("pillar2mailbox@hmrc.gov.uk")
+      bannerHeading.text() mustBe "HMRC has received a Below-Threshold Notification for this account. Please contact " +
+        "the pillar2mailbox@hmrc.gov.uk if your circumstances change."
+      bannerLink.attr("href") mustBe govUkGuidanceUrl
     }
 
-    "not have an inactive status if the the inactive status is false" in {
-      val organisationDashboardView =
-        Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
+    "not have an inactive status banner if the inactive status is false" in {
+      val activeOrganisationDashboardView = Jsoup.parse(
+        page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString()
+      )
 
-      val bannerLink = organisationDashboardView.getElementsByClass("govuk-notification-banner__link")
+      val bannerHeading: Elements = activeOrganisationDashboardView.getElementsByClass("govuk-notification-banner__heading")
+      val bannerLink:    Elements = activeOrganisationDashboardView.getElementsByClass("govuk-notification-banner__link")
 
-      organisationDashboardView.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
+      bannerHeading.text() mustNot include(
         "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
-      bannerLink.attr("href") mustNot include(
-        "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
-      )
+      bannerLink.attr("href") mustNot include(govUkGuidanceUrl)
       bannerLink.text() mustNot include("pillar2mailbox@hmrc.gov.uk")
     }
 
     "have paragraphs detailing organisation information" in {
-      val elements = organisationDashboardView.getElementsByTag("p")
-
-      elements.get(2).text must include(s"Group’s Pillar 2 Top-up Taxes ID: $plrRef")
-      elements.get(3).text must include(s"Registration date: $date")
-      elements.get(4).text must include(s"Ultimate Parent Entity: $organisationName")
+      organisationViewParagraphs.get(2).text mustBe s"Group’s Pillar 2 Top-up Taxes ID: $plrRef"
+      organisationViewParagraphs.get(3).text mustBe s"Registration date: $date"
+      organisationViewParagraphs.get(4).text mustBe s"Ultimate Parent Entity: $organisationName"
     }
 
     "have payment information" in {
-      val h2       = organisationDashboardView.getElementsByTag("h2").get(1)
-      val elements = organisationDashboardView.getElementsByTag("p")
-      h2.text must include("Payments")
-      h2.hasClass("govuk-heading-m") mustBe true
+      organisationViewH2Headings.get(1).text mustBe "Payments"
+      organisationViewH2Headings.get(1).hasClass("govuk-heading-m") mustBe true
 
-      elements.get(5).text                               must include("You have no payments due")
-      elements.get(6).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(6).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
-      elements.get(7).getElementsByTag("a").text()       must include("View your transaction history")
-      elements.get(7).getElementsByTag("a").attr("href") must include(
+      organisationViewParagraphs.get(5).text mustBe "You have no payments due."
+      organisationViewParagraphs.get(6).getElementsByTag("a").text() mustBe "Make a payment"
+      organisationViewParagraphs.get(6).getElementsByTag("a").attr("href") mustBe
+        controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url
+
+      organisationViewParagraphs.get(7).getElementsByTag("a").text() mustBe "View your transaction history"
+      organisationViewParagraphs.get(7).getElementsByTag("a").attr("href") mustBe
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
-      )
+
+      organisationViewParagraphs.get(8).getElementsByTag("a").text() mustBe "Request a refund"
+      organisationViewParagraphs.get(8).getElementsByTag("a").attr("href") mustBe
+        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+
       organisationDashboardView
         .getElementsByTag("hr")
         .first()
@@ -104,66 +110,63 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have manage your account heading and links" in {
-      val h2       = organisationDashboardView.getElementsByTag("h2").get(2)
-      val elements = organisationDashboardView.getElementsByTag("a")
+      organisationViewH2Headings.get(2).text mustBe "Manage your account"
+      organisationViewH2Headings.get(2).hasClass("govuk-heading-m") mustBe true
 
-      h2.text must include("Manage your account")
-      h2.hasClass("govuk-heading-m") mustBe true
-      elements.get(9).text() must include("View and amend contact details")
-      elements.get(9).attr("href") must include(
+      organisationViewParagraphs.get(9).getElementsByTag("a").text() mustBe "View and amend contact details"
+      organisationViewParagraphs.get(9).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
-      )
-      elements.get(10).text() must include("View and amend group details")
-      elements.get(10).attr("href") must include(
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
-      )
 
+      organisationViewParagraphs.get(10).getElementsByTag("a").text() mustBe "View and amend group details"
+      organisationViewParagraphs.get(10).getElementsByTag("a").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
     }
 
     "have pillar 2 information" in {
-      val element   = organisationDashboardView.getElementsByTag("li")
-      val paragraph = organisationDashboardView.getElementsByTag("p")
-      element.text() must not include
-        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
-      element.text() must not include
+      val listItems: Elements = organisationDashboardView.getElementsByTag("li")
+
+      listItems.text() must not include
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for" +
+        " Pillar 2 Top-up Taxes ended after 31 December 2024"
+
+      listItems.text() must not include
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
 
-      paragraph.get(11).text() must include(
-        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
-      )
-
+      organisationViewParagraphs.get(11).text() mustBe
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to" +
+        " submit your returns before the due date for reporting."
     }
 
     "have pillar 2 information with inActive status false" in {
-      val element   = inActiveOrganisationDashboardView.getElementsByTag("li")
-      val paragraph = inActiveOrganisationDashboardView.getElementsByTag("p")
+      val listItems:  Elements = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val paragraphs: Elements = inActiveOrganisationDashboardView.getElementsByTag("p")
 
-      element.get(0).text() must include(
-        "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
-      )
-      element.get(1).text() must include(
+      listItems.get(0).text() mustBe
+        "18 months after the last day of the group’s accounting period, if the first accounting period you reported" +
+        " for Pillar 2 Top-up Taxes ended after 31 December 2024"
+
+      listItems.get(1).text() mustBe
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
-      )
-      paragraph.get(10).text() must include(
-        "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
-      )
-      paragraph.get(11).text() must include(
-        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
-      )
+
+      paragraphs.get(10).text() mustBe "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
+
+      paragraphs.get(11).text() mustBe
+        "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need" +
+        " to submit your returns before the due date for reporting."
     }
 
     "have a Pillar 2 research heading" in {
-      val researchHeading = organisationDashboardView.getElementsByClass("research-heading")
+      val researchHeading: Elements = organisationDashboardView.getElementsByClass("research-heading")
       researchHeading.text mustBe "Take part in Pillar 2 research"
     }
 
     "have a Pillar 2 research paragraph" in {
-      val researchParagraph = organisationDashboardView.getElementsByClass("research-body")
+      val researchParagraph: Elements = organisationDashboardView.getElementsByClass("research-body")
       researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
     }
 
     "have a Pillar 2 link to the research page" in {
-      val researchLink = organisationDashboardView.getElementsByClass("research-link")
+      val researchLink: Elements = organisationDashboardView.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
@@ -182,50 +185,47 @@ class DashboardViewSpec extends ViewSpecBase {
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
-    "have an inactive status banner if the there is an inactive status" in {
-      val bannerLink = agentDashboardView.getElementsByClass("govuk-notification-banner__link")
+    "have an inactive status banner if there is an inactive status" in {
+      val bannerHeading: Elements = agentDashboardView.getElementsByClass("govuk-notification-banner__heading")
+      val bannerLink:    Elements = bannerHeading.first().getElementsByClass("govuk-notification-banner__link")
 
-      agentDashboardView.getElementsByClass("govuk-notification-banner__heading").text() must include(
-        "HMRC has received a Below-Threshold Notification for this account. Please contact the"
-      )
-      bannerLink.attr("href") must include(
-        "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
-      )
-      bannerLink.text() must include("pillar2mailbox@hmrc.gov.uk")
+      bannerHeading.text() mustBe "HMRC has received a Below-Threshold Notification for this account. Please contact " +
+        "the pillar2mailbox@hmrc.gov.uk if your circumstances change."
+      bannerLink.attr("href") mustBe govUkGuidanceUrl
     }
 
-    "not have an inactive status if the the inactive status is false" in {
-      val agentDashboardView =
-        Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = true)(request, appConfig, messages).toString())
+    "not have an inactive status banner if the inactive status is false" in {
+      val activeAgentDashboardView: Document = Jsoup.parse(
+        page(organisationName, date, plrRef, inactiveStatus = false, agentView = true)(request, appConfig, messages).toString()
+      )
 
-      val bannerLink = agentDashboardView.getElementsByClass("govuk-notification-banner__link")
+      val bannerHeading: Elements = activeAgentDashboardView.getElementsByClass("govuk-notification-banner__heading")
+      val bannerLink:    Elements = activeAgentDashboardView.getElementsByClass("govuk-notification-banner__link")
 
-      agentDashboardView.getElementsByClass("govuk-notification-banner__heading").text() mustNot include(
+      bannerHeading.text() mustNot include(
         "HMRC has received a Below-Threshold Notification for this account. Please contact the"
       )
-      bannerLink.attr("href") mustNot include(
-        "https://www.gov.uk/government/consultations/draft-guidance-multinational-top-up-tax-and-domestic-top-up-tax"
-      )
+      bannerLink.attr("href") must not be govUkGuidanceUrl
       bannerLink.text() mustNot include("pillar2mailbox@hmrc.gov.uk")
     }
 
     "have a link to Agent Services Account" in {
-      val element = agentDashboardView.getElementsByTag("a").get(6)
+      val element: Element = agentDashboardView.getElementsByTag("a").get(6)
 
       element.text() must include("Agent Services Account")
       element.attr("href") mustBe "/report-pillar2-top-up-taxes/asa/home"
     }
 
     "have a link to change entered pillar2 id" in {
-      val element = agentDashboardView.getElementsByTag("a").get(7)
+      val element: Element = agentDashboardView.getElementsByTag("a").get(7)
 
       element.text must include("Change client")
       element.attr("href") mustBe controllers.routes.AgentController.onPageLoadClientPillarId.url
     }
 
     "have manage your account heading and links" in {
-      val h2       = agentDashboardView.getElementsByTag("h2").get(2)
-      val elements = agentDashboardView.getElementsByTag("a")
+      val h2:       Element  = agentDashboardView.getElementsByTag("h2").get(2)
+      val elements: Elements = agentDashboardView.getElementsByTag("a")
 
       h2.text must include("Manage your client’s account")
       h2.hasClass("govuk-heading-m") mustBe true
@@ -245,16 +245,16 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have payment information" in {
-      val h2       = agentDashboardView.getElementsByTag("h2").get(1)
-      val elements = agentDashboardView.getElementsByTag("p")
+      val h2:         Element  = agentDashboardView.getElementsByTag("h2").get(1)
+      val paragraphs: Elements = agentDashboardView.getElementsByTag("p")
       h2.text must include("Payments")
       h2.hasClass("govuk-heading-m") mustBe true
 
-      elements.get(7).text                               must include("Your client has no payments due.")
-      elements.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      elements.get(8).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
-      elements.get(9).getElementsByTag("a").text()       must include("View your client’s transaction history")
-      elements.get(9).getElementsByTag("a").attr("href") must include(
+      paragraphs.get(7).text                               must include("Your client has no payments due.")
+      paragraphs.get(8).getElementsByTag("a").text()       must include("Make a payment")
+      paragraphs.get(8).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+      paragraphs.get(9).getElementsByTag("a").text()       must include("View your client’s transaction history")
+      paragraphs.get(9).getElementsByTag("a").attr("href") must include(
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
       )
       agentDashboardView
@@ -264,8 +264,10 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information" in {
-      val element   = organisationDashboardView.getElementsByTag("li")
-      val paragraph = organisationDashboardView.getElementsByTag("p")
+      // FIXME: OrganisationDashboardView used in Agent tests
+      val element: Elements = agentDashboardView.getElementsByTag("li")
+      // FIXME: OrganisationDashboardView used in Agent tests
+      val paragraph: Elements = agentDashboardView.getElementsByTag("p")
 
       element.text() must not include
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
@@ -277,17 +279,17 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have a Pillar 2 research heading" in {
-      val researchHeading = agentDashboardView.getElementsByClass("research-heading")
+      val researchHeading: Elements = agentDashboardView.getElementsByClass("research-heading")
       researchHeading.text mustBe "Take part in Pillar 2 research"
     }
 
     "have a Pillar 2 research paragraph" in {
-      val researchParagraph = agentDashboardView.getElementsByClass("research-body")
+      val researchParagraph: Elements = agentDashboardView.getElementsByClass("research-body")
       researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
     }
 
     "have a Pillar 2 link to the research page" in {
-      val researchLink = agentDashboardView.getElementsByClass("research-link")
+      val researchLink: Elements = agentDashboardView.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl

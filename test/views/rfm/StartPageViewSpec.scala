@@ -45,12 +45,12 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have sub headings" in {
-      view.getElementsByClass("govuk-heading-m").get(0).text must include(
-        "Tell HMRC when you have replaced your filing member"
-      )
-      view.getElementsByClass("govuk-heading-m").get(1).text must include("Who can replace a filing member")
-      view.getElementsByClass("govuk-heading-m").get(2).text must include("Obligations as the filing member")
-      view.getElementsByClass("govuk-heading-m").get(3).text must include("What you will need")
+      val mSubheadings: Elements = view.getElementsByClass("govuk-heading-m")
+
+      mSubheadings.get(0).text must include("Tell HMRC when you have replaced your filing member")
+      mSubheadings.get(1).text must include("Who can replace a filing member")
+      mSubheadings.get(2).text must include("Obligations as the filing member")
+      mSubheadings.get(3).text must include("What you will need")
       view.getElementsByClass("govuk-heading-s").get(0).text must include(
         "By continuing you confirm you are able to act as a new filing member for your group"
       )
@@ -79,13 +79,11 @@ class StartPageViewSpec extends ViewSpecBase {
       )
 
       paragraphs.get(4).text must include(
-        "As the new filing member, you will take over " +
-          "the obligations to:"
+        "As the new filing member, you will take over the obligations to:"
       )
 
       paragraphs.get(5).text must include(
-        "If you fail to meet your obligations as a " +
-          "filing member, you may be liable for penalties."
+        "If you fail to meet your obligations as a filing member, you may be liable for penalties."
       )
 
       paragraphs.get(6).text must include(

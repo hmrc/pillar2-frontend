@@ -64,13 +64,8 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
           "There are two Pillar 2 Top-up Taxes in the UK:"
         )
 
-        listItems.get(0).text must equal(
-          "Domestic Top-up Tax"
-        )
-
-        listItems.get(1).text must equal(
-          "Multinational Top-up Tax"
-        )
+        listItems.get(0).text mustBe "Domestic Top-up Tax"
+        listItems.get(1).text mustBe "Multinational Top-up Tax"
 
         paragraphs.get(3).text must equal(
           "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
@@ -127,13 +122,8 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
           "There are two Pillar 2 Top-up Taxes in the UK:"
         )
 
-        listItems.get(0).text must equal(
-          "Domestic Top-up Tax"
-        )
-
-        listItems.get(1).text must equal(
-          "Multinational Top-up Tax"
-        )
+        listItems.get(0).text mustBe "Domestic Top-up Tax"
+        listItems.get(1).text mustBe "Multinational Top-up Tax"
 
         paragraphs.get(3).text must equal(
           "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."

@@ -49,8 +49,9 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioItems.get(0).text must include("Yes")
+      radioItems.get(1).text must include("No")
     }
 
     "have a button" in {

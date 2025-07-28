@@ -35,11 +35,11 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
     "when status is InProgress" must {
 
-      "have correct title" in {
+      "have a title" in {
         inProgressView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have correct heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = inProgressView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
@@ -52,12 +52,10 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "display spinner" in {
-
         inProgressView.getElementsByClass("hods-loading-spinner__spinner").size() must be > 0
       }
 
       "have a meta refresh tag" in {
-
         val metaRefresh = Option(inProgressView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }
@@ -65,11 +63,11 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
     "when status is SuccessfullyCompleted" must {
 
-      "have correct title" in {
+      "have a title" in {
         completedView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have correct heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = completedView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle

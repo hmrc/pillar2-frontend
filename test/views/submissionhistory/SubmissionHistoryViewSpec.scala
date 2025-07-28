@@ -47,11 +47,11 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a paragraph detailing submission details" in {
-      val paragraph = organisationView.getElementsByTag("p")
-      paragraph.get(1).text() must include(
+      val paragraphs: Elements = organisationView.getElementsByTag("p")
+      paragraphs.get(1).text() must include(
         "You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods."
       )
-      paragraph.get(2).text must include(
+      paragraphs.get(2).text must include(
         "Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions."
       )
     }
@@ -99,11 +99,11 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
   "Submission History Agent View" should {
 
     "have a paragraph detailing submission details" in {
-      val paragraph = agentView.getElementsByTag("p")
-      paragraph.get(1).text() must include(
+      val paragraphs: Elements = agentView.getElementsByTag("p")
+      paragraphs.get(1).text() must include(
         "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
       )
-      paragraph.get(2).text must include(
+      paragraphs.get(2).text must include(
         "Where your client makes changes to a tax return or information return, we’ll list these as individual submissions."
       )
     }

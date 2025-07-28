@@ -64,18 +64,21 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Pillar 2 Top-up Taxes ID")
-      view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Registration date")
+      val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
+      summaryListKeys.get(0).text must include("Pillar 2 Top-up Taxes ID")
+      summaryListKeys.get(1).text must include("Registration date")
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(plrReference)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(dateHelper.formatDateGDS(registrationDate))
+      val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+      summaryListItems.get(0).text must include(plrReference)
+      summaryListItems.get(1).text must include(dateHelper.formatDateGDS(registrationDate))
     }
 
     "have a summary list links" in {
-      view.getElementsByClass("govuk-summary-list__actions").get(0).text must include("Change")
-      view.getElementsByClass("govuk-summary-list__actions").get(1).text must include("Change")
+      val summaryListLinks = view.getElementsByClass("govuk-summary-list__actions")
+      summaryListLinks.get(0).text must include("Change")
+      summaryListLinks.get(1).text must include("Change")
     }
 
     "have a button" in {

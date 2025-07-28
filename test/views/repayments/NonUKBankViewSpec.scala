@@ -36,11 +36,11 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       page(formProvider(), NormalMode)(request, appConfig, messages).toString()
     )
 
-    "have the correct title" in {
+    "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       // FIXME: this title contains a hint. Full H1 text is "Bank account details This must be a business account."

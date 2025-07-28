@@ -67,20 +67,23 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Name")
-      view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Address")
+      val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
+      summaryListKeys.get(0).text must include("Name")
+      summaryListKeys.get(1).text must include("Address")
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(userName)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine1)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine3)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(country)
+      val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+      summaryListItems.get(0).text must include(userName)
+      summaryListItems.get(1).text must include(nonUkAddress.addressLine1)
+      summaryListItems.get(1).text must include(nonUkAddress.addressLine3)
+      summaryListItems.get(1).text must include(country)
     }
 
     "have a summary list links" in {
-      view.getElementsByClass("govuk-summary-list__actions").get(0).text must include("Change")
-      view.getElementsByClass("govuk-summary-list__actions").get(1).text must include("Change")
+      val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
+      summaryListActions.get(0).text must include("Change")
+      summaryListActions.get(1).text must include("Change")
     }
 
     "have a button" in {

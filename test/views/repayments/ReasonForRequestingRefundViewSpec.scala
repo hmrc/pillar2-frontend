@@ -27,7 +27,7 @@ import views.html.repayments.ReasonForRequestingRefundView
 
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
-  lazy val formProvider = new ReasonForRequestingRefundFormProvider
+  lazy val formProvider: ReasonForRequestingRepaymentFormProvider = new ReasonForRequestingRepaymentFormProvider
   lazy val page:      ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
   lazy val pageTitle: String                        = "Why are you requesting a refund?"
 
@@ -65,12 +65,13 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
 
       val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
+      "have an error summary" in {
         view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
         view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter why you are requesting a repayment")
       }
 
-      "have a input error" in {
+
+      "have an input error" in {
         view.getElementsByClass("govuk-error-message").text must include("Enter why you are requesting a repayment")
       }
     }
@@ -80,14 +81,12 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       val view: Document =
         Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), NormalMode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Reason for repayment request must be 250 characters or less"
-        )
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Reason for repayment request must be 250 characters or less")
       }
 
-      "have a input error" in {
+      "have an input error" in {
         view.getElementsByClass("govuk-error-message").text must include("Reason for repayment request must be 250 characters or less")
       }
     }

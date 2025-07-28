@@ -31,8 +31,7 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
   "Security Check Error View" should {
 
     "have a title" in {
-      val title = s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe title
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {

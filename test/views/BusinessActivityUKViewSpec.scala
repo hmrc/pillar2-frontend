@@ -55,8 +55,9 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioButtonsLabels.get(0).text must include("Yes")
+      radioButtonsLabels.get(1).text must include("No")
     }
 
     "have a continue button" in {

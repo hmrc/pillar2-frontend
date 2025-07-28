@@ -37,7 +37,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
       page(form, NormalMode)(request, appConfig, messages).toString()
     )
 
-    "have the correct title" in {
+    "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 

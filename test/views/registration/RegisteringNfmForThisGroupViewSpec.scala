@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegisteringNfmForThisGroupView
 
 class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
@@ -36,15 +37,20 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    // FIXME: this test is not properly testing H1 - it is testing some classes
     "have a unique H1 heading" in {
-      view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
-        be("Check if you need to report Pillar 2 Top-up Taxes")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+    }
+
+    "have an H2 heading" in {
+      view.getElementsByTag("h2").get(0).text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text() must
-        be("The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records.")
+      view
+        .getElementsByClass("govuk-hint")
+        .text() mustBe "The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records."
     }
 
     "have Yes/No radio buttons" in {

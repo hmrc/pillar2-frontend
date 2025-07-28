@@ -42,7 +42,6 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
 
     "have an H2 heading" in {
       view.getElementsByTag("h2").first().text mustBe "How to confirm your details"
-      // view.getElementsByTag("h2").text must include("How to confirm your details")
     }
 
     "have a paragraph body" in {

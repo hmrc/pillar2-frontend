@@ -43,17 +43,21 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      val listItems:  Elements = view.getElementsByTag("li")
+
+      paragraphs.first().text must include(
         "You indicated that the Ultimate Parent Entity has nominated a different company within your group to act as the filing member."
       )
-      view.getElementsByClass("govuk-body").get(1).text must include(
+      paragraphs.get(1).text must include(
         "However, the details you provided for the nominated filing member are the same as those for the Ultimate Parent Entity."
       )
-      view.getElementsByClass("govuk-body").get(2).text must include("Before submitting your registration, you must either:")
-      view.getElementsByTag("li").get(0).text must include(
+      paragraphs.get(2).text must include("Before submitting your registration, you must either:")
+
+      listItems.get(0).text must include(
         "provide the details of the company that will act as your nominated filing member"
       )
-      view.getElementsByTag("li").get(1).text must include("keep your Ultimate Parent Entity as the default filing member")
+      listItems.get(1).text must include("keep your Ultimate Parent Entity as the default filing member")
     }
 
     "has legend" in {
@@ -63,8 +67,9 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioButtonsLabels.get(0).text must include("Yes")
+      radioButtonsLabels.get(1).text must include("No")
     }
 
     "have a button" in {

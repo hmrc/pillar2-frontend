@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
 
@@ -54,23 +54,29 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
     }
 
     "have start and end date legends" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).text must equal("Start date")
-      view.getElementById("startDate-hint").text                    must equal("For example 27 3 2024")
-      view.getElementsByClass("govuk-date-input__item").get(0).text must equal("Day")
-      Option(view.getElementById("startDate.day")) mustBe defined
-      view.getElementsByClass("govuk-date-input__item").get(1).text must equal("Month")
-      Option(view.getElementById("startDate.month")) mustBe defined
-      view.getElementsByClass("govuk-date-input__item").get(2).text must equal("Year")
-      Option(view.getElementById("startDate.year")) mustBe defined
+      val datesFieldsets:    Elements = view.getElementsByClass("govuk-fieldset")
+      val startDateFieldset: Element  = datesFieldsets.get(0)
+      val endDateFieldset:   Element  = datesFieldsets.get(1)
 
-      view.getElementsByClass("govuk-fieldset__legend").get(1).text must equal("End date")
-      view.getElementById("endDate-hint").text                      must equal("For example 28 3 2025")
-      view.getElementsByClass("govuk-date-input__item").get(3).text must equal("Day")
-      Option(view.getElementById("endDate.day")) mustBe defined
-      view.getElementsByClass("govuk-date-input__item").get(4).text must equal("Month")
-      Option(view.getElementById("endDate.month")) mustBe defined
-      view.getElementsByClass("govuk-date-input__item").get(5).text must equal("Year")
-      Option(view.getElementById("endDate.year")) mustBe defined
+      startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
+      startDateFieldset.getElementById("startDate-hint").text mustBe "For example 27 3 2024"
+
+      startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
+      Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
+      startDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text mustBe "Month"
+      Option(startDateFieldset.getElementById("startDate.month")) mustBe defined
+      startDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
+      Option(startDateFieldset.getElementById("startDate.year")) mustBe defined
+
+      endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
+      endDateFieldset.getElementById("endDate-hint").text mustBe "For example 28 3 2025"
+
+      endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
+      Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
+      endDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text mustBe "Month"
+      Option(endDateFieldset.getElementById("endDate.month")) mustBe defined
+      endDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
+      Option(endDateFieldset.getElementById("endDate.year")) mustBe defined
     }
 
     "have a button" in {

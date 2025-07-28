@@ -54,8 +54,14 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
   }
 
   "CannotReturnAfterSubscriptionView layout" should {
-    "have correct page title" in {
-      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, your registration is complete" // FIXME: inconsistency between title and H1
     }
 
     "not display back link" in {
