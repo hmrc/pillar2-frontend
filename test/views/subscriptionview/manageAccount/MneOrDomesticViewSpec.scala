@@ -44,37 +44,39 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view().getElementsByTag("h1")
-        // FIXME: this page has 2 H1 headings!!!
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph and list content" in {
-        view().getElementsByClass("govuk-body").get(0).text must equal(
+        val paragraphs: Elements = view().getElementsByClass("govuk-body")
+        val listItems:  Elements = view().getElementsByTag("li")
+
+        paragraphs.get(0).text must equal(
           "You must inform HMRC of the entity locations in the group."
         )
 
-        view().getElementsByClass("govuk-body").get(1).text must equal(
+        paragraphs.get(1).text must equal(
           "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
         )
 
-        view().getElementsByClass("govuk-body").get(2).text must equal(
+        paragraphs.get(2).text must equal(
           "There are two Pillar 2 Top-up Taxes in the UK:"
         )
 
-        view().getElementsByTag("li").get(0).text must equal(
+        listItems.get(0).text must equal(
           "Domestic Top-up Tax"
         )
 
-        view().getElementsByTag("li").get(1).text must equal(
+        listItems.get(1).text must equal(
           "Multinational Top-up Tax"
         )
 
-        view().getElementsByClass("govuk-body").get(3).text must equal(
+        paragraphs.get(3).text must equal(
           "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
         )
 
-        view().getElementsByClass("govuk-body").get(4).text must equal(
+        paragraphs.get(4).text must equal(
           "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
         )
       }
@@ -84,9 +86,9 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a radio options" in {
-        view().getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
-
-        view().getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
+        val radioButtonOptions: Elements = view().getElementsByClass("govuk-label govuk-radios__label")
+        radioButtonOptions.get(0).text must equal("Only in the UK")
+        radioButtonOptions.get(1).text must equal("In the UK and outside the UK")
       }
 
       "have a button" in {
@@ -105,37 +107,39 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
-        // FIXME: this page has 2 H1 headings!!!
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have the following paragraph and list content" in {
-        view(isAgent = true).getElementsByClass("govuk-body").get(0).text must equal(
+        val paragraphs: Elements = view(isAgent = true).getElementsByClass("govuk-body")
+        val listItems:  Elements = view(isAgent = true).getElementsByTag("li")
+
+        paragraphs.get(0).text must equal(
           "You must inform HMRC of the entity locations in the group."
         )
 
-        view(isAgent = true).getElementsByClass("govuk-body").get(1).text must equal(
+        paragraphs.get(1).text must equal(
           "The entity locations determine which Pillar 2 Top-up Taxes the group needs to report for."
         )
 
-        view(isAgent = true).getElementsByClass("govuk-body").get(2).text must equal(
+        paragraphs.get(2).text must equal(
           "There are two Pillar 2 Top-up Taxes in the UK:"
         )
 
-        view(isAgent = true).getElementsByTag("li").get(0).text must equal(
+        listItems.get(0).text must equal(
           "Domestic Top-up Tax"
         )
 
-        view(isAgent = true).getElementsByTag("li").get(1).text must equal(
+        listItems.get(1).text must equal(
           "Multinational Top-up Tax"
         )
 
-        view(isAgent = true).getElementsByClass("govuk-body").get(3).text must equal(
+        paragraphs.get(3).text must equal(
           "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
         )
 
-        view(isAgent = true).getElementsByClass("govuk-body").get(4).text must equal(
+        paragraphs.get(4).text must equal(
           "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
         )
       }
@@ -145,9 +149,9 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a radio options" in {
-        view(isAgent = true).getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
-
-        view(isAgent = true).getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
+        val radioButtonOptions: Elements = view(isAgent = true).getElementsByClass("govuk-label govuk-radios__label")
+        radioButtonOptions.get(0).text must equal("Only in the UK")
+        radioButtonOptions.get(1).text must equal("In the UK and outside the UK")
       }
 
       "have a button" in {
