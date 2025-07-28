@@ -44,7 +44,6 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view().getElementsByTag("h1")
-        // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
@@ -95,7 +94,6 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
-        // FIXME: this page has 3 H1 headings!!!
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
