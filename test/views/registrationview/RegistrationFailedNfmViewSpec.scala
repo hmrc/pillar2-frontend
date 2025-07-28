@@ -40,8 +40,8 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
     }
 
-    "have a H2 heading" in {
-      view.getElementsByTag("h2").text must include("How to confirm your details")
+    "have an H2 heading" in {
+      view.getElementsByTag("h2").get(0).text mustBe "How to confirm your details"
     }
 
     "have a paragraph body" in {

@@ -53,16 +53,18 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a label" in {
-      view.getElementsByClass("govuk-label").get(0).text must include("Name of the bank")
-      view.getElementsByClass("govuk-label").get(1).text must include("Name on the account")
-      view.getElementsByClass("govuk-label").get(2).text must include("Sort Code")
-      view.getElementsByClass("govuk-label").get(3).text must include("Account number")
+      val labels: Elements = view.getElementsByClass("govuk-label")
+      labels.get(0).text mustBe "Name of the bank"
+      labels.get(1).text mustBe "Name on the account"
+      labels.get(2).text mustBe "Sort Code"
+      labels.get(3).text mustBe "Account number"
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include("The account must be a UK business account.")
-      view.getElementsByClass("govuk-hint").get(1).text must include("Must be 6 digits long")
-      view.getElementsByClass("govuk-hint").get(2).text must include("Must be between 6 and 8 digits long")
+      val hints: Elements = view.getElementsByClass("govuk-hint")
+      hints.get(0).text mustBe "The account must be a UK business account."
+      hints.get(1).text mustBe "Must be 6 digits long"
+      hints.get(2).text mustBe "Must be between 6 and 8 digits long"
     }
 
     "have a button" in {

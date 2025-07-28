@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.fm
+package views.fmview
 
 import base.ViewSpecBase
 import forms.NfmNameRegistrationFormProvider
@@ -33,9 +33,7 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                          = "What is the name of the nominated filing member?"
 
   "NFM Name Registration View" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode)(request, appConfig, messages).toString()
-    )
+    val view: Document = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
     "have the correct title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"

@@ -37,15 +37,16 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a h1 heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
-    "have two h2 headings" in {
-      view.getElementsByTag("h2").text must include("Client’s ultimate parent")
-      view.getElementsByTag("h2").text must include("Client’s Pillar 2 Top-up Taxes ID")
+    "have two H2 headings" in {
+      val h2Elements: Elements = view.getElementsByTag("h2")
+      h2Elements.get(0).text must include("Client’s ultimate parent")
+      h2Elements.get(1).text must include("Client’s Pillar 2 Top-up Taxes ID")
     }
 
     "display the org name and pillar 2 id" in {
