@@ -42,7 +42,10 @@ class HomepageViewSpec extends ViewSpecBase {
 
   "HomepageView for a group" should {
     "display page header correctly" in {
-      organisationView.getElementsByTag("h1").first().text() mustBe "Pillar 2 Top-up Taxes"
+      val h1Elements = organisationView.getElementsByTag("h1")
+
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Pillar 2 Top-up Taxes"
     }
 
     "display organisation information correctly" in {
