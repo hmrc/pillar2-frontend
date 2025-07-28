@@ -25,8 +25,8 @@ import views.html.repayments.CouldNotConfirmDetailsView
 
 class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
 
-  val page:           CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
-  val view:           Document                   = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:      CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
+  lazy val view:      Document                   = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
   lazy val pageTitle: String                     = "We could not confirm your bank details"
 
   "Could Not Confirm Details View" should {

@@ -46,13 +46,14 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text must
         include(
           "If the new filing member is registered in the UK, we will ask you for identifying " +
             "information so we can best match it with our records."
         )
 
-      view.getElementsByClass("govuk-body").get(1).text must
+      paragraphs.get(1).text must
         include(
           "If the new filing member is registered outside of the UK or if they are not a listed entity type, " +
             "we will ask you for identifying information so we can create a new HMRC record."

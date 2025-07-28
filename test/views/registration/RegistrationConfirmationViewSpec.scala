@@ -25,65 +25,53 @@ import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationConfirmationView
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
-  val testPillar2ID   = "PLR2ID123"
-  val testCompanyName = "TestCompany"
-  val testDate        = "13 September 2024"
-  val testTimeStamp   = "11:00am (GMT)"
-  val testDomestic: MneOrDomestic = Uk
-  val testMne:      MneOrDomestic = UkAndOther
+  lazy val testPillar2ID   = "PLR2ID123"
+  lazy val testCompanyName = "TestCompany"
+  lazy val testDate        = "13 September 2024"
+  lazy val testTimeStamp   = "11:00am (GMT)"
+  lazy val testDomestic: MneOrDomestic                = Uk
+  lazy val testMne:      MneOrDomestic                = UkAndOther
+  lazy val page:         RegistrationConfirmationView = inject[RegistrationConfirmationView]
+  lazy val pageTitle:    String                       = "Registration complete"
 
-  val page: RegistrationConfirmationView = inject[RegistrationConfirmationView]
-
-  val viewDomestic: Document =
+  lazy val viewDomestic: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
-  val viewMne: Document =
+  lazy val viewMne: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testMne)(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "Registration complete"
 
   "Registration Confirmation View" should {
     "have a title" in {
       viewDomestic.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    // TODO: check if this is correct
     "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = viewDomestic.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-panel__title") mustBe true
+      h1Elements.next().hasClass("govuk-panel__body") mustBe true
+      h1Elements.next().text() mustBe s"Group’s Pillar 2 Top-up Taxes ID $testPillar2ID"
     }
 
-    // FIXME: the getElementsByClass("govuk-panel__title") has been moved above - check if correct and adjust the panel__body test
-    "have a panel" in {
-      viewDomestic.getElementsByClass("govuk-panel__title").text must include("Registration complete")
-      viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 Top-up Taxes ID PLR2ID123")
-    }
-
-    "have a unique H1 heading" in {
-      viewDomestic.getElementsByTag("h2").first.text must include(s"Registration date: ")
+    "have an H2 heading" in {
+      viewDomestic.getElementsByTag("h2").first.text mustBe s"Registration date: $testDate"
     }
 
     "have the correct paragraphs for Multinationals and Domestic companies" in {
-      viewDomestic.getElementsByClass("govuk-body").get(0).text must include(
-        "TestCompany has successfully registered to report for " +
-          "Domestic Top-up Tax, " +
-          "on 13 September 2024 at 11:00am (GMT)."
-      )
+      viewDomestic.getElementsByClass("govuk-body").get(0).text mustBe
+        "TestCompany has successfully registered to report for Domestic Top-up Tax, " +
+        "on 13 September 2024 at 11:00am (GMT)."
 
-      viewMne.getElementsByClass("govuk-body").get(0).text must include(
-        "TestCompany has successfully registered to report for " +
-          "Domestic Top-up Tax and Multinational Top-up Tax, " +
-          "on 13 September 2024 at 11:00am (GMT)."
-      )
+      viewMne.getElementsByClass("govuk-body").get(0).text mustBe
+        "TestCompany has successfully registered to report for Domestic Top-up Tax and Multinational Top-up Tax, " +
+        "on 13 September 2024 at 11:00am (GMT)."
 
-      viewDomestic.getElementsByClass("govuk-body").get(1).text must include(
+      viewDomestic.getElementsByClass("govuk-body").get(1).text mustBe
         "You will be able to find your Pillar 2 Top-up Taxes ID and " +
-          "registration date on your account homepage. Keep these details safe."
-      )
+        "registration date on your account homepage. Keep these details safe."
 
-      viewDomestic.getElementsByClass("govuk-body").get(2).text must include(
+      viewDomestic.getElementsByClass("govuk-body").get(2).text mustBe
         "You can now report and manage your Pillar 2 Top-up Taxes."
-      )
     }
 
     "have a bullet list with download and print links" in {

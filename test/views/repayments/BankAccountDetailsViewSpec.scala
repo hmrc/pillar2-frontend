@@ -52,7 +52,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       h1Elements.text() mustBe s"$pageTitle The account must be a UK business account."
     }
 
-    "have a label" in {
+    "have the correct labels" in {
       val labels: Elements = view.getElementsByClass("govuk-label")
       labels.get(0).text mustBe "Name of the bank"
       labels.get(1).text mustBe "Name on the account"
@@ -60,7 +60,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       labels.get(3).text mustBe "Account number"
     }
 
-    "have a hint description" in {
+    "have the correct hints" in {
       val hints: Elements = view.getElementsByClass("govuk-hint")
       hints.get(0).text mustBe "The account must be a UK business account."
       hints.get(1).text mustBe "Must be 6 digits long"

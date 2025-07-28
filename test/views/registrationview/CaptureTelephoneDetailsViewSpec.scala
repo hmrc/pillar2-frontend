@@ -45,7 +45,7 @@ class CaptureTelephoneDetailsViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle for $username?"
+      h1Elements.text() mustBe s"$pageTitle for $username?" // FIXME: inconsistency between title and H1
     }
 
     "have a hint description" in {

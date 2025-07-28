@@ -22,6 +22,7 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import org.scalatest.Assertion
 import views.html.subscriptionview.MneOrDomesticView
 
 class MneOrDomesticViewSpec extends ViewSpecBase {
@@ -64,13 +65,8 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
         "There are two Pillar 2 Top-up Taxes in the UK:"
       )
 
-      listItems.get(0).text must equal(
-        "Domestic Top-up Tax"
-      )
-
-      listItems.get(1).text must equal(
-        "Multinational Top-up Tax"
-      )
+      listItems.get(0).text mustBe "Domestic Top-up Tax"
+      listItems.get(1).text mustBe "Multinational Top-up Tax"
 
       paragraphs.get(3).text must equal(
         "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
@@ -90,9 +86,10 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
     }
 
     "have a radio options" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must equal("Only in the UK")
+      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
 
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must equal("In the UK and outside the UK")
+      radioButtonsLabels.get(0).text must equal("Only in the UK")
+      radioButtonsLabels.get(1).text must equal("In the UK and outside the UK")
     }
 
     "have a button" in {
