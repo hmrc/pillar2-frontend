@@ -476,7 +476,7 @@ nfmNameRegistration.error.length = Name of the nominated filing member must be 1
 nfmNameRegistration.change.hidden = the name of the nominated filing member
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
-securityQuestionsCheckYourAnswers.title = Check Your Answers
+securityQuestionsCheckYourAnswers.title = Check your answers
 securityQuestionsCheckYourAnswers.heading = Check your answers
 securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
 rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 Top-up Taxes ID

@@ -45,7 +45,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val page:      SecurityQuestionsCheckYourAnswersView = inject[SecurityQuestionsCheckYourAnswersView]
   lazy val view:      Document                              = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                                = "Check Your Answers" // FIXME: we are using a title with Capital initials in the view
+  lazy val pageTitle: String                                = "Check your answers"
 
   "Security Questions Check Your Answers View" should {
 
