@@ -57,75 +57,78 @@ class StartPageViewSpec extends ViewSpecBase {
     }
 
     "have paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "Use this service to replace the filing member " +
-          "for an existing Pillar 2 Top-up Taxes account."
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+
+      paragraphs.get(0).text must include(
+        "Use this service to replace the filing member for an existing Pillar 2 Top-up Taxes account."
       )
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
+      paragraphs.get(1).text must include(
         "It is a legal requirement to replace your filing member’s details " +
           "within 6 months of the change occurring in your group."
       )
 
-      view.getElementsByClass("govuk-body").get(2).text must include(
+      paragraphs.get(2).text must include(
         "If your group has not yet registered, you will " +
           "need to register to report Pillar 2 Top-up Taxes. You can choose to nominate a filing member during registration."
       )
 
-      view.getElementsByClass("govuk-body").get(3).text must include(
+      paragraphs.get(3).text must include(
         "Only the new filing member can use this service. " +
           "This can either be the Ultimate Parent Entity or another company member which has been nominated by the Ultimate Parent Entity."
       )
 
-      view.getElementsByClass("govuk-body").get(4).text must include(
+      paragraphs.get(4).text must include(
         "As the new filing member, you will take over " +
           "the obligations to:"
       )
 
-      view.getElementsByClass("govuk-body").get(5).text must include(
+      paragraphs.get(5).text must include(
         "If you fail to meet your obligations as a " +
           "filing member, you may be liable for penalties."
       )
 
-      view.getElementsByClass("govuk-body").get(6).text must include(
+      paragraphs.get(6).text must include(
         "To replace the filing member, you’ll need to " +
           "provide the Government Gateway user ID for the new filing member."
       )
 
-      view.getElementsByClass("govuk-body").get(7).text must include(
+      paragraphs.get(7).text must include(
         "If the new filing member is a UK limited company, or limited liability partnership, " +
           "you must also provide the company registration number, and Unique Taxpayer Reference."
       )
 
-      view.getElementsByClass("govuk-body").get(8).text must include(
+      paragraphs.get(8).text must include(
         "You’ll also need to tell us:"
       )
     }
 
     "have bullet lists" in {
-      view.getElementsByTag("li").get(0).text must include(
+      val listItems: Elements = view.getElementsByTag("li")
+
+      listItems.get(0).text must include(
         "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
       )
 
-      view.getElementsByTag("li").get(1).text must include(
+      listItems.get(1).text must include(
         "submit your group’s Pillar 2 Top-up Taxes returns"
       )
 
-      view.getElementsByTag("li").get(2).text must include(
+      listItems.get(2).text must include(
         "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records"
       )
 
-      view.getElementsByTag("li").get(3).text must include("the group’s Pillar 2 Top-up Taxes ID")
+      listItems.get(3).text must include("the group’s Pillar 2 Top-up Taxes ID")
 
-      view.getElementsByTag("li").get(4).text must include(
+      listItems.get(4).text must include(
         "the date the group first registered to report their Pillar 2 Top-up Taxes in the UK"
       )
 
-      view.getElementsByTag("li").get(5).text must include(
+      listItems.get(5).text must include(
         "contact details and preferences, for one or 2 individuals or teams in the group"
       )
 
-      view.getElementsByTag("li").get(6).text must include("a contact postal address for the group")
+      listItems.get(6).text must include("a contact postal address for the group")
 
     }
 

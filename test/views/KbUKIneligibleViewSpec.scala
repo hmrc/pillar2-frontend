@@ -41,11 +41,13 @@ class KbUKIneligibleViewSpec extends ViewSpecBase {
     }
 
     "have paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      val paragraphs = view.getElementsByClass("govuk-body")
+
+      paragraphs.get(0).text must include(
         "Pillar 2 Top-up Taxes may be collected when you have an entity located in the UK."
       )
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
+      paragraphs.get(1).text must include(
         "If your group members are only located outside the UK, you should check where any liability may apply."
       )
     }

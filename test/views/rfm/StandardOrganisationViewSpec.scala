@@ -42,8 +42,7 @@ class StandardOrganisationViewSpec extends ViewSpecBase {
 
     "have a body" in {
       view.getElementsByClass("govuk-body").get(0).text must include(
-        "You’ve signed in with a standard organisation " +
-          "account."
+        "You’ve signed in with a standard organisation account."
       )
 
       view.getElementsByClass("govuk-body").get(1).text must include(
