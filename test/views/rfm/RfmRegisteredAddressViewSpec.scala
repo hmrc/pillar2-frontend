@@ -64,12 +64,13 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct field labels" in {
-      view.getElementsByClass("govuk-label").get(0).text must include("Address line 1")
-      view.getElementsByClass("govuk-label").get(1).text must include("Address line 2 (optional)")
-      view.getElementsByClass("govuk-label").get(2).text must include("Town or city")
-      view.getElementsByClass("govuk-label").get(3).text must include("Region (optional)")
-      view.getElementsByClass("govuk-label").get(4).text must include("Postcode (if applicable)")
-      view.getElementsByClass("govuk-label").get(5).text must include("Country")
+      val labels: Elements = view.getElementsByClass("govuk-label")
+      labels.get(0).text must include("Address line 1")
+      labels.get(1).text must include("Address line 2 (optional)")
+      labels.get(2).text must include("Town or city")
+      labels.get(3).text must include("Region (optional)")
+      labels.get(4).text must include("Postcode (if applicable)")
+      labels.get(5).text must include("Country")
     }
 
     "have the correct country hint text" in {

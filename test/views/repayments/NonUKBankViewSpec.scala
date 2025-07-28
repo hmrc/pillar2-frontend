@@ -56,10 +56,11 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have the correct field labels" in {
-      view.getElementsByClass("govuk-label").get(0).text must include("Name of the bank")
-      view.getElementsByClass("govuk-label").get(1).text must include("Name on the account")
-      view.getElementsByClass("govuk-label").get(2).text must include("BIC or SWIFT code")
-      view.getElementsByClass("govuk-label").get(3).text must include("IBAN")
+      val labels: Elements = view.getElementsByClass("govuk-label")
+      labels.get(0).text must include("Name of the bank")
+      labels.get(1).text must include("Name on the account")
+      labels.get(2).text must include("BIC or SWIFT code")
+      labels.get(3).text must include("IBAN")
     }
 
     "have the correct hint text for each field" in {

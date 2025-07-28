@@ -41,8 +41,9 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You’ve signed in with an individual account.")
-      view.getElementsByClass("govuk-body").get(1).text  must include("Only users with an agent services account can use this service.")
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.first().text mustBe "You’ve signed in with an individual account."
+      paragraphs.get(1).text mustBe "Only users with an agent services account can use this service."
     }
 
     "have a paragraph body with links" in {
