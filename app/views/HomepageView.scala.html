@@ -43,7 +43,7 @@
 }
 
 @bannerHtml = {
- <div style="max-width: fit-content">
+ <div class="homepage-banner-container">
   @paragraphBody(messages("homepage.btnActiveBanner.title", if(isAgent) organisationName else "Your account"), "govuk-notification-banner__heading")
   @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body", maybeBTNBannerDate.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
   @link(
@@ -62,9 +62,9 @@
     @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml), classes = "govuk-!-margin-bottom-0"))
   }
 
-  <h1 class="govuk-heading-l" style="margin-top: -8px;">@messages("homepage.title")</h1>
+  <h1 class="govuk-heading-l homepage-title">@messages("homepage.title")</h1>
 
-  <p class="govuk-body" style="margin-bottom: 2.5em; display: flex; flex-wrap: wrap; gap: 0.5em;">
+  <p class="govuk-body homepage-details">
    <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
    <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
   </p>
@@ -74,7 +74,7 @@
  @maybeUktrBannerScenario.map { scenario =>
   <h2 class="govuk-heading-m">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title")</h2>
   <p class="govuk-body">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body")</p>
-  <p class="govuk-body" style="margin-bottom: 2.6em;">
+  <p class="govuk-body homepage-uktr-banner-bottom">
     @link(
       text = messages("homepage.uktrBanner.linkText"),
       call = Call("GET", dueAndOverdueReturnsUrl),
@@ -84,14 +84,11 @@
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
  }
 
- <div class="card-group" style="display: flex; flex-wrap: wrap; margin-top: 2em; margin-bottom: 0; gap: 1.5rem;">
-   <style>
-     .card-group > div { margin-bottom: 0 !important; }
-   </style>
+ <div class="card-group homepage-card-group">
       @if(maybeUktrBannerScenario.isDefined) {
-    <div class="card-half-width" style="width: 450px; height: auto; display: flex; flex-direction: column; margin-bottom: 0;">
-      <div style="border: solid #b1b4b6 1px; height: 100%; display: flex; flex-direction: column;">
-        <div class="card-label" style="background-color: #f3f2f1; padding: 10px 0 1px 15px; margin: 0 0 10px 0;">
+    <div class="card-half-width homepage-card-half-width">
+      <div class="homepage-card-border">
+        <div class="card-label homepage-card-label">
           <h2 class="govuk-heading-m">
             @messages("homepage.returns.title")
             @maybeUktrBannerScenario.map { scenario =>
@@ -101,17 +98,17 @@
                     case "Overdue" => "govuk-tag--red"
                     case "Incomplete" => "govuk-tag--purple"
                   }
-                } govuk-!-margin-right-5" aria-label="@{scenario} returns" title="@{scenario} returns" style="float: right;">@scenario</span>
+                } govuk-!-margin-right-5 homepage-status-tag" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
               }
             }
           </h2>
         </div>
-      <div class="card-content" style="padding: 15px 15px 0 15px; flex-grow: 1;">
+      <div class="card-content homepage-card-content">
        <ul class="govuk-list">
-        <li class="card-links" style="padding: 0 0 15px 0;">
+        <li class="card-links homepage-card-links">
          <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
         </li>
-        <li class="card-links" style="padding: 0 0 15px 0;">
+        <li class="card-links homepage-card-links">
          <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
         </li>
        </ul>
@@ -155,12 +152,7 @@
      cardClass = "card-full-width"
     )
    }
-   <style>
-     div[class*="card-full-width"] { 
-       margin-top: -0.3rem !important; 
-       margin-bottom: 0 !important;
-     }
-   </style>
+
  </div>
 }
 
