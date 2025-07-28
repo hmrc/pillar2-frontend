@@ -60,7 +60,7 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
     }
 
     "have an H2 heading" in {
-      view.getElementsByTag("h2").text must include("Do you have a second contact?")
+      view.getElementsByTag("h2").get(1).text mustBe "Do you have a second contact?"
     }
 
     "have a button" in {

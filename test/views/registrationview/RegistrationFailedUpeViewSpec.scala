@@ -34,12 +34,14 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a headings" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
-      view.getElementsByTag("h2").text must include("How to confirm your details")
+    }
 
+    "have an H2 heading" in {
+      view.getElementsByTag("h2").first().text mustBe "How to confirm your details"
     }
 
     "have a paragraph body" in {

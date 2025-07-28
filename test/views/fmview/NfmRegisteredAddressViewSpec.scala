@@ -44,7 +44,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe s"$pageTitle of $userName?"

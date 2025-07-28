@@ -37,7 +37,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading with the account holder's name" in {
+    "have a unique H1 heading with the account holder's name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe "This account belongs to James" // FIXME: inconsistency between title and H1

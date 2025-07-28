@@ -41,8 +41,8 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have two h2 headings" in {
-      view.getElementsByTag("h2").text must include("Before you start")
+    "have an H2 heading" in {
+      view.getElementsByTag("h2").get(0).text mustBe "Before you start"
     }
 
     "have following contents" in {

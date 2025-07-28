@@ -33,78 +33,50 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
   lazy val form:         Form[NonUKAddress]                     = formProvider()
   lazy val page:         CaptureSubscriptionAddressView         = inject[CaptureSubscriptionAddressView]
   lazy val pageTitle:    String                                 = "What address do you want to use as the filing member’s contact address?"
+  lazy val view:              Document = Jsoup.parse(page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString())
+  lazy val addressFormLabels: Elements = view.getElementsByClass("govuk-label")
 
   "Capture Subscription Address View" should {
 
-    "display the correct title" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
+    "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "display the correct heading" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "display the address line 1 label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(0).text must include("Address line 1")
+      addressFormLabels.get(0).text must include("Address line 1")
     }
 
     "display the address line 2 label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(1).text must include("Address line 2 (optional)")
+      addressFormLabels.get(1).text must include("Address line 2 (optional)")
     }
 
     "display the town or city label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(2).text must include("Town or city")
+      addressFormLabels.get(2).text must include("Town or city")
     }
 
     "display the region label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(3).text must include("Region (optional)")
+      addressFormLabels.get(3).text must include("Region (optional)")
     }
 
     "display the postcode label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(4).text must include("Postcode (if applicable)")
+      addressFormLabels.get(4).text must include("Postcode (if applicable)")
     }
 
     "display the country label" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-label").get(5).text must include("Country")
+      addressFormLabels.get(5).text must include("Country")
     }
 
     "display the country hint" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
       view.getElementById("countryCode-hint").text must include("Enter text and then choose from the list.")
     }
 
     "display the submit button" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, Seq.empty)(request, appConfig, messages).toString()
-      )
       view.getElementsByClass("govuk-button").text must include("Save and continue")
     }
 

@@ -45,7 +45,6 @@ class SecondaryTelephoneViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      // FIXME: page title and H1 are different
       h1Elements.text() mustBe s"$pageTitle for $username?" // FIXME: inconsistency between title and H1
     }
 
