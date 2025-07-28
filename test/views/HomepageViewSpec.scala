@@ -38,6 +38,8 @@ class HomepageViewSpec extends ViewSpecBase {
   val agentView: Document =
     Jsoup.parse(page(organisationName, date, None, plrRef, isAgent = true)(request, appConfig, messages).toString())
 
+  val btnUrl: String = s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes/below-threshold-notification/start"
+
   "HomepageView for a group" should {
     "display page header correctly" in {
       organisationView.getElementsByTag("h1").first().text() mustBe "Pillar 2 Top-up Taxes"
@@ -56,7 +58,9 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
       links.get(1).text() mustBe "View submission history"
+      links.get(1).attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
     "display payments card with correct content" in {
@@ -66,21 +70,31 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val links = paymentsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View transaction history"
+      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe controllers.routes.TransactionHistoryController
+        .onPageLoadTransactionHistory(None)
+        .url
       links.get(1).text() mustBe "View outstanding payments"
+      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
       links.get(2).text() mustBe "Request a repayment"
+      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
-      val manageCard = organisationView.getElementsByClass("card-full-width").first()
+      val manageCard  = organisationView.getElementsByClass("card-full-width").first()
+      val manageLinks = manageCard.getElementsByTag("a")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
       manageCard.text() must include(s"Registration date: $date")
 
       val links = manageCard.getElementsByTag("a")
       links.exists(_.text() == "Manage contact details") mustBe true
+      manageLinks.get(0).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       links.exists(_.text() == "Manage group details") mustBe true
+      manageLinks.get(1).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       links.exists(_.text() == "Replace filing member") mustBe true
+      manageLinks.get(2).attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
       links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
+      manageLinks.get(3).attr("href") mustBe btnUrl
     }
 
     "display correct help text" in {
@@ -140,7 +154,9 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val links = returnsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View all due and overdue returns"
+      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
       links.get(1).text() mustBe "View submission history"
+      links.get(1).attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
     "display payments card with correct content" in {
@@ -150,21 +166,31 @@ class HomepageViewSpec extends ViewSpecBase {
 
       val links = paymentsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View transaction history"
+      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe controllers.routes.TransactionHistoryController
+        .onPageLoadTransactionHistory(None)
+        .url
       links.get(1).text() mustBe "View outstanding payments"
+      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
       links.get(2).text() mustBe "Request a repayment"
+      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
-      val manageCard = agentView.getElementsByClass("card-full-width").first()
+      val manageCard  = agentView.getElementsByClass("card-full-width").first()
+      val manageLinks = manageCard.getElementsByTag("a")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
       manageCard.text() must include(s"Registration date: $date")
 
       val links = manageCard.getElementsByTag("a")
       links.exists(_.text() == "Manage contact details") mustBe true
+      manageLinks.get(0).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       links.exists(_.text() == "Manage group details") mustBe true
+      manageLinks.get(1).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
       links.exists(_.text() == "Replace filing member") mustBe false
       links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
+      manageLinks.get(2).attr("href") mustBe btnUrl
+      manageLinks.size() mustEqual 3
     }
 
     "display correct help text" in {

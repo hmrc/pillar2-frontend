@@ -38,6 +38,7 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
   val dateTo:   LocalDate = LocalDate.now.plusYears(1)
 
   val TransactionHistoryUrl: String = s"/report-pillar2-top-up-taxes/transaction-history/$PlrReference/${dateFrom.toString}/${dateTo.toString}"
+  val financialDataUrl:      String = s"/report-pillar2-top-up-taxes/financial-data/$PlrReference/${dateFrom.toString}/${dateTo.toString}"
 
   val transactionHistoryResponse: TransactionHistory =
     TransactionHistory(
@@ -48,7 +49,28 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
       )
     )
 
-  "Transaction history connector" must {
+  val financialDataResponse: FinancialData = FinancialData(
+    financialTransactions = Seq(
+      FinancialTransaction(
+        mainTransaction = Some("4741"),
+        subTransaction = Some("1234"),
+        taxPeriodFrom = Some(LocalDate.now.minusMonths(6)),
+        taxPeriodTo = Some(LocalDate.now),
+        outstandingAmount = Some(BigDecimal(1000.00)),
+        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(1))))
+      ),
+      FinancialTransaction(
+        mainTransaction = Some("4742"),
+        subTransaction = Some("5678"),
+        taxPeriodFrom = Some(LocalDate.now),
+        taxPeriodTo = Some(LocalDate.now.plusMonths(6)),
+        outstandingAmount = Some(BigDecimal(2000.00)),
+        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(2))))
+      )
+    )
+  )
+
+  ".retrieveTransactionHistory" should {
     "return a transaction history" in {
       stubGet(TransactionHistoryUrl, expectedStatus = 200, Json.toJson(transactionHistoryResponse).toString())
 
@@ -74,4 +96,29 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
     }
   }
 
+  ".retrieveFinancialData" should {
+    "return financial data" in {
+      stubGet(financialDataUrl, expectedStatus = 200, Json.toJson(financialDataResponse).toString())
+
+      val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
+
+      value.futureValue mustBe financialDataResponse
+    }
+
+    "return a no result error when there is no results found for plr reference" in {
+      stubGet(financialDataUrl, expectedStatus = 404, "")
+
+      val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
+
+      value.failed.futureValue mustBe NoResultFound
+    }
+
+    "return a unexpected response when an error is returned" in {
+      stubGet(financialDataUrl, expectedStatus = 500, "")
+
+      val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
+
+      value.failed.futureValue mustBe UnexpectedResponse
+    }
+  }
 }
