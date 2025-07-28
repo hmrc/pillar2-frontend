@@ -27,12 +27,16 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HomepageViewSpec extends ViewSpecBase {
+<<<<<<< HEAD
   lazy val page:             HomepageView      = inject[HomepageView]
   lazy val organisationName: String            = "Some Org name"
   lazy val plrRef:           String            = "XMPLR0012345678"
   lazy val date:             String            = "1 June 2020"
   lazy val apEndDate:        Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
-  lazy val pageTitle:        String            = "Pillar 2 Top-up Taxes"
+
+  // This is only case where the page Title and the H1 heading are inconsistent in the service
+  lazy val pageTitle:   String = "Report Pillar 2 Top-up Taxes - GOV.UK"
+  lazy val pageHeading: String = "Pillar 2 Top-up Taxes"
 
   lazy val organisationView: Document =
     Jsoup.parse(
@@ -49,13 +53,13 @@ class HomepageViewSpec extends ViewSpecBase {
   "HomepageView for a group" should {
 
     "have a title" in {
-      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      organisationView.title() mustBe pageTitle
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe pageHeading
     }
 
     "display organisation information correctly" in {
@@ -220,15 +224,14 @@ class HomepageViewSpec extends ViewSpecBase {
   }
 
   "HomepageView for an agent" should {
-    // TODO: test for title was missing!
     "have a title" in {
-      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentView.title() mustBe pageTitle
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = agentView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe pageHeading
     }
 
     "display organisation information correctly" in {
