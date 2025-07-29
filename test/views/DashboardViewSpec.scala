@@ -34,6 +34,8 @@ class DashboardViewSpec extends ViewSpecBase {
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = false)(request, appConfig, messages).toString())
   lazy val agentDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = true, agentView = true)(request, appConfig, messages).toString())
+
+  // FIXME: this is ACTIVE - NOT INACTIVE
   lazy val inActiveOrganisationDashboardView: Document =
     Jsoup.parse(page(organisationName, date, plrRef, inactiveStatus = false, agentView = false)(request, appConfig, messages).toString())
 
@@ -138,8 +140,8 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 information with inActive status false" in {
-      val listItems:  Elements = inActiveOrganisationDashboardView.getElementsByTag("li")
-      val paragraphs: Elements = inActiveOrganisationDashboardView.getElementsByTag("p")
+      val listItems:                                 Elements = inActiveOrganisationDashboardView.getElementsByTag("li")
+      val activeOrganisationDashboardViewParagraphs: Elements = inActiveOrganisationDashboardView.getElementsByTag("p")
 
       listItems.get(0).text() mustBe
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported" +
@@ -148,9 +150,9 @@ class DashboardViewSpec extends ViewSpecBase {
       listItems.get(1).text() mustBe
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
 
-      paragraphs.get(10).text() mustBe "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
+      activeOrganisationDashboardViewParagraphs.get(10).text() mustBe "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
 
-      paragraphs.get(11).text() mustBe
+      activeOrganisationDashboardViewParagraphs.get(11).text() mustBe
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need" +
         " to submit your returns before the due date for reporting."
     }
@@ -174,6 +176,9 @@ class DashboardViewSpec extends ViewSpecBase {
   }
 
   "Dashboard View for Agent" should {
+    val agentViewParagraphs: Elements = agentDashboardView.getElementsByTag("p")
+    val agentViewH2Headings: Elements = agentDashboardView.getElementsByTag("h2")
+
     "have a title" in {
       agentDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -212,51 +217,47 @@ class DashboardViewSpec extends ViewSpecBase {
     "have a link to Agent Services Account" in {
       val element: Element = agentDashboardView.getElementsByTag("a").get(6)
 
-      element.text() must include("Agent Services Account")
-      element.attr("href") mustBe "/report-pillar2-top-up-taxes/asa/home"
+      element.text() mustBe "Agent Services Account"
+      element.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
     }
 
     "have a link to change entered pillar2 id" in {
       val element: Element = agentDashboardView.getElementsByTag("a").get(7)
 
-      element.text must include("Change client")
+      element.text mustBe "Change client"
       element.attr("href") mustBe controllers.routes.AgentController.onPageLoadClientPillarId.url
     }
 
     "have manage your account heading and links" in {
-      val h2:       Element  = agentDashboardView.getElementsByTag("h2").get(2)
-      val elements: Elements = agentDashboardView.getElementsByTag("a")
+      agentViewH2Headings.get(2).text mustBe "Manage your client’s account"
+      agentViewH2Headings.get(2).hasClass("govuk-heading-m") mustBe true
 
-      h2.text must include("Manage your client’s account")
-      h2.hasClass("govuk-heading-m") mustBe true
+      agentViewParagraphs.get(10).getElementsByTag("a").text() mustBe "Request a repayment"
+      agentViewParagraphs.get(10).getElementsByTag("a").attr("href") mustBe
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url // FIXME: is the renamed controller name ok? was RequestRefundBeforeStartController
 
-      elements.get(10).text() must include("Request a repayment")
-      elements.get(10).attr("href") must include(
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
-      )
-      elements.get(11).text() must include("View and amend contact details")
-      elements.get(11).attr("href") must include(
+      agentViewParagraphs.get(11).getElementsByTag("a").text() mustBe "View and amend contact details"
+      agentViewParagraphs.get(11).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
-      )
-      elements.get(12).text() must include("View and amend group details")
-      elements.get(12).attr("href") must include(
+
+      agentViewParagraphs.get(12).getElementsByTag("a").text() mustBe "View and amend group details"
+      agentViewParagraphs.get(12).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
-      )
     }
 
     "have payment information" in {
       val h2:         Element  = agentDashboardView.getElementsByTag("h2").get(1)
       val paragraphs: Elements = agentDashboardView.getElementsByTag("p")
-      h2.text must include("Payments")
+      h2.text mustBe "Payments"
       h2.hasClass("govuk-heading-m") mustBe true
 
-      paragraphs.get(7).text                               must include("Your client has no payments due.")
-      paragraphs.get(8).getElementsByTag("a").text()       must include("Make a payment")
-      paragraphs.get(8).getElementsByTag("a").attr("href") must include(controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
-      paragraphs.get(9).getElementsByTag("a").text()       must include("View your client’s transaction history")
-      paragraphs.get(9).getElementsByTag("a").attr("href") must include(
+      paragraphs.get(7).text mustBe "Your client has no payments due."
+      paragraphs.get(8).getElementsByTag("a").text() mustBe "Make a payment"
+      paragraphs.get(8).getElementsByTag("a").attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url
+      paragraphs.get(9).getElementsByTag("a").text() mustBe "View your client’s transaction history"
+      paragraphs.get(9).getElementsByTag("a").attr("href") mustBe
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
-      )
+
       agentDashboardView
         .getElementsByTag("hr")
         .first()
@@ -273,9 +274,8 @@ class DashboardViewSpec extends ViewSpecBase {
         "18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
       element.text() must not include
         "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024"
-      paragraph.get(11).text() must include(
+      paragraph.get(11).text() mustBe
         "HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting."
-      )
     }
 
     "have a Pillar 2 research heading" in {
