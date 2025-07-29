@@ -197,6 +197,7 @@ class DashboardController @Inject() (
         case _ => None
       }
     }
+
     obligationsAndSubmissions.accountingPeriodDetails
       .flatMap(periodStatus)
       .maxOption
