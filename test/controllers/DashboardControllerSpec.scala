@@ -733,6 +733,50 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
+    "return Due when there are mixed obligation types with at least one open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
     "return None when accounting periods exist but no obligations exist" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {

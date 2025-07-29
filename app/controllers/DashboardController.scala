@@ -175,6 +175,8 @@ class DashboardController @Inject() (
         val girObligation  = period.obligations.find(_.obligationType == GIR)
         val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
 
+        val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
+
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>
             (uktr.status, gir.status, dueDatePassed) match {
@@ -184,6 +186,8 @@ class DashboardController @Inject() (
               case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
               case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
               case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
+              case _ if hasAnyOpenObligation && !dueDatePassed                => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                 => Some(Overdue)
               case _                                                          => None
             }
           case (Some(uktr), None) =>
@@ -198,7 +202,9 @@ class DashboardController @Inject() (
               case (ObligationStatus.Open, true)  => Some(Overdue)
               case _                              => None
             }
-          case _ => None
+          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
+          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
+          case _                                           => None
         }
       }
 
