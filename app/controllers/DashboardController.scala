@@ -198,10 +198,8 @@ class DashboardController @Inject() (
       }
     }
     obligationsAndSubmissions.accountingPeriodDetails
-      .map(period => (period, periodStatus(period)))
-      .filter(_._2.isDefined)
-      .minByOption(_._1.endDate)
-      .flatMap(_._2)
+      .flatMap(periodStatus)
+      .maxOption
 
   }
 }

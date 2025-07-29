@@ -767,7 +767,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
-        result mustBe Some(Due) // Should return the status from the earliest period (firstPeriod)
+        result mustBe Some(Overdue)
       }
     }
   }
