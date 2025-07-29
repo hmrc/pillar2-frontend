@@ -73,7 +73,7 @@ object OutstandingPaymentsServiceSpec {
     taxPeriodFrom = Some(periodFrom),
     taxPeriodTo = Some(periodTo),
     mainTransaction = Some("6500"),
-    subTransaction = Some("6324"),
+    subTransaction = Some("6234"),
     outstandingAmount = Some(1000.00),
     items = Seq(FinancialItem(dueDate = Some(testDate)))
   )
@@ -97,16 +97,62 @@ object OutstandingPaymentsServiceSpec {
     )
   )
 
-  val invalidTransaction: FinancialTransaction = FinancialTransaction(
+  val transactionMissingAp: FinancialTransaction = FinancialTransaction(
     taxPeriodFrom = None,
     taxPeriodTo = None,
+    mainTransaction = Some("6500"),
+    subTransaction = Some("6233"),
+    outstandingAmount = Some(1000),
+    items = Seq(FinancialItem(dueDate = Some(testDate)))
+  )
+
+  val transactionMissingAmount: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom),
+    taxPeriodTo = Some(periodTo),
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     outstandingAmount = None,
     items = Seq(FinancialItem(dueDate = Some(testDate)))
   )
 
-  val redundantTransaction: FinancialData = FinancialData(financialTransactions = Seq(firstApUktrDTT, firstApUktrDTT, invalidTransaction))
+  val transactionInvalidMainTransaction: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom),
+    taxPeriodTo = Some(periodTo),
+    mainTransaction = Some("0"),
+    subTransaction = Some("6233"),
+    outstandingAmount = Some(1000),
+    items = Seq(FinancialItem(dueDate = Some(testDate)))
+  )
+
+  val transactionInvalidSubTransaction: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom),
+    taxPeriodTo = Some(periodTo),
+    mainTransaction = Some("6500"),
+    subTransaction = Some("0"),
+    outstandingAmount = Some(1000),
+    items = Seq(FinancialItem(dueDate = Some(testDate)))
+  )
+
+  val transactionNoDueDate: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = None,
+    taxPeriodTo = None,
+    mainTransaction = Some("6500"),
+    subTransaction = Some("6230"),
+    outstandingAmount = Some(1000),
+    items = Seq(FinancialItem(dueDate = None))
+  )
+
+  val redundantTransaction: FinancialData = FinancialData(financialTransactions =
+    Seq(
+      firstApUktrDTT,
+      firstApUktrDTT,
+      transactionMissingAp,
+      transactionMissingAmount,
+      transactionInvalidMainTransaction,
+      transactionInvalidSubTransaction,
+      transactionNoDueDate
+    )
+  )
 
   val redundantTransactionExpectedSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(AccountingPeriod(periodFrom, periodTo), Seq(TransactionSummary(PILLAR2_UKTR, 2000.00, testDate)))

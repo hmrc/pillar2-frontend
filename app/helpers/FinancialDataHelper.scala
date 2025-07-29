@@ -18,11 +18,21 @@ package helpers
 
 object FinancialDataHelper {
 
-  val ETMP_UKTR     = "6500"
-  val ETMP_INTEREST = "6503"
+  private lazy val ETMP_UKTR          = "6500"
+  private lazy val ETMP_UKTR_DTT      = "6233"
+  private lazy val ETMP_UKTR_IIR      = "6234"
+  private lazy val ETMP_UKTR_UTPR     = "6235"
+  private lazy val ETMP_INTEREST      = "6503"
+  private lazy val ETMP_INTEREST_IIR  = "6236"
+  private lazy val ETMP_INTEREST_UTPR = "6238"
+  private lazy val ETMP_INTEREST_DTT  = "6239"
 
-  val PILLAR2_UKTR     = "UK tax return"
-  val PILLAR2_INTEREST = "UK tax return interest"
+  lazy val PILLAR2_UKTR     = "UK tax return"
+  lazy val PILLAR2_INTEREST = "UK tax return interest"
+
+  lazy val PLR_MAIN_TRANSACTIONS: Set[String] = Set(ETMP_UKTR, ETMP_INTEREST)
+  lazy val PLR_SUB_TRANSACTIONS: Set[String] =
+    Set(ETMP_UKTR_DTT, ETMP_UKTR_IIR, ETMP_UKTR_UTPR, ETMP_INTEREST_IIR, ETMP_INTEREST_UTPR, ETMP_INTEREST_DTT)
 
   def toPillar2Transaction(mainTransaction: String): String =
     Map(

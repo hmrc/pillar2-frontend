@@ -18,6 +18,7 @@ package services
 
 import connectors.FinancialDataConnector
 import helpers.FinancialDataHelper
+import helpers.FinancialDataHelper.{PLR_MAIN_TRANSACTIONS, PLR_SUB_TRANSACTIONS}
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -34,7 +35,8 @@ class OutstandingPaymentsService @Inject() (financialDataConnector: FinancialDat
         .filter { transaction =>
           transaction.taxPeriodFrom.isDefined &&
           transaction.taxPeriodTo.isDefined &&
-          transaction.mainTransaction.isDefined &&
+          transaction.mainTransaction.exists(PLR_MAIN_TRANSACTIONS.contains) &&
+          transaction.subTransaction.exists(PLR_SUB_TRANSACTIONS.contains) &&
           transaction.outstandingAmount.exists(_ > 0) &&
           transaction.items.headOption.exists(_.dueDate.isDefined)
         }
