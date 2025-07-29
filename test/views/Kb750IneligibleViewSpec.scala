@@ -41,13 +41,13 @@ class Kb750IneligibleViewSpec extends ViewSpecBase {
     }
 
     "have paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
-      )
+      view.getElementsByClass("govuk-body").get(0).text mustBe
+        "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at " +
+        "least 2 of the previous 4 accounting periods."
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "You may need to report Pillar 2 Top-up Taxes if the global turnover meets the €750 million threshold in future accounting periods."
-      )
+      view.getElementsByClass("govuk-body").get(1).text mustBe
+        "You may need to report Pillar 2 Top-up Taxes if the global turnover meets the €750 million threshold in " +
+        "future accounting periods."
     }
 
     "have a link" in {

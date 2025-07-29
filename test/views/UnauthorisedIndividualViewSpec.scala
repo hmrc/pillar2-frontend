@@ -41,22 +41,20 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You’ve signed in with an individual account. Only users with an organisation account can register to use this service."
-      )
     }
 
     "have a paragraph with link" in {
-      val paragraphWithLink = view.getElementsByClass("govuk-body").get(1)
-      paragraphWithLink.text                     must include("If the group still needs to register,")
-      paragraphWithLink.select("a").text         must include("sign in to Government Gateway with an organisation account.")
-      paragraphWithLink.select("a").attr("href") must include(appConfig.loginUrl)
+      val paragraphLink = view.getElementsByClass("govuk-body").get(1).select("a")
+      paragraphLink.text mustBe "If the group still needs to register, sign in to Government Gateway with an organisation account."
+      paragraphLink.attr("href") mustBe appConfig.loginUrl
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who can use this service")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who can use this service"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

@@ -39,7 +39,7 @@ class TurnOverEligibilityViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
+      view.getElementsByTag("h2").get(0).text mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a legend with heading" in {
@@ -50,18 +50,19 @@ class TurnOverEligibilityViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million by the number of days in your accounting period and dividing it by 365."
-      )
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
+        "If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million " +
+        "by the number of days in your accounting period and dividing it by 365."
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioButtonsLabels.get(0).text mustBe "Yes"
+      radioButtonsLabels.get(1).text mustBe "No"
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

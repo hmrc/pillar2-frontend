@@ -24,9 +24,10 @@ import views.html.UnauthorisedAgentView
 
 class UnauthorisedAgentViewSpec extends ViewSpecBase {
 
-  lazy val page:      UnauthorisedAgentView = inject[UnauthorisedAgentView]
-  lazy val view:      Document              = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                = "Register your group"
+  lazy val page:             UnauthorisedAgentView = inject[UnauthorisedAgentView]
+  lazy val view:             Document              = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:        String                = "Register your group"
+  lazy val signInToAgentUrl: String                = "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
 
   "Unauthorised Agent View" should {
 
@@ -52,32 +53,22 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
 
     "have list items with links" in {
       val listItem1 = view.getElementsByTag("li").get(0)
-      listItem1.select("p").text must include(
-        "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must"
-      )
-      listItem1.select("a").text must include(
-        "sign in via agent services"
-      )
-      listItem1.select("a").attr("href") must include(
-        "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
-      )
+
+      listItem1.select("a").text mustBe "if you are an agent that has been given authorisation to report Pillar 2 " +
+        "Top-up Taxes on behalf of a group, you must sign in via agent services"
+      listItem1.select("a").attr("href") mustBe signInToAgentUrl
 
       val listItem2 = view.getElementsByTag("li").get(1)
-      listItem2.select("p").text must include(
-        "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must"
-      )
-      listItem2.select("a").text must include(
-        "request authorisation via agent services"
-      )
-      listItem2.select("a").attr("href") must include(
-        "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
-      )
+
+      listItem2.select("a").text mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you " +
+        "must request authorisation via agent services"
+      listItem2.select("a").attr("href") mustBe signInToAgentUrl
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who can use this service")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who can use this service"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

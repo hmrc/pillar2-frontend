@@ -48,8 +48,8 @@ class UnauthorisedViewSpec extends ViewSpecBase {
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("register to report Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/guidance/report-pillar-2-top-up-taxes")
+      link.text mustBe "register to report Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
 
   }

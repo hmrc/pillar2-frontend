@@ -25,11 +25,10 @@ import views.html.MakeAPaymentDashboardView
 import scala.jdk.CollectionConverters._
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
-  private val page:    MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
-  lazy val testPlr2Id: String                    = "12345678"
-  lazy val makePaymentDashboardView: Document =
-    Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "Make a payment"
+  private val page:                  MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
+  lazy val testPlr2Id:               String                    = "12345678"
+  lazy val makePaymentDashboardView: Document                  = Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
+  lazy val pageTitle:                String                    = "Make a payment"
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
@@ -44,14 +43,12 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have the correct paragraphs" in {
-      val paragraphs = makePaymentDashboardView.getElementsByTag("p").listIterator().asScala.toList.filter(_.hasClass("govuk-body"))
-      paragraphs must have size 2
-      paragraphs.head.text() must equal(
+      val paragraphs = makePaymentDashboardView.getElementsByClass("govuk-body")
+      paragraphs.size() mustBe 2
+      paragraphs.get(0).text() mustBe
         s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 Top-up Taxes payments."""
-      )
-      paragraphs.tail.head.text() must equal(
+      paragraphs.get(1).text() mustBe
         "You can use the 'Pay Now' button to pay online, or read more about other payment methods. (opens in a new tab)"
-      )
     }
 
     "have the correct Pay Now button" in {
