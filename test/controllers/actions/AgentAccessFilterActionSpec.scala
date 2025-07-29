@@ -29,9 +29,10 @@ class AgentAccessFilterActionSpec extends SpecBase {
     "redirect to unauthorised page if user is agent and agent journey is disabled" in {
       when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(false)
 
-      val filterAction      = new AgentAccessFilterAction(mockFrontendAppConfig)
-      val identifierRequest = new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = true, userIdForEnrolment = "userId")
-      val futureResult      = filterAction.filter(identifierRequest)
+      val filterAction = new AgentAccessFilterAction(mockFrontendAppConfig)
+      val identifierRequest =
+        new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = true, userIdForEnrolment = "userId")
+      val futureResult = filterAction.filter(identifierRequest)
 
       status(futureResult.map(_.get)) mustBe SEE_OTHER
 
@@ -41,9 +42,10 @@ class AgentAccessFilterActionSpec extends SpecBase {
     "allow the request if user is agent and agent journey is enabled" in {
       when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(true)
 
-      val filterAction      = new AgentAccessFilterAction(mockFrontendAppConfig)
-      val identifierRequest = new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = true, userIdForEnrolment = "userId")
-      val futureResult      = filterAction.filter(identifierRequest).futureValue
+      val filterAction = new AgentAccessFilterAction(mockFrontendAppConfig)
+      val identifierRequest =
+        new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = true, userIdForEnrolment = "userId")
+      val futureResult = filterAction.filter(identifierRequest).futureValue
 
       futureResult.map(_ mustBe None)
     }
@@ -51,9 +53,10 @@ class AgentAccessFilterActionSpec extends SpecBase {
     "allow the request if user is not an agent regardless of agent journey being enabled" in {
       when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(true)
 
-      val filterAction      = new AgentAccessFilterAction(mockFrontendAppConfig)
-      val identifierRequest = new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = false, userIdForEnrolment = "userId")
-      val futureResult      = filterAction.filter(identifierRequest).futureValue
+      val filterAction = new AgentAccessFilterAction(mockFrontendAppConfig)
+      val identifierRequest =
+        new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = false, userIdForEnrolment = "userId")
+      val futureResult = filterAction.filter(identifierRequest).futureValue
 
       futureResult.map(_ mustBe None)
     }
@@ -61,9 +64,10 @@ class AgentAccessFilterActionSpec extends SpecBase {
     "allow the request if user is not an agent regardless of agent journey being disabled" in {
       when(mockFrontendAppConfig.asaAccessEnabled).thenReturn(false)
 
-      val filterAction      = new AgentAccessFilterAction(mockFrontendAppConfig)
-      val identifierRequest = new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = false, userIdForEnrolment = "userId")
-      val futureResult      = filterAction.filter(identifierRequest).futureValue
+      val filterAction = new AgentAccessFilterAction(mockFrontendAppConfig)
+      val identifierRequest =
+        new IdentifierRequest[AnyContent](FakeRequest(), "userId", enrolments = Set.empty, isAgent = false, userIdForEnrolment = "userId")
+      val futureResult = filterAction.filter(identifierRequest).futureValue
 
       futureResult.map(_ mustBe None)
     }

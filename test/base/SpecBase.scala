@@ -39,7 +39,6 @@ import play.api.mvc._
 import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test._
 import play.api.{Application, Configuration}
-import play.i18n.MessagesApi
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -63,6 +62,7 @@ trait SpecBase
     with Writeables
     with EssentialActionCaller
     with HeaderNames
+    with StubMessageControllerComponents
     with IntegrationPatience
     with GuiceOneAppPerSuite
     with UserAnswersFixture

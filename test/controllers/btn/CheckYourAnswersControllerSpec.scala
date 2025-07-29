@@ -20,13 +20,13 @@ import base.SpecBase
 import controllers.btn.routes._
 import controllers.routes.IndexController
 import models.btn.{BTNStatus, BTNSuccess}
+import models.subscription.AccountingPeriod
 import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito._
 import org.scalatestplus.mockito.MockitoSugar
 import pages._
 import play.api.Application
-import play.api.i18n.Messages
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
@@ -40,7 +40,7 @@ import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccounting
 import viewmodels.govuk.SummaryListFluency
 import views.html.btn.CheckYourAnswersView
 
-import java.time.ZonedDateTime
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{Future, Promise}
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
@@ -49,13 +49,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
   override val mockSessionRepository: SessionRepository = mock[SessionRepository]
   override val mockAuditService:      AuditService      = mock[AuditService]
 
-  val validBTNCyaUa: UserAnswers = UserAnswers("id")
-    .setOrException(SubAccountingPeriodPage, accountingPeriod)
-    .setOrException(EntitiesInsideOutsideUKPage, true)
-
-  def btnCyaSummaryList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+  def btnCyaSummaryList(): SummaryList = SummaryListViewModel(
     rows = Seq(
-      SubAccountingPeriodSummary.row(accountingPeriod, multipleAccountingPeriods = false),
+      SubAccountingPeriodSummary.row(AccountingPeriod(LocalDate.of(2025, 7, 18), LocalDate.of(2026, 7, 18)), multipleAccountingPeriods = false),
       BTNEntitiesInsideOutsideUKSummary.row(validBTNCyaUa, ukOnly = true)
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
@@ -157,7 +153,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual "/report-pillar2-submission-top-up-taxes/there-is-a-problem"
+          redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
         }
       }
     }

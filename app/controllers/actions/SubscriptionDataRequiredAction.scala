@@ -46,14 +46,14 @@ class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContex
         )
       case (None, _) =>
         logger.warn(s"subscription data not found")
-        Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
-      case (_, None) =>
-        logger.warn(s"user answers not found")
         if (JourneyCheck.isBTNJourney(request.path)) {
           Future.successful(Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
         } else {
           Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
         }
+      case (_, None) =>
+        logger.warn(s"user answers not found")
+        Future.successful(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
     }
 
 }

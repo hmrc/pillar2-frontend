@@ -31,7 +31,7 @@ import java.time.LocalDate
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
-  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23))
+  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
   val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)

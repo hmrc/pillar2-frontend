@@ -36,10 +36,11 @@ import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.{Key, SummaryList}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.ViewHelpers
 import viewmodels.govuk.summarylist._
+import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -78,11 +79,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       def list(startDate: LocalDate, endDate: LocalDate): SummaryList = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
-            key = Key(HtmlContent("btn.accountingPeriod.startAccountDate")),
+            "btn.accountingPeriod.startAccountDate",
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(startDate))))
           ),
           SummaryListRowViewModel(
-            key = Key(HtmlContent("btn.accountingPeriod.endAccountDate")),
+            "btn.accountingPeriod.endAccountDate",
             value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(endDate))))
           )
         )

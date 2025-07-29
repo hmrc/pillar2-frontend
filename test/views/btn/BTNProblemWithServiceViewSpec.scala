@@ -43,7 +43,7 @@ class BTNProblemWithServiceViewSpec extends ViewSpecBase {
     "have a return to home page link with the correct URL" in {
       val link = view.select("a[href*='pillar2-top-up-tax-home']").first()
       link.text() must include("Return to your account homepage to submit a Below-Threshold Notification again")
-      link.attr("href") mustBe "http://localhost:10050/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
   }
