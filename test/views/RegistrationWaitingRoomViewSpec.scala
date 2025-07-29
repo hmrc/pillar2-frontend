@@ -26,7 +26,9 @@ import views.html.registrationview.RegistrationWaitingRoomView
 class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
 
   lazy val page: RegistrationWaitingRoomView = inject[RegistrationWaitingRoomView]
-  lazy val view: Document                    = Jsoup.parse(page(Some(SuccessfullyCompletedSubscription))(request, appConfig, messages).toString())
+  lazy val view: Document = Jsoup.parse(
+    page(Some(SuccessfullyCompletedSubscription))(request, appConfig, messages).toString()
+  )
   lazy val pageTitle: String = "Submitting your registration"
 
   "Rfm Waiting Room View" should {

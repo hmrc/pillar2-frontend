@@ -41,13 +41,10 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
     }
 
     "have paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe
         "Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 Top-up Taxes."
-      )
-
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "This group may still need to register."
-      )
+      paragraphs.get(1).text mustBe "This group may still need to register."
     }
 
     "have a link" in {

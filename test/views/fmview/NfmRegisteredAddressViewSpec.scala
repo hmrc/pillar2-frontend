@@ -47,7 +47,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle of $userName?"
+      h1Elements.text() mustBe s"$pageTitle of $userName?" // FIXME inconsistency between title and h1
     }
 
     "have the correct section caption" in {
