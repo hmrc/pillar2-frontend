@@ -22,7 +22,6 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import org.scalatest.Assertion
 import views.html.subscriptionview.MneOrDomesticView
 
 class MneOrDomesticViewSpec extends ViewSpecBase {

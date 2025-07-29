@@ -22,8 +22,6 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.DashboardView
 
-import scala.jdk.CollectionConverters.CollectionHasAsScala
-
 class DashboardViewSpec extends ViewSpecBase {
   private lazy val page:             DashboardView = inject[DashboardView]
   private lazy val organisationName: String        = "Some Org name"
@@ -178,7 +176,6 @@ class DashboardViewSpec extends ViewSpecBase {
   "Dashboard View for Agent" should {
     val agentViewParagraphs: Elements = agentDashboardView.getElementsByTag("p")
     val agentViewH2Headings: Elements = agentDashboardView.getElementsByTag("h2")
-    val agentViewListItems:  Elements = agentDashboardView.getElementsByTag("li")
 
     "have a title" in {
       agentDashboardView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
