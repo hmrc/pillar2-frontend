@@ -167,36 +167,40 @@ class DashboardController @Inject() (
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
-    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] = {
-      val uktrObligation = period.obligations.find(_.obligationType == UKTR)
-      val girObligation  = period.obligations.find(_.obligationType == GIR)
-      val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
+    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
+      if (period.obligations.isEmpty) {
+        None
+      } else {
+        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
+        val girObligation  = period.obligations.find(_.obligationType == GIR)
+        val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
 
-      (uktrObligation, girObligation) match {
-        case (Some(uktr), Some(gir)) =>
-          (uktr.status, gir.status, dueDatePassed) match {
-            case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
-            case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
-            case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
-            case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
-            case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
-            case _                                                          => None
-          }
-        case (Some(uktr), None) =>
-          (uktr.status, dueDatePassed) match {
-            case (ObligationStatus.Open, false) => Some(Due)
-            case (ObligationStatus.Open, true)  => Some(Overdue)
-            case _                              => None
-          }
-        case (None, Some(gir)) =>
-          (gir.status, dueDatePassed) match {
-            case (ObligationStatus.Open, false) => Some(Due)
-            case (ObligationStatus.Open, true)  => Some(Overdue)
-            case _                              => None
-          }
-        case _ => None
+        (uktrObligation, girObligation) match {
+          case (Some(uktr), Some(gir)) =>
+            (uktr.status, gir.status, dueDatePassed) match {
+              case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
+              case _                                                          => None
+            }
+          case (Some(uktr), None) =>
+            (uktr.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case (None, Some(gir)) =>
+            (gir.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case _ => None
+        }
       }
-    }
 
     obligationsAndSubmissions.accountingPeriodDetails
       .flatMap(periodStatus)
