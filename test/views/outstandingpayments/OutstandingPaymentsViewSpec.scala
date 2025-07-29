@@ -62,7 +62,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         .text() mustBe "The amount includes all liabilities due. This may be over more than one accounting period. It also includes any penalties or late payment interest."
       paragraphs
         .get(1)
-        .text() mustBe "Any payments made to your account before submitting your tax return have been deducted from you amount due. If you have recently made a payment, it take 3-5 days to be added to your account."
+        .text() mustBe "Any payments made to your account before submitting your tax return have been deducted from your amount due. If you have recently made a payment, it take 3-5 days to be added to your account."
     }
 
     "should display payment button with correct link" in {
