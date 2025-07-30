@@ -47,17 +47,16 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
 
       "have a hint description" in {
-        view.getElementsByClass("govuk-hint").get(0).text must include(
+        view.getElementsByClass("govuk-hint").get(0).text mustBe
           "For example, if there is an amount leftover after a payment was made for an obligation."
-        )
       }
 
       "have a character count" in {
-        view.getElementsByClass("govuk-character-count__message").text must include("250 characters")
+        view.getElementsByClass("govuk-character-count__message").text mustBe "250 characters"
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
@@ -66,13 +65,13 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter why you are requesting a repayment")
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter why you are requesting a repayment"
       }
 
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter why you are requesting a repayment")
+        view.getElementsByClass("govuk-error-message").text mustBe "Enter why you are requesting a repayment"
       }
     }
 
@@ -82,12 +81,12 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
         Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), NormalMode)(request, appConfig, messages).toString())
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Reason for repayment request must be 250 characters or less")
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Reason for repayment request must be 250 characters or less"
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Reason for repayment request must be 250 characters or less")
+        view.getElementsByClass("govuk-error-message").text mustBe "Reason for repayment request must be 250 characters or less"
       }
     }
 
@@ -100,17 +99,15 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
         page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(
+      errorList mustBe
         "The reason for your repayment request you enter must not include the following characters <, >, \" or &"
-      )
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include(
+      fieldErrors mustBe
         "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
-      )
     }
 
   }

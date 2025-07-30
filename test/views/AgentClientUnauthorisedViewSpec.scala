@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.AgentClientUnauthorisedView
 
@@ -40,15 +40,12 @@ class AgentClientUnauthorisedViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You need to")
-    }
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-
-      link.text         must include("request authorisation to report and manage this client’s Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/asa/home")
+      paragraph.text mustBe "You need to request authorisation to report and manage this client’s Pillar 2 Top-up Taxes."
+      paragraph.getElementsByTag("a").text() mustBe "request authorisation to report and manage this client’s Pillar 2 Top-up Taxes"
+      paragraph.getElementsByTag("a").attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
     }
 
   }

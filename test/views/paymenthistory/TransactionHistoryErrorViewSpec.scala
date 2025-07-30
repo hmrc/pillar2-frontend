@@ -42,15 +42,15 @@ class TransactionHistoryErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We cannot retrieve your details at this time.")
-      view.getElementsByClass("govuk-body").get(1).text  must include("Please try again later.")
+      view.getElementsByClass("govuk-body").first().text mustBe "We cannot retrieve your details at this time."
+      view.getElementsByClass("govuk-body").get(1).text mustBe "Please try again later."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").get(2).getElementsByTag("a")
 
-      link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.text mustBe "Return to your account homepage"
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
   }

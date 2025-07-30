@@ -42,14 +42,14 @@ class RepaymentErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You can try again later when the service is available.")
+      view.getElementsByClass("govuk-body").first().text mustBe "You can try again later when the service is available."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.text mustBe "Return to your account homepage"
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
   }

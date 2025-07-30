@@ -41,19 +41,19 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID.")
+      view.getElementsByClass("govuk-body").first().text mustBe "Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID."
     }
 
     "have a paragraph link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)")
-      link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+      link.text mustBe "Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
       link.attr("target") mustBe "_blank"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Return to your Business Tax Account")
+      view.getElementsByClass("govuk-button").text mustBe "Return to your Business Tax Account"
     }
 
   }

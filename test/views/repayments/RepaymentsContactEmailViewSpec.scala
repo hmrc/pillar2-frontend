@@ -50,14 +50,12 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text must include(
-          "We will only use this to contact you about " +
-            "this repayment request."
-        )
+        view.getElementsByClass("govuk-hint").text mustBe
+          "We will only use this to contact you about this repayment request."
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
@@ -70,14 +68,13 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Enter an email address for ABC Limited"
-        )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter an email address for ABC Limited")
+        view.getElementsByClass("govuk-error-message").text mustBe "Enter an email address for ABC Limited"
       }
 
     }
@@ -96,14 +93,13 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Email address must be 100 characters or less"
-        )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Email address must be 100 characters or less")
+        view.getElementsByClass("govuk-error-message").text mustBe "Email address must be 100 characters or less"
       }
 
     }
@@ -122,14 +118,13 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Enter an email address in the correct format, like name@example.com"
-        )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter an email address in the correct format, like name@example.com")
+        view.getElementsByClass("govuk-error-message").text mustBe "Enter an email address in the correct format, like name@example.com"
       }
 
     }

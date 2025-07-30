@@ -42,11 +42,9 @@ class AmendApiFailureViewSpec extends ViewSpecBase {
 
     "have a paragraph body" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs.get(0).text must include("Please try again later")
-      paragraphs.get(1).text must
-        include(
-          "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
-        )
+      paragraphs.get(0).text mustBe "Please try again later"
+      paragraphs.get(1).text mustBe
+        "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
     }
   }
 }

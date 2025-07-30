@@ -28,7 +28,7 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
   lazy val page:           RepaymentsErrorReturnView = inject[RepaymentsErrorReturnView]
   lazy val view:           Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
   lazy val testPillar2Ref: String                    = "XMPLR0012345674"
-  lazy val pageTitle:      String                    = "You cannot return, your refund request is complete"
+  lazy val pageTitle:      String                    = "You cannot return, your repayment request is complete"
 
   "Repayments error return view" should {
     "have a title" in {
@@ -42,22 +42,21 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "You have successfully submitted your repayment request." +
-          " You can return to report and manage your Pillar 2 Top-up Taxes ."
-      )
+      view.getElementsByClass("govuk-body").text mustBe
+        "You have successfully submitted your repayment request. You can return to report and manage your " +
+          "Pillar 2 Top-up Taxes ."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("manage your Pillar 2 Top-up Taxes")
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.text mustBe "report and manage your Pillar 2 Top-up Taxes"
     }
 
     "have the correct banner link" in {
-      val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Report Pillar 2 Top-up Taxes")
+      val link: Elements = view.getElementsByClass("govuk-header__link").last().getElementsByTag("a")
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.text mustBe "Report Pillar 2 Top-up Taxes"
     }
 
   }

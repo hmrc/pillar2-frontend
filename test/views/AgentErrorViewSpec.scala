@@ -41,14 +41,14 @@ class AgentErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("Please try again later.")
+      view.getElementsByClass("govuk-body").first().text mustBe "Please try again later."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Return to your Agent Services Account")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/asa/home")
+      link.text mustBe "Return to your Agent Services Account"
+      link.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
     }
 
   }

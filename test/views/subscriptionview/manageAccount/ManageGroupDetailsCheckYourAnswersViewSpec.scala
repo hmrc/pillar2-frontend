@@ -54,19 +54,18 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       "have a summary list" in {
         val mne      = "Where are the entities in your group located?"
         val mneValue = "Only in the UK"
+        // FIXME:
         view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
         view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
-        )
 
         val ap      = "Group’s accounting period"
         val apValue = ""
         view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
         view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-        view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+        view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
-        )
 
         val startDate = "Start date"
         val endDate   = "End date"
@@ -77,7 +76,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+        view.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
       }
     }
 
@@ -106,17 +105,15 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val mneValue = "Only in the UK"
         agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
         agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-        agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+        agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
-        )
 
         val ap      = "Group’s accounting period"
         val apValue = ""
         agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
         agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-        agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+        agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
-        )
 
         val startDate = "Start date"
         val endDate   = "End date"
@@ -127,7 +124,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a button" in {
-        agentView.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+        agentView.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
       }
     }
   }

@@ -34,11 +34,10 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
   "Request Repayment Amount View" should {
 
     "page loaded" should {
-
       val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK" // FIXME:
       }
 
       "have a h1 heading" in {
@@ -48,7 +47,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
 
     }
@@ -58,13 +57,13 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document =
         Jsoup.parse(page(formProvider().bind(Map("value" -> "")), mode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Enter your requested repayment amount in pounds")
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter your requested repayment amount in pounds"
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter your requested repayment amount in pounds")
+        view.getElementsByClass("govuk-error-message").text mustBe "Enter your requested repayment amount in pounds"
       }
 
     }
@@ -74,13 +73,13 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document =
         Jsoup.parse(page(formProvider().bind(Map("value" -> "£-1.0")), mode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Value entered should not be less than £0.00")
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Value entered should not be less than £0.00"
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Value entered should not be less than £0.00")
+        view.getElementsByClass("govuk-error-message").text mustBe "Value entered should not be less than £0.00"
       }
 
     }
@@ -92,15 +91,14 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
           page(formProvider().bind(Map("value" -> "£100,000,000,000.00")), mode)(request, appConfig, messages).toString()
         )
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Value entered should not be greater than £99,999,999,999.99"
-        )
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Value entered should not be greater than £99,999,999,999.99")
+        view.getElementsByClass("govuk-error-message").text mustBe "Value entered should not be greater than £99,999,999,999.99"
       }
 
     }
@@ -110,15 +108,14 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       val view: Document =
         Jsoup.parse(page(formProvider().bind(Map("value" -> "$100.00")), mode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Repayment amount must only use numbers 0-9, commas and full stops"
-        )
       }
 
       "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Repayment amount must only use numbers 0-9, commas and full stops")
+        view.getElementsByClass("govuk-error-message").text mustBe "Repayment amount must only use numbers 0-9, commas and full stops"
       }
 
     }

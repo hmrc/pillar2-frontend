@@ -39,7 +39,7 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -49,14 +49,11 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include(
-        "We will only use this to contact you about Pillar 2 " +
-          "Top-up Taxes."
-      )
+      view.getElementsByClass("govuk-hint").text mustBe "We will only use this to contact you about Pillar 2 Top-up Taxes."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

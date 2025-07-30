@@ -42,14 +42,14 @@ class AgentClientNoMatchViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We could not match the details you entered with records held by HMRC.")
+      view.getElementsByClass("govuk-body").first().text mustBe "We could not match the details you entered with records held by HMRC."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Re-enter your client’s Pillar 2 Top-up Taxes ID to try again")
-      link.attr("href") must include(routes.AgentController.onPageLoadClientPillarId.url)
+      link.text mustBe "Re-enter your client’s Pillar 2 Top-up Taxes ID to try again"
+      link.attr("href") mustBe routes.AgentController.onPageLoadClientPillarId.url
     }
 
   }

@@ -51,17 +51,16 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct section caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "display the warning text" in {
-      view.getElementsByClass("govuk-warning-text").text must include(
+      view.getElementsByClass("govuk-warning-text").text mustBe
         "! Warning You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
-      )
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show error summary when form has errors" in {
@@ -80,11 +79,11 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the first line of the address")
-      errorList must include("Enter the town or city")
-      errorList must include("Enter the country")
+      errorList mustBe "Enter the first line of the address"
+      errorList mustBe "Enter the town or city"
+      errorList mustBe "Enter the country"
     }
 
     "show XSS validation errors when special characters are entered" in {
@@ -101,13 +100,13 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
-      errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
+      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
       val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressErrorCount mustBe 4
     }
@@ -132,15 +131,15 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("First line of the address must be 35 characters or less")
-      errorList must include("Second line of the address must be 35 characters or less")
-      errorList must include("Town or city must be 35 characters or less")
-      errorList must include("Region must be 35 characters or less")
-      errorList must include("The country cannot be more than 35 characters")
-      errorList must include("Postcode must be 10 characters or less")
+      errorList mustBe "First line of the address must be 35 characters or less"
+      errorList mustBe "Second line of the address must be 35 characters or less"
+      errorList mustBe "Town or city must be 35 characters or less"
+      errorList mustBe "Region must be 35 characters or less"
+      errorList mustBe "The country cannot be more than 35 characters"
+      errorList mustBe "Postcode must be 10 characters or less"
     }
   }
 }

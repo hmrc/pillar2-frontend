@@ -18,15 +18,16 @@ package views.repayments
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
 
-  lazy val page:      JourneyRecoveryView = inject[JourneyRecoveryView]
-  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String              = "Sorry, there is a problem with the service"
+  lazy val page:       JourneyRecoveryView = inject[JourneyRecoveryView]
+  lazy val view:       Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String              = "Sorry, there is a problem with the service"
+  lazy val paragraphs: Elements            = view.getElementsByClass("govuk-body")
 
   "Repayments journey recovery view" should {
 
@@ -41,22 +42,17 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
     }
 
     "have the first paragraph with the correct text" in {
-      view.getElementsByTag("p").text must include("Your answers were not saved.")
+      paragraphs.get(0).text mustBe "Your answers were not saved."
     }
 
     "have the second paragraph with the correct text" in {
-      view.getElementsByTag("p").text must include("Please try again later when the service is available.")
+      paragraphs.get(1).text mustBe "Please try again later when the service is available."
     }
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
-
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("p").text must include("Return to account homepage")
-
+    "have a paragraph with a link" in {
+      paragraphs.get(2).getElementsByTag("a").text() mustBe "Return to account homepage"
+      paragraphs.get(2).getElementsByTag("a").attr("href") mustBe
+        controllers.routes.DashboardController.onPageLoad.url
     }
-
   }
 }

@@ -41,9 +41,8 @@ class UnauthorisedViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You need to register to report Pillar 2 Top-up Taxes to access this page."
-      )
     }
 
     "have a link" in {

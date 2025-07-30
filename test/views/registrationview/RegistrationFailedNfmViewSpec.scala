@@ -45,8 +45,8 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We could not match the details you entered with records held by HMRC.")
-      view.getElementsByClass("govuk-body").get(1).text  must include("You can confirm your details with the records held by HMRC by:")
+      view.getElementsByClass("govuk-body").first().text mustBe "We could not match the details you entered with records held by HMRC."
+      view.getElementsByClass("govuk-body").get(1).text mustBe "You can confirm your details with the records held by HMRC by:"
     }
 
     "have a paragraph links" in {
@@ -54,19 +54,17 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
       val link2 = view.getElementsByTag("ul").first().getElementsByTag("a").get(1)
       val link3 = view.getElementsByClass("govuk-body").get(4)
 
-      link1.text         must include("search Companies House for the company registration number and registered office address (opens in a new tab)")
-      link1.attr("href") must include("https://find-and-update.company-information.service.gov.uk/")
+      link1.text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
+      link1.attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
       link1.attr("target") mustBe "_blank"
 
-      link2.text         must include("ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)")
-      link2.attr("href") must include("https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr")
+      link2.text mustBe "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
+      link2.attr("href") mustBe "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
       link2.attr("target") mustBe "_blank"
 
-      link3.text must include(
-        "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
-      )
-      link3.getElementsByTag("a").text()       must include("go back to select the entity type")
-      link3.getElementsByTag("a").attr("href") must include("/report-pillar2-top-up-taxes/business-matching/filing-member/uk-based/entity-type")
+      link3.text mustBe "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
+      link3.getElementsByTag("a").text() mustBe "go back to select the entity type"
+      link3.getElementsByTag("a").attr("href") mustBe "/report-pillar2-top-up-taxes/business-matching/filing-member/uk-based/entity-type" // FIXME
 
     }
 

@@ -68,7 +68,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 
@@ -84,22 +84,20 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter the name of the bank " +
-          "Enter the name on the account " +
-          "Enter the sort code " +
-          "Enter the account number"
-      )
+        "Enter the name on the account " +
+        "Enter the sort code " +
+        "Enter the account number"
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Error: Enter the name of the bank " +
-          "Error: Enter the name on the account " +
-          "Error: Enter the sort code " +
-          "Error: Enter the account number"
-      )
+        "Error: Enter the name on the account " +
+        "Error: Enter the sort code " +
+        "Error: Enter the account number"
     }
 
   }
@@ -131,22 +129,20 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "The name of the bank must be 40 characters or less " +
-          "The name on the account must be 60 characters or less " +
-          "Sort code must be 6 digits " +
-          "Account number must be 8 digits"
-      )
+        "The name on the account must be 60 characters or less " +
+        "Sort code must be 6 digits " +
+        "Account number must be 8 digits"
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Error: The name of the bank must be 40 characters or less " +
-          "Error: The name on the account must be 60 characters or less " +
-          "Error: Sort code must be 6 digits " +
-          "Error: Account number must be 8 digits"
-      )
+        "Error: The name on the account must be 60 characters or less " +
+        "Error: Sort code must be 6 digits " +
+        "Error: Account number must be 8 digits"
     }
 
   }
@@ -163,14 +159,14 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
     )
 
-    view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+    view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
     val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-    errorList must include("Name of the bank you enter must not include the following characters <, > or \"")
-    errorList must include("Name on the account you enter must not include the following characters <, > or \"")
+    errorList mustBe "Name of the bank you enter must not include the following characters <, > or \""
+    errorList mustBe "Name on the account you enter must not include the following characters <, > or \""
 
     val fieldErrors = view.getElementsByClass("govuk-error-message").text
-    fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, > or \"")
-    fieldErrors must include("Error: Name on the account you enter must not include the following characters <, > or \"")
+    fieldErrors mustBe "Error: Name of the bank you enter must not include the following characters <, > or \""
+    fieldErrors mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
   }
 }

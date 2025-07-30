@@ -68,11 +68,11 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
   "Registering Nfm for this group view when clicking continue with missing values" should {
     "have an error summary" in {
-      viewWithErrors.getElementsByClass("govuk-error-summary").text() must
-        include("Select yes if you are registering as the group’s nominated filing member");
+      viewWithErrors.getElementsByClass("govuk-error-summary").text() mustBe
+        "Select yes if you are registering as the group’s nominated filing member"
 
-      viewWithErrors.getElementsByClass("govuk-form-group govuk-form-group--error").text() must
-        include("Select yes if you are registering as the group’s nominated filing member")
+      viewWithErrors.getElementsByClass("govuk-form-group govuk-form-group--error").text() mustBe
+        "Select yes if you are registering as the group’s nominated filing member"
     }
   }
 }

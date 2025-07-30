@@ -38,7 +38,7 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
     "have a unique H1 heading" in {
@@ -48,14 +48,13 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
         "This is 15 characters, for example, " +
-          "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
-      )
+        "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }

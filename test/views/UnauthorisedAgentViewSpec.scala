@@ -46,9 +46,8 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You’ve signed in using an agent Government Gateway user ID. Only groups can register to use this service."
-      )
     }
 
     "have list items with links" in {

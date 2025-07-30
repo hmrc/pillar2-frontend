@@ -49,8 +49,8 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who can use this service")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who can use this service"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

@@ -46,34 +46,32 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       val listItems:  Elements = view.getElementsByTag("li")
 
-      paragraphs.first().text must include(
+      paragraphs.first().text mustBe
         "You indicated that the Ultimate Parent Entity has nominated a different company within your group to act as the filing member."
-      )
-      paragraphs.get(1).text must include(
+      paragraphs.get(1).text mustBe
         "However, the details you provided for the nominated filing member are the same as those for the Ultimate Parent Entity."
-      )
-      paragraphs.get(2).text must include("Before submitting your registration, you must either:")
+      paragraphs.get(2).text mustBe
+        "Before submitting your registration, you must either:"
 
-      listItems.get(0).text must include(
+      listItems.get(0).text mustBe
         "provide the details of the company that will act as your nominated filing member"
-      )
-      listItems.get(1).text must include("keep your Ultimate Parent Entity as the default filing member")
+      listItems.get(1).text mustBe
+        "keep your Ultimate Parent Entity as the default filing member"
     }
 
     "has legend" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
+      view.getElementsByClass("govuk-fieldset__legend").get(0).text mustBe
         "Has a different company in your group been nominated to act as your filing member?"
-      )
     }
 
     "have radio items" in {
       val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-      radioButtonsLabels.get(0).text must include("Yes")
-      radioButtonsLabels.get(1).text must include("No")
+      radioButtonsLabels.get(0).text mustBe "Yes"
+      radioButtonsLabels.get(1).text mustBe "No"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 
@@ -89,16 +87,14 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Select yes if a different company in your group has been nominated to act as your filing member"
-      )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Error: Select yes if a different company in your group has been nominated to act as your filing member"
-      )
     }
 
   }

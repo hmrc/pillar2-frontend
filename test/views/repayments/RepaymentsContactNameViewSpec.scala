@@ -48,11 +48,11 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
+        view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
 
     }
@@ -63,16 +63,14 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider().bind(Map("contactName" -> "")), mode)(request, appConfig, messages).toString())
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Enter name of the person or team we should contact for this repayment request"
-        )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include(
-          "Enter name of the person or team we should contact for this repayment request"
-        )
+        view.getElementsByClass("govuk-error-message").text mustBe "Enter name of the person or team we should " +
+          "contact for this repayment request"
       }
 
     }
@@ -87,14 +85,14 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
         )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
           "Name of the contact person or team must be 160 characters or less"
-        )
       }
 
       "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Name of the contact person or team must be 160 characters or less")
+        view.getElementsByClass("govuk-error-message").text mustBe "Name of the contact person or team must be 160 " +
+          "characters or less"
       }
 
     }
@@ -108,13 +106,13 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase {
         page(formProvider().bind(xssInput), mode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The name you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "The name you enter must not include the following characters <, >, \" or &"
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: The name you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
 
   }

@@ -27,12 +27,12 @@ import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 class HomepageViewSpec extends ViewSpecBase {
-<<<<<<< HEAD
-  lazy val page:             HomepageView      = inject[HomepageView]
-  lazy val organisationName: String            = "Some Org name"
-  lazy val plrRef:           String            = "XMPLR0012345678"
-  lazy val date:             String            = "1 June 2020"
-  lazy val apEndDate:        Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
+  lazy val page:                      HomepageView      = inject[HomepageView]
+  lazy val organisationName:          String            = "Some Org name"
+  lazy val plrRef:                    String            = "XMPLR0012345678"
+  lazy val date:                      String            = "1 June 2020"
+  lazy val apEndDate:                 Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
+  private lazy val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   // This is only case where the page Title and the H1 heading are inconsistent in the service
   lazy val pageTitle:   String = "Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -64,8 +64,8 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display organisation information correctly" in {
       val infoText = organisationView.getElementsByClass("govuk-body").first().text()
-      infoText must include(s"Group: $organisationName")
-      infoText must include(s"ID: $plrRef")
+      infoText mustBe s"Group: $organisationName"
+      infoText mustBe s"ID: $plrRef"
     }
 
     "display returns card with correct content" in {
@@ -101,7 +101,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val manageLinks = manageCard.getElementsByTag("a")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
-      manageCard.text() must include(s"Registration date: $date")
+      manageCard.text() mustBe s"Registration date: $date"
 
       val links = manageCard.getElementsByTag("a")
       links.exists(_.text() == "Manage contact details") mustBe true
@@ -116,12 +116,11 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display correct help text" in {
       val manageCard = organisationView.getElementsByClass("card-full-width").first()
-      manageCard.text() must include("Edit the details we use to contact you about Pillar 2 Top-up Taxes.")
-      manageCard.text() must include("Amend your group's accounting period or update changes to your entity's locations.")
-      manageCard.text() must include("Change the filing member for your group's Pillar 2 Top-up Taxes account.")
-      manageCard.text() must include(
+      manageCard.text() mustBe "Edit the details we use to contact you about Pillar 2 Top-up Taxes."
+      manageCard.text() mustBe "Amend your group's accounting period or update changes to your entity's locations."
+      manageCard.text() mustBe "Change the filing member for your group's Pillar 2 Top-up Taxes account."
+      manageCard.text() mustBe
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
-      )
     }
 
     "have correct structure" in {
@@ -150,7 +149,7 @@ class HomepageViewSpec extends ViewSpecBase {
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe "Your account has a Below-Threshold Notification."
       bannerContent
         .text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
-        .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
+        .format(dateTimeFormatter)} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
 
@@ -236,8 +235,8 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display organisation information correctly" in {
       val infoText = agentView.getElementsByClass("govuk-body").first().text()
-      infoText must include(s"Group: $organisationName")
-      infoText must include(s"ID: $plrRef")
+      infoText mustBe s"Group: $organisationName"
+      infoText mustBe s"ID: $plrRef"
     }
 
     "display returns card with correct content" in {
@@ -273,7 +272,7 @@ class HomepageViewSpec extends ViewSpecBase {
       val manageLinks = manageCard.getElementsByTag("a")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
-      manageCard.text() must include(s"Registration date: $date")
+      manageCard.text() mustBe s"Registration date: $date"
 
       val links = manageCard.getElementsByTag("a")
       links.exists(_.text() == "Manage contact details") mustBe true
@@ -288,10 +287,10 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display correct help text" in {
       val manageCard = agentView.getElementsByClass("card-full-width").first()
-      manageCard.text() must include("Edit the details we use to contact your client about Pillar 2 Top-up Taxes.")
-      manageCard.text() must include("Amend your client's accounting period or update changes to entity locations.")
-      manageCard.text() must include("As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this.")
-      manageCard.text() must include("Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.")
+      manageCard.text() mustBe "Edit the details we use to contact your client about Pillar 2 Top-up Taxes."
+      manageCard.text() mustBe "Amend your client's accounting period or update changes to entity locations."
+      manageCard.text() mustBe "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."
+      manageCard.text() mustBe "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
     }
 
     "have correct structure" in {
@@ -320,7 +319,7 @@ class HomepageViewSpec extends ViewSpecBase {
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe s"$organisationName has a Below-Threshold Notification."
       bannerContent.text() mustBe
         s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
-          .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
+          .format(dateTimeFormatter)} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
   }

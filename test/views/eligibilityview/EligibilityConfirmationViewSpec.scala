@@ -41,19 +41,17 @@ class EligibilityConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You now need to sign in with a Government Gateway user ID associated with the filing member."
-      )
     }
 
     "have a inset text" in {
-      view.getElementsByClass("govuk-inset-text").text must include(
+      view.getElementsByClass("govuk-inset-text").text mustBe
         "You cannot use an individual or agent Government Gateway user ID to register."
-      )
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

@@ -42,14 +42,14 @@ class BankDetailsErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We are unable to proceed with the account details you entered.")
+      view.getElementsByClass("govuk-body").first().text mustBe "We are unable to proceed with the account details you entered."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("try again with a different business bank account")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/repayment/uk-details")
+      link.text mustBe "try again with a different business bank account"
+      link.attr("href") mustBe "/report-pillar2-top-up-taxes/repayment/uk-details" // FIXME
     }
 
   }

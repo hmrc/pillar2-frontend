@@ -45,7 +45,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -55,27 +55,26 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
     }
 
     "display the warning text" in {
-      view.getElementsByClass("govuk-warning-text__text").text must include(
+      view.getElementsByClass("govuk-warning-text__text").text mustBe
         "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
-      )
     }
 
     "have the correct field labels" in {
       val labels: Elements = view.getElementsByClass("govuk-label")
-      labels.get(0).text must include("Address line 1")
-      labels.get(1).text must include("Address line 2 (optional)")
-      labels.get(2).text must include("Town or city")
-      labels.get(3).text must include("Region (optional)")
-      labels.get(4).text must include("Postcode")
-      labels.get(5).text must include("Country")
+      labels.get(0).text mustBe "Address line 1"
+      labels.get(1).text mustBe "Address line 2 (optional)"
+      labels.get(2).text mustBe "Town or city"
+      labels.get(3).text mustBe "Region (optional)"
+      labels.get(4).text mustBe "Postcode"
+      labels.get(5).text mustBe "Country"
     }
 
     "have the correct country hint text" in {
-      view.getElementById("countryCode-hint").text must include("Enter text and then choose from the list.")
+      view.getElementById("countryCode-hint").text mustBe "Enter text and then choose from the list."
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show required field errors when form is submitted empty" in {
@@ -95,13 +94,13 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the first line of the address")
-      errorList must include("Enter the town or city")
-      errorList must include("Enter the country")
-      errorList must include("Enter the postcode")
+      errorList mustBe "Enter the first line of the address"
+      errorList mustBe "Enter the town or city"
+      errorList mustBe "Enter the country"
+      errorList mustBe "Enter the postcode"
     }
 
     "show length validation errors when input exceeds maximum length" in {
@@ -124,15 +123,15 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("First line of the address must be 35 characters or less")
-      errorList must include("Second line of the address must be 35 characters or less")
-      errorList must include("Town or city must be 35 characters or less")
-      errorList must include("Region must be 35 characters or less")
-      errorList must include("The country cannot be more than 200 characters")
-      errorList must include("Postcode must be 10 characters or less")
+      errorList mustBe "First line of the address must be 35 characters or less"
+      errorList mustBe "Second line of the address must be 35 characters or less"
+      errorList mustBe "Town or city must be 35 characters or less"
+      errorList mustBe "Region must be 35 characters or less"
+      errorList mustBe "The country cannot be more than 200 characters"
+      errorList mustBe "Postcode must be 10 characters or less"
     }
 
     "show XSS validation errors when special characters are entered" in {
@@ -149,21 +148,21 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      errorList must include("The country you enter must not include the following characters <, >, \" or &")
-      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
+      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
       val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressErrorCount mustBe 4
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: The postcode you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      fieldErrors mustBe "Error: The country you enter must not include the following characters <, >, \" or &"
+      fieldErrors mustBe "Error: The postcode you enter must not include the following characters <, >, \" or &"
       val addressFieldCount =
         StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressFieldCount mustBe 4

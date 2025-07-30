@@ -24,12 +24,14 @@ import views.html.paymenthistory.NoTransactionHistoryView
 
 class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
-  lazy val page:      NoTransactionHistoryView = inject[NoTransactionHistoryView]
-  lazy val groupView: Document                 = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
-  lazy val agentView: Document                 = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                   = "Transaction history"
+  lazy val page:                NoTransactionHistoryView = inject[NoTransactionHistoryView]
+  lazy val groupView:           Document                 = Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
+  lazy val agentView:           Document                 = Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+  lazy val pageTitle:           String                   = "Transaction history"
+  lazy val groupViewParagraphs: Elements                 = groupView.getElementsByClass("govuk-body")
+  lazy val agentViewParagraphs: Elements                 = agentView.getElementsByClass("govuk-body")
 
-  "No Transaction History View" should {
+  "No Transaction History View for Group" should {
 
     "have a title" in {
       groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -41,28 +43,45 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have paragraph 1 for a group" in {
-      groupView.getElementsByClass("govuk-body").text must include(
+    "have paragraph 1" in {
+      groupViewParagraphs.get(0).text mustBe
         "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
-      )
-    }
-
-    "have paragraph 1 for an agent" in {
-      agentView.getElementsByClass("govuk-body").text must include(
-        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
-      )
     }
 
     "have paragraph 2" in {
-      groupView.getElementsByClass("govuk-body").text must include(
+      groupViewParagraphs.get(1).text mustBe
         "It will take up to 5 working days for payments to appear after each transaction."
-      )
     }
 
     "have paragraph 3" in {
-      groupView.getElementsByClass("govuk-body").text must include(
-        "No transactions made"
-      )
+      groupViewParagraphs.get(2).text mustBe "No transactions made."
+    }
+  }
+
+  "No Transaction History View for Agent" should {
+
+    "have a title" in {
+      groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+    }
+
+    "have paragraph 1" in {
+      agentViewParagraphs.get(0).text mustBe
+        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
+    }
+
+    "have paragraph 2" in {
+      agentViewParagraphs.get(1).text mustBe
+        "It will take up to 5 working days for payments to appear after each transaction."
+    }
+
+    "have paragraph 3" in {
+      agentViewParagraphs.get(2).text mustBe "No transactions made."
     }
   }
 }

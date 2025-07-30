@@ -45,23 +45,22 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
 
     "have a subheading" in {
       val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
-      view.getElementsByTag("legend").text must include(subheading)
+      view.getElementsByTag("legend").text mustBe subheading
     }
 
-    "have a paragraph" in {
-      view.getElementsByClass("govuk-body").first().text must include(
+    "have paragraphs" in {
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "Is this who you want the repayment to be sent to? If not, check the account details on your bank statement and try again."
-      )
-      view.getElementsByClass("govuk-body").get(1).text must include("We may not be able to recover your money if it goes to the wrong account.")
+      view.getElementsByClass("govuk-body").get(1).text mustBe "We may not be able to recover your money if it goes to the wrong account."
     }
 
     "have a yes or no form" in {
-      view.getElementsByClass("govuk-radios__item").first().text must include("Yes")
-      view.getElementsByClass("govuk-radios__item").get(1).text  must include("No")
+      view.getElementsByClass("govuk-radios__item").first().text mustBe "Yes"
+      view.getElementsByClass("govuk-radios__item").get(1).text mustBe "No"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }

@@ -24,10 +24,10 @@ import views.html.repayments.RequestRefundBeforeStartView
 
 class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
 
-  val page:           RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
-  val view:           Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
-  val agentView:      Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                       = "Request a refund"
+  lazy val page:      RequestRefundBeforeStartView = inject[RequestRefundBeforeStartView]
+  lazy val view:      Document                     = Jsoup.parse(page(agentView = false)(request, appConfig, messages).toString())
+  lazy val agentView: Document                     = Jsoup.parse(page(agentView = true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                       = "Request a repayment"
 
   "Request Repayment Before Start View" should {
 
@@ -42,30 +42,31 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have an H2 heading" in {
-      view.getElementsByTag("h2").get(0).text mustBe "Before you start"
+      view.getElementsByTag("h2").first().text mustBe "Before you start"
     }
 
     "have following contents" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "You can use this service to request a repayment. You can only make a request if there are funds in your group’s Pillar 2 account."
-      )
 
-      agentView.getElementsByClass("govuk-body").text must include(
-        "You can use this service to request a repayment on behalf of your client. " +
-          "You can only make a request if there are funds in your group’s Pillar 2 account."
-      )
+      val listItems: Elements = view.getElementsByTag("li")
 
-      view.getElementsByClass("govuk-body").text must include(
-        "You’ll need to provide:"
-      )
-      view.getElementsByTag("li").text must include("repayment amount")
-      view.getElementsByTag("li").text must include("reason for your repayment request")
-      view.getElementsByTag("li").text must include("bank account details")
-      view.getElementsByTag("li").text must include("contact details for someone we can contact about this request")
+      view.getElementsByClass("govuk-body").first().text mustBe
+        "You can use this service to request a repayment. You can only make a request if there are funds in your " +
+        "group’s Pillar 2 account."
+
+      agentView.getElementsByClass("govuk-body").first().text mustBe
+        "You can use this service to request a repayment on behalf of your client. You can only make a request if there " +
+        "are funds in your group’s Pillar 2 account."
+
+      view.getElementsByClass("govuk-body").get(1).text mustBe "You’ll need to provide:"
+
+      listItems.get(0).text mustBe "repayment amount"
+      listItems.get(1).text mustBe "reason for your repayment request"
+      listItems.get(2).text mustBe "bank account details"
+      listItems.get(3).text mustBe "contact details for someone we can contact about this request"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Request a repayment")
+      view.getElementsByClass("govuk-button").text mustBe "Request a repayment"
     }
 
   }

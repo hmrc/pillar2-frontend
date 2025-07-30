@@ -44,7 +44,7 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -64,11 +64,11 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
     }
 
     "have the correct country hint text" in {
-      view.getElementById("countryCode-hint").text must include("Enter text and then choose from the list.")
+      view.getElementById("countryCode-hint").text mustBe "Enter text and then choose from the list."
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show required field errors when form is submitted empty" in {
@@ -86,12 +86,12 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the first line of the address")
-      errorList must include("Enter town or city")
-      errorList must include("Enter the country")
+      errorList mustBe "Enter the first line of the address"
+      errorList mustBe "Enter town or city"
+      errorList mustBe "Enter the country"
     }
 
     "show length validation errors when input exceeds maximum length" in {
@@ -113,15 +113,15 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The first line of the address must be 35 characters or less")
-      errorList must include("The second line of the address must be 35 characters or less")
-      errorList must include("The Town or city must be 35 characters or less")
-      errorList must include("The region must be 35 characters or less")
-      errorList must include("Country cannot be more than 200 characters")
-      errorList must include("Postcode must be 10 characters or less")
+      errorList mustBe "The first line of the address must be 35 characters or less"
+      errorList mustBe "The second line of the address must be 35 characters or less"
+      errorList mustBe "The Town or city must be 35 characters or less"
+      errorList mustBe "The region must be 35 characters or less"
+      errorList mustBe "Country cannot be more than 200 characters"
+      errorList mustBe "Postcode must be 10 characters or less"
     }
 
     "show XSS validation errors when special characters are entered" in {
@@ -138,21 +138,21 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
-      errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
+      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
       val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressErrorCount mustBe 4
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      fieldErrors must include("Error: The postcode you enter must not include the following characters <, >, \" or &")
-      fieldErrors must include("Error: The country you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      fieldErrors mustBe "Error: The postcode you enter must not include the following characters <, >, \" or &"
+      fieldErrors mustBe "Error: The country you enter must not include the following characters <, >, \" or &"
       val addressFieldCount =
         StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressFieldCount mustBe 4

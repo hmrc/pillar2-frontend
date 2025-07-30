@@ -84,51 +84,55 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have the correct H2 headings" in {
       val h2Elements: Elements = view.getElementsByTag("h2")
-      h2Elements.get(0).text must include("Request details")
-      h2Elements.get(1).text must include("Bank account details")
-      h2Elements.get(2).text must include("Contact details")
-      h2Elements.get(3).text must include("Do you need to keep a record of your answers?")
-      h2Elements.get(4).text must include("Now submit your details to request for a repayment")
+
+      h2Elements.get(0).text mustBe "Request details"
+      h2Elements.get(1).text mustBe "Bank account details"
+      h2Elements.get(2).text mustBe "Contact details"
+      h2Elements.get(3).text mustBe "Do you need to keep a record of your answers?"
+      h2Elements.get(4).text mustBe "Now submit your details to request for a repayment"
     }
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
-      summaryListKeys.get(0).text must include("Repayment amount")
-      summaryListKeys.get(1).text must include("Reason for repayment request")
-      summaryListKeys.get(2).text must include("What type of account will the repayment be sent to?")
-      summaryListKeys.get(3).text must include("Name of the bank")
-      summaryListKeys.get(4).text must include("Name on account")
-      summaryListKeys.get(5).text must include("BIC or SWIFT code")
-      summaryListKeys.get(6).text must include("IBAN")
-      summaryListKeys.get(7).text must include("Contact name")
-      summaryListKeys.get(8).text must include("Email address")
-      summaryListKeys.get(9).text must include("Can we contact by telephone?")
-      summaryListKeys.get(10).text must include("Telephone number")
+
+      summaryListKeys.get(0).text mustBe "Repayment amount"
+      summaryListKeys.get(1).text mustBe "Reason for repayment request"
+      summaryListKeys.get(2).text mustBe "What type of account will the repayment be sent to?"
+      summaryListKeys.get(3).text mustBe "Name of the bank"
+      summaryListKeys.get(4).text mustBe "Name on account"
+      summaryListKeys.get(5).text mustBe "BIC or SWIFT code"
+      summaryListKeys.get(6).text mustBe "IBAN"
+      summaryListKeys.get(7).text mustBe "Contact name"
+      summaryListKeys.get(8).text mustBe "Email address"
+      summaryListKeys.get(9).text mustBe "Can we contact by telephone?"
+      summaryListKeys.get(10).text mustBe "Telephone number"
     }
 
     "have a summary list items" in {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
-      summaryListItems.get(0).text  must include(amount.toString())
-      summaryListItems.get(1).text  must include("answer for reason")
-      summaryListItems.get(2).text  must include("Non-UK bank account")
-      summaryListItems.get(3).text  must include("BankName")
-      summaryListItems.get(4).text  must include("Name")
-      summaryListItems.get(5).text  must include("HBUKGB4B")
-      summaryListItems.get(6).text  must include("GB29NWBK60161331926819")
-      summaryListItems.get(7).text  must include("contact name")
-      summaryListItems.get(8).text  must include("test@test.com")
-      summaryListItems.get(9).text  must include("Yes")
-      summaryListItems.get(10).text must include("1234567")
+
+      summaryListItems.get(0).text mustBe amount.toString()
+      summaryListItems.get(1).text mustBe "answer for reason"
+      summaryListItems.get(2).text mustBe "Non-UK bank account"
+      summaryListItems.get(3).text mustBe "BankName"
+      summaryListItems.get(4).text mustBe "Name"
+      summaryListItems.get(5).text mustBe "HBUKGB4B"
+      summaryListItems.get(6).text mustBe "GB29NWBK60161331926819"
+      summaryListItems.get(7).text mustBe "contact name"
+      summaryListItems.get(8).text mustBe "test@test.com"
+      summaryListItems.get(9).text mustBe "Yes"
+      summaryListItems.get(10).text mustBe "1234567"
     }
 
     "have a summary list links" in {
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
-      summaryListActions.get(0).text must include("Change")
-      summaryListActions.get(1).text must include("Change")
+
+      summaryListActions.get(0).text mustBe "Change"
+      summaryListActions.get(1).text mustBe "Change"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and submit")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and submit"
     }
   }
 }

@@ -42,15 +42,15 @@ class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We are unable to proceed with the account details you entered.")
-      view.getElementsByClass("govuk-body").last.text    must include("Please")
+      view.getElementsByClass("govuk-body").first().text mustBe "We are unable to proceed with the account details you entered."
+      view.getElementsByClass("govuk-body").last.text mustBe "Please"
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("return to your bank details and try again")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/repayment/uk-details")
+      link.text mustBe "return to your bank details and try again"
+      link.attr("href") mustBe "/report-pillar2-top-up-taxes/repayment/uk-details" // FIXME
     }
 
   }

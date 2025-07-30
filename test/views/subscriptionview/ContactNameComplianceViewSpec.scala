@@ -46,21 +46,20 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
     }
 
     "display the hint text" in {
-      view.getElementsByClass("govuk-hint").text must include("You can enter a person or team name.")
+      view.getElementsByClass("govuk-hint").text mustBe "You can enter a person or team name."
     }
 
     "display the submit button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "display an error summary when form has errors" in {
       val errorView: Document = Jsoup.parse(
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
     }
 
     "display character limit error message when input exceeds maximum length" in {
@@ -68,10 +67,9 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       val errorView: Document = Jsoup.parse(
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Name of the contact person or team should be 160 characters or less"
-      )
     }
 
     "display XSS validation error messages when special characters are entered" in {
@@ -83,13 +81,13 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The name you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "The name you enter must not include the following characters <, >, \" or &"
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: The name you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
   }
 }

@@ -36,7 +36,7 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementById("section-header").text must include("Group details")
+      view.getElementById("section-header").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -47,21 +47,17 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
 
     "have a paragraph body" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs.get(0).text must
-        include(
-          "If the new filing member is registered in the UK, we will ask you for identifying " +
-            "information so we can best match it with our records."
-        )
+      paragraphs.get(0).text mustBe
+        "If the new filing member is registered in the UK, we will ask you for identifying information so we can " +
+        "best match it with our records."
 
-      paragraphs.get(1).text must
-        include(
-          "If the new filing member is registered outside of the UK or if they are not a listed entity type, " +
-            "we will ask you for identifying information so we can create a new HMRC record."
-        )
+      paragraphs.get(1).text mustBe
+        "If the new filing member is registered outside of the UK or if they are not a listed entity type, " +
+        "we will ask you for identifying information so we can create a new HMRC record."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }
