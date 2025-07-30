@@ -29,11 +29,11 @@ object RequestRefundAmountSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RepaymentsRefundAmountPage).map { answer =>
       SummaryListRowViewModel(
-        key = "requestRefundAmount.checkYourAnswersLabel",
+        key = "requestRepaymentAmount.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape("£" + answer.bigDecimal.setScale(2)).toString.replace(".00", "")),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.repayments.routes.RequestRefundAmountController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("requestRefundAmount.change.hidden"))
+          ActionItemViewModel("site.change", controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("requestRepaymentAmount.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )
       )
