@@ -18,7 +18,7 @@ package controllers.repayments
 
 import config.FrontendAppConfig
 import controllers.actions._
-import forms.ReasonForRequestingRefundFormProvider
+import forms.ReasonForRequestingRepaymentFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
 import pages.ReasonForRequestingRefundPage
@@ -33,13 +33,13 @@ import views.html.repayments.ReasonForRequestingRefundView
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class ReasonForRequestingRefundController @Inject() (
+class ReasonForRequestingRepaymentController @Inject() (
   val sessionRepository:                  SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SessionDataRetrievalAction,
   navigator:                              RepaymentNavigator,
   requireData:                            SessionDataRequiredAction,
-  formProvider:                           ReasonForRequestingRefundFormProvider,
+  formProvider:                           ReasonForRequestingRepaymentFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ReasonForRequestingRefundView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)

@@ -48,7 +48,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
       "have a hint" in {
         view.getElementsByClass("govuk-hint").text must include(
           "We will only use this to contact you about " +
-            "this refund request."
+            "this repayment request."
         )
       }
 
