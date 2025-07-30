@@ -84,6 +84,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
+      bind[SessionRepository].toInstance(mockSessionRepository),
       bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
     )
     .build()
@@ -91,6 +92,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
   "BTNChooseAccountingPeriodController" must {
     "must return OK and the correct view for a GET" in {
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
 
@@ -115,11 +117,13 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
       def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(userAnswers))
         .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
         )
         .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
 
@@ -145,12 +149,9 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must redirect to the AccountingPeriod page when a valid answer is submitted" in {
-
-      val mockSessionRepository = mock[SessionRepository]
-
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
 
@@ -167,6 +168,9 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+
         val request =
           FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
             .withFormUrlEncodedBody(("value", ""))

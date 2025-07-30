@@ -47,6 +47,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
+      bind[SessionRepository].toInstance(mockSessionRepository),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
     )
     .build()
@@ -56,6 +57,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
     "must return OK and the correct view for a GET" in {
 
       running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
 
         val result = route(application, request).value
@@ -75,13 +77,9 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
       val userAnswers = UserAnswers(userAnswersId).set(EntitiesInsideOutsideUKPage, true).success.value
 
-      val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(userAnswers))
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
-
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
 
         val view = application.injector.instanceOf[BTNEntitiesInsideOutsideUKView]
@@ -99,6 +97,9 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
     "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
         val request =
           FakeRequest(POST, entitiesInsideOutsideUKRoute)
             .withFormUrlEncodedBody(("value", "true"))
@@ -132,6 +133,9 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
     "must return a Bad Request and errors when invalid data is submitted" in {
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+
         val request =
           FakeRequest(POST, entitiesInsideOutsideUKRoute)
             .withFormUrlEncodedBody(("value", ""))

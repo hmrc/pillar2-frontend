@@ -22,6 +22,7 @@ import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
 import pages.BTNChooseAccountingPeriodPage
+import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -44,54 +45,67 @@ class BTNChooseAccountingPeriodController @Inject() (
   view:                                   BTNChooseAccountingPeriodView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData) {
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
       implicit request =>
-        val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
-        val form              = formProvider()
-        val preparedForm = request.userAnswers
-          .get(BTNChooseAccountingPeriodPage)
-          .flatMap { chosenPeriod =>
-            accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
-              form.fill(index)
-            }
-          }
-          .getOrElse(form)
-        Ok(view(preparedForm, mode, request.isAgent, request.subscriptionLocalData.organisationName, accountingPeriods))
+        sessionRepository.get(request.userId).flatMap {
+          case Some(userAnswers) =>
+            val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+            val form              = formProvider()
+            val preparedForm = userAnswers
+              .get(BTNChooseAccountingPeriodPage)
+              .flatMap { chosenPeriod =>
+                accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
+                  form.fill(index)
+                }
+              }
+              .getOrElse(form)
+            Future.successful(Ok(view(preparedForm, mode, request.isAgent, request.subscriptionLocalData.organisationName, accountingPeriods)))
+          case None =>
+            logger.error("user answers not found")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
       implicit request =>
-        val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
-        val form              = formProvider()
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors =>
-              Future.successful(
-                BadRequest(
-                  view(
-                    formWithErrors,
-                    mode,
-                    request.isAgent,
-                    request.subscriptionLocalData.organisationName,
-                    accountingPeriods
-                  )
-                )
-              ),
-            value =>
-              accountingPeriods.find { case (_, index) => index == value } match {
-                case Some((chosenPeriod, _)) =>
-                  for {
-                    updatedAnswers <- Future.fromTry(request.userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
-                    _              <- sessionRepository.set(updatedAnswers)
-                  } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
-                case None =>
-                  Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
-              }
-          )
+        sessionRepository.get(request.userId).flatMap {
+          case Some(userAnswers) =>
+            val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+            val form              = formProvider()
+            form
+              .bindFromRequest()
+              .fold(
+                formWithErrors =>
+                  Future.successful(
+                    BadRequest(
+                      view(
+                        formWithErrors,
+                        mode,
+                        request.isAgent,
+                        request.subscriptionLocalData.organisationName,
+                        accountingPeriods
+                      )
+                    )
+                  ),
+                value =>
+                  accountingPeriods.find { case (_, index) => index == value } match {
+                    case Some((chosenPeriod, _)) =>
+                      for {
+                        updatedAnswers <- Future.fromTry(userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
+                        _              <- sessionRepository.set(updatedAnswers)
+                      } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                    case None =>
+                      Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+                  }
+              )
+          case None =>
+            logger.error("user answers not found")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
     }
 }

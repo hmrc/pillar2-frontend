@@ -18,12 +18,16 @@ package controllers.btn
 
 import base.SpecBase
 import models.btn.BTNStatus
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import views.html.btn.BTNWaitingRoomView
+
+import scala.concurrent.Future
 
 class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
@@ -40,6 +44,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
           val result  = route(application, request).value
 
@@ -55,6 +61,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
 
           val timestamp = System.currentTimeMillis() - 5000
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
@@ -76,6 +83,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
           val timestamp = System.currentTimeMillis() - 1000
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
@@ -97,6 +106,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
           val result  = route(application, request).value
 
@@ -112,6 +123,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession("btn_submission_initiated" -> "true")
           val result = route(application, request).value
@@ -135,6 +148,8 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           .build()
 
         running(application) {
+          when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
           val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
           val result  = route(application, request).value
 

@@ -30,7 +30,7 @@
         formHelper: FormWithCSRF,
 )
 
-@(list: SummaryList, mode: Mode, changeAccountingPeriodUrl: String, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(list: SummaryList, mode: Mode, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle = titleNoForm(messages("btn.accountingPeriod.title"))
 ) {
@@ -56,9 +56,9 @@
 
         @if(currentAP) {
             @if(isAgent) {
-                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
             } else {
-                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = changeAccountingPeriodUrl, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
             }
         }
 

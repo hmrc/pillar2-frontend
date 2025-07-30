@@ -47,7 +47,6 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
             request.userId,
             request.subscriptionLocalData,
             obligationData,
-            request.userAnswers,
             request.enrolments,
             request.isAgent
           )

@@ -41,7 +41,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
   def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
     Jsoup.parse(
-      page(list, NormalMode, "test-url", isAgent, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages).toString()
+      page(list, NormalMode, isAgent, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages).toString()
     )
 
   "BTNAccountingPeriodView" when {
@@ -80,7 +80,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
           "If the accounting period dates are wrong,"
         )
         link.text         must include("update your group’s accounting period dates")
-        link.attr("href") must include("test-url")
+        link.attr("href") must include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         view().getElementsByTag("p").text must include(
           "before continuing."
         )
@@ -92,7 +92,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
           "If the accounting period dates are wrong,"
         )
         link.text mustNot include("update your group’s accounting period dates")
-        link.attr("href") mustNot include("test-url")
+        link.attr("href") mustNot include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
           "before continuing."
         )
@@ -143,7 +143,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
           "If the accounting period dates are wrong,"
         )
         link.text         must include("update the group’s accounting period dates")
-        link.attr("href") must include("test-url")
+        link.attr("href") must include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         view(isAgent = true).getElementsByTag("p").text must include(
           "before continuing."
         )
@@ -156,7 +156,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
           "If the accounting period dates are wrong,"
         )
         link.text mustNot include("update the group’s accounting period dates")
-        link.attr("href") mustNot include("test-url")
+        link.attr("href") mustNot include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
         view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
           "before continuing."
         )

@@ -47,6 +47,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
     .overrides(
+      bind[SessionRepository].toInstance(mockSessionRepository),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
     )
     .build()
@@ -56,6 +57,8 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
     "must return OK and the correct view for a GET" in {
 
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+
         val request = FakeRequest(GET, entitiesInUKOnlyRoute)
 
         val result = route(application, request).value
@@ -77,11 +80,14 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 
       val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(userAnswers))
         .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
         .build()
 
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+
         val request = FakeRequest(GET, entitiesInUKOnlyRoute)
 
         val view = application.injector.instanceOf[BTNEntitiesInUKOnlyView]
@@ -100,6 +106,9 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
 
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
         val request =
           FakeRequest(POST, entitiesInUKOnlyRoute)
             .withFormUrlEncodedBody(("value", "true"))
@@ -134,6 +143,9 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
     "must return a Bad Request and errors when invalid data is submitted" in {
 
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
+
         val request =
           FakeRequest(POST, entitiesInUKOnlyRoute)
             .withFormUrlEncodedBody(("value", ""))

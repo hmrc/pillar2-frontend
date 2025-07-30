@@ -32,8 +32,7 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
 }
 
 class FakeSubscriptionDataRetrievalAction(
-  subscriptionData: Option[SubscriptionLocalData],
-  userAnswers:      Option[UserAnswers]
+  subscriptionData: Option[SubscriptionLocalData]
 ) extends SubscriptionDataRetrievalAction {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalSubscriptionDataRequest[A]] =
@@ -42,7 +41,6 @@ class FakeSubscriptionDataRetrievalAction(
         request.request,
         request.userId,
         subscriptionData,
-        userAnswers,
         request.enrolments,
         request.isAgent
       )
