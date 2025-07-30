@@ -25,7 +25,7 @@ import models.UserAnswers
 import models.repayments.RepaymentJourneyModel
 import models.rfm.RfmJourneyModel
 import models.subscription._
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage, RepaymentConfirmationTimestampPage}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -113,8 +113,9 @@ class PrintPdfController @Inject() (
 
   def onDownloadRepaymentConfirmation: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
     implicit request =>
-      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
-      fopService.render(repaymentConfirmationPdfView.render(currentDate.toString(), implicitly, implicitly).body).map { pdf =>
+      val currentDate               = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+      val pdfLinkGeneratedTimestamp = request.userAnswers.get(RepaymentConfirmationTimestampPage).getOrElse(currentDate.toString())
+      fopService.render(repaymentConfirmationPdfView.render(pdfLinkGeneratedTimestamp, implicitly, implicitly).body).map { pdf =>
         Ok(pdf)
           .as("application/octet-stream")
           .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")

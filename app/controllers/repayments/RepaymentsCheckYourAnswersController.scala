@@ -23,6 +23,7 @@ import controllers.actions._
 import models.repayments.RepaymentsStatus._
 import models.{UnexpectedResponse, UserAnswers}
 import pages._
+import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -30,6 +31,7 @@ import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ViewHelpers
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
@@ -51,6 +53,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
+
+  val dateHelper = new ViewHelpers()
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
@@ -93,7 +97,13 @@ class RepaymentsCheckYourAnswersController @Inject() (
           success = (updatedStatus == SuccessfullyCompleted)
           optionalSessionData <- sessionRepository.get(request.userAnswers.id)
           sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-          updatedAnswers  <- Future.fromTry(sessionData.set(RepaymentsStatusPage, updatedStatus))
+          updatedAnswers <- if (success) {
+                              Future.fromTry(
+                                sessionData
+                                  .set(RepaymentsStatusPage, updatedStatus)
+                                  .flatMap(_.set(RepaymentConfirmationTimestampPage, dateHelper.getDateTimeGMT))
+                              )
+                            } else Future.successful(sessionData)
           updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
           updatedAnswers1 <-
             if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
