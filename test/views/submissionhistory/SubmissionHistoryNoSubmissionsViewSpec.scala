@@ -30,6 +30,8 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
   lazy val pageTitle:        String                             = "Submission history"
 
   "Submission History with no submission organisation view" should {
+    val organisationViewParagraphs: Elements = organisationView.getElementsByTag("p")
+
     "have a title" in {
       organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -41,51 +43,45 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
     }
 
     "have a first paragraph" in {
-      organisationView.getElementsByTag("p").text must include(
-        "You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods."
-      )
+      organisationViewParagraphs.get(1).text() mustBe
+        "You can find all submissions and amendments made by your group during this accounting period and the " +
+        "previous 6 accounting periods."
     }
 
     "have a second paragraph" in {
-      organisationView.getElementsByTag("p").text must include(
-        "No submissions made."
-      )
+      organisationViewParagraphs.get(2).text() mustBe "No submissions made."
     }
 
     "have a sub heading" in {
-      organisationView.getElementsByTag("h2").text must include("Due and overdue returns")
+      organisationView.getElementsByTag("h2").get(0).text() mustBe "Due and overdue returns"
     }
 
     "have a paragraph with link" in {
-      val link = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      organisationView.getElementsByTag("p").text must include(
-        "Information on your group’s"
-      )
-      link.text         must include("due and overdue returns")
-      link.attr("href") must include("/due-and-overdue-returns")
+      organisationViewParagraphs.get(3).text() mustBe "Information on your group’s due and overdue returns."
+      organisationViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
+      organisationViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
     }
   }
 
   "Submission History with no submission agent view" should {
+    val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
+
     "have a first paragraph" in {
-      agentView.getElementsByTag("p").text must include(
-        "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
-      )
+      agentViewParagraphs.get(1).text() mustBe
+        "You can find all submissions and amendments made by your client during this accounting period and the " +
+        "previous 6 accounting periods."
     }
 
     "have a second paragraph" in {
-      agentView.getElementsByTag("p").text must include(
-        "No submissions made."
-      )
+      agentViewParagraphs.get(2).text() mustBe "No submissions made."
     }
 
     "have a paragraph with link" in {
-      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      agentView.getElementsByTag("p").text must include(
-        "Information on your client’s"
-      )
-      link.text         must include("due and overdue returns")
-      link.attr("href") must include("/due-and-overdue-returns")
+      agentViewParagraphs.get(3).text() mustBe "Information on your client’s due and overdue returns."
+      agentViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
+      agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
     }
   }
 }

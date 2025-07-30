@@ -49,35 +49,35 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
     }
 
     "display the address line 1 label" in {
-      addressFormLabels.get(0).text must include("Address line 1")
+      addressFormLabels.get(0).text mustBe "Address line 1"
     }
 
     "display the address line 2 label" in {
-      addressFormLabels.get(1).text must include("Address line 2 (optional)")
+      addressFormLabels.get(1).text mustBe "Address line 2 (optional)"
     }
 
     "display the town or city label" in {
-      addressFormLabels.get(2).text must include("Town or city")
+      addressFormLabels.get(2).text mustBe "Town or city"
     }
 
     "display the region label" in {
-      addressFormLabels.get(3).text must include("Region (optional)")
+      addressFormLabels.get(3).text mustBe "Region (optional)"
     }
 
     "display the postcode label" in {
-      addressFormLabels.get(4).text must include("Postcode (if applicable)")
+      addressFormLabels.get(4).text mustBe "Postcode (if applicable)"
     }
 
     "display the country label" in {
-      addressFormLabels.get(5).text must include("Country")
+      addressFormLabels.get(5).text mustBe "Country"
     }
 
     "display the country hint" in {
-      view.getElementById("countryCode-hint").text must include("Enter text and then choose from the list.")
+      view.getElementById("countryCode-hint").text mustBe "Enter text and then choose from the list."
     }
 
     "display the submit button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "display an error summary when form has errors" in {
@@ -94,12 +94,11 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
           Seq.empty
         )(request, appConfig, messages).toString()
       )
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter the first line of the address " +
-          "Enter the town or city " +
-          "Enter the country"
-      )
+        "Enter the town or city " +
+        "Enter the country"
     }
 
     "display field-specific error messages" in {
@@ -116,11 +115,10 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
           Seq.empty
         )(request, appConfig, messages).toString()
       )
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Error: Enter the first line of the address " +
-          "Error: Enter the town or city " +
-          "Error: Enter the country"
-      )
+        "Error: Enter the town or city " +
+        "Error: Enter the country"
     }
 
     "retain user input in the form fields when there are errors" in {
@@ -134,11 +132,11 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
       val view: Document = Jsoup.parse(
         page(form.bind(userInput), NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
-      view.getElementById("addressLine1").attr("value") must include("123 Test Street")
-      view.getElementById("addressLine2").attr("value") must include("<script>alert('xss')</script>")
-      view.getElementById("addressLine3").attr("value") must include("Test City")
-      view.getElementById("addressLine4").attr("value") must include("Region Name")
-      view.getElementById("postalCode").attr("value")   must include("12345")
+      view.getElementById("addressLine1").attr("value") mustBe "123 Test Street"
+      view.getElementById("addressLine2").attr("value") mustBe "<script>alert('xss')</script>"
+      view.getElementById("addressLine3").attr("value") mustBe "Test City"
+      view.getElementById("addressLine4").attr("value") mustBe "Region Name"
+      view.getElementById("postalCode").attr("value") mustBe "12345"
     }
 
     "display XSS validation error messages when special characters are entered" in {
@@ -155,21 +153,21 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode, Seq.empty)(request, appConfig, messages).toString()
       )
 
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      errorList must include("Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      errorList must include("The postcode you enter must not include the following characters <, >, \" or &")
-      errorList must include("The country you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
+      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
       val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressErrorCount mustBe 4
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &")
-      fieldErrors must include("Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\")
-      errorList   must include("The postcode you enter must not include the following characters <, >, \" or &")
-      errorList   must include("The country you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
+      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
       val addressFieldCount =
         StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
       addressFieldCount mustBe 4

@@ -19,7 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.IncompleteDataView
 
@@ -41,15 +41,13 @@ class IncompleteDataViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/review-submit/check-answers"
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("p").text must include(
-        "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
-      )
+      paragraph.text mustBe "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
+      paragraph.getElementsByTag("a").text() mustBe "replace the filing member for a Pillar 2 Top-up Taxes account to try again"
+      paragraph.getElementsByTag("a").attr("href") mustBe
+        controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
     }
 
   }

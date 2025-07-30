@@ -57,7 +57,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -68,26 +68,26 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
-      summaryListKeys.get(0).text must include("Name")
-      summaryListKeys.get(1).text must include("Address")
+      summaryListKeys.get(0).text mustBe "Name"
+      summaryListKeys.get(1).text mustBe "Address"
     }
 
     "have a summary list items" in {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
-      summaryListItems.get(0).text must include(userName)
-      summaryListItems.get(1).text must include(nonUkAddress.addressLine1)
-      summaryListItems.get(1).text must include(nonUkAddress.addressLine3)
-      summaryListItems.get(1).text must include(country)
+      summaryListItems.get(0).text mustBe userName
+      summaryListItems.get(1).text mustBe nonUkAddress.addressLine1
+      summaryListItems.get(1).text mustBe nonUkAddress.addressLine3
+      summaryListItems.get(1).text mustBe country
     }
 
     "have a summary list links" in {
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
-      summaryListActions.get(0).text must include("Change")
-      summaryListActions.get(1).text must include("Change")
+      summaryListActions.get(0).text mustBe "Change"
+      summaryListActions.get(1).text mustBe "Change"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 }

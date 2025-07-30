@@ -41,8 +41,8 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You’ve signed in with an organisations account.")
-      view.getElementsByClass("govuk-body").get(1).text  must include("Only users with an agent services account can use this service.")
+      view.getElementsByClass("govuk-body").first().text mustBe "You’ve signed in with an organisations account."
+      view.getElementsByClass("govuk-body").get(1).text mustBe "Only users with an agent services account can use this service."
     }
 
     "have a paragraph body with links" in {
@@ -50,14 +50,13 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
       val firstBullet  = bulletList.first().getElementsByClass("govuk-body").first()
       val secondBullet = bulletList.first().getElementsByClass("govuk-body").get(1)
 
-      firstBullet.text() must include(
+      firstBullet.text() mustBe
         "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must"
-      )
-      firstBullet.getElementsByTag("a").text() must include("sign in via agent services")
+      firstBullet.getElementsByTag("a").text() mustBe "sign in via agent services"
       firstBullet.getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
 
-      secondBullet.text()                       must include("if you need to request authorisation to report Pillar 2 Top-up Taxes, you must")
-      secondBullet.getElementsByTag("a").text() must include("request authorisation on agent services")
+      secondBullet.text() mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must"
+      secondBullet.getElementsByTag("a").text() mustBe "request authorisation on agent services"
       secondBullet
         .getElementsByTag("a")
         .attr("href") mustBe "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
@@ -66,8 +65,8 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Find out more about who can report for Pillar 2 Top-up Taxes")
-      link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+      link.text mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
 
   }

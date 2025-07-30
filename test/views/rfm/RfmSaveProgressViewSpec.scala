@@ -41,14 +41,14 @@ class RfmSaveProgressViewSpec extends ViewSpecBase {
     }
 
     "have a p1 " in {
-      view.getElementById("save-p1").text must include(
-        "From this point, the information you enter will be saved as you progress. If you sign out," +
-          " the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again."
-      )
+      view.getElementById("save-p1").text mustBe
+        "From this point, the information you enter will be saved as you progress. If you sign out, the information " +
+        "you have already entered will be saved for 28 days. After that time you will need to enter all of the " +
+        "information again."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

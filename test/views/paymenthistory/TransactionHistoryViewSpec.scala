@@ -34,10 +34,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     ),
     head = Some(
       Seq(
-        HeadCell(Text(messages("transactionHistory.date"))),
-        HeadCell(Text(messages("transactionHistory.description"))),
-        HeadCell(Text(messages("transactionHistory.amountPaid"))),
-        HeadCell(Text(messages("transactionHistory.amountRepaid")))
+        HeadCell(Text(messages("transactionHistory.date"))), // FIXME
+        HeadCell(Text(messages("transactionHistory.description"))), // FIXME
+        HeadCell(Text(messages("transactionHistory.amountPaid"))), // FIXME
+        HeadCell(Text(messages("transactionHistory.amountRepaid"))) // FIXME
       )
     )
   )
@@ -78,51 +78,48 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraph 1 for a group" in {
-      groupView.getElementsByClass("govuk-body").text must include(
+      groupView.getElementsByClass("govuk-body").text mustBe
         "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
-      )
     }
 
     "have correct paragraph 1 for an agent" in {
-      agentView.getElementsByClass("govuk-body").text must include(
+      agentView.getElementsByClass("govuk-body").text mustBe
         "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
-      )
     }
 
     "have correct paragraph 2" in {
-      groupView.getElementsByClass("govuk-body").text must include(
+      groupView.getElementsByClass("govuk-body").text mustBe
         "It will take up to 5 working days for payments to appear after each transaction."
-      )
     }
 
     "have a table" in {
       val tableHeaders = groupView.getElementsByClass("govuk-table__header")
 
-      tableHeaders.first().text must include("Date")
-      tableHeaders.get(1).text  must include("Transaction description")
-      tableHeaders.get(2).text  must include("You paid HMRC")
-      tableHeaders.get(3).text  must include("HMRC paid you")
+      tableHeaders.first().text mustBe "Date"
+      tableHeaders.get(1).text mustBe "Transaction description"
+      tableHeaders.get(2).text mustBe "You paid HMRC"
+      tableHeaders.get(3).text mustBe "HMRC paid you"
 
       (1 to 3).foreach { int =>
         val tableRow = groupView.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
-        tableRow.first().text must include("1 July 2024")
-        tableRow.get(1).text  must include("Payment")
-        tableRow.get(2).text  must include("£-5000.00")
-        tableRow.get(3).text  must include("£0.00")
+        tableRow.first().text mustBe "1 July 2024"
+        tableRow.get(1).text mustBe "Payment"
+        tableRow.get(2).text mustBe "£-5000.00"
+        tableRow.get(3).text mustBe "£0.00"
       }
     }
 
     "have pagination" in {
       val link = groupView.getElementsByClass("govuk-link govuk-pagination__link")
 
-      link.first().text         must include("1")
-      link.first().attr("href") must include("/report-pillar2-top-up-taxes/payment/history?page=1")
-      link.get(1).text          must include("2")
-      link.get(1).attr("href")  must include("/report-pillar2-top-up-taxes/payment/history?page=2")
-      link.get(2).text          must include("3")
-      link.get(2).attr("href")  must include("/report-pillar2-top-up-taxes/payment/history?page=3")
-      link.get(3).text          must include("4")
-      link.get(3).attr("href")  must include("/report-pillar2-top-up-taxes/payment/history?page=4")
+      link.first().text mustBe "1"
+      link.first().attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=1" // FIXME
+      link.get(1).text mustBe "2"
+      link.get(1).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=2"
+      link.get(2).text mustBe "3"
+      link.get(2).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=3"
+      link.get(3).text mustBe "4"
+      link.get(3).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=4"
     }
   }
 }

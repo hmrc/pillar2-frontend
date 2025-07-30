@@ -38,7 +38,7 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementById("section-header").text must include("Replace filing member")
+      view.getElementById("section-header").text mustBe "Replace filing member"
     }
 
     "have a unique H1 heading" in {
@@ -48,18 +48,16 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "This will be the date when your group first " +
-          "registered to report their Pillar 2 Top-up Taxes in the UK."
-      )
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
+        "This will be the date when your group first registered to report their Pillar 2 Top-up Taxes in the UK."
     }
 
     "have a registration date hint" in {
-      view.getElementsByClass("govuk-hint").get(1).text must include("For example, 27 3 2026")
+      view.getElementsByClass("govuk-hint").get(1).text mustBe "For example, 27 3 2026"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }

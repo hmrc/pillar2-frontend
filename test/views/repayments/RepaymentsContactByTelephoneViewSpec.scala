@@ -20,8 +20,9 @@ import base.ViewSpecBase
 import forms.RepaymentsContactByTelephoneFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.scalatest.Assertion
 import views.html.repayments.RepaymentsContactByTelephoneView
 
 class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
@@ -49,16 +50,18 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text must include("We will only use this to contact you about this repayment request.")
+        view.getElementsByClass("govuk-hint").text mustBe "We will only use this to contact you about this repayment request."
       }
 
       "have radio items" in {
-        view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-        view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+        val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+        radioButtonsLabels.get(0).text mustBe "Yes"
+        radioButtonsLabels.get(1).text mustBe "No"
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
   }
@@ -71,16 +74,21 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Select yes if we can contact John Doe by telephone"
-      )
+      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by telephone"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Select yes if we can contact John Doe by telephone")
-    }
+    "have field-specific errors" in {
+      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
 
+      fieldErrors.get(0).text() mustBe "Error: Select yes if we can contact John Doe by telephone"
+    }
   }
 
 }

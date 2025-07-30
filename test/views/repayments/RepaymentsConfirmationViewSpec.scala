@@ -43,8 +43,8 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
     "have the correct header link to Pillar 2 home" in {
       val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Report Pillar 2 Top-up Taxes")
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.text mustBe "Report Pillar 2 Top-up Taxes"
     }
 
     "have a panel with a unique H1 heading" in {
@@ -55,9 +55,8 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a confirmation message" in {
-      view.getElementsByClass("govuk-body").text must include(
+      view.getElementsByClass("govuk-body").text mustBe
         s"You have successfully submitted your repayment request on ${currentDate.toString()}."
-      )
     }
 
     "have a 'What happens next' heading" in {
@@ -65,15 +64,15 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided."
-      )
+      view.getElementsByClass("govuk-body").text mustBe
+        "We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team " +
+        "from the information you provided."
     }
 
     "have a return link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Back to group homepage")
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.text mustBe "Back to group homepage"
     }
 
   }

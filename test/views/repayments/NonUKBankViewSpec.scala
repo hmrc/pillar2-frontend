@@ -21,15 +21,15 @@ import forms.NonUKBankFormProvider
 import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.NonUKBankView
 
 class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
-  lazy val formProvider = new NonUKBankFormProvider
-  lazy val page:      NonUKBankView = inject[NonUKBankView]
-  lazy val pageTitle: String        = "Bank account details"
+  lazy val formProvider: NonUKBankFormProvider = new NonUKBankFormProvider
+  lazy val page:         NonUKBankView         = inject[NonUKBankView]
+  lazy val pageTitle:    String                = "Bank account details"
 
   "Non UK Bank View" should {
     val view: Document = Jsoup.parse(
@@ -49,34 +49,30 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "For BIC or SWIFT codes and IBAN, " +
-          "you can check with your bank to find out what you need to provide for international payments."
-      )
+      view.getElementsByClass("govuk-body").get(0).text mustBe
+        "For BIC or SWIFT codes and IBAN, you can check with your bank to find out what you need to provide " +
+        "for international payments."
     }
 
     "have the correct field labels" in {
       val labels: Elements = view.getElementsByClass("govuk-label")
-      labels.get(0).text must include("Name of the bank")
-      labels.get(1).text must include("Name on the account")
-      labels.get(2).text must include("BIC or SWIFT code")
-      labels.get(3).text must include("IBAN")
+
+      labels.get(0).text mustBe "Name of the bank"
+      labels.get(1).text mustBe "Name on the account"
+      labels.get(2).text mustBe "BIC or SWIFT code"
+      labels.get(3).text mustBe "IBAN"
     }
 
     "have the correct hint text for each field" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "This must be a business account."
-      )
-      view.getElementsByClass("govuk-hint").get(1).text must include(
-        "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
-      )
-      view.getElementsByClass("govuk-hint").get(2).text must include(
-        "You can ask your bank or check your bank statement."
-      )
+      val hints: Elements = view.getElementsByClass("govuk-hint")
+
+      hints.get(0).text mustBe "This must be a business account."
+      hints.get(1).text mustBe "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
+      hints.get(2).text mustBe "You can ask your bank or check your bank statement."
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 
@@ -95,29 +91,35 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       )(request, appConfig, messages).toString()
     )
 
-    "show error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Enter the name of the bank")
-      errorList must include("Enter the name on the account")
-      errorList must include("Enter the BIC or SWIFT code")
-      errorList must include("Enter the IBAN")
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the name of the bank"
+      errorsList.get(1).text() mustBe "Enter the name on the account"
+      errorsList.get(2).text() mustBe "Enter the BIC or SWIFT code"
+      errorsList.get(3).text() mustBe "Enter the IBAN"
     }
 
     "show field-specific errors" in {
-      val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Enter the name of the bank")
-      fieldErrors must include("Error: Enter the name on the account")
-      fieldErrors must include("Error: Enter the BIC or SWIFT code")
-      fieldErrors must include("Error: Enter the IBAN")
+      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
+      fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
+      fieldErrors.get(2).text() mustBe "Error: Enter the BIC or SWIFT code"
+      fieldErrors.get(3).text() mustBe "Error: Enter the IBAN"
     }
   }
 
   "when form is submitted with values exceeding maximum length" should {
-    val longBankName    = "A" * 41
-    val longAccountName = "A" * 61
-    val longBic         = "A" * 12
+    val longBankName:    String = "A" * 41
+    val longAccountName: String = "A" * 61
+    val longBic:         String = "A" * 12
 
     val view: Document = Jsoup.parse(
       page(
@@ -133,18 +135,23 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       )(request, appConfig, messages).toString()
     )
 
-    "show length validation errors" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Name of the bank must be 40 characters or less")
-      errorList must include("Name on the account must be 60 characters or less")
-      errorList must include("BIC or SWIFT code must be between 8 and 11 characters long")
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Name of the bank must be 40 characters or less"
+      errorsList.get(1).text() mustBe "Name on the account must be 60 characters or less"
+      errorsList.get(2).text() mustBe "BIC or SWIFT code must be between 8 and 11 characters long"
     }
   }
 
   "when form is submitted with special characters" should {
-    val xssInput = Map(
+    val xssInput: Map[String, String] = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
       "nameOnBankAccount" -> "Test <script>alert('xss')</script>",
       "bic"               -> "ABCD>EFG",
@@ -155,16 +162,28 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
     )
 
-    "show XSS validation errors" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Name of the bank you enter must not include the following characters <, > or \"")
-      errorList must include("Name on the account you enter must not include the following characters <, > or \"")
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-      val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: Name of the bank you enter must not include the following characters <, > or \"")
-      fieldErrors must include("Error: Name on the account you enter must not include the following characters <, > or \"")
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Name of the bank you enter must not include the following characters <, > or \""
+      errorsList.get(1).text() mustBe "Name on the account you enter must not include the following characters <, > or \""
+      errorsList.get(2).text() mustBe "Enter a valid BIC or SWIFT code like HBUKGB4B"
+      errorsList.get(3).text() mustBe "Enter a valid IBAN like GB29NWBK60161331926819"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Name of the bank you enter must not include the following characters <, > or \""
+      fieldErrors.get(1).text() mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
+      fieldErrors.get(2).text() mustBe "Error: Enter a valid BIC or SWIFT code like HBUKGB4B"
+      fieldErrors.get(3).text() mustBe "Error: Enter a valid IBAN like GB29NWBK60161331926819"
     }
   }
 }

@@ -38,7 +38,7 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -48,29 +48,27 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include(
+      view.getElementsByClass("govuk-body").first().text mustBe
         "The default filing member for your group is the Ultimate Parent Entity (UPE). " +
-          "However, the UPE can nominate another company in your group to act as the filing member."
-      )
-      view.getElementsByClass("govuk-body").get(1).text must include(
+        "However, the UPE can nominate another company in your group to act as the filing member."
+
+      view.getElementsByClass("govuk-body").get(1).text mustBe
         "If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). " +
-          "You do not need to submit this during registration, but we may ask for it during compliance checks."
-      )
+        "You do not need to submit this during registration, but we may ask for it during compliance checks."
     }
 
     "has legend" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).text must include(
+      view.getElementsByClass("govuk-fieldset__legend").get(0).text mustBe
         "Has the Ultimate Parent Entity nominated another company within your group to act as the filing member?"
-      )
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text mustBe "Yes"
+      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text mustBe "No"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 
@@ -86,16 +84,14 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Select yes if the Ultimate Parent Entity has nominated another company within your group to act as the filing member"
-      )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Error: Select yes if the Ultimate Parent Entity has nominated another company within your group to act as the filing member"
-      )
     }
 
   }

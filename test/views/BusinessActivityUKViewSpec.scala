@@ -38,7 +38,7 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
+      view.getElementsByTag("h2").text mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a legend with heading" in {
@@ -49,19 +49,18 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
         "Pillar 2 Top-up Taxes may be collected if you have an entity located in the UK."
-      )
     }
 
     "have radio items" in {
       val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-      radioButtonsLabels.get(0).text must include("Yes")
-      radioButtonsLabels.get(1).text must include("No")
+      radioButtonsLabels.get(0).text mustBe "Yes"
+      radioButtonsLabels.get(1).text mustBe "No"
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

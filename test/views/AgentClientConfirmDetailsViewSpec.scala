@@ -45,23 +45,23 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
 
     "have two H2 headings" in {
       val h2Elements: Elements = view.getElementsByTag("h2")
-      h2Elements.get(0).text must include("Client’s ultimate parent")
-      h2Elements.get(1).text must include("Client’s Pillar 2 Top-up Taxes ID")
+      h2Elements.get(0).text mustBe "Client’s ultimate parent"
+      h2Elements.get(1).text mustBe "Client’s Pillar 2 Top-up Taxes ID"
     }
 
     "display the org name and pillar 2 id" in {
-      view.getElementsByClass("govuk-body").text must include(clientUpe)
-      view.getElementsByClass("govuk-body").text must include(pillar2Id)
+      view.getElementsByClass("govuk-body").get(0).text mustBe clientUpe
+      view.getElementsByClass("govuk-body").get(1).text mustBe pillar2Id
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.AgentController.onSubmitClientPillarId.url)
-      link.text         must include("Enter a different client’s Pillar 2 Top-up Taxes ID")
+      link.attr("href") mustBe routes.AgentController.onSubmitClientPillarId.url
+      link.text mustBe "Enter a different client’s Pillar 2 Top-up Taxes ID"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
 
   }

@@ -43,13 +43,12 @@ class AgentClientPillarIdViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      view.getElementById("value-hint").text must include(
+      view.getElementById("value-hint").text mustBe
         "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes homepage."
-      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

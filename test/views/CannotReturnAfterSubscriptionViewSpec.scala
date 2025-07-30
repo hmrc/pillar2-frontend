@@ -53,6 +53,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
     }
   }
 
+  // FIXME: two tests are "identical"
   "CannotReturnAfterSubscriptionView layout" should {
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"

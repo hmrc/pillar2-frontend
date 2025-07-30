@@ -18,7 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.JourneyRecoveryView
 
@@ -40,15 +40,12 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/start"
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("p").text must include(
-        messages("You can go back to") + " " + messages("replace the filing member for a Pillar 2 Top-up Taxes account to try again")
-      )
+      paragraph.text mustBe "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
+      paragraph.getElementsByTag("a").text() mustBe "to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
+      paragraph.getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
     }
 
   }

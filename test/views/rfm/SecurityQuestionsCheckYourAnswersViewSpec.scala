@@ -17,7 +17,7 @@
 package views.rfm
 
 import base.ViewSpecBase
-import models.{NormalMode, UserAnswers}
+import models.{CheckMode, NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -54,7 +54,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
     "have a unique H1 heading" in {
@@ -65,24 +65,30 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
-      summaryListKeys.get(0).text must include("Pillar 2 Top-up Taxes ID")
-      summaryListKeys.get(1).text must include("Registration date")
+      summaryListKeys.get(0).text mustBe "Pillar 2 Top-up Taxes ID"
+      summaryListKeys.get(1).text mustBe "Registration date"
     }
 
     "have a summary list items" in {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
-      summaryListItems.get(0).text must include(plrReference)
-      summaryListItems.get(1).text must include(dateHelper.formatDateGDS(registrationDate))
+      summaryListItems.get(0).text mustBe plrReference
+      summaryListItems.get(1).text mustBe dateHelper.formatDateGDS(registrationDate)
     }
 
     "have a summary list links" in {
-      val summaryListLinks = view.getElementsByClass("govuk-summary-list__actions")
-      summaryListLinks.get(0).text must include("Change")
-      summaryListLinks.get(1).text must include("Change")
+      val summaryListLinks: Elements = view.getElementsByClass("govuk-summary-list__actions")
+
+      summaryListLinks.get(0).text mustBe "Change The group’s Pillar 2 Top-up Taxes ID"
+      summaryListLinks.get(0).getElementsByTag("a").attr("href") mustBe
+        controllers.rfm.routes.SecurityCheckController.onPageLoad(CheckMode).url
+
+      summaryListLinks.get(1).text mustBe "Change The group’s registration date"
+      summaryListLinks.get(1).getElementsByTag("a").attr("href") mustBe
+        controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(CheckMode).url
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 

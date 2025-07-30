@@ -54,13 +54,14 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a hint description" in {
-        view.getElementsByClass("govuk-hint").get(0).text must include(
-          "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
-        )
+        view.getElementsByClass("govuk-hint").get(0).text mustBe
+          "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To " +
+          "add an extension number, add hash (#) to the end of the phone number, then the extension number. For " +
+          "example, 01632960001#123."
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
   }
@@ -74,20 +75,17 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Enter the phone number for ABC Limited"
-      )
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter the phone number for ABC Limited"
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Enter the phone number for ABC Limited")
+      view.getElementsByClass("govuk-error-message").text mustBe "Enter the phone number for ABC Limited"
     }
 
   }
 
   "value entered exceeds character limit" should {
-
     val telephoneNumber = "+".padTo(51, '1')
     val view: Document =
       Jsoup.parse(
@@ -99,22 +97,19 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Phone number should be 24 characters or less"
-      )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Phone number should be 24 characters or less")
+      view.getElementsByClass("govuk-error-message").text mustBe "Phone number should be 24 characters or less"
     }
 
   }
 
   "value entered not in correct format" should {
-
     val telephoneNumber = "123$!abc"
-
     val view: Document =
       Jsoup.parse(
         page(formProvider(contactName).bind(Map("phoneNumber" -> telephoneNumber)), mode, contactName)(
@@ -125,16 +120,14 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
       )
 
     "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
-      )
     }
 
     "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include(
+      view.getElementsByClass("govuk-error-message").text mustBe
         "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
-      )
     }
 
   }

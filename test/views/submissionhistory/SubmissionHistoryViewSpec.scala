@@ -19,8 +19,9 @@ package views.submissionhistory
 import base.ViewSpecBase
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import org.mockito.internal.matchers.StartsWith
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.format.DateTimeFormatter
@@ -36,6 +37,8 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
   lazy val pageTitle: String = "Submission history"
 
   "Submission History Organisation View" should {
+    val organisationViewParagraphs: Elements = organisationView.getElementsByTag("p")
+
     "have a title" in {
       organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -47,74 +50,70 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a paragraph detailing submission details" in {
-      val paragraphs: Elements = organisationView.getElementsByTag("p")
-      paragraphs.get(1).text() must include(
+      organisationViewParagraphs.get(1).text() mustBe
         "You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods."
-      )
-      paragraphs.get(2).text must include(
+      organisationViewParagraphs.get(2).text mustBe
         "Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions."
-      )
     }
 
     "have a inset text" in {
-      organisationView.getElementsByClass("govuk-inset-text").text must include(
+      organisationView.getElementsByClass("govuk-inset-text").text mustBe
         "You can amend submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline."
-      )
     }
 
     "have a table" in {
-      val fromDate:       String = LocalDate.now.minusYears(7).format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-      val toDate:         String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-      val submissionDate: String = ZonedDateTime.now().format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+      val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+      val fromDate:          String            = LocalDate.now.minusYears(7).format(dateTimeFormatter)
+      val toDate:            String            = LocalDate.now.format(dateTimeFormatter)
+      val submissionDate:    String            = ZonedDateTime.now().format(dateTimeFormatter)
 
-      val captions = organisationView.getElementsByClass("govuk-table__caption")
-      captions.first().text must include(s"$fromDate to $toDate")
+      val tableElements: Elements = organisationView.select("table.govuk-table")
+      tableElements.size() mustBe 1
 
-      val tableHeaders = organisationView.getElementsByClass("govuk-table__header")
+      val table: Element = tableElements.first()
 
-      tableHeaders.first().text must include("Type of return")
-      tableHeaders.get(1).text  must include("Submission date")
+      val captions: Elements = table.getElementsByClass("govuk-table__caption")
+      captions.first().text mustBe s"$fromDate to $toDate"
 
-      (1 to 2).foreach { int =>
-        val tableRow = organisationView.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
-        tableRow.first().text must include("UK Tax Return")
-        tableRow.get(1).text  must include(submissionDate)
+      val tableHeaders: Elements = table.getElementsByClass("govuk-table__header")
+      tableHeaders.get(0).text mustBe "Type of return"
+      tableHeaders.get(1).text mustBe "Submission date"
+
+      val tableBodyRows: Elements = table.getElementsByClass("govuk-table__body").first().getElementsByClass("govuk-table__row")
+      (0 to 1).foreach { int =>
+        val tableCells: Elements = tableBodyRows.get(int).getElementsByClass("govuk-table__cell")
+        tableCells.first().text must startWith("UK Tax Return") // FIXME: one row is "UK Tax Return", the 2nd one is "UK Tax Return Amendment"
+        tableCells.get(1).text mustBe submissionDate
       }
     }
 
     "have a sub heading" in {
-      organisationView.getElementsByTag("h2").text must include("Due and overdue returns")
+      organisationView.getElementsByTag("h2").first().text mustBe "Due and overdue returns"
     }
 
     "have a paragraph with link" in {
-      val link = organisationView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      organisationView.getElementsByTag("p").text must include(
-        "Information on your group’s"
-      )
-      link.text         must include("due and overdue returns")
-      link.attr("href") must include("/due-and-overdue-returns")
+      organisationViewParagraphs.get(3).text mustBe "Information on your group’s due and overdue returns."
+      organisationViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
+      organisationViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
     }
   }
 
   "Submission History Agent View" should {
+    val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a paragraph detailing submission details" in {
-      val paragraphs: Elements = agentView.getElementsByTag("p")
-      paragraphs.get(1).text() must include(
+      agentViewParagraphs.get(1).text() mustBe
         "You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods."
-      )
-      paragraphs.get(2).text must include(
+      agentViewParagraphs.get(2).text mustBe
         "Where your client makes changes to a tax return or information return, we’ll list these as individual submissions."
-      )
     }
 
     "have a paragraph with link" in {
-      val link = agentView.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      agentView.getElementsByTag("p").text must include(
-        "Information on your client’s"
-      )
-      link.text         must include("due and overdue returns")
-      link.attr("href") must include("/due-and-overdue-returns")
+      agentViewParagraphs.get(3).text mustBe "Information on your client’s due and overdue returns."
+      agentViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
+      agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
     }
   }
 }

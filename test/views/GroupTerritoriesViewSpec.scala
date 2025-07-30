@@ -37,7 +37,7 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
+      view.getElementsByTag("h2").text mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a legend with a unique H1 heading" in {
@@ -48,19 +48,19 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one Ultimate Parent Entity needs to register."
-      )
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
+        "An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent " +
+        "group, only one Ultimate Parent Entity needs to register."
     }
 
     "have radio items" in {
       val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-      radioButtonsLabels.get(0).text must include("Yes")
-      radioButtonsLabels.get(1).text must include("No")
+      radioButtonsLabels.get(0).text mustBe "Yes"
+      radioButtonsLabels.get(1).text mustBe "No"
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

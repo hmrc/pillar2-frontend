@@ -38,7 +38,7 @@ class CorporatePositionViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
     "have a unique H1 heading" in {
@@ -49,12 +49,12 @@ class CorporatePositionViewSpec extends ViewSpecBase {
 
     "have radio items" in {
       val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-      radioItems.get(0).text must include("New nominated filing member")
-      radioItems.get(1).text must include("Ultimate Parent Entity (UPE)")
+      radioItems.get(0).text mustBe "New nominated filing member"
+      radioItems.get(1).text mustBe "Ultimate Parent Entity (UPE)"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

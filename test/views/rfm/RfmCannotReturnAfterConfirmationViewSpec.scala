@@ -41,18 +41,16 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account."
-      )
-      view.getElementsByClass("govuk-body").get(1).text must include(
+      view.getElementsByClass("govuk-body").get(1).text mustBe
         "You can now "
-      )
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("report and manage your Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
+      link.text mustBe "report and manage your Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
     }
 
   }

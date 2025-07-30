@@ -77,14 +77,13 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
     "have a bullet list with download and print links" in {
       val bulletItems = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
 
-      bulletItems.get(0).text must include("Download as PDF")
-      bulletItems.get(1).text must include("Print this page")
+      bulletItems.get(0).text mustBe "Download as PDF"
+      bulletItems.get(1).text mustBe "Print this page"
     }
 
     "have warning text" in {
-      viewDomestic.getElementsByClass("govuk-warning-text__text").text must include(
+      viewDomestic.getElementsByClass("govuk-warning-text__text").text mustBe
         "You will not be emailed a confirmation of this registration."
-      )
     }
 
     "have a Pillar 2 research heading" in {

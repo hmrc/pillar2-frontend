@@ -46,9 +46,8 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a sub heading" in {
-        inProgressView.getElementsByTag("h2").text must include(
+        inProgressView.getElementsByTag("h2").text mustBe
           "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
-        )
       }
 
       "display spinner" in {
@@ -74,9 +73,8 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a sub heading" in {
-        completedView.getElementsByTag("h2").text must include(
+        completedView.getElementsByTag("h2").text mustBe
           "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
-        )
       }
 
       "have a meta refresh tag" in {

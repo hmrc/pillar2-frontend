@@ -28,7 +28,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
 
   lazy val formProvider = new UkOrAbroadBankAccountFormProvider
   lazy val page:      UkOrAbroadBankAccountView = inject[UkOrAbroadBankAccountView]
-  lazy val pageTitle: String                    = "What type of account will the refund be sent to?"
+  lazy val pageTitle: String                    = "What type of account will the repayment be sent to?"
 
   "UK or Abroad Bank Account View" when {
 
@@ -47,26 +47,26 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       }
 
       "have radio items" in {
-        view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("UK bank account")
-        view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("Non-UK bank account")
+        view.getElementsByClass("govuk-label govuk-radios__label").get(0).text mustBe "UK bank account"
+        view.getElementsByClass("govuk-label govuk-radios__label").get(1).text mustBe "Non-UK bank account"
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
     "nothing selected and page submitted" should {
-
       val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
-      "have a error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text           must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include("Select what type of account the repayment will be sent to")
+
+      "have an error summary" in {
+        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Select what type of account the repayment will be sent to"
       }
 
       "have a select error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Select what type of account the repayment will be sent to")
+        view.getElementsByClass("govuk-error-message").text mustBe "Select what type of account the repayment will be sent to"
       }
 
     }

@@ -76,8 +76,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
     }
 
     "have first contact header" in {
-      view.getElementsByTag("h2").first.text      must include("Primary contact")
-      agentView.getElementsByTag("h2").first.text must include("Primary contact")
+      view.getElementsByTag("h2").first.text mustBe "Primary contact"
+      agentView.getElementsByTag("h2").first.text mustBe "Primary contact"
     }
 
     "have a first contact summary list" in {
@@ -85,62 +85,54 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       val contactNameValue = "John"
       view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe contactName
       view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe contactNameValue
-      view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe contactName
       agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe contactNameValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
-      )
 
       val emailAddress      = "Email address"
       val emailAddressValue = "john@email.com"
       view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe emailAddress
       view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe emailAddressValue
-      view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe emailAddress
       agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe emailAddressValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
-      )
 
       val contactTelephone      = "Can we contact the primary contact by phone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
-      view.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe contactTelephone
       agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe contactTelephoneValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
-      )
 
       val telephone      = "Phone number"
       val telephoneValue = "123"
       view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
-      view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
-      )
     }
 
     "have second contact header" in {
-      view.getElementsByTag("h2").get(1).text      must include("Secondary contact")
-      agentView.getElementsByTag("h2").get(1).text must include("Secondary contact")
+      view.getElementsByTag("h2").get(1).text mustBe "Secondary contact"
+      agentView.getElementsByTag("h2").get(1).text mustBe "Secondary contact"
     }
 
     "have a second contact summary list" in {
@@ -148,97 +140,85 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       val isSecondContactValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       view.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
-      view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(4).text() mustBe isSecondContact
       agentView.getElementsByClass("govuk-summary-list__value").get(4).text() mustBe isSecondContactValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
-      )
 
       val secondContact      = "Second contact name"
       val secondContactValue = "Doe"
       view.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       view.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
-      view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(5).text() mustBe secondContact
       agentView.getElementsByClass("govuk-summary-list__value").get(5).text() mustBe secondContactValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
-      )
 
       val emailAddress      = "Second contact email address"
       val emailAddressValue = "doe@email.com"
       view.getElementsByClass("govuk-summary-list__key").get(6).text() mustBe emailAddress
       view.getElementsByClass("govuk-summary-list__value").get(6).text() mustBe emailAddressValue
-      view.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(6).text() mustBe emailAddress
       agentView.getElementsByClass("govuk-summary-list__value").get(6).text() mustBe emailAddressValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(6).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
-      )
 
       val contactTelephone      = "Can we contact the secondary contact by phone?"
       val contactTelephoneValue = "Yes"
       view.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       view.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
-      view.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(7).text() mustBe contactTelephone
       agentView.getElementsByClass("govuk-summary-list__value").get(7).text() mustBe contactTelephoneValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(7).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
-      )
 
       val telephone      = "Second contact phone number"
       val telephoneValue = "123"
       view.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(8).text() mustBe telephoneValue
-      view.getElementsByClass("govuk-summary-list__actions").get(8).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__actions").get(8).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(8).text() mustBe telephone
       agentView.getElementsByClass("govuk-summary-list__value").get(8).text() mustBe telephoneValue
-      agentView.getElementsByClass("govuk-summary-list__actions").get(8).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__actions").get(8).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
-      )
     }
 
     "have a contact address header" in {
-      view.getElementsByTag("h2").get(2).text      must include("Filing member contact address")
-      agentView.getElementsByTag("h2").get(2).text must include("Filing member contact address")
+      view.getElementsByTag("h2").get(2).text mustBe "Filing member contact address"
+      agentView.getElementsByTag("h2").get(2).text mustBe "Filing member contact address"
     }
 
     "have a address summary list" in {
       val address      = "Address"
       val addressValue = "line1 line United Kingdom"
       view.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe address
-      view.getElementsByClass("govuk-summary-list__value").get(9).text() must include(addressValue)
-      view.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") must include(
+      view.getElementsByClass("govuk-summary-list__value").get(9).text() mustBe addressValue
+      view.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
-      )
 
       agentView.getElementsByClass("govuk-summary-list__key").get(9).text() mustBe address
-      agentView.getElementsByClass("govuk-summary-list__value").get(9).text() must include(addressValue)
-      agentView.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") must include(
+      agentView.getElementsByClass("govuk-summary-list__value").get(9).text() mustBe addressValue
+      agentView.getElementsByClass("govuk-summary-list__actions").get(9).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
-      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text      must include("Save and return to homepage")
-      agentView.getElementsByClass("govuk-button").text must include("Save and return to homepage")
+      view.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
+      agentView.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
     }
   }
 

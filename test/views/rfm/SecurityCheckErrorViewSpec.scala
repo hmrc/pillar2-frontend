@@ -41,19 +41,17 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include(
+      view.getElementsByClass("govuk-body").first().text mustBe
         "This service is for new nominated filing members to takeover the responsibilities from the current filing member."
-      )
     }
 
     "have a link" in {
       val paragraphMessageWithLink = view.getElementsByClass("govuk-body").last()
       val link                     = paragraphMessageWithLink.getElementsByTag("a")
 
-      paragraphMessageWithLink.text() must include(
+      paragraphMessageWithLink.text() mustBe
         "If you need to manage who can access your Pillar 2 Top-up Taxes returns, go to your business tax account."
-      )
-      link.text must include("go to your business tax account")
+      link.text mustBe "go to your business tax account"
       link.attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account"
     }
 
