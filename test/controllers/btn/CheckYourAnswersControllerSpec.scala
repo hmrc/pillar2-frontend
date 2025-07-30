@@ -58,6 +58,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
   def application: Application =
     applicationBuilder(userAnswers = Option(UserAnswers(userAnswersId, JsObject.empty)), subscriptionLocalData = Some(someSubscriptionLocalData))
+      .configure("features.phase2ScreensEnabled" -> true)
       .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
       .overrides(bind[BTNService].toInstance(mockBTNService))
       .overrides(bind[AuditService].toInstance(mockAuditService))
@@ -74,6 +75,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(validBTNCyaUa)))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -100,6 +102,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
         def application: Application =
           applicationBuilder(userAnswers = Some(testUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+            .configure("features.phase2ScreensEnabled" -> true)
             .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
             .build()
 
@@ -127,6 +130,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUa)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -143,6 +147,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(submittedBTNRecord)))
 
         val application = applicationBuilder(userAnswers = Some(submittedBTNRecord), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -161,6 +166,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(processingUa)))
 
         val application = applicationBuilder(userAnswers = Some(processingUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -175,6 +181,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
         val application = applicationBuilder(userAnswers = None, subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -186,6 +193,25 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
+        }
+      }
+
+      "must redirect to dashboard when phase2ScreensEnabled is false" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .configure("features.phase2ScreensEnabled" -> false)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+          val request = FakeRequest(GET, CheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
         }
       }
     }
@@ -202,6 +228,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
@@ -228,6 +255,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .overrides(bind[AuditService].toInstance(mockAuditService))
@@ -257,6 +285,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .overrides(bind[AuditService].toInstance(mockAuditService))
@@ -281,6 +310,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
@@ -300,6 +330,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
@@ -319,6 +350,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[BTNService].toInstance(mockBTNService))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()

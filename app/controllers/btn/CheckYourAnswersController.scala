@@ -49,14 +49,15 @@ class CheckYourAnswersController @Inject() (
   cannotReturnView:         BTNCannotReturnView,
   btnService:               BTNService,
   val controllerComponents: MessagesControllerComponents,
-  auditService:             AuditService
+  auditService:             AuditService,
+  checkPhase2Screens:       Phase2ScreensAction
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
           userAnswers.get(EntitiesInsideOutsideUKPage) match {
@@ -95,7 +96,7 @@ class CheckYourAnswersController @Inject() (
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userId).flatMap {
       case Some(userAnswers) =>
         val subAccountingPeriod: AccountingPeriod =

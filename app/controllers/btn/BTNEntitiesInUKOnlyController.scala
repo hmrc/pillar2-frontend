@@ -42,47 +42,50 @@ class BTNEntitiesInUKOnlyController @Inject() (
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNEntitiesInUKOnlyFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BTNEntitiesInUKOnlyView
+  view:                                   BTNEntitiesInUKOnlyView,
+  checkPhase2Screens:                     Phase2ScreensAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async {
+      implicit request =>
+        sessionRepository.get(request.userId).flatMap {
+          case Some(userAnswers) =>
+            val form = formProvider()
+            val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
+              case None        => form
+              case Some(value) => form.fill(value)
+            }
+
+            Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
+          case None =>
+            logger.error("user answers not found")
+            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+        }
+    }
+
+  def onSubmit(mode: Mode): Action[AnyContent] =
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
           val form = formProvider()
-          val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
-            case None        => form
-            case Some(value) => form.fill(value)
-          }
-
-          Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
+          form
+            .bindFromRequest()
+            .fold(
+              formWithErrors =>
+                Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName, mode))),
+              value =>
+                for {
+                  updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
+                  _              <- sessionRepository.set(updatedAnswers)
+                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, mode, updatedAnswers))
+            )
         case None =>
           logger.error("user answers not found")
           Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       }
     }
-
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
-    sessionRepository.get(request.userId).flatMap {
-      case Some(userAnswers) =>
-        val form = formProvider()
-        form
-          .bindFromRequest()
-          .fold(
-            formWithErrors =>
-              Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName, mode))),
-            value =>
-              for {
-                updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
-                _              <- sessionRepository.set(updatedAnswers)
-              } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, mode, updatedAnswers))
-          )
-      case None =>
-        logger.error("user answers not found")
-        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-    }
-  }
 }

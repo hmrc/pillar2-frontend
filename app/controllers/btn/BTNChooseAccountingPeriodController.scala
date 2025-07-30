@@ -42,15 +42,16 @@ class BTNChooseAccountingPeriodController @Inject() (
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BTNChooseAccountingPeriodView
+  view:                                   BTNChooseAccountingPeriodView,
+  checkPhase2Screens:                     Phase2ScreensAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
-      implicit request =>
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+      .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
             val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
@@ -68,11 +69,11 @@ class BTNChooseAccountingPeriodController @Inject() (
             logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
-    }
+      }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData).async {
-      implicit request =>
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+      .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
             val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
@@ -107,5 +108,5 @@ class BTNChooseAccountingPeriodController @Inject() (
             logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
         }
-    }
+      }
 }

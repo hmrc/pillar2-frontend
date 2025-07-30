@@ -27,8 +27,7 @@ import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
-import services.ObligationsAndSubmissionsService
+import services.{ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -47,13 +46,14 @@ class BTNBeforeStartController @Inject() (
   requireData:                      DataRequiredAction,
   obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
   subscriptionService:              SubscriptionService,
-  sessionRepository:                SessionRepository
+  sessionRepository:                SessionRepository,
+  checkPhase2Screens:               Phase2ScreensAction
 )(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen agentAccess andThen getData andThen requireData).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen agentAccess andThen getData andThen requireData).async { implicit request =>
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       (

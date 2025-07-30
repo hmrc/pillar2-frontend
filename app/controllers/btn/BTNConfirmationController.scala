@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, Phase2ScreensAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.FopService
@@ -38,27 +38,29 @@ class BTNConfirmationController @Inject() (
   fopService:                             FopService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   BTNConfirmationView,
-  confirmationPdf:                        BTNConfirmationPdf
+  confirmationPdf:                        BTNConfirmationPdf,
+  checkPhase2Screens:                     Phase2ScreensAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData) { implicit request =>
     val submissionDate            = dateHelper.formatDateGDS(LocalDate.now())
     val accountingPeriodStartDate = dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
 
     Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent))
   }
 
-  def onDownloadConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = dateHelper.formatDateGDS(LocalDate.now())
-    val startDate   = dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
+  def onDownloadConfirmation: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async {
+    implicit request =>
+      val currentDate = dateHelper.formatDateGDS(LocalDate.now())
+      val startDate   = dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
 
-    for {
-      pdf <- fopService.render(confirmationPdf.render(currentDate, startDate, request, implicitly).body)
-    } yield Ok(pdf)
-      .as("application/octet-stream")
-      .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=below-threshold-notification-confirmation.pdf")
+      for {
+        pdf <- fopService.render(confirmationPdf.render(currentDate, startDate, request, implicitly).body)
+      } yield Ok(pdf)
+        .as("application/octet-stream")
+        .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=below-threshold-notification-confirmation.pdf")
   }
 
 }

@@ -67,6 +67,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+    .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
       bind[SessionRepository].toInstance(mockSessionRepository),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -123,6 +124,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountPeriod).success.value
 
         def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(userAnswers))
+          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -158,6 +160,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
     "must redirect to a knockback page when a BTN is submitted" in {
       val application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
 
@@ -178,6 +181,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         .setOrException(SubAccountingPeriodPage, dates)
         .setOrException(PlrReferencePage, plrReference)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
+        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -201,6 +205,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
     "must redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -308,6 +313,26 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
+      }
+    }
+
+    "must redirect to dashboard when phase2ScreensEnabled is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> false)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, btnAccountingPeriodRoute)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
       }
     }
   }
