@@ -31,14 +31,14 @@ object ReasonForRequestingRefundSummary {
     answers.get(ReasonForRequestingRefundPage).map { answer =>
       val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
       SummaryListRowViewModel(
-        key = "reasonForRequestingRefund.checkYourAnswersLabel",
+        key = "reasonForRequestingRepayment.checkYourAnswersLabel",
         value = value,
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(CheckMode).url
+            controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(CheckMode).url
           )
-            .withVisuallyHiddenText(messages("reasonForRequestingRefund.change.hidden"))
+            .withVisuallyHiddenText(messages("reasonForRequestingRepayment.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )
       )
