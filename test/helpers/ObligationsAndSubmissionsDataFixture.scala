@@ -22,9 +22,13 @@ import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions._
 import models.subscription.AccountingPeriod
-import pages.{EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
+import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
+import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
@@ -173,6 +177,28 @@ trait ObligationsAndSubmissionsDataFixture {
     .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)))
     .setOrException(EntitiesInsideOutsideUKPage, true)
   lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
+
+  def buildAccountingPeriodDetails(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): AccountingPeriodDetails =
+    AccountingPeriodDetails(
+      startDate = startDate,
+      endDate = endDate,
+      dueDate = dueDate,
+      underEnquiry = false,
+      obligations = Nil
+    )
+
+  def buildBtnUserAnswers(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): UserAnswers =
+    UserAnswers("id")
+      .setOrException(BTNChooseAccountingPeriodPage, buildAccountingPeriodDetails(startDate, endDate, dueDate))
+      .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate))
+      .setOrException(EntitiesInsideOutsideUKPage, true)
+
+  def buildSummaryList(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
+    rows = Seq(
+      SubAccountingPeriodSummary.row(AccountingPeriod(startDate, endDate), multipleAccountingPeriods = true),
+      BTNEntitiesInsideOutsideUKSummary.row(buildBtnUserAnswers(startDate, endDate, dueDate), ukOnly = true)
+    ).flatten
+  ).withCssClass("govuk-!-margin-bottom-9")
 
   def obligationsAndSubmissionsSuccessResponse(
     underEnquiry:   Boolean = false,

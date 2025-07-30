@@ -22,6 +22,7 @@ import controllers.actions._
 import models.MneOrDomestic.Uk
 import models.audit.ApiResponseData
 import models.btn.{BTNRequest, BTNStatus}
+import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
 import pages._
 import play.api.Logging
@@ -60,10 +61,26 @@ class CheckYourAnswersController @Inject() (
         case Some(userAnswers) =>
           userAnswers.get(EntitiesInsideOutsideUKPage) match {
             case Some(true) =>
-              val multipleAccountingPeriods = userAnswers.get(BTNChooseAccountingPeriodPage).isDefined
+              val maybeAccountingPeriodDetails: Option[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage)
+
+              val accountingPeriod: AccountingPeriod =
+                maybeAccountingPeriodDetails
+                  .map { accountingPeriodDetails =>
+                    logger.info("Using AccountingPeriod from User Answers.")
+                    AccountingPeriod(
+                      startDate = accountingPeriodDetails.startDate,
+                      endDate = accountingPeriodDetails.endDate,
+                      duetDate = Some(accountingPeriodDetails.dueDate)
+                    )
+                  }
+                  .getOrElse {
+                    logger.info("No AccountingPeriod in User Answers. Using SubscriptionLocalData.")
+                    request.subscriptionLocalData.subAccountingPeriod
+                  }
+
               val summaryList = SummaryListViewModel(
                 rows = Seq(
-                  SubAccountingPeriodSummary.row(request.subscriptionLocalData.subAccountingPeriod, multipleAccountingPeriods),
+                  SubAccountingPeriodSummary.row(accountingPeriod, maybeAccountingPeriodDetails.isDefined),
                   BTNEntitiesInsideOutsideUKSummary.row(userAnswers, request.subscriptionLocalData.subMneOrDomestic == Uk)
                 ).flatten
               ).withCssClass("govuk-!-margin-bottom-9")
