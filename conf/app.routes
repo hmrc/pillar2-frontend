@@ -56,8 +56,8 @@ POST        /business-matching/filing-member/change-nominate                    
 
 GET         /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByPhoneController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/no-id/phone                                       controllers.registration.ContactUPEByPhoneController.onSubmit(mode: Mode = NormalMode)
-GET         /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByPhoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /business-matching/ultimate-parent/no-id/change-telephone                                controllers.registration.ContactUPEByPhoneController.onSubmit(mode: Mode = CheckMode)
+GET         /business-matching/ultimate-parent/no-id/change-phone                                controllers.registration.ContactUPEByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /business-matching/ultimate-parent/no-id/change-phone                                controllers.registration.ContactUPEByPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /business-matching/filing-member/no-id/check-answers                                     controllers.fm.NfmCheckYourAnswersController.onPageLoad
 
