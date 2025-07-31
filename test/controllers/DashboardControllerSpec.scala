@@ -551,7 +551,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
-    "return None when UKTR is fulfilled and GIR is open but due date has not passed" in {
+    "return Due when UKTR is fulfilled and GIR is open but due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
@@ -585,7 +585,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
-        result mustBe None
+        result mustBe Some(Due)
       }
     }
 
