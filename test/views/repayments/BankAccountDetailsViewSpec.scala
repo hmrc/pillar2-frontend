@@ -21,7 +21,7 @@ import forms.BankAccountDetailsFormProvider
 import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.BankAccountDetailsView
 
@@ -72,92 +72,93 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
-  "Non UK Bank View when binding with missing values" should {
-
-    val view: Document =
+  "when form is submitted with missing values" should {
+    val errorView: Document =
       Jsoup.parse(
-        page(formProvider().bind(Map("bankName" -> "", "accountHolderName" -> "", "sortCode" -> "", "accountNumber" -> "")), NormalMode)(
-          request,
-          appConfig,
-          messages
-        ).toString()
+        page(
+          formProvider().bind(
+            Map(
+              "bankName"          -> "",
+              "accountHolderName" -> "",
+              "sortCode"          -> "",
+              "accountNumber"     -> ""
+            )
+          ),
+          NormalMode
+        )(request, appConfig, messages).toString()
       )
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-        "Enter the name of the bank " +
-        "Enter the name on the account " +
-        "Enter the sort code " +
-        "Enter the account number"
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the name of the bank"
+      errorsList.get(1).text() mustBe "Enter the name on the account"
+      errorsList.get(2).text() mustBe "Enter the sort code"
+      errorsList.get(3).text() mustBe "Enter the account number"
     }
 
     "show field-specific errors" in {
-      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
       fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
       fieldErrors.get(2).text() mustBe "Error: Enter the sort code"
       fieldErrors.get(3).text() mustBe "Error: Enter the account number"
     }
-
-    // FIXME: replace all instances of 'view.getElementsByClass("govuk-error-message").text' with the above
-//    "have an input error" in {
-//      view.getElementsByClass("govuk-error-message").text mustBe
-//        "Error: Enter the name of the bank " +
-//        "Error: Enter the name on the account " +
-//        "Error: Enter the sort code " +
-//        "Error: Enter the account number"
-//    }
-
   }
 
-  "Non UK Bank View when provided with values in the incorrect format" should {
+  "when form is submitted with values exceeding maximum length" should {
+    val longInput: String = randomAlphaNumericStringGenerator(99)
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "bankName"          -> longInput,
+            "accountHolderName" -> longInput,
+            "sortCode"          -> "1234567890",
+            "accountNumber"     -> "12345678901234567890"
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
 
-    val testBankName:        String = randomAlphaNumericStringGenerator(41)
-    val testBankAccountName: String = randomAlphaNumericStringGenerator(61)
-    val testSortCode:        String = "1234567"
-    val testAccountNumber:   String = "123456789"
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-    val view: Document =
-      Jsoup.parse(
-        page(
-          formProvider().bind(
-            Map(
-              "bankName"          -> testBankName,
-              "accountHolderName" -> testBankAccountName,
-              "sortCode"          -> testSortCode,
-              "accountNumber"     -> testAccountNumber
-            )
-          ),
-          NormalMode
-        )(
-          request,
-          appConfig,
-          messages
-        ).toString()
-      )
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-        "The name of the bank must be 40 characters or less " +
-        "The name on the account must be 60 characters or less " +
-        "Sort code must be 6 digits " +
-        "Account number must be 8 digits"
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      // FIXME: inconsistency - other forms return "The name of the bank must be 40 characters or less" and others "Name of the bank must be 40 characters or less"
+      errorsList.get(0).text() mustBe "The name of the bank must be 40 characters or less"
+      // FIXME: inconsistency - other forms return "The name on the account must be 60 characters or less" and others "Name on the account must be 60 characters or less"
+      errorsList.get(1).text() mustBe "The name on the account must be 60 characters or less"
+      errorsList.get(2).text() mustBe "Sort code must be 6 digits"
+      errorsList.get(3).text() mustBe "Account number must be 8 digits"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text mustBe
-        "Error: The name of the bank must be 40 characters or less " +
-        "Error: The name on the account must be 60 characters or less " +
-        "Error: Sort code must be 6 digits " +
-        "Error: Account number must be 8 digits"
-    }
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+      // FIXME: inconsistency - other forms return "The name of the bank must be 40 characters or less" and others "Name of the bank must be 40 characters or less"
+      fieldErrors.get(0).text() mustBe "Error: The name of the bank must be 40 characters or less"
+      // FIXME: inconsistency - other forms return "The name on the account must be 60 characters or less" and others "Name on the account must be 60 characters or less"
+      fieldErrors.get(1).text() mustBe "Error: The name on the account must be 60 characters or less"
+      fieldErrors.get(2).text() mustBe "Error: Sort code must be 6 digits"
+      fieldErrors.get(3).text() mustBe "Error: Account number must be 8 digits"
+    }
   }
 
-  "display XSS validation error messages when special characters are entered" in {
+  "when form is submitted with special characters" should {
     val xssInput: Map[String, String] = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
       "accountHolderName" -> "Test <script>alert('xss')</script>",
@@ -165,18 +166,29 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       "accountNumber"     -> "12345678"
     )
 
-    val view: Document = Jsoup.parse(
+    val errorView: Document = Jsoup.parse(
       page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
     )
 
-    view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-    val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-    errorList mustBe "Name of the bank you enter must not include the following characters <, > or \""
-    errorList mustBe "Name on the account you enter must not include the following characters <, > or \""
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-    val fieldErrors = view.getElementsByClass("govuk-error-message").text
-    fieldErrors mustBe "Error: Name of the bank you enter must not include the following characters <, > or \""
-    fieldErrors mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Name of the bank you enter must not include the following characters <, > or \""
+      errorsList.get(1).text() mustBe "Name on the account you enter must not include the following characters <, > or \""
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Name of the bank you enter must not include the following characters <, > or \""
+      fieldErrors.get(1).text() mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
+    }
   }
+
 }

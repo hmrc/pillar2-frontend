@@ -18,16 +18,17 @@ package views.registrationview
 
 import base.ViewSpecBase
 import forms.UpeRegisteredAddressFormProvider
+import generators.StringGenerators
 import models.NormalMode
 import models.UKAddress
 import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.registrationview.UpeRegisteredAddressView
 
-class UpeRegisteredAddressViewSpec extends ViewSpecBase {
+class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: UpeRegisteredAddressFormProvider = new UpeRegisteredAddressFormProvider
   lazy val form:         Form[UKAddress]                  = formProvider()
@@ -56,7 +57,8 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
 
     "display the warning text" in {
       view.getElementsByClass("govuk-warning-text__text").text mustBe
-        "You must provide the registered office address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
+        "Warning You must provide the registered office address for HMRC to keep on record. If you’re uncertain, " +
+        "verify the registered address before proceeding."
     }
 
     "have the correct field labels" in {
@@ -77,96 +79,140 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
-    "show required field errors when form is submitted empty" in {
-      val errorView = Jsoup.parse(
-        page(
-          form.bind(
-            Map(
-              "addressLine1" -> "",
-              "addressLine3" -> "",
-              "countryCode"  -> "",
-              "postalCode"   -> ""
-            )
-          ),
-          NormalMode,
-          userName,
-          Seq.empty
-        )(request, appConfig, messages).toString()
-      )
+  }
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+  "when form is submitted with missing values" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        form.bind(
+          Map(
+            "addressLine1" -> "",
+            "addressLine3" -> "",
+            "countryCode"  -> "",
+            "postalCode"   -> ""
+          )
+        ),
+        NormalMode,
+        userName,
+        Seq.empty
+      )(request, appConfig, messages).toString()
+    )
 
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "Enter the first line of the address"
-      errorList mustBe "Enter the town or city"
-      errorList mustBe "Enter the country"
-      errorList mustBe "Enter the postcode"
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the first line of the address"
+      errorsList.get(1).text() mustBe "Enter the town or city"
+      errorsList.get(2).text() mustBe "Enter the postcode"
+      errorsList.get(3).text() mustBe "Enter the country"
     }
 
-    "show length validation errors when input exceeds maximum length" in {
-      val longInput = "A" * 36
-      val errorView = Jsoup.parse(
-        page(
-          form.bind(
-            Map(
-              "addressLine1" -> longInput,
-              "addressLine2" -> longInput,
-              "addressLine3" -> longInput,
-              "addressLine4" -> longInput,
-              "countryCode"  -> longInput,
-              "postalCode"   -> longInput
-            )
-          ),
-          NormalMode,
-          userName,
-          Seq.empty
-        )(request, appConfig, messages).toString()
-      )
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "First line of the address must be 35 characters or less"
-      errorList mustBe "Second line of the address must be 35 characters or less"
-      errorList mustBe "Town or city must be 35 characters or less"
-      errorList mustBe "Region must be 35 characters or less"
-      errorList mustBe "The country cannot be more than 200 characters"
-      errorList mustBe "Postcode must be 10 characters or less"
-    }
-
-    "show XSS validation errors when special characters are entered" in {
-      val xssInput = Map(
-        "addressLine1" -> "Test <script>alert('xss')</script>",
-        "addressLine2" -> "Test & Company",
-        "addressLine3" -> "Test City <script>",
-        "addressLine4" -> "Test Region >",
-        "postalCode"   -> "AB1 2CD<",
-        "countryCode"  -> "Test Country &"
-      )
-
-      val errorView = Jsoup.parse(
-        page(form.bind(xssInput), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
-      )
-
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
-      errorList mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
-      errorList mustBe "The country you enter must not include the following characters <, >, \" or &"
-      errorList mustBe "The postcode you enter must not include the following characters <, >, \" or &"
-      val addressErrorCount = StringUtils.countMatches(errorList, "Enter the address using only letters, numbers, and the allowed symbols, / - , .")
-      addressErrorCount mustBe 4
-
-      val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
-      fieldErrors mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
-      fieldErrors mustBe "Error: The country you enter must not include the following characters <, >, \" or &"
-      fieldErrors mustBe "Error: The postcode you enter must not include the following characters <, >, \" or &"
-      val addressFieldCount =
-        StringUtils.countMatches(fieldErrors, "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , .")
-      addressFieldCount mustBe 4
-
+      fieldErrors.get(0).text() mustBe "Error: Enter the first line of the address"
+      fieldErrors.get(1).text() mustBe "Error: Enter the town or city"
+      fieldErrors.get(2).text() mustBe "Error: Enter the postcode"
+      fieldErrors.get(3).text() mustBe "Error: Enter the country"
     }
   }
+
+  "when form is submitted with values exceeding maximum length" should {
+    val longInput: String = randomAlphaNumericStringGenerator(99)
+    val errorView = Jsoup.parse(
+      page(
+        form.bind(
+          Map(
+            "addressLine1" -> longInput,
+            "addressLine2" -> longInput,
+            "addressLine3" -> longInput,
+            "addressLine4" -> longInput,
+            "countryCode"  -> longInput,
+            "postalCode"   -> longInput
+          )
+        ),
+        NormalMode,
+        userName,
+        Seq.empty
+      )(request, appConfig, messages).toString()
+    )
+
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "First line of the address must be 35 characters or less"
+      errorsList.get(1).text() mustBe "Second line of the address must be 35 characters or less"
+      errorsList.get(2).text() mustBe "Town or city must be 35 characters or less"
+      errorsList.get(3).text() mustBe "Region must be 35 characters or less"
+      errorsList.get(4).text() mustBe "Postcode must be 10 characters or less"
+      errorsList.get(5).text() mustBe "The country cannot be more than 200 characters" // FIXME: this says limit is 200 chars but gives error for 99
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: First line of the address must be 35 characters or less"
+      fieldErrors.get(1).text() mustBe "Error: Second line of the address must be 35 characters or less"
+      fieldErrors.get(2).text() mustBe "Error: Town or city must be 35 characters or less"
+      fieldErrors.get(3).text() mustBe "Error: Region must be 35 characters or less"
+      fieldErrors.get(4).text() mustBe "Error: Postcode must be 10 characters or less"
+      fieldErrors.get(5).text() mustBe "Error: The country cannot be more than 200 characters"
+    }
+  }
+
+  "when form is submitted with special characters" should {
+    val xssInput = Map(
+      "addressLine1" -> "Test <script>alert('xss')</script>",
+      "addressLine2" -> "Test & Company",
+      "addressLine3" -> "Test City <script>",
+      "addressLine4" -> "Test Region >",
+      "postalCode"   -> "AB1 2CD<",
+      "countryCode"  -> "Test Country &"
+    )
+
+    val errorView = Jsoup.parse(
+      page(form.bind(xssInput), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
+    )
+
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      errorsList.get(1).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorsList.get(2).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorsList.get(3).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      errorsList.get(4).text() mustBe "The postcode you enter must not include the following characters <, >, \" or &"
+      errorsList.get(5).text() mustBe "The country you enter must not include the following characters <, >, \" or &"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
+      fieldErrors.get(1).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      fieldErrors.get(2).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      fieldErrors.get(3).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
+      fieldErrors.get(4).text() mustBe "Error: The postcode you enter must not include the following characters <, >, \" or &"
+      fieldErrors.get(5).text() mustBe "Error: The country you enter must not include the following characters <, >, \" or &"
+    }
+  }
+
 }
