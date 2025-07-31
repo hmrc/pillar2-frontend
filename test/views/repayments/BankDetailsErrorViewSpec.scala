@@ -49,7 +49,7 @@ class BankDetailsErrorViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text mustBe "try again with a different business bank account"
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/repayment/uk-details" // FIXME
+      link.attr("href") mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url
     }
 
   }

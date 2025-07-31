@@ -25,9 +25,10 @@ import views.html.repayments.CouldNotConfirmDetailsView
 
 class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
 
-  lazy val page:      CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
-  lazy val view:      Document                   = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                     = "We could not confirm your bank details"
+  lazy val page:       CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
+  lazy val view:       Document                   = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                     = "We could not confirm your bank details"
+  lazy val paragraphs: Elements                   = view.getElementsByClass("govuk-body")
 
   "Could Not Confirm Details View" should {
 
@@ -42,15 +43,14 @@ class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text mustBe "We are unable to proceed with the account details you entered."
-      view.getElementsByClass("govuk-body").last.text mustBe "Please"
+      paragraphs.first().text mustBe "We are unable to proceed with the account details you entered."
     }
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-
-      link.text mustBe "return to your bank details and try again"
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/repayment/uk-details" // FIXME
+    "have a paragraph with link" in {
+      paragraphs.last().text mustBe "Please return to your bank details and try again."
+      paragraphs.last().getElementsByTag("a").text mustBe "return to your bank details and try again"
+      paragraphs.last().getElementsByTag("a").attr("href") mustBe
+        controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url
     }
 
   }

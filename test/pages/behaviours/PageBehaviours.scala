@@ -43,7 +43,7 @@ trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
             } yield (page, userAnswers.remove(page).success.value)
 
             forAll(gen) { case (page, userAnswers) =>
-              userAnswers.get(page) must be(empty)
+              userAnswers.get(page) mustBe empty
             }
           }
         }
@@ -95,7 +95,7 @@ trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
 
         forAll(gen) { case (page, userAnswers) =>
           val updatedAnswers = userAnswers.remove(page).success.value
-          updatedAnswers.get(page) must be(empty)
+          updatedAnswers.get(page) mustBe empty
         }
       }
   }

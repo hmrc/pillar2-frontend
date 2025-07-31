@@ -27,17 +27,19 @@ import views.html.repayments.RepaymentsContactByTelephoneView
 
 class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
 
-  lazy val formProvider = new RepaymentsContactByTelephoneFormProvider
-  lazy val mode:      Mode                             = NormalMode
-  lazy val page:      RepaymentsContactByTelephoneView = inject[RepaymentsContactByTelephoneView]
-  lazy val pageTitle: String                           = "Can we contact by telephone"
+  lazy val formProvider: RepaymentsContactByTelephoneFormProvider = new RepaymentsContactByTelephoneFormProvider
+  lazy val mode:         Mode                                     = NormalMode
+  lazy val page:         RepaymentsContactByTelephoneView         = inject[RepaymentsContactByTelephoneView]
+  lazy val pageTitle:    String                                   = "Can we contact by telephone"
+  lazy val contactName:  String                                   = "John Doe"
 
-  "Repayments Contact By Telephone View" should {
+  "Repayments Contact By Telephone View" when {
 
     "page loaded" should {
 
-      val view: Document =
-        Jsoup.parse(page(formProvider("John Doe"), mode, "John Doe")(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(
+        page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()
+      )
 
       "have a title" in {
         view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -46,7 +48,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe "Can we contact John Doe by telephone?" // FIXME: inconsistency between title and heading
+        h1Elements.text() mustBe s"Can we contact $contactName by telephone?" // FIXME: inconsistency between title and heading
       }
 
       "have a hint" in {
@@ -54,10 +56,11 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
       }
 
       "have radio items" in {
-        val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
 
-        radioButtonsLabels.get(0).text mustBe "Yes"
-        radioButtonsLabels.get(1).text mustBe "No"
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text mustBe "Yes"
+        radioButtons.get(1).text mustBe "No"
       }
 
       "have a button" in {
@@ -67,28 +70,36 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
   }
 
   "nothing entered and page submitted" should {
-
-    val view: Document =
-      Jsoup.parse(
-        page(formProvider("John Doe").bind(Map("value" -> "")), mode, "John Doe")(request, appConfig, messages).toString()
-      )
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider(contactName).bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        mode,
+        contactName
+      )(request, appConfig, messages).toString()
+    )
 
     "have an error summary" in {
-      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
       val errorSummary: Element  = errorSummaryElements.first()
       val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
-      errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by telephone"
+      errorsList.get(0).text() mustBe s"Select yes if we can contact $contactName by telephone"
     }
 
     "have field-specific errors" in {
-      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Select yes if we can contact John Doe by telephone"
+      fieldErrors.get(0).text() mustBe s"Error: Select yes if we can contact $contactName by telephone"
     }
   }
+
+  // TODO: add missing tests for long and XSS
 
 }

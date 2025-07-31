@@ -18,18 +18,19 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.ReasonForRequestingRepaymentFormProvider
-import generators.Generators
+import generators.{Generators, StringGenerators}
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.ReasonForRequestingRefundView
 
-class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
+// FIXME: move StringGenerators inside Generators(?)
+class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators with StringGenerators {
 
   lazy val formProvider: ReasonForRequestingRepaymentFormProvider = new ReasonForRequestingRepaymentFormProvider
   lazy val page:      ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
-  lazy val pageTitle: String                        = "Why are you requesting a refund?"
+  lazy val pageTitle:    String                                = "Why are you requesting a repayment?"
 
   "Reason For Requesting Repayment View" when {
 
@@ -52,7 +53,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
 
       "have a character count" in {
-        view.getElementsByClass("govuk-character-count__message").text mustBe "250 characters"
+        view.getElementsByClass("govuk-character-count__message").text mustBe "You can enter up to 250 characters"
       }
 
       "have a button" in {
@@ -60,54 +61,78 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators {
       }
     }
 
-    "nothing selected and page submitted" should {
+    "form is submitted with missing value" should {
+      val errorView: Document = Jsoup.parse(
+        page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
+      )
 
-      val view: Document = Jsoup.parse(page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
+      "show a missing value error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter why you are requesting a repayment"
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Enter why you are requesting a repayment"
       }
 
+      "show field-specific error" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Enter why you are requesting a repayment"
-      }
-    }
-
-    "too many characters entered and page submitted" should {
-
-      val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "".padTo(251, 's'))), NormalMode)(request, appConfig, messages).toString())
-
-      "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Reason for repayment request must be 250 characters or less"
-      }
-
-      "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Reason for repayment request must be 250 characters or less"
+        fieldErrors.get(0).text() mustBe "Error: Enter why you are requesting a repayment"
       }
     }
 
-    "show error when input contains special characters" in {
-      val xssInput = Map(
+    "form is submitted with value exceeding maximum length" should {
+      val longInput: String = randomAlphaNumericStringGenerator(299)
+      val errorView: Document = Jsoup.parse(
+        page(formProvider().bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
+      )
+
+      "show length validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Reason for repayment request must be 250 characters or less"
+      }
+
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: Reason for repayment request must be 250 characters or less"
+      }
+    }
+
+    "form is submitted with value containing special characters" should {
+      val xssInput: Map[String, String] = Map(
         "value" -> "Test <script>alert('xss')</script> & Company"
       )
 
-      val errorView = Jsoup.parse(
+      val errorView: Document = Jsoup.parse(
         page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      "show XSS validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe
-        "The reason for your repayment request you enter must not include the following characters <, >, \" or &"
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-      val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors mustBe
-        "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "The reason for your repayment request you enter must not include the following characters <, >, \" or &"
+      }
+
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
+      }
     }
 
   }

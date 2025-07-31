@@ -25,14 +25,14 @@ import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationConfirmationView
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
-  lazy val testPillar2ID   = "PLR2ID123"
-  lazy val testCompanyName = "TestCompany"
-  lazy val testDate        = "13 September 2024"
-  lazy val testTimeStamp   = "11:00am (GMT)"
-  lazy val testDomestic: MneOrDomestic                = Uk
-  lazy val testMne:      MneOrDomestic                = UkAndOther
-  lazy val page:         RegistrationConfirmationView = inject[RegistrationConfirmationView]
-  lazy val pageTitle:    String                       = "Registration complete"
+  lazy val testPillar2ID:   String                       = "PLR2ID123"
+  lazy val testCompanyName: String                       = "TestCompany"
+  lazy val testDate:        String                       = "13 September 2024"
+  lazy val testTimeStamp:   String                       = "11:00am (GMT)"
+  lazy val testDomestic:    MneOrDomestic                = Uk
+  lazy val testMne:         MneOrDomestic                = UkAndOther
+  lazy val page:            RegistrationConfirmationView = inject[RegistrationConfirmationView]
+  lazy val pageTitle:       String                       = "Registration complete"
 
   lazy val viewDomestic: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
@@ -75,29 +75,29 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a bullet list with download and print links" in {
-      val bulletItems = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
+      val bulletItems: Elements = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
 
       bulletItems.get(0).text mustBe "Download as PDF"
       bulletItems.get(1).text mustBe "Print this page"
     }
 
     "have warning text" in {
-      viewDomestic.getElementsByClass("govuk-warning-text__text").text mustBe
-        "You will not be emailed a confirmation of this registration."
+      viewDomestic.getElementsByClass("govuk-warning-text__text").first().text() mustBe
+        "Warning You will not be emailed a confirmation of this registration."
     }
 
     "have a Pillar 2 research heading" in {
-      val researchHeading = viewDomestic.getElementsByClass("research-heading")
+      val researchHeading: Elements = viewDomestic.getElementsByClass("research-heading")
       researchHeading.text mustBe "Take part in Pillar 2 research"
     }
 
     "have a Pillar 2 research paragraph" in {
-      val researchParagraph = viewDomestic.getElementsByClass("research-body")
+      val researchParagraph: Elements = viewDomestic.getElementsByClass("research-body")
       researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
     }
 
     "have a Pillar 2 link to the research page" in {
-      val researchLink = viewDomestic.getElementsByClass("research-link")
+      val researchLink: Elements = viewDomestic.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl

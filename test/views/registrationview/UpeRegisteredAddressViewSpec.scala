@@ -157,7 +157,9 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
       errorsList.get(2).text() mustBe "Town or city must be 35 characters or less"
       errorsList.get(3).text() mustBe "Region must be 35 characters or less"
       errorsList.get(4).text() mustBe "Postcode must be 10 characters or less"
-      errorsList.get(5).text() mustBe "The country cannot be more than 200 characters" // FIXME: this says limit is 200 chars but gives error for 99
+      errorsList
+        .get(5)
+        .text() mustBe "The country cannot be more than 200 characters" // FIXME: error message says limit is 200 chars but gives error for 99
     }
 
     "show field-specific errors" in {

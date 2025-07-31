@@ -179,8 +179,8 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
         val json = Json.parse("{}")
 
         val result = json.as[GrsResponse]
-        result.incorporatedEntityRegistrationData must be(None)
-        result.partnershipEntityRegistrationData  must be(None)
+        result.incorporatedEntityRegistrationData mustBe None
+        result.partnershipEntityRegistrationData mustBe None
       }
 
       "when JSON contains unexpected fields" in {
@@ -217,7 +217,7 @@ class GrsResponseSpec extends AnyFreeSpec with Matchers {
 
         val result = json.as[GrsResponse]
         result.incorporatedEntityRegistrationData must not be None
-        result.partnershipEntityRegistrationData  must be(None)
+        result.partnershipEntityRegistrationData mustBe None
 
         result.incorporatedEntityRegistrationData.foreach { data =>
           data.companyProfile.companyName mustBe "Test Company"

@@ -52,7 +52,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     submissionHistoryParagraph.isPresent mustBe true
 
     val submissionHistoryLink: Element = submissionHistoryParagraph.get().select("a").first()
-    submissionHistoryLink.attr("href") mustBe "/submission-history" // FIXME: attr("href")
+    submissionHistoryLink.attr("href") mustBe
+      controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
   }
 
   def verifyTableHeaders(table: org.jsoup.select.Elements): Unit = {
@@ -65,7 +66,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
   "DueAndOverdueReturnsView" when {
     "there are no returns" must {
-      lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(
+        page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+      )
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -82,7 +85,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     }
 
     "all returns are fulfilled" must {
-      lazy val view: Document = Jsoup.parse(page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(
+        page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+      )
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -102,7 +107,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     }
 
     "there are due returns" must {
-      lazy val view: Document = Jsoup.parse(page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
+      lazy val view: Document = Jsoup.parse(
+        page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
+      )
 
       "display the common page elements" in {
         verifyCommonPageElements(view)
@@ -131,12 +138,11 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.text mustBe "Due"
-        statusTag.attr("class") mustBe "govuk-tag--blue"
+        statusTag.attr("class") mustBe "govuk-tag govuk-tag--blue"
       }
     }
 
     "there are overdue returns" must {
-
       lazy val view: Document =
         Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
 
@@ -157,7 +163,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.size must be > 0
         statusTag.text mustBe "Overdue"
-        statusTag.attr("class") mustBe "govuk-tag--red"
+        statusTag.attr("class") mustBe "govuk-tag govuk-tag--red"
       }
     }
 
@@ -214,7 +220,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         val firstTableStatusTag: Elements = firstTableRows.first().select("td p.govuk-tag")
         firstTableStatusTag.size must be > 0
         firstTableStatusTag.text mustBe "Overdue"
-        firstTableStatusTag.attr("class") mustBe "govuk-tag--red"
+        firstTableStatusTag.attr("class") mustBe "govuk-tag govuk-tag--red"
         val secondTableRows: Elements = tables.get(1).select("tbody tr")
         secondTableRows.size mustBe 2
 
@@ -231,9 +237,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         val secondTableStatusTags: Elements = secondTableRows.select("td p.govuk-tag")
         secondTableStatusTags.size mustBe 2
         secondTableStatusTags.get(0).text mustBe "Due"
-        secondTableStatusTags.get(0).attr("class") mustBe "govuk-tag--blue"
+        secondTableStatusTags.get(0).attr("class") mustBe "govuk-tag govuk-tag--blue"
         secondTableStatusTags.get(1).text mustBe "Due"
-        secondTableStatusTags.get(1).attr("class") mustBe "govuk-tag--blue"
+        secondTableStatusTags.get(1).attr("class") mustBe "govuk-tag govuk-tag--blue"
       }
     }
 
