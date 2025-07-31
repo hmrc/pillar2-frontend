@@ -280,17 +280,17 @@ POST        /manage-account/contact-details/change-second-input-email           
 
 GET         /contact-details/second-telephone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details/second-telephone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-second-telephone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/change-second-phone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-phone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
 GET        /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad
 POST       /manage-account/contact-details/change-second-telephone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit
 
 
-GET         /contact-details/second-input-telephone                                                  controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/second-input-telephone                                                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-second-input-telephone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-input-phone                                                  controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-input-phone                                                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad
 POST        /manage-account/contact-details/change-second-input-telephone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit
