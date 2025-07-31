@@ -28,7 +28,7 @@ case class OptionalDataRequest[A](
   userAnswers:        Option[UserAnswers],
   enrolments:         Option[Set[Enrolment]] = None,
   userIdForEnrolment: String,
-  isAgent:            Boolean = false
+  isAgent:            Boolean
 ) extends WrappedRequest[A](request)
 
 case class DataRequest[A](
@@ -38,7 +38,7 @@ case class DataRequest[A](
   userAnswers:        UserAnswers,
   enrolments:         Option[Set[Enrolment]] = None,
   userIdForEnrolment: String,
-  isAgent:            Boolean = false
+  isAgent:            Boolean
 ) extends WrappedRequest[A](request)
 
 final case class OptionalSubscriptionDataRequest[A](
@@ -46,7 +46,7 @@ final case class OptionalSubscriptionDataRequest[A](
   userId:                     String,
   maybeSubscriptionLocalData: Option[SubscriptionLocalData],
   enrolments:                 Set[Enrolment],
-  isAgent:                    Boolean = false
+  isAgent:                    Boolean
 ) extends WrappedRequest[A](request)
 
 final case class SubscriptionDataRequest[A](
@@ -54,7 +54,7 @@ final case class SubscriptionDataRequest[A](
   userId:                String,
   subscriptionLocalData: SubscriptionLocalData,
   enrolments:            Set[Enrolment],
-  isAgent:               Boolean = false
+  isAgent:               Boolean
 ) extends WrappedRequest[A](request)
 
 final case class ObligationsAndSubmissionsSuccessDataRequest[A](
