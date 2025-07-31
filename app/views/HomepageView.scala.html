@@ -27,7 +27,6 @@
 
 @(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
 @bannerHtml = {
@@ -36,7 +35,7 @@
   @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body", maybeBTNBannerDate.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
   @link(
    text = messages("homepage.btnActiveBanner.linkText"),
-   call = Call("GET", s"$submissionFrontendPath/below-threshold-notification/start"),
+   call = controllers.btn.routes.BTNBeforeStartController.onPageLoad,
    classes = Some("govuk-notification-banner__link")
   )
  </div>
@@ -111,7 +110,7 @@
   ),
   (
           messages("homepage.manageAccount.btn.linkText"),
-          s"$submissionFrontendPath/below-threshold-notification/start",
+          controllers.btn.routes.BTNBeforeStartController.onPageLoad.url,
           Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
   )
  )

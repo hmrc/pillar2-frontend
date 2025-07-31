@@ -27,9 +27,8 @@ import java.time.LocalDate
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  val host:                   String = configuration.get[String]("host")
-  val submissionFrontendHost: String = configuration.get[String]("submissionFrontendHost")
-  val appName:                String = configuration.get[String]("appName")
+  val host:    String = configuration.get[String]("host")
+  val appName: String = configuration.get[String]("appName")
 
   val asaAccessEnabled: Boolean = configuration.get[Boolean]("features.asaAccessEnabled")
 
