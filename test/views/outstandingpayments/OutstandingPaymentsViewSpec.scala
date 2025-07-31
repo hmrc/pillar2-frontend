@@ -140,7 +140,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       val expectedContent = Seq(
         "Any payments made to the group’s account before submitting the tax return have been deducted from the amount due. If you have recently made a payment, it take 3-5 days to be added to the group’s account.",
         "Pillar 2 reference: XMPLR0012345678",
-        "You’ll need to use this reference if you want to make manual payment for this group.",
+        "You’ll need to use this reference if you want to make a manual payment for this group.",
         "Find out how HMRC may charge the group penalties and interest."
       )
 

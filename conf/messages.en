@@ -1673,7 +1673,7 @@ payments.outstanding.otherWaysToPay.heading = Other ways to pay
 payments.outstanding.otherWaysToPay.p1 = Your Pillar 2 reference: {0}
 payments.outstanding.otherWaysToPay.agent.p1 = Pillar 2 reference: {0}
 payments.outstanding.otherWaysToPay.p2 = You’ll need to use this reference if you want to make a manual payment.
-payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this reference if you want to make manual payment for this group.
+payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this reference if you want to make a manual payment for this group.
 payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay
 
 payments.outstanding.details.heading = Details of outstanding payments
