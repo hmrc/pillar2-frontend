@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, Phase2ScreensAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions._
 import models.btn.BTNStatus
 import play.api.Logging
 import play.api.i18n.I18nSupport
