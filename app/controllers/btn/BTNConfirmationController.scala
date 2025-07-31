@@ -20,11 +20,9 @@ import config.FrontendAppConfig
 import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import services.FopService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.ViewHelpers
 import views.html.btn.BTNConfirmationView
-import views.xml.pdf.BTNConfirmationPdf
 
 import java.time.LocalDate
 import javax.inject.{Inject, Named}
@@ -35,10 +33,8 @@ class BTNConfirmationController @Inject() (
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
   dateHelper:                             ViewHelpers,
-  fopService:                             FopService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   BTNConfirmationView,
-  confirmationPdf:                        BTNConfirmationPdf,
   checkPhase2Screens:                     Phase2ScreensAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -50,17 +46,4 @@ class BTNConfirmationController @Inject() (
 
     Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent))
   }
-
-  def onDownloadConfirmation: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async {
-    implicit request =>
-      val currentDate = dateHelper.formatDateGDS(LocalDate.now())
-      val startDate   = dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
-
-      for {
-        pdf <- fopService.render(confirmationPdf.render(currentDate, startDate, request, implicitly).body)
-      } yield Ok(pdf)
-        .as("application/octet-stream")
-        .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=below-threshold-notification-confirmation.pdf")
-  }
-
 }
