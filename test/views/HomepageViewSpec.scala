@@ -81,10 +81,12 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCard.text() must include(s"Registration date: $date")
 
       val links = manageCard.getElementsByTag("a")
-      links.exists(_.text() == "Manage contact details") mustBe true
-      links.exists(_.text() == "Manage group details") mustBe true
-      links.exists(_.text() == "Replace filing member") mustBe true
-      links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
+      links.get(0).text mustBe "Manage contact details"
+      links.get(1).text mustBe "Manage group details"
+      links.get(2).text mustBe "Replace filing member"
+      links.get(3).text mustBe "Submit a Below-Threshold Notification"
+      links.get(3).attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
+
     }
 
     "display correct help text" in {
@@ -125,6 +127,7 @@ class HomepageViewSpec extends ViewSpecBase {
         .text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
         .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
 
     "show clean Returns card with no tag when Due scenario is provided" in {
@@ -234,11 +237,14 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
       manageCard.text() must include(s"Registration date: $date")
 
+      manageCard.text() must include("Replace filing member")
+
       val links = manageCard.getElementsByTag("a")
-      links.exists(_.text() == "Manage contact details") mustBe true
-      links.exists(_.text() == "Manage group details") mustBe true
+      links.get(0).text mustBe "Manage contact details"
+      links.get(1).text mustBe "Manage group details"
       links.exists(_.text() == "Replace filing member") mustBe false
-      links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
+      links.get(2).text mustBe "Submit a Below-Threshold Notification"
+      links.get(2).attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
 
     "display correct help text" in {
@@ -277,6 +283,7 @@ class HomepageViewSpec extends ViewSpecBase {
         s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
           .format(DateTimeFormatter.ofPattern("d MMMM yyyy"))} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
   }
 
