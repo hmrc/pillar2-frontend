@@ -44,7 +44,7 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text mustBe "Do not leave this page."
+      view.getElementsByTag("h2").first().text() mustBe "Do not leave this page."
     }
 
   }

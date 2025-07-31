@@ -31,52 +31,54 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   lazy val page:         NonUKBankView         = inject[NonUKBankView]
   lazy val pageTitle:    String                = "Bank account details"
 
-  "Non UK Bank View" should {
-    val view: Document = Jsoup.parse(
-      page(formProvider(), NormalMode)(request, appConfig, messages).toString()
-    )
+  "Non UK Bank View" when {
+    "page loaded" should {
+      val view: Document = Jsoup.parse(
+        page(formProvider(), NormalMode)(request, appConfig, messages).toString()
+      )
 
-    "have a title" in {
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
+      "have a title" in {
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
 
-    "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
-      h1Elements.size() mustBe 1
-      // FIXME: this title contains a hint. Full H1 text is "Bank account details This must be a business account."
-      h1Elements.text() must startWith("Bank account details")
-      h1Elements.text() mustBe s"$pageTitle This must be a business account." // FIXME: inconsistency between title and H1
-    }
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        // FIXME: this title contains a hint. Full H1 text is "Bank account details This must be a business account."
+        h1Elements.text() must startWith("Bank account details")
+        h1Elements.text() mustBe s"$pageTitle This must be a business account." // FIXME: inconsistency between title and H1
+      }
 
-    "have a paragraph" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe
-        "For BIC or SWIFT codes and IBAN, you can check with your bank to find out what you need to provide " +
-        "for international payments."
-    }
+      "have a paragraph" in {
+        view.getElementsByClass("govuk-body").get(0).text mustBe
+          "For BIC or SWIFT codes and IBAN, you can check with your bank to find out what you need to provide " +
+          "for international payments."
+      }
 
-    "have the correct field labels" in {
-      val labels: Elements = view.getElementsByClass("govuk-label")
+      "have the correct field labels" in {
+        val labels: Elements = view.getElementsByClass("govuk-label")
 
-      labels.get(0).text mustBe "Name of the bank"
-      labels.get(1).text mustBe "Name on the account"
-      labels.get(2).text mustBe "BIC or SWIFT code"
-      labels.get(3).text mustBe "IBAN"
-    }
+        labels.get(0).text mustBe "Name of the bank"
+        labels.get(1).text mustBe "Name on the account"
+        labels.get(2).text mustBe "BIC or SWIFT code"
+        labels.get(3).text mustBe "IBAN"
+      }
 
-    "have the correct hint text for each field" in {
-      val hints: Elements = view.getElementsByClass("govuk-hint")
+      "have the correct hint text for each field" in {
+        val hints: Elements = view.getElementsByClass("govuk-hint")
 
-      hints.get(0).text mustBe "This must be a business account."
-      hints.get(1).text mustBe "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
-      hints.get(2).text mustBe "You can ask your bank or check your bank statement."
-    }
+        hints.get(0).text mustBe "This must be a business account."
+        hints.get(1).text mustBe "Must be between 8 and 11 characters. You can ask your bank or check your bank statement."
+        hints.get(2).text mustBe "You can ask your bank or check your bank statement."
+      }
 
-    "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a continue button" in {
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      }
     }
   }
 
-  "when form is submitted with missing values" should {
+  "form is submitted with missing values" should {
     val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(
@@ -91,7 +93,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       )(request, appConfig, messages).toString()
     )
 
-    "show missing values error summary" in {
+    "show a missing values error summary" in {
       val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
@@ -116,7 +118,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
-  "when form is submitted with values exceeding maximum length" should {
+  "form is submitted with values exceeding maximum length" should {
     val longInput: String = randomAlphaNumericStringGenerator(99)
     val errorView: Document = Jsoup.parse(
       page(
@@ -155,7 +157,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
-  "when form is submitted with special characters" should {
+  "form is submitted with values containing special characters" should {
     val xssInput: Map[String, String] = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
       "nameOnBankAccount" -> "Test <script>alert('xss')</script>",

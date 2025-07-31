@@ -24,9 +24,10 @@ import views.html.AgentIndividualErrorView
 
 class AgentIndividualErrorViewSpec extends ViewSpecBase {
 
-  lazy val page:      AgentIndividualErrorView = inject[AgentIndividualErrorView]
-  lazy val view:      Document                 = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                   = "Sorry, you’re unable to use this service"
+  lazy val page:       AgentIndividualErrorView = inject[AgentIndividualErrorView]
+  lazy val view:       Document                 = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                   = "Sorry, you’re unable to use this service"
+  lazy val paragraphs: Elements                 = view.getElementsByClass("govuk-body")
 
   "Agent Individual Error View" should {
 
@@ -41,30 +42,28 @@ class AgentIndividualErrorViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs.first().text mustBe "You’ve signed in with an individual account."
-      paragraphs.get(1).text mustBe "Only users with an agent services account can use this service."
+      paragraphs.get(0).text() mustBe "You’ve signed in with an individual account."
+      paragraphs.get(1).text() mustBe "Only users with an agent services account can use this service."
     }
 
     "have a paragraph body with links" in {
-      val bulletList   = view.getElementsByClass("govuk-list govuk-list--bullet")
-      val firstBullet  = bulletList.first().getElementsByClass("govuk-body").first()
-      val secondBullet = bulletList.first().getElementsByClass("govuk-body").get(1)
+      paragraphs.get(2).text() mustBe "if you are an agent that has been given authorisation to report Pillar 2 " +
+        "Top-up Taxes on behalf of a group, you must sign in via agent services."
+      paragraphs.get(2).getElementsByTag("a").text() mustBe
+        "sign in via agent services"
+      paragraphs.get(2).getElementsByTag("a").attr("href") mustBe
+        "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
 
-      firstBullet.text() mustBe
-        "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must"
-      firstBullet.getElementsByTag("a").text() mustBe "sign in via agent services"
-      firstBullet.getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
-
-      secondBullet.text() mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must"
-      secondBullet.getElementsByTag("a").text() mustBe "request authorisation on agent services"
-      secondBullet
-        .getElementsByTag("a")
-        .attr("href") mustBe "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
+      paragraphs.get(3).text() mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you " +
+        "must request authorisation on agent services."
+      paragraphs.get(3).getElementsByTag("a").text() mustBe
+        "request authorisation on agent services"
+      paragraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
     }
 
     "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      val link: Elements = paragraphs.last().getElementsByTag("a")
 
       link.text mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
       link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"

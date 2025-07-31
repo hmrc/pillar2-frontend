@@ -18,15 +18,16 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.RfmCannotReturnAfterConfirmationView
 
 class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val page:      RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
-  lazy val view:      Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                               = "Register your group"
+  lazy val page:       RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
+  lazy val view:       Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                               = "Register your group"
+  lazy val paragraphs: Elements                             = view.getElementsByClass("govuk-body")
 
   "Rfm Cannot Return After Confirmation View" should {
 
@@ -41,16 +42,14 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe
+      paragraphs.get(0).text mustBe
         "You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account."
-      view.getElementsByClass("govuk-body").get(1).text mustBe
-        "You can now "
     }
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text mustBe "report and manage your Pillar 2 Top-up Taxes"
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
+    "have a paragraph with a link" in {
+      paragraphs.get(1).text() mustBe "You can now report and manage your Pillar 2 Top-up Taxes."
+      paragraphs.get(1).getElementsByTag("a").text() mustBe "report and manage your Pillar 2 Top-up Taxes"
+      paragraphs.get(1).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
   }

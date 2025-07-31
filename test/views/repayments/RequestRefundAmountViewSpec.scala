@@ -20,16 +20,16 @@ import base.ViewSpecBase
 import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.RequestRefundAmountView
 
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
   lazy val formProvider: RequestRepaymentAmountFormProvider = new RequestRepaymentAmountFormProvider
-  lazy val mode:         Mode                               = NormalMode
-  lazy val page:         RequestRefundAmountView            = inject[RequestRefundAmountView]
-  lazy val pageTitle:    String                             = "Enter your requested refund amount in pounds"
+  lazy val mode:         Mode                            = NormalMode
+  lazy val page:         RequestRefundAmountView         = inject[RequestRefundAmountView]
+  lazy val pageTitle:    String                          = "Enter your requested repayment amount in pounds"
 
   "Request Repayment Amount View" should {
 
@@ -52,72 +52,116 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
 
     }
 
-    "nothing selected and page submitted" should {
-
-      val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "")), mode)(request, appConfig, messages).toString())
+    "when form is submitted with missing values" should {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map("value" -> "")
+          ),
+          mode
+        )(request, appConfig, messages).toString()
+      )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter your requested repayment amount in pounds"
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Enter your requested repayment amount in pounds"
       }
 
-      "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Enter your requested repayment amount in pounds"
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Enter your requested repayment amount in pounds"
+      }
     }
 
-    "value submitted it less than minimum allowed" should {
-
-      val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "£-1.0")), mode)(request, appConfig, messages).toString())
+    "value submitted is less than minimum allowed" should {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map("value" -> "£-1.0")
+          ),
+          mode
+        )(request, appConfig, messages).toString()
+      )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Value entered should not be less than £0.00"
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Value entered should not be less than £0.00"
       }
 
-      "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Value entered should not be less than £0.00"
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Value entered should not be less than £0.00"
+      }
     }
 
-    "value submitted it greater than maximum allowed" should {
-
-      val view: Document =
-        Jsoup.parse(
-          page(formProvider().bind(Map("value" -> "£100,000,000,000.00")), mode)(request, appConfig, messages).toString()
-        )
+    "value submitted is greater than maximum allowed" should {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map("value" -> "£100,000,000,000.00")
+          ),
+          mode
+        )(request, appConfig, messages).toString()
+      )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-          "Value entered should not be greater than £99,999,999,999.99"
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Value entered should not be greater than £99,999,999,999.99"
       }
 
-      "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Value entered should not be greater than £99,999,999,999.99"
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Value entered should not be greater than £99,999,999,999.99"
+      }
     }
 
     "value submitted contains invalid characters" should {
-
-      val view: Document =
-        Jsoup.parse(page(formProvider().bind(Map("value" -> "$100.00")), mode)(request, appConfig, messages).toString())
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider().bind(
+            Map("value" -> "$100.00")
+          ),
+          mode
+        )(request, appConfig, messages).toString()
+      )
 
       "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-          "Repayment amount must only use numbers 0-9, commas and full stops"
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Repayment amount must only use numbers 0-9, commas and full stops"
       }
 
-      "have a input error" in {
-        view.getElementsByClass("govuk-error-message").text mustBe "Repayment amount must only use numbers 0-9, commas and full stops"
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Repayment amount must only use numbers 0-9, commas and full stops"
+      }
     }
 
   }
