@@ -43,6 +43,13 @@ trait ObligationsAndSubmissionsDataFixture {
   val pastDueDate:   LocalDate = LocalDate.now().minusDays(30) // Always overdue
   val futureDueDate: LocalDate = LocalDate.now().plusDays(30) // Always due
 
+  val testZonedDateTime:                            ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  val obligationsAndSubmissionsSuccessResponseJson: JsValue       = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
+  val validBTNCyaUa: UserAnswers = UserAnswers("id")
+    .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)))
+    .setOrException(EntitiesInsideOutsideUKPage, true)
+  lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
+
   def createObligation(
     obligationType: ObligationType = ObligationType.UKTR,
     status:         ObligationStatus = ObligationStatus.Open,
@@ -169,15 +176,6 @@ trait ObligationsAndSubmissionsDataFixture {
     )
   )
 
-  lazy val localDateFrom:                                LocalDate     = LocalDate.of(2024, 10, 24)
-  lazy val localDateTo:                                  LocalDate     = localDateFrom.plusYears(1)
-  lazy val testZonedDateTime:                            ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
-  lazy val obligationsAndSubmissionsSuccessResponseJson: JsValue       = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
-  val validBTNCyaUa: UserAnswers = UserAnswers("id")
-    .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)))
-    .setOrException(EntitiesInsideOutsideUKPage, true)
-  lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get
-
   def buildAccountingPeriodDetails(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate): AccountingPeriodDetails =
     AccountingPeriodDetails(
       startDate = startDate,
@@ -214,9 +212,9 @@ trait ObligationsAndSubmissionsDataFixture {
         processingDate = testZonedDateTime,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
-            startDate = localDateFrom,
-            endDate = localDateTo,
-            dueDate = localDateTo.plusMonths(10),
+            startDate = fromDate,
+            endDate = toDate,
+            dueDate = toDate.plusMonths(10),
             underEnquiry = underEnquiry,
             obligations = Seq(
               Obligation(

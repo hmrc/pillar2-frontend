@@ -34,20 +34,20 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import views.html.btn.BTNBeforeStartView
 
 import java.time.LocalDate
-import javax.inject.Inject
+import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNBeforeStartController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             BTNBeforeStartView,
-  identify:                         IdentifierAction,
   agentAccess:                      AgentAccessFilterAction,
   getData:                          DataRetrievalAction,
   requireData:                      DataRequiredAction,
   obligationsAndSubmissionsService: ObligationsAndSubmissionsService,
   subscriptionService:              SubscriptionService,
   sessionRepository:                SessionRepository,
-  checkPhase2Screens:               Phase2ScreensAction
+  checkPhase2Screens:               Phase2ScreensAction,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {

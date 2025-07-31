@@ -37,21 +37,22 @@ import viewmodels.govuk.summarylist._
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
 import java.time.format.DateTimeFormatter
+import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
-  identify:                 IdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
-  btnStatus:                BTNStatusAction,
-  sessionRepository:        SessionRepository,
-  view:                     CheckYourAnswersView,
-  cannotReturnView:         BTNCannotReturnView,
-  btnService:               BTNService,
-  val controllerComponents: MessagesControllerComponents,
-  auditService:             AuditService,
-  checkPhase2Screens:       Phase2ScreensAction
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+  getData:                                SubscriptionDataRetrievalAction,
+  requireData:                            SubscriptionDataRequiredAction,
+  btnStatus:                              BTNStatusAction,
+  sessionRepository:                      SessionRepository,
+  view:                                   CheckYourAnswersView,
+  cannotReturnView:                       BTNCannotReturnView,
+  btnService:                             BTNService,
+  val controllerComponents:               MessagesControllerComponents,
+  auditService:                           AuditService,
+  checkPhase2Screens:                     Phase2ScreensAction,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

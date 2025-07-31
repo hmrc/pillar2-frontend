@@ -27,7 +27,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
 
-  val url:       String = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$localDateFrom/$localDateTo"
+  val url:       String = s"/report-pillar2-top-up-taxes/obligations-and-submissions/$fromDate/$toDate"
   val pillar2Id: String = PlrReference
 
   lazy val connector: ObligationsAndSubmissionsConnector = app.injector.instanceOf[ObligationsAndSubmissionsConnector]
@@ -41,7 +41,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
         Map("X-Pillar2-Id" -> PlrReference)
       )
 
-      val result = connector.getData(pillar2Id, localDateFrom, localDateTo).futureValue
+      val result = connector.getData(pillar2Id, fromDate, toDate).futureValue
       result mustBe obligationsAndSubmissionsSuccessResponse().success
     }
 
@@ -52,7 +52,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
         headers = Map("X-Pillar2-Id" -> PlrReference)
       )
 
-      whenReady(connector.getData(pillar2Id, localDateFrom, localDateTo).failed)(ex => ex mustBe an[Exception])
+      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
     }
 
     "fail when the response cannot be parsed" in {
@@ -63,7 +63,7 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
         Map("X-Pillar2-Id" -> PlrReference)
       )
 
-      whenReady(connector.getData(pillar2Id, localDateFrom, localDateTo).failed)(ex => ex mustBe an[Exception])
+      whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
     }
   }
 }
