@@ -21,8 +21,10 @@ import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
+import models._
+import models.obligationsandsubmissions.ObligationStatus
+import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{InternalIssueError, UserAnswers}
@@ -108,19 +110,31 @@ class DashboardController @Inject() (
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
       val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
-      osService
-        .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
-        .map { response =>
-          Ok(
-            homepageView(
-              subscriptionData.upeDetails.organisationName,
-              subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-              if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
-              plrReference,
-              isAgent = request.isAgent
+      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+        osService
+          .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
+          .map { response =>
+            Ok(
+              homepageView(
+                subscriptionData.upeDetails.organisationName,
+                subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+                if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
+                getDueOrOverdueReturnsStatus(response) match {
+                  case None => None
+                  case Some(value) =>
+                    value match {
+                      case Due        => Some("Due")
+                      case Overdue    => Some("Overdue")
+                      case Incomplete => Some("Incomplete")
+                    }
+                },
+                plrReference,
+                isAgent = request.isAgent
+              )
             )
-          )
-        }
+          }
+      }
     } else {
       Future.successful(
         Ok(
@@ -149,5 +163,54 @@ class DashboardController @Inject() (
     } else {
       accountingPeriods.find(_.obligations.head.submissions.nonEmpty).map(_.endDate)
     }
+  }
+
+  def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
+
+    def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
+      if (period.obligations.isEmpty) {
+        None
+      } else {
+        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
+        val girObligation  = period.obligations.find(_.obligationType == GIR)
+        val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
+
+        val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
+
+        (uktrObligation, girObligation) match {
+          case (Some(uktr), Some(gir)) =>
+            (uktr.status, gir.status, dueDatePassed) match {
+              case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
+              case _ if hasAnyOpenObligation && !dueDatePassed                => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                 => Some(Overdue)
+              case _                                                          => None
+            }
+          case (Some(uktr), None) =>
+            (uktr.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case (None, Some(gir)) =>
+            (gir.status, dueDatePassed) match {
+              case (ObligationStatus.Open, false) => Some(Due)
+              case (ObligationStatus.Open, true)  => Some(Overdue)
+              case _                              => None
+            }
+          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
+          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
+          case _                                           => None
+        }
+      }
+
+    obligationsAndSubmissions.accountingPeriodDetails
+      .flatMap(periodStatus)
+      .maxOption
+
   }
 }

@@ -22,6 +22,7 @@ import generators.ModelGenerators
 import models.UserAnswers
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
+import models.{Due, Incomplete, Overdue}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -98,6 +99,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            None,
             None,
             "12345678",
             isAgent = false
@@ -215,6 +217,641 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       }
     }
 
+  }
+
+  "getDueOrOverdueReturnsStatus" should {
+
+    "return Due when UKTR obligation is open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Overdue when UKTR obligation is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
+
+    "return None when both UKTR and GIR obligations are fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return Due when both UKTR and GIR obligations are open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Due when UKTR is open, GIR is fulfilled and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Due when UKTR is fulfilled, GIR is open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Overdue when both UKTR and GIR obligations are open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
+
+    "return Incomplete when UKTR is open, GIR is fulfilled and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Incomplete)
+      }
+    }
+
+    "return Incomplete when UKTR is fulfilled, GIR is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Incomplete)
+      }
+    }
+
+    "return Due when UKTR is fulfilled and GIR is open but due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return None when only UKTR obligation is fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return Due when only GIR obligation is open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return Overdue when only GIR obligation is open and due date has passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
+
+    "return None when only GIR obligation is fulfilled" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now().minusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return None when no accounting periods exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq.empty
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return Due when there are mixed obligation types with at least one open and due date has not passed" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq.empty
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Due)
+      }
+    }
+
+    "return None when accounting periods exist but no obligations exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = LocalDate.now().plusDays(7),
+          underEnquiry = false,
+          obligations = Seq.empty
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return the earliest period status when multiple accounting periods exist" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now().plusDays(7)
+        val pastDueDate   = LocalDate.now().minusDays(7)
+
+        // First period (earlier end date) - Due
+        val firstPeriodObligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val firstPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(24),
+          endDate = LocalDate.now().minusDays(10), // Earlier end date
+          dueDate = futureDueDate,
+          underEnquiry = false,
+          obligations = firstPeriodObligations
+        )
+
+        // Second period (later end date) - Overdue
+        val secondPeriodObligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Open,
+            canAmend = false,
+            submissions = Seq.empty
+          )
+        )
+        val secondPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now().minusDays(5), // Later end date
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = secondPeriodObligations
+        )
+
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(secondPeriod, firstPeriod) // Order shouldn't matter
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Overdue)
+      }
+    }
   }
 
 }

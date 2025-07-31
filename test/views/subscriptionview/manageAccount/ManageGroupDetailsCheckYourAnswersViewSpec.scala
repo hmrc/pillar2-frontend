@@ -32,7 +32,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
   "Manage Group Details Check Your Answers View" when {
     "it's an organisation view" must {
       implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
-        SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty)
+        SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
       val view: Document = Jsoup.parse(page(subscriptionDataGroupSummaryList(), isAgent = false, None)(request, appConfig, messages).toString())
 
       "have a title" in {
