@@ -79,7 +79,7 @@ class HomepageViewSpec extends ViewSpecBase {
       links.get(1).text() mustBe "View outstanding payments"
       paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
       links.get(2).text() mustBe "Request a repayment"
-      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
@@ -175,7 +175,7 @@ class HomepageViewSpec extends ViewSpecBase {
       links.get(1).text() mustBe "View outstanding payments"
       paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
       links.get(2).text() mustBe "Request a repayment"
-      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
