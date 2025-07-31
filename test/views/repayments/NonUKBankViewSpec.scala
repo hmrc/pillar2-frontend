@@ -117,6 +117,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "when form is submitted with values exceeding maximum length" should {
+    // FIXME: this can be just 'loooongInput'
     val longBankName:    String = "A" * 41
     val longAccountName: String = "A" * 61
     val longBic:         String = "A" * 12

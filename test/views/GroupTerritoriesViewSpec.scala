@@ -37,7 +37,7 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text mustBe "Check if you need to report Pillar 2 Top-up Taxes"
+      view.getElementsByTag("h2").first().text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a legend with a unique H1 heading" in {
