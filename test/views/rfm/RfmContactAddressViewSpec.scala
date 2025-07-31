@@ -18,6 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import forms.RfmContactAddressFormProvider
+import generators.StringGenerators
 import models.NonUKAddress
 import models.NormalMode
 import org.apache.commons.lang3.StringUtils
@@ -27,7 +28,7 @@ import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.rfm.RfmContactAddressView
 
-class RfmContactAddressViewSpec extends ViewSpecBase {
+class RfmContactAddressViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: RfmContactAddressFormProvider = new RfmContactAddressFormProvider
   lazy val form:         Form[NonUKAddress]            = formProvider()
@@ -111,17 +112,17 @@ class RfmContactAddressViewSpec extends ViewSpecBase {
   }
 
   "when form is submitted with values exceeding maximum length" should {
-    val looooooooongInput: String = "A" * 56
+    val longInput: String = randomAlphaNumericStringGenerator(99)
     val errorView: Document = Jsoup.parse(
       page(
         form.bind(
           Map(
-            "addressLine1" -> looooooooongInput,
-            "addressLine2" -> looooooooongInput,
-            "addressLine3" -> looooooooongInput,
-            "addressLine4" -> looooooooongInput,
-            "countryCode"  -> looooooooongInput,
-            "postalCode"   -> looooooooongInput
+            "addressLine1" -> longInput,
+            "addressLine2" -> longInput,
+            "addressLine3" -> longInput,
+            "addressLine4" -> longInput,
+            "countryCode"  -> longInput,
+            "postalCode"   -> longInput
           )
         ),
         NormalMode,

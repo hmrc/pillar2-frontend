@@ -77,7 +77,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "when form is submitted with missing values" should {
-    val view: Document = Jsoup.parse(
+    val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(
           Map(
@@ -92,7 +92,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "show missing values error summary" in {
-      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
       val errorSummary: Element  = errorSummaryElements.first()
@@ -107,7 +107,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "show field-specific errors" in {
-      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
       fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
@@ -117,18 +117,14 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "when form is submitted with values exceeding maximum length" should {
-    // FIXME: this can be just 'loooongInput'
-    val longBankName:    String = "A" * 41
-    val longAccountName: String = "A" * 61
-    val longBic:         String = "A" * 12
-
-    val view: Document = Jsoup.parse(
+    val longInput: String = randomAlphaNumericStringGenerator(99)
+    val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(
           Map(
-            "bankName"          -> longBankName,
-            "nameOnBankAccount" -> longAccountName,
-            "bic"               -> longBic,
+            "bankName"          -> longInput,
+            "nameOnBankAccount" -> longInput,
+            "bic"               -> longInput,
             "iban"              -> "GB82WEST12345698765432"
           )
         ),
@@ -137,7 +133,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "show length validation error summary" in {
-      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
       val errorSummary: Element  = errorSummaryElements.first()
@@ -149,6 +145,14 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       errorsList.get(1).text() mustBe "Name on the account must be 60 characters or less"
       errorsList.get(2).text() mustBe "BIC or SWIFT code must be between 8 and 11 characters long"
     }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Name of the bank must be 40 characters or less"
+      fieldErrors.get(1).text() mustBe "Error: Name on the account must be 60 characters or less"
+      fieldErrors.get(2).text() mustBe "Error: BIC or SWIFT code must be between 8 and 11 characters long"
+    }
   }
 
   "when form is submitted with special characters" should {
@@ -159,12 +163,12 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       "iban"              -> "GB82<WEST12345698765432"
     )
 
-    val view: Document = Jsoup.parse(
+    val errorView: Document = Jsoup.parse(
       page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
     )
 
     "show XSS validation error summary" in {
-      val errorSummaryElements: Elements = view.getElementsByClass("govuk-error-summary")
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
       val errorSummary: Element  = errorSummaryElements.first()
@@ -179,7 +183,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "show field-specific errors" in {
-      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe "Error: Name of the bank you enter must not include the following characters <, > or \""
       fieldErrors.get(1).text() mustBe "Error: Name on the account you enter must not include the following characters <, > or \""
