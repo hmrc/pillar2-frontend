@@ -175,12 +175,12 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to error page when account status inactive flag is true" ignore { //TODO: COME BACK TO THIS TEST
+    "must redirect to error page when account status inactive flag is true" in {
       val ua = emptySubscriptionLocalData
         .copy(accountStatus = Some(AccountStatus(true)))
         .setOrException(SubAccountingPeriodPage, dates)
         .setOrException(PlrReferencePage, plrReference)
-      val application = applicationBuilder(subscriptionLocalData = Some(ua))
+      val application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -199,7 +199,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad(None).url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
 
