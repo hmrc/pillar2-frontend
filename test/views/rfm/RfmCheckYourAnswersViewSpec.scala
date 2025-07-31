@@ -47,7 +47,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
   )
 
   lazy val page:      RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
-  val view:           Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val view:      Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
   lazy val pageTitle: String                  = "Check your answers for filing member details"
 
   "Rfm Check Your Answers View" should {
@@ -66,6 +66,8 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    println(view.getElementsByClass("govuk-summary-list"))
+
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
       summaryListKeys.get(0).text mustBe "Name"
@@ -74,16 +76,15 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list items" in {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+
       summaryListItems.get(0).text mustBe userName
-      summaryListItems.get(1).text mustBe nonUkAddress.addressLine1
-      summaryListItems.get(1).text mustBe nonUkAddress.addressLine3
-      summaryListItems.get(1).text mustBe country
+      summaryListItems.get(1).text mustBe s"${nonUkAddress.addressLine1} ${nonUkAddress.addressLine3} $country"
     }
 
     "have a summary list links" in {
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
-      summaryListActions.get(0).text mustBe "Change"
-      summaryListActions.get(1).text mustBe "Change"
+      summaryListActions.get(0).text mustBe "Change the name of the new nominated filing member"
+      summaryListActions.get(1).text mustBe "Change the address of the new nominated filing member"
     }
 
     "have a button" in {

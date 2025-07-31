@@ -92,22 +92,32 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
         "Enter the account number"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text mustBe
-        "Error: Enter the name of the bank " +
-        "Error: Enter the name on the account " +
-        "Error: Enter the sort code " +
-        "Error: Enter the account number"
+    "show field-specific errors" in {
+      val fieldErrors: Elements = view.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Enter the name of the bank"
+      fieldErrors.get(1).text() mustBe "Error: Enter the name on the account"
+      fieldErrors.get(2).text() mustBe "Error: Enter the sort code"
+      fieldErrors.get(3).text() mustBe "Error: Enter the account number"
     }
+
+    // FIXME: replace all instances of 'view.getElementsByClass("govuk-error-message").text' with the above
+//    "have an input error" in {
+//      view.getElementsByClass("govuk-error-message").text mustBe
+//        "Error: Enter the name of the bank " +
+//        "Error: Enter the name on the account " +
+//        "Error: Enter the sort code " +
+//        "Error: Enter the account number"
+//    }
 
   }
 
   "Non UK Bank View when provided with values in the incorrect format" should {
 
-    val testBankName        = randomAlphaNumericStringGenerator(41)
-    val testBankAccountName = randomAlphaNumericStringGenerator(61)
-    val testSortCode        = "1234567"
-    val testAccountNumber   = "123456789"
+    val testBankName:        String = randomAlphaNumericStringGenerator(41)
+    val testBankAccountName: String = randomAlphaNumericStringGenerator(61)
+    val testSortCode:        String = "1234567"
+    val testAccountNumber:   String = "123456789"
 
     val view: Document =
       Jsoup.parse(
@@ -148,7 +158,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "display XSS validation error messages when special characters are entered" in {
-    val xssInput = Map(
+    val xssInput: Map[String, String] = Map(
       "bankName"          -> "Test <script>alert('xss')</script>",
       "accountHolderName" -> "Test <script>alert('xss')</script>",
       "sortCode"          -> "123456",
