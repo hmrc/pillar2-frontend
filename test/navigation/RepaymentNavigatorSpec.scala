@@ -39,10 +39,10 @@ class RepaymentNavigatorSpec extends SpecBase {
           UnknownPage,
           NormalMode,
           UserAnswers("id")
-        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad
       }
 
-      "go to type of bank account page after submitting their reason for requesting a refund" in {
+      "go to type of bank account page after submitting their reason for requesting a repayment" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
           NormalMode,
@@ -76,14 +76,14 @@ class RepaymentNavigatorSpec extends SpecBase {
         navigator.nextPage(UkOrAbroadBankAccountPage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
-      "go to journey recovery page from request refund amount page" in {
+      "go to journey recovery page from request repayment amount page" in {
         navigator.nextPage(RepaymentsContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
-      "go to reason for requesting a refund page from request refund amount page" in {
+      "go to reason for requesting a repayment page from request repayment amount page" in {
         val userAnswers = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, BigDecimal(100.00))
         navigator.nextPage(RepaymentsRefundAmountPage, NormalMode, userAnswers) mustBe
-          controllers.repayments.routes.ReasonForRequestingRefundController.onPageLoad(NormalMode)
+          controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode)
       }
 
       "go to Repayments contact name page from Non-UK Bank Account page" in {
@@ -185,10 +185,10 @@ class RepaymentNavigatorSpec extends SpecBase {
           UnknownPage,
           CheckMode,
           UserAnswers("id")
-        ) mustBe controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad
+        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad
       }
 
-      "go to Repayment questions CYA page from Repayments Refund Amount page" in {
+      "go to Repayment questions CYA page from Repayments Repayment Amount page" in {
         navigator.nextPage(
           RepaymentsRefundAmountPage,
           CheckMode,
@@ -197,7 +197,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
-      "go to Repayment questions CYA page from Reason For requesting refund page" in {
+      "go to Repayment questions CYA page from Reason For requesting repayment page" in {
         navigator.nextPage(
           ReasonForRequestingRefundPage,
           CheckMode,
@@ -321,7 +321,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
-      "go to journey recovery page from request refund amount page" in {
+      "go to journey recovery page from request repayment amount page" in {
         navigator.nextPage(RepaymentsContactByTelephonePage, CheckMode, emptyUserAnswers) mustBe journeyRecovery
       }
 

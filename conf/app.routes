@@ -471,12 +471,12 @@ GET         /replace-filing-member/security/saving-progress                     
 GET         /replace-filing-member/review-submit/confirmation                                        controllers.rfm.RfmConfirmationController.onPageLoad
 
 
-GET         /repayment/before-you-start                                                              controllers.repayments.RequestRefundBeforeStartController.onPageLoad
+GET         /repayment/before-you-start                                                              controllers.repayments.RequestRepaymentBeforeStartController.onPageLoad
 
-GET         /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = NormalMode)
-POST        /repayment/amount                                                                        controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = NormalMode)
-GET         /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onPageLoad(mode: Mode = CheckMode)
-POST        /repayment/change-amount                                                                 controllers.repayments.RequestRefundAmountController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/amount                                                                        controllers.repayments.RequestRepaymentAmountController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/amount                                                                        controllers.repayments.RequestRepaymentAmountController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-amount                                                                 controllers.repayments.RequestRepaymentAmountController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-amount                                                                 controllers.repayments.RequestRepaymentAmountController.onSubmit(mode: Mode = CheckMode)
 
 GET         /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onPageLoad(mode: Mode = NormalMode)
 POST        /repayment/contact-details/input-name                                                    controllers.repayments.RepaymentsContactNameController.onSubmit(mode: Mode = NormalMode)
@@ -508,10 +508,10 @@ POST        /repayment/uk-details                                               
 GET         /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /repayment/change-uk-details                                                             controllers.repayments.BankAccountDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = NormalMode)
-POST        /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = NormalMode)
-GET         /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onPageLoad(mode: Mode = CheckMode)
-POST        /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRefundController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRepaymentController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/reason                                                                        controllers.repayments.ReasonForRequestingRepaymentController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRepaymentController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/change-reason                                                                 controllers.repayments.ReasonForRequestingRepaymentController.onSubmit(mode: Mode = CheckMode)
 
 GET         /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onPageLoad(mode: Mode = NormalMode)
 POST        /repayment/method                                                                        controllers.repayments.UkOrAbroadBankAccountController.onSubmit(mode: Mode = NormalMode)
@@ -530,11 +530,11 @@ GET        /repayment/error/change-partial-name                                 
 POST       /repayment/error/change-partial-name                                                     controllers.repayments.RepaymentErrorController.onSubmitPartialNameError(mode: Mode = CheckMode)
 GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
-GET        /repayment/error/incomplete-refund-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
+GET        /repayment/error/incomplete-repayment-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
-GET        /repayment/processing-refund                                                             controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
+GET        /repayment/processing-repayment                                                          controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
 GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
 GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)

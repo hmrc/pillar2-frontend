@@ -205,23 +205,23 @@ payment.legacy.dashboard.message2 = Submit your return before making a payment. 
 payment.legacy.dashboard.message3 = You can
 payment.legacy.dashboard.message4 = read the guidance to find the methods you can use to make a payment.
 
-repayment.requestRefundBeforeStart.title = Request a refund
-repayment.requestRefundBeforeStart.header = Request a refund
-repayment.requestRefundBeforeStart.p1 = You can use this service to request a refund. You can only make a request if there are funds in your group’s Pillar 2 account.
-repayment.requestRefundBeforeStart.agentView.p1 = You can use this service to request a refund on behalf of your client. You can only make a request if there are funds in your group’s Pillar 2 account.
-repayment.requestRefundBeforeStart.header3 = Before you start
-repayment.requestRefundBeforeStart.p3 = You’ll need to provide:
-repayment.requestRefundBeforeStart.li1 = refund amount
-repayment.requestRefundBeforeStart.li2 = reason for your refund request
-repayment.requestRefundBeforeStart.li3 = bank account details
-repayment.requestRefundBeforeStart.li4 = contact details for someone we can contact about this request
+repayment.requestRepaymentBeforeStart.title = Request a repayment
+repayment.requestRepaymentBeforeStart.header = Request a repayment
+repayment.requestRepaymentBeforeStart.p1 = You can use this service to request a repayment. You can only make a request if there are funds in your group’s Pillar 2 account.
+repayment.requestRepaymentBeforeStart.agentView.p1 = You can use this service to request a repayment on behalf of your client. You can only make a request if there are funds in your group’s Pillar 2 account.
+repayment.requestRepaymentBeforeStart.header3 = Before you start
+repayment.requestRepaymentBeforeStart.p3 = You’ll need to provide:
+repayment.requestRepaymentBeforeStart.li1 = repayment amount
+repayment.requestRepaymentBeforeStart.li2 = reason for your repayment request
+repayment.requestRepaymentBeforeStart.li3 = bank account details
+repayment.requestRepaymentBeforeStart.li4 = contact details for someone we can contact about this request
 
-repayment.requestRefundAmount.title = Enter your requested refund amount in pounds
-repayment.requestRefundAmount.header = Enter your requested refund amount in pounds
-repayment.requestRefundAmount.error.required = Enter your requested refund amount in pounds
-repayment.requestRefundAmount.error.format = Refund amount must only use numbers 0-9, commas and full stops
-repayment.requestRefundAmount.error.minValue = Value entered should not be less than £0.00
-repayment.requestRefundAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
+repayment.requestRepaymentAmount.title = Enter your requested repayment amount in pounds
+repayment.requestRepaymentAmount.header = Enter your requested repayment amount in pounds
+repayment.requestRepaymentAmount.error.required = Enter your requested repayment amount in pounds
+repayment.requestRepaymentAmount.error.format = Repayment amount must only use numbers 0-9, commas and full stops
+repayment.requestRepaymentAmount.error.minValue = Value entered should not be less than £0.00
+repayment.requestRepaymentAmount.error.maxValue = Value entered should not be greater than £99,999,999,999.99
 timeout.title = You’re about to be signed out
 timeout.message = For security reasons, you will be signed out of this service in
 timeout.keepAlive = Stay signed in
@@ -890,7 +890,7 @@ dashboard.payments = Payments
 dashboard.noPayment = You have no payments due.
 dashboard.voluntaryPayment = Make a payment
 dashboard.paymentHistory = View your transaction history
-dashboard.requestRefund = Request a refund
+dashboard.requestRepayment = Request a repayment
 dashboard.manageAccount = Manage your account
 dashboard.contactDetails = View and amend contact details
 dashboard.groupDetails = View and amend group details
@@ -1365,15 +1365,15 @@ repayments.UKBank.summary.accNumber.checkYourAnswersLabel = Account number
 repayments.UKBank.summary.accNumber.checkYourAnswersLabel.hidden = the account number
 
 
-repayments.contactName.title = What is the name of the person or team we should contact about the refund request?
-repayments.contactName.heading = What is the name of the person or team we should contact about the refund request?
+repayments.contactName.title = What is the name of the person or team we should contact about the repayment request?
+repayments.contactName.heading = What is the name of the person or team we should contact about the repayment request?
 repayments.contactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
-repayments.contactName.error.required = Enter name of the person or team we should contact for this refund request
+repayments.contactName.error.required = Enter name of the person or team we should contact for this repayment request
 repayments.contactName.error.length = Name of the contact person or team must be 160 characters or less
 
 repayments.contactEmail.title = What is the email address?
 repayments.contactEmail.heading = What is the email address for {0}?
-repayments.contactEmail.hint = We will only use this to contact you about this refund request.
+repayments.contactEmail.hint = We will only use this to contact you about this repayment request.
 repayments.contactEmail.error.contactEmail.required = Enter an email address for {0}
 repayments.contactEmail.error.contactEmail.length = Email address must be 100 characters or less
 repayments.contactEmail.error.contactEmail.format = Enter an email address in the correct format, like name@example.com
@@ -1398,22 +1398,22 @@ repayments.bankDetails.p2.link = try again with a different business bank accoun
 repayments.accountNameConfirm.title = Do you want to continue with these bank details?
 repayments.accountNameConfirm.heading = Do you want to continue with these bank details?
 repayments.accountNameConfirm.subheading = This account belongs to {0}
-repayments.accountNameConfirm.p1 = Is this who you want the refund to be sent to? If not, check the account details on your bank statement and try again.
+repayments.accountNameConfirm.p1 = Is this who you want the repayment to be sent to? If not, check the account details on your bank statement and try again.
 repayments.accountNameConfirm.p2 = We may not be able to recover your money if it goes to the wrong account.
 repayments.accountNameConfirm.error.required = Enter if you want to continue with these bank details?
 
 repayments.contactByTelephone.title = Can we contact by telephone?
 repayments.contactByTelephone.heading = Can we contact {0} by telephone?
-repayments.contactByTelephone.hint = We will only use this to contact you about this refund request.
+repayments.contactByTelephone.hint = We will only use this to contact you about this repayment request.
 repayments.contactByTelephone.error.required = Select yes if we can contact {0} by telephone
 
 repayments.telephoneDetails.heading.caption = Contact details
 
-repayments.incompleteDataView.title = Refund request has missing information
-repayments.incompleteDataView.heading = Refund request has missing information
+repayments.incompleteDataView.title = Repayment request has missing information
+repayments.incompleteDataView.heading = Repayment request has missing information
 repayments.incompleteDataView.paragraphStart = You need to
 repayments.incompleteDataView.link.text = go back and complete all the required answers
-repayments.incompleteDataView.paragraphStop = before submitting your refund request.
+repayments.incompleteDataView.paragraphStop = before submitting your repayment request.
 
 repayments.journeyRecovery.title = Sorry, there is a problem with the service
 repayments.journeyRecovery.heading = Sorry, there is a problem with the service
@@ -1444,33 +1444,33 @@ rfmConfirmation.link-home = report and manage your group''s Pillar 2 Top-up Taxe
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
-reasonForRequestingRefund.title = Why are you requesting a refund?
-reasonForRequestingRefund.heading = Why are you requesting a refund?
-reasonForRequestingRefund.error.required = Enter why you are requesting a refund
-reasonForRequestingRefund.error.hint = For example, if there is an amount leftover after a payment was made for an obligation.
-reasonForRequestingRefund.error.length = Reason for refund request must be 250 characters or less
-reasonForRequestingRefund.error.xss = The reason for your refund request you enter must not include the following characters <, >, " or &
+reasonForRequestingRepayment.title = Why are you requesting a repayment?
+reasonForRequestingRepayment.heading = Why are you requesting a repayment?
+reasonForRequestingRepayment.error.required = Enter why you are requesting a repayment
+reasonForRequestingRepayment.error.hint = For example, if there is an amount leftover after a payment was made for an obligation.
+reasonForRequestingRepayment.error.length = Reason for repayment request must be 250 characters or less
+reasonForRequestingRepayment.error.xss = The reason for your repayment request you enter must not include the following characters <, >, " or &
 
-ukOrAbroadBankAccount.title = What type of account will the refund be sent to?
-ukOrAbroadBankAccount.heading = What type of account will the refund be sent to?
+ukOrAbroadBankAccount.title = What type of account will the repayment be sent to?
+ukOrAbroadBankAccount.heading = What type of account will the repayment be sent to?
 ukOrAbroadBankAccount.ukBankAccount = UK bank account
 ukOrAbroadBankAccount.nonUkBankAccount = Non-UK bank account
-ukOrAbroadBankAccount.checkYourAnswersLabel = What type of account will the refund be sent to?
-ukOrAbroadBankAccount.error.required = Select what type of account the refund will be sent to
-ukOrAbroadBankAccount.change.hidden = what type of account will the refund be sent to?
+ukOrAbroadBankAccount.checkYourAnswersLabel = What type of account will the repayment be sent to?
+ukOrAbroadBankAccount.error.required = Select what type of account the repayment will be sent to
+ukOrAbroadBankAccount.change.hidden = what type of account will the repayment be sent to?
 
 
-repaymentsCheckYourAnswers.heading = Check your answers before submitting your refund request
-repaymentsCheckYourAnswers.title = Check your answers before submitting your refund request
+repaymentsCheckYourAnswers.heading = Check your answers before submitting your repayment request
+repaymentsCheckYourAnswers.title = Check your answers before submitting your repayment request
 repaymentsCheckYourAnswers.request-details.h2 = Request details
 repaymentsCheckYourAnswers.bank.account-details.h2 = Bank account details
 repaymentsCheckYourAnswers.bank.contact-details.h2 = Contact details
-repaymentsCheckYourAnswers.bank.submit-details.h2 = Now submit your details to request for a refund
+repaymentsCheckYourAnswers.bank.submit-details.h2 = Now submit your details to request for a repayment
 repaymentsCheckYourAnswers.bank.submit-p1 = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
-requestRefundAmount.checkYourAnswersLabel = Refund amount
-requestRefundAmount.change.hidden = the refund amount
-reasonForRequestingRefund.checkYourAnswersLabel = Reason for refund request
-reasonForRequestingRefund.change.hidden = the reason for the refund request
+requestRepaymentAmount.checkYourAnswersLabel = Repayment amount
+requestRepaymentAmount.change.hidden = the repayment amount
+reasonForRequestingRepayment.checkYourAnswersLabel = Reason for repayment request
+reasonForRequestingRepayment.change.hidden = the reason for the repayment request
 
 repaymentsContactName.checkYourAnswersLabel = Contact name
 repaymentsContactName.change.hidden = the contact name
@@ -1488,11 +1488,11 @@ repayments.confirmation.heading = What happens next
 repayments.confirmation.paragraph = We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided.
 repayments.confirmation.back = Back to group homepage
 
-repayments.refundErrorConfirmation.title = You cannot return, your refund request is complete
-repayments.refundErrorConfirmation.heading = You cannot return, your refund request is complete
-repayments.refundErrorConfirmation.paragraphOne = You have successfully submitted your refund request.
-repayments.refundErrorConfirmation.paragraphTwo = You can return to
-repayments.refundErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 Top-up Taxes
+repayments.repaymentErrorConfirmation.title = You cannot return, your repayment request is complete
+repayments.repaymentErrorConfirmation.heading = You cannot return, your repayment request is complete
+repayments.repaymentErrorConfirmation.paragraphOne = You have successfully submitted your repayment request.
+repayments.repaymentErrorConfirmation.paragraphTwo = You can return to
+repayments.repaymentErrorConfirmation.paragraphTwo.link = report and manage your Pillar 2 Top-up Taxes
 
 repayments.bank-account-details.title = Bank account details
 repayments.bank-account-details.heading = Bank account details
@@ -1528,9 +1528,9 @@ registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration
 registrationWaitingRoom.h2 = Do not leave this page.
 
-repaymentsWaitingRoom.title = Submitting your refund request
-repaymentsWaitingRoom.heading = Submitting your refund request
-repaymentsWaitingRoom.h1 = Submitting your refund request
+repaymentsWaitingRoom.title = Submitting your repayment request
+repaymentsWaitingRoom.heading = Submitting your repayment request
+repaymentsWaitingRoom.h1 = Submitting your repayment request
 repaymentsWaitingRoom.h2 = Do not leave this page.
 
 manageGroupDetails.title = Submitting your group details
@@ -1556,7 +1556,7 @@ transactionHistory.p4 = page.
 transactionHistory.date = Date
 transactionHistory.description = Transaction description
 transactionHistory.amountPaid = You paid HMRC
-transactionHistory.amountRefunded = HMRC paid you
+transactionHistory.amountRepaid = HMRC paid you
 transactionHistory.pagination.next = Next
 transactionHistory.pagination.previous = Previous
 
