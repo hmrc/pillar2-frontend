@@ -76,6 +76,7 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockAgentAccessFilterAction:                    AgentAccessFilterAction                    = mock[AgentAccessFilterAction]
   val mockBTNService:                                 BTNService                                 = mock[BTNService]
   val mockBTNConnector:                               BTNConnector                               = mock[BTNConnector]
+  val mockObligationsAndSubmissionsConnector:         ObligationsAndSubmissionsConnector         = mock[ObligationsAndSubmissionsConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -99,6 +100,10 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockEnrolmentStoreProxyConnector,
       mockAuditService,
       mockEnrolmentConnector,
-      mockSessionRepository
+      mockSessionRepository,
+      mockAgentAccessFilterAction,
+      mockBTNService,
+      mockBTNConnector,
+      mockObligationsAndSubmissionsConnector
     ).foreach(Mockito.reset(_))
 }
