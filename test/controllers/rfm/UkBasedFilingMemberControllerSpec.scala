@@ -41,8 +41,8 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[UkBasedFilingMemberView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[UkBasedFilingMemberView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
@@ -55,8 +55,8 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url)
-        val result = route(application, request).value
-        val view = application.injector.instanceOf[UkBasedFilingMemberView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[UkBasedFilingMemberView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider().fill(true), NormalMode)(request, applicationConfig, messages(application)).toString
