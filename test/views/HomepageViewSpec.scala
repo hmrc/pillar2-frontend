@@ -18,9 +18,8 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.twirl.api.TwirlHelperImports.twirlJavaCollectionToScala
 import views.html.HomepageView
 
 import java.time.LocalDate
@@ -51,7 +50,6 @@ class HomepageViewSpec extends ViewSpecBase {
   lazy val btnUrl: String = s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes/below-threshold-notification/start"
 
   "HomepageView for a group" should {
-
     "have a title" in {
       organisationView.title() mustBe pageTitle
     }
@@ -63,17 +61,16 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display organisation information correctly" in {
-      val infoText = organisationView.getElementsByClass("govuk-body").first().text()
-      infoText mustBe s"Group: $organisationName"
-      infoText mustBe s"ID: $plrRef"
+      val infoText: String = organisationView.getElementsByClass("govuk-body").first().text()
+      infoText mustBe s"Group: $organisationName ID: $plrRef"
     }
 
     "display returns card with correct content" in {
-      val returnsCard = organisationView.getElementsByClass("card-half-width").first()
+      val returnsCard: Element  = organisationView.getElementsByClass("card-half-width").first()
+      val links:       Elements = returnsCard.getElementsByTag("a")
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
-      val links = returnsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View all due and overdue returns"
       links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
       links.get(1).text() mustBe "View submission history"
@@ -81,45 +78,57 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = organisationView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard:      Element  = organisationView.getElementsByClass("card-half-width").get(1)
+      val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
-      val links = paymentsCard.getElementsByTag("a")
-      links.get(0).text() mustBe "View transaction history"
-      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe controllers.routes.TransactionHistoryController
-        .onPageLoadTransactionHistory(None)
-        .url
-      links.get(1).text() mustBe "View outstanding payments"
-      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
-      links.get(2).text() mustBe "Request a repayment"
-      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+      paymentsCardLinks.get(0).text() mustBe "View transaction history"
+      paymentsCardLinks.get(0).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+
+      paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+      paymentsCardLinks.get(1).attr("href") mustBe
+        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+      paymentsCardLinks.get(2).text() mustBe "Request a repayment"
+      paymentsCardLinks.get(2).attr("href") mustBe
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
-      val manageCard  = organisationView.getElementsByClass("card-full-width").first()
-      val manageLinks = manageCard.getElementsByTag("a")
+      // FIXME: use an ID or a class to target the Manage Account card instead of the generic "card-full-width"
+      val manageCard:          Element  = organisationView.getElementsByClass("card-full-width").first()
+      val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
+      val manageCardHelpTexts: Elements = manageCard.select(".govuk-list p")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
-      manageCard.text() mustBe s"Registration date: $date"
+      manageCard.getElementsByClass("govuk-body").first().text() mustBe s"Registration date: $date"
 
       val links = manageCard.getElementsByTag("a")
-      links.exists(_.text() == "Manage contact details") mustBe true
-      manageLinks.get(0).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
-      links.exists(_.text() == "Manage group details") mustBe true
-      manageLinks.get(1).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
-      links.exists(_.text() == "Replace filing member") mustBe true
-      manageLinks.get(2).attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
-      links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
-      manageLinks.get(3).attr("href") mustBe btnUrl
-    }
 
-    "display correct help text" in {
-      val manageCard = organisationView.getElementsByClass("card-full-width").first()
-      manageCard.text() mustBe "Edit the details we use to contact you about Pillar 2 Top-up Taxes."
-      manageCard.text() mustBe "Amend your group's accounting period or update changes to your entity's locations."
-      manageCard.text() mustBe "Change the filing member for your group's Pillar 2 Top-up Taxes account."
-      manageCard.text() mustBe
+      manageCardLinks.get(0).text() mustBe "Manage contact details"
+      manageCardLinks.get(0).attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      manageCardHelpTexts.get(0).text() mustBe
+        "Edit the details we use to contact you about Pillar 2 Top-up Taxes."
+
+      manageCardLinks.get(1).text() mustBe "Manage group details"
+      manageCardLinks.get(1).attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+      manageCardHelpTexts.get(1).text() mustBe
+        "Amend your group's accounting period or update changes to your entity's locations."
+
+      manageCardLinks.get(2).text() mustBe "Replace filing member"
+      manageCardLinks.get(2).attr("href") mustBe
+        controllers.rfm.routes.StartPageController.onPageLoad.url
+      manageCardHelpTexts.get(2).text() mustBe
+        "Change the filing member for your group's Pillar 2 Top-up Taxes account."
+
+      manageCardLinks.get(3).text() mustBe "Submit a Below-Threshold Notification"
+      manageCardLinks.get(3).attr("href") mustBe
+        btnUrl
+      manageCardHelpTexts.get(3).text() mustBe
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
     }
 
@@ -234,17 +243,16 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display organisation information correctly" in {
-      val infoText = agentView.getElementsByClass("govuk-body").first().text()
-      infoText mustBe s"Group: $organisationName"
-      infoText mustBe s"ID: $plrRef"
+      val infoText: String = agentView.getElementsByClass("govuk-body").first().text()
+      infoText mustBe s"Group: $organisationName ID: $plrRef"
     }
 
     "display returns card with correct content" in {
-      val returnsCard = agentView.getElementsByClass("card-half-width").first()
+      val returnsCard: Element  = agentView.getElementsByClass("card-half-width").first()
+      val links:       Elements = returnsCard.getElementsByTag("a")
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
-      val links = returnsCard.getElementsByTag("a")
       links.get(0).text() mustBe "View all due and overdue returns"
       links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
       links.get(1).text() mustBe "View submission history"
@@ -252,7 +260,7 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display payments card with correct content" in {
-      val paymentsCard = agentView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard: Element = agentView.getElementsByClass("card-half-width").get(1)
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
@@ -268,29 +276,38 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display manage account card with correct content" in {
-      val manageCard  = agentView.getElementsByClass("card-full-width").first()
-      val manageLinks = manageCard.getElementsByTag("a")
+      // FIXME: use an ID or a class to target the Manage Account card instead of the generic "card-full-width"
+      val manageCard:          Element  = agentView.getElementsByClass("card-full-width").first()
+      val manageCardListItems: Elements = manageCard.getElementsByTag("li")
+      val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
+      val manageCardHelpTexts: Elements = manageCard.select(".govuk-list p")
 
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
-      manageCard.text() mustBe s"Registration date: $date"
+      manageCard.getElementsByClass("govuk-body").first().text() mustBe s"Registration date: $date"
 
-      val links = manageCard.getElementsByTag("a")
-      links.exists(_.text() == "Manage contact details") mustBe true
-      manageLinks.get(0).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
-      links.exists(_.text() == "Manage group details") mustBe true
-      manageLinks.get(1).attr("href") mustBe controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
-      links.exists(_.text() == "Replace filing member") mustBe false
-      links.exists(_.text() == "Submit a Below-Threshold Notification") mustBe true
-      manageLinks.get(2).attr("href") mustBe btnUrl
-      manageLinks.size() mustEqual 3
-    }
+      manageCardLinks.get(0).text() mustBe "Manage contact details"
+      manageCardLinks.get(0).attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      manageCardHelpTexts.get(0).text() mustBe
+        "Edit the details we use to contact your client about Pillar 2 Top-up Taxes."
 
-    "display correct help text" in {
-      val manageCard = agentView.getElementsByClass("card-full-width").first()
-      manageCard.text() mustBe "Edit the details we use to contact your client about Pillar 2 Top-up Taxes."
-      manageCard.text() mustBe "Amend your client's accounting period or update changes to entity locations."
-      manageCard.text() mustBe "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."
-      manageCard.text() mustBe "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
+      manageCardLinks.get(1).text() mustBe "Manage group details"
+      manageCardLinks.get(1).attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+      manageCardHelpTexts.get(1).text() mustBe
+        "Amend your client's accounting period or update changes to entity locations."
+
+      // This list item has no active link yet
+      // FIXME: Remove the `<b>` tag from the view
+      manageCardListItems.get(2).getElementsByTag("b").first().text() mustBe "Replace filing member"
+      manageCardHelpTexts.get(2).text() mustBe
+        "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."
+
+      manageCardLinks.get(2).text() mustBe "Submit a Below-Threshold Notification"
+      manageCardLinks.get(2).attr("href") mustBe
+        btnUrl
+      manageCardHelpTexts.get(3).text() mustBe
+        "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
     }
 
     "have correct structure" in {
@@ -326,13 +343,13 @@ class HomepageViewSpec extends ViewSpecBase {
 
   "HomepageView layout" should {
     "have correct structure" in {
-      val cardGroup = organisationView.getElementsByClass("card-group")
+      val cardGroup: Elements = organisationView.getElementsByClass("card-group")
       cardGroup.size() mustBe 1
 
-      val mainCards = organisationView.getElementsByClass("card-half-width")
+      val mainCards: Elements = organisationView.getElementsByClass("card-half-width")
       mainCards.size() mustBe 2
 
-      val fullWidthCards = organisationView.getElementsByClass("card-full-width")
+      val fullWidthCards: Elements = organisationView.getElementsByClass("card-full-width")
       fullWidthCards.size() mustBe 1
     }
 

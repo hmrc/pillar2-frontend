@@ -25,8 +25,8 @@ import views.html.repayments.RepaymentsWaitingRoomView
 
 class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page:           RepaymentsWaitingRoomView = inject[RepaymentsWaitingRoomView]
-  val view:           Document                  = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val page:      RepaymentsWaitingRoomView = inject[RepaymentsWaitingRoomView]
+  lazy val view:      Document                  = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
   lazy val pageTitle: String                    = "Submitting your refund request"
 
   "Repayments Waiting Room View" should {
@@ -42,7 +42,7 @@ class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text mustBe "Do not leave this page."
+      view.getElementsByTag("h2").first().text() mustBe "Do not leave this page."
     }
 
   }

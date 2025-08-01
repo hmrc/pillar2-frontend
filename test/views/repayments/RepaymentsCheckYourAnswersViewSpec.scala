@@ -111,7 +111,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a summary list items" in {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
 
-      summaryListItems.get(0).text mustBe amount.toString()
+      summaryListItems.get(0).text mustBe s"£$amount"
       summaryListItems.get(1).text mustBe "answer for reason"
       summaryListItems.get(2).text mustBe "Non-UK bank account"
       summaryListItems.get(3).text mustBe "BankName"
@@ -127,8 +127,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a summary list links" in {
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
 
-      summaryListActions.get(0).text mustBe "Change"
-      summaryListActions.get(1).text mustBe "Change"
+      summaryListActions.get(0).text mustBe "Change the repayment amount"
+      summaryListActions.get(1).text mustBe "Change the reason for the repayment request"
     }
 
     "have a button" in {

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package views.subscription.manageAccount
+package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import models.subscription.ManageGroupDetailsStatus.SuccessfullyCompleted
@@ -42,7 +42,8 @@ class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text mustBe "Do not press back in your browser or leave this page."
+      view.getElementsByTag("h2").first().text mustBe "Do not press back in your browser or leave this page. " +
+        "It may take up to a minute to process this change."
     }
 
   }

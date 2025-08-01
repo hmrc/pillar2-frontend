@@ -39,7 +39,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
 
   when(mockCountryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
 
-  lazy val list: SummaryList = SummaryListViewModel(
+  val list: SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmNameRegistrationSummary.row(userAnswer)(messages),
       RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(messages)
@@ -65,8 +65,6 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
-
-    println(view.getElementsByClass("govuk-summary-list"))
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")

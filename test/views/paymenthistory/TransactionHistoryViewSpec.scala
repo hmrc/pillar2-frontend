@@ -18,7 +18,7 @@ package views.paymenthistory
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import uk.gov.hmrc.govukfrontend.views.Aliases._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
@@ -34,10 +34,10 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     ),
     head = Some(
       Seq(
-        HeadCell(Text(messages("transactionHistory.date"))), // FIXME
-        HeadCell(Text(messages("transactionHistory.description"))), // FIXME
-        HeadCell(Text(messages("transactionHistory.amountPaid"))), // FIXME
-        HeadCell(Text(messages("transactionHistory.amountRepaid"))) // FIXME
+        HeadCell(Text("Date")),
+        HeadCell(Text("Transaction description")),
+        HeadCell(Text("You paid HMRC")),
+        HeadCell(Text("HMRC paid you"))
       )
     )
   )
@@ -46,14 +46,44 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     Pagination(
       Some(
         Vector(
-          PaginationItem("/report-pillar2-top-up-taxes/payment/history?page=1", Some("1"), None, Some(true), None, Map()),
-          PaginationItem("/report-pillar2-top-up-taxes/payment/history?page=2", Some("2"), None, Some(false), None, Map()),
-          PaginationItem("/report-pillar2-top-up-taxes/payment/history?page=3", Some("3"), None, Some(false), None, Map()),
-          PaginationItem("/report-pillar2-top-up-taxes/payment/history?page=4", Some("4"), None, Some(false), None, Map())
+          PaginationItem(
+            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(1)).url,
+            Some("1"),
+            None,
+            Some(true),
+            None,
+            Map()
+          ),
+          PaginationItem(
+            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url,
+            Some("2"),
+            None,
+            Some(false),
+            None,
+            Map()
+          ),
+          PaginationItem(
+            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(3)).url,
+            Some("3"),
+            None,
+            Some(false),
+            None,
+            Map()
+          ),
+          PaginationItem(
+            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(4)).url,
+            Some("4"),
+            None,
+            Some(false),
+            None,
+            Map()
+          )
         )
       ),
       None,
-      Some(PaginationLink("/report-pillar2-top-up-taxes/payment/history?page=2", Some("Next"), None, Map())),
+      Some(
+        PaginationLink(controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url, Some("Next"), None, Map())
+      ),
       None,
       "",
       Map()
@@ -77,49 +107,61 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "have correct paragraph 1 for a group" in {
-      groupView.getElementsByClass("govuk-body").text mustBe
-        "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
+    "have correct paragraphs for a group" in {
+      val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
+
+      groupViewParagraphs.get(0).text() mustBe "You can find all transactions made by your group during this " +
+        "accounting period and the previous 6 accounting periods."
+      groupViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
+        "each transaction."
     }
 
-    "have correct paragraph 1 for an agent" in {
-      agentView.getElementsByClass("govuk-body").text mustBe
-        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
-    }
+    "have correct paragraphs for an agent" in {
+      val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-    "have correct paragraph 2" in {
-      groupView.getElementsByClass("govuk-body").text mustBe
-        "It will take up to 5 working days for payments to appear after each transaction."
+      agentViewParagraphs.get(0).text() mustBe "You can find all transactions made by your client during this " +
+        "accounting period and the previous 6 accounting periods."
+      agentViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
+        "each transaction."
     }
 
     "have a table" in {
-      val tableHeaders = groupView.getElementsByClass("govuk-table__header")
+      val tableElements: Elements = groupView.select("table.govuk-table")
+      tableElements.size() mustBe 1
 
-      tableHeaders.first().text mustBe "Date"
+      val table: Element = tableElements.first()
+
+      val tableHeaders: Elements = table.getElementsByClass("govuk-table__header")
+      tableHeaders.get(0).text mustBe "Date"
       tableHeaders.get(1).text mustBe "Transaction description"
       tableHeaders.get(2).text mustBe "You paid HMRC"
       tableHeaders.get(3).text mustBe "HMRC paid you"
 
-      (1 to 3).foreach { int =>
-        val tableRow = groupView.getElementsByClass("govuk-table__row").get(int).getElementsByClass("govuk-table__cell")
-        tableRow.first().text mustBe "1 July 2024"
-        tableRow.get(1).text mustBe "Payment"
-        tableRow.get(2).text mustBe "£-5000.00"
-        tableRow.get(3).text mustBe "£0.00"
+      val tableBodyRows: Elements = table.getElementsByClass("govuk-table__body").first().getElementsByClass("govuk-table__row")
+      tableBodyRows.forEach { row =>
+        val rowCells: Elements = row.getElementsByClass("govuk-table__cell")
+        rowCells.get(0).text() mustBe "1 July 2024"
+        rowCells.get(1).text() mustBe "Payment"
+        rowCells.get(2).text() mustBe "£-5000.00"
+        rowCells.get(3).text() mustBe "£0.00"
       }
     }
 
     "have pagination" in {
-      val link = groupView.getElementsByClass("govuk-link govuk-pagination__link")
+      val paginationLinks: Elements = groupView.getElementsByClass("govuk-link govuk-pagination__link")
 
-      link.first().text mustBe "1"
-      link.first().attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=1" // FIXME
-      link.get(1).text mustBe "2"
-      link.get(1).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=2"
-      link.get(2).text mustBe "3"
-      link.get(2).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=3"
-      link.get(3).text mustBe "4"
-      link.get(3).attr("href") mustBe "/report-pillar2-top-up-taxes/payment/history?page=4"
+      paginationLinks.get(0).text mustBe "1"
+      paginationLinks.get(0).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(1)).url
+      paginationLinks.get(1).text mustBe "2"
+      paginationLinks.get(1).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url
+      paginationLinks.get(2).text mustBe "3"
+      paginationLinks.get(2).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(3)).url
+      paginationLinks.get(3).text mustBe "4"
+      paginationLinks.get(3).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(4)).url
     }
   }
 }
