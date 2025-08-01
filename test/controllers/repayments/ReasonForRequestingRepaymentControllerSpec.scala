@@ -129,5 +129,36 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
       }
     }
 
+    "must display character limit text when long text is entered" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("250 characters")
+      }
+    }
+
+    "must display pre-populated repayment reason field when previously answered" in {
+      val longText =
+        "A content designer works on the end-to-end journey of a service to help users complete their goal and government deliver a policy intent. Their work may involve the creation of, or change to, a transaction, product or single piece of content."
+      val userAnswers = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, longText).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include(longText)
+      }
+    }
+
   }
 }

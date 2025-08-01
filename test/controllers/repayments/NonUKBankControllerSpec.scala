@@ -102,5 +102,24 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show specific error message for invalid BIC/SWIFT code" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.NonUKBankController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "bankName"          -> "HSBC",
+              "nameOnBankAccount" -> "HMRC Shipley",
+              "bic"               -> "0BCDEF01A1C",
+              "iban"              -> "ErrorMessageIBANMustBeUpto34Characters"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter a valid BIC or SWIFT code like HBUKGB4B")
+        contentAsString(result) must include("IBAN must be up to 34 characters")
+      }
+    }
+
   }
 }

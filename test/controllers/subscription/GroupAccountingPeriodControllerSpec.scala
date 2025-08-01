@@ -193,5 +193,371 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
+
+    "must return Bad Request and show specific error message when both start and end date are missing" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date is before minimum" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "30",
+              "startDate.month" -> "12",
+              "startDate.year"  -> "2023",
+              "endDate.day"     -> "31",
+              "endDate.month"   -> "12",
+              "endDate.year"    -> "2023"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must be on or after 31 December 2023")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date is before start date" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "15",
+              "startDate.month" -> "1",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "14",
+              "endDate.month"   -> "1",
+              "endDate.year"    -> "2024"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("End date must be after the start date")
+      }
+    }
+
+    "must return Bad Request and show specific error message when dates are invalid" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "1",
+              "startDate.month" -> "15",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "12",
+              "endDate.month"   -> "20",
+              "endDate.year"    -> "2024"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must be a real date")
+        contentAsString(result) must include("End date must be a real date")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing month and year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "30",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a month and year")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing day and year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "01",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a day and year")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing day and month" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a day and month")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing only day" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "12",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a day")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing only month" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "10",
+              "startDate.month" -> "",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a month")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when start date missing only year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "10",
+              "startDate.month" -> "12",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must include a year")
+        contentAsString(result) must include("Enter the end date of the group’s accounting period")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing month and year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "12",
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a month and year")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing day and year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "10",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a day and year")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing day and month" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "",
+              "endDate.year"    -> "2024"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a day and month")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing only day" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "",
+              "endDate.month"   -> "10",
+              "endDate.year"    -> "2024"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a day")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing only month" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "40",
+              "endDate.month"   -> "",
+              "endDate.year"    -> "2024"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a month")
+      }
+    }
+
+    "must return Bad Request and show specific error message when end date missing only year" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "",
+              "startDate.month" -> "",
+              "startDate.year"  -> "",
+              "endDate.day"     -> "40",
+              "endDate.month"   -> "10",
+              "endDate.year"    -> ""
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the start date of the group’s accounting period")
+        contentAsString(result) must include("End date must include a year")
+      }
+    }
   }
 }

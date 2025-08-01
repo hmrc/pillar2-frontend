@@ -151,6 +151,29 @@ class CorporatePositionControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
       }
     }
+
+    "must return Bad Request and show specific error message when no option is selected" in {
+      val ua = emptyUserAnswers
+        .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
+        .setOrException(RfmRegistrationDatePage, LocalDate.now())
+      val application = applicationBuilder(userAnswers = None)
+        .overrides(
+          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
+        val request =
+          FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select if you are the Ultimate Parent Entity or a new nominated filing member")
+      }
+    }
     "redirect to journey recovery if no data is found in sessionRepository or the BE database" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(

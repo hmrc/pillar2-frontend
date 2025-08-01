@@ -95,6 +95,53 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show error message when email address is missing" in {
+      val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("emailAddress", ""))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the email address for NFM Contact")
+      }
+    }
+
+    "must return Bad Request and show error message when email format is incorrect" in {
+      val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("emailAddress", "incorrect email"))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter an email address in the correct format, like name@example.com")
+      }
+    }
+
+    "must return Bad Request and show error message when email is too long" in {
+      val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val longEmail =
+          "NFMNameCharacterLengthErrorValidation@andMaximumNFMCharacterLengthShouldBeEnteredMoreThanOneHundredThirtyTwoCharactersForEmailTextField.com"
+        val request =
+          FakeRequest(POST, controllers.fm.routes.NfmEmailAddressController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("emailAddress", longEmail))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Email address must be 132 characters or less")
+      }
+    }
+
     "redirect to book mark page if no contact name is found for GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()

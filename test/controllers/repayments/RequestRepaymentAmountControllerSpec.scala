@@ -140,5 +140,21 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         ).toString
       }
     }
+
+    "must display pre-populated refund amount field when previously answered" in {
+      val amount = BigDecimal(9999.99)
+      val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(ua)))
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("9999.99")
+      }
+    }
   }
 }

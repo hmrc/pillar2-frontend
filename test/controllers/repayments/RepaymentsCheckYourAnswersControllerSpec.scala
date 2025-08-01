@@ -93,6 +93,76 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
         }
       }
+
+      "display specific row values in check your answers summary for Non-UK bank account" in {
+        val userAnswer = UserAnswers("id")
+        val completeData = emptyUserAnswers
+          .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
+          .setOrException(ReasonForRequestingRefundPage, "Test Reason")
+          .setOrException(UkOrAbroadBankAccountPage, models.UkOrAbroadBankAccount.ForeignBankAccount)
+          .setOrException(NonUKBankPage, models.repayments.NonUKBank("HSBC2", "Test Name2", Some("HBUKGB4C"), Some("GB29NWBK60161331926820")))
+          .setOrException(RepaymentsContactNamePage, "Repayment Contact Name change")
+          .setOrException(RepaymentsContactEmailPage, "email@change.com")
+          .setOrException(RepaymentsContactByTelephonePage, false)
+
+        val application = applicationBuilder(userAnswers = Some(completeData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("£1000")
+          contentAsString(result) must include("Test Reason")
+          contentAsString(result) must include("Non-UK bank account")
+          contentAsString(result) must include("HSBC2")
+          contentAsString(result) must include("Test Name2")
+          contentAsString(result) must include("HBUKGB4C")
+          contentAsString(result) must include("GB29NWBK60161331926820")
+          contentAsString(result) must include("Repayment Contact Name change")
+          contentAsString(result) must include("email@change.com")
+          contentAsString(result) must include("No")
+        }
+      }
+
+      "display specific row values in check your answers summary for UK bank account" in {
+        val userAnswer = UserAnswers("id")
+        val completeData = emptyUserAnswers
+          .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
+          .setOrException(ReasonForRequestingRefundPage, "Test Reason")
+          .setOrException(UkOrAbroadBankAccountPage, models.UkOrAbroadBankAccount.UkBankAccount)
+          .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611"))
+          .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
+          .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
+          .setOrException(RepaymentsContactByTelephonePage, true)
+          .setOrException(RepaymentsTelephoneDetailsPage, "789765423")
+
+        val application = applicationBuilder(userAnswers = Some(completeData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+
+        running(application) {
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val result  = route(application, request).value
+          status(result) mustEqual OK
+          contentAsString(result) must include("£1000")
+          contentAsString(result) must include("Test Reason")
+          contentAsString(result) must include("UK bank account")
+          contentAsString(result) must include("Natwest")
+          contentAsString(result) must include("Epic Adventure Inc")
+          contentAsString(result) must include("206705")
+          contentAsString(result) must include("86473611")
+        }
+      }
     }
 
     "on submit method" should {
