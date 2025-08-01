@@ -56,14 +56,12 @@ class RepaymentsWaitingRoomController @Inject() (
           _              <- sessionRepository.set(updatedAnswers)
         } yield Ok(view(s))
       case (Some(SuccessfullyCompleted), Some(true)) =>
-        println("***Successfully Completed***")
         Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(submissionTimestamp)))
       case (Some(UnexpectedResponseError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
       case (Some(IncompleteDataError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
       case (s, _) =>
-        println("***Back to waiting Room***")
         Future.successful(Ok(view(s)))
     }
 
