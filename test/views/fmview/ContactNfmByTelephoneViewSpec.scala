@@ -41,19 +41,19 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must equal("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must equal("Can we contact Contact CYA by telephone?")
+      view.getElementsByTag("h1").text mustBe "Can we contact Contact CYA by telephone?"
     }
 
     "have hint text" in {
-      view.getElementsByClass("govuk-hint").text must equal("We will use this to confirm your records.")
+      view.getElementsByClass("govuk-hint").text mustBe "We will use this to confirm your records."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
