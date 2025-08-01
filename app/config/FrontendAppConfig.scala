@@ -30,8 +30,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val host:    String = configuration.get[String]("host")
   val appName: String = configuration.get[String]("appName")
 
-  val asaAccessEnabled: Boolean = configuration.get[Boolean]("features.asaAccessEnabled")
-
   private def loadConfig(key: String): String =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
 

@@ -170,6 +170,7 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def cannotReturnKnockback: Action[AnyContent] =
-    identify(implicit request => BadRequest(cannotReturnView()))
+  def cannotReturnKnockback: Action[AnyContent] = (identify andThen checkPhase2Screens) { implicit request =>
+    BadRequest(cannotReturnView())
+  }
 }

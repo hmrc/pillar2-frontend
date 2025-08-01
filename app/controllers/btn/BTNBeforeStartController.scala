@@ -40,7 +40,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNBeforeStartController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNBeforeStartView,
-  agentAccess:                            AgentAccessFilterAction,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
@@ -53,7 +52,7 @@ class BTNBeforeStartController @Inject() (
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen agentAccess andThen getData andThen requireData).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
       implicit val hc: HeaderCarrier =
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       (

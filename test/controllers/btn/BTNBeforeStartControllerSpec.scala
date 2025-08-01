@@ -18,7 +18,6 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.AgentAccessFilterAction
 import models.NormalMode
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
@@ -27,7 +26,6 @@ import org.mockito.Mockito.when
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
-import play.api.mvc.AnyContent
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import services.ObligationsAndSubmissionsService
@@ -48,117 +46,92 @@ class BTNBeforeStartControllerSpec extends SpecBase {
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
     .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
-      bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
     )
     .build()
 
   "BTNBeforeStartController" must {
-    "redirect to unauthorised page when AgentAccessFilterAction returns a request block/redirect" in {
+
+    "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
       running(application) {
-        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
-        when(mockAgentAccessFilterAction.filter[AnyContent](any()))
-          .thenReturn(Future.successful(Some(Redirect(controllers.routes.UnauthorisedController.onPageLoad))))
-
-        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.UnauthorisedController.onPageLoad.url
-      }
-    }
-
-    "allow access to start page when AgentAccessFilterAction check passes" which {
-      "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
-        running(application) {
-          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
-          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
-          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(subscriptionData)))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
-
-          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          val view = application.injector.instanceOf[BTNBeforeStartView]
-
-          status(result) mustEqual OK
-
-          contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = false, NormalMode)(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
-        }
-      }
-
-      "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
-        when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
-        when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
         when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
         when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[BTNBeforeStartView]
 
-        status(result) mustBe OK
+        status(result) mustEqual OK
 
-        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
+        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = false, NormalMode)(
           request,
           applicationConfig,
           messages(application)
         ).toString
       }
+    }
 
-      "redirect to BTN error page when no subscription data is found" in {
-        def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
-          .configure("features.phase2ScreensEnabled" -> true)
-          .overrides(
-            bind[AgentAccessFilterAction].toInstance(mockAgentAccessFilterAction),
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
+    "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
+      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+      when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+        .thenReturn(Future.successful(Some(subscriptionData)))
+      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
-        running(application) {
-          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
-          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+      val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+      val result  = route(application, request).value
 
-          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-          val result  = route(application, request).value
+      val view = application.injector.instanceOf[BTNBeforeStartView]
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-        }
+      status(result) mustBe OK
+
+      contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
+        request,
+        applicationConfig,
+        messages(application)
+      ).toString
+    }
+
+    "redirect to BTN error page when no subscription data is found" in {
+      def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> true)
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
+
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
+    }
 
-      "redirect to BTN error page when no obligation data is found" in {
-        running(application) {
-          when(mockAgentAccessFilterAction.executionContext).thenReturn(scala.concurrent.ExecutionContext.global)
-          when(mockAgentAccessFilterAction.filter[AnyContent](any())).thenReturn(Future.successful(None))
-          when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(subscriptionData)))
-          when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-            .thenReturn(Future.failed(new Exception("Service failed")))
+    "redirect to BTN error page when no obligation data is found" in {
+      running(application) {
+        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+          .thenReturn(Future.failed(new Exception("Service failed")))
 
-          val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-          val result  = route(application, request).value
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-        }
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
     }
 

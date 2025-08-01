@@ -62,7 +62,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
         }
       }
 
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
+      "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(

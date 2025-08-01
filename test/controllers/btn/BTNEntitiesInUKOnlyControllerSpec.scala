@@ -185,7 +185,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
       }
     }
 
-    "must redirect to dashboard when phase2ScreensEnabled is false" in {
+    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
 
       def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> false)
@@ -199,6 +199,31 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
 
         val request = FakeRequest(GET, entitiesInUKOnlyRoute)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+      }
+    }
+
+    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+
+      def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> false)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
+        )
+        .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val request =
+          FakeRequest(POST, entitiesInUKOnlyRoute)
+            .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
