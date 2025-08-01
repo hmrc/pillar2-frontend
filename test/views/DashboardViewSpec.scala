@@ -255,7 +255,7 @@ class DashboardViewSpec extends ViewSpecBase {
 
       agentViewParagraphs.get(10).getElementsByTag("a").text() mustBe "Request a repayment"
       agentViewParagraphs.get(10).getElementsByTag("a").attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url // FIXME: is the renamed controller name ok? was RequestRefundBeforeStartController
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
 
       agentViewParagraphs.get(11).getElementsByTag("a").text() mustBe "View and amend contact details"
       agentViewParagraphs.get(11).getElementsByTag("a").attr("href") mustBe

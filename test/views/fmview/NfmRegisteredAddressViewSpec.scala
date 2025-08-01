@@ -178,7 +178,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
         errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
         errorsList.get(0).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
-        // FIXME: inconsistency in error messages regarding allowed characters - first field rejects "&" and the rest do no
+        // FIXME: inconsistency in error messages regarding allowed characters - first field rejects "&" and the rest do not
         errorsList.get(1).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         errorsList.get(2).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         errorsList.get(3).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
@@ -190,7 +190,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
-        // FIXME: inconsistency in error messages regarding allowed characters - first field rejects "&" and the rest do no
+        // FIXME: inconsistency in error messages regarding allowed characters - first field rejects "&" and the rest do not
         fieldErrors.get(1).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         fieldErrors.get(2).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         fieldErrors.get(3).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"

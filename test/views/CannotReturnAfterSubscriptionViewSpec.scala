@@ -49,24 +49,12 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
       val link = linkSection.getElementsByClass("govuk-link").first()
       link.text() mustBe "report and manage your Pillar 2 Top-up Taxes."
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
-    }
-  }
-
-  // FIXME: two tests are "identical"
-  "CannotReturnAfterSubscriptionView layout" should {
-    "have a title" in {
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
-      h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You cannot return, your registration is complete" // FIXME: inconsistency between title and H1
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "not display back link" in {
       view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
   }
+
 }

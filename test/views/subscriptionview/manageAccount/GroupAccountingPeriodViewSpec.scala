@@ -118,9 +118,9 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have start and end date legends" in {
-        val datesFieldsets = agentView.getElementsByClass("govuk-fieldset")
-        val startDateFieldset: Element = datesFieldsets.get(0)
-        val endDateFieldset:   Element = datesFieldsets.get(1)
+        val datesFieldsets:    Elements = agentView.getElementsByClass("govuk-fieldset")
+        val startDateFieldset: Element  = datesFieldsets.get(0)
+        val endDateFieldset:   Element  = datesFieldsets.get(1)
 
         startDateFieldset.getElementsByClass("govuk-fieldset__legend").text must equal("Start date")
         startDateFieldset.getElementById("startDate-hint").text             must equal("For example 27 3 2024")

@@ -65,9 +65,11 @@ class DuplicateSafeIdViewSpec extends ViewSpecBase {
     }
 
     "have radio items" in {
-      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-      radioButtonsLabels.get(0).text mustBe "Yes"
-      radioButtonsLabels.get(1).text mustBe "No"
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text mustBe "Yes"
+      radioButtons.get(1).text mustBe "No"
     }
 
     "have a button" in {

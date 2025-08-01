@@ -54,19 +54,19 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
       }
 
       "have radio items" in {
-        val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-        radioButtonsLabels.get(0).text mustBe "Yes"
-        radioButtonsLabels.get(1).text mustBe "No"
+        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text mustBe "Yes"
+        radioButtons.get(1).text mustBe "No"
       }
 
       "have a continue button" in {
         view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
-
     }
 
-    // TODO: add missing lenght and special chars tests
-    "nothing entered and page submitted" should {
+    "form is submitted with missing value" should {
       val errorView: Document = Jsoup.parse(
         page(
           formProvider.bind(
@@ -75,7 +75,7 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      "have an error summary" in {
+      "show a missing value error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
         errorSummaryElements.size() mustBe 1
 
@@ -86,12 +86,13 @@ class BusinessActivityUKViewSpec extends ViewSpecBase {
         errorsList.get(0).text() mustBe "Select yes if the group has an entity located in the UK"
       }
 
-      "show field-specific errors" in {
+      "show field-specific error" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Select yes if the group has an entity located in the UK"
       }
     }
+
   }
 
 }

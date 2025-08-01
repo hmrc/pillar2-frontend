@@ -85,10 +85,11 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
     }
 
     "have a radio options" in {
-      val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
 
-      radioButtonsLabels.get(0).text must equal("Only in the UK")
-      radioButtonsLabels.get(1).text must equal("In the UK and outside the UK")
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text must equal("Only in the UK")
+      radioButtons.get(1).text must equal("In the UK and outside the UK")
     }
 
     "have a button" in {

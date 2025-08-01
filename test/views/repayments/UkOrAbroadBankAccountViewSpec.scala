@@ -48,9 +48,11 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       }
 
       "have radio items" in {
-        val radioButtonsLabels: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
-        radioButtonsLabels.get(0).text mustBe "UK bank account"
-        radioButtonsLabels.get(1).text mustBe "Non-UK bank account"
+        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text mustBe "UK bank account"
+        radioButtons.get(1).text mustBe "Non-UK bank account"
       }
 
       "have a button" in {
@@ -58,7 +60,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
       }
     }
 
-    "nothing selected and page submitted" should { // FIXME: rename to form submitted with missing values
+    "form is submitted with missing value" should {
       val errorView: Document = Jsoup.parse(
         page(
           ukOrAbroadBankAccountForm.bind(
@@ -68,7 +70,7 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      "have an error summary" in {
+      "show a missing value error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
         errorSummaryElements.size() mustBe 1
 
@@ -79,12 +81,13 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
         errorsList.get(0).text() mustBe "Select what type of account the repayment will be sent to"
       }
 
-      "show field-specific errors" in {
+      "show field-specific error" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Select what type of account the repayment will be sent to"
       }
     }
+
   }
 
 }

@@ -54,7 +54,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a meta refresh tag" in {
-        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body???
+        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body??? - Investigate
         val metaRefresh = Option(inProgressView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }
@@ -77,7 +77,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a meta refresh tag" in {
-        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body???
+        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body??? - Investigate
         val metaRefresh = Option(completedView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }
