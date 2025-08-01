@@ -53,7 +53,7 @@
 
   @bulletList(items = List(
     printLink(messages("site.print")),
-    pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
+    pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation(currentDate).url)
   ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
 
   @h2(messages("repayments.confirmation.heading"))

@@ -63,8 +63,6 @@ class PrintPdfController @Inject() (
     with I18nSupport
     with Logging {
 
-  val dateHelper = new ViewHelpers()
-
   def onDownloadRfmAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     RfmJourneyModel
       .from(request.userAnswers)
@@ -79,7 +77,7 @@ class PrintPdfController @Inject() (
   }
 
   def onDownloadRfmConfirmation: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
     (for {
       mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userAnswers.id))
       userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -111,15 +109,14 @@ class PrintPdfController @Inject() (
         .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
-  def onDownloadRepaymentConfirmation: Action[AnyContent] = (identifyRepayment andThen getSessionData andThen requireSessionData).async {
-    implicit request =>
-      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
-      fopService.render(repaymentConfirmationPdfView.render(currentDate.toString(), implicitly, implicitly).body).map { pdf =>
+  def onDownloadRepaymentConfirmation(submissionTimestamp: String): Action[AnyContent] =
+    (identifyRepayment andThen getSessionData andThen requireSessionData).async { implicit request =>
+      fopService.render(repaymentConfirmationPdfView.render(submissionTimestamp, implicitly, implicitly).body).map { pdf =>
         Ok(pdf)
           .as("application/octet-stream")
           .withHeaders(CONTENT_DISPOSITION -> "attachment; filename=repayment-confirmation.pdf")
       }
-  }
+    }
 
   def onDownloadRegistrationAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     upeJourney

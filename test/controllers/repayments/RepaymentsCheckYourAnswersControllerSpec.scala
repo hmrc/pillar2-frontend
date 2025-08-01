@@ -32,6 +32,7 @@ import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import utils.ViewHelpers
 import viewmodels.govuk.SummaryListFluency
 
 import scala.concurrent.Future
@@ -127,7 +128,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad(currentDate.toString).url
           verify(mockSessionRepository, times(2)).get(eqTo("id"))
           verify(mockSessionRepository, times(2)).set(any())
         }
@@ -151,7 +152,9 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController
+            .onPageLoad(ViewHelpers.getDateTimeGMT)
+            .url
           verify(mockSessionRepository).set(eqTo(userAnswer))
         }
       }

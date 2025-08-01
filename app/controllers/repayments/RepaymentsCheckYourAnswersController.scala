@@ -30,6 +30,7 @@ import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.ViewHelpers
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
@@ -58,7 +59,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
-          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad(ViewHelpers.getDateTimeGMT))
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
@@ -93,7 +94,12 @@ class RepaymentsCheckYourAnswersController @Inject() (
           success = (updatedStatus == SuccessfullyCompleted)
           optionalSessionData <- sessionRepository.get(request.userAnswers.id)
           sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-          updatedAnswers  <- Future.fromTry(sessionData.set(RepaymentsStatusPage, updatedStatus))
+          updatedAnswers <- if (success) {
+                              Future.fromTry(
+                                sessionData
+                                  .set(RepaymentsStatusPage, updatedStatus)
+                              )
+                            } else Future.successful(sessionData)
           updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
           updatedAnswers1 <-
             if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
@@ -111,7 +117,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
           updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
           _                <- sessionRepository.set(updatedAnswers10)
         } yield (): Unit
-        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad(ViewHelpers.getDateTimeGMT))
       } else {
         Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
       }
