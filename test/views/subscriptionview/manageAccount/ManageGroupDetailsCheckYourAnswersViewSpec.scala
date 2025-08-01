@@ -52,27 +52,31 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a summary list" in {
+        val summaryListKeys:    Elements = view.getElementsByClass("govuk-summary-list__key")
+        val summaryListItems:   Elements = view.getElementsByClass("govuk-summary-list__value")
+        val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
+
         val mne      = "Where are the entities in your group located?"
         val mneValue = "Only in the UK"
-        // FIXME:
-        view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
-        view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
+        summaryListKeys.get(0).text() mustBe mne
+        summaryListItems.get(0).text() mustBe mneValue
+        summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
 
         val ap      = "Group’s accounting period"
         val apValue = ""
-        view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
-        view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-        view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
+        summaryListKeys.get(1).text() mustBe ap
+        summaryListItems.get(1).text() mustBe apValue
+        summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
 
         val startDate = "Start date"
         val endDate   = "End date"
-        view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-        view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
-        view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+        summaryListKeys.get(2).text() mustBe startDate
+        summaryListItems.get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+
+        summaryListKeys.get(3).text() mustBe endDate
+        summaryListItems.get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
       }
 
       "have a button" in {
@@ -101,26 +105,30 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
       }
 
       "have a summary list" in {
+        val summaryListKeys:    Elements = agentView.getElementsByClass("govuk-summary-list__key")
+        val summaryListItems:   Elements = agentView.getElementsByClass("govuk-summary-list__value")
+        val summaryListActions: Elements = agentView.getElementsByClass("govuk-summary-list__actions")
+
         val mne      = "Where are the group entities located?"
         val mneValue = "Only in the UK"
-        agentView.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe mne
-        agentView.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe mneValue
-        agentView.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") mustBe
+        summaryListKeys.get(0).text() mustBe mne
+        summaryListItems.get(0).text() mustBe mneValue
+        summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
 
         val ap      = "Group’s accounting period"
         val apValue = ""
-        agentView.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe ap
-        agentView.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe apValue
-        agentView.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") mustBe
+        summaryListKeys.get(1).text() mustBe ap
+        summaryListItems.get(1).text() mustBe apValue
+        summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
 
         val startDate = "Start date"
         val endDate   = "End date"
-        agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-        agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
-        agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+        summaryListKeys.get(2).text() mustBe startDate
+        summaryListItems.get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+        summaryListKeys.get(3).text() mustBe endDate
+        summaryListItems.get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
       }
 
       "have a button" in {
