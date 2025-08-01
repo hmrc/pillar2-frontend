@@ -73,36 +73,27 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       val summaryListElements: Elements = view.getElementsByClass("govuk-summary-list")
       summaryListElements.size() mustBe 1
 
-      val summaryListRows: Elements = summaryListElements.first().getElementsByClass("govuk-summary-list__row")
+      val summaryListKeys:    Elements = view.getElementsByClass("govuk-summary-list__key")
+      val summaryListItems:   Elements = view.getElementsByClass("govuk-summary-list__value")
+      val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
 
-      summaryListRows.get(0).getElementsByClass("govuk-summary-list__key").text() mustBe
-        "Where are the entities in your group located?"
-      summaryListRows.get(0).getElementsByClass("govuk-summary-list__value").text() mustBe
-        "Only in the UK"
-      summaryListRows.get(0).getElementsByClass("govuk-summary-list__actions").text() mustBe
-        "Change where are the entities in your group located"
-      summaryListRows.get(0).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").attr("href") mustBe
+      summaryListKeys.get(0).text() mustBe "Where are the entities in your group located?"
+      summaryListItems.get(0).text() mustBe "Only in the UK"
+      summaryListActions.get(0).text() mustBe "Change where are the entities in your group located"
+      summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
 
-      summaryListRows.get(1).getElementsByClass("govuk-summary-list__key").text() mustBe
-        "Group’s consolidated accounting period"
-      summaryListRows.get(1).getElementsByClass("govuk-summary-list__value").text() mustBe
-        ""
-      summaryListRows.get(1).getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+      summaryListKeys.get(1).text() mustBe "Group’s consolidated accounting period"
+      summaryListItems.get(1).text() mustBe ""
 
-      summaryListRows.get(2).getElementsByClass("govuk-summary-list__key").text() mustBe
-        "Start date"
-      summaryListRows.get(2).getElementsByClass("govuk-summary-list__value").text() mustBe
-        dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
-      summaryListRows.get(2).getElementsByClass("govuk-summary-list__actions").size() mustBe 0
+      summaryListKeys.get(2).text() mustBe "Start date"
+      summaryListItems.get(2).text() mustBe dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
 
-      summaryListRows.get(3).getElementsByClass("govuk-summary-list__key").text() mustBe
-        "End date"
-      summaryListRows.get(3).getElementsByClass("govuk-summary-list__value").text() mustBe
-        dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
-      summaryListRows.get(3).getElementsByClass("govuk-summary-list__actions").text() mustBe
+      summaryListKeys.get(3).text() mustBe "End date"
+      summaryListItems.get(3).text() mustBe dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
+      summaryListActions.get(1).getElementsByClass("govuk-summary-list__actions").text() mustBe
         "Change the dates of the group’s consolidated accounting period"
-      summaryListRows.get(3).getElementsByClass("govuk-summary-list__actions").first().getElementsByTag("a").attr("href") mustBe
+      summaryListActions.get(1).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
     }
 
