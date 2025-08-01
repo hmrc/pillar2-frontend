@@ -27,9 +27,8 @@ import java.time.LocalDate
 @Singleton
 class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig: ServicesConfig) {
 
-  val host:                   String = configuration.get[String]("host")
-  val submissionFrontendHost: String = configuration.get[String]("submissionFrontendHost")
-  val appName:                String = configuration.get[String]("appName")
+  val host:    String = configuration.get[String]("host")
+  val appName: String = configuration.get[String]("appName")
 
   private def loadConfig(key: String): String =
     configuration.getOptional[String](key).getOrElse(throw new Exception(s"Missing configuration key: $key"))
@@ -114,4 +113,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
   val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
+
+  val btnWaitingRoomPollIntervalSeconds: Int = configuration.get[Int]("btn.waitingRoom.pollIntervalSeconds")
 }

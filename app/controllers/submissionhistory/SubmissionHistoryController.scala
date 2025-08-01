@@ -25,8 +25,7 @@ import play.api.i18n.I18nSupport
 import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.ObligationsAndSubmissionsService
-import services.ReferenceNumberService
+import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
@@ -50,7 +49,7 @@ class SubmissionHistoryController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen checkPhase2Screens).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
     (for {
       maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))

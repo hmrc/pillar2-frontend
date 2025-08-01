@@ -17,7 +17,6 @@
 package controllers.actions
 
 import base.SpecBase
-import controllers.actions._
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -36,7 +35,7 @@ class Phase2ScreensActionSpec extends SpecBase {
   ) extends FrontendBaseController {
 
     def testAction(): Action[AnyContent] =
-      (identify andThen getData andThen requireData andThen checkPhase2Screens).async { _ =>
+      (identify andThen checkPhase2Screens andThen getData andThen requireData).async { _ =>
         Future.successful(Ok("Success"))
       }
   }

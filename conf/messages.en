@@ -1677,6 +1677,120 @@ dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full de
 
 ###############################################
 #
+# Below-Threshold Notification
+#
+###############################################
+
+btn.beforeStart.title = Below-Threshold Notification (BTN)
+btn.beforeStart.header = Below-Threshold Notification (BTN)
+btn.beforeStart.group.p1 = The Below-Threshold Notification satisfies your group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while your group remains below-threshold.
+btn.beforeStart.agent.p1 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
+btn.beforeStart.header2 = Who can submit a Below-Threshold Notification
+btn.beforeStart.group.p2 = You can submit a Below-Threshold Notification if the group:
+btn.beforeStart.agent.p2 = The group can submit a Below-Threshold Notification if it:
+btn.beforeStart.li1 = does not have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods
+btn.beforeStart.li2 = is not expected to make consolidated annual revenues of €750 million or more within the next 2 accounting periods
+btn.beforeStart.group.insetText = If you need to submit a UK tax return for this accounting period you do not qualify for a Below-Threshold Notification.
+btn.beforeStart.agent.insetText = If your client needs to submit a UK tax return for this accounting period they do not qualify for a Below-Threshold Notification.
+btn.beforeStart.header3 = Before you start
+btn.beforeStart.p3 = To submit a Below-Threshold Notification you’ll need to tell us:
+btn.beforeStart.li3 = the start and end date of the group’s accounting period
+btn.beforeStart.li4 = whether the group has entities located in the UK
+btn.beforeStart.p4 = If you submit a Below-Threshold Notification, this will replace any returns you’ve submitted for that period. It will also replace any returns you have already submitted for your most recent account periods.
+
+btn.chooseAccountingPeriod.title = Which accounting period would you like to register a Below-Threshold Notification for?
+btn.chooseAccountingPeriod.heading = Which accounting period would you like to register a Below-Threshold Notification for?
+btn.chooseAccountingPeriod.p1 = We only list the current and previous accounting periods.
+btn.chooseAccountingPeriod.error.required = Select the account period you’d like to register as below-threshold.
+
+btn.accountingPeriod.title = Confirm account period for Below-Threshold Notification
+btn.accountingPeriod.header = Confirm account period for Below-Threshold Notification
+btn.accountingPeriod.p1 = Your group will keep below-threshold status from this accounting period onwards, unless you file a UK tax return.
+btn.accountingPeriod.agent.p1 = The group will keep below-threshold status from this accounting period onwards, unless a UK Tax Return is filed.
+btn.accountingPeriod.startAccountDate = Start date of accounting period
+btn.accountingPeriod.endAccountDate = End date of accounting period
+btn.accountingPeriod.selectAccountingPeriodLink = Select different accounting period
+btn.accountingPeriod.p2.before = If the accounting period dates are wrong,
+btn.accountingPeriod.link = update your group’s accounting period dates
+btn.accountingPeriod.agent.link = update the group’s accounting period dates
+btn.accountingPeriod.p2 =  before continuing.
+btn.accountingPeriod.checkYourAnswersLabel = Group’s accounting period
+btn.accountingPeriod.change.hidden = group’s accounting period
+btn.accountingPeriod.checkYourAnswersPrefix.startDate = Start date:
+btn.accountingPeriod.checkYourAnswersPrefix.endDate = End date:
+
+btn.returnSubmitted.title = You’ve submitted a UK Tax Return for the accounting period {0} - {1}
+btn.returnSubmitted.agent.title = The group has submitted a UK Tax Return for the accounting period {0} - {1}
+btn.returnSubmitted.heading = You’ve submitted a UK Tax Return for the accounting period {0} - {1}
+btn.returnSubmitted.agent.heading = The group has submitted a UK Tax Return for the accounting period {0} - {1}
+btn.returnSubmitted.startAccountDate = Start date of accounting period
+btn.returnSubmitted.endAccountDate = End date of accounting period
+btn.returnSubmitted.p1 = By continuing, your UK Tax Return will be replaced for this period.
+btn.returnSubmitted.agent.p1 = By continuing, the group’s UK Tax Return will be replaced for this period.
+btn.returnSubmitted.insetText = If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification.
+btn.returnSubmitted.agent.insetText = If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification.
+btn.returnSubmitted.link = Return to homepage
+
+btn.alreadyInPlace.title = The group has already submitted a Below-Threshold Notification for this accounting period
+btn.alreadyInPlace.heading = The group has already submitted a Below-Threshold Notification for this accounting period
+btn.alreadyInPlace.p1 = You cannot submit two notifications for the same period.
+btn.alreadyInPlace.link = Return to homepage
+
+btn.entitiesInsideOutsideUK.title.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.title.uk = Does the group still have entities located only in the UK?
+btn.entitiesInsideOutsideUK.heading.ukAndOther = Does the group still have entities located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.heading.uk = Does the group still have entities located only in the UK?
+btn.entitiesInsideOutsideUK.checkYourAnswersLabel = Are the entities still located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.checkYourAnswersLabel.uk = Are the entities still located only in the UK?
+btn.entitiesInsideOutsideUK.error.required.ukAndOther = Select yes if the group still has entities located in both the UK and outside the UK
+btn.entitiesInsideOutsideUK.error.required.uk = Select yes if the group still has entities located only in the UK
+btn.entitiesInsideOutsideUK.change.hidden = are the entities still located in both the UK and outside the UK?
+btn.entitiesInsideOutsideUK.change.hidden.uk = are the entities still located only in the UK?
+btn.entitiesInsideOutsideUK.amend.title = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.agent.title = Group details amend needed
+btn.entitiesInsideOutsideUK.amend.heading = Based on your answer, you need to amend your details
+btn.entitiesInsideOutsideUK.amend.agent.heading = Group details amend needed
+btn.entitiesInsideOutsideUK.amend.p1.ukAndOther = You reported that your group has entities both in and outside of the UK.
+btn.entitiesInsideOutsideUK.amend.agent.p1.ukAndOther = You reported that the group has entities both in and outside of the UK.
+btn.entitiesInsideOutsideUK.amend.p1.ukOnly = You reported that your group only has entities in the UK.
+btn.entitiesInsideOutsideUK.amend.agent.p1.ukOnly = You reported that the group only has entities in the UK.
+btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your group details to update the location of your entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.amend.agent.p2 = If this has changed, you must amend the group details to update the location of the entities before submitting a BTN.
+btn.entitiesInsideOutsideUK.amend.link = Amend group details
+
+btn.cya.title = Check Your Answers
+btn.cya.heading = Check your answers to submit your Below-Threshold Notification
+btn.cya.p1 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.
+btn.cya.p2 = Submit your Below-Threshold Notification
+btn.cya.p3 = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
+
+btn.confirmation.title = Below-Threshold Notification successful
+btn.confirmation.heading = Below-Threshold Notification successful
+btn.confirmation.group.p1 = You have submitted a Below-Threshold Notification on {0}.
+btn.confirmation.agent.p1 = You have submitted a Below-Threshold Notification for {0} on {1}.
+btn.confirmation.p2 = This is effective from the start of the accounting period you selected, {0}.
+btn.confirmation.subheading = What happens next
+btn.confirmation.group.p3 = The Below-Threshold Notification satisfies the group’s obligation to submit a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an information return while the group remains below-threshold.
+btn.confirmation.group.p4 = The group must submit a UK Tax Return if your group meets the threshold conditions in the future.
+btn.confirmation.p5.group.link = Back to group’s homepage
+
+btn.error.title = Sorry, there is a problem with the service
+btn.error.heading = Sorry, there is a problem with the service
+btn.error.tryAgainLater.p1 = You can try again later when the service is available.
+btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
+
+btn.cannotReturn.heading = Submission successful
+btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
+btn.cannotReturn.link = Return to your group’s homepage
+btn.waitingRoom.submitting = Submitting your notification
+btn.waitingRoom.title = Submitting your Below-Threshold Notification
+btn.waitingRoom.dontLeave = Don’t leave this page
+btn.waitingRoom.redirect = You will be redirected automatically when the submission is complete.
+
+###############################################
+
+###############################################
+#
 # Outstanding Payments
 #
 ###############################################

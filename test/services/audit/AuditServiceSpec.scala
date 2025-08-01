@@ -24,9 +24,11 @@ import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
+import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
-import uk.gov.hmrc.play.audit.http.connector.AuditResult
+import play.api.test.Helpers.running
+import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 
 import scala.concurrent.Future
 
@@ -110,5 +112,111 @@ class AuditServiceSpec extends SpecBase {
       result mustBe AuditResult.Success
     }
 
+    "for BTN" when {
+
+      val application: Application = applicationBuilder()
+        .overrides(
+          bind[AuditConnector].toInstance(mockAuditConnector)
+        )
+        .build()
+
+      "return Success when audit call is successful" in {
+        running(application) {
+          when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+            .thenReturn(Future.successful(AuditResult.Success))
+
+          val service = application.injector.instanceOf[AuditService]
+          val result = service
+            .auditBTN(
+              pillarReference = "PLR1234567890",
+              accountingPeriod = "2024-03-20",
+              entitiesInsideAndOutsideUK = true,
+              apiResponseData = models.audit.ApiResponseData(
+                statusCode = 200,
+                processingDate = "2024-03-20T07:32:03Z",
+                errorCode = None,
+                responseMessage = "Success"
+              )
+            )(hc)
+            .futureValue
+
+          result mustBe AuditResult.Success
+        }
+      }
+
+      "return Disabled when audit connector is disabled" in {
+        running(application) {
+          when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+            .thenReturn(Future.successful(AuditResult.Disabled))
+
+          val service = application.injector.instanceOf[AuditService]
+          val result = service
+            .auditBTN(
+              pillarReference = "PLR1234567890",
+              accountingPeriod = "2024-03-20",
+              entitiesInsideAndOutsideUK = true,
+              apiResponseData = models.audit.ApiResponseData(
+                statusCode = 200,
+                processingDate = "2024-03-20T07:32:03Z",
+                errorCode = None,
+                responseMessage = "Success"
+              )
+            )(hc)
+            .futureValue
+
+          result mustBe AuditResult.Disabled
+        }
+      }
+
+      "return Failure when audit connector returns failure" in {
+        running(application) {
+          when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+            .thenReturn(Future.successful(AuditResult.Failure("Audit failure")))
+
+          val service = application.injector.instanceOf[AuditService]
+          val result = service
+            .auditBTN(
+              pillarReference = "PLR1234567890",
+              accountingPeriod = "2024-03-20",
+              entitiesInsideAndOutsideUK = true,
+              apiResponseData = models.audit.ApiResponseData(
+                statusCode = 200,
+                processingDate = "2024-03-20T07:32:03Z",
+                errorCode = None,
+                responseMessage = "Success"
+              )
+            )(hc)
+            .futureValue
+
+          result mustBe AuditResult.Failure("Audit failure")
+        }
+      }
+
+      "propagate exceptions from audit connector" in {
+        running(application) {
+          when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+            .thenReturn(Future.failed(new RuntimeException("Test exception")))
+
+          val service = application.injector.instanceOf[AuditService]
+          val resultFuture = service.auditBTN(
+            pillarReference = "PLR1234567890",
+            accountingPeriod = "2024-03-20",
+            entitiesInsideAndOutsideUK = true,
+            apiResponseData = models.audit.ApiResponseData(
+              statusCode = 200,
+              processingDate = "2024-03-20T07:32:03Z",
+              errorCode = None,
+              responseMessage = "Success"
+            )
+          )(hc)
+
+          whenReady(resultFuture.failed) { exception =>
+            exception mustBe a[RuntimeException]
+            exception.getMessage mustBe "Test exception"
+          }
+
+        }
+      }
+    }
   }
 }

@@ -1,0 +1,59 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import views.html.components.gds._
+
+@this(
+        layout: templates.Layout,
+        formHelper: FormWithCSRF,
+        p: paragraphBody,
+        paragraphMessageWithLink: ParagraphMessageWithLink,
+        link: link,
+        printLink: printLink,
+        pdfLink: pdfLink,
+        govukButton: GovukButton,
+        govukPanel: GovukPanel,
+        h2: HeadingH2
+)
+
+
+@(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false) {
+
+    @govukPanel(Panel(
+        title = Text(messages("btn.confirmation.heading")),
+        content = HtmlContent(""),
+        attributes = Map("id" -> "plr2-banner")
+    ))
+
+    @if(isAgent && companyName.isDefined) {
+        @p(messages("btn.confirmation.agent.p1", companyName.get, submissionDate))
+    } else {
+        @p(messages("btn.confirmation.group.p1", submissionDate))
+    }
+    @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
+
+    @printLink(messages("site.print"))
+    @pdfLink(messages("site.pdf"), controllers.btn.routes.BTNConfirmationController.onDownloadConfirmation.url)
+
+    @h2(messages("btn.confirmation.subheading"))
+    @p(messages("btn.confirmation.group.p3"))
+    @p(messages("btn.confirmation.group.p4"))
+
+    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p5.group.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url, classes = "govuk-body govuk-!-display-none-print")
+}

@@ -18,7 +18,7 @@ package helpers
 
 import config.FrontendAppConfig
 import connectors._
-import controllers.actions.{DataRequiredAction, DataRetrievalAction, SubscriptionDataRetrievalAction}
+import controllers.actions._
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -74,6 +74,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockRepaymentService:                           RepaymentService                           = mock[RepaymentService]
   val mockFinancialDataConnector:                     FinancialDataConnector                     = mock[FinancialDataConnector]
   val mockOutstandingPaymentsService:                 OutstandingPaymentsService                 = mock[OutstandingPaymentsService]
+  val mockBTNService:                                 BTNService                                 = mock[BTNService]
+  val mockBTNConnector:                               BTNConnector                               = mock[BTNConnector]
+  val mockObligationsAndSubmissionsConnector:         ObligationsAndSubmissionsConnector         = mock[ObligationsAndSubmissionsConnector]
 
   override protected def beforeEach(): Unit =
     Seq(
@@ -97,6 +100,9 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
       mockEnrolmentStoreProxyConnector,
       mockAuditService,
       mockEnrolmentConnector,
-      mockSessionRepository
+      mockSessionRepository,
+      mockBTNService,
+      mockBTNConnector,
+      mockObligationsAndSubmissionsConnector
     ).foreach(Mockito.reset(_))
 }

@@ -37,6 +37,7 @@ case class SubscriptionLocalData(
   subSecondaryCapturePhone:    Option[String],
   subSecondaryPhonePreference: Option[Boolean],
   subRegisteredAddress:        NonUKAddress,
+  accountStatus:               Option[AccountStatus],
   organisationName:            Option[String]
 ) {
 

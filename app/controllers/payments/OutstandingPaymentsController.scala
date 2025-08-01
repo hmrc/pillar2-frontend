@@ -55,7 +55,7 @@ class OutstandingPaymentsController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen checkPhase2Screens).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
       implicit val hc:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       implicit val isAgent: Boolean       = request.isAgent
       (for {

@@ -17,7 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import models.requests.DataRequest
+import models.requests.IdentifierRequest
 import play.api.mvc.{ActionRefiner, Result, Results}
 
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class Phase2ScreensActionImpl @Inject() (
 )(implicit val executionContext: ExecutionContext)
     extends Phase2ScreensAction {
 
-  override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
+  override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
     if (config.phase2ScreensEnabled) {
       Future.successful(Right(request))
     } else {
@@ -36,4 +36,4 @@ class Phase2ScreensActionImpl @Inject() (
     }
 }
 
-trait Phase2ScreensAction extends ActionRefiner[DataRequest, DataRequest]
+trait Phase2ScreensAction extends ActionRefiner[IdentifierRequest, IdentifierRequest]

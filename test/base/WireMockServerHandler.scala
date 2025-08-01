@@ -64,15 +64,26 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
         )
     )
 
-  protected def stubGet(expectedEndpoint: String, expectedStatus: Int, expectedBody: String): StubMapping =
+  protected def stubGet(
+    expectedEndpoint: String,
+    expectedStatus:   Int,
+    expectedBody:     String = "",
+    headers:          Map[String, String] = Map.empty
+  ): StubMapping = {
+
+    val requestMaybeHeaders = if (headers.nonEmpty) {
+      headers.foldLeft(get(urlEqualTo(expectedEndpoint))) { case (req, (key, value)) => req.withHeader(key, equalTo(value)) }
+    } else get(urlEqualTo(expectedEndpoint))
+
     server.stubFor(
-      get(urlEqualTo(s"$expectedEndpoint"))
+      requestMaybeHeaders
         .willReturn(
-          aResponse()
-            .withStatus(expectedStatus)
-            .withBody(expectedBody)
+          Option(expectedBody)
+            .filter(_.nonEmpty)
+            .fold(aResponse().withStatus(expectedStatus))(body => aResponse().withStatus(expectedStatus).withBody(body))
         )
     )
+  }
 
   protected def stubGetUserAnswerConnector(expectedEndpoint: String, expectedStatus: Int, expectedBody: JsValue): StubMapping =
     server.stubFor(
