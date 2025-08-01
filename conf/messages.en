@@ -1789,6 +1789,36 @@ btn.waitingRoom.redirect = You will be redirected automatically when the submiss
 
 ###############################################
 
+###############################################
+#
+# Outstanding Payments
+#
+###############################################
+payments.outstanding.title = Outstanding payments
+payments.outstanding.amountDue = Total amount due: £{0}
+payments.outstanding.p1 = The amount includes all liabilities due. This may be over more than one accounting period. It also includes any penalties or late payment interest.
+payments.outstanding.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to your account.
+payments.outstanding.agent.p2 = Any payments made to the group’s account before submitting the tax return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be added to the group’s account.
+
+payments.outstanding.pay.buttonText = Pay online
+payments.outstanding.otherWaysToPay.heading = Other ways to pay
+payments.outstanding.otherWaysToPay.p1 = Your Pillar 2 reference: {0}
+payments.outstanding.otherWaysToPay.agent.p1 = Pillar 2 reference: {0}
+payments.outstanding.otherWaysToPay.p2 = You’ll need to use this reference if you want to make a manual payment.
+payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this reference if you want to make a manual payment for this group.
+payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay
+
+payments.outstanding.details.heading = Details of outstanding payments
+payments.outstanding.details.p1 = We have separated any payments due by accounting period.
+payments.outstanding.details.nothingDue = No payments due.
+
+payments.outstanding.transactionHistory.p1 = Find details on payments and refunds.
+payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
+
+payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
+payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
+payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
+payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
 # ---------------------------------------------
 # Pillar 2 Research
 # ---------------------------------------------

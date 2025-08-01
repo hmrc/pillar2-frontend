@@ -542,6 +542,7 @@ GET        /review-submit/registration-in-progress/:plrReference                
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
 GET        /payment/history-empty                                                                   controllers.TransactionHistoryController.onPageLoadNoTransactionHistory()
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
+GET        /payment/outstanding                                                                     controllers.payments.OutstandingPaymentsController.onPageLoad
 
 GET        /review-submit/download-registration-answers.pdf                                         controllers.pdf.PrintPdfController.onDownloadRegistrationAnswers
 GET        /review-submit/download-registration-confirmation-pdf                                    controllers.pdf.PrintPdfController.printRegistrationConfirmation

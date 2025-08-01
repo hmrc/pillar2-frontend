@@ -99,6 +99,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val eacdHomePageUrl:              String  = configuration.get[String]("urls.eacdHomePage")
   val howToRegisterPlr2GuidanceUrl: String  = configuration.get[String]("urls.howToRegisterPlr2Guidance")
   val researchUrl:                  String  = configuration.get[String]("urls.researchUrl")
+  val howToPayPillar2TaxesUrl:      String  = configuration.get[String]("urls.howToPayPillar2Taxes")
 
   val opsBaseUrl:             String  = servicesConfig.baseUrl("ops")
   val opsStartUrl:            String  = configuration.get[String]("microservice.services.ops.startUrl")
