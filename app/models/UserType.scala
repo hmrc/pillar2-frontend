@@ -56,7 +56,7 @@ object UserType {
       value match {
         case Upe => "Upe"
         case Fm  => "Fm"
-        case Fm  => "Rfm"
+        case Rfm => "Rfm"
       }
   }
 
