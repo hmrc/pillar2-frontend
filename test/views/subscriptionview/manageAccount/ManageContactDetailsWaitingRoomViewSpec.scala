@@ -34,7 +34,6 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
   "Manage Contact Details Waiting Room View" should {
 
     "when status is InProgress" must {
-
       "have a title" in {
         inProgressView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
@@ -46,7 +45,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a sub heading" in {
-        inProgressView.getElementsByTag("h2").text mustBe
+        inProgressView.getElementsByTag("h2").first().text() mustBe
           "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
       }
 
@@ -55,13 +54,13 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a meta refresh tag" in {
+        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body???
         val metaRefresh = Option(inProgressView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }
     }
 
     "when status is SuccessfullyCompleted" must {
-
       "have a title" in {
         completedView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
@@ -73,11 +72,12 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a sub heading" in {
-        completedView.getElementsByTag("h2").text mustBe
+        completedView.getElementsByTag("h2").first().text() mustBe
           "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
       }
 
       "have a meta refresh tag" in {
+        // FIXME: the meta-refresh should not be in the body - is HTML valid if in body???
         val metaRefresh = Option(completedView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }

@@ -43,9 +43,10 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe "This account belongs to James" // FIXME: inconsistency between title and H1
     }
 
-    "have a subheading" in {
+    "have an h2 subheading" in {
+      // FIXME: H2 matches Title instead of H1 matching the Title
       val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
-      view.getElementsByTag("legend").text mustBe subheading
+      view.getElementsByTag("h2").first().text() mustBe subheading
     }
 
     "have paragraphs" in {

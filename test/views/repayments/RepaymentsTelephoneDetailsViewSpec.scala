@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.CaptureTelephoneDetailsFormProvider
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsTelephoneDetailsView
 
@@ -66,28 +66,34 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
     }
   }
 
-  "nothing entered and page submitted" should {
-
-    val view: Document =
+  "form is submitted with missing value" should {
+    val errorView: Document =
       Jsoup.parse(
         page(formProvider(contactName).bind(Map("phoneNumber" -> "")), mode, contactName)(request, appConfig, messages)
           .toString()
       )
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe "Enter the phone number for ABC Limited"
+    "show a missing value error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe "Enter the phone number for ABC Limited"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text mustBe "Enter the phone number for ABC Limited"
-    }
+    "show field-specific error" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+      fieldErrors.get(0).text() mustBe "Error: Enter the phone number for ABC Limited"
+    }
   }
 
-  "value entered exceeds character limit" should {
+  "form is submitted with value exceeding maximum length" should {
     val telephoneNumber = "+".padTo(51, '1')
-    val view: Document =
+    val errorView: Document =
       Jsoup.parse(
         page(formProvider(contactName).bind(Map("phoneNumber" -> telephoneNumber)), mode, contactName)(
           request,
@@ -96,39 +102,54 @@ class RepaymentsTelephoneDetailsViewSpec extends ViewSpecBase {
         ).toString()
       )
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-        "Phone number should be 24 characters or less"
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe "Phone number should be 24 characters or less"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text mustBe "Phone number should be 24 characters or less"
-    }
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+      fieldErrors.get(0).text() mustBe "Error: Phone number should be 24 characters or less"
+    }
   }
 
-  "value entered not in correct format" should {
-    val telephoneNumber = "123$!abc"
-    val view: Document =
+  "form is submitted with value containing special characters" should {
+    val xssInput: Map[String, String] = Map(
+      "phoneNumber" -> "<script>alert('xss')"
+    )
+
+    val errorView: Document =
       Jsoup.parse(
-        page(formProvider(contactName).bind(Map("phoneNumber" -> telephoneNumber)), mode, contactName)(
-          request,
-          appConfig,
-          messages
-        ).toString()
+        page(
+          formProvider(contactName).bind(xssInput),
+          mode,
+          contactName
+        )(request, appConfig, messages).toString()
       )
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-        "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text mustBe
-        "Enter the phone number using numbers and the allowed symbols, # ( ) + -"
-    }
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+      fieldErrors.get(0).text() mustBe "Error: Enter the phone number using numbers and the allowed symbols, # ( ) + -"
+    }
   }
+
 }

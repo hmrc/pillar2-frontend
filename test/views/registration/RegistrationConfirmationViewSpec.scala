@@ -74,6 +74,7 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
         "You can now report and manage your Pillar 2 Top-up Taxes."
     }
 
+    // FIXME: on the RepaymentsConfirmationViewSpec the options are in reverse order
     "have a bullet list with download and print links" in {
       val bulletItems: Elements = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
 
