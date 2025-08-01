@@ -19,10 +19,13 @@ package views.subscriptionview
 import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
+import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
+
+import java.time.LocalDate
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
@@ -80,6 +83,19 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
+
+    "show pre-populated values when form is filled with existing data" in {
+      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
+      val filledForm       = formProvider().fill(accountingPeriod)
+      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
+
+      viewWithData.getElementById("startDate.day").attr("value") mustBe "15"
+      viewWithData.getElementById("startDate.month").attr("value") mustBe "1"
+      viewWithData.getElementById("startDate.year").attr("value") mustBe "2024"
+      viewWithData.getElementById("endDate.day").attr("value") mustBe "15"
+      viewWithData.getElementById("endDate.month").attr("value") mustBe "1"
+      viewWithData.getElementById("endDate.year").attr("value") mustBe "2025"
     }
   }
 }
