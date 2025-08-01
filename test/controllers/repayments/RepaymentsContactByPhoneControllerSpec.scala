@@ -31,7 +31,7 @@ import views.html.repayments.RepaymentsContactByTelephoneView
 
 import scala.concurrent.Future
 
-class RepaymentsContactByTelephoneControllerSpec extends SpecBase {
+class RepaymentsContactByPhoneControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactByTelephoneFormProvider()
   val form: Form[Boolean] = formProvider("ABC Limited")

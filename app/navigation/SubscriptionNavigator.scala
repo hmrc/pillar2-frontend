@@ -41,7 +41,7 @@ class SubscriptionNavigator @Inject() {
     case SubAccountingPeriodPage         => _ => groupDetailCheckYourAnswerRoute
     case SubUsePrimaryContactPage        => usePrimaryContactRoute
     case SubPrimaryContactNamePage       => _ => controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode)
-    case SubPrimaryEmailPage             => _ => controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode)
+    case SubPrimaryEmailPage             => _ => controllers.subscription.routes.ContactByPhoneController.onPageLoad(NormalMode)
     case SubPrimaryPhonePreferencePage   => primaryPhonePreference
     case SubPrimaryCapturePhonePage      => _ => controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
     case SubAddSecondaryContactPage      => addSecondaryContactRoute
@@ -82,7 +82,7 @@ class SubscriptionNavigator @Inject() {
       .get(SubPrimaryPhonePreferencePage)
       .map { provided =>
         if (provided) {
-          controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode)
         } else {
           controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
         }
@@ -164,7 +164,7 @@ class SubscriptionNavigator @Inject() {
       .get(SubPrimaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
-          controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(CheckMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {

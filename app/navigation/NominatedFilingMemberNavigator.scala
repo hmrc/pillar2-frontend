@@ -43,7 +43,7 @@ class NominatedFilingMemberNavigator @Inject() {
     case FmNameRegistrationPage   => _ => controllers.fm.routes.NfmRegisteredAddressController.onPageLoad(NormalMode)
     case FmRegisteredAddressPage  => _ => controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode)
     case FmContactNamePage        => _ => controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode)
-    case FmContactEmailPage       => _ => controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode)
+    case FmContactEmailPage       => _ => controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode)
     case FmPhonePreferencePage    => telephonePreferenceLogic
     case FmCapturePhonePage       => _ => nfmCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
@@ -90,7 +90,7 @@ class NominatedFilingMemberNavigator @Inject() {
       .get(FmPhonePreferencePage)
       .map { provided =>
         if (provided) {
-          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode)
         } else {
           nfmCheckYourAnswers
         }
@@ -127,7 +127,7 @@ class NominatedFilingMemberNavigator @Inject() {
       .get(FmPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(FmCapturePhonePage).isEmpty) {
-          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {

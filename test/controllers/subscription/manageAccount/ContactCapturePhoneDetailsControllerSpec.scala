@@ -35,7 +35,7 @@ import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsV
 import java.util.UUID
 import scala.concurrent.Future
 
-class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
   val id:           String = UUID.randomUUID().toString
