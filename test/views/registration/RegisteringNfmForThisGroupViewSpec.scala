@@ -18,6 +18,7 @@ package views.registration
 
 import base.ViewSpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -68,7 +69,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
     }
   }
 
-  "nothing selected and page submitted" should {
+  "form is submitted with missing value" should {
     lazy val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(
@@ -77,7 +78,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
       )(request, appConfig, messages).toString()
     )
 
-    "have an error summary" in {
+    "show a missing value error summary" in {
       val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
@@ -88,7 +89,7 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
       errorsList.get(0).text() mustBe "Select yes if you are registering as the group’s nominated filing member"
     }
 
-    "have field-specific errors" in {
+    "show field-specific error" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe "Error: Select yes if you are registering as the group’s nominated filing member"

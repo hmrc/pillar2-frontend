@@ -18,13 +18,14 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentsContactByTelephoneFormProvider
+import generators.StringGenerators
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactByTelephoneView
 
-class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
+class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: RepaymentsContactByTelephoneFormProvider = new RepaymentsContactByTelephoneFormProvider
   lazy val mode:         Mode                                     = NormalMode
@@ -68,20 +69,18 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
     }
   }
 
-  "nothing entered and page submitted" should {
+  "form is submitted with missing value" should {
     val errorView: Document = Jsoup.parse(
       page(
         formProvider(contactName).bind(
-          Map(
-            "value" -> ""
-          )
+          Map("value" -> "")
         ),
         mode,
         contactName
       )(request, appConfig, messages).toString()
     )
 
-    "have an error summary" in {
+    "show a missing value error summary" in {
       val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
       errorSummaryElements.size() mustBe 1
 
@@ -92,13 +91,11 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
       errorsList.get(0).text() mustBe s"Select yes if we can contact $contactName by telephone"
     }
 
-    "have field-specific errors" in {
+    "show field-specific error" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
       fieldErrors.get(0).text() mustBe s"Error: Select yes if we can contact $contactName by telephone"
     }
   }
-
-  // TODO: add missing tests for long and XSS
 
 }

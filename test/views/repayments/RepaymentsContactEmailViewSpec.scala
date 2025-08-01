@@ -18,13 +18,14 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentsContactEmailFormProvider
+import generators.StringGenerators
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactEmailView
 
-class RepaymentsContactEmailViewSpec extends ViewSpecBase {
+class RepaymentsContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: RepaymentsContactEmailFormProvider = new RepaymentsContactEmailFormProvider
   lazy val mode:         Mode                               = NormalMode
@@ -58,8 +59,9 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
+    //---
 
-    "nothing entered and page submitted" should {
+    "form is submitted with missing value" should {
       val errorView: Document = Jsoup.parse(
         page(
           formProvider(contactName).bind(Map("contactEmail" -> "")),
@@ -68,7 +70,7 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         )(request, appConfig, messages).toString()
       )
 
-      "have an error summary" in {
+      "show a missing value error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
         errorSummaryElements.size() mustBe 1
 
@@ -79,27 +81,24 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         errorsList.get(0).text() mustBe "Enter an email address for ABC Limited"
       }
 
-      "have an input error" in {
+      "show field-specific error" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Enter an email address for ABC Limited"
       }
     }
 
-    "value entered exceeds character limit" should {
-      val contactEmail = "".padTo(100, 'A').concat("@gmail.com")
-
+    "form is submitted with value exceeding maximum length" should {
+      val longContactEmail = randomAlphaNumericStringGenerator(199).concat("@example.com")
       val errorView: Document = Jsoup.parse(
         page(
-          formProvider(contactName).bind(
-            Map("contactEmail" -> contactEmail)
-          ),
+          formProvider(contactName).bind(Map("contactEmail" -> longContactEmail)),
           mode,
           contactName
         )(request, appConfig, messages).toString()
       )
 
-      "have an error summary" in {
+      "show length validation error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
         errorSummaryElements.size() mustBe 1
 
@@ -110,26 +109,23 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         errorsList.get(0).text() mustBe "Email address must be 100 characters or less"
       }
 
-      "have an input error" in {
+      "show field-specific errors" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Email address must be 100 characters or less"
       }
     }
 
-    "value entered not in correct format" should {
-      val contactEmail = "123$!abc"
-      val errorView: Document = Jsoup.parse(
-        page(
-          formProvider(contactName).bind(
-            Map("contactEmail" -> contactEmail)
-          ),
-          mode,
-          contactName
-        )(request, appConfig, messages).toString()
+    "form is submitted with value containing special characters" should {
+      val xssInput: Map[String, String] = Map(
+        "contactEmail" -> "<script>alert('xss')@example.com"
       )
 
-      "have an error summary" in {
+      val errorView: Document = Jsoup.parse(
+        page(formProvider(contactName).bind(xssInput), mode, contactName)(request, appConfig, messages).toString()
+      )
+
+      "show XSS validation error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
         errorSummaryElements.size() mustBe 1
 
@@ -140,12 +136,12 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         errorsList.get(0).text() mustBe "Enter an email address in the correct format, like name@example.com"
       }
 
-      "have an input error" in {
+      "show field-specific errors" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
         fieldErrors.get(0).text() mustBe "Error: Enter an email address in the correct format, like name@example.com"
       }
     }
-
   }
+
 }

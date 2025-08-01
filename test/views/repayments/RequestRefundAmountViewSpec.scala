@@ -30,14 +30,14 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
   lazy val mode:         Mode                               = NormalMode
   lazy val page:         RequestRefundAmountView            = inject[RequestRefundAmountView]
   lazy val pageTitle:    String                             = "Enter your requested repayment amount in pounds"
+  lazy val view:         Document                           = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
   "Request Repayment Amount View" should {
 
     "page loaded" should {
-      val view: Document = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK" // FIXME:
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
@@ -49,7 +49,6 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
       "have a button" in {
         view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
-
     }
 
     "when form is submitted with missing values" should {

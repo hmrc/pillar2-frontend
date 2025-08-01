@@ -17,6 +17,7 @@
 package views.registrationview
 
 import base.ViewSpecBase
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -65,7 +66,8 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
       link3.text mustBe
         "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
       link3.getElementsByTag("a").text() mustBe "go back to select the entity type"
-      link3.getElementsByTag("a").attr("href") mustBe "/report-pillar2-top-up-taxes/business-matching/ultimate-parent/uk-based/entity-type" //FIXME
+      link3.getElementsByTag("a").attr("href") mustBe
+        controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
 
     }
 
