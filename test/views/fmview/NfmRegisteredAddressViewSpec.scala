@@ -21,7 +21,6 @@ import forms.NfmRegisteredAddressFormProvider
 import generators.StringGenerators
 import models.NonUKAddress
 import models.NormalMode
-import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements

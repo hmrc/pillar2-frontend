@@ -21,7 +21,6 @@ import forms.UpeRegisteredAddressFormProvider
 import generators.StringGenerators
 import models.NormalMode
 import models.UKAddress
-import org.apache.commons.lang3.StringUtils
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements

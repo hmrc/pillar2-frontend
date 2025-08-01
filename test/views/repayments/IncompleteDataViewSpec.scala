@@ -26,7 +26,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
   lazy val page:      IncompleteDataView = inject[IncompleteDataView]
   lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String             = "Refund request has missing information"
+  lazy val pageTitle: String             = "Repayment request has missing information"
 
   "Repayments incomplete data view" should {
     "have a title" in {
@@ -45,7 +45,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
       paragraph.text mustBe "You need to go back and complete all the required answers before submitting your repayment request."
       paragraph.getElementsByTag("a").text() mustBe "go back and complete all the required answers"
       paragraph.getElementsByTag("a").attr("href") mustBe
-        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
   }

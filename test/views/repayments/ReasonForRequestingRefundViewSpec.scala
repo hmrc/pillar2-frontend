@@ -29,8 +29,8 @@ import views.html.repayments.ReasonForRequestingRefundView
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators with StringGenerators {
 
   lazy val formProvider: ReasonForRequestingRepaymentFormProvider = new ReasonForRequestingRepaymentFormProvider
-  lazy val page:      ReasonForRequestingRefundView = inject[ReasonForRequestingRefundView]
-  lazy val pageTitle:    String                                = "Why are you requesting a repayment?"
+  lazy val page:         ReasonForRequestingRefundView            = inject[ReasonForRequestingRefundView]
+  lazy val pageTitle:    String                                   = "Why are you requesting a repayment?"
 
   "Reason For Requesting Repayment View" when {
 
@@ -131,7 +131,9 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
       "show field-specific errors" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-        fieldErrors.get(0).text() mustBe "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
+        fieldErrors
+          .get(0)
+          .text() mustBe "Error: The reason for your repayment request you enter must not include the following characters <, >, \" or &"
       }
     }
 

@@ -19,7 +19,7 @@ package views.registrationview
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationFailedRfmView
 

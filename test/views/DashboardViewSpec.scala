@@ -100,9 +100,9 @@ class DashboardViewSpec extends ViewSpecBase {
       organisationViewParagraphs.get(7).getElementsByTag("a").attr("href") mustBe
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
 
-      organisationViewParagraphs.get(8).getElementsByTag("a").text() mustBe "Request a refund"
+      organisationViewParagraphs.get(8).getElementsByTag("a").text() mustBe "Request a repayment"
       organisationViewParagraphs.get(8).getElementsByTag("a").attr("href") mustBe
-        controllers.repayments.routes.RequestRefundBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
 
       organisationDashboardView
         .getElementsByTag("hr")

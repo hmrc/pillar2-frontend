@@ -18,7 +18,7 @@ package views.repayments
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.repayments.JourneyRecoveryView
 

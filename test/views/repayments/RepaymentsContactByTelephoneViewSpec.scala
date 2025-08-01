@@ -22,7 +22,6 @@ import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.scalatest.Assertion
 import views.html.repayments.RepaymentsContactByTelephoneView
 
 class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
