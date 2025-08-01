@@ -117,8 +117,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
 
-        summaryListKeys.get(3).text() mustBe secondContactByPhoneLabel
-        summaryListItems.get(3).text() mustBe secondContactByPhoneValue
+        summaryListKeys.get(3).text() mustBe contactPhoneLabel
+        summaryListItems.get(3).text() mustBe contactPhoneValue
         summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
       }
