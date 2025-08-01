@@ -44,11 +44,11 @@ class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with Subscriptio
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must equal("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must equal("Check your answers for filing member details")
+      view.getElementsByTag("h1").text mustBe "Check your answers for filing member details"
     }
 
     "have a button" in {

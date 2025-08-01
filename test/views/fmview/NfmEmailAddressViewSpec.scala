@@ -41,15 +41,15 @@ class NfmEmailAddressViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text must equal("What is the email address for Contact CYA?")
+      view.getElementsByTag("h1").text mustBe "What is the email address for Contact CYA?"
     }
 
     "have hint text" in {
-      view.getElementsByClass("govuk-hint").text must equal("We will use this to confirm your records.")
+      view.getElementsByClass("govuk-hint").text mustBe "We will use this to confirm your records."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
