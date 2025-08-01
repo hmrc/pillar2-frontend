@@ -316,7 +316,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to dashboard when phase2ScreensEnabled is false" in {
+    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> false)
         .overrides(
@@ -331,6 +331,26 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
         val result  = route(application, request).value
 
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+      }
+    }
+
+    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> false)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(application) {
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+
+        val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
+        val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
       }

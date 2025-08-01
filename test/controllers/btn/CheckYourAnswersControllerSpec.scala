@@ -196,7 +196,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
+      "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(
@@ -363,11 +363,31 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
         }
       }
+
+      "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+          .configure("features.phase2ScreensEnabled" -> false)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository)
+          )
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+          val request = FakeRequest(POST, CheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        }
+      }
     }
 
     ".cannotReturnKnockback" should {
       "return BAD_REQUEST and render the knockback view" in {
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
           .build()
 
         running(application) {
@@ -375,6 +395,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual BAD_REQUEST
+        }
+      }
+
+      "must redirect to dashboard for cannotReturnKnockback when phase2ScreensEnabled is false" in {
+        val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> false)
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, CheckYourAnswersController.cannotReturnKnockback.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
         }
       }
     }

@@ -234,7 +234,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to dashboard when phase2ScreensEnabled is false" in {
+    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
       def application: Application =
         applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
@@ -251,6 +251,33 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
         val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+      }
+    }
+
+    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+      def application: Application =
+        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+          .configure("features.phase2ScreensEnabled" -> false)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+      running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+
+        val request =
+          FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
+            .withFormUrlEncodedBody(("value", "1"))
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url

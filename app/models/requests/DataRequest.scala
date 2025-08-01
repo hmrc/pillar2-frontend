@@ -63,7 +63,7 @@ final case class ObligationsAndSubmissionsSuccessDataRequest[A](
   subscriptionLocalData:                SubscriptionLocalData,
   obligationsAndSubmissionsSuccessData: ObligationsAndSubmissionsSuccess,
   enrolments:                           Set[Enrolment],
-  isAgent:                              Boolean = false
+  isAgent:                              Boolean
 ) extends WrappedRequest[A](request)
 
 final case class SessionDataRequest[A](
