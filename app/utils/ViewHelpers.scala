@@ -26,7 +26,7 @@ import java.util.Date
 import javax.inject.Singleton
 
 @Singleton
-class ViewHelpers extends Logging {
+object ViewHelpers extends Logging {
   //only for date like Sunday 25 January 2015
   def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
     dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))

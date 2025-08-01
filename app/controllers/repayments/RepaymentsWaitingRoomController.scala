@@ -43,7 +43,7 @@ class RepaymentsWaitingRoomController @Inject() (
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(submissionTimestamp: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     val repaymentStatusPage          = request.userAnswers.get(RepaymentsStatusPage)
     val repaymentsWaitingRoomVisited = request.userAnswers.get(RepaymentsWaitingRoomVisited)
 
@@ -56,12 +56,15 @@ class RepaymentsWaitingRoomController @Inject() (
           _              <- sessionRepository.set(updatedAnswers)
         } yield Ok(view(s))
       case (Some(SuccessfullyCompleted), Some(true)) =>
-        Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
+        println("***Successfully Completed***")
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(submissionTimestamp)))
       case (Some(UnexpectedResponseError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
       case (Some(IncompleteDataError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
-      case (s, _) => Future.successful(Ok(view(s)))
+      case (s, _) =>
+        println("***Back to waiting Room***")
+        Future.successful(Ok(view(s)))
     }
 
   }

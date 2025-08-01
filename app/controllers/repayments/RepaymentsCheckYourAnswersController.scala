@@ -23,7 +23,6 @@ import controllers.actions._
 import models.repayments.RepaymentsStatus._
 import models.{UnexpectedResponse, UserAnswers}
 import pages._
-import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -54,15 +53,13 @@ class RepaymentsCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  val dateHelper = new ViewHelpers()
-
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
-          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad(ViewHelpers.getDateTimeGMT))
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
@@ -101,7 +98,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
                               Future.fromTry(
                                 sessionData
                                   .set(RepaymentsStatusPage, updatedStatus)
-                                  .flatMap(_.set(RepaymentConfirmationTimestampPage, dateHelper.getDateTimeGMT))
                               )
                             } else Future.successful(sessionData)
           updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
@@ -121,7 +117,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
           updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
           _                <- sessionRepository.set(updatedAnswers10)
         } yield (): Unit
-        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+        Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad(ViewHelpers.getDateTimeGMT))
       } else {
         Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
       }

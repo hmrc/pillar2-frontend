@@ -369,12 +369,11 @@ object fmJourney {
 
 object groupJourney {
 
-  val dateHelper = new ViewHelpers()
   def from(answers: UserAnswers)(implicit messages: Messages): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
-      answers.getEither(SubAccountingPeriodPage).map(ap => dateHelper.formatDateGDS(ap.startDate)),
-      answers.getEither(SubAccountingPeriodPage).map(ap => dateHelper.formatDateGDS(ap.endDate))
+      answers.getEither(SubAccountingPeriodPage).map(ap => ViewHelpers.formatDateGDS(ap.startDate)),
+      answers.getEither(SubAccountingPeriodPage).map(ap => ViewHelpers.formatDateGDS(ap.endDate))
     ).parMapN {
       (
         mneOrDomestic,

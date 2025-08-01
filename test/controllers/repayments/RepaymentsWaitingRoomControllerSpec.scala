@@ -22,6 +22,7 @@ import models.repayments.RepaymentsStatus._
 import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.ViewHelpers
 import views.html.repayments.RepaymentsWaitingRoomView
 
 class RepaymentsWaitingRoomControllerSpec extends SpecBase {
@@ -33,7 +34,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad(currentDate.toString).url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RepaymentsWaitingRoomView]
 
@@ -49,11 +50,11 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad(ViewHelpers.getDateTimeGMT).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.RepaymentConfirmationController.onPageLoad().url
+        redirectLocation(result).value mustEqual routes.RepaymentConfirmationController.onPageLoad(ViewHelpers.getDateTimeGMT).url
       }
     }
 
@@ -64,7 +65,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad(currentDate.toString).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -79,7 +80,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad().url)
+        val request = FakeRequest(GET, routes.RepaymentsWaitingRoomController.onPageLoad(currentDate.toString).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

@@ -531,10 +531,10 @@ POST       /repayment/error/change-partial-name                                 
 GET        /error/repayment-request-unsuccessful                                                    controllers.repayments.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed
 GET        /repayment/error/answers-not-saved                                                       controllers.repayments.RepaymentsJourneyRecoveryController.onPageLoad
 GET        /repayment/error/incomplete-repayment-request                                               controllers.repayments.RepaymentsIncompleteDataController.onPageLoad
-GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
+GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad(submissionTimestamp: String)
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
-GET        /repayment/processing-repayment                                                          controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
+GET        /repayment/processing-repayment                                                          controllers.repayments.RepaymentsWaitingRoomController.onPageLoad(submissionTimestamp: String)
 GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
 GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)
@@ -548,7 +548,7 @@ GET        /review-submit/download-registration-confirmation-pdf                
 GET        /replace-filing-member/download-answers-pdf                                              controllers.pdf.PrintPdfController.onDownloadRfmAnswers
 GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
 GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
-GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
+GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation(submissionTimestamp: String)
 
 GET        /manage-account/contact/waiting-room                                                     controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad

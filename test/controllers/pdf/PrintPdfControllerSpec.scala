@@ -233,7 +233,7 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
           .build()
         when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
         running(application) {
-          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
+          val request = FakeRequest(GET, controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation(currentDate.toString).url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) mustEqual "hello"

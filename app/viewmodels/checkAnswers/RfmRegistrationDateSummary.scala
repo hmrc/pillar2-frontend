@@ -27,10 +27,9 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object RfmRegistrationDateSummary {
-  val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(RfmRegistrationDatePage).map { answer =>
-      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer))
+      val startDate = HtmlFormat.escape(ViewHelpers.formatDateGDS(answer))
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(startDate)),
