@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package controllers
+package controllers.payments
 
 import base.SpecBase
 import connectors.OPSConnector

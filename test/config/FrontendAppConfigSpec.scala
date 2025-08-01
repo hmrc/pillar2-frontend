@@ -34,17 +34,94 @@ class FrontendAppConfigSpec extends SpecBase {
         config.btaHomePageUrl mustBe "http://localhost:9020/business-account"
       }
     }
+
     ".supportUrl" must {
       "return support URL" in {
         when(mockRequestHeader.uri).thenReturn("/some/test/uri")
         config.supportUrl mustBe "http://localhost:9250/contact/report-technical-problem?service=pillar2-frontend&referrerUrl=%2Fsome%2Ftest%2Furi"
       }
     }
+
     ".howToRegisterPlr2GuidanceUrl" must {
       "how to register pillar 2 guidance URL" in {
         config.howToRegisterPlr2GuidanceUrl mustBe "https://www.gov.uk/government/publications/introduction-of-the-new-multinational-top-up-tax"
       }
     }
-  }
 
+    ".enrolmentKey and .enrolmentIdentifier" must {
+      "return correct enrolment values" in {
+        config.enrolmentKey mustBe "HMRC-PILLAR2-ORG"
+        config.enrolmentIdentifier mustBe "PLRID"
+      }
+    }
+
+    ".timeout and .countdown" must {
+      "return correct timeout values" in {
+        config.timeout mustBe 900
+        config.countdown mustBe 120
+      }
+    }
+
+    ".accessibilityStatementPath" must {
+      "return correct accessibility statement path" in {
+        config.accessibilityStatementPath mustBe "/accessibility-statement/pillar2-frontend"
+      }
+    }
+
+    ".phase2ScreensEnabled" must {
+      "return correct feature flag value" in {
+        config.phase2ScreensEnabled mustBe false
+      }
+    }
+
+    ".newHomepageEnabled" must {
+      "return correct feature flag value" in {
+        config.newHomepageEnabled mustBe false
+      }
+    }
+
+    ".enablePayByBankAccount" must {
+      "return correct feature flag value" in {
+        config.enablePayByBankAccount mustBe true
+      }
+    }
+
+    ".subscriptionPollingTimeoutSeconds and .subscriptionPollingIntervalSeconds" must {
+      "return correct polling configuration values" in {
+        config.subscriptionPollingTimeoutSeconds mustBe 20
+        config.subscriptionPollingIntervalSeconds mustBe 2
+      }
+    }
+
+    ".incorporatedEntityBvEnabled and .partnershipBvEnabled" must {
+      "return correct BV enabled flags" in {
+        config.incorporatedEntityBvEnabled mustBe false
+        config.partnershipBvEnabled mustBe false
+      }
+    }
+
+    ".cacheTtl" must {
+      "return correct cache TTL value" in {
+        config.cacheTtl mustBe 900
+      }
+    }
+
+    ".researchUrl" must {
+      "return correct research URL" in {
+        config.researchUrl mustBe "https://docs.google.com/forms/d/e/1FAIpQLScinYzxH9XrSPZzqc_kiF2sfO8u5z75YdgzaSp49WwdzJ7XzQ/viewform?usp=sharing&ouid=112858317209071254702"
+      }
+    }
+
+    ".howToPayPillar2TaxesUrl" must {
+      "return correct guidance URL" in {
+        config.howToPayPillar2TaxesUrl mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      }
+    }
+
+    ".btaAccessEnabled" must {
+      "return correct feature flag value" in {
+        config.btaAccessEnabled mustBe true
+      }
+    }
+  }
 }
