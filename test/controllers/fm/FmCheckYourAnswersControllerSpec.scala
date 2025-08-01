@@ -17,8 +17,11 @@
 package controllers.fm
 
 import base.SpecBase
+import models.NonUKAddress
+import pages._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 
 class FmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -48,6 +51,39 @@ class FmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency 
         contentAsString(result) must include("Check your answers for filing member details")
       }
 
+    }
+
+    "display specific address values in check your answers summary" in {
+      val testAddress = NonUKAddress(
+        addressLine1 = "Change& Address /",
+        addressLine2 = None,
+        addressLine3 = "City CYA",
+        addressLine4 = None,
+        postalCode = None,
+        countryCode = "AE"
+      )
+
+      val testUserAnswers = emptyUserAnswers
+        .setOrException(NominateFilingMemberPage, true)
+        .setOrException(FmNameRegistrationPage, "Test NFM")
+        .setOrException(FmRegisteredInUKPage, false)
+        .setOrException(FmRegisteredAddressPage, testAddress)
+        .setOrException(FmContactNamePage, "Test Contact")
+        .setOrException(FmContactEmailPage, "test@example.com")
+        .setOrException(FmPhonePreferencePage, true)
+        .setOrException(FmCapturePhonePage, "07123456789")
+        .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
+
+      val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
+      running(application) {
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("Change&amp; Address /")
+        contentAsString(result) must include("City CYA")
+        contentAsString(result) must include("United Arab Emirates")
+      }
     }
   }
 }

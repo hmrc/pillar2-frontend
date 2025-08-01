@@ -98,6 +98,21 @@ class ContactNfmByTelephoneControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show specific error message when no option is selected" in {
+      val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select yes if we can contact NFM Contact by telephone")
+      }
+    }
+
     "redirect to book mark page if no contact name or contact email is found for GET" in {
       val application = applicationBuilder(userAnswers = None)
         .build()
