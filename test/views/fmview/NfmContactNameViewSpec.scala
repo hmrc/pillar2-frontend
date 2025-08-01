@@ -14,78 +14,63 @@
  * limitations under the License.
  */
 
-package views.fm
+package views.fmview
 
 import base.ViewSpecBase
 import forms.NfmContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmContactNameView
 
 class NfmContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmContactNameFormProvider
-  val form: Form[String]       = formProvider()
-  val page: NfmContactNameView = inject[NfmContactNameView]
+  lazy val formProvider: NfmContactNameFormProvider = new NfmContactNameFormProvider
+  lazy val form:         Form[String]               = formProvider()
+  lazy val page:         NfmContactNameView         = inject[NfmContactNameView]
+  lazy val pageTitle:    String                     = "What is the name of the person or team from the nominated filing member to keep on record?"
+  val view:              Document                   = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
   "NFM Contact Name View" should {
-    "display the correct title" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team from the nominated filing member to keep on record?"
-      )
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "display the correct heading" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team from the nominated filing member to keep on record?"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "display the correct caption" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "display the hint text" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-hint").text must include(
-        "For example, ‘Tax team’ or ‘Ashley Smith’."
-      )
+      view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
     }
 
     "display an error when no input is provided" in {
-      val view: Document = Jsoup.parse(
-        page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
-      )
+      val view: Document = Jsoup.parse(page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString())
 
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter the name of the person or team from the nominated filing member to keep on record"
-      )
+    }
+
+    "display the submit button" in {
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "display an error when input exceeds maximum length" in {
       val longInput = "A" * 106
-      val view: Document = Jsoup.parse(
-        page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
-      )
+      val view: Document = Jsoup.parse(page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString())
 
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Name of the contact person or team should be 105 characters or less"
-      )
     }
 
     "display XSS validation error messages when special characters are entered" in {
@@ -93,24 +78,16 @@ class NfmContactNameViewSpec extends ViewSpecBase {
         "value" -> "Test <script>alert('xss')</script> & Company"
       )
 
-      val view: Document = Jsoup.parse(
-        page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
-      )
+      val view: Document = Jsoup.parse(page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString())
 
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The name you enter must not include the following characters <, >, \" or &")
+      errorList mustBe "The name you enter must not include the following characters <, >, \" or &"
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: The name you enter must not include the following characters <, >, \" or &")
+      fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
 
-    "display the submit button" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
-    }
   }
 }

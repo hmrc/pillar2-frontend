@@ -18,19 +18,22 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentsContactEmailFormProvider
+import generators.StringGenerators
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactEmailView
 
-class RepaymentsContactEmailViewSpec extends ViewSpecBase {
+class RepaymentsContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
-  val formProvider = new RepaymentsContactEmailFormProvider
-  val mode: Mode                       = NormalMode
-  val page: RepaymentsContactEmailView = inject[RepaymentsContactEmailView]
-  val contactName = "ABC Limited"
+  lazy val formProvider: RepaymentsContactEmailFormProvider = new RepaymentsContactEmailFormProvider
+  lazy val mode:         Mode                               = NormalMode
+  lazy val page:         RepaymentsContactEmailView         = inject[RepaymentsContactEmailView]
+  lazy val contactName:  String                             = "ABC Limited"
+  lazy val pageTitle:    String                             = "What is the email address"
 
-  "Repayments Contact Email View" should {
+  "Repayments Contact Email View" when {
 
     "page loaded" should {
 
@@ -38,97 +41,107 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase {
         Jsoup.parse(page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("What is the email address?")
+        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include("What is the email address for ABC Limited?")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe s"$pageTitle for ABC Limited?"
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text must include(
-          "We will only use this to contact you about " +
-            "this repayment request."
-        )
+        view.getElementsByClass("govuk-hint").text mustBe
+          "We will only use this to contact you about this repayment request."
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      }
+    }
+    //---
+
+    "form is submitted with missing value" should {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider(contactName).bind(Map("contactEmail" -> "")),
+          mode,
+          contactName
+        )(request, appConfig, messages).toString()
+      )
+
+      "show a missing value error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
+
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Enter an email address for ABC Limited"
+      }
+
+      "show field-specific error" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: Enter an email address for ABC Limited"
       }
     }
 
-    "nothing entered and page submitted" should {
+    "form is submitted with value exceeding maximum length" should {
+      val longContactEmail = randomAlphaNumericStringGenerator(199).concat("@example.com")
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider(contactName).bind(Map("contactEmail" -> longContactEmail)),
+          mode,
+          contactName
+        )(request, appConfig, messages).toString()
+      )
 
-      val view: Document =
-        Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> "")), mode, contactName)(request, appConfig, messages)
-            .toString()
-        )
+      "show length validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Enter an email address for ABC Limited"
-        )
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Email address must be 100 characters or less"
       }
 
-      "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter an email address for ABC Limited")
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Email address must be 100 characters or less"
+      }
     }
 
-    "value entered exceeds character limit" should {
+    "form is submitted with value containing special characters" should {
+      val xssInput: Map[String, String] = Map(
+        "contactEmail" -> "<script>alert('xss')@example.com"
+      )
 
-      val contactEmail = "".padTo(100, 'A').concat("gmail.com")
+      val errorView: Document = Jsoup.parse(
+        page(formProvider(contactName).bind(xssInput), mode, contactName)(request, appConfig, messages).toString()
+      )
 
-      val view: Document =
-        Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), mode, contactName)(
-            request,
-            appConfig,
-            messages
-          ).toString()
-        )
+      "show XSS validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Email address must be 100 characters or less"
-        )
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Enter an email address in the correct format, like name@example.com"
       }
 
-      "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Email address must be 100 characters or less")
-      }
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+        fieldErrors.get(0).text() mustBe "Error: Enter an email address in the correct format, like name@example.com"
+      }
     }
-
-    "value entered not in correct format" should {
-
-      val contactEmail = "123$!abc"
-
-      val view: Document =
-        Jsoup.parse(
-          page(formProvider(contactName).bind(Map("contactEmail" -> contactEmail)), mode, contactName)(
-            request,
-            appConfig,
-            messages
-          ).toString()
-        )
-
-      "have an error summary" in {
-        view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-        view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-          "Enter an email address in the correct format, like name@example.com"
-        )
-      }
-
-      "have an input error" in {
-        view.getElementsByClass("govuk-error-message").text must include("Enter an email address in the correct format, like name@example.com")
-      }
-
-    }
-
   }
+
 }

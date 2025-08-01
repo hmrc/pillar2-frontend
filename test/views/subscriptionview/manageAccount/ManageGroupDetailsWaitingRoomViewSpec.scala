@@ -14,31 +14,36 @@
  * limitations under the License.
  */
 
-package views.subscription.manageAccount
+package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import models.subscription.ManageGroupDetailsStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
 
 class ManageGroupDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page: ManageGroupDetailsWaitingRoomView = inject[ManageGroupDetailsWaitingRoomView]
-  val view: Document                          = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val page:      ManageGroupDetailsWaitingRoomView = inject[ManageGroupDetailsWaitingRoomView]
+  lazy val view:      Document                          = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val pageTitle: String                            = "Submitting your group details"
 
   "Manage Group Details Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(messages("Submitting your group details"))
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(messages("Submitting your group details"))
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text must include("Do not press back in your browser or leave this page.")
+      view.getElementsByTag("h2").first().text mustBe "Do not press back in your browser or leave this page. " +
+        "It may take up to a minute to process this change."
     }
 
   }

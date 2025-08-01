@@ -19,53 +19,54 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentIndividualErrorView
 
 class AgentIndividualErrorViewSpec extends ViewSpecBase {
 
-  val page: AgentIndividualErrorView = inject[AgentIndividualErrorView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:       AgentIndividualErrorView = inject[AgentIndividualErrorView]
+  lazy val view:       Document                 = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                   = "Sorry, you’re unable to use this service"
+  lazy val paragraphs: Elements                 = view.getElementsByClass("govuk-body")
 
   "Agent Individual Error View" should {
 
     "have a title" in {
-      val title = "Sorry, you’re unable to use this service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, you’re unable to use this service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You’ve signed in with an individual account.")
-      view.getElementsByClass("govuk-body").get(1).text  must include("Only users with an agent services account can use this service.")
+      paragraphs.get(0).text() mustBe "You’ve signed in with an individual account."
+      paragraphs.get(1).text() mustBe "Only users with an agent services account can use this service."
     }
 
     "have a paragraph body with links" in {
-      val bulletList   = view.getElementsByClass("govuk-list govuk-list--bullet")
-      val firstBullet  = bulletList.first().getElementsByClass("govuk-body").first()
-      val secondBullet = bulletList.first().getElementsByClass("govuk-body").get(1)
+      paragraphs.get(2).text() mustBe "if you are an agent that has been given authorisation to report Pillar 2 " +
+        "Top-up Taxes on behalf of a group, you must sign in via agent services."
+      paragraphs.get(2).getElementsByTag("a").text() mustBe
+        "sign in via agent services"
+      paragraphs.get(2).getElementsByTag("a").attr("href") mustBe
+        "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
 
-      firstBullet.text() must include(
-        "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes on behalf of a group, you must"
-      )
-      firstBullet.getElementsByTag("a").text() must include("sign in via agent services")
-      firstBullet.getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
-
-      secondBullet.text()                       must include("if you need to request authorisation to report Pillar 2 Top-up Taxes, you must")
-      secondBullet.getElementsByTag("a").text() must include("request authorisation on agent services")
-      secondBullet
-        .getElementsByTag("a")
-        .attr("href") mustBe "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
+      paragraphs.get(3).text() mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you " +
+        "must request authorisation on agent services."
+      paragraphs.get(3).getElementsByTag("a").text() mustBe
+        "request authorisation on agent services"
+      paragraphs.get(3).getElementsByTag("a").attr("href") mustBe
+        "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
     }
 
     "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      val link: Elements = paragraphs.last().getElementsByTag("a")
 
-      link.text         must include("Find out more about who can report for Pillar 2 Top-up Taxes")
-      link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+      link.text mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
 
   }

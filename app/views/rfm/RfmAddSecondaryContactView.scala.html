@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import viewmodels.LegendSize.Medium
 @import views.html.components.gds.{heading, paragraphBody, sectionHeader}
+@import viewmodels.LegendSize
 
 @this(
     layout: templates.Layout,
@@ -48,7 +49,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("rfm.addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading(Medium)
+                legend = LegendViewModel(messages("rfm.addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading1(size = LegendSize.Medium, headingLevel = Some("h2"))
             )
         )
 

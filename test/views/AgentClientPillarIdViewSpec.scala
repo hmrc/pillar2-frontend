@@ -20,33 +20,35 @@ import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.AgentClientPillarIdView
 
 class AgentClientPillarIdViewSpec extends ViewSpecBase {
 
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page: AgentClientPillarIdView = inject[AgentClientPillarIdView]
-
-  val view: Document = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val formProvider: AgentClientPillar2ReferenceFormProvider = new AgentClientPillar2ReferenceFormProvider
+  lazy val page:         AgentClientPillarIdView                 = inject[AgentClientPillarIdView]
+  lazy val view:         Document                                = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                                  = "What is your client’s Pillar 2 Top-up Taxes ID?"
 
   "Agent Client PillarId View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is your client’s Pillar 2 Top-up Taxes ID?")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your client’s Pillar 2 Top-up Taxes ID?")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint" in {
-      view.getElementById("value-hint").text must include(
+      view.getElementById("value-hint").text mustBe
         "This is 15 characters, for example, XMPLR0123456789. The current filing member can find it on their Pillar 2 Top-up Taxes homepage."
-      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

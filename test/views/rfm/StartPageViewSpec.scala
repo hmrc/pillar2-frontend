@@ -19,116 +19,105 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.StartPageView
 
 class StartPageViewSpec extends ViewSpecBase {
 
-  val page: StartPageView = inject[StartPageView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      StartPageView = inject[StartPageView]
+  lazy val view:      Document      = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String        = "Replace the filing member for a Pillar 2 Top-up Taxes account"
 
   "Start Page View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Replace the filing member for a Pillar 2 Top-up Taxes account")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have sub headings" in {
-      view.getElementsByClass("govuk-heading-m").get(0).text must include(
-        "Tell HMRC when you have replaced your " +
-          "filing member"
-      )
-      view.getElementsByClass("govuk-heading-m").get(1).text must include("Who can replace a filing member")
-      view.getElementsByClass("govuk-heading-m").get(2).text must include("Obligations as the filing member")
-      view.getElementsByClass("govuk-heading-m").get(3).text must include("What you will need")
-      view.getElementsByClass("govuk-heading-s").get(0).text must include(
+      val mSubheadings: Elements = view.getElementsByClass("govuk-heading-m")
+
+      mSubheadings.get(0).text mustBe "Tell HMRC when you have replaced your filing member"
+      mSubheadings.get(1).text mustBe "Who can replace a filing member"
+      mSubheadings.get(2).text mustBe "Obligations as the filing member"
+      mSubheadings.get(3).text mustBe "What you will need"
+      view.getElementsByClass("govuk-heading-s").get(0).text mustBe
         "By continuing you confirm you are able to act as a new filing member for your group"
-      )
     }
 
     "have paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "Use this service to replace the filing member " +
-          "for an existing Pillar 2 Top-up Taxes account."
-      )
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "It is a legal requirement to replace your filing member’s details " +
-          "within 6 months of the change occurring in your group."
-      )
+      paragraphs.get(0).text mustBe
+        "Use this service to replace the filing member for an existing Pillar 2 Top-up Taxes account."
 
-      view.getElementsByClass("govuk-body").get(2).text must include(
-        "If your group has not yet registered, you will " +
-          "need to register to report Pillar 2 Top-up Taxes. You can choose to nominate a filing member during registration."
-      )
+      paragraphs.get(1).text mustBe
+        "It is a legal requirement to replace your filing member’s details within 6 months of the change occurring " +
+        "in your group."
 
-      view.getElementsByClass("govuk-body").get(3).text must include(
-        "Only the new filing member can use this service. " +
-          "This can either be the Ultimate Parent Entity or another company member which has been nominated by the Ultimate Parent Entity."
-      )
+      paragraphs.get(2).text mustBe
+        "If your group has not yet registered, you will need to register to report Pillar 2 Top-up Taxes. You can " +
+        "choose to nominate a filing member during registration."
 
-      view.getElementsByClass("govuk-body").get(4).text must include(
-        "As the new filing member, you will take over " +
-          "the obligations to:"
-      )
+      paragraphs.get(3).text mustBe
+        "Only the new filing member can use this service. This can either be the Ultimate Parent Entity or another " +
+        "company member which has been nominated by the Ultimate Parent Entity."
 
-      view.getElementsByClass("govuk-body").get(5).text must include(
-        "If you fail to meet your obligations as a " +
-          "filing member, you may be liable for penalties."
-      )
+      paragraphs.get(4).text mustBe
+        "As the new filing member, you will take over the obligations to:"
 
-      view.getElementsByClass("govuk-body").get(6).text must include(
-        "To replace the filing member, you’ll need to " +
-          "provide the Government Gateway user ID for the new filing member."
-      )
+      paragraphs.get(5).text mustBe
+        "If you fail to meet your obligations as a filing member, you may be liable for penalties."
 
-      view.getElementsByClass("govuk-body").get(7).text must include(
-        "If the new filing member is a UK limited company, or limited liability partnership, " +
-          "you must also provide the company registration number, and Unique Taxpayer Reference."
-      )
+      paragraphs.get(6).text mustBe
+        "To replace the filing member, you’ll need to provide the Government Gateway user ID for the new filing member."
 
-      view.getElementsByClass("govuk-body").get(8).text must include(
+      paragraphs.get(7).text mustBe
+        "If the new filing member is a UK limited company, or limited liability partnership, you must also provide " +
+        "the company registration number, and Unique Taxpayer Reference."
+
+      paragraphs.get(8).text mustBe
         "You’ll also need to tell us:"
-      )
     }
 
     "have bullet lists" in {
-      view.getElementsByTag("li").get(0).text must include(
+      val listItems: Elements = view.getElementsByTag("li")
+
+      listItems.get(0).text mustBe
         "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
-      )
 
-      view.getElementsByTag("li").get(1).text must include(
+      listItems.get(1).text mustBe
         "submit your group’s Pillar 2 Top-up Taxes returns"
-      )
 
-      view.getElementsByTag("li").get(2).text must include(
+      listItems.get(2).text mustBe
         "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records"
-      )
 
-      view.getElementsByTag("li").get(3).text must include("the group’s Pillar 2 Top-up Taxes ID")
+      listItems.get(3).text mustBe
+        "the group’s Pillar 2 Top-up Taxes ID"
 
-      view.getElementsByTag("li").get(4).text must include(
+      listItems.get(4).text mustBe
         "the date the group first registered to report their Pillar 2 Top-up Taxes in the UK"
-      )
 
-      view.getElementsByTag("li").get(5).text must include(
+      listItems.get(5).text mustBe
         "contact details and preferences, for one or 2 individuals or teams in the group"
-      )
 
-      view.getElementsByTag("li").get(6).text must include("a contact postal address for the group")
+      listItems.get(6).text mustBe
+        "a contact postal address for the group"
 
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 }

@@ -20,35 +20,37 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.CouldNotConfirmDetailsView
 
 class CouldNotConfirmDetailsViewSpec extends ViewSpecBase {
 
-  val page: CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
-
-  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:       CouldNotConfirmDetailsView = inject[CouldNotConfirmDetailsView]
+  lazy val view:       Document                   = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                     = "We could not confirm your bank details"
+  lazy val paragraphs: Elements                   = view.getElementsByClass("govuk-body")
 
   "Could Not Confirm Details View" should {
 
     "have a title" in {
-      val title = "We could not confirm your bank details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("We could not confirm your bank details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We are unable to proceed with the account details you entered.")
-      view.getElementsByClass("govuk-body").last.text    must include("Please")
+      paragraphs.first().text mustBe "We are unable to proceed with the account details you entered."
     }
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-
-      link.text         must include("return to your bank details and try again")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/repayment/uk-details")
+    "have a paragraph with link" in {
+      paragraphs.last().text mustBe "Please return to your bank details and try again."
+      paragraphs.last().getElementsByTag("a").text mustBe "return to your bank details and try again"
+      paragraphs.last().getElementsByTag("a").attr("href") mustBe
+        controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url
     }
 
   }

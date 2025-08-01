@@ -20,46 +20,51 @@ import base.ViewSpecBase
 import forms.TurnOverEligibilityFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import play.api.data.Form
 import views.html.TurnOverEligibilityView
 
 class TurnOverEligibilityViewSpec extends ViewSpecBase {
 
-  val formProvider = new TurnOverEligibilityFormProvider()()
-  val page: TurnOverEligibilityView = inject[TurnOverEligibilityView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider: Form[Boolean]           = new TurnOverEligibilityFormProvider()()
+  lazy val page:         TurnOverEligibilityView = inject[TurnOverEligibilityView]
+  lazy val view:         Document                = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle: String =
+    "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
 
   "Turn Over Eligibility View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
+      view.getElementsByTag("h2").get(0).text mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
     "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million by the number of days in your accounting period and dividing it by 365."
-      )
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
+        "If the group’s accounting period is not 365 days, you can calculate the threshold by multiplying €750 million " +
+        "by the number of days in your accounting period and dividing it by 365."
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text mustBe "Yes"
+      radioButtons.get(1).text mustBe "No"
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

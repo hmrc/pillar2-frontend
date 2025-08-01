@@ -19,33 +19,36 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmSaveProgressInformView
 
 class RfmSaveProgressViewSpec extends ViewSpecBase {
 
-  val page: RfmSaveProgressInformView = inject[RfmSaveProgressInformView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RfmSaveProgressInformView = inject[RfmSaveProgressInformView]
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                    = "Saving progress"
 
   "Rfm Save Progress inform View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Saving progress")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Saving progress")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a p1 " in {
-      view.getElementById("save-p1").text must include(
-        "From this point, the information you enter will be saved as you progress. If you sign out," +
-          " the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again."
-      )
+      view.getElementById("save-p1").text mustBe
+        "From this point, the information you enter will be saved as you progress. If you sign out, the information " +
+        "you have already entered will be saved for 28 days. After that time you will need to enter all of the " +
+        "information again."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

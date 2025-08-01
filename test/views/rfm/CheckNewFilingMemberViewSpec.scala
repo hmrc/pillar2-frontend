@@ -20,46 +20,44 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.CheckNewFilingMemberView
 
 class CheckNewFilingMemberViewSpec extends ViewSpecBase {
 
-  val page: CheckNewFilingMemberView = inject[CheckNewFilingMemberView]
-
-  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:      CheckNewFilingMemberView = inject[CheckNewFilingMemberView]
+  lazy val view:      Document                 = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                   = "We need to match the details of the new nominated filing member to HMRC records"
 
   "Check New Filing Member View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must
-        include("We need to match the details of the new nominated filing member to HMRC records")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementById("section-header").text must include("Group details")
+      view.getElementById("section-header").text mustBe "Group details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must
-        include("We need to match the details of the new nominated filing member to HMRC records")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must
-        include(
-          "If the new filing member is registered in the UK, we will ask you for identifying " +
-            "information so we can best match it with our records."
-        )
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe
+        "If the new filing member is registered in the UK, we will ask you for identifying information so we can " +
+        "best match it with our records."
 
-      view.getElementsByClass("govuk-body").get(1).text must
-        include(
-          "If the new filing member is registered outside of the UK or if they are not a listed entity type, " +
-            "we will ask you for identifying information so we can create a new HMRC record."
-        )
+      paragraphs.get(1).text mustBe
+        "If the new filing member is registered outside of the UK or if they are not a listed entity type, " +
+        "we will ask you for identifying information so we can create a new HMRC record."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }

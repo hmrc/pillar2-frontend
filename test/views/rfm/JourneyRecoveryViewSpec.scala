@@ -18,34 +18,34 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.rfm.JourneyRecoveryView
 
 class JourneyRecoveryViewSpec extends ViewSpecBase {
 
-  val page: JourneyRecoveryView = inject[JourneyRecoveryView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      JourneyRecoveryView = inject[JourneyRecoveryView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "There has been an error"
 
   "Replace filing member journey recovery view" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("There has been an error")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("There has been an error")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/start"
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("p").text must include(
-        messages("You can go back to") + " " + messages("replace the filing member for a Pillar 2 Top-up Taxes account to try again")
-      )
+      paragraph.text mustBe "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
+      paragraph.getElementsByTag("a").text() mustBe "to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
+      paragraph.getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
     }
 
   }

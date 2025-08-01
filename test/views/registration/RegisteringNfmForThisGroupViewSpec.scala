@@ -19,52 +19,80 @@ package views.registration
 import base.ViewSpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.registrationview.RegisteringNfmForThisGroupView
 
 class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
 
-  val formProvider: RegisteringNfmForThisGroupFormProvider = new RegisteringNfmForThisGroupFormProvider
-  val page:         RegisteringNfmForThisGroupView         = inject[RegisteringNfmForThisGroupView]
-  val view:         Document                               = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
-  val viewWithErrors: Document = Jsoup.parse(page(formProvider().bind(Map("registeringNfmGroup" -> "")))(request, appConfig, messages).toString())
+  lazy val formProvider: RegisteringNfmForThisGroupFormProvider = new RegisteringNfmForThisGroupFormProvider
+  lazy val page:         RegisteringNfmForThisGroupView         = inject[RegisteringNfmForThisGroupView]
+  lazy val view:         Document                               = Jsoup.parse(page(formProvider())(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                                 = "Are you registering as the group’s nominated filing member?"
 
-  "Registering Nfm for this group view" should {
-    "have a caption" in {
-      view.getElementsByTag("title").text() must
-        include("Are you registering as the group’s nominated filing member?")
-    }
+  "Registering Nfm for this group view" when {
 
-    "have a heading" in {
-      view.getElementsByClass("govuk-caption-l hmrc-caption-l").text() must
-        be("Check if you need to report Pillar 2 Top-up Taxes")
-    }
+    "page loaded" should {
 
-    "have a hint" in {
-      view.getElementsByClass("govuk-hint").text() must
-        be("The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records.")
-    }
+      "have a title" in {
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
 
-    "have Yes/No radio buttons" in {
-      val radioButtons = view.getElementsByClass("govuk-radios").first().children()
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
+      }
 
-      radioButtons.size()        must be(2)
-      radioButtons.get(0).text() must be("Yes")
-      radioButtons.get(1).text() must be("No")
-    }
+      "have an H2 heading" in {
+        view.getElementsByTag("h2").get(0).text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
+      }
 
-    "have a continue button" in {
-      view.getElementsByClass("govuk-button").text() must be("Continue")
+      "have a hint" in {
+        view
+          .getElementsByClass("govuk-hint")
+          .text() mustBe "The nominated filing member is responsible for managing the group’s Pillar 2 Top-up Taxes returns and keeping business records."
+      }
+
+      "have Yes/No radio buttons" in {
+        val radioButtons: Elements = view.getElementsByClass("govuk-radios").first().children()
+
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text() mustBe "Yes"
+        radioButtons.get(1).text() mustBe "No"
+      }
+
+      "have a continue button" in {
+        view.getElementsByClass("govuk-button").text() mustBe "Continue"
+      }
     }
   }
 
-  "Registering Nfm for this group view when clicking continue with missing values" should {
-    "have an error summary" in {
-      viewWithErrors.getElementsByClass("govuk-error-summary").text() must
-        include("Select yes if you are registering as the group’s nominated filing member");
+  "form is submitted with missing value" should {
+    lazy val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map("registeringNfmGroup" -> "")
+        )
+      )(request, appConfig, messages).toString()
+    )
 
-      viewWithErrors.getElementsByClass("govuk-form-group govuk-form-group--error").text() must
-        include("Select yes if you are registering as the group’s nominated filing member")
+    "show a missing value error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe "Select yes if you are registering as the group’s nominated filing member"
+    }
+
+    "show field-specific error" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Select yes if you are registering as the group’s nominated filing member"
     }
   }
+
 }

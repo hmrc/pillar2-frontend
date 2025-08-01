@@ -21,38 +21,40 @@ import forms.RfmPrimaryContactEmailFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmPrimaryContactEmailView
 
 class RfmPrimaryContactEmailViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactEmailFormProvider
-  val page: RfmPrimaryContactEmailView = inject[RfmPrimaryContactEmailView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: RfmPrimaryContactEmailFormProvider = new RfmPrimaryContactEmailFormProvider
+  lazy val page:         RfmPrimaryContactEmailView         = inject[RfmPrimaryContactEmailView]
+  lazy val username:     String                             = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the email address"
 
   "Rfm Primary Contact Email View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the email address?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is the email address for John Doe")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include(
-        "We will only use this to contact you about Pillar 2 " +
-          "Top-up Taxes."
-      )
+      view.getElementsByClass("govuk-hint").text mustBe
+        "We will only use this to contact you about Pillar 2 Top-up Taxes."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

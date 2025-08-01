@@ -19,30 +19,32 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.AmendApiFailureView
 
 class AmendApiFailureViewSpec extends ViewSpecBase {
 
-  val page: AmendApiFailureView = inject[AmendApiFailureView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      AmendApiFailureView = inject[AmendApiFailureView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "Sorry, there is a problem with the service"
 
   "Amend Api Failure View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Sorry, there is a problem with the service")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, there is a problem with the service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include("Please try again later")
-      view.getElementsByClass("govuk-body").get(1).text must
-        include(
-          "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
-        )
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe "Please try again later"
+      paragraphs.get(1).text mustBe
+        "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
     }
   }
 }

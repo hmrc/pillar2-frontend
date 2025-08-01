@@ -19,42 +19,41 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.Kb750IneligibleView
 
 class Kb750IneligibleViewSpec extends ViewSpecBase {
 
-  val page: Kb750IneligibleView = inject[Kb750IneligibleView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      Kb750IneligibleView = inject[Kb750IneligibleView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
 
   "Kb750 Ineligible View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Based on your answers, this group does not need to report Pillar 2 Top-up Taxes"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
-      )
+      view.getElementsByClass("govuk-body").get(0).text mustBe
+        "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at " +
+        "least 2 of the previous 4 accounting periods."
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "You may need to report Pillar 2 Top-up Taxes if the global turnover meets the €750 million threshold in future accounting periods."
-      )
+      view.getElementsByClass("govuk-body").get(1).text mustBe
+        "You may need to report Pillar 2 Top-up Taxes if the global turnover meets the €750 million threshold in " +
+        "future accounting periods."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who is eligible for Pillar 2 Top-up Taxes")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who is eligible for Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

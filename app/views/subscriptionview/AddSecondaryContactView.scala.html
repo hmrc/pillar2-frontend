@@ -26,13 +26,12 @@
         govukRadios: GovukRadios,
         govukButton: GovukButton,
         paragraphBody: paragraphBody,
-        h1: heading,
+        h1: heading
 )
 
 @(form: Form[_], contactName: String, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
-
 
     @formHelper(action = controllers.subscription.routes.AddSecondaryContactController.onSubmit(mode), 'autoComplete -> "off") {
 
@@ -49,7 +48,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading(Medium)
+                legend = LegendViewModel(messages("addSecondaryContact.checkYourAnswersLabel", contactName)).asPageHeading1(size = Medium, headingLevel = Some("h2"))
             )
         )
 

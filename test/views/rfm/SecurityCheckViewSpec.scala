@@ -21,38 +21,40 @@ import forms.RfmSecurityCheckFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmSecurityCheckFormProvider
-  val page: SecurityCheckView = inject[SecurityCheckView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmSecurityCheckFormProvider = new RfmSecurityCheckFormProvider
+  lazy val page:         SecurityCheckView            = inject[SecurityCheckView]
+  lazy val view:         Document                     = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                       = "Enter the group’s Pillar 2 Top-up Taxes ID"
 
   "Security Check View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Enter the group’s Pillar 2 Top-up Taxes ID")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
         "This is 15 characters, for example, " +
-          "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
-      )
+        "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }

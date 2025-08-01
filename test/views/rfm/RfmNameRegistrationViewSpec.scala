@@ -21,35 +21,34 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmNameRegistrationView
 
 class RfmNameRegistrationViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactNameFormProvider
-  val page: RfmNameRegistrationView = inject[RfmNameRegistrationView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmPrimaryContactNameFormProvider = new RfmPrimaryContactNameFormProvider
+  lazy val page:         RfmNameRegistrationView           = inject[RfmNameRegistrationView]
+  lazy val view:         Document                          = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                            = "What is the name of the new nominated filing member?"
 
   "Rfm Name Registration View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the new nominated filing member?"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the new nominated filing member?"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

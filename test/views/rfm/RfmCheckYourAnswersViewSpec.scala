@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -28,11 +29,11 @@ import viewmodels.govuk.summarylist._
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
-  val userName    = "John Doe"
-  val countryCode = "US"
-  val country     = "United States"
+  lazy val userName:    String = "John Doe"
+  lazy val countryCode: String = "US"
+  lazy val country:     String = "United States"
 
-  val userAnswer: UserAnswers = emptyUserAnswers
+  lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RfmNameRegistrationPage, userName)
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
 
@@ -45,43 +46,47 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     ).flatten
   )
 
-  val page: RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
-
-  val view: Document = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val page:      RfmCheckYourAnswersView = inject[RfmCheckYourAnswersView]
+  lazy val view:      Document                = Jsoup.parse(page(NormalMode, list)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                  = "Check your answers for filing member details"
 
   "Rfm Check Your Answers View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers for filing member details")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Check your answers for filing member details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a summary list keys" in {
-      view.getElementsByClass("govuk-summary-list__key").get(0).text must include("Name")
-      view.getElementsByClass("govuk-summary-list__key").get(1).text must include("Address")
+      val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
+      summaryListKeys.get(0).text mustBe "Name"
+      summaryListKeys.get(1).text mustBe "Address"
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(userName)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine1)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(nonUkAddress.addressLine3)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(country)
+      val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+
+      summaryListItems.get(0).text mustBe userName
+      summaryListItems.get(1).text mustBe s"${nonUkAddress.addressLine1} ${nonUkAddress.addressLine3} $country"
     }
 
     "have a summary list links" in {
-      view.getElementsByClass("govuk-summary-list__actions").get(0).text must include("Change")
-      view.getElementsByClass("govuk-summary-list__actions").get(1).text must include("Change")
+      val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
+      summaryListActions.get(0).text mustBe "Change the name of the new nominated filing member"
+      summaryListActions.get(1).text mustBe "Change the address of the new nominated filing member"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 }

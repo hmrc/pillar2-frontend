@@ -25,81 +25,81 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
   "Transformation utility methods" must {
 
     "noTransform should return input unchanged" in {
-      noTransform("test") mustEqual "test"
-      noTransform("") mustEqual ""
-      noTransform("Test 123") mustEqual "Test 123"
+      noTransform("test") mustBe "test"
+      noTransform("") mustBe ""
+      noTransform("Test 123") mustBe "Test 123"
     }
 
     "strip should remove all spaces" in {
-      strip("test value") mustEqual "testvalue"
-      strip(" test ") mustEqual "test"
-      strip("") mustEqual ""
-      strip("a b c d") mustEqual "abcd"
+      strip("test value") mustBe "testvalue"
+      strip(" test ") mustBe "test"
+      strip("") mustBe ""
+      strip("a b c d") mustBe "abcd"
     }
 
     "toUpperCaseAlphaOnly should convert lowercase to uppercase" in {
-      toUpperCaseAlphaOnly("test") mustEqual "TEST"
-      toUpperCaseAlphaOnly("Test123") mustEqual "TEST123"
-      toUpperCaseAlphaOnly("") mustEqual ""
-      toUpperCaseAlphaOnly("abc-def_123") mustEqual "ABC-DEF_123"
+      toUpperCaseAlphaOnly("test") mustBe "TEST"
+      toUpperCaseAlphaOnly("Test123") mustBe "TEST123"
+      toUpperCaseAlphaOnly("") mustBe ""
+      toUpperCaseAlphaOnly("abc-def_123") mustBe "ABC-DEF_123"
     }
 
     "noSpaceWithUpperCaseTransform should strip spaces and convert to uppercase" in {
-      noSpaceWithUpperCaseTransform("test value") mustEqual "TESTVALUE"
-      noSpaceWithUpperCaseTransform(" abc ") mustEqual "ABC"
-      noSpaceWithUpperCaseTransform("") mustEqual ""
+      noSpaceWithUpperCaseTransform("test value") mustBe "TESTVALUE"
+      noSpaceWithUpperCaseTransform(" abc ") mustBe "ABC"
+      noSpaceWithUpperCaseTransform("") mustBe ""
     }
 
     "minimiseSpace should replace multiple spaces with single space" in {
-      minimiseSpace("test  value") mustEqual "test value"
-      minimiseSpace("a   b    c") mustEqual "a b c"
-      minimiseSpace("  test  ") mustEqual " test "
-      minimiseSpace("test") mustEqual "test"
+      minimiseSpace("test  value") mustBe "test value"
+      minimiseSpace("a   b    c") mustBe "a b c"
+      minimiseSpace("  test  ") mustBe " test "
+      minimiseSpace("test") mustBe "test"
     }
 
     "standardiseText should replace whitespace and trim" in {
-      standardiseText("  test   value  ") mustEqual "test value"
-      standardiseText("\t\ntest\r\nvalue\t") mustEqual "test value"
-      standardiseText("") mustEqual ""
-      standardiseText("   ") mustEqual ""
+      standardiseText("  test   value  ") mustBe "test value"
+      standardiseText("\t\ntest\r\nvalue\t") mustBe "test value"
+      standardiseText("") mustBe ""
+      standardiseText("   ") mustBe ""
     }
 
     "standardTextTransform should trim input" in {
-      standardTextTransform("  test  ") mustEqual "test"
-      standardTextTransform("test") mustEqual "test"
-      standardTextTransform("") mustEqual ""
-      standardTextTransform("   ") mustEqual ""
+      standardTextTransform("  test  ") mustBe "test"
+      standardTextTransform("test") mustBe "test"
+      standardTextTransform("") mustBe ""
+      standardTextTransform("   ") mustBe ""
     }
 
     "postCodeTransform should strip, minimise, trim and uppercase" in {
-      postCodeTransform("  sw1a   1aa  ") mustEqual "SW1A1AA"
-      postCodeTransform("test") mustEqual "TEST"
-      postCodeTransform("") mustEqual ""
+      postCodeTransform("  sw1a   1aa  ") mustBe "SW1A1AA"
+      postCodeTransform("test") mustBe "TEST"
+      postCodeTransform("") mustBe ""
     }
 
     "postCodeDataTransform should transform and filter non-empty" in {
-      postCodeDataTransform(Some("  sw1a  1aa  ")) mustEqual Some("SW1A1AA")
-      postCodeDataTransform(Some("")) mustEqual None
-      postCodeDataTransform(Some("   ")) mustEqual None
-      postCodeDataTransform(None) mustEqual None
+      postCodeDataTransform(Some("  sw1a  1aa  ")) mustBe Some("SW1A1AA")
+      postCodeDataTransform(Some("")) mustBe None
+      postCodeDataTransform(Some("   ")) mustBe None
+      postCodeDataTransform(None) mustBe None
     }
 
     "postCodeValidTransform should format valid UK postcodes" in {
       // Valid postcode without space - should add space
-      postCodeValidTransform("SW1A1AA") mustEqual "SW1A 1AA"
+      postCodeValidTransform("SW1A1AA") mustBe "SW1A 1AA"
       // Valid postcode with space - should preserve
-      postCodeValidTransform("SW1A 1AA") mustEqual "SW1A 1AA"
+      postCodeValidTransform("SW1A 1AA") mustBe "SW1A 1AA"
       // Invalid postcode - should return unchanged
-      postCodeValidTransform("INVALID") mustEqual "INVALID"
-      postCodeValidTransform("") mustEqual ""
+      postCodeValidTransform("INVALID") mustBe "INVALID"
+      postCodeValidTransform("") mustBe ""
     }
 
     "countryDataTransform should transform and filter country codes" in {
-      countryDataTransform(Some("  gb  ")) mustEqual Some("GB")
-      countryDataTransform(Some("us")) mustEqual Some("US")
-      countryDataTransform(Some("")) mustEqual None
-      countryDataTransform(Some("   ")) mustEqual None
-      countryDataTransform(None) mustEqual None
+      countryDataTransform(Some("  gb  ")) mustBe Some("GB")
+      countryDataTransform(Some("us")) mustBe Some("US")
+      countryDataTransform(Some("")) mustBe None
+      countryDataTransform(Some("   ")) mustBe None
+      countryDataTransform(None) mustBe None
     }
   }
 
@@ -115,67 +115,67 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
     "must return XSS error for invalid characters" in {
       val data   = Map("postcode" -> "SW1A <script>", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.xss"
+      result.errors.head.message mustBe "address.postcode.error.xss"
     }
 
     "must format UK postcode correctly when no space exists" in {
       val data   = Map("postcode" -> "SW1A1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
+      result.value mustBe Some((Some("SW1A 1AA"), "GB"))
     }
 
     "must preserve UK postcode when space already exists" in {
       val data   = Map("postcode" -> "SW1A 1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
+      result.value mustBe Some((Some("SW1A 1AA"), "GB"))
     }
 
     "must return error for invalid UK postcode format" in {
       val data   = Map("postcode" -> "INVALID", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.invalid.GB"
+      result.errors.head.message mustBe "address.postcode.error.invalid.GB"
     }
 
     "must accept valid non-UK postcode within length limit" in {
       val data   = Map("postcode" -> "12345", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("12345"), "US"))
+      result.value mustBe Some((Some("12345"), "US"))
     }
 
     "must return length error for non-UK postcode exceeding limit" in {
       val data   = Map("postcode" -> "1234567890123", "countryCode" -> "US")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.length"
+      result.errors.head.message mustBe "address.postcode.error.length"
     }
 
     "must accept postcode with whitespace normalisation" in {
       val data   = Map("postcode" -> "  12345  ", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("12345"), "US"))
+      result.value mustBe Some((Some("12345"), "US"))
     }
 
     "must return error for missing postcode when country is GB" in {
       val data   = Map("postcode" -> "", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.invalid.GB"
+      result.errors.head.message mustBe "address.postcode.error.invalid.GB"
     }
 
     "must return None for missing postcode when country is not GB" in {
       val data   = Map("postcode" -> "", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some((None, "US"))
+      result.value mustBe Some((None, "US"))
     }
 
     "must handle complex UK postcode formatting" in {
       val data   = Map("postcode" -> "SW1A1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
+      result.value mustBe Some((Some("SW1A 1AA"), "GB"))
     }
 
     "must handle normalisation of postcode case and spaces" in {
       val data   = Map("postcode" -> "  sw1a   1aa  ", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
+      result.value mustBe Some((Some("SW1A 1AA"), "GB"))
     }
 
     "must handle XSS characters in various positions" in {
@@ -189,30 +189,30 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       testCases.foreach { postcode =>
         val data   = Map("postcode" -> postcode, "countryCode" -> "GB")
         val result = form.bind(data)
-        result.errors.head.message mustEqual "address.postcode.error.xss"
+        result.errors.head.message mustBe "address.postcode.error.xss"
       }
     }
 
     "must unbind correctly with Some value" in {
       val unboundData = form.mapping.unbind((Some("SW1A 1AA"), "GB"))
-      unboundData("postcode") mustEqual "SW1A 1AA"
+      unboundData("postcode") mustBe "SW1A 1AA"
     }
 
     "must unbind correctly with None value" in {
       val unboundData = form.mapping.unbind((None, "GB"))
-      unboundData("postcode") mustEqual ""
+      unboundData("postcode") mustBe ""
     }
 
     "must handle extra whitespace in various positions" in {
       val data   = Map("postcode" -> " SW1A  1AA ", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some((Some("SW1A 1AA"), "GB"))
+      result.value mustBe Some((Some("SW1A 1AA"), "GB"))
     }
 
     "must handle missing postcode key entirely" in {
       val data   = Map("countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some((None, "US"))
+      result.value mustBe Some((None, "US"))
     }
   }
 
@@ -228,67 +228,67 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
     "must return XSS error for invalid characters" in {
       val data   = Map("postcode" -> "SW1A <script>", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.xss"
+      result.errors.head.message mustBe "address.postcode.error.xss"
     }
 
     "must format UK postcode correctly when no space exists" in {
       val data   = Map("postcode" -> "SW1A1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some(("SW1A 1AA", "GB"))
+      result.value mustBe Some(("SW1A 1AA", "GB"))
     }
 
     "must preserve UK postcode when space already exists" in {
       val data   = Map("postcode" -> "SW1A 1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some(("SW1A 1AA", "GB"))
+      result.value mustBe Some(("SW1A 1AA", "GB"))
     }
 
     "must return error for invalid UK postcode format" in {
       val data   = Map("postcode" -> "INVALID", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.invalid.GB"
+      result.errors.head.message mustBe "address.postcode.error.invalid.GB"
     }
 
     "must accept valid non-UK postcode within length limit" in {
       val data   = Map("postcode" -> "12345", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some(("12345", "US"))
+      result.value mustBe Some(("12345", "US"))
     }
 
     "must return length error for non-UK postcode exceeding limit" in {
       val data   = Map("postcode" -> "1234567890123", "countryCode" -> "US")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.length"
+      result.errors.head.message mustBe "address.postcode.error.length"
     }
 
     "must handle postcode case conversion" in {
       val data   = Map("postcode" -> "ab123cd", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some(("AB123CD", "US"))
+      result.value mustBe Some(("AB123CD", "US"))
     }
 
     "must return error for missing postcode when country is GB" in {
       val data   = Map("postcode" -> "", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.invalid.GB"
+      result.errors.head.message mustBe "address.postcode.error.invalid.GB"
     }
 
     "must return required error for missing postcode when country is not GB" in {
       val data   = Map("postcode" -> "", "countryCode" -> "US")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.required"
+      result.errors.head.message mustBe "address.postcode.error.required"
     }
 
     "must return required error for missing postcode and country" in {
       val data   = Map("postcode" -> "", "countryCode" -> "")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.required"
+      result.errors.head.message mustBe "address.postcode.error.required"
     }
 
     "must handle normalisation of postcode case and spaces" in {
       val data   = Map("postcode" -> "  sw1a   1aa  ", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some(("SW1A 1AA", "GB"))
+      result.value mustBe Some(("SW1A 1AA", "GB"))
     }
 
     "must handle various UK postcode formats" in {
@@ -304,7 +304,7 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       testCases.foreach { case (input, expected) =>
         val data   = Map("postcode" -> input, "countryCode" -> "GB")
         val result = form.bind(data)
-        result.value mustEqual Some((expected, "GB"))
+        result.value mustBe Some((expected, "GB"))
       }
     }
 
@@ -319,43 +319,43 @@ class AddressMappingsSpec extends SpecBase with AddressMappings {
       testCases.foreach { postcode =>
         val data   = Map("postcode" -> postcode, "countryCode" -> "GB")
         val result = form.bind(data)
-        result.errors.head.message mustEqual "address.postcode.error.xss"
+        result.errors.head.message mustBe "address.postcode.error.xss"
       }
     }
 
     "must unbind correctly" in {
       val unboundData = form.mapping.unbind(("SW1A 1AA", "GB"))
-      unboundData("postcode") mustEqual "SW1A 1AA"
+      unboundData("postcode") mustBe "SW1A 1AA"
     }
 
     "must handle UK postcodes with single letter area" in {
       val data   = Map("postcode" -> "M1 1AA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some(("M1 1AA", "GB"))
+      result.value mustBe Some(("M1 1AA", "GB"))
     }
 
     "must handle mixed case normalisation" in {
       val data   = Map("postcode" -> "sw1a1aA", "countryCode" -> "GB")
       val result = form.bind(data)
-      result.value mustEqual Some(("SW1A 1AA", "GB"))
+      result.value mustBe Some(("SW1A 1AA", "GB"))
     }
 
     "must handle missing postcode key entirely" in {
       val data   = Map("countryCode" -> "US")
       val result = form.bind(data)
-      result.errors.head.message mustEqual "address.postcode.error.required"
+      result.errors.head.message mustBe "address.postcode.error.required"
     }
 
     "must handle very short postcodes for non-GB countries" in {
       val data   = Map("postcode" -> "1", "countryCode" -> "US")
       val result = form.bind(data)
-      result.value mustEqual Some(("1", "US"))
+      result.value mustBe Some(("1", "US"))
     }
 
     "must handle postcode exactly at maxPostCodeLength for non-GB" in {
       val data   = Map("postcode" -> "1234567890", "countryCode" -> "US") // Exactly 10 chars
       val result = form.bind(data)
-      result.value mustEqual Some(("1234567890", "US"))
+      result.value mustBe Some(("1234567890", "US"))
     }
   }
 }
