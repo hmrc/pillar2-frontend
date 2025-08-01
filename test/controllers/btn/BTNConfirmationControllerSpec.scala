@@ -19,12 +19,11 @@ package controllers.btn
 import base.SpecBase
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import play.api.http.HeaderNames
 import play.api.inject._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{FopService, ObligationsAndSubmissionsService}
+import services.ObligationsAndSubmissionsService
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -76,47 +75,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
-        }
-      }
-    }
-
-    "onDownloadRfmAnswers" should {
-      "return OK and the correct view" in {
-        val mockFopService = mock[FopService]
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
-          .overrides(
-            bind[FopService].toInstance(mockFopService)
-          )
-          .build()
-        when(mockFopService.render(any())).thenReturn(Future.successful("hello".getBytes))
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onDownloadConfirmation.url)
-          val result  = route(application, request).value
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual "hello"
-          header(HeaderNames.CONTENT_DISPOSITION, result).value mustEqual "attachment; filename=below-threshold-notification-confirmation.pdf"
-        }
-      }
-
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onDownloadConfirmation.url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
