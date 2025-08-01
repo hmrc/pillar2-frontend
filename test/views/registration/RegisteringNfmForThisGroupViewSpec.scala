@@ -18,7 +18,6 @@ package views.registration
 
 import base.ViewSpecBase
 import forms.RegisteringNfmForThisGroupFormProvider
-import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements

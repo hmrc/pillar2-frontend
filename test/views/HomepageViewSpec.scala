@@ -105,8 +105,6 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCard.getElementsByTag("h2").text() mustBe "Manage account"
       manageCard.getElementsByClass("govuk-body").first().text() mustBe s"Registration date: $date"
 
-      val links = manageCard.getElementsByTag("a")
-
       manageCardLinks.get(0).text() mustBe "Manage contact details"
       manageCardLinks.get(0).attr("href") mustBe
         controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
@@ -153,12 +151,13 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
         )
 
-      val bannerContent = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
+      val bannerContent: Element = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
 
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe "Your account has a Below-Threshold Notification."
-      bannerContent
-        .text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
-        .format(dateTimeFormatter)} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
+      bannerContent.text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need " +
+        s"to submit a UK Tax Return for the accounting period ending ${apEndDate.get.format(dateTimeFormatter)} or " +
+        s"for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 " +
+        s"Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
 
@@ -168,18 +167,21 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
-      val returnsCard = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
+      val returnsCard:      Element  = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
+      val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
 
-      returnsCard.getElementsByTag("h2").text() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
 
-      val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag")
-      statusTag.size() mustBe 0
+      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag")
+      statusTags.size() mustBe 0
 
-      val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
-      links.get(0).text() mustBe "View all due and overdue returns"
-      links.get(1).text() mustBe "View submission history"
+      returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
+      returnsCardLinks.get(0).attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+
+      returnsCardLinks.get(1).text() mustBe "View submission history"
+      returnsCardLinks.get(1).attr("href") mustBe
+        controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
@@ -188,22 +190,27 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
-      val returnsCard = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+      val returnsCard:      Element  = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+      val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
 
-      val h2Element = returnsCard.getElementsByTag("h2").first()
-      h2Element.ownText() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").first().text() mustBe "Returns Overdue"
 
-      val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag--red")
-      statusTag.size() mustBe 1
-      statusTag.first().text() mustBe "Overdue"
-      statusTag.first().attr("aria-label") mustBe "Overdue returns"
-      statusTag.first().attr("title") mustBe "Overdue returns"
+      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag--red")
+      statusTags.size() mustBe 1
 
-      val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
-      links.get(0).text() mustBe "View all due and overdue returns"
-      links.get(1).text() mustBe "View submission history"
+      val overdueStatusTag: Element = statusTags.first()
+      overdueStatusTag.text() mustBe "Overdue"
+      overdueStatusTag.attr("aria-label") mustBe "Overdue returns"
+      overdueStatusTag.attr("title") mustBe "Overdue returns"
+
+      returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
+      returnsCardLinks.get(0).attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+
+      returnsCardLinks.get(1).text() mustBe "View submission history"
+      returnsCardLinks.get(1).attr("href") mustBe
+        controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
@@ -212,22 +219,27 @@ class HomepageViewSpec extends ViewSpecBase {
           page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
-      val returnsCard = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
+      val returnsCard:      Element  = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
+      val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
 
-      val h2Element = returnsCard.getElementsByTag("h2").first()
-      h2Element.ownText() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
+      returnsCard.getElementsByTag("h2").first().text() mustBe "Returns Incomplete"
 
-      val cardHeader = returnsCard.getElementsByClass("card-label").first()
-      val statusTag  = cardHeader.getElementsByClass("govuk-tag--purple")
-      statusTag.size() mustBe 1
-      statusTag.first().text() mustBe "Incomplete"
-      statusTag.first().attr("aria-label") mustBe "Incomplete returns"
-      statusTag.first().attr("title") mustBe "Incomplete returns"
+      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag--purple")
+      statusTags.size() mustBe 1
 
-      val links = returnsCard.getElementsByTag("a")
-      links.get(0).attr("href") must include("due-and-overdue-returns")
-      links.get(0).text() mustBe "View all due and overdue returns"
-      links.get(1).text() mustBe "View submission history"
+      val incompleteStatusTag: Element = statusTags.first()
+      incompleteStatusTag.text() mustBe "Incomplete"
+      incompleteStatusTag.attr("aria-label") mustBe "Incomplete returns"
+      incompleteStatusTag.attr("title") mustBe "Incomplete returns"
+
+      returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
+      returnsCardLinks.get(0).attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+
+      returnsCardLinks.get(1).text() mustBe "View submission history"
+      returnsCardLinks.get(1).attr("href") mustBe
+        controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
   }
 
@@ -248,31 +260,37 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display returns card with correct content" in {
-      val returnsCard: Element  = agentView.getElementsByClass("card-half-width").first()
-      val links:       Elements = returnsCard.getElementsByTag("a")
+      val returnsCard:      Element  = agentView.getElementsByClass("card-half-width").first()
+      val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
 
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
-      links.get(0).text() mustBe "View all due and overdue returns"
-      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
-      links.get(1).text() mustBe "View submission history"
-      links.get(1).attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
+      returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
+      returnsCardLinks.get(0).attr("href") mustBe
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+
+      returnsCardLinks.get(1).text() mustBe "View submission history"
+      returnsCardLinks.get(1).attr("href") mustBe
+        controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
     "display payments card with correct content" in {
-      val paymentsCard: Element = agentView.getElementsByClass("card-half-width").get(1)
+      val paymentsCard:      Element  = agentView.getElementsByClass("card-half-width").get(1)
+      val paymentsCardLinks: Elements = paymentsCard.getElementsByTag("a")
 
       paymentsCard.getElementsByTag("h2").text() mustBe "Payments"
 
-      val links = paymentsCard.getElementsByTag("a")
-      links.get(0).text() mustBe "View transaction history"
-      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe controllers.routes.TransactionHistoryController
-        .onPageLoadTransactionHistory(None)
-        .url
-      links.get(1).text() mustBe "View outstanding payments"
-      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
-      links.get(2).text() mustBe "Request a repayment"
-      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+      paymentsCardLinks.get(0).text() mustBe "View transaction history"
+      paymentsCard.getElementsByTag("a").get(0).attr("href") mustBe
+        controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
+
+      paymentsCardLinks.get(1).text() mustBe "View outstanding payments"
+      paymentsCard.getElementsByTag("a").get(1).attr("href") mustBe
+        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+      paymentsCardLinks.get(2).text() mustBe "Request a repayment"
+      paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
     "display manage account card with correct content" in {
@@ -334,9 +352,11 @@ class HomepageViewSpec extends ViewSpecBase {
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
 
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe s"$organisationName has a Below-Threshold Notification."
-      bannerContent.text() mustBe
-        s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending ${apEndDate.get
-          .format(dateTimeFormatter)} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted. Find out more about Below-Threshold Notification"
+      bannerContent.text() mustBe s"Important $organisationName has a Below-Threshold Notification. You or your " +
+        s"client have told us the group does not need to submit a UK Tax Return for the accounting period " +
+        s"ending ${apEndDate.get.format(dateTimeFormatter)} or for any future accounting periods. If your client " +
+        s"meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be " +
+        s"submitted. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
     }
   }
