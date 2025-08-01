@@ -26,24 +26,24 @@ import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNWaitingRoomView
 
-import javax.inject.{Inject, Singleton}
+import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class BTNWaitingRoomController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identifierAction:         IdentifierAction,
-  dataRetrievalAction:      SubscriptionDataRetrievalAction,
-  dataRequiredAction:       SubscriptionDataRequiredAction,
-  sessionRepository:        SessionRepository,
-  btnWaitingRoomView:       BTNWaitingRoomView,
-  checkPhase2Screens:       Phase2ScreensAction
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+  val controllerComponents:               MessagesControllerComponents,
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  dataRetrievalAction:                    SubscriptionDataRetrievalAction,
+  dataRequiredAction:                     SubscriptionDataRequiredAction,
+  sessionRepository:                      SessionRepository,
+  btnWaitingRoomView:                     BTNWaitingRoomView,
+  checkPhase2Screens:                     Phase2ScreensAction
+)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identifierAction andThen checkPhase2Screens andThen dataRetrievalAction andThen dataRequiredAction).async {
+  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen dataRetrievalAction andThen dataRequiredAction).async {
     implicit request =>
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
