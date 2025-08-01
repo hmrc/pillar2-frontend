@@ -44,7 +44,7 @@ class RepaymentsErrorReturnViewSpec extends ViewSpecBase {
     "have a paragraph" in {
       view.getElementsByClass("govuk-body").text mustBe
         "You have successfully submitted your repayment request. You can return to report and manage your " +
-          "Pillar 2 Top-up Taxes ."
+        "Pillar 2 Top-up Taxes ."
     }
 
     "have a link" in {

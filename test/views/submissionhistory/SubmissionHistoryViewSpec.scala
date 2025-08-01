@@ -21,7 +21,6 @@ import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import org.mockito.internal.matchers.StartsWith
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.format.DateTimeFormatter

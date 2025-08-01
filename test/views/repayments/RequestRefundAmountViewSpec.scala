@@ -27,9 +27,9 @@ import views.html.repayments.RequestRefundAmountView
 class RequestRefundAmountViewSpec extends ViewSpecBase {
 
   lazy val formProvider: RequestRepaymentAmountFormProvider = new RequestRepaymentAmountFormProvider
-  lazy val mode:         Mode                            = NormalMode
-  lazy val page:         RequestRefundAmountView         = inject[RequestRefundAmountView]
-  lazy val pageTitle:    String                          = "Enter your requested repayment amount in pounds"
+  lazy val mode:         Mode                               = NormalMode
+  lazy val page:         RequestRefundAmountView            = inject[RequestRefundAmountView]
+  lazy val pageTitle:    String                             = "Enter your requested repayment amount in pounds"
 
   "Request Repayment Amount View" should {
 

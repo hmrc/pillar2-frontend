@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
