@@ -681,7 +681,7 @@ useContactPrimary.h2 = Do you want to use this as your primary contact?
 useContactPrimary.error.required = Select yes if you want to use this as your primary contact
 useContactPrimary.name = Name
 useContactPrimary.email = Email
-useContactPrimary.phone = Phone
+useContactPrimary.telephone = Phone
 
 contactNameCompliance.heading.caption = Contact details
 contactNameCompliance.title = Who should we contact about compliance for Pillar 2 Top-up Taxes?
