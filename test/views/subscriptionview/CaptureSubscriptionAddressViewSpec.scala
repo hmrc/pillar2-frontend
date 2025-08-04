@@ -191,11 +191,6 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
 
         errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-        // FIXME: inconsistency between allowed symbols error message
-        // some messages say: "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
-        // and other: "The name you enter must not include the following characters <, >, \" or &"
-        // FIXME: inconsistency among error messages. Some have a call to action "Enter the name or address", other mention the error "The postcode you enter must not include..."
-        // FIXME: first address field allows ampersand & in the error message. Other address fields do not.
         errorsList.get(0).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
         errorsList.get(1).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         errorsList.get(2).text() mustBe "Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
@@ -207,7 +202,6 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
       "show field-specific errors" in {
         val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-        // FIXME: first address field allows ampersand & in the error message. Other address fields do not.
         fieldErrors.get(0).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\ &"
         fieldErrors.get(1).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
         fieldErrors.get(2).text() mustBe "Error: Enter the address using only letters, numbers, and the allowed symbols, / - , . \\"
@@ -217,7 +211,6 @@ class CaptureSubscriptionAddressViewSpec extends ViewSpecBase with StringGenerat
       }
     }
 
-    // FIXME: this test does not exist in other Spec files
     "form is submitted with errors, should retain user input in the form fields" in {
       val userInput = Map(
         "addressLine1" -> "123 Test Street",

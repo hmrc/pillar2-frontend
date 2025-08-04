@@ -27,9 +27,9 @@ import views.html.repayments.BankAccountDetailsView
 
 class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
-  lazy val formProvider = new BankAccountDetailsFormProvider
-  lazy val page:      BankAccountDetailsView = inject[BankAccountDetailsView]
-  lazy val pageTitle: String                 = "Bank account details"
+  lazy val formProvider: BankAccountDetailsFormProvider = new BankAccountDetailsFormProvider
+  lazy val page:         BankAccountDetailsView         = inject[BankAccountDetailsView]
+  lazy val pageTitle:    String                         = "Bank account details"
 
   "Non UK Bank View" should {
     val view: Document = Jsoup.parse(
@@ -47,8 +47,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      // FIXME: this title contains a hint. Full H1 text is "Bank account details The account must be a UK business account."
-      h1Elements.text() must startWith(pageTitle)
+      h1Elements.get(0).ownText() mustBe pageTitle // H1 contains a hint
       h1Elements.text() mustBe s"$pageTitle The account must be a UK business account."
     }
 
@@ -138,9 +137,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      // FIXME: inconsistency - other forms return "The name of the bank must be 40 characters or less" and others "Name of the bank must be 40 characters or less"
       errorsList.get(0).text() mustBe "The name of the bank must be 40 characters or less"
-      // FIXME: inconsistency - other forms return "The name on the account must be 60 characters or less" and others "Name on the account must be 60 characters or less"
       errorsList.get(1).text() mustBe "The name on the account must be 60 characters or less"
       errorsList.get(2).text() mustBe "Sort code must be 6 digits"
       errorsList.get(3).text() mustBe "Account number must be 8 digits"
@@ -149,9 +146,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      // FIXME: inconsistency - other forms return "The name of the bank must be 40 characters or less" and others "Name of the bank must be 40 characters or less"
       fieldErrors.get(0).text() mustBe "Error: The name of the bank must be 40 characters or less"
-      // FIXME: inconsistency - other forms return "The name on the account must be 60 characters or less" and others "Name on the account must be 60 characters or less"
       fieldErrors.get(1).text() mustBe "Error: The name on the account must be 60 characters or less"
       fieldErrors.get(2).text() mustBe "Error: Sort code must be 6 digits"
       fieldErrors.get(3).text() mustBe "Error: Account number must be 8 digits"

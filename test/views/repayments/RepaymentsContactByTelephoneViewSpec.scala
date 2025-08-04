@@ -48,7 +48,7 @@ class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase with StringGener
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe s"Can we contact $contactName by telephone?" // FIXME: inconsistency between title and heading
+        h1Elements.text() mustBe s"Can we contact $contactName by telephone?"
       }
 
       "have a hint" in {

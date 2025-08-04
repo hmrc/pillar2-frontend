@@ -97,7 +97,6 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display manage account card with correct content" in {
-      // FIXME: use an ID or a class to target the Manage Account card instead of the generic "card-full-width"
       val manageCard:          Element  = organisationView.getElementsByClass("card-full-width").first()
       val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
       val manageCardHelpTexts: Elements = manageCard.select(".govuk-list p")
@@ -294,7 +293,6 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display manage account card with correct content" in {
-      // FIXME: use an ID or a class to target the Manage Account card instead of the generic "card-full-width"
       val manageCard:          Element  = agentView.getElementsByClass("card-full-width").first()
       val manageCardListItems: Elements = manageCard.getElementsByTag("li")
       val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
@@ -316,7 +314,6 @@ class HomepageViewSpec extends ViewSpecBase {
         "Amend your client's accounting period or update changes to entity locations."
 
       // This list item has no active link yet
-      // FIXME: Remove the `<b>` tag from the view
       manageCardListItems.get(2).getElementsByTag("b").first().text() mustBe "Replace filing member"
       manageCardHelpTexts.get(2).text() mustBe
         "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."

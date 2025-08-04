@@ -81,7 +81,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       val tableBodyRows: Elements = table.getElementsByClass("govuk-table__body").first().getElementsByClass("govuk-table__row")
       tableBodyRows.forEach { row =>
         val rowCells: Elements = row.getElementsByClass("govuk-table__cell")
-        rowCells.get(0).text() must startWith("UK Tax Return") // FIXME: one row is "UK Tax Return", the 2nd one is "UK Tax Return Amendment"
+        rowCells.get(0).text() must startWith("UK Tax Return")
         rowCells.get(1).text() mustBe submissionDate
       }
     }

@@ -40,24 +40,27 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
     "have a unique H1 heading with the account holder's name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "This account belongs to James" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe "This account belongs to James"
     }
 
     "have an h2 subheading" in {
-      // FIXME: H2 matches Title instead of H1 matching the Title
       val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
       view.getElementsByTag("h2").first().text() mustBe subheading
     }
 
     "have paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe
-        "Is this who you want the repayment to be sent to? If not, check the account details on your bank statement and try again."
-      view.getElementsByClass("govuk-body").get(1).text mustBe "We may not be able to recover your money if it goes to the wrong account."
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe "Is this who you want the repayment to be sent to? If not, check the account " +
+        "details on your bank statement and try again."
+      paragraphs.get(1).text mustBe "We may not be able to recover your money if it goes to the wrong account."
     }
 
     "have a yes or no form" in {
-      view.getElementsByClass("govuk-radios__item").first().text mustBe "Yes"
-      view.getElementsByClass("govuk-radios__item").get(1).text mustBe "No"
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioButtons.size() mustBe 2
+      radioButtons.first().text mustBe "Yes"
+      radioButtons.get(1).text mustBe "No"
     }
 
     "have a button" in {

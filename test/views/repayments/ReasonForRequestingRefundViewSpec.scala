@@ -25,7 +25,6 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.ReasonForRequestingRefundView
 
-// FIXME: move StringGenerators inside Generators(?)
 class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators with StringGenerators {
 
   lazy val formProvider: ReasonForRequestingRepaymentFormProvider = new ReasonForRequestingRepaymentFormProvider

@@ -33,9 +33,9 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val formProvider:     RfmRegisteredAddressFormProvider = new RfmRegisteredAddressFormProvider
   lazy val nonUkAddressForm: Form[NonUKAddress]               = formProvider()
   lazy val page:             RfmRegisteredAddressView         = inject[RfmRegisteredAddressView]
-  lazy val userName = "Test Company"
-  lazy val pageTitle:      String           = "What is the registered office address"
-  lazy val countryOptions: Seq[InputOption] = Seq.empty // FIXME
+  lazy val userName:         String                           = "Test Company"
+  lazy val pageTitle:        String                           = "What is the registered office address"
+  lazy val countryOptions:   Seq[InputOption]                 = Seq.empty
 
   "RFM Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -49,7 +49,7 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     "have a unique H1 heading with interpolated company name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle of $userName?" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe s"$pageTitle of $userName?"
     }
 
     "have the correct caption" in {
@@ -136,7 +136,7 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
         ),
         NormalMode,
         userName,
-        Seq.empty
+        countryOptions
       )(request, appConfig, messages).toString()
     )
 
@@ -149,41 +149,28 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      // FIXME: inconsistency - other forms return "The first line of the address must be 35 characters or less" and others "First line of the address must be 35 characters or less"
       errorsList.get(0).text() mustBe "The first line of the address must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The second line of the address must be 35 characters or less" and others "Second line of the address must be 35 characters or less"
       errorsList.get(1).text() mustBe "The second line of the address must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The town or city must be 35 characters or less" and others "Town or city must be 35 characters or less"
       errorsList.get(2).text() mustBe "The town or city must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The region must be 35 characters or less" and others "Region must be 35 characters or less"
       errorsList.get(3).text() mustBe "The region must be 35 characters or less"
       errorsList.get(4).text() mustBe "Postcode must be 10 characters or less"
-      // FIXME: error message says limit is 200 chars but gives error for 99
-      // FIXME: other country form fields show error "The country cannot be more than 35 characters" and others "The country cannot be more than 200 characters"
       errorsList.get(5).text() mustBe "The country cannot be more than 35 characters"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      // FIXME: inconsistency - other forms return "The first line of the address must be 35 characters or less" and others "First line of the address must be 35 characters or less"
       fieldErrors.get(0).text() mustBe "Error: The first line of the address must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The second line of the address must be 35 characters or less" and others "Second line of the address must be 35 characters or less"
       fieldErrors.get(1).text() mustBe "Error: The second line of the address must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The town or city must be 35 characters or less" and others "Town or city must be 35 characters or less"
       fieldErrors.get(2).text() mustBe "Error: The town or city must be 35 characters or less"
-      // FIXME: inconsistency - other forms return "The region must be 35 characters or less" and others "Region must be 35 characters or less"
       fieldErrors.get(3).text() mustBe "Error: The region must be 35 characters or less"
       fieldErrors.get(4).text() mustBe "Error: Postcode must be 10 characters or less"
-      // FIXME: error message says limit is 200 chars but gives error for 99
-      // FIXME: other country form fields show error "The country cannot be more than 35 characters" and others "The country cannot be more than 200 characters"
       fieldErrors.get(5).text() mustBe "Error: The country cannot be more than 35 characters"
     }
   }
 
   "when form is submitted with special characters" should {
-    // TODO: move these xssInputs in another file
-    val xssInput = Map(
+    val xssInput: Map[String, String] = Map(
       "addressLine1" -> "Test <script>alert('xss')</script>",
       "addressLine2" -> "Test & Company",
       "addressLine3" -> "Test City <script>",

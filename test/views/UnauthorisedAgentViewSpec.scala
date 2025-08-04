@@ -42,7 +42,7 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Sorry, you’re unable to use this service" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe "Sorry, you’re unable to use this service"
     }
 
     "have a paragraph body" in {

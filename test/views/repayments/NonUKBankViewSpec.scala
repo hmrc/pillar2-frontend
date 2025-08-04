@@ -44,9 +44,8 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        // FIXME: this title contains a hint. Full H1 text is "Bank account details This must be a business account."
-        h1Elements.text() must startWith("Bank account details")
-        h1Elements.text() mustBe s"$pageTitle This must be a business account." // FIXME: inconsistency between title and H1
+        h1Elements.get(0).ownText() mustBe pageTitle // H1 contains a hint
+        h1Elements.text() mustBe s"$pageTitle This must be a business account."
       }
 
       "have a paragraph" in {

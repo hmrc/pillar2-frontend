@@ -45,7 +45,7 @@ class NfmCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle for $username?" // FIXME: inconsistency - some title use "for" and other "of"!
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint description" in {

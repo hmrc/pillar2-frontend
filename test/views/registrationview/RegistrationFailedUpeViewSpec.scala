@@ -25,9 +25,10 @@ import views.html.registrationview.RegistrationFailedUpeView
 
 class RegistrationFailedUpeViewSpec extends ViewSpecBase {
 
-  lazy val page:      RegistrationFailedUpeView = inject[RegistrationFailedUpeView]
-  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                    = "Register your group"
+  lazy val page:       RegistrationFailedUpeView = inject[RegistrationFailedUpeView]
+  lazy val view:       Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                    = "Register your group"
+  lazy val paragraphs: Elements                  = view.getElementsByClass("govuk-body")
 
   "Registration Failed Upe View" should {
 
@@ -38,7 +39,7 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe "The details you entered did not match our records"
     }
 
     "have an H2 heading" in {
@@ -46,29 +47,26 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text mustBe "We could not match the details you entered with records held by HMRC."
-      view.getElementsByClass("govuk-body").get(1).text mustBe "You can confirm your details with the records held by HMRC by:"
+      paragraphs.get(0).text mustBe "We could not match the details you entered with records held by HMRC."
+      paragraphs.get(1).text mustBe "You can confirm your details with the records held by HMRC by:"
     }
 
     "have a paragraph links" in {
-      val link1 = view.getElementsByTag("ul").first().getElementsByTag("a").first()
-      val link2 = view.getElementsByTag("ul").first().getElementsByTag("a").get(1)
-      val link3 = view.getElementsByClass("govuk-body").get(4)
+      val links: Elements = view.getElementsByTag("ul").first().getElementsByTag("a")
 
-      link1.text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
-      link1.attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
-      link1.attr("target") mustBe "_blank"
+      links.get(0).text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
+      links.get(0).attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
+      links.get(0).attr("target") mustBe "_blank"
 
-      link2.text mustBe "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
-      link2.attr("href") mustBe "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
-      link2.attr("target") mustBe "_blank"
+      links.get(1).text mustBe "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
+      links.get(1).attr("href") mustBe "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
+      links.get(1).attr("target") mustBe "_blank"
 
-      link3.text mustBe
+      paragraphs.get(4).text mustBe
         "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
-      link3.getElementsByTag("a").text() mustBe "go back to select the entity type"
-      link3.getElementsByTag("a").attr("href") mustBe
+      paragraphs.get(4).getElementsByTag("a").text() mustBe "go back to select the entity type"
+      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
-
     }
 
   }

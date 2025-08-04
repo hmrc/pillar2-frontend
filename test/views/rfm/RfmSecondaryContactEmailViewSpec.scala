@@ -26,9 +26,9 @@ import views.html.rfm.RfmSecondaryContactEmailView
 
 class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
 
-  lazy val formProvider = new RfmSecondaryContactEmailFormProvider
-  lazy val page:     RfmSecondaryContactEmailView = inject[RfmSecondaryContactEmailView]
-  lazy val username: String                       = "John Doe"
+  lazy val formProvider: RfmSecondaryContactEmailFormProvider = new RfmSecondaryContactEmailFormProvider
+  lazy val page:         RfmSecondaryContactEmailView         = inject[RfmSecondaryContactEmailView]
+  lazy val username:     String                               = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "What is the email address"
 
@@ -45,7 +45,7 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle for $username?" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint" in {

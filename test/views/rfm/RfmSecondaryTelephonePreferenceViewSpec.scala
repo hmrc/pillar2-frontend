@@ -44,7 +44,7 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Can we contact John Doe by telephone?" // FIXME: inconsistency with other H1s -  not using the pageTitle
+      h1Elements.text() mustBe "Can we contact John Doe by telephone?"
     }
 
     "have a button" in {

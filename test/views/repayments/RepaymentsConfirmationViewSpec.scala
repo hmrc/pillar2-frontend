@@ -62,7 +62,6 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     "have a bullet list with download and print links" in {
       val bulletItems: Elements = view.getElementsByClass("govuk-list--bullet").select("li")
 
-      // FIXME: on the RegistrationConfirmationViewSpec the options are in reverse order
       bulletItems.get(0).text mustBe "Print this page"
       bulletItems.get(1).text mustBe "Download as PDF"
     }

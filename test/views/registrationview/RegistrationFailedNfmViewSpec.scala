@@ -38,7 +38,7 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "The details you entered did not match our records" // FIXME: inconsistency between title and H1
+      h1Elements.text() mustBe "The details you entered did not match our records"
     }
 
     "have an H2 heading" in {
