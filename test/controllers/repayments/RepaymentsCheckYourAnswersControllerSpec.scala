@@ -273,6 +273,81 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
+    "must display row 5 value O'Connor Construction from acceptance test scenario" in {
+      val userAnswer = emptyUserAnswers
+        .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
+        .setOrException(ReasonForRequestingRefundPage, "Test Reason")
+        .setOrException(UkOrAbroadBankAccountPage, models.UkOrAbroadBankAccount.UkBankAccount)
+        .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
+        .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
+        .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
+        .setOrException(RepaymentsContactByTelephonePage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+      running(application) {
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        responseContent must include("O'Connor Construction")
+      }
+    }
+
+    "must display row 6 value 609593 from acceptance test scenario" in {
+      val userAnswer = emptyUserAnswers
+        .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
+        .setOrException(ReasonForRequestingRefundPage, "Test Reason")
+        .setOrException(UkOrAbroadBankAccountPage, models.UkOrAbroadBankAccount.UkBankAccount)
+        .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
+        .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
+        .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
+        .setOrException(RepaymentsContactByTelephonePage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+      running(application) {
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        responseContent must include("609593")
+      }
+    }
+
+    "must display row 7 value 96863604 from acceptance test scenario" in {
+      val userAnswer = emptyUserAnswers
+        .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
+        .setOrException(ReasonForRequestingRefundPage, "Test Reason")
+        .setOrException(UkOrAbroadBankAccountPage, models.UkOrAbroadBankAccount.UkBankAccount)
+        .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
+        .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
+        .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
+        .setOrException(RepaymentsContactByTelephonePage, false)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+
+      running(application) {
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        responseContent must include("96863604")
+      }
+    }
+
     "on submit method" should {
 
       "redirect to incomplete data page if isRepaymentsJourneyCompleted returns false" in {

@@ -14,27 +14,27 @@
  * limitations under the License.
  */
 
-package views.fmview
+package views.registrationview
 
 import base.ViewSpecBase
-import forms.IsNFMUKBasedFormProvider
+import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import views.html.fmview.IsNFMUKBasedView
+import views.html.registrationview.UPERegisteredInUKConfirmationView
 
-class IsNFMUKBasedViewSpec extends ViewSpecBase {
+class UPERegisteredInUKConfirmationViewSpec extends ViewSpecBase {
 
-  val formProvider = new IsNFMUKBasedFormProvider
-  val page: IsNFMUKBasedView = inject[IsNFMUKBasedView]
+  val formProvider = new UPERegisteredInUKConfirmationFormProvider
+  val page: UPERegisteredInUKConfirmationView = inject[UPERegisteredInUKConfirmationView]
 
   val view: Document =
     Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
-  "IsNFMUKBasedView" should {
+  "UPERegisteredInUKConfirmationView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Is the nominated filing member registered in the UK?")
+      view.getElementsByTag("title").text must include("Is the Ultimate Parent Entity registered in the UK?")
     }
 
     "have a caption" in {
@@ -42,7 +42,7 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Is the nominated filing member registered in the UK?"
+      view.getElementsByTag("h1").text mustBe "Is the Ultimate Parent Entity registered in the UK?"
     }
 
     "have Yes and No radio options" in {
@@ -61,7 +61,7 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Select yes if the nominated filing member is registered in the UK"
+        "Select yes if the Ultimate Parent Entity is registered in the UK"
       )
     }
   }

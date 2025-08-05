@@ -183,6 +183,24 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
       }
     }
 
+    "must display character count message when 8 characters remaining from acceptance test scenario" in {
+      val testText242Chars = "A" * 242
+      val userAnswers      = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, testText242Chars).success.value
+      val application      = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        testText242Chars.length mustBe 242
+        responseContent must include(testText242Chars)
+      }
+    }
+
     "must display Repayment reason field pre-populated with Test Refund from acceptance test scenario" in {
       val testRefundReason = "Test Refund"
       val userAnswers      = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, testRefundReason).success.value

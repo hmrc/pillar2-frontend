@@ -634,8 +634,9 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          verify(mockSessionRepository).set(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
+          verify(mockSessionRepository).get(any())
+          verify(mockSessionRepository, times(1)).set(any())
         }
       }
 
