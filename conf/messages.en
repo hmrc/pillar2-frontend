@@ -713,7 +713,7 @@ contactCaptureTelephoneDetails.heading.caption = Contact details
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
 contactNameCompliance.change.hidden = the primary contact name
-contactCaptureTelephoneDetails.checkYourAnswersLabel = Phone number
+contactCaptureTelephoneDetails.checkYourAnswersLabel = Primary phone number
 contactCaptureTelephoneDetails.change.hidden = the phone number for the primary contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
