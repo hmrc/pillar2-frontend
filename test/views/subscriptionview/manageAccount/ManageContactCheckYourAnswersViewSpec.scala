@@ -116,7 +116,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
       )
 
-      val telephone      = "Phone number"
+      val telephone      = "Primary phone number"
       val telephoneValue = "123"
       view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
       view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
