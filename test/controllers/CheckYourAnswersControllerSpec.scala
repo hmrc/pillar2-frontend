@@ -610,8 +610,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
 
-        val sessionData = defaultUserAnswer
-          .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
+        val sessionData = UserAnswers(userAnswersId)
 
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .overrides(
