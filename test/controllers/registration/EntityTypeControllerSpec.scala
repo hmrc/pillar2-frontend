@@ -175,11 +175,11 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
         when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
           .thenReturn(
-            Future(
+            Future.successful(
               GrsCreateRegistrationResponse(
                 "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=UkLimitedCompany"
               )
@@ -207,10 +207,10 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
           .thenReturn(
-            Future(
+            Future.successful(
               GrsCreateRegistrationResponse(
                 "/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=normalmode&entityType=LimitedLiabilityPartnership"
               )
@@ -245,7 +245,7 @@ class EntityTypeControllerSpec extends SpecBase {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
         when(mockUserAnswersConnectors.save(any(), any())(any()))
-          .thenReturn(Future(jsonTobeReturned))
+          .thenReturn(Future.successful(jsonTobeReturned))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

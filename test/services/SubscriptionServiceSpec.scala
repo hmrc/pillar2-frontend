@@ -69,7 +69,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           val result = service.createSubscription(userAnswer)
@@ -97,7 +97,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           val result = service.createSubscription(userAnswer)
@@ -126,7 +126,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           val result = service.createSubscription(userAnswer)
@@ -220,7 +220,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.successful(Done))
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.InternalIssueError
@@ -251,7 +251,7 @@ class SubscriptionServiceSpec extends SpecBase {
           when(mockSubscriptionConnector.subscribe(any())(any())).thenReturn(Future.successful("ID"))
           when(mockEnrolmentConnector.enrolAndActivate(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
           when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
           val result = service.createSubscription(userAnswer)
           result.failed.futureValue mustBe models.InternalIssueError
@@ -303,7 +303,7 @@ class SubscriptionServiceSpec extends SpecBase {
         running(application) {
           when(mockRegistrationConnector.registerUltimateParent(any())(any())).thenReturn(Future.successful("DuplicateID"))
           when(mockRegistrationConnector.registerFilingMember(any())(any())).thenReturn(Future.successful("DuplicateID"))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
 
           val result = service.createSubscription(userAnswer)
