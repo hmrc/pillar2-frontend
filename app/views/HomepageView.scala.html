@@ -86,7 +86,6 @@
  <div class="card-group homepage-card-group">
       @if(maybeUktrBannerScenario.isDefined) {
     <div class="card-half-width homepage-card-half-width">
-      <div class="homepage-card-border">
         <div class="card-label homepage-card-label">
           <h2 class="govuk-heading-m">
             @messages("homepage.returns.title")
@@ -113,7 +112,6 @@
        </ul>
       </div>
      </div>
-    </div>
    } else {
     @card(
      title = messages("homepage.returns.title"),
