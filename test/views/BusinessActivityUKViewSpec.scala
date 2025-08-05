@@ -19,45 +19,78 @@ package views
 import base.ViewSpecBase
 import forms.BusinessActivityUKFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
+import play.api.data.Form
 import views.html.BusinessActivityUKView
 
 class BusinessActivityUKViewSpec extends ViewSpecBase {
 
-  val formProvider = new BusinessActivityUKFormProvider()()
-  val page: BusinessActivityUKView = inject[BusinessActivityUKView]
+  lazy val formProvider: Form[Boolean]          = new BusinessActivityUKFormProvider()()
+  lazy val page:         BusinessActivityUKView = inject[BusinessActivityUKView]
+  lazy val view:         Document               = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                 = "Does the group have an entity located in the UK?"
 
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  "Business Activity UK View" when {
+    "page loaded" should {
+      "have a title" in {
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
 
-  "Business Activity UK View" should {
+      "have a caption" in {
+        view.getElementsByTag("h2").first().text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
+      }
 
-    "have a title" in {
-      view.getElementsByTag("title").text must include("Does the group have an entity located in the UK?")
+      "have a legend with heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
+        h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
+      }
+
+      "have a hint" in {
+        view.getElementsByClass("govuk-hint").get(0).text mustBe
+          "Pillar 2 Top-up Taxes may be collected if you have an entity located in the UK."
+      }
+
+      "have radio items" in {
+        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text mustBe "Yes"
+        radioButtons.get(1).text mustBe "No"
+      }
+
+      "have a continue button" in {
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      }
     }
 
-    "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
-    }
-
-    "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Does the group have an entity located in the UK?"
+    "form is submitted with missing value" should {
+      val errorView: Document = Jsoup.parse(
+        page(
+          formProvider.bind(
+            Map("value" -> "")
+          )
+        )(request, appConfig, messages).toString()
       )
-    }
 
-    "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "Pillar 2 Top-up Taxes may be collected if you have an entity located in the UK."
-      )
-    }
+      "show a missing value error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-    "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
-    }
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-    "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+        errorsList.get(0).text() mustBe "Select yes if the group has an entity located in the UK"
+      }
+
+      "show field-specific error" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: Select yes if the group has an entity located in the UK"
+      }
     }
 
   }

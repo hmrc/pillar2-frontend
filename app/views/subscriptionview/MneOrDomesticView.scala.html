@@ -15,7 +15,7 @@
  *@
 
 @import config.FrontendAppConfig
-@import viewmodels.LegendSize.Medium
+@import viewmodels.LegendSize
 @import views.html.components.gds._
 
 @this(
@@ -57,7 +57,7 @@
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
+                legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading1(size = LegendSize.Medium, headingLevel = Some("h2")),
                 items = MneOrDomestic.options
             )
         )

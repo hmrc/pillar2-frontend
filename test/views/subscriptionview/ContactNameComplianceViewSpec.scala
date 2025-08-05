@@ -21,68 +21,55 @@ import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.ContactNameComplianceView
 
 class ContactNameComplianceViewSpec extends ViewSpecBase {
 
-  val formProvider = new ContactNameComplianceFormProvider
-  val form: Form[String]              = formProvider()
-  val page: ContactNameComplianceView = inject[ContactNameComplianceView]
+  lazy val formProvider = new ContactNameComplianceFormProvider
+  lazy val form:      Form[String]              = formProvider()
+  lazy val page:      ContactNameComplianceView = inject[ContactNameComplianceView]
+  lazy val pageTitle: String                    = "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
+  lazy val view:      Document                  = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
   "Contact Name Compliance View" should {
 
-    "display the correct title" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByTag("title").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes? - Report Pillar 2 Top-up Taxes - GOV.UK"
-      )
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "display the correct heading" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByTag("h1").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "display the hint text" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-hint").text must include("You can enter a person or team name.")
+      view.getElementsByClass("govuk-hint").text mustBe "You can enter a person or team name."
     }
 
     "display the submit button" in {
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode)(request, appConfig, messages).toString()
-      )
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "display an error summary when form has errors" in {
-      val view: Document = Jsoup.parse(
+      val errorView: Document = Jsoup.parse(
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
     }
 
     "display character limit error message when input exceeds maximum length" in {
       val longInput = "A" * 161
-      val view: Document = Jsoup.parse(
+      val errorView: Document = Jsoup.parse(
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Name of the contact person or team should be 160 characters or less"
-      )
     }
 
     "display XSS validation error messages when special characters are entered" in {
@@ -90,17 +77,17 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
         "value" -> "Test <script>alert('xss')</script> & Company"
       )
 
-      val view: Document = Jsoup.parse(
+      val errorView: Document = Jsoup.parse(
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
-      val errorList = view.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The name you enter must not include the following characters <, >, \" or &")
+      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
+      errorList mustBe "The name you enter must not include the following characters <, >, \" or &"
 
-      val fieldErrors = view.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: The name you enter must not include the following characters <, >, \" or &")
+      val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
+      fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
   }
 }

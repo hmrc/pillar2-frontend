@@ -14,41 +14,43 @@
  * limitations under the License.
  */
 
-package views.fm
+package views.fmview
 
 import base.ViewSpecBase
 import forms.NfmNameRegistrationFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmNameRegistrationView
 
 class NfmNameRegistrationViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmNameRegistrationFormProvider
-  val form: Form[String]            = formProvider()
-  val page: NfmNameRegistrationView = inject[NfmNameRegistrationView]
+  lazy val formProvider: NfmNameRegistrationFormProvider = new NfmNameRegistrationFormProvider
+  lazy val form:         Form[String]                    = formProvider()
+  lazy val page:         NfmNameRegistrationView         = inject[NfmNameRegistrationView]
+  lazy val pageTitle:    String                          = "What is the name of the nominated filing member?"
 
   "NFM Name Registration View" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode)(request, appConfig, messages).toString()
-    )
+    val view: Document = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
-    "have the correct title" in {
-      view.getElementsByTag("title").text must include("What is the name of the nominated filing member? - Report Pillar 2 Top-up Taxes - GOV.UK")
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct heading" in {
-      view.getElementsByTag("h1").text must include("What is the name of the nominated filing member?")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have the correct section caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show error summary when form has errors" in {
@@ -56,10 +58,9 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Enter the name of the nominated filing member"
-      )
     }
 
     "show character limit error when input is too long" in {
@@ -68,10 +69,9 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Name of the nominated filing member must be 105 characters or less"
-      )
     }
 
     "show XSS validation error when special characters are entered" in {
@@ -83,13 +83,13 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
         page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("The name you enter must not include the following characters <, > or \"")
+      errorList mustBe "The name you enter must not include the following characters <, > or \""
 
       val fieldErrors = errorView.getElementsByClass("govuk-error-message").text
-      fieldErrors must include("Error: The name you enter must not include the following characters <, > or \"")
+      fieldErrors mustBe "Error: The name you enter must not include the following characters <, > or \""
     }
   }
 }

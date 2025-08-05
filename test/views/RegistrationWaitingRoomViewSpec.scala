@@ -20,25 +20,31 @@ import base.ViewSpecBase
 import models.subscription.SubscriptionStatus.SuccessfullyCompletedSubscription
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
 
-  val page: RegistrationWaitingRoomView = inject[RegistrationWaitingRoomView]
-  val view: Document                    = Jsoup.parse(page(Some(SuccessfullyCompletedSubscription))(request, appConfig, messages).toString())
+  lazy val page: RegistrationWaitingRoomView = inject[RegistrationWaitingRoomView]
+  lazy val view: Document = Jsoup.parse(
+    page(Some(SuccessfullyCompletedSubscription))(request, appConfig, messages).toString()
+  )
+  lazy val pageTitle: String = "Submitting your registration"
 
   "Rfm Waiting Room View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Submitting your registration")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Submitting your registration")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").text must include("Do not leave this page.")
+      view.getElementsByTag("h2").first().text() mustBe "Do not leave this page."
     }
 
   }
