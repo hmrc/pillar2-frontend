@@ -19,9 +19,12 @@ package views.subscriptionview
 import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
+import models.MneOrDomestic
+import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
@@ -33,7 +36,26 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
 
   lazy val page: SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
 
-  lazy val view: Document = Jsoup.parse(
+  def createViewWithData(userAnswers: models.UserAnswers): Document =
+    Jsoup.parse(
+      page(
+        SummaryListViewModel(
+          Seq(
+            MneOrDomesticSummary.row(userAnswers),
+            GroupAccountingPeriodSummary.row(userAnswers),
+            GroupAccountingPeriodStartDateSummary.row(userAnswers),
+            GroupAccountingPeriodEndDateSummary.row(userAnswers)
+          ).flatten
+        )
+      )(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
+
+  val view: Document = Jsoup.parse(
+>>>>>>> 0730cb54 (Updated to new comments moved into unit tests)
     page(
       SummaryListViewModel(
         Seq(
@@ -83,7 +105,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
 
-      summaryListKeys.get(1).text() mustBe "Group’s consolidated accounting period"
+      summaryListKeys.get(1).text() mustBe "Group's consolidated accounting period"
       summaryListItems.get(1).text() mustBe ""
 
       summaryListKeys.get(2).text() mustBe "Start date"
@@ -95,6 +117,27 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         "Change the dates of the group’s consolidated accounting period"
       summaryListActions.get(1).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
+    }
+
+    "must display row 3 value 15 January 2024 from acceptance test scenario" in {
+      val testDate = LocalDate.of(2024, 1, 15)
+      val testUserAnswers = emptyUserAnswers
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(testDate, LocalDate.of(2025, 1, 15)))
+      val testView = createViewWithData(testUserAnswers)
+
+      testView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe "15 January 2024"
+    }
+
+    "must display row 4 value 15 January 2025 from acceptance test scenario" in {
+      val testStartDate = LocalDate.of(2024, 1, 15)
+      val testEndDate   = LocalDate.of(2025, 1, 15)
+      val testUserAnswers = emptyUserAnswers
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(testStartDate, testEndDate))
+      val testView = createViewWithData(testUserAnswers)
+
+      testView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe "15 January 2025"
     }
 
     "have a button" in {

@@ -40,6 +40,10 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text must include("Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
+    "must have exact page title from acceptance test scenario" in {
+      view.getElementsByTag("title").text mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }

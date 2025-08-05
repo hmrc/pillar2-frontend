@@ -40,6 +40,10 @@ class NfmEmailAddressViewSpec extends ViewSpecBase {
       view.getElementsByTag("title").text must include("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
+    "must have exact page title from acceptance test scenario" in {
+      view.getElementsByTag("title").text mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
     "have a heading" in {
       view.getElementsByTag("h1").text mustBe "What is the email address for Contact CYA?"
     }

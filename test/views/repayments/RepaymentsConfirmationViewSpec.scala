@@ -82,5 +82,17 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
+    "must display Print this page link" in {
+      val printLink = view.select("*:contains(Print this page)")
+      printLink.size() mustBe 1
+      printLink.text() mustBe "Print this page"
+    }
+
+    "must display Sign out link" in {
+      val signOutElements = view.select("*:contains(Sign out)")
+      signOutElements.size() must be >= 1
+      signOutElements.text() must include("Sign out")
+    }
+
   }
 }
