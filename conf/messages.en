@@ -476,7 +476,7 @@ nfmNameRegistration.error.length = Name of the nominated filing member must be 1
 nfmNameRegistration.change.hidden = the name of the nominated filing member
 nfmNameRegistration.error.invalid = The name of the new nominated filing member must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
-securityQuestionsCheckYourAnswers.title = Check Your Answers
+securityQuestionsCheckYourAnswers.title = Check your answers
 securityQuestionsCheckYourAnswers.heading = Check your answers
 securityQuestionsCheckYourAnswers.heading.caption = Replace filing member
 rfmSecurityCheck.checkYourAnswersLabel = Pillar 2 Top-up Taxes ID
@@ -876,6 +876,23 @@ homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
 homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return.
 homepage.btnActiveBanner.agent.body = You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted.
 homepage.btnActiveBanner.linkText = Find out more about Below-Threshold Notification
+
+homepage.uktrBanner.Due.title = You have one or more returns due
+homepage.uktrBanner.Due.body = Submit your returns before the due date to avoid penalties.
+homepage.uktrBanner.agent.Due.title = One or more returns are now due
+homepage.uktrBanner.agent.Due.body = Submit returns before the due date to avoid penalties.
+
+homepage.uktrBanner.Overdue.title = You have overdue or incomplete returns
+homepage.uktrBanner.Overdue.body = You must submit or complete these returns as soon as possible.
+homepage.uktrBanner.agent.Overdue.title = Overdue or incomplete returns
+homepage.uktrBanner.agent.Overdue.body = Submit or complete these returns as soon as possible.
+
+homepage.uktrBanner.Incomplete.title = You have overdue or incomplete returns
+homepage.uktrBanner.Incomplete.body = You must submit or complete these returns as soon as possible.
+homepage.uktrBanner.agent.Incomplete.title = Overdue or incomplete returns
+homepage.uktrBanner.agent.Incomplete.body = Submit or complete these returns as soon as possible.
+
+homepage.uktrBanner.linkText = View all due and overdue returns
 ###############################################
 #
 # Dashboard
@@ -1647,6 +1664,7 @@ dueAndOverdueReturns.obligationType.UKTR = UK Tax Return
 dueAndOverdueReturns.obligationType.GIR = Information return
 dueAndOverdueReturns.status.overdue = Overdue
 dueAndOverdueReturns.status.due = Due
+dueAndOverdueReturns.status.incomplete = Incomplete
 dueAndOverdueReturns.submissionHistory = Submission history
 dueAndOverdueReturns.submissionHistory.description1 = You can find full details of your group’s submitted returns on the
 dueAndOverdueReturns.submissionHistory.link = submission history
@@ -1657,6 +1675,36 @@ dueAndOverdueReturns.agent.commercialSoftware = You must submit each return befo
 dueAndOverdueReturns.agent.noReturns = Your client is up to date with their returns for this accounting period.
 dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full details of your client’s submitted returns on the
 
+###############################################
+#
+# Outstanding Payments
+#
+###############################################
+payments.outstanding.title = Outstanding payments
+payments.outstanding.amountDue = Total amount due: £{0}
+payments.outstanding.p1 = The amount includes all liabilities due. This may be over more than one accounting period. It also includes any penalties or late payment interest.
+payments.outstanding.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to your account.
+payments.outstanding.agent.p2 = Any payments made to the group’s account before submitting the tax return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be added to the group’s account.
+
+payments.outstanding.pay.buttonText = Pay online
+payments.outstanding.otherWaysToPay.heading = Other ways to pay
+payments.outstanding.otherWaysToPay.p1 = Your Pillar 2 reference: {0}
+payments.outstanding.otherWaysToPay.agent.p1 = Pillar 2 reference: {0}
+payments.outstanding.otherWaysToPay.p2 = You’ll need to use this reference if you want to make a manual payment.
+payments.outstanding.otherWaysToPay.agent.p2 = You’ll need to use this reference if you want to make a manual payment for this group.
+payments.outstanding.otherWaysToPay.linkText = Find out more about ways to pay
+
+payments.outstanding.details.heading = Details of outstanding payments
+payments.outstanding.details.p1 = We have separated any payments due by accounting period.
+payments.outstanding.details.nothingDue = No payments due.
+
+payments.outstanding.transactionHistory.p1 = Find details on payments and refunds.
+payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
+
+payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges
+payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
+payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
+payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
 # ---------------------------------------------
 # Pillar 2 Research
 # ---------------------------------------------

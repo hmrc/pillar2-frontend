@@ -21,36 +21,41 @@ import forms.RfmContactByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmContactByTelephoneView
 
 class RfmContactByTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmContactByTelephoneFormProvider
-  val page: RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider = new RfmContactByTelephoneFormProvider
+  lazy val page:     RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
+  lazy val username: String                    = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Can we contact by telephone"
 
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by telephone?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"Can we contact $username by telephone?"
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioItems.get(0).text mustBe "Yes"
+      radioItems.get(1).text mustBe "No"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

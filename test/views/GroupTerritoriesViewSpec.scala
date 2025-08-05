@@ -20,44 +20,49 @@ import base.ViewSpecBase
 import forms.GroupTerritoriesFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.GroupTerritoriesView
 
 class GroupTerritoriesViewSpec extends ViewSpecBase {
 
-  val formProvider = new GroupTerritoriesFormProvider()()
-  val page: GroupTerritoriesView = inject[GroupTerritoriesView]
-
-  val view: Document = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val formProvider = new GroupTerritoriesFormProvider()()
+  lazy val page:      GroupTerritoriesView = inject[GroupTerritoriesView]
+  lazy val view:      Document             = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
+  lazy val pageTitle: String               = "Are you registering as the group’s Ultimate Parent Entity?"
 
   "Group Territories View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Are you registering as the group’s Ultimate Parent Entity?")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Check if you need to report Pillar 2 Top-up Taxes")
+      view.getElementsByTag("h2").first().text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
     }
 
-    "have a legend with heading" in {
-      view.getElementsByClass("govuk-fieldset__legend").get(0).select("h1").text must include(
-        "Are you registering as the group’s Ultimate Parent Entity?"
-      )
+    "have a legend with a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").get(0).text must include(
-        "An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent group, only one Ultimate Parent Entity needs to register."
-      )
+      view.getElementsByClass("govuk-hint").get(0).text mustBe
+        "An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent " +
+        "group, only one Ultimate Parent Entity needs to register."
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text mustBe "Yes"
+      radioButtons.get(1).text mustBe "No"
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

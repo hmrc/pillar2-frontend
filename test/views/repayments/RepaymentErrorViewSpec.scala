@@ -20,34 +20,36 @@ import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentErrorView
 
 class RepaymentErrorViewSpec extends ViewSpecBase {
 
-  val page: RepaymentErrorView = inject[RepaymentErrorView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      RepaymentErrorView = inject[RepaymentErrorView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Sorry, there is a problem with the service"
 
   "Bank Details Error View" should {
 
     "have a title" in {
-      val title = "Sorry, there is a problem with the service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, there is a problem with the service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("You can try again later when the service is available.")
+      view.getElementsByClass("govuk-body").first().text mustBe "You can try again later when the service is available."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Return to your account homepage")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
+      link.text mustBe "Return to your account homepage"
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
   }

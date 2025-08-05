@@ -35,10 +35,22 @@ class DataRequiredActionImpl @Inject() (implicit val executionContext: Execution
     request.userAnswers match {
       case None =>
         Future.successful(
-          Right(DataRequest(request.request, request.userId, request.groupId, UserAnswers("12345"), request.enrolments, request.userIdForEnrolment))
+          Right(
+            DataRequest(
+              request.request,
+              request.userId,
+              request.groupId,
+              UserAnswers("12345"),
+              request.enrolments,
+              request.userIdForEnrolment,
+              request.isAgent
+            )
+          )
         )
       case Some(data) =>
-        Future.successful(Right(DataRequest(request.request, request.userId, request.groupId, data, request.enrolments, request.userIdForEnrolment)))
+        Future.successful(
+          Right(DataRequest(request.request, request.userId, request.groupId, data, request.enrolments, request.userIdForEnrolment, request.isAgent))
+        )
     }
   }
 

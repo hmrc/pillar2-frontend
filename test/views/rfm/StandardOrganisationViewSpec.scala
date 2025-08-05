@@ -19,43 +19,39 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.StandardOrganisationView
 
 class StandardOrganisationViewSpec extends ViewSpecBase {
 
-  val page: StandardOrganisationView = inject[StandardOrganisationView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      StandardOrganisationView = inject[StandardOrganisationView]
+  lazy val view:      Document                 = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                   = "Sorry, you’re unable to use this service"
 
   "Standard Organisation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Sorry, you’re unable to use this service")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, you’re unable to use this service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
-        "You’ve signed in with a standard organisation " +
-          "account."
-      )
+      view.getElementsByClass("govuk-body").get(0).text mustBe "You’ve signed in with a standard organisation account."
 
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "Only Government Gateway accounts with an " +
-          "administrator role can replace their nominated filing member."
-      )
+      view.getElementsByClass("govuk-body").get(1).text mustBe "Only Government Gateway accounts with an " +
+        "administrator role can replace their nominated filing member."
 
-      view.getElementsByClass("govuk-body").get(2).text must include(
-        "Someone with an administrator’s Government " +
-          "Gateway user ID who is the new nominated filing member will need to replace the current filing member."
-      )
+      view.getElementsByClass("govuk-body").get(2).text mustBe "Someone with an administrator’s Government " +
+        "Gateway user ID who is the new nominated filing member will need to replace the current filing member."
     }
 
     "have a link" in {
-      view.getElementsByClass("govuk-link").text must include("Find out more about who can use this service")
+      view.getElementsByClass("govuk-link").get(1).text mustBe "Find out more about who can use this service"
     }
   }
 

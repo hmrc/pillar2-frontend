@@ -19,34 +19,35 @@ package views.rfm
 import base.ViewSpecBase
 import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  val formProvider = new AgentClientPillar2ReferenceFormProvider
-  val page: IncompleteDataView = inject[IncompleteDataView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val formProvider: AgentClientPillar2ReferenceFormProvider = new AgentClientPillar2ReferenceFormProvider
+  lazy val page:         IncompleteDataView                      = inject[IncompleteDataView]
+  lazy val view:         Document                                = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                                  = "You have an incomplete task"
 
   "Replace filing member incomplete data view" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("You have an incomplete task")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You have an incomplete task")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/replace-filing-member/review-submit/check-answers"
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("p").text must include(
-        "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again"
-      )
+      paragraph.text mustBe "You can go back to replace the filing member for a Pillar 2 Top-up Taxes account to try again."
+      paragraph.getElementsByTag("a").text() mustBe "replace the filing member for a Pillar 2 Top-up Taxes account to try again"
+      paragraph.getElementsByTag("a").attr("href") mustBe
+        controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
     }
 
   }

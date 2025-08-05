@@ -305,7 +305,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          // Verify that sessionRepository.set was called twice (immediate response + background polling)
           verify(mockSessionRepository, times(2)).set(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
@@ -634,7 +633,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          // Session repository update happens asynchronously, so we verify it was called but don't enforce exact content
           verify(mockSessionRepository).set(any())
           redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }

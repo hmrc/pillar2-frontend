@@ -20,34 +20,36 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.repayments.BankDetailsErrorView
 
 class BankDetailsErrorViewSpec extends ViewSpecBase {
 
-  val page: BankDetailsErrorView = inject[BankDetailsErrorView]
-
-  val view: Document = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val page:      BankDetailsErrorView = inject[BankDetailsErrorView]
+  lazy val view:      Document             = Jsoup.parse(page(NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String               = "We could not confirm your bank details"
 
   "Bank Details Error View" should {
 
     "have a title" in {
-      val title = "We could not confirm your bank details - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("We could not confirm your bank details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("We are unable to proceed with the account details you entered.")
+      view.getElementsByClass("govuk-body").first().text mustBe "We are unable to proceed with the account details you entered."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("try again with a different business bank account")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/repayment/uk-details")
+      link.text mustBe "try again with a different business bank account"
+      link.attr("href") mustBe controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url
     }
 
   }

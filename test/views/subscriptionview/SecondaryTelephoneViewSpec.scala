@@ -21,33 +21,37 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.SecondaryTelephoneView
 
 class SecondaryTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: SecondaryTelephoneView = inject[SecondaryTelephoneView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         SecondaryTelephoneView              = inject[SecondaryTelephoneView]
+  lazy val username:     String                              = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the phone number"
 
   "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the phone number?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustEqual "What is the phone number for John Doe?"
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint description" in {
       view
         .getElementsByClass("govuk-hint")
-        .text mustEqual "Enter the phone number for John Doe, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
+        .text mustEqual s"Enter the phone number for $username, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
     }
 
     "have a button" in {

@@ -21,40 +21,46 @@ import forms.RfmAddSecondaryContactFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmAddSecondaryContactView
 
 class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmAddSecondaryContactFormProvider
-  val page: RfmAddSecondaryContactView = inject[RfmAddSecondaryContactView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmAddSecondaryContactFormProvider = new RfmAddSecondaryContactFormProvider
+  lazy val page:         RfmAddSecondaryContactView         = inject[RfmAddSecondaryContactView]
+  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), "John Doe", NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Add a secondary contact"
 
   "Rfm Add Secondary Contact View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Add a secondary contact")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").get(0).text must equal("Add a secondary contact")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two description paragraphs" in {
-      view.getElementsByClass("govuk-body").get(0).text must equal(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+
+      paragraphs.get(0).text must equal(
         "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
       )
-      view.getElementsByClass("govuk-body").get(1).text must equal(
+
+      paragraphs.get(1).text must equal(
         "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
       )
     }
 
-    "have a legend heading" in {
-      view.getElementsByClass("govuk-fieldset__heading").text must equal("Do you have a second contact?")
+    "have an H2 heading" in {
+      view.getElementsByTag("h2").get(1).text mustBe "Do you have a second contact?"
     }
 
     "have a button" in {

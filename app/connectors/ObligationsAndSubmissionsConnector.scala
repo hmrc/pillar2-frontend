@@ -41,6 +41,8 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
       .get(url"$url")
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
-      .flatMap(response => Future.successful(Json.parse(response.body).as[ObligationsAndSubmissionsSuccess]))
+      .map { response =>
+        Json.parse(response.body).as[ObligationsAndSubmissionsSuccess]
+      }
   }
 }

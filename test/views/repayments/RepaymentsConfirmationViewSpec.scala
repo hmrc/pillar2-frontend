@@ -19,15 +19,20 @@ package views.repayments
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
-import play.twirl.api.HtmlFormat
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
+import play.twirl.api.{Html, HtmlFormat}
 import utils.ViewHelpers
 import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  val page: RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
-  val testPillar2Ref = "XMPLR0012345674"
+  lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
+  lazy val testPillar2Ref: String                     = "XMPLR0012345674"
+  lazy val pageTitle:      String                     = "Repayment request submitted"
+  lazy val currentDate:    Html                       = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+  lazy val view:           Document                   = Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
+  lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
     val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
@@ -35,27 +40,33 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 
     "have a page title" in {
-      view.title() mustBe "Repayment request submitted - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have the correct header link to Pillar 2 home" in {
-      val link = view.getElementsByClass("govuk-header__content").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Report Pillar 2 Top-up Taxes")
+      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
+
+      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
+      headerLink.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
-    "have one H1 banner-panel heading" in {
-      val heading = view.getElementsByTag("h1")
-
-      heading.size() mustBe 1
-      heading.hasClass("govuk-panel__title") mustBe true
-      heading.text() mustBe "Repayment request submitted"
+    "have a panel with a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.hasClass("govuk-panel__title") mustBe true
     }
 
     "have a confirmation message" in {
-      view.getElementsByClass("govuk-body").text must include(
+      paragraphs.get(0).text mustBe
         s"You have successfully submitted your repayment request on ${currentDate.toString()}."
-      )
+    }
+
+    "have a bullet list with download and print links" in {
+      val bulletItems: Elements = view.getElementsByClass("govuk-list--bullet").select("li")
+
+      bulletItems.get(0).text mustBe "Print this page"
+      bulletItems.get(1).text mustBe "Download as PDF"
     }
 
     "have a 'What happens next' heading" in {
@@ -63,15 +74,15 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided."
-      )
+      paragraphs.get(2).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
+        "contact the relevant person or team from the information you provided."
     }
 
     "have a return link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.attr("href") must include(routes.DashboardController.onPageLoad.url)
-      link.text         must include("Back to group homepage")
+      val link: Element = paragraphs.last().getElementsByTag("a").first()
+
+      link.text mustBe "Back to group homepage"
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
   }
