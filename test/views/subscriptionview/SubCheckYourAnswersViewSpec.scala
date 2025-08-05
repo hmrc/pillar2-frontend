@@ -21,7 +21,7 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
+import utils.ViewHelpers
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
@@ -74,7 +74,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
       )
 
-      val formattedDate    = dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
+      val formattedDate    = ViewHelpers.formatDateGDS(LocalDate.of(2025, 7, 18))
       val accountingPeriod = "Group’s consolidated accounting period"
       val startDate        = "Start date"
       val startDateValue   = formattedDate

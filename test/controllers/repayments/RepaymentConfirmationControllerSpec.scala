@@ -27,12 +27,11 @@ import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
-  val dateHelper = new ViewHelpers()
 
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+      val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
       val testUserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
         .setOrException(RepaymentConfirmationTimestampPage, currentDate.toString())

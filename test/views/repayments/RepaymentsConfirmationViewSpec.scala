@@ -28,10 +28,9 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   val page: RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   val testPillar2Ref = "XMPLR0012345674"
-  val dateHelper     = new ViewHelpers()
 
   "Repayments confirmation view" should {
-    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
     val view: Document =
       Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 

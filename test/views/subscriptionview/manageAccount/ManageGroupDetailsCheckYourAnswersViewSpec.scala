@@ -22,7 +22,7 @@ import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import play.api.mvc.AnyContent
-import viewmodels.checkAnswers.manageAccount.GroupAccountingPeriodStartDateSummary.dateHelper
+import utils.ViewHelpers
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -68,9 +68,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-        view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+        view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe ViewHelpers.formatDateGDS(currentDate)
         view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe ViewHelpers.formatDateGDS(currentDate.plusYears(1))
       }
 
       "have a button" in {
@@ -117,9 +117,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         agentView.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-        agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe dateHelper.formatDateGDS(currentDate)
+        agentView.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe ViewHelpers.formatDateGDS(currentDate)
         agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe dateHelper.formatDateGDS(currentDate.plusYears(1))
+        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe ViewHelpers.formatDateGDS(currentDate.plusYears(1))
       }
 
       "have a button" in {

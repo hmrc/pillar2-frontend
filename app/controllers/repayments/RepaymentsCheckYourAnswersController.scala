@@ -54,7 +54,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-  val dateHelper = new ViewHelpers()
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
@@ -101,7 +100,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                               Future.fromTry(
                                 sessionData
                                   .set(RepaymentsStatusPage, updatedStatus)
-                                  .flatMap(_.set(RepaymentConfirmationTimestampPage, dateHelper.getDateTimeGMT))
+                                  .flatMap(_.set(RepaymentConfirmationTimestampPage, ViewHelpers.getDateTimeGMT))
                               )
                             } else Future.successful(sessionData)
           updatedAnswers0 <- if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)

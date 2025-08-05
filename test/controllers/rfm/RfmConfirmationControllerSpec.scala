@@ -36,7 +36,6 @@ import java.util.UUID
 import scala.concurrent.Future
 
 class RfmConfirmationControllerSpec extends SpecBase {
-  val dateHelper = new ViewHelpers()
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
@@ -65,7 +64,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+        val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
         val view        = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
