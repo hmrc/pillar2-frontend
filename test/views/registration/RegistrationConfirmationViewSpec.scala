@@ -21,85 +21,83 @@ import models.MneOrDomestic
 import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationConfirmationView
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
-  val testPillar2ID   = "PLR2ID123"
-  val testCompanyName = "TestCompany"
-  val testDate        = "13 September 2024"
-  val testTimeStamp   = "11:00am (GMT)"
-  val testDomestic: MneOrDomestic = Uk
-  val testMne:      MneOrDomestic = UkAndOther
+  lazy val testPillar2ID:   String                       = "PLR2ID123"
+  lazy val testCompanyName: String                       = "TestCompany"
+  lazy val testDate:        String                       = "13 September 2024"
+  lazy val testTimeStamp:   String                       = "11:00am (GMT)"
+  lazy val testDomestic:    MneOrDomestic                = Uk
+  lazy val testMne:         MneOrDomestic                = UkAndOther
+  lazy val page:            RegistrationConfirmationView = inject[RegistrationConfirmationView]
+  lazy val pageTitle:       String                       = "Registration complete"
 
-  val page: RegistrationConfirmationView = inject[RegistrationConfirmationView]
-
-  val viewDomestic: Document =
+  lazy val viewDomestic: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
-  val viewMne: Document =
+  lazy val viewMne: Document =
     Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testMne)(request, appConfig, messages).toString())
 
   "Registration Confirmation View" should {
     "have a title" in {
-      viewDomestic.getElementsByTag("title").text must include("Registration complete - Report Pillar 2 Top-up Taxes - GOV.UK")
+      viewDomestic.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a panel" in {
-      viewDomestic.getElementsByClass("govuk-panel__title").text must include("Registration complete")
-      viewDomestic.getElementsByClass("govuk-panel__body").text  must include("Group’s Pillar 2 Top-up Taxes ID PLR2ID123")
+    "have a panel with a unique H1 heading" in {
+      val h1Elements: Elements = viewDomestic.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+      h1Elements.hasClass("govuk-panel__title") mustBe true
+      h1Elements.next().hasClass("govuk-panel__body") mustBe true
+      h1Elements.next().text() mustBe s"Group’s Pillar 2 Top-up Taxes ID $testPillar2ID"
     }
 
-    "have a heading" in {
-      viewDomestic.getElementsByTag("h2").first.text must include(s"Registration date: ")
+    "have an H2 heading" in {
+      viewDomestic.getElementsByTag("h2").first.text mustBe s"Registration date: $testDate"
     }
 
     "have the correct paragraphs for Multinationals and Domestic companies" in {
-      viewDomestic.getElementsByClass("govuk-body").get(0).text must include(
-        "TestCompany has successfully registered to report for " +
-          "Domestic Top-up Tax, " +
-          "on 13 September 2024 at 11:00am (GMT)."
-      )
+      viewDomestic.getElementsByClass("govuk-body").get(0).text mustBe
+        "TestCompany has successfully registered to report for Domestic Top-up Tax, " +
+        "on 13 September 2024 at 11:00am (GMT)."
 
-      viewMne.getElementsByClass("govuk-body").get(0).text must include(
-        "TestCompany has successfully registered to report for " +
-          "Domestic Top-up Tax and Multinational Top-up Tax, " +
-          "on 13 September 2024 at 11:00am (GMT)."
-      )
+      viewMne.getElementsByClass("govuk-body").get(0).text mustBe
+        "TestCompany has successfully registered to report for Domestic Top-up Tax and Multinational Top-up Tax, " +
+        "on 13 September 2024 at 11:00am (GMT)."
 
-      viewDomestic.getElementsByClass("govuk-body").get(1).text must include(
+      viewDomestic.getElementsByClass("govuk-body").get(1).text mustBe
         "You will be able to find your Pillar 2 Top-up Taxes ID and " +
-          "registration date on your account homepage. Keep these details safe."
-      )
+        "registration date on your account homepage. Keep these details safe."
 
-      viewDomestic.getElementsByClass("govuk-body").get(2).text must include(
+      viewDomestic.getElementsByClass("govuk-body").get(2).text mustBe
         "You can now report and manage your Pillar 2 Top-up Taxes."
-      )
     }
 
     "have a bullet list with download and print links" in {
-      val bulletItems = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
+      val bulletItems: Elements = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
 
-      bulletItems.get(0).text must include("Download as PDF")
-      bulletItems.get(1).text must include("Print this page")
+      bulletItems.get(0).text mustBe "Download as PDF"
+      bulletItems.get(1).text mustBe "Print this page"
     }
 
     "have warning text" in {
-      viewDomestic.getElementsByClass("govuk-warning-text__text").text must include(
-        "You will not be emailed a confirmation of this registration."
-      )
+      viewDomestic.getElementsByClass("govuk-warning-text__text").first().text() mustBe
+        "Warning You will not be emailed a confirmation of this registration."
     }
 
     "have a Pillar 2 research heading" in {
-      val researchHeading = viewDomestic.getElementsByClass("research-heading")
+      val researchHeading: Elements = viewDomestic.getElementsByClass("research-heading")
       researchHeading.text mustBe "Take part in Pillar 2 research"
     }
 
     "have a Pillar 2 research paragraph" in {
-      val researchParagraph = viewDomestic.getElementsByClass("research-body")
+      val researchParagraph: Elements = viewDomestic.getElementsByClass("research-body")
       researchParagraph.text mustBe "Help us improve this online service by taking part in user research."
     }
 
     "have a Pillar 2 link to the research page" in {
-      val researchLink = viewDomestic.getElementsByClass("research-link")
+      val researchLink: Elements = viewDomestic.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl

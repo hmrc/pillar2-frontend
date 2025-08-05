@@ -19,40 +19,42 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.CannotReturnAfterSubscriptionView
 
 class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
-  private val page: CannotReturnAfterSubscriptionView = inject[CannotReturnAfterSubscriptionView]
-
-  val doc: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  private lazy val page: CannotReturnAfterSubscriptionView = inject[CannotReturnAfterSubscriptionView]
+  lazy val view:         Document                          = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                            = "Register your group"
 
   "CannotReturnAfterSubscriptionView" should {
-    "display page header correctly" in {
-      doc.getElementsByTag("h1").first().text() mustBe "You cannot return, your registration is complete"
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, your registration is complete"
     }
 
     "display error message correctly" in {
-      val message = doc.getElementsByClass("govuk-body").first()
+      val message = view.getElementsByClass("govuk-body").first()
       message.text() mustBe "You have successfully registered to report Pillar 2 Top-up Taxes."
     }
 
     "display link section correctly" in {
-      val linkSection = doc.getElementsByClass("govuk-body").last()
+      val linkSection = view.getElementsByClass("govuk-body").last()
       linkSection.text() mustEqual "You can now report and manage your Pillar 2 Top-up Taxes."
 
       val link = linkSection.getElementsByClass("govuk-link").first()
       link.text() mustBe "report and manage your Pillar 2 Top-up Taxes."
-      link.attr("href") mustBe "/report-pillar2-top-up-taxes/pillar2-top-up-tax-home"
-    }
-  }
-
-  "CannotReturnAfterSubscriptionView layout" should {
-    "have correct page title" in {
-      doc.title() mustEqual "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "not display back link" in {
-      doc.getElementsByClass("govuk-back-link").size() mustBe 0
+      view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
   }
+
 }
