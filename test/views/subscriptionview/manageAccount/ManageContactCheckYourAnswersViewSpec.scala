@@ -63,7 +63,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
   lazy val emailAddressValue:         String = "john@email.com"
   lazy val contactByPhoneLabel:       String = "Can we contact the primary contact by phone?"
   lazy val contactByPhoneValue:       String = "Yes"
-  lazy val contactPhoneLabel:         String = "Phone number"
+  lazy val contactPhoneLabel:         String = "Primary phone number"
   lazy val contactPhoneValue:         String = "123"
   lazy val secondContactLabel:        String = "Do you have a second contact?"
   lazy val secondContactValue:        String = "Yes"

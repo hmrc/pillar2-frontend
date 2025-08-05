@@ -30,7 +30,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   lazy val page:     RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
   lazy val username: String                    = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Can we contact by telephone"
+  lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Contact By Telephone View" should {
 

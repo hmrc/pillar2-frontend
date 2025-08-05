@@ -29,7 +29,7 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
   lazy val formProvider = new RfmSecondaryTelephonePreferenceFormProvider
   lazy val page: RfmSecondaryTelephonePreferenceView = inject[RfmSecondaryTelephonePreferenceView]
   lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Can we contact by telephone"
+  lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Secondary Telephone Preference View" should {
 
