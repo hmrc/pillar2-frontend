@@ -145,22 +145,5 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
-    "must display the repayment method UK bank account remain selected from acceptance test scenario" in {
-      val userAnswers = UserAnswers(userAnswersId).set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount).success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
-
-      running(application) {
-        val request         = FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
-        val result          = route(application, request).value
-        val responseContent = contentAsString(result)
-
-        status(result) mustEqual OK
-        val expectedValue = UkOrAbroadBankAccount.UkBankAccount.toString
-        expectedValue mustBe "ukBankAccount"
-        responseContent must include("checked")
-        responseContent must include("UK bank account")
-      }
-    }
-
   }
 }

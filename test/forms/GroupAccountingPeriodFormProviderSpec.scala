@@ -457,4 +457,310 @@ class GroupAccountingPeriodFormProviderSpec extends DateBehaviours {
     )
   }
 
+  "throw a form error for invalid start date format with missing end date" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "15",
+      "startDate.year"  -> "2024",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.month.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for invalid start year format with missing end date" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "10",
+      "startDate.year"  -> "Y2024",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.year.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for invalid start year length with missing end date" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "15",
+      "startDate.year"  -> "20244",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.monthYear.invalid"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for start date with invalid year format and missing end date" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "10",
+      "startDate.year"  -> "Y2024",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.year.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for start date with invalid month and year length and missing end date" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "15",
+      "startDate.year"  -> "20244",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.monthYear.invalid"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid day month year format" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "DD",
+      "endDate.month"   -> "MM",
+      "endDate.year"    -> "YYYY"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.dayMonthYear.invalid")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid day" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "40",
+      "endDate.month"   -> "10",
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.day.length")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15",
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.month.nan")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month and year format" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15",
+      "endDate.year"    -> "Y2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.monthYear.invalid")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month and year length" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15",
+      "endDate.year"    -> "20245"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.monthYear.invalid")
+    )
+  }
+
+  // Additional unit tests covering the specific commented scenarios from FurtherDetailsTask.feature acceptance tests
+
+  "throw a form error for start date missing day with invalid month and missing end date - acceptance test first scenario" in {
+    val data = Map(
+      "startDate.day"   -> "", // Missing day (not entered in acceptance test)
+      "startDate.month" -> "15", // Invalid month
+      "startDate.year"  -> "2024",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required", Seq("day")),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for start date invalid month with missing end date - acceptance test scenario line 120-121" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "15", // Invalid month
+      "startDate.year"  -> "2024",
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.month.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for start date invalid year format with missing end date - acceptance test scenario line 127-128" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "10",
+      "startDate.year"  -> "Y2024", // Invalid year format
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.year.nan"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for start date invalid month and year length with missing end date - acceptance test scenario line 134-135" in {
+    val data = Map(
+      "startDate.day"   -> "10",
+      "startDate.month" -> "15", // Invalid month
+      "startDate.year"  -> "20244", // Invalid year length
+      "endDate.day"     -> "",
+      "endDate.month"   -> "",
+      "endDate.year"    -> ""
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.monthYear.invalid"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.required.all")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid format - acceptance test scenario line 141-142" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "DD", // Invalid day format
+      "endDate.month"   -> "MM", // Invalid month format
+      "endDate.year"    -> "YYYY" // Invalid year format
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.dayMonthYear.invalid")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid day - acceptance test scenario line 148-149" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "40", // Invalid day (40)
+      "endDate.month"   -> "10",
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.day.length")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month - acceptance test scenario line 155-156" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15", // Invalid month (15)
+      "endDate.year"    -> "2024"
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.month.nan")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month and year format - acceptance test scenario line 162-163" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15", // Invalid month
+      "endDate.year"    -> "Y2024" // Invalid year format
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.monthYear.invalid")
+    )
+  }
+
+  "throw a form error for missing start date with end date invalid month and year length - acceptance test scenario line 169-170" in {
+    val data = Map(
+      "startDate.day"   -> "",
+      "startDate.month" -> "",
+      "startDate.year"  -> "",
+      "endDate.day"     -> "10",
+      "endDate.month"   -> "15", // Invalid month
+      "endDate.year"    -> "20245" // Invalid year length
+    )
+
+    form.bind(data).errors shouldEqual Seq(
+      FormError("startDate", "groupAccountingPeriod.error.startDate.required.all"),
+      FormError("endDate", "groupAccountingPeriod.error.endDate.monthYear.invalid")
+    )
+  }
+
 }

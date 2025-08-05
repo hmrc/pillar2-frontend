@@ -284,6 +284,54 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show mixed error messages for invalid start date and empty end date" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "1",
+              "startDate.month" -> "15", // Invalid month
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "", // Empty end date
+              "endDate.month"   -> "",
+              "endDate.year"    -> ""
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must be a real date")
+        contentAsString(result) must include("Enter the end date")
+      }
+    }
+
+    "must return Bad Request and show mixed error messages for invalid start day and invalid end date" in {
+      val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.GroupAccountingPeriodController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "startDate.day"   -> "AA", // Invalid day
+              "startDate.month" -> "12",
+              "startDate.year"  -> "2024",
+              "endDate.day"     -> "12",
+              "endDate.month"   -> "20", // Invalid month
+              "endDate.year"    -> "2024"
+            )
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Start date must be a real date")
+        contentAsString(result) must include("End date must be a real date")
+      }
+    }
+
     "must return Bad Request and show specific error message when start date missing month and year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
