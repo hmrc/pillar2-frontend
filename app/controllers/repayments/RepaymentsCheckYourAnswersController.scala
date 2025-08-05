@@ -54,7 +54,6 @@ class RepaymentsCheckYourAnswersController @Inject() (
     with I18nSupport
     with Logging {
 
-
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers

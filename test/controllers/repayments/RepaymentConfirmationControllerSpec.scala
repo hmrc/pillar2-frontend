@@ -27,7 +27,6 @@ import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
-
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
@@ -54,7 +53,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
       val application     = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad(currentDate.toString).url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
 
         val result = route(application, request).value
 

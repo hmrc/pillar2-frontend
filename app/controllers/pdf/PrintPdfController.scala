@@ -63,7 +63,6 @@ class PrintPdfController @Inject() (
     with I18nSupport
     with Logging {
 
-
   def onDownloadRfmAnswers: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     RfmJourneyModel
       .from(request.userAnswers)
