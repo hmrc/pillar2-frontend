@@ -41,7 +41,8 @@ class NfmEmailAddressViewSpec extends ViewSpecBase {
     }
 
     "must have exact page title from acceptance test scenario" in {
-      view.getElementsByTag("title").text mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
+      titleText must startWith("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a heading" in {

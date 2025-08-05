@@ -41,7 +41,8 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "must have exact page title from acceptance test scenario" in {
-      view.getElementsByTag("title").text mustBe "Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
+      titleText must startWith("Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a caption" in {

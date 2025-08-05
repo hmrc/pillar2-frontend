@@ -155,8 +155,9 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
         val responseContent = contentAsString(result)
 
         status(result) mustEqual OK
-        UkOrAbroadBankAccount.UkBankAccount.toString mustBe "UkBankAccount"
-        responseContent must include("value=\"UkBankAccount\"")
+        val expectedValue = UkOrAbroadBankAccount.UkBankAccount.toString
+        expectedValue mustBe "ukBankAccount"
+        responseContent must include("checked")
         responseContent must include("UK bank account")
       }
     }

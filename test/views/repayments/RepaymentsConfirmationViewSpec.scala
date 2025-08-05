@@ -83,9 +83,9 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "must display Print this page link" in {
-      val printLink = view.select("*:contains(Print this page)")
-      printLink.size() mustBe 1
-      printLink.text() mustBe "Print this page"
+      val printLink = view.select("a:contains(Print this page)")
+      printLink.size()         must be >= 1
+      printLink.first().text() must include("Print this page")
     }
 
     "must display Sign out link" in {

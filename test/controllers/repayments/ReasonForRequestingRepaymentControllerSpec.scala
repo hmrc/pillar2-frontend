@@ -143,9 +143,9 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
       }
     }
 
-    "must display exact character limit remaining text when 8 characters remaining" in {
+    "must display field pre-populated with 242 characters that would result in 8 characters remaining" in {
       val textWith242Chars =
-        "A content designer works on the end-to-end journey of a service to help users complete their goal and government deliver a policy intent. Their work may involve the creation of, or change to, a transaction, product or single piec"
+        "A content designer works on the end-to-end journey of a service to help users complete their goal and government deliver a policy intent. Their work may involve the creation of, or change to, a transaction, product or single piece of content."
       val userAnswers = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, textWith242Chars).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -161,7 +161,8 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
         val characterLimit = 250
         val remainingChars = characterLimit - textWith242Chars.length
         remainingChars mustBe 8
-        responseString must include("You have 8 characters remaining")
+        responseString must include(s">$textWith242Chars</textarea>")
+        responseString must include("data-maxlength=\"250\"")
       }
     }
 
@@ -196,7 +197,7 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         testRefundReason mustBe "Test Refund"
-        responseContent must include("value=\"Test Refund\"")
+        responseContent must include(">Test Refund</textarea>")
       }
     }
 

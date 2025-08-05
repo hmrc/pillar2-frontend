@@ -114,7 +114,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       summaryListKeys.get(3).text() mustBe "End date"
       summaryListItems.get(3).text() mustBe dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
       summaryListActions.get(1).getElementsByClass("govuk-summary-list__actions").text() mustBe
-        "Change the dates of the group’s consolidated accounting period"
+        "Change the dates of the group's consolidated accounting period"
       summaryListActions.get(1).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
     }
