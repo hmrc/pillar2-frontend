@@ -30,11 +30,12 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   lazy val page:     RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
   lazy val username: String                    = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Can we contact by telephone"
+  lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
+      view.getElementsByTag("title").text must include("Can we contact by phone?")
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
@@ -45,7 +46,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"Can we contact $username by telephone?"
+      h1Elements.text() mustBe s"Can we contact $username by phone?"
     }
 
     "have radio items" in {

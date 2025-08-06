@@ -31,7 +31,7 @@ import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
-class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 
@@ -46,7 +46,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -69,7 +69,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
 
@@ -90,7 +90,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("phoneNumber", ""))
 
         val result = route(application, request).value
@@ -103,7 +103,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -115,7 +115,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.fm.routes.NfmCapturePhoneDetailsController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -132,7 +132,7 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.NfmCapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("phoneNumber", "1234567890")
             )

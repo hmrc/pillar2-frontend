@@ -132,7 +132,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url
       }
     }
 

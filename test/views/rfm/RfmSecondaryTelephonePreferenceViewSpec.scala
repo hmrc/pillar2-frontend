@@ -29,11 +29,12 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
   lazy val formProvider = new RfmSecondaryTelephonePreferenceFormProvider
   lazy val page: RfmSecondaryTelephonePreferenceView = inject[RfmSecondaryTelephonePreferenceView]
   lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Can we contact by telephone"
+  lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Secondary Telephone Preference View" should {
 
     "have a title" in {
+      view.getElementsByTag("title").text must include("Can we contact by phone?")
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
@@ -44,7 +45,7 @@ class RfmSecondaryTelephonePreferenceViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Can we contact John Doe by telephone?"
+      h1Elements.text() mustBe "Can we contact John Doe by phone?"
     }
 
     "have a button" in {

@@ -33,7 +33,7 @@ import views.html.fmview.NfmCaptureTelephoneDetailsView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class NfmCaptureTelephoneDetailsController @Inject() (
+class NfmCapturePhoneDetailsController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,

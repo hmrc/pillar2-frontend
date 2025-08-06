@@ -38,7 +38,7 @@ import views.html.subscriptionview.manageAccount.ContactByTelephoneView
 import java.util.UUID
 import scala.concurrent.Future
 
-class ContactByTelephoneControllerSpec extends SpecBase {
+class ContactByPhoneControllerSpec extends SpecBase {
 
   val form = new ContactByTelephoneFormProvider()
   val formProvider: Form[Boolean] = form("name")

@@ -34,7 +34,7 @@ object UPEContactTelephoneSummary {
           key = "captureTelephoneDetails.checkYourAnswersLabel",
           value = ValueViewModel(HtmlFormat.escape(answer).toString),
           actions = Seq(
-            ActionItemViewModel("site.change", controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+            ActionItemViewModel("site.change", controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode).url)
               .withVisuallyHiddenText(messages("captureTelephoneDetails.change.hidden"))
               .withCssClass("govuk-!-display-none-print")
           )
