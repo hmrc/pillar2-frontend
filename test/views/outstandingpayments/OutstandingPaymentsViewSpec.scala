@@ -22,7 +22,7 @@ import helpers.FinancialDataHelper.PILLAR2_UKTR
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.outstandingpayments.OutstandingPaymentsView
 import views.outstandingpayments.OutstandingPaymentsViewSpec._
@@ -31,21 +31,32 @@ import java.time.LocalDate
 
 class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
-  val page: OutstandingPaymentsView = inject[OutstandingPaymentsView]
+  lazy val page: OutstandingPaymentsView = inject[OutstandingPaymentsView]
 
-  val organisationView: Document =
+  lazy val organisationView: Document =
     Jsoup.parse(page(data, plrRef)(request, appConfig, messages, isAgent = false).toString())
 
-  val agentView: Document =
+  lazy val agentView: Document =
     Jsoup.parse(page(data, plrRef)(request, appConfig, messages, isAgent = true).toString())
 
-  val h2s:        Elements = organisationView.getElementsByTag("h2")
-  val paragraphs: Elements = organisationView.getElementsByClass("govuk-body")
-  val links:      Elements = organisationView.getElementsByClass("govuk-link")
+  lazy val pageTitle:  String   = "Outstanding payments"
+  lazy val h2Elements: Elements = organisationView.getElementsByTag("h2")
+  lazy val paragraphs: Elements = organisationView.getElementsByClass("govuk-body")
+  lazy val links:      Elements = organisationView.getElementsByClass("govuk-link")
 
   "OutstandingPaymentsView" should {
     "should use correct width layout" in {
       organisationView.getElementsByClass("govuk-grid-column-two-thirds").size() mustBe 2
+    }
+
+    "have a title" in {
+      organisationView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = organisationView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "should display page title correctly" in {
@@ -57,12 +68,11 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "should display the leading paragraphs correctly" in {
-      paragraphs
-        .get(0)
-        .text() mustBe "The amount includes all liabilities due. This may be over more than one accounting period. It also includes any penalties or late payment interest."
-      paragraphs
-        .get(1)
-        .text() mustBe "Any payments made to your account before submitting your tax return have been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to your account."
+      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may be over more than one " +
+        "accounting period. It also includes any penalties or late payment interest."
+      paragraphs.get(1).text() mustBe "Any payments made to your account before submitting your tax return have " +
+        "been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to " +
+        "your account."
     }
 
     "should display payment button with correct link" in {
@@ -73,7 +83,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "should display other ways to pay section" in {
-      h2s.get(1).text() mustBe "Other ways to pay"
+      h2Elements.get(1).text() mustBe "Other ways to pay"
       paragraphs.get(2).text() mustBe "Your Pillar 2 reference: XMPLR0012345678"
       paragraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
 
@@ -85,7 +95,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "display a payment section that contains" should {
       "a heading" in {
-        h2s.get(2).text() mustBe "Details of outstanding payments"
+        h2Elements.get(2).text() mustBe "Details of outstanding payments"
       }
 
       "table if there are outstanding payments" in {
@@ -93,31 +103,31 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
         val table = organisationView.getElementsByClass("govuk-table").first()
 
-        val caption = table.getElementsByClass("govuk-table__caption--s").first()
-        caption.text() must include("Accounting period: 1 April 2023 to 31 March 2024")
+        val caption: Element = table.getElementsByClass("govuk-table__caption--s").first()
+        caption.text() mustBe "Accounting period: 1 April 2023 to 31 March 2024"
 
-        val headers = table.getElementsByTag("th")
+        val headers: Elements = table.getElementsByTag("th")
         headers.get(0).text() mustBe "Description"
         headers.get(1).text() mustBe "Amount"
         headers.get(2).text() mustBe "Due date"
 
-        val rows = table.getElementsByTag("td")
+        val rows: Elements = table.getElementsByTag("td")
         rows.get(0).text() mustBe "UK tax return"
         rows.get(1).text() mustBe "£1,000.00"
         rows.get(2).text() mustBe "31 March 2024"
       }
 
       "a 'No payments due' message if no payments are outstanding" in {
-        val noPaymentsData = Seq(financialSummary.copy(transactions = Seq(transaction.copy(outstandingAmount = 0.00))))
-        val noPaymentsView = Jsoup.parse(page(noPaymentsData, plrRef)(request, appConfig, messages, isAgent = false).toString())
+        val noPaymentsData: Seq[FinancialSummary] = Seq(financialSummary.copy(transactions = Seq(transaction.copy(outstandingAmount = 0.00))))
+        val noPaymentsView: Document = Jsoup.parse(page(noPaymentsData, plrRef)(request, appConfig, messages, isAgent = false).toString())
 
-        noPaymentsView.text() must include("No payments due.")
+        noPaymentsView.getElementsByClass("govuk-body").get(6).text() mustBe "No payments due."
         noPaymentsView.getElementsByClass("govuk-table").size() mustBe 0
       }
     }
 
     "should display transaction history section" in {
-      h2s.get(3).text() mustBe "Transaction history"
+      h2Elements.get(3).text() mustBe "Transaction history"
       paragraphs.get(7).text() mustBe "Payments will appear in the transaction history page within 3-5 working days."
 
       val viewTransactionHistoryLink = links.get(3)
@@ -127,30 +137,31 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "should display penalties and charges section" in {
-      h2s.get(4).text() mustBe "Penalties and interest charges"
+      h2Elements.get(4).text() mustBe "Penalties and interest charges"
       paragraphs.get(9).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
-      val penaltiesLink = links.get(4)
+      val penaltiesLink: Element = links.get(4)
 
       penaltiesLink.text() mustBe "Pillar 2 Top-up Taxes penalties information (opens in a new page)"
       penaltiesLink.attr("href") mustBe UnderConstructionController.onPageLoad.url
     }
 
     "should display agent-specific content" in {
-      val expectedContent = Seq(
-        "Any payments made to the group’s account before submitting the tax return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be added to the group’s account.",
-        "Pillar 2 reference: XMPLR0012345678",
-        "You’ll need to use this reference if you want to make a manual payment for this group.",
-        "Find out how HMRC may charge the group penalties and interest."
-      )
+      val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-      expectedContent.foreach(content => agentView.text() must include(content))
+      agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
+        "return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be " +
+        "added to the group’s account."
+      agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+      agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+        "payment for this group."
+      agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
     }
   }
 }
 
 object OutstandingPaymentsViewSpec {
-  val plrRef = "XMPLR0012345678"
+  val plrRef: String = "XMPLR0012345678"
 
   val transaction: TransactionSummary = TransactionSummary(PILLAR2_UKTR, 1000.00, LocalDate.of(2024, 3, 31))
 

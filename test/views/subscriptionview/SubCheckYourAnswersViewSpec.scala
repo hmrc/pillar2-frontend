@@ -21,15 +21,19 @@ import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import viewmodels.checkAnswers.GroupAccountingPeriodStartDateSummary.dateHelper
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
 
+import java.time.LocalDate
+
 class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
-  val page: SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
+  lazy val page: SubCheckYourAnswersView = inject[SubCheckYourAnswersView]
 
-  val view: Document = Jsoup.parse(
+  lazy val view: Document = Jsoup.parse(
     page(
       SummaryListViewModel(
         Seq(
@@ -47,49 +51,54 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       .toString()
   )
 
+  lazy val pageTitle: String = "Check your answers for further group details"
+
   "Manage Contact Check Your Answers View" should {
 
     "have a title" in {
-      val title = "Check your answers for further group details"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByTag("h2").text must include("Group details")
+      view.getElementsByTag("h2").first().text() mustBe "Group details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").first().text must include("Check your answers for further group details")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a group details summary list" in {
-      val entityLocation      = "Where are the entities in your group located?"
-      val entityLocationValue = "Only in the UK"
-      view.getElementsByClass("govuk-summary-list__key").get(0).text() mustBe entityLocation
-      view.getElementsByClass("govuk-summary-list__value").get(0).text() mustBe entityLocationValue
-      view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByClass("govuk-link").attr("href") must include(
+      val summaryListElements: Elements = view.getElementsByClass("govuk-summary-list")
+      summaryListElements.size() mustBe 1
+
+      val summaryListKeys:    Elements = view.getElementsByClass("govuk-summary-list__key")
+      val summaryListItems:   Elements = view.getElementsByClass("govuk-summary-list__value")
+      val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
+
+      summaryListKeys.get(0).text() mustBe "Where are the entities in your group located?"
+      summaryListItems.get(0).text() mustBe "Only in the UK"
+      summaryListActions.get(0).text() mustBe "Change where are the entities in your group located"
+      summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
-      )
 
-      val accountingPeriod = "Group’s consolidated accounting period"
-      val startDate        = "Start date"
-      val startDateValue   = "18 July 2025"
-      val endDate          = "End date"
-      val endDateValue     = "18 July 2025"
+      summaryListKeys.get(1).text() mustBe "Group’s consolidated accounting period"
+      summaryListItems.get(1).text() mustBe ""
 
-      view.getElementsByClass("govuk-summary-list__key").get(1).text() mustBe accountingPeriod
-      view.getElementsByClass("govuk-summary-list__value").get(1).text() mustBe ""
-      view.getElementsByClass("govuk-summary-list__key").get(2).text() mustBe startDate
-      view.getElementsByClass("govuk-summary-list__value").get(2).text() mustBe startDateValue
-      view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe endDate
-      view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe endDateValue
-      view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByClass("govuk-link").attr("href") must include(
+      summaryListKeys.get(2).text() mustBe "Start date"
+      summaryListItems.get(2).text() mustBe dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
+
+      summaryListKeys.get(3).text() mustBe "End date"
+      summaryListItems.get(3).text() mustBe dateHelper.formatDateGDS(LocalDate.of(2025, 7, 18))
+      summaryListActions.get(1).getElementsByClass("govuk-summary-list__actions").text() mustBe
+        "Change the dates of the group’s consolidated accounting period"
+      summaryListActions.get(1).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
-      )
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 

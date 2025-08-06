@@ -21,14 +21,16 @@ import forms.SecondaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.SecondaryContactNameView
 
 class SecondaryContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new SecondaryContactNameFormProvider
-  val form: Form[String]             = formProvider()
-  val page: SecondaryContactNameView = inject[SecondaryContactNameView]
+  lazy val formProvider: SecondaryContactNameFormProvider = new SecondaryContactNameFormProvider
+  lazy val form:         Form[String]                     = formProvider()
+  lazy val page:         SecondaryContactNameView         = inject[SecondaryContactNameView]
+  lazy val pageTitle:    String                           = "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
 
   "Secondary Contact Name page" should {
     val view: Document = Jsoup.parse(
@@ -36,29 +38,25 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
     )
 
     "display the correct page title" in {
-      view.getElementsByTag("title").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "show 'Contact details' as the section header" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "display the main heading asking for alternative contact details" in {
-      view.getElementsByTag("h1").text must include(
-        "Who should we contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "include a helpful hint with examples" in {
-      view.getElementsByClass("govuk-hint").text must include(
-        "You can enter a person or team name."
-      )
+      view.getElementsByClass("govuk-hint").text mustBe "You can enter a person or team name."
     }
 
     "display a 'Save and continue' button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show appropriate error when the name field is left empty" in {
@@ -66,17 +64,15 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
+      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text must include(
+      errorList.text mustBe
         "Enter the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text must include(
+      fieldError.text mustBe
         "Error: Enter the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
     }
 
     "show error when name is too long (over 160 characters)" in {
@@ -85,17 +81,13 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
+      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text must include(
-        "Name of the alternative contact person or team should be 160 characters or less"
-      )
+      errorList.text mustBe "Name of the alternative contact person or team should be 160 characters or less"
 
       val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text must include(
-        "Error: Name of the alternative contact person or team should be 160 characters or less"
-      )
+      fieldError.text mustBe "Error: Name of the alternative contact person or team should be 160 characters or less"
     }
 
     "show error when name contains invalid characters" in {
@@ -104,17 +96,15 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> invalidInput)), NormalMode)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text must include("There is a problem")
+      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
       val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text must include(
+      errorList.text mustBe
         "The name you enter must not include the following characters <, >, \" or &"
-      )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text must include(
+      fieldError.text mustBe
         "Error: The name you enter must not include the following characters <, >, \" or &"
-      )
     }
   }
 }

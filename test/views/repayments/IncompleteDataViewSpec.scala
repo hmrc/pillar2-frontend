@@ -18,41 +18,34 @@ package views.repayments
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.repayments.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  val page: IncompleteDataView = inject[IncompleteDataView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      IncompleteDataView = inject[IncompleteDataView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Repayment request has missing information"
 
   "Repayments incomplete data view" should {
     "have a title" in {
-      view.getElementsByTag("title").text must include("Repayment request has missing information")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Repayment request has missing information")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
-    "have a paragraph with the correct text" in {
-      view.getElementsByTag("p").text must include("You need to")
-    }
+    "have a paragraph with a link" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
 
-    "have a link with the correct text and url" in {
-      val expectedLink = "/report-pillar2-top-up-taxes/repayment/before-you-start"
-
-      val linkExists = Option(view.getElementsByAttributeValue("href", expectedLink).first()).isDefined
-      linkExists mustBe true
-
-      view.getElementsByTag("a").text must include(
-        "go back and complete all the required answers"
-      )
-    }
-
-    "have a paragraph with the correct stop text" in {
-      view.getElementsByTag("p").text must include("before submitting your repayment request.")
+      paragraph.text mustBe "You need to go back and complete all the required answers before submitting your repayment request."
+      paragraph.getElementsByTag("a").text() mustBe "go back and complete all the required answers"
+      paragraph.getElementsByTag("a").attr("href") mustBe
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
     }
 
   }

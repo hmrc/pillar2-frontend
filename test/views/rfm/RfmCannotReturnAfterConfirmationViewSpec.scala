@@ -19,36 +19,37 @@ package views.rfm
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.RfmCannotReturnAfterConfirmationView
 
 class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
 
-  val page: RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
-  val view: Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:       RfmCannotReturnAfterConfirmationView = inject[RfmCannotReturnAfterConfirmationView]
+  lazy val view:       Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                               = "Register your group"
+  lazy val paragraphs: Elements                             = view.getElementsByClass("govuk-body")
 
   "Rfm Cannot Return After Confirmation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You cannot return, you have replaced the filing member")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You cannot return, you have replaced the filing member"
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      paragraphs.get(0).text mustBe
         "You have successfully replaced the filing member for your Pillar 2 Top-up Taxes account."
-      )
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "You can now "
-      )
     }
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("report and manage your Pillar 2 Top-up Taxes")
-      link.attr("href") must include("/report-pillar2-top-up-taxes/pillar2-top-up-tax-home")
+    "have a paragraph with a link" in {
+      paragraphs.get(1).text() mustBe "You can now report and manage your Pillar 2 Top-up Taxes."
+      paragraphs.get(1).getElementsByTag("a").text() mustBe "report and manage your Pillar 2 Top-up Taxes"
+      paragraphs.get(1).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
   }

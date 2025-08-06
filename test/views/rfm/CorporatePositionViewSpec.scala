@@ -21,36 +21,40 @@ import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.rfm.CorporatePositionView
 
 class CorporatePositionViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmCorporatePositionFormProvider
-  val page: CorporatePositionView = inject[CorporatePositionView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: RfmCorporatePositionFormProvider = new RfmCorporatePositionFormProvider
+  lazy val page:         CorporatePositionView            = inject[CorporatePositionView]
+  lazy val view:         Document                         = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle:    String                           = "What is your position in the corporate structure of the group?"
 
   "Corporate Position View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is your position in the corporate structure of the group?")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Replace filing member")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("What is your position in the corporate structure of the group?")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("New nominated filing member")
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("Ultimate Parent Entity (UPE)")
+      val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+      radioItems.get(0).text mustBe "New nominated filing member"
+      radioItems.get(1).text mustBe "Ultimate Parent Entity (UPE)"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
