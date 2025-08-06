@@ -91,7 +91,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
@@ -113,7 +113,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(

@@ -62,7 +62,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     val address = Map(
       "addressLine1" -> "27 House",
