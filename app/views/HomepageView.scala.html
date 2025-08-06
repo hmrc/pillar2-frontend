@@ -27,7 +27,6 @@
 
 @(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@submissionFrontendPath = @{s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes"}
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
 @dueAndOverdueReturnsUrl = @{
@@ -39,7 +38,7 @@
 }
 
 @btnUrl = @{
-  s"$submissionFrontendPath/below-threshold-notification/start"
+  controllers.btn.routes.BTNBeforeStartController.onPageLoad.url
 }
 
 @bannerHtml = {

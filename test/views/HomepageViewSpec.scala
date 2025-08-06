@@ -47,8 +47,6 @@ class HomepageViewSpec extends ViewSpecBase {
       page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
     )
 
-  lazy val btnUrl: String = s"${appConfig.submissionFrontendHost}/report-pillar2-submission-top-up-taxes/below-threshold-notification/start"
-
   "HomepageView for a group" should {
     "have a title" in {
       organisationView.title() mustBe pageTitle
@@ -124,7 +122,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       manageCardLinks.get(3).text() mustBe "Submit a Below-Threshold Notification"
       manageCardLinks.get(3).attr("href") mustBe
-        btnUrl
+        controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
       manageCardHelpTexts.get(3).text() mustBe
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
     }
@@ -158,6 +156,7 @@ class HomepageViewSpec extends ViewSpecBase {
         s"for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 " +
         s"Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
 
     "show clean Returns card with no tag when Due scenario is provided" in {
@@ -320,7 +319,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       manageCardLinks.get(2).text() mustBe "Submit a Below-Threshold Notification"
       manageCardLinks.get(2).attr("href") mustBe
-        btnUrl
+        controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
       manageCardHelpTexts.get(3).text() mustBe
         "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
     }
@@ -355,6 +354,7 @@ class HomepageViewSpec extends ViewSpecBase {
         s"meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be " +
         s"submitted. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
+      bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
   }
 

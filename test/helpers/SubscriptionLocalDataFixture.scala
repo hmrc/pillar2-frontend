@@ -58,6 +58,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
+    accountStatus = Some(AccountStatus(false)),
     organisationName = None
   )
 
@@ -75,6 +76,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
     subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false)),
     organisationName = Some("ABC Intl")
   )
 
@@ -153,5 +155,23 @@ trait SubscriptionLocalDataFixture {
     request:                                  SubscriptionDataRequest[_]
   ): SummaryList = SummaryListViewModel(
     rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
+  )
+
+  val someSubscriptionLocalDataUkOther: SubscriptionLocalData = SubscriptionLocalData(
+    plrReference = "Abc123",
+    subMneOrDomestic = MneOrDomestic.UkAndOther,
+    subAccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)),
+    subPrimaryContactName = "John",
+    subPrimaryEmail = "john@email.com",
+    subPrimaryPhonePreference = true,
+    subPrimaryCapturePhone = Some("123"),
+    subAddSecondaryContact = true,
+    subSecondaryContactName = Some("Doe"),
+    subSecondaryEmail = Some("doe@email.com"),
+    subSecondaryCapturePhone = Some("123"),
+    subSecondaryPhonePreference = Some(true),
+    subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
+    accountStatus = Some(AccountStatus(false)),
+    organisationName = Some("orgName")
   )
 }
