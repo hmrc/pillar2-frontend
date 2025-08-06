@@ -33,16 +33,16 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
   "ContactNfmByTelephoneView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by telephone?")
+      view.getElementsByTag("title").text must include("Can we contact by phone?")
     }
 
     "have the correct page title" in {
-      view.getElementsByTag("title").text must include("Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.getElementsByTag("title").text must include("Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "must have exact page title from acceptance test scenario" in {
       val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
-      titleText must startWith("Can we contact by telephone? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      titleText must startWith("Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a caption" in {
@@ -50,7 +50,7 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
     }
 
     "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Can we contact Contact CYA by telephone?"
+      view.getElementsByTag("h1").text mustBe "Can we contact Contact CYA by phone?"
     }
 
     "have hint text" in {

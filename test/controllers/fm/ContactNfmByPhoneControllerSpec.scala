@@ -104,12 +104,12 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.ContactNfmByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
-        contentAsString(result) must include("Select yes if we can contact NFM Contact by telephone")
+        contentAsString(result) must include("Select yes if we can contact NFM Contact by phone")
       }
     }
 
