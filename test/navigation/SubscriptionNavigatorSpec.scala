@@ -67,11 +67,11 @@ class SubscriptionNavigatorSpec extends SpecBase {
       }
       "go to primary telephone preference page from primary contact email page" in {
         navigator.nextPage(SubPrimaryEmailPage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryEmailPage, "Zorro@la.com")) mustBe
-          controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode)
+          controllers.subscription.routes.ContactByPhoneController.onPageLoad(NormalMode)
       }
       "go to primary telephone page if they choose to nominate primary a contact number" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true)) mustBe
-          controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode)
       }
       "go to AddSecondaryContact page from the primary contact capture number page" in {
         navigator.nextPage(SubPrimaryCapturePhonePage, NormalMode, emptyUserAnswers.setOrException(SubPrimaryCapturePhonePage, "1234567890")) mustBe
@@ -159,7 +159,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
       }
       "go primary capture telephone page if they have chosen to nominate a primary contact number" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true)) mustBe
-          controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(CheckMode)
       }
       "go to journey recovery if no answer for SubPrimaryPhonePreference page can be found" in {
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, emptyUserAnswers) mustBe
@@ -251,7 +251,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
       "go primary capture telephone page if they have chosen to nominate a primary contact number and if they have finished every task " in {
         val ua = emptyUserAnswers.setOrException(SubPrimaryPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(SubPrimaryPhonePreferencePage, CheckMode, ua) mustBe
-          controllers.subscription.routes.ContactCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(CheckMode)
       }
       "go to review and submit page if they have chosen not to nominate a  primary contact number and if they have finished every task " in {
         val ua = subCompletedJourney.setOrException(CheckYourAnswersLogicPage, true)

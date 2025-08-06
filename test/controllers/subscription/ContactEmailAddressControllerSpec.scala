@@ -104,7 +104,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -112,7 +112,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactByTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.ContactByPhoneController.onPageLoad(NormalMode).url
       }
     }
 

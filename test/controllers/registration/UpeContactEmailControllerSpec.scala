@@ -124,7 +124,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.registration.routes.UpeContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -132,7 +132,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url
       }
     }
 

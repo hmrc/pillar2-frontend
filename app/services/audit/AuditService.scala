@@ -200,4 +200,24 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
 
+  def sendEventBTN(auditEvent: AuditEvent)(implicit hc: HeaderCarrier): Future[AuditResult] = {
+    logger.info(s"Sending audit event: ${auditEvent.auditType}")
+    auditConnector.sendExtendedEvent(auditEvent.extendedDataEvent)
+  }
+
+  def auditBTN(
+    pillarReference:            String,
+    accountingPeriod:           String,
+    entitiesInsideAndOutsideUK: Boolean,
+    apiResponseData:            ApiResponseData
+  )(implicit hc:                HeaderCarrier): Future[AuditResult] =
+    sendEventBTN(
+      CreateBtnAuditEvent(
+        pillarReference = pillarReference,
+        accountingPeriod = accountingPeriod,
+        entitiesInsideAndOutsideUK = entitiesInsideAndOutsideUK,
+        apiResponseData = apiResponseData
+      )
+    )
+
 }
