@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNBeforeStartView
 
 class BTNBeforeStartViewSpec extends ViewSpecBase {
@@ -39,10 +40,11 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have two h2 headings" in {
-      view().getElementsByTag("h2").get(0).text mustEqual "Who can submit a Below-Threshold Notification"
-      view().getElementsByTag("h2").get(0).hasClass("govuk-heading-m") mustEqual true
-      view().getElementsByTag("h2").get(1).text mustEqual "Before you start"
-      view().getElementsByTag("h2").get(1).hasClass("govuk-heading-m") mustEqual true
+      val h2Headings: Elements = view().getElementsByTag("h2")
+      h2Headings.get(0).text mustEqual "Who can submit a Below-Threshold Notification"
+      h2Headings.get(0).hasClass("govuk-heading-m") mustEqual true
+      h2Headings.get(1).text mustEqual "Before you start"
+      h2Headings.get(1).hasClass("govuk-heading-m") mustEqual true
     }
 
     "have group specific content" in {

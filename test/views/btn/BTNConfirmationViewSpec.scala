@@ -19,6 +19,7 @@ package views.btn
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNConfirmationView
 
 class BTNConfirmationViewSpec extends ViewSpecBase {
@@ -47,8 +48,9 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a h2 heading" in {
-      groupView.getElementsByTag("h2").text() must include("What happens next")
-      groupView.getElementsByTag("h2").get(0).hasClass("govuk-heading-m") mustEqual true
+      val h2Headings: Elements = groupView.getElementsByTag("h2")
+      h2Headings.get(0).text() mustEqual "What happens next"
+      h2Headings.get(0).hasClass("govuk-heading-m") mustEqual true
     }
 
     "in a group flow have paragraph content and a link" in {
