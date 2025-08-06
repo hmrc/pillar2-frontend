@@ -46,7 +46,6 @@ class BTNAccountingPeriodController @Inject() (
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   btnStatus:                              BTNStatusAction,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
-  dateHelper:                             ViewHelpers,
   accountingPeriodView:                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
   btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
@@ -59,8 +58,8 @@ class BTNAccountingPeriodController @Inject() (
     with Logging {
 
   private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
-    val start = HtmlFormat.escape(dateHelper.formatDateGDS(startDate))
-    val end   = HtmlFormat.escape(dateHelper.formatDateGDS(endDate))
+    val start = HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))
+    val end   = HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))
 
     SummaryListViewModel(
       rows = Seq(

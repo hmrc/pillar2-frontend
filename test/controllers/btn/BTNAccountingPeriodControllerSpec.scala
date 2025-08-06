@@ -52,7 +52,6 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
 
   val plrReference = "testPlrRef"
   val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
-  val dateHelper = new ViewHelpers()
 
   val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
   val chosenAccountPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
@@ -81,11 +80,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         rows = Seq(
           SummaryListRowViewModel(
             "btn.accountingPeriod.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(startDate))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))))
           ),
           SummaryListRowViewModel(
             "btn.accountingPeriod.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(dateHelper.formatDateGDS(endDate))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))))
           )
         )
       )
