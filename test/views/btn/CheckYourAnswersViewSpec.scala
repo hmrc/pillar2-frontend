@@ -63,8 +63,9 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with a H2 heading" in {
-      view().getElementsByTag("h2").get(0).text mustEqual "Submit your Below-Threshold Notification"
-      view().getElementsByTag("h2").get(0).hasClass("govuk-heading-s") mustEqual true
+      val h2Headings = view().getElementsByTag("h2")
+      h2Headings.get(0).text mustEqual "Submit your Below-Threshold Notification"
+      h2Headings.get(0).hasClass("govuk-heading-s") mustEqual true
       view().getElementsByClass("govuk-body").get(1).text mustEqual
         "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
     }
