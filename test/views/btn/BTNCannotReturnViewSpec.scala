@@ -40,7 +40,7 @@ class BTNCannotReturnViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text must include("Return to your group’s homepage")
-      link.attr("href") mustEqual controllers.routes.IndexController.onPageLoad.url
+      link.attr("href") mustEqual controllers.routes.DashboardController.onPageLoad.url
     }
   }
 }
