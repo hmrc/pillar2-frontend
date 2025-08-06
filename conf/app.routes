@@ -559,3 +559,35 @@ GET       /manage-account/details/waiting-room                                  
 GET       /submission-history                                                                       controllers.submissionhistory.SubmissionHistoryController.onPageLoad
 GET       /due-and-overdue-returns                                                                  controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad
 
+GET       /below-threshold-notification/start                                                       controllers.btn.BTNBeforeStartController.onPageLoad(mode: Mode = NormalMode)
+
+GET       /below-threshold-notification/choose-accounting-period                                    controllers.btn.BTNChooseAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST      /below-threshold-notification/choose-accounting-period                                    controllers.btn.BTNChooseAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET       /below-threshold-notification/change-choose-accounting-period                             controllers.btn.BTNChooseAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST      /below-threshold-notification/change-choose-accounting-period                             controllers.btn.BTNChooseAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+
+
+GET       /below-threshold-notification/accounting-period                                           controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = NormalMode)
+POST      /below-threshold-notification/accounting-period                                           controllers.btn.BTNAccountingPeriodController.onSubmit(mode: Mode = NormalMode)
+GET       /below-threshold-notification/change-accounting-period                                    controllers.btn.BTNAccountingPeriodController.onPageLoad(mode: Mode = CheckMode)
+POST      /below-threshold-notification/change-accounting-period                                    controllers.btn.BTNAccountingPeriodController.onSubmit(mode: Mode = CheckMode)
+
+GET       /below-threshold-notification/domestic-or-multinational                                   controllers.btn.BTNEntitiesInsideOutsideUKController.onPageLoad(mode: Mode = NormalMode)
+POST      /below-threshold-notification/domestic-or-multinational                                   controllers.btn.BTNEntitiesInsideOutsideUKController.onSubmit(mode: Mode = NormalMode)
+GET       /below-threshold-notification/change-domestic-or-multinational                            controllers.btn.BTNEntitiesInsideOutsideUKController.onPageLoad(mode: Mode = CheckMode)
+POST      /below-threshold-notification/change-domestic-or-multinational                            controllers.btn.BTNEntitiesInsideOutsideUKController.onSubmit(mode: Mode = CheckMode)
+GET       /below-threshold-notification/amend-group-details                                         controllers.btn.BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
+
+GET       /below-threshold-notification/domestic                                                    controllers.btn.BTNEntitiesInUKOnlyController.onPageLoad(mode: Mode = NormalMode)
+POST      /below-threshold-notification/domestic                                                    controllers.btn.BTNEntitiesInUKOnlyController.onSubmit(mode: Mode = NormalMode)
+GET       /below-threshold-notification/change-domestic                                             controllers.btn.BTNEntitiesInUKOnlyController.onPageLoad(mode: Mode = CheckMode)
+POST      /below-threshold-notification/change-domestic                                             controllers.btn.BTNEntitiesInUKOnlyController.onSubmit(mode: Mode = CheckMode)
+
+GET       /below-threshold-notification/submit                                                      controllers.btn.CheckYourAnswersController.onPageLoad
+POST      /below-threshold-notification/submit                                                      controllers.btn.CheckYourAnswersController.onSubmit
+GET       /below-threshold-notification/cannot-return                                               controllers.btn.CheckYourAnswersController.cannotReturnKnockback
+
+GET       /below-threshold-notification/confirmation                                                controllers.btn.BTNConfirmationController.onPageLoad
+GET       /below-threshold-notification/problem-with-service                                        controllers.btn.BTNProblemWithServiceController.onPageLoad
+
+GET       /below-threshold-notification/processing-submission                                       controllers.btn.BTNWaitingRoomController.onPageLoad
