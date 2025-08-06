@@ -21,42 +21,42 @@ import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.rfm.RfmPrimaryContactNameView
 
 class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
-  val formProvider = new RfmPrimaryContactNameFormProvider
-  val form: Form[String]              = formProvider()
-  val page: RfmPrimaryContactNameView = inject[RfmPrimaryContactNameView]
+  lazy val formProvider: RfmPrimaryContactNameFormProvider = new RfmPrimaryContactNameFormProvider
+  lazy val form:         Form[String]                      = formProvider()
+  lazy val page:         RfmPrimaryContactNameView         = inject[RfmPrimaryContactNameView]
+  lazy val pageTitle: String = "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
 
   "RFM Primary Contact Name View" should {
     val view: Document = Jsoup.parse(
       page(form, NormalMode)(request, appConfig, messages).toString()
     )
 
-    "have the correct title" in {
-      view.getElementsByTag("title").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must include("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "What is the name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a hint" in {
-      view.getElementsByClass("govuk-hint").text must include("For example, ‘Tax team’ or ‘Ashley Smith’.")
+      view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
     }
 
     "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
     "show required field error when form is submitted empty" in {
@@ -64,17 +64,15 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(
+      errorList mustBe
         "Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include(
+      fieldError mustBe
         "Error: Enter name of the person or team we should contact about compliance for Pillar 2 Top-up Taxes"
-      )
     }
 
     "show length validation error when input exceeds maximum length" in {
@@ -83,13 +81,13 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include("Name of the contact person or team must be 160 characters or less")
+      errorList mustBe "Name of the contact person or team must be 160 characters or less"
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include("Error: Name of the contact person or team must be 160 characters or less")
+      fieldError mustBe "Error: Name of the contact person or team must be 160 characters or less"
     }
 
     "show invalid character error when special characters are entered" in {
@@ -98,17 +96,15 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
         page(form.bind(Map("value" -> invalidInput)), NormalMode)(request, appConfig, messages).toString()
       )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
+      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
       val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList must include(
+      errorList mustBe
         "The name you enter must not include the following characters <, >, \" or &"
-      )
 
       val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError must include(
+      fieldError mustBe
         "Error: The name you enter must not include the following characters <, >, \" or &"
-      )
     }
   }
 }

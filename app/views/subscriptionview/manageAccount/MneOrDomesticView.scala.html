@@ -67,7 +67,7 @@
                 @govukRadios(
                     RadiosViewModel(
                         field = form("value"),
-                        legend = LegendViewModel(messages("mneOrDomestic.agent.group-operate")).asPageHeading(Medium),
+                        legend = LegendViewModel(messages("mneOrDomestic.agent.group-operate")).asPageHeading1(Medium, headingLevel = Some("h2")),
                         items = MneOrDomestic.options
                     )
                 )
@@ -75,7 +75,7 @@
                 @govukRadios(
                     RadiosViewModel(
                         field = form("value"),
-                        legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading(Medium),
+                        legend = LegendViewModel(messages("mneOrDomestic.group-operate")).asPageHeading1(Medium, headingLevel = Some("h2")),
                         items = MneOrDomestic.options
                     )
                 )

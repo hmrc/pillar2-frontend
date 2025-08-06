@@ -19,38 +19,39 @@ package views.eligibilityview
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationViewSpec extends ViewSpecBase {
 
-  val page: EligibilityConfirmationView = inject[EligibilityConfirmationView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      EligibilityConfirmationView = inject[EligibilityConfirmationView]
+  lazy val view:      Document                    = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                      = "You need to register this group to report Pillar 2 Top-up Taxes"
 
   "Eligibility Confirmation View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("You need to register this group to report Pillar 2 Top-up Taxes")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You need to register this group to report Pillar 2 Top-up Taxes")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You now need to sign in with a Government Gateway user ID associated with the filing member."
-      )
     }
 
     "have a inset text" in {
-      view.getElementsByClass("govuk-inset-text").text must include(
+      view.getElementsByClass("govuk-inset-text").text mustBe
         "You cannot use an individual or agent Government Gateway user ID to register."
-      )
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text must include("Continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
   }

@@ -19,42 +19,38 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.KbMnIneligibleView
 
 class KbMnIneligibleViewSpec extends ViewSpecBase {
 
-  val page: KbMnIneligibleView = inject[KbMnIneligibleView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      KbMnIneligibleView = inject[KbMnIneligibleView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
 
   "KbMn Ineligible View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include(
-        "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
-      )
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include(
-        "Based on your answers, you cannot register this group to report Pillar 2 Top-up Taxes"
-      )
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe
         "Only the ultimate parent or nominated filing member for an eligible group can register to report Pillar 2 Top-up Taxes."
-      )
-
-      view.getElementsByClass("govuk-body").get(1).text must include(
-        "This group may still need to register."
-      )
+      paragraphs.get(1).text mustBe "This group may still need to register."
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who can use this service")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who can use this service"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

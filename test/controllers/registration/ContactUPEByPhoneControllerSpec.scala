@@ -32,7 +32,7 @@ import views.html.registrationview.ContactUPEByTelephoneView
 
 import scala.concurrent.Future
 
-class ContactUPEByTelephoneControllerSpec extends SpecBase {
+class ContactUPEByPhoneControllerSpec extends SpecBase {
 
   val form = new ContactUPEByTelephoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")
@@ -46,7 +46,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -69,7 +69,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -87,7 +87,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     "redirect to book mark prevention page for GET if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -104,15 +104,15 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("value", "true")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
     "must return a Bad Request and errors when invalid data is submitted" in {
@@ -125,9 +125,9 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.registration.routes.ContactUPEByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               ("value", "")
             )
@@ -146,7 +146,7 @@ class ContactUPEByTelephoneControllerSpec extends SpecBase {
     "redirect to journey recovery when no contact name is found for POST" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
-        val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

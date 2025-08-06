@@ -34,7 +34,7 @@ import views.html.subscriptionview.ContactByTelephoneView
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class ContactByTelephoneController @Inject() (
+class ContactByPhoneController @Inject() (
   val userAnswersConnectors: UserAnswersConnectors,
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,

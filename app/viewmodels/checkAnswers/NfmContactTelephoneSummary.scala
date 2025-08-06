@@ -32,7 +32,7 @@ object NfmContactTelephoneSummary {
         key = "nfmCaptureTelephoneDetails.checkYourAnswersLabel",
         value = ValueViewModel(HtmlFormat.escape(answer).toString),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )

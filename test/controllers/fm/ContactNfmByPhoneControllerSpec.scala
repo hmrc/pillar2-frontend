@@ -18,42 +18,41 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.ContactNfmByTelephoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
+import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmview.NfmCaptureTelephoneDetailsView
+import views.html.fmview.ContactNfmByTelephoneView
 
 import scala.concurrent.Future
 
-class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class ContactNfmByPhoneControllerSpec extends SpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
+  val formProvider = new ContactNfmByTelephoneFormProvider()
 
-  "NfmCaptureTelephoneDetails Controller" when {
+  "ContactNfmByTelephone Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
       val ua = emptyUserAnswers
-        .setOrException(FmContactNamePage, "name")
-        .setOrException(FmPhonePreferencePage, true)
-
+        .setOrException(FmContactNamePage, "TestName")
+        .setOrException(FmContactEmailPage, "email")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[ContactNfmByTelephoneView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
           request,
           applicationConfig,
           messages(application)
@@ -63,20 +62,22 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
-        .setOrException(FmCapturePhonePage, "12312323")
-        .setOrException(FmContactNamePage, "name")
         .setOrException(FmPhonePreferencePage, true)
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+        .setOrException(FmContactNamePage, "TestName")
+        .setOrException(FmContactEmailPage, "email")
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-
-        val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
+        val request = FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
+        val view = application.injector.instanceOf[ContactNfmByTelephoneView]
+
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider("name").fill("12312323"), NormalMode, "name")(
+        contentAsString(result) mustEqual view(formProvider("TestName").fill(true), NormalMode, "TestName")(
           request,
           applicationConfig,
           messages(application)
@@ -85,43 +86,44 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "name").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+      val ua          = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-            .withFormUrlEncodedBody(("phoneNumber", ""))
-
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
         val result = route(application, request).value
-
         status(result) mustEqual BAD_REQUEST
       }
     }
 
-    "redirect to book mark page if no data found for contact name or phone preference for GET" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
+    "redirect to book mark page if no contact name or contact email is found for GET" in {
+      val application = applicationBuilder(userAnswers = None)
+        .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(GET, controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
+
     }
-
-    "redirect to journey recovery if no data found for contact name for POST" in {
-      val application = applicationBuilder(userAnswers = None).build()
-
+    "redirect to Journey Recovery if no contact name is found in POST" in {
+      val application = applicationBuilder(userAnswers = None)
+        .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
-        val result  = route(application, request).value
+        val request =
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
+
+        val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
-
     }
 
     "must redirect to next page when valid data is submitted" in {
@@ -130,15 +132,15 @@ class NfmCaptureTelephoneDetailsControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.fm.routes.NfmCaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.fm.routes.ContactNfmByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
-              ("phoneNumber", "1234567890")
+              ("value", "true")
             )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
 

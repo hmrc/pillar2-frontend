@@ -19,41 +19,42 @@ package views
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.UnauthorisedIndividualView
 
 class UnauthorisedIndividualViewSpec extends ViewSpecBase {
 
-  val page: UnauthorisedIndividualView = inject[UnauthorisedIndividualView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      UnauthorisedIndividualView = inject[UnauthorisedIndividualView]
+  lazy val view:      Document                   = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                     = "Register your group"
 
   "Unauthorised Individual View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Register your group")
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("Sorry, you’re unable to use this service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Sorry, you’re unable to use this service"
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text must include(
+      view.getElementsByClass("govuk-body").get(0).text mustBe
         "You’ve signed in with an individual account. Only users with an organisation account can register to use this service."
-      )
     }
 
     "have a paragraph with link" in {
-      val paragraphWithLink = view.getElementsByClass("govuk-body").get(1)
-      paragraphWithLink.text                     must include("If the group still needs to register,")
-      paragraphWithLink.select("a").text         must include("sign in to Government Gateway with an organisation account.")
-      paragraphWithLink.select("a").attr("href") must include(appConfig.loginUrl)
+      val paragraphLink = view.getElementsByClass("govuk-body").get(1).select("a")
+      paragraphLink.text mustBe "If the group still needs to register, sign in to Government Gateway with an organisation account."
+      paragraphLink.attr("href") mustBe appConfig.loginUrl
     }
 
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text         must include("Find out more about who can use this service")
-      link.attr("href") must include(appConfig.startPagePillar2Url)
+      link.text mustBe "Find out more about who can use this service"
+      link.attr("href") mustBe appConfig.startPagePillar2Url
     }
 
   }

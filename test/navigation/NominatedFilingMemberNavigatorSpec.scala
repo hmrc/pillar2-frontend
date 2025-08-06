@@ -97,11 +97,11 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to telephone preference page from contact email page" in {
         navigator.nextPage(FmContactEmailPage, NormalMode, emptyUserAnswers.setOrException(FmContactEmailPage, "something@something.com")) mustBe
-          controllers.fm.routes.ContactNfmByTelephoneController.onPageLoad(NormalMode)
+          controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode)
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
-          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode)
       }
       "go to CYA page if they have chosen not to nominate a contact number" in {
         navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, false)) mustBe
@@ -147,7 +147,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to a page where we capture their telephone number if they have chosen to nominate one" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
-          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)
       }
       "go to CYA page if they chose yes to nominate a phone number and have provided one already" in {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(FmCapturePhonePage, "1321")
@@ -191,7 +191,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       "go to capture telephone page if they have chosen to nominate one even if they have have answered all other mandatory questions on the tasklist" in {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
-          controllers.fm.routes.NfmCaptureTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)
       }
       "go to submit and review CYA page if no to nominating a contact number if they have have answered all mandatory questions on the tasklist" in {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, false).setOrException(CheckYourAnswersLogicPage, true)

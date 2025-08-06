@@ -36,7 +36,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   val formProvider = new CaptureSubscriptionAddressFormProvider()
 
   def application: Application = {
-    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true)))
       .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -46,7 +46,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode).url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     val address = Map(
       "addressLine1" -> "27 House",

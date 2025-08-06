@@ -19,39 +19,41 @@ package views.bta
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.bta.NoPlrIdGuidanceView
 
 class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
 
-  val page: NoPlrIdGuidanceView = inject[NoPlrIdGuidanceView]
-
-  val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      NoPlrIdGuidanceView = inject[NoPlrIdGuidanceView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "You need a Pillar 2 Top-up Taxes ID to access this service"
 
   "No Plr Id Guidance View" should {
 
     "have a title" in {
-      val title = "You need a Pillar 2 Top-up Taxes ID to access this service - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.getElementsByTag("title").text must include(title)
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text must include("You need a Pillar 2 Top-up Taxes ID to access this service")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text must include("Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID.")
+      view.getElementsByClass("govuk-body").first().text mustBe "Register to report Pillar 2 Top-up Taxes to get a Pillar 2 Top-up Taxes ID."
     }
 
     "have a paragraph link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
-      link.text         must include("Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)")
-      link.attr("href") must include("https://www.gov.uk/guidance/report-pillar-2-top-up-taxes")
+      link.text mustBe "Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
       link.attr("target") mustBe "_blank"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Return to your Business Tax Account")
+      view.getElementsByClass("govuk-button").text mustBe "Return to your Business Tax Account"
     }
 
   }

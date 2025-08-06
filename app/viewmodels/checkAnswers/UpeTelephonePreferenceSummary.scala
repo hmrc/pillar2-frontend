@@ -32,7 +32,7 @@ object UpeTelephonePreferenceSummary {
         key = "contactUPEByTelephone.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
-          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByTelephoneController.onPageLoad(CheckMode).url)
+          ActionItemViewModel("site.change", controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("contactUPEByTelephone.change.hidden"))
             .withCssClass("govuk-!-display-none-print")
         )

@@ -35,7 +35,7 @@ import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsV
 import java.util.UUID
 import scala.concurrent.Future
 
-class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
+class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
   val id:           String = UUID.randomUUID().toString
@@ -97,7 +97,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
@@ -227,7 +227,7 @@ class ContactCaptureTelephoneDetailsControllerSpec extends SpecBase {
         )
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))

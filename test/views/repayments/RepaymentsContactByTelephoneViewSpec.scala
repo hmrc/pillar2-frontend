@@ -18,65 +18,84 @@ package views.repayments
 
 import base.ViewSpecBase
 import forms.RepaymentsContactByTelephoneFormProvider
+import generators.StringGenerators
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.repayments.RepaymentsContactByTelephoneView
 
-class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase {
+class RepaymentsContactByTelephoneViewSpec extends ViewSpecBase with StringGenerators {
 
-  val formProvider = new RepaymentsContactByTelephoneFormProvider
-  val mode: Mode                             = NormalMode
-  val page: RepaymentsContactByTelephoneView = inject[RepaymentsContactByTelephoneView]
+  lazy val formProvider: RepaymentsContactByTelephoneFormProvider = new RepaymentsContactByTelephoneFormProvider
+  lazy val mode:         Mode                                     = NormalMode
+  lazy val page:         RepaymentsContactByTelephoneView         = inject[RepaymentsContactByTelephoneView]
+  lazy val pageTitle:    String                                   = "Can we contact by telephone"
+  lazy val contactName:  String                                   = "John Doe"
 
-  "Repayments Contact By Telephone View" should {
+  "Repayments Contact By Telephone View" when {
 
     "page loaded" should {
 
-      val view: Document =
-        Jsoup.parse(page(formProvider("John Doe"), mode, "John Doe")(request, appConfig, messages).toString())
+      val view: Document = Jsoup.parse(
+        page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()
+      )
 
       "have a title" in {
-        view.getElementsByTag("title").text must include("Can we contact by telephone?")
+        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a heading" in {
-        view.getElementsByTag("h1").text must include("Can we contact John Doe by telephone?")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe s"Can we contact $contactName by telephone?"
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text must include("We will only use this to contact you about this repayment request.")
+        view.getElementsByClass("govuk-hint").text mustBe "We will only use this to contact you about this repayment request."
       }
 
       "have radio items" in {
-        view.getElementsByClass("govuk-label govuk-radios__label").get(0).text must include("Yes")
-        view.getElementsByClass("govuk-label govuk-radios__label").get(1).text must include("No")
+        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+        radioButtons.size() mustBe 2
+        radioButtons.get(0).text mustBe "Yes"
+        radioButtons.get(1).text mustBe "No"
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text must include("Continue")
+        view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
   }
 
-  "nothing entered and page submitted" should {
+  "form is submitted with missing value" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider(contactName).bind(
+          Map("value" -> "")
+        ),
+        mode,
+        contactName
+      )(request, appConfig, messages).toString()
+    )
 
-    val view: Document =
-      Jsoup.parse(
-        page(formProvider("John Doe").bind(Map("value" -> "")), mode, "John Doe")(request, appConfig, messages).toString()
-      )
+    "show a missing value error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-    "have an error summary" in {
-      view.getElementsByClass("govuk-error-summary__title").text must include("There is a problem")
-      view.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
-        "Select yes if we can contact John Doe by telephone"
-      )
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+      errorsList.get(0).text() mustBe s"Select yes if we can contact $contactName by telephone"
     }
 
-    "have an input error" in {
-      view.getElementsByClass("govuk-error-message").text must include("Select yes if we can contact John Doe by telephone")
-    }
+    "show field-specific error" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
+      fieldErrors.get(0).text() mustBe s"Error: Select yes if we can contact $contactName by telephone"
+    }
   }
 
 }

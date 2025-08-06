@@ -21,27 +21,31 @@ import forms.CaptureTelephoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
 
 class ContactCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider
-  val page: ContactCaptureTelephoneDetailsView = inject[ContactCaptureTelephoneDetailsView]
-
-  val view: Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         ContactCaptureTelephoneDetailsView  = inject[ContactCaptureTelephoneDetailsView]
+  lazy val username:     String                              = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "What is the phone number"
 
   "CaptureTelephoneDetailsView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the phone number?")
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustEqual "What is the phone number for John Doe?"
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
     "have a hint description" in {
