@@ -48,6 +48,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
     "have a h2 heading" in {
       groupView.getElementsByTag("h2").text() must include("What happens next")
+      groupView.getElementsByTag("h2").get(0).hasClass("govuk-heading-m") mustEqual true
     }
 
     "in a group flow have paragraph content and a link" in {

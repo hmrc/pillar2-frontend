@@ -39,8 +39,10 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     }
 
     "have two h2 headings" in {
-      view().getElementsByTag("h2").text must include("Who can submit a Below-Threshold Notification")
-      view().getElementsByTag("h2").text must include("Before you start")
+      view().getElementsByTag("h2").get(0).text mustEqual "Who can submit a Below-Threshold Notification"
+      view().getElementsByTag("h2").get(0).hasClass("govuk-heading-m") mustEqual true
+      view().getElementsByTag("h2").get(1).text mustEqual "Before you start"
+      view().getElementsByTag("h2").get(1).hasClass("govuk-heading-m") mustEqual true
     }
 
     "have group specific content" in {
