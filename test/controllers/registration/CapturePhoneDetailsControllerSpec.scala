@@ -31,7 +31,7 @@ import views.html.registrationview.CaptureTelephoneDetailsView
 
 import scala.concurrent.Future
 
-class CaptureTelephoneDetailsControllerSpec extends SpecBase {
+class CapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CaptureTelephoneDetailsFormProvider()
 
@@ -43,7 +43,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         .setOrException(UpePhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -65,7 +65,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
         .setOrException(UpeCapturePhonePage, "12321")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
@@ -85,7 +85,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(POST, routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, routes.CapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("phoneNumber" -> "adsasd")
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -95,7 +95,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     "redirect to book mark prevention page" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.registration.routes.CaptureTelephoneDetailsController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -117,7 +117,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.registration.routes.CapturePhoneDetailsController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("phoneNumber", "1234567890"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -128,7 +128,7 @@ class CaptureTelephoneDetailsControllerSpec extends SpecBase {
     "redirect to journey recovery if no contact name is found for POST" in {
       val application = applicationBuilder(None).build()
       running(application) {
-        val request = FakeRequest(POST, controllers.registration.routes.CaptureTelephoneDetailsController.onSubmit(NormalMode).url)
+        val request = FakeRequest(POST, controllers.registration.routes.CapturePhoneDetailsController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

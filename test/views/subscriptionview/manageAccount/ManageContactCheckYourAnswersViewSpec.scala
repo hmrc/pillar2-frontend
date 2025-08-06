@@ -63,7 +63,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
   lazy val emailAddressValue:         String = "john@email.com"
   lazy val contactByPhoneLabel:       String = "Can we contact the primary contact by phone?"
   lazy val contactByPhoneValue:       String = "Yes"
-  lazy val contactPhoneLabel:         String = "Phone number"
+  lazy val contactPhoneLabel:         String = "Primary phone number"
   lazy val contactPhoneValue:         String = "123"
   lazy val secondContactLabel:        String = "Do you have a second contact?"
   lazy val secondContactValue:        String = "Yes"
@@ -205,10 +205,19 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
 
-        summaryListKeys.get(3).text() mustBe contactPhoneLabel
-        summaryListItems.get(3).text() mustBe contactPhoneValue
-        summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
+        val telephone      = "Primary phone number"
+        val telephoneValue = "123"
+        view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
+        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
+        view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+        )
+
+        agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
+        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
+        agentView.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+        )
       }
 
       "have second contact header" in {
