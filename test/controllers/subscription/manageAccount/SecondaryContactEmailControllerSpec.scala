@@ -104,7 +104,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
@@ -268,7 +268,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         )
 
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(
             POST,

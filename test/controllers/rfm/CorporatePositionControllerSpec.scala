@@ -92,8 +92,8 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
 
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.Upe.toString)
@@ -118,8 +118,8 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
 
@@ -141,7 +141,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -159,7 +159,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future(None))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
@@ -189,7 +189,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       running(application) {
         when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-        when(mockSessionRepository.get(any())).thenReturn(Future(None))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", "newNfm"))
