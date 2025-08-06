@@ -16,6 +16,7 @@
 
 package generators
 
+import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.{FinancialHistory, TransactionHistory}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen._
@@ -241,6 +242,15 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
         plrReference     <- nonEmptyString
         financialHistory <- Gen.listOf(arbitrary[FinancialHistory])
       } yield TransactionHistory(plrReference, financialHistory)
+    }
+
+  implicit lazy val accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =
+    Arbitrary {
+      for {
+        startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        endDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+        dueDate   <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
+      } yield new AccountingPeriodDetails(startDate, endDate, dueDate, false, Seq.empty)
     }
 
 }

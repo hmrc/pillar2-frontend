@@ -62,10 +62,12 @@ trait SpecBase
     with Writeables
     with EssentialActionCaller
     with HeaderNames
+    with StubMessageControllerComponents
     with IntegrationPatience
     with GuiceOneAppPerSuite
     with UserAnswersFixture
     with SubscriptionLocalDataFixture
+    with ObligationsAndSubmissionsDataFixture
     with StringGenerators {
 
   implicit lazy val ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global

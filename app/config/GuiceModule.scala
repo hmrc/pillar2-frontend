@@ -35,6 +35,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[DataRequiredAction]).to(classOf[DataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRetrievalAction]).to(classOf[SubscriptionDataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[SubscriptionDataRequiredAction]).to(classOf[SubscriptionDataRequiredActionImpl]).asEagerSingleton()
+    bind(classOf[ObligationsAndSubmissionsDataRetrievalAction]).to(classOf[ObligationsAndSubmissionsDataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[SessionDataRetrievalAction]).to(classOf[SessionDataRetrievalActionImpl]).asEagerSingleton()
     bind(classOf[SessionDataRequiredAction]).to(classOf[SessionDataRequiredActionImpl]).asEagerSingleton()
     bind(classOf[Phase2ScreensAction]).to(classOf[Phase2ScreensActionImpl]).asEagerSingleton()

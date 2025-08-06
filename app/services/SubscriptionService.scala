@@ -88,6 +88,14 @@ class SubscriptionService @Inject() (
       case None          => Future.failed(NoResultFound)
     }
 
+  def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier): Future[SubscriptionLocalData] =
+    subscriptionConnector.getSubscriptionCache(userId).flatMap {
+      case Some(readSubscriptionResponse) =>
+        Future.successful(readSubscriptionResponse)
+      case _ =>
+        Future.failed(InternalIssueError)
+    }
+
   def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit
     hc:                          HeaderCarrier
   ): Future[Boolean] =
