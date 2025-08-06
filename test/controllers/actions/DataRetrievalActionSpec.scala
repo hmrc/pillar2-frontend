@@ -39,7 +39,7 @@ class DataRetrievalActionSpec extends SpecBase {
 
       "must set userAnswers to 'None' in the request" in {
 
-        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(None)(ec)
+        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future.successful(None)
         val action = new Harness(mockUserAnswersConnectors)
 
         val result = action.callTransform(IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue
@@ -52,7 +52,7 @@ class DataRetrievalActionSpec extends SpecBase {
 
       "must build a userAnswers object and add it to the request" in {
 
-        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future(Some(Json.obj("abc" -> "def")))(ec)
+        when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future.successful(Some(Json.obj("abc" -> "def")))
         val action = new Harness(mockUserAnswersConnectors)
 
         val result = action.callTransform(new IdentifierRequest(FakeRequest(), "id", Some("groupID"), userIdForEnrolment = "userId")).futureValue

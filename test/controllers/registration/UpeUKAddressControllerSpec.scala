@@ -64,7 +64,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(GET, controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(
             ("addressLine1", "27 house"),
@@ -87,7 +87,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
@@ -112,7 +112,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
         val request =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)

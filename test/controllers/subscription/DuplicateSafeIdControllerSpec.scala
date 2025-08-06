@@ -78,7 +78,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url).withFormUrlEncodedBody(
             "nominateFilingMember" -> "$$"
           )
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val result    = route(application, request).value
         val boundForm = formProvider().bind(Map("nominateFilingMember" -> "$$"))
         val view      = application.injector.instanceOf[DuplicateSafeIdView]
@@ -93,7 +93,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url)
             .withFormUrlEncodedBody(("nominateFilingMember", "true"))
@@ -109,7 +109,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url)
             .withFormUrlEncodedBody(("nominateFilingMember", "false"))
