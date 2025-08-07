@@ -23,7 +23,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers.RfmRegistrationDateSummary.dateHelper
+import utils.ViewHelpers
 import viewmodels.checkAnswers.{RfmRegistrationDateSummary, RfmSecurityCheckSummary}
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
@@ -70,9 +70,11 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a summary list items" in {
+      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(plrReference)
+      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(ViewHelpers.formatDateGDS(registrationDate))
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
       summaryListItems.get(0).text mustBe plrReference
-      summaryListItems.get(1).text mustBe dateHelper.formatDateGDS(registrationDate)
+      summaryListItems.get(1).text mustBe ViewHelpers.formatDateGDS(registrationDate)
     }
 
     "have a summary list links" in {

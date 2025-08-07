@@ -32,7 +32,6 @@ class BTNConfirmationController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  dateHelper:                             ViewHelpers,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   BTNConfirmationView,
   checkPhase2Screens:                     Phase2ScreensAction
@@ -41,8 +40,8 @@ class BTNConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData) { implicit request =>
-    val submissionDate            = dateHelper.formatDateGDS(LocalDate.now())
-    val accountingPeriodStartDate = dateHelper.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
+    val submissionDate            = ViewHelpers.formatDateGDS(LocalDate.now())
+    val accountingPeriodStartDate = ViewHelpers.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
 
     Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent))
   }
