@@ -190,7 +190,7 @@ class HomepageViewSpec extends ViewSpecBase {
         )
       val returnsCard:      Element  = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
       val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
-      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag--red")
+      val statusTags:       Elements = returnsCard.getElementsByClass("govuk-tag--red")
 
       returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
 
@@ -218,7 +218,7 @@ class HomepageViewSpec extends ViewSpecBase {
         )
       val returnsCard:      Element  = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
       val returnsCardLinks: Elements = returnsCard.getElementsByTag("a")
-      val statusTags: Elements = returnsCard.getElementsByClass("govuk-tag--purple")
+      val statusTags:       Elements = returnsCard.getElementsByClass("govuk-tag--purple")
 
       returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
 
