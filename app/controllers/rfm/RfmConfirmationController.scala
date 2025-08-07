@@ -40,10 +40,9 @@ class RfmConfirmationController @Inject() (
 )(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val dateHelper = new ViewHelpers()
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers

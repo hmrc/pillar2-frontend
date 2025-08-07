@@ -28,11 +28,9 @@ import viewmodels.implicits._
 
 object SubAccountingPeriodSummary {
 
-  private val viewHelpers = new ViewHelpers()
-
   def row(accountingPeriod: AccountingPeriod, multipleAccountingPeriods: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-    val startDate = viewHelpers.formatDateGDS(accountingPeriod.startDate)
-    val endDate   = viewHelpers.formatDateGDS(accountingPeriod.endDate)
+    val startDate = ViewHelpers.formatDateGDS(accountingPeriod.startDate)
+    val endDate   = ViewHelpers.formatDateGDS(accountingPeriod.endDate)
 
     if (multipleAccountingPeriods) {
       Some(

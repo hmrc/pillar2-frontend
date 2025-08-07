@@ -28,10 +28,9 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object GroupAccountingPeriodEndDateSummary {
-  val dateHelper = new ViewHelpers()
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubAccountingPeriodPage).map { answer =>
-      val startDate = HtmlFormat.escape(dateHelper.formatDateGDS(answer.endDate))
+      val startDate = HtmlFormat.escape(ViewHelpers.formatDateGDS(answer.endDate))
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
         value = ValueViewModel(HtmlContent(startDate)),

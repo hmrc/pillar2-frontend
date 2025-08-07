@@ -29,13 +29,16 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
   lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   lazy val testPillar2Ref: String                     = "XMPLR0012345674"
-  lazy val dateHelper:     ViewHelpers                = new ViewHelpers()
   lazy val pageTitle:      String                     = "Repayment request submitted"
-  lazy val currentDate:    Html                       = HtmlFormat.escape(dateHelper.getDateTimeGMT)
+  lazy val currentDate:    Html                       = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
   lazy val view:           Document                   = Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
   lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
+    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+    val view: Document =
+      Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
+
     "have a page title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
