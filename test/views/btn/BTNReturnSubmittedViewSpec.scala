@@ -23,7 +23,8 @@ import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Element
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.LocalDateOps
 import views.html.btn.BTNReturnSubmittedView
