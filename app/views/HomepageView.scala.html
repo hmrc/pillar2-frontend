@@ -64,8 +64,8 @@
   <h1 class="govuk-heading-l homepage-title">@messages("homepage.title")</h1>
 
   <p class="govuk-body homepage-details">
-   <span><b>@{messages("homepage.group")}:</b> @organisationName</span>
-   <span><b>@{messages("homepage.id")}:</b> @plrReference</span>
+   <span><strong>@{messages("homepage.group")}:</strong> @organisationName</span>
+   <span><strong>@{messages("homepage.id")}:</strong> @plrReference</span>
   </p>
   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
@@ -137,7 +137,7 @@
     val registrationContent = Html(
      s"""
        <p class="govuk-body">
-           <b>${messages("homepage.manageAccount.registrationDate")}:</b> $registrationDate
+           <strong>${messages("homepage.manageAccount.registrationDate")}:</strong> $registrationDate
        </p>
      """
     )
