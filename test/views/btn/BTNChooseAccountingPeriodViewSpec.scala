@@ -22,6 +22,7 @@ import models.NormalMode
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNChooseAccountingPeriodView
 
 import java.time.LocalDate
@@ -36,8 +37,12 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
   val page: BTNChooseAccountingPeriodView = inject[BTNChooseAccountingPeriodView]
   def view(isAgent: Boolean = false): Document =
     Jsoup.parse(page(formProvider(), NormalMode, isAgent, Some("orgName"), accountingPeriodDetails)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Which accounting period would you like to register a Below-Threshold Notification for?"
 
   "BTNChooseAccountingPeriodView" should {
+    "have a title" in {
+      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
 
     "have a caption for an agent view" in {
       view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
@@ -47,12 +52,10 @@ class BTNChooseAccountingPeriodViewSpec extends ViewSpecBase {
       view().getElementsByClass("govuk-caption-m").text mustNot include("orgName")
     }
 
-    "have a title" in {
-      view().getElementsByTag("title").text must include("Which accounting period would you like to register a Below-Threshold Notification for?")
-    }
-
     "have a h1 heading" in {
-      view().getElementsByTag("h1").text must include("Which accounting period would you like to register a Below-Threshold Notification for?")
+      val h1Elements: Elements = view().getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph" in {

@@ -21,22 +21,28 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.btn.BTNBeforeStartView
+
+import scala.collection.mutable
 
 class BTNBeforeStartViewSpec extends ViewSpecBase {
 
-  val page: BTNBeforeStartView = inject[BTNBeforeStartView]
+  lazy val page: BTNBeforeStartView = inject[BTNBeforeStartView]
   def view(isAgent: Boolean = false, hasMultipleAccountPeriods: Boolean = false): Document =
     Jsoup.parse(page(isAgent, hasMultipleAccountPeriods, NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Below-Threshold Notification (BTN)"
 
   "BTNBeforeStartView" should {
-
     "have a title" in {
-      view().getElementsByTag("title").text must include("Below-Threshold Notification (BTN)")
+      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {
-      view().getElementsByTag("h1").text must include("Below-Threshold Notification (BTN)")
+      val h1Elements: Elements = view().getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have two h2 headings" in {

@@ -21,6 +21,7 @@ import forms.BTNEntitiesInsideOutsideUKFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNEntitiesInsideOutsideUKView
 
 class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
@@ -28,15 +29,18 @@ class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
   val page: BTNEntitiesInsideOutsideUKView = inject[BTNEntitiesInsideOutsideUKView]
   def view(isAgent: Boolean = false): Document =
     Jsoup.parse(page(formProvider(), isAgent, Some("orgName"), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Does the group still have entities located in both the UK and outside the UK?"
 
   "BTN Entities Both In UK And Outside View" should {
 
     "have a title" in {
-      view().getElementsByTag("title").text must include("Does the group still have entities located in both the UK and outside the UK?")
+      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {
-      view().getElementsByTag("h1").text must include("Does the group still have entities located in both the UK and outside the UK?")
+      val h1Elements: Elements = view().getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have radio items" in {

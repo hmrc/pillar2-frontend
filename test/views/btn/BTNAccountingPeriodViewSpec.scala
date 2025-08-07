@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -39,20 +40,33 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
   )
 
   val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
+
   def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
     Jsoup.parse(
       page(list, NormalMode, isAgent, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages).toString()
     )
 
+  lazy val pageTitle: String   = "Confirm account period for Below-Threshold Notification"
+  lazy val headings:  Elements = view().select("h1, h2, h3, h4")
+  println(headings)
+
+  //def validateHeadings(headingElements: Elements) = ???
+
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include("Confirm account period for Below-Threshold Notification")
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
+
+//      "have a Title that matches the H1 heading" in {
+//        view().title without the servicePrefix+GOVUK mustEqual view().getElementsByTag("h1").text
+//      }
 
       "have following contents" in {
         view().getElementsByClass("govuk-body").text must include(

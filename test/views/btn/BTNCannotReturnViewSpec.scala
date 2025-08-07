@@ -19,21 +19,32 @@ package views.btn
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNCannotReturnView
 
 class BTNCannotReturnViewSpec extends ViewSpecBase {
 
-  val page: BTNCannotReturnView = inject[BTNCannotReturnView]
-  val view: Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      BTNCannotReturnView = inject[BTNCannotReturnView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "You have submitted a Below-Threshold Notification"
 
   "BTNCannotReturnView" should {
 
-    "have no back link" in {
-      view.getElementsByClass("govuk-back-link").size mustBe 0
+    "have a title" in {
+      // FIXME: inconsistent Title and H1
+      // Title: Submission successful - Report Pillar 2 Top-up Taxes - GOV.UK
+      // H1: "You have submitted a Below-Threshold Notification"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a h1 heading" in {
-      view.getElementsByTag("h1").text mustEqual "You have submitted a Below-Threshold Notification"
+    "have a unique h1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "You have submitted a Below-Threshold Notification"
+    }
+
+    "have no back link" in {
+      view.getElementsByClass("govuk-back-link").size mustBe 0
     }
 
     "have a link" in {

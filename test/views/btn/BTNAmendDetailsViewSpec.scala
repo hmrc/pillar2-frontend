@@ -20,6 +20,7 @@ import base.ViewSpecBase
 import models.MneOrDomestic
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNAmendDetailsView
 
 class BTNAmendDetailsViewSpec extends ViewSpecBase {
@@ -28,6 +29,7 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
   def viewUkOnly(isAgent: Boolean = false): Document = Jsoup.parse(page(MneOrDomestic.Uk, isAgent)(request, appConfig, messages).toString())
   def viewUkAndOther(isAgent: Boolean = false): Document =
     Jsoup.parse(page(MneOrDomestic.UkAndOther, isAgent)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Based on your answer, you need to amend your details"
 
   "BTNAmendDetailsView" when {
     "it's an organisation view" should {
@@ -37,13 +39,15 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a title" in {
-        viewUkOnly().getElementsByTag("title").text     must include("Based on your answer, you need to amend your details")
-        viewUkAndOther().getElementsByTag("title").text must include("Based on your answer, you need to amend your details")
+        viewUkOnly().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        viewUkAndOther().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        viewUkOnly().getElementsByTag("h1").text     must include("Based on your answer, you need to amend your details")
-        viewUkAndOther().getElementsByTag("h1").text must include("Based on your answer, you need to amend your details")
+        viewUkOnly().getElementsByTag("h1").text must include("Based on your answer, you need to amend your details")
+        val h1Elements: Elements = viewUkAndOther().getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have paragraph content" in {

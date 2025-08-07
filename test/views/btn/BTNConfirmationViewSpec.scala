@@ -30,13 +30,14 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
   val page: BTNConfirmationView = inject[BTNConfirmationView]
 
-  def groupView: Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, false)(request, appConfig, messages).toString())
-  def agentView: Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, true)(request, appConfig, messages).toString())
+  def groupView:      Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, false)(request, appConfig, messages).toString())
+  def agentView:      Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, true)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Below-Threshold Notification successful"
 
   "BTNConfirmationView" should {
 
     "have a title" in {
-      groupView.getElementsByTag("title").text must include("Below-Threshold Notification successful")
+      groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have no back link" in {
@@ -44,7 +45,9 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a h1 heading" in {
-      groupView.getElementsByTag("h1").text must include("Below-Threshold Notification successful")
+      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a h2 heading" in {

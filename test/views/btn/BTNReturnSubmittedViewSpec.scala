@@ -23,6 +23,7 @@ import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.format.DateTimeFormatter
@@ -30,10 +31,10 @@ import java.time.{LocalDate, ZonedDateTime}
 
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
-  val accountingPeriodStartDate: LocalDate = LocalDate.now().minusYears(1)
-  val accountingPeriodEndDate:   LocalDate = LocalDate.now()
+  lazy val accountingPeriodStartDate: LocalDate = LocalDate.now().minusYears(1)
+  lazy val accountingPeriodEndDate:   LocalDate = LocalDate.now()
 
-  val accountingPeriodDetails: AccountingPeriodDetails = AccountingPeriodDetails(
+  lazy val accountingPeriodDetails: AccountingPeriodDetails = AccountingPeriodDetails(
     accountingPeriodStartDate,
     accountingPeriodEndDate,
     LocalDate.now().plusYears(1),
@@ -41,24 +42,23 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
     Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
   )
 
-  val formattedStartDate: String = accountingPeriodStartDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-  val formattedEndDate:   String = accountingPeriodEndDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+  lazy val formattedStartDate: String = accountingPeriodStartDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+  lazy val formattedEndDate:   String = accountingPeriodEndDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
 
-  val page: BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
+  lazy val page: BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
   def view(isAgent: Boolean = false): Document = Jsoup.parse(page(isAgent, accountingPeriodDetails)(request, appConfig, messages).toString())
+  lazy val pageTitle:                 String   = s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include(
-          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include(
-          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a paragraph" in {

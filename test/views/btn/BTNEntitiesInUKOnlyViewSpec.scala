@@ -21,22 +21,26 @@ import forms.BTNEntitiesInUKOnlyFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNEntitiesInUKOnlyView
 
 class BTNEntitiesInUKOnlyViewSpec extends ViewSpecBase {
-  val formProvider = new BTNEntitiesInUKOnlyFormProvider
-  val page: BTNEntitiesInUKOnlyView = inject[BTNEntitiesInUKOnlyView]
+  lazy val formProvider = new BTNEntitiesInUKOnlyFormProvider
+  lazy val page: BTNEntitiesInUKOnlyView = inject[BTNEntitiesInUKOnlyView]
   def view(isAgent: Boolean = false): Document =
     Jsoup.parse(page(formProvider(), isAgent, Some("orgName"), NormalMode)(request, appConfig, messages).toString())
+  lazy val pageTitle: String = "Does the group still have entities located only in the UK?"
 
   "BTNEntitiesInUKOnlyView" should {
 
     "have a title" in {
-      view().getElementsByTag("title").text must include("Does the group still have entities located only in the UK?")
+      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a h1 heading" in {
-      view().getElementsByTag("h1").text must include("Does the group still have entities located only in the UK?")
+      val h1Elements: Elements = view().getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have radio items" in {

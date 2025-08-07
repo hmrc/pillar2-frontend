@@ -21,6 +21,7 @@ import models.subscription.AccountingPeriod
 import models.{CheckMode, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import pages.{EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
@@ -31,8 +32,8 @@ import java.time.LocalDate
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
-  val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
-  val validBTNCyaUa: UserAnswers = UserAnswers("id")
+  lazy val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 24))
+  lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)
 
@@ -43,18 +44,21 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     ).flatten
   ).withCssClass("govuk-!-margin-bottom-9")
 
-  val page: CheckYourAnswersView = inject[CheckYourAnswersView]
+  lazy val page: CheckYourAnswersView = inject[CheckYourAnswersView]
   def view(summaryList: SummaryList = summaryListCYA(), isAgent: Boolean = false): Document =
     Jsoup.parse(page(summaryList, isAgent, Some("orgName"))(request, appConfig, realMessagesApi.preferred(request)).toString())
+  lazy val pageTitle: String = "Check Your Answers"
 
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      view().getElementsByTag("title").get(0).text mustEqual "Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a H1 heading" in {
-      view().getElementsByTag("h1").text mustEqual "Check your answers to submit your Below-Threshold Notification"
+      val h1Elements: Elements = view().getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph" in {

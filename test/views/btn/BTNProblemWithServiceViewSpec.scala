@@ -19,21 +19,26 @@ package views.btn
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNProblemWithServiceView
 
 class BTNProblemWithServiceViewSpec extends ViewSpecBase {
 
-  private val page: BTNProblemWithServiceView = inject[BTNProblemWithServiceView]
-  private val view: Document                  = Jsoup.parse(page()(request, appConfig, messages).toString)
+  lazy val page:      BTNProblemWithServiceView = inject[BTNProblemWithServiceView]
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString)
+  lazy val pageTitle: String                    = "Sorry, there is a problem with the service"
 
   "BTNProblemWithServiceView" should {
-
-    "have the correct page title" in {
-      view.select("title").text() must include("Sorry, there is a problem with the service")
+    // FIXME: "have the correct page title" in {
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
+    // FIXME: we are using `select` here
     "display the error heading" in {
-      view.select("h1").text() must include("Sorry, there is a problem with the service")
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "display a try again later message" in {
