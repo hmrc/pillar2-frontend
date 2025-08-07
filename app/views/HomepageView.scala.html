@@ -83,20 +83,18 @@
  <div class="card-group">
       @if(maybeUktrBannerScenario.isDefined) {
     <div class="card-half-width">
-        <div class="card-label">
-          <h2 class="govuk-heading-m">
-            @messages("homepage.returns.title")
-            @maybeUktrBannerScenario.map { scenario =>
+        <div class="govuk-summary-card__title-wrapper card-with-tag">
+          <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
+          @maybeUktrBannerScenario.map { scenario =>
               @if(scenario == "Overdue" || scenario == "Incomplete") {
                 <span class="govuk-tag @{
                   scenario match {
                     case "Overdue" => "govuk-tag--red"
                     case "Incomplete" => "govuk-tag--purple"
                   }
-                } homepage-returns-tag" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
+                }" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
               }
-            }
-          </h2>
+          }
         </div>
       <div class="card-content">
        <ul class="govuk-list">

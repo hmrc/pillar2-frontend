@@ -26,7 +26,7 @@
 @isManageAccountCard = @{cardClass == "card-full-width"}
 
 <div class="@cardClass">
-  <div class="card-label"><h2 class="govuk-heading-m">@title</h2></div>
+  <div class="govuk-summary-card__title-wrapper"><h2 class="govuk-heading-m govuk-!-margin-0">@title</h2></div>
   <div class="card-content">@extraContent
    <ul class="govuk-list @if(isManageAccountCard){columns}">
     @for((linkText, url, optDescription) <- links) {
