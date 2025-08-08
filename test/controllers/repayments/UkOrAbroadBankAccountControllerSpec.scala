@@ -130,5 +130,20 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
+    "must display pre-populated repayment method selection when previously answered" in {
+      val userAnswers = UserAnswers(userAnswersId).set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.UkOrAbroadBankAccountController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("UK bank account")
+      }
+    }
+
   }
 }

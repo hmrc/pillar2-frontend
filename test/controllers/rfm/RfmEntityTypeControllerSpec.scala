@@ -129,6 +129,21 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show specific error message when no entity type is selected" in {
+      val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", ""))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select what type of entity the new filing member is")
+      }
+    }
+
     "must redirect to GRS for UK Limited company" in {
 
       val ua =

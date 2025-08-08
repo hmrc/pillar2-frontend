@@ -129,5 +129,95 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
       }
     }
 
+    "must display character limit text when long text is entered" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("250 characters")
+      }
+    }
+
+    "must display field pre-populated with 242 characters that would result in 8 characters remaining" in {
+      val textWith242Chars =
+        "A content designer works on the end-to-end journey of a service to help users complete their goal and government deliver a policy intent. Their work may involve the creation of, or change to, a transaction, product or single piece of content."
+      val userAnswers = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, textWith242Chars).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result         = route(application, request).value
+        val responseString = contentAsString(result)
+
+        status(result) mustEqual OK
+        textWith242Chars.length mustBe 242
+        val characterLimit = 250
+        val remainingChars = characterLimit - textWith242Chars.length
+        remainingChars mustBe 8
+        responseString must include(s">$textWith242Chars</textarea>")
+        responseString must include("data-maxlength=\"250\"")
+      }
+    }
+
+    "must display pre-populated repayment reason field when previously answered" in {
+      val longText =
+        "A content designer works on the end-to-end journey of a service to help users complete their goal and government deliver a policy intent. Their work may involve the creation of, or change to, a transaction, product or single piece of content."
+      val userAnswers = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, longText).success.value
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include(longText)
+      }
+    }
+
+    "must display character count message when 8 characters remaining from acceptance test scenario" in {
+      val testText242Chars = "A" * 242
+      val userAnswers      = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, testText242Chars).success.value
+      val application      = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        testText242Chars.length mustBe 242
+        responseContent must include(testText242Chars)
+      }
+    }
+
+    "must display Repayment reason field pre-populated with Test Refund from acceptance test scenario" in {
+      val testRefundReason = "Test Refund"
+      val userAnswers      = UserAnswers(userAnswersId).set(ReasonForRequestingRefundPage, testRefundReason).success.value
+      val application      = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(GET, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        testRefundReason mustBe "Test Refund"
+        responseContent must include(">Test Refund</textarea>")
+      }
+    }
+
   }
 }

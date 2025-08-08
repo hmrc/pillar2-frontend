@@ -119,5 +119,39 @@ class BankAccountDetailsControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
+
+    "must return Bad Request and show specific error message for missing bank name" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(
+              "bankName"          -> "",
+              "accountHolderName" -> "Epic Adventure Inc",
+              "sortCode"          -> "206705",
+              "accountNumber"     -> "86473611"
+            )
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Enter the name of the bank")
+      }
+    }
+
+    "must display pre-populated UK Bank Name field when previously answered" in {
+      val testBankAccountDetails = BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611")
+      val ua                     = emptyUserAnswers.setOrException(BankAccountDetailsPage, testBankAccountDetails)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      running(application) {
+        val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("Natwest")
+      }
+    }
   }
 }
