@@ -100,14 +100,6 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
   width: 100%;
   min-width: 300px;
   border: solid #b1b4b6 1px;
-  margin-top: -0.3rem !important;
-  margin-bottom: 0 !important;
-}
-
-.card-label {
-  background-color: #f3f2f1;
-  padding: 10px 0 1px 15px;
-  margin: 0 0 10px 0;
 }
 
 .card-content {
@@ -128,82 +120,19 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
 }
 
 .homepage-title {
-  margin-top: -8px;
-}
-
-.homepage-details {
-  margin-bottom: 1.8em;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.3em;
+  gap: 0.5em;
 }
 
-@media screen and (min-width: 768px) {
-  .homepage-details {
-    margin-bottom: 2.5em;
-    gap: 0.5em;
-  }
-}
-
-.homepage-uktr-banner-bottom {
-  margin-bottom: 1.5em;
-}
-
-@media screen and (min-width: 768px) {
-  .homepage-uktr-banner-bottom {
-    margin-bottom: 2.6em;
-  }
-}
-
-.homepage-card-group {
-  display: flex;
-  flex-wrap: wrap;
-  margin-top: 1.5em;
-  margin-bottom: 0;
-  gap: 1rem;
-}
-
-@media screen and (min-width: 768px) {
-  .homepage-card-group {
-    margin-top: 2em;
-    gap: 1.5rem;
-  }
-}
-
-.homepage-card-group > div {
-  margin-bottom: 0 !important;
-}
-
-.homepage-card-half-width {
-  flex: 1;
-  min-width: 0;
-  height: auto;
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 0;
-}
-
-.homepage-card-label {
-  background-color: #f3f2f1;
-  padding: 10px 0 1px 15px;
-  margin: 0 0 10px 0;
-}
-
-.homepage-banner-container {
+.btn-banner {
   max-width: fit-content;
 }
 
-.homepage-status-tag {
-  float: right;
-}
-
-.homepage-card-content {
-  padding: 15px 15px 0 15px;
-  flex-grow: 1;
-}
-
-.homepage-card-links {
-  padding: 0 0 15px 0;
+.card-with-tag{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 @media screen and (max-width: 997px) {
@@ -212,15 +141,6 @@ div:has(div.hods-loading-spinner) { .govuk-grid-column-two-thirds {width:100%;} 
   }
 
   .card-half-width {
-    width: 100%;
-  }
-
-  .homepage-card-group {
-    flex-direction: column;
-  }
-
-  .homepage-card-half-width {
-    flex: none;
     width: 100%;
   }
 
