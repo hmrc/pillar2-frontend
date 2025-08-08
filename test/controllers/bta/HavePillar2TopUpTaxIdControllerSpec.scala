@@ -175,5 +175,26 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
       }
     }
 
+    "must return Bad Request and show specific error message when no option is selected" in {
+      val application = applicationBuilder()
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .configure(
+          Seq(
+            "features.btaAccessEnabled" -> true
+          ): _*
+        )
+        .build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.bta.routes.HavePillar2TopUpTaxIdController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select yes if you have a Pillar 2 Top-up Taxes ID")
+      }
+    }
+
   }
 }
