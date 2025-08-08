@@ -58,6 +58,24 @@ class BTNAccountingPeriodController @Inject() (
     with I18nSupport
     with Logging {
 
+  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
+    val start = HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))
+    val end   = HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))
+
+    SummaryListViewModel(
+      rows = Seq(
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.startAccountDate",
+          value = ValueViewModel(HtmlContent(start))
+        ),
+        SummaryListRowViewModel(
+          key = "btn.returnSubmitted.endAccountDate",
+          value = ValueViewModel(HtmlContent(end))
+        )
+      )
+    )
+  }
+
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { implicit request =>
@@ -118,24 +136,6 @@ class BTNAccountingPeriodController @Inject() (
         }
       }
       .getOrElse(Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
-  }
-
-  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
-    val start = HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))
-    val end   = HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))
-
-    SummaryListViewModel(
-      rows = Seq(
-        SummaryListRowViewModel(
-          key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(HtmlContent(start))
-        ),
-        SummaryListRowViewModel(
-          key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(HtmlContent(end))
-        )
-      )
-    )
   }
 
   private def isLastSubmission(period: AccountingPeriodDetails, submissionTypes: Set[SubmissionType]): Boolean =

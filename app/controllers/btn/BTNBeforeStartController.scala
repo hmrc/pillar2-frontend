@@ -30,6 +30,7 @@ import services.{ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.btn.BTNBeforeStartView
 
 import java.time.LocalDate.now
@@ -66,7 +67,7 @@ class BTNBeforeStartController @Inject() (
         .flatMap {
           case Some(subscriptionData) =>
             obligationsAndSubmissionsService
-              .handleData(subscriptionData.plrReference, now.minusYears(7), now)
+              .handleData(subscriptionData.plrReference, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now)
               .map(success => filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1)
               .map(hasMultipleAccountingPeriods => Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode)))
           case None =>
