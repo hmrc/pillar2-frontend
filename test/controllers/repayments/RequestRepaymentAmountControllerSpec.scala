@@ -140,5 +140,59 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         ).toString
       }
     }
+
+    "must display pre-populated refund amount field when previously answered" in {
+      val amount = BigDecimal(9999.99)
+      val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(ua)))
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("9999.99")
+      }
+    }
+
+    "must display Refund Amount field pre-populated with exactly 9999.99 from acceptance test scenario" in {
+      val exactAmount = BigDecimal("9999.99")
+      val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, exactAmount)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(ua)))
+        val request         = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        exactAmount.toString mustBe "9999.99"
+        responseContent must include("value=\"9999.99\"")
+      }
+    }
+
+    "must display Refund Amount field pre-populated with exactly 100.00 from acceptance test scenario" in {
+      val exactAmount = BigDecimal("100.00")
+      val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, exactAmount)
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+      running(application) {
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(ua)))
+        val request         = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
+        val result          = route(application, request).value
+        val responseContent = contentAsString(result)
+
+        status(result) mustEqual OK
+        exactAmount.toString mustBe "100.00"
+        responseContent must include("value=\"100.00\"")
+      }
+    }
   }
 }

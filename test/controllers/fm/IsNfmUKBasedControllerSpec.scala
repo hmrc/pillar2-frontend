@@ -112,6 +112,20 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
+
+    "must return Bad Request and show specific error message when no option is selected" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.fm.routes.IsNfmUKBasedController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select yes if the nominated filing member is registered in the UK")
+      }
+    }
     "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
 
       val expectedNextPage = Call(GET, "/")

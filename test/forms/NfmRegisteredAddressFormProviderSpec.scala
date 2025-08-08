@@ -16,6 +16,7 @@
 
 package forms
 
+import forms.Validation
 import forms.behaviours.StringFieldBehaviours
 import forms.mappings.AddressMappings.maxAddressLineLength
 import models.NonUKAddress

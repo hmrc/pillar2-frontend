@@ -119,5 +119,20 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
+    "must return a Bad Request and show specific error message when no option is selected" in {
+      val ua          = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
+      val application = applicationBuilder(userAnswers = Some(ua)).build()
+
+      running(application) {
+        val request =
+          FakeRequest(POST, controllers.subscription.routes.MneOrDomesticController.onSubmit(NormalMode).url)
+            .withFormUrlEncodedBody(("value", ""))
+        val result = route(application, request).value
+
+        status(result) mustEqual BAD_REQUEST
+        contentAsString(result) must include("Select if the group has entities located only in the UK or in the UK and outside the UK")
+      }
+    }
+
   }
 }
