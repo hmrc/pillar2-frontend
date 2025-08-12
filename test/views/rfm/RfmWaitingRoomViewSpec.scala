@@ -35,6 +35,12 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
+    "have a non-clickable banner" in {
+      val headerContent = view.getElementsByClass("govuk-header__content").get(0)
+      headerContent.text mustBe "Report Pillar 2 Top-up Taxes"
+      headerContent.getElementsByTag("a") mustBe empty
+    }
+
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
