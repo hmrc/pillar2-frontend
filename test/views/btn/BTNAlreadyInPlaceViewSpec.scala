@@ -18,7 +18,7 @@ package views.btn
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.btn.BTNAlreadyInPlaceView
 
@@ -29,29 +29,26 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
   lazy val pageTitle: String                = "The group has already submitted a Below-Threshold Notification for this accounting period"
 
   "BTNAlreadyInPlaceView" should {
-
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a h1 heading" in {
+    "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph" in {
-      view.getElementsByClass("govuk-body").text must include(
-        "You cannot submit two notifications for the same period."
-      )
+      view.getElementsByClass("govuk-body").get(0).text mustBe "You cannot submit two notifications for the same period."
     }
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text must include("Return to homepage")
-      link.attr("href") must include(
-        controllers.routes.DashboardController.onPageLoad.url
-      )
+    "have a Return to Homepage link" in {
+      val returnLink: Element = view.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+
+      returnLink.text mustBe "Return to homepage"
+      returnLink.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      returnLink.attr("target") mustBe "_self"
     }
 
   }
