@@ -17,7 +17,6 @@
 package controllers
 
 import base.SpecBase
-import models.subscription.ReadSubscriptionRequestParameters
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -37,7 +36,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadAndCacheSubscription(any[ReadSubscriptionRequestParameters])(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
           .thenReturn(Future.successful(None))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
@@ -66,7 +65,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadAndCacheSubscription(any[ReadSubscriptionRequestParameters])(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
           .thenReturn(Future.successful(Some(subscriptionData)))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
@@ -84,14 +83,15 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadAndCacheSubscription(any[ReadSubscriptionRequestParameters])(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
           .thenReturn(Future.failed(new RuntimeException("Service error")))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
 
         val result = route(application, request).value
 
-        status(result) mustEqual INTERNAL_SERVER_ERROR
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
   }

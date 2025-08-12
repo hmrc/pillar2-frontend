@@ -67,26 +67,17 @@ class SubscriptionService @Inject() (
       case _       => false
     }
 
-  def readAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
-    subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
-      case Some(readSubscriptionResponse) =>
-        Future.successful(readSubscriptionResponse)
-      case _ =>
-        Future.failed(InternalIssueError)
-    }
-  def maybeReadAndCacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[Option[SubscriptionData]] =
-    subscriptionConnector.readSubscriptionAndCache(parameters).flatMap {
-      case Some(readSubscriptionResponse) =>
-        Future.successful(Some(readSubscriptionResponse))
-      case _ =>
-        Future.successful(None)
-    }
+  def maybeReadSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[Option[SubscriptionData]] =
+    subscriptionConnector.readSubscription(plrReference)
 
   def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(subData) => Future.successful(subData)
       case None          => Future.failed(NoResultFound)
     }
+
+  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+    subscriptionConnector.cacheSubscription(parameters)
 
   def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier): Future[SubscriptionLocalData] =
     subscriptionConnector.getSubscriptionCache(userId).flatMap {

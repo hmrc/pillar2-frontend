@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import models.subscription.ReadSubscriptionRequestParameters
+import models.UnprocessableEntityError
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -41,17 +41,19 @@ class RegistrationInProgressController @Inject() (
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
     subscriptionService
-      .maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, plrReference))
-      .map { maybeData =>
-        if (maybeData.isDefined) {
+      .maybeReadSubscription(plrReference)
+      .map {
+        case Some(_) =>
           Redirect(controllers.routes.DashboardController.onPageLoad)
-        } else {
+        case None =>
           Ok(view(plrReference))
-        }
       }
-      .recover { case ex =>
-        logger.error(s"RegistrationInProgressController - error retrieving subscription data for PLR reference: $plrReference", ex)
-        InternalServerError("Error retrieving subscription data")
+      .recover {
+        case UnprocessableEntityError =>
+          Ok(view(plrReference))
+        case e: Throwable =>
+          logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
+          Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
   }
 }

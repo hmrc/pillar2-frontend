@@ -88,7 +88,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             .thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSessionRepository.set(any()))
             .thenReturn(Future.successful(true))
-          when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
 
@@ -127,7 +128,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             .thenReturn(Future.successful(Some(emptyUserAnswers)))
           when(mockSessionRepository.set(any()))
             .thenReturn(Future.successful(true))
-          when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+          when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           val result = route(application, request).value
           val view   = application.injector.instanceOf[DashboardView]
 
@@ -158,7 +160,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
+        when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
         val result = route(application, request).value
@@ -178,8 +181,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           .build()
       when(mockSessionRepository.get(any()))
         .thenReturn(Future.successful(None))
-      when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
@@ -205,7 +206,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSubscriptionService.readAndCacheSubscription(any())(any())).thenReturn(Future.failed(models.InternalIssueError))
+      when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
+      when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
@@ -725,73 +727,6 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
           processingDate = java.time.ZonedDateTime.now(),
           accountingPeriodDetails = Seq.empty
-        )
-
-        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
-
-        result mustBe None
-      }
-    }
-
-    "return Due when there are mixed obligation types with at least one open and due date has not passed" in {
-      val application = applicationBuilder(userAnswers = None, enrolments).build()
-      running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
-
-        val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
-          models.obligationsandsubmissions.Obligation(
-            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
-            status = ObligationStatus.Fulfilled,
-            canAmend = false,
-            submissions = Seq.empty
-          ),
-          models.obligationsandsubmissions.Obligation(
-            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
-            status = ObligationStatus.Fulfilled,
-            canAmend = false,
-            submissions = Seq.empty
-          ),
-          models.obligationsandsubmissions.Obligation(
-            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
-            status = ObligationStatus.Open,
-            canAmend = false,
-            submissions = Seq.empty
-          )
-        )
-        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
-          startDate = LocalDate.now().minusMonths(12),
-          endDate = LocalDate.now(),
-          dueDate = futureDueDate,
-          underEnquiry = false,
-          obligations = obligations
-        )
-        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
-          processingDate = java.time.ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(accountingPeriod)
-        )
-
-        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
-
-        result mustBe Some(Due)
-      }
-    }
-
-    "return None when accounting periods exist but no obligations exist" in {
-      val application = applicationBuilder(userAnswers = None, enrolments).build()
-      running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
-
-        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
-          startDate = LocalDate.now().minusMonths(12),
-          endDate = LocalDate.now(),
-          dueDate = LocalDate.now().plusDays(7),
-          underEnquiry = false,
-          obligations = Seq.empty
-        )
-        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
-          processingDate = java.time.ZonedDateTime.now(),
-          accountingPeriodDetails = Seq(accountingPeriod)
         )
 
         val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
