@@ -24,14 +24,16 @@ import views.html.btn.BTNConfirmationView
 
 class BTNConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val currentDate: String              = "10 November 2024"
-  lazy val startDate:   String              = "11 November 2024"
-  lazy val companyName: String              = "Test Company"
-  lazy val page:        BTNConfirmationView = inject[BTNConfirmationView]
-  lazy val pageTitle:   String              = "Below-Threshold Notification successful"
+  lazy val submissionDate:            String              = "10 November 2024"
+  lazy val accountingPeriodStartDate: String              = "11 November 2024"
+  lazy val companyName:               String              = "Test Company"
+  lazy val page:                      BTNConfirmationView = inject[BTNConfirmationView]
+  lazy val pageTitle:                 String              = "Below-Threshold Notification successful"
 
-  def groupView: Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, isAgent = false)(request, appConfig, messages).toString())
-  def agentView: Document = Jsoup.parse(page(Some(companyName), currentDate, startDate, isAgent = true)(request, appConfig, messages).toString())
+  def groupView: Document =
+    Jsoup.parse(page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false)(request, appConfig, messages).toString())
+  def agentView: Document =
+    Jsoup.parse(page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true)(request, appConfig, messages).toString())
 
   "BTNConfirmationView" should {
 
@@ -58,12 +60,14 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     "have paragraph content and a link when in a group flow" in {
       val paragraphs: Elements = groupView.getElementsByClass("govuk-body")
 
-      paragraphs.get(0).text() mustBe s"You have submitted a Below-Threshold Notification on $currentDate."
-      paragraphs.get(1).text() mustBe s"This is effective from the start of the accounting period you selected, $startDate."
+      paragraphs.get(0).text() mustBe s"You have submitted a Below-Threshold Notification on $submissionDate."
+      paragraphs.get(1).text() mustBe
+        s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
       paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
         "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
         "information return while the group remains below-threshold."
-      paragraphs.get(3).text() mustBe "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+      paragraphs.get(3).text() mustBe
+        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
@@ -72,12 +76,15 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     "have paragraph content (containing company name) and a link when in an agent flow" in {
       val paragraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-      paragraphs.get(0).text() mustBe s"You have submitted a Below-Threshold Notification for $companyName on $currentDate."
-      paragraphs.get(1).text() mustBe s"This is effective from the start of the accounting period you selected, $startDate."
+      paragraphs.get(0).text() mustBe
+        s"You have submitted a Below-Threshold Notification for $companyName on $submissionDate."
+      paragraphs.get(1).text() mustBe
+        s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
       paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
         "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
         "information return while the group remains below-threshold."
-      paragraphs.get(3).text() mustBe "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+      paragraphs.get(3).text() mustBe
+        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
