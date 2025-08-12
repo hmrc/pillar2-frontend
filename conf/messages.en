@@ -1758,7 +1758,7 @@ btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your 
 btn.entitiesInsideOutsideUK.amend.agent.p2 = If this has changed, you must amend the group details to update the location of the entities before submitting a BTN.
 btn.entitiesInsideOutsideUK.amend.link = Amend group details
 
-btn.cya.title = Check Your Answers
+btn.cya.title = Check your answers
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.
 btn.cya.p2 = Submit your Below-Threshold Notification
