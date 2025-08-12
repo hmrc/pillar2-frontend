@@ -23,6 +23,9 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.data.Form
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.RfmSecondaryContactNameView
 
 class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
@@ -31,14 +34,22 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
   lazy val form:         Form[String]                        = formProvider()
   lazy val page:         RfmSecondaryContactNameView         = inject[RfmSecondaryContactNameView]
   lazy val pageTitle: String = "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url).withCSRFToken
 
   "RFM Secondary Contact Name View" should {
     val view: Document = Jsoup.parse(
-      page(form, NormalMode)(request, appConfig, messages).toString()
+      page(form, NormalMode)(rfmRequest, appConfig, messages).toString()
     )
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have the correct caption" in {
@@ -61,7 +72,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
 
     "show required field error when form is submitted empty" in {
       val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> "")), NormalMode)(rfmRequest, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
@@ -76,7 +87,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     "show length validation error when input exceeds maximum length" in {
       val longInput = "A" * 161
       val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> longInput)), NormalMode)(rfmRequest, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
@@ -91,7 +102,7 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     "show XSS validation error when special characters are entered" in {
       val invalidInput = "Test <script>alert('xss')</script> & Company"
       val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> invalidInput)), NormalMode)(request, appConfig, messages).toString()
+        page(form.bind(Map("value" -> invalidInput)), NormalMode)(rfmRequest, appConfig, messages).toString()
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"

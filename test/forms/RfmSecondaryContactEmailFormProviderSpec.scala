@@ -24,8 +24,8 @@ import play.api.data.FormError
 class RfmSecondaryContactEmailFormProviderSpec extends StringFieldBehaviours {
 
   val requiredKey  = "rfm.secondaryContactEmail.error.required"
-  val lengthKey = "rfm.secondaryContactEmail.error.length"
-  val xssKey = "rfm.secondaryContactEmail.error.format"
+  val lengthKey    = "rfm.secondaryContactEmail.error.length"
+  val xssKey       = "rfm.secondaryContactEmail.error.format"
   val formProvider = new RfmSecondaryContactEmailFormProvider()
 
   ".value" - {

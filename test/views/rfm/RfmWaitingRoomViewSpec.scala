@@ -21,12 +21,17 @@ import models.rfm.RfmStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.RfmWaitingRoomView
 
 class RfmWaitingRoomViewSpec extends ViewSpecBase {
 
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url).withCSRFToken
   lazy val page:      RfmWaitingRoomView = inject[RfmWaitingRoomView]
-  lazy val view:      Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val view:      Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(rfmRequest, appConfig, messages).toString())
   lazy val pageTitle: String             = "Submitting..."
 
   "Rfm Waiting Room View" should {
@@ -36,9 +41,9 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a non-clickable banner" in {
-      val headerContent = view.getElementsByClass("govuk-header__content").get(0)
-      headerContent.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerContent.getElementsByTag("a") mustBe empty
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a unique H1 heading" in {

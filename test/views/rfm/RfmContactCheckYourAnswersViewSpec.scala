@@ -27,6 +27,9 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages._
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -100,9 +103,11 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
     rows = Seq(RfmContactAddressSummary.row(userAnswers, mockCountryOptions)).flatten
   )
 
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url).withCSRFToken
   lazy val page: RfmContactCheckYourAnswersView = inject[RfmContactCheckYourAnswersView]
   lazy val view: Document = Jsoup.parse(
-    page(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address)(request, appConfig, messages).toString()
+    page(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address)(rfmRequest, appConfig, messages).toString()
   )
   lazy val pageTitle:  String   = "Check your answers before submitting"
   lazy val h2Elements: Elements = view.getElementsByTag("h2")
@@ -111,6 +116,12 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a caption" in {
