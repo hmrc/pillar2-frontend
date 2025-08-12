@@ -30,9 +30,9 @@
 
 @layout(
     pageTitle = if(isAgent) {
-        messages("btn.entitiesInsideOutsideUK.amend.agent.title")
+      titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.agent.title"))
     } else {
-        messages("btn.entitiesInsideOutsideUK.amend.title")
+      titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.title"))
     }
 ) {
 
@@ -64,5 +64,8 @@
         @p(messages("btn.entitiesInsideOutsideUK.amend.p2"))
     }
 
-    @paragraphMessageWithLink(linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(
+      linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"),
+      linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+    )
 }
