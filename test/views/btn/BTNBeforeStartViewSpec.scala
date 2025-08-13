@@ -20,8 +20,7 @@ import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Element
 import org.jsoup.select.Elements
 import views.html.btn.BTNBeforeStartView
 

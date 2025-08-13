@@ -104,12 +104,10 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         link.attr("rel") mustNot be("noopener noreferrer")
       }
 
-      // FIXME: this test only test for "mustNot include"
       "not have a paragraph with link if it's a previous accounting period" in {
         val paragraphs: Elements = view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
         val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
 
-        // FIXME: remove mustNot include
         paragraphs.text mustNot include("If the accounting period dates are wrong, update your group’s accounting period dates before continuing.")
         link.text mustNot include("update your group’s accounting period dates")
         link.attr("href") mustNot include(
@@ -180,12 +178,10 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         link.attr("rel") mustNot be("noopener noreferrer")
       }
 
-      // FIXME: this test only test for "mustNot include"
       "not have a paragraph with link if it's a previous accounting period" in {
         val paragraphs: Elements = view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
         val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
 
-        // FIXME: remove mustNot include
         paragraphs.text mustNot include("If the accounting period dates are wrong, update the group’s accounting period dates before continuing.")
         link.text mustNot include("update the group’s accounting period dates")
         link.attr("href") mustNot include(
