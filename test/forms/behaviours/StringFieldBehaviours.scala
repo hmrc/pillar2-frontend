@@ -30,6 +30,15 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
+  def fieldWithMinLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
+    s"not bind strings less than $maxLength characters" in {
+      val gen = generator.getOrElse(stringsShorterThan(maxLength))
+      forAll(gen -> "shortString") { string =>
+        val result = form.bind(Map(fieldName -> string)).apply(fieldName)
+        result.errors must contain only lengthError
+      }
+    }
+
   def fieldWithRegex(
     form:              Form[_],
     fieldName:         String,
