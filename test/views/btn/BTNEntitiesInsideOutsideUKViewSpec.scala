@@ -52,7 +52,7 @@ class BTNEntitiesInsideOutsideUKViewSpec extends ViewSpecBase {
       radioButtons.get(1).text mustBe "No"
     }
 
-    "have a Continue button" in {
+    "have a 'Continue' button" in {
       val continueButton: Element = view().getElementsByClass("govuk-button").first()
       continueButton.text mustBe "Continue"
       continueButton.attr("type") mustBe "submit"

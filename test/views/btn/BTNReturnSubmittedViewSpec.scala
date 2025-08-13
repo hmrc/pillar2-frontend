@@ -73,7 +73,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
           "If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification."
       }
 
-      "have a Continue button" in {
+      "have a 'Continue' button" in {
         val continueButton: Element = view().getElementsByClass("govuk-button").first()
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
@@ -110,7 +110,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
           "If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification."
       }
 
-      "have a Continue button" in {
+      "have a 'Continue' button" in {
         val continueButton: Element = view(isAgent = true).getElementsByClass("govuk-button").first()
         continueButton.text mustBe "Continue"
         continueButton.attr("type") mustBe "submit"
