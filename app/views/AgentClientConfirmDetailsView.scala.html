@@ -40,11 +40,8 @@
 
         @paragraphMessageWithLink(linkMessage = messages("agent.clientConfirm.link"), linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
 
-        @govukButton(Button(
-            element = Some("button"),
-            content = messages("site.confirm-and-continue"),
-            preventDoubleClick = Some(true),
-            attributes = Map("id" -> "continue"),
-        ))
+        @govukButton(
+            ButtonViewModel(messages("site.confirm-and-continue")).withAttribute("id", "continue")
+        )
     }
 }
