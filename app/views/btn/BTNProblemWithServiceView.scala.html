@@ -17,11 +17,11 @@
 @import config.FrontendAppConfig
 @import views.ViewUtils.titleNoForm
 @import views.html.components.gds._
-@import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
 
 @this(
     layout: templates.Layout,
     heading: heading,
+    p: paragraphBody,
     paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
@@ -31,7 +31,7 @@
 
   @heading(messages("btn.error.heading"), classes = "govuk-heading-xl")
 
-  <p class="govuk-body">@messages("btn.error.tryAgainLater.p1")</p>
+  @p(messages("btn.error.tryAgainLater.p1"))
 
   @paragraphMessageWithLink(
     linkMessage = messages("btn.error.returnToHomePageText.link"),
