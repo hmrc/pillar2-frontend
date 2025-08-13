@@ -21,18 +21,20 @@
 
 @this(
     layout: templates.Layout,
-    paragraphMessageWithLink: ParagraphMessageWithLink,
+    heading: heading,
+    paragraphMessageWithLink: ParagraphMessageWithLink
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(
-    pageTitle = titleNoForm(messages("btn.error.title")),
-    showBackLink = false
-) {
-    <h1 class="govuk-heading-xl">@messages("btn.error.heading")</h1>
+@layout(pageTitle = titleNoForm(messages("btn.error.title")), showBackLink = false) {
 
-    <p class="govuk-body">@messages("btn.error.tryAgainLater.p1")</p>
+  @heading(messages("btn.error.heading"), classes = "govuk-heading-xl")
 
-    @paragraphMessageWithLink(linkMessage = messages("btn.error.returnToHomePageText.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+  <p class="govuk-body">@messages("btn.error.tryAgainLater.p1")</p>
+
+  @paragraphMessageWithLink(
+    linkMessage = messages("btn.error.returnToHomePageText.link"),
+    linkUrl = controllers.routes.DashboardController.onPageLoad.url
+  )
 }
