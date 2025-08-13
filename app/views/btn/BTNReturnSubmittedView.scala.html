@@ -44,19 +44,11 @@
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent) {
             @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
-        } else {
-            @heading(messages("btn.returnSubmitted.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
-        }
-
-        @if(isAgent) {
             @p(messages("btn.returnSubmitted.agent.p1"))
-        } else {
-            @p(messages("btn.returnSubmitted.p1"))
-        }
-
-        @if(isAgent) {
             @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.agent.insetText"))))
         } else {
+            @heading(messages("btn.returnSubmitted.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+            @p(messages("btn.returnSubmitted.p1"))
             @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.insetText"))))
         }
 
@@ -64,6 +56,9 @@
             ButtonViewModel(messages("site.continue"))
         )
 
-        @paragraphMessageWithLink(linkMessage = messages("btn.returnSubmitted.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+        @paragraphMessageWithLink(
+          linkMessage = messages("btn.returnSubmitted.link"),
+          linkUrl = controllers.routes.DashboardController.onPageLoad.url
+        )
     }
 }
