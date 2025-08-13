@@ -15,10 +15,9 @@
  *@
 
 @import config.FrontendAppConfig
-@import java.time.format.DateTimeFormatter
-@import java.time.LocalDate
 @import models.obligationsandsubmissions.AccountingPeriodDetails
 @import views.html.components.gds._
+@import views.ViewUtils._
 
 @this(
         layout: templates.Layout,
@@ -32,22 +31,23 @@
 
 @(isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@formatDate = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
+@accountingPeriodStartDate=@{accountingPeriodDetails.startDate.format(dateFormatter)}
+@accountingPeriodEndDate = @{accountingPeriodDetails.endDate.format(dateFormatter)}
 
 @layout(
     pageTitle = if(isAgent) {
-        titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
+        titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodStartDate, accountingPeriodEndDate))
     } else {
-        titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)))
+        titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodStartDate, accountingPeriodEndDate))
     }
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent) {
-            @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+            @heading(messages("btn.returnSubmitted.agent.heading", accountingPeriodStartDate, accountingPeriodEndDate), classes = "govuk-heading-l")
             @p(messages("btn.returnSubmitted.agent.p1"))
             @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.agent.insetText"))))
         } else {
-            @heading(messages("btn.returnSubmitted.heading", accountingPeriodDetails.startDate.format(formatDate), accountingPeriodDetails.endDate.format(formatDate)), classes = "govuk-heading-l")
+            @heading(messages("btn.returnSubmitted.heading", accountingPeriodStartDate, accountingPeriodEndDate), classes = "govuk-heading-l")
             @p(messages("btn.returnSubmitted.p1"))
             @govukInsetText(InsetText(content = Text(messages("btn.returnSubmitted.insetText"))))
         }
@@ -57,8 +57,8 @@
         )
 
         @paragraphMessageWithLink(
-          linkMessage = messages("btn.returnSubmitted.link"),
-          linkUrl = controllers.routes.DashboardController.onPageLoad.url
+            linkMessage = messages("btn.returnSubmitted.link"),
+            linkUrl = controllers.routes.DashboardController.onPageLoad.url
         )
     }
 }
