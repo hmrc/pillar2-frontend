@@ -21,7 +21,6 @@ import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
-import models.subscription.AccountingPeriod
 import models.{Mode, UserAnswers}
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
@@ -31,9 +30,10 @@ import services.{ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.btn.BTNBeforeStartView
 
-import java.time.LocalDate
+import java.time.LocalDate.now
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -66,13 +66,10 @@ class BTNBeforeStartController @Inject() (
       ).value
         .flatMap {
           case Some(subscriptionData) =>
-            multipleAccountingPeriods(
-              subscriptionData.subAccountingPeriod,
-              subscriptionData.plrReference,
-              subscriptionData.accountStatus.forall(_.inactive)
-            ).map { hasMultipleAccountingPeriods =>
-              Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode))
-            }
+            obligationsAndSubmissionsService
+              .handleData(subscriptionData.plrReference, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now)
+              .map(success => filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1)
+              .map(hasMultipleAccountingPeriods => Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode)))
           case None =>
             Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         }
@@ -80,18 +77,4 @@ class BTNBeforeStartController @Inject() (
           Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
-
-  private def multipleAccountingPeriods(
-    subAccountPeriod: AccountingPeriod,
-    pillar2Id:        String,
-    accountStatus:    Boolean
-  )(implicit hc:      HeaderCarrier): Future[Boolean] = {
-    val now: LocalDate = LocalDate.now()
-
-    obligationsAndSubmissionsService
-      .handleData(pillar2Id, subAccountPeriod.startDate, now)
-      .map { success =>
-        !accountStatus && filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1
-      }
-  }
 }
