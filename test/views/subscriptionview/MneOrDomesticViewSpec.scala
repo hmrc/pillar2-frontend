@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.MneOrDomesticFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.MneOrDomesticView
 
@@ -84,8 +84,10 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       radioButtons.get(1).text mustBe "In the UK and outside the UK"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.NfmContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.fmview.NfmContactNameView
@@ -82,8 +82,10 @@ class NfmContactNameViewSpec extends ViewSpecBase {
       fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
 
-    "display the submit button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
 
   }

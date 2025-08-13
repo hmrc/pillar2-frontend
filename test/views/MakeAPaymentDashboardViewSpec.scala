@@ -18,14 +18,14 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.MakeAPaymentDashboardView
 
 import scala.jdk.CollectionConverters._
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
-  private val page:                  MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
+  lazy val page:                     MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
   lazy val testPlr2Id:               String                    = "12345678"
   lazy val makePaymentDashboardView: Document                  = Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
   lazy val pageTitle:                String                    = "Make a payment"
@@ -43,33 +43,35 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have the correct paragraphs" in {
-      val paragraphs = makePaymentDashboardView.getElementsByClass("govuk-body")
+      val paragraphs: Elements = makePaymentDashboardView.getElementsByClass("govuk-body")
       paragraphs.size() mustBe 2
       paragraphs.get(0).text() mustBe
-        s"""Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 Top-up Taxes payments."""
+        s"Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 Top-up Taxes payments."
       paragraphs.get(1).text() mustBe
         "You can use the 'Pay Now' button to pay online, or read more about other payment methods. (opens in a new tab)"
+      // FIXME: this opens in new tab. Add a test for this link!!! it is missing
     }
 
-    "have the correct Pay Now button" in {
-      val elements = makePaymentDashboardView.getElementsByTag("a").listIterator().asScala.toList.filter(_.hasClass("govuk-button"))
-      elements must have size 1
-      val button = elements.head
-      button.attr("href") mustBe "/report-pillar2-top-up-taxes/payment/redirect"
-      button.text() mustBe "Pay Now"
+    "have a 'Pay now' link-button" in {
+      val payNowLink: Element = makePaymentDashboardView.getElementsByClass("govuk-button").first()
+      payNowLink.text mustBe "Pay Now" // FIXME: should both words be capitalised?
+      payNowLink.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url
+      payNowLink.attr("role") mustBe "button"
     }
 
     "have the correct link to payment guidance" in {
-      val elements = makePaymentDashboardView
+      val elements: List[Element] = makePaymentDashboardView
         .getElementsByTag("a")
         .listIterator()
         .asScala
         .toList
         .filter(_.text == "read more about other payment methods. (opens in a new tab)")
       elements must have size 1
-      val guidancePageLink = elements.head
+      val guidancePageLink: Element = elements.head
       guidancePageLink.attr("href") mustBe
         "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      guidancePageLink.attr("target") mustBe "_blank"
+      guidancePageLink.attr("rel") mustBe "noreferrer noopener"
     }
   }
 }

@@ -109,6 +109,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
       howToPayLink.text() mustBe "Find out more about ways to pay"
       howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      // FIXME: should this open in new tab?
     }
 
     "display a payment section that contains" should {

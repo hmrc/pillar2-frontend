@@ -19,7 +19,7 @@ package views.repayments
 import base.ViewSpecBase
 import controllers.routes
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.RequestRefundBeforeStartView
 
@@ -72,8 +72,10 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
       listItems.get(3).text mustBe "contact details for someone we can contact about this request"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Request a repayment"
+    "have a 'Request a repayment' button" in {
+      val requestRepaymentButton: Element = view.getElementsByClass("govuk-button").first()
+      requestRepaymentButton.text mustBe "Request a repayment"
+      requestRepaymentButton.attr("type") mustBe "submit"
     }
 
   }

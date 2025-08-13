@@ -61,8 +61,10 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase with StringGenerators 
           "We will only use this to contact you about this repayment request."
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 

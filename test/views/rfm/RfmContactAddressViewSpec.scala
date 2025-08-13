@@ -67,8 +67,10 @@ class RfmContactAddressViewSpec extends ViewSpecBase with StringGenerators {
       view.getElementById("countryCode-hint").text mustBe "Enter text and then choose from the list."
     }
 
-    "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 

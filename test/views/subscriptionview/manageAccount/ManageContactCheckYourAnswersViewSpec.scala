@@ -21,7 +21,7 @@ import controllers.routes
 import helpers.SubscriptionLocalDataFixture
 import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
 import utils.countryOptions.CountryOptions
@@ -171,8 +171,10 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
           controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
+      "have a 'Save and return to homepage' button" in {
+        val saveAndReturnButton: Element = view.getElementsByClass("govuk-button").first()
+        saveAndReturnButton.text mustBe "Save and return to homepage"
+        saveAndReturnButton.attr("type") mustBe "submit"
       }
     }
 
@@ -259,8 +261,10 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
           controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
       }
 
-      "have a button" in {
-        agentView.getElementsByClass("govuk-button").text mustBe "Save and return to homepage"
+      "have a 'Save and return to homepage' button" in {
+        val saveAndReturnButton: Element = agentView.getElementsByClass("govuk-button").first()
+        saveAndReturnButton.text mustBe "Save and return to homepage"
+        saveAndReturnButton.attr("type") mustBe "submit"
       }
     }
 

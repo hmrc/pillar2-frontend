@@ -69,8 +69,10 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
         radioButtons.get(1).text mustBe "No"
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
   }

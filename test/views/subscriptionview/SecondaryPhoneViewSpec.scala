@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.CapturePhoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.SecondaryPhoneView
 
@@ -53,8 +53,10 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
         s"01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

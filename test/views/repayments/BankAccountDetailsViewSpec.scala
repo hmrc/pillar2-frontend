@@ -72,8 +72,10 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       hints.get(2).text mustBe "Must be between 6 and 8 digits long"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 

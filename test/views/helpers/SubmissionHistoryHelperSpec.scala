@@ -25,6 +25,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
 import utils.DateTimeUtils.ZonedDateTimeOps
+import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 
 import java.time.{LocalDate, ZonedDateTime}
 
@@ -64,9 +65,9 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
     }
 
     "format table caption correctly" in {
-      val startDate = LocalDate.of(2024, 1, 1)
-      val endDate   = LocalDate.of(2024, 12, 31)
-      val table     = SubmissionHistoryHelper.createTable(startDate, endDate, Seq.empty)
+      val startDate: LocalDate = LocalDate.of(2024, 1, 1)
+      val endDate:   LocalDate = LocalDate.of(2024, 12, 31)
+      val table:     Table     = SubmissionHistoryHelper.createTable(startDate, endDate, Seq.empty)
       table.caption shouldBe Some("1 January 2024 to 31 December 2024")
     }
 

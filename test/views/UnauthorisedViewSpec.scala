@@ -46,9 +46,9 @@ class UnauthorisedViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      link.text mustBe "register to report Pillar 2 Top-up Taxes"
-      link.attr("href") mustBe "https://www.gov.uk/guidance/check-if-you-need-to-report-pillar-2-top-up-taxes"
+      val links: Elements = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      links.get(0).text mustBe "register to report Pillar 2 Top-up Taxes"
+      links.get(0).attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
     }
 
   }

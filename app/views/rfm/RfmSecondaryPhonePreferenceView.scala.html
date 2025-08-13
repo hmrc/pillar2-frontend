@@ -36,7 +36,7 @@
     @formHelper(action = controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
     }
         <!-- <span class="govuk-caption-l">@messages("rfm.secondaryContactEmail.heading.caption")</span> -->
         @govukRadios(

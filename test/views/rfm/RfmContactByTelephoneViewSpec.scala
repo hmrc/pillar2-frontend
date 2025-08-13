@@ -17,25 +17,30 @@
 package views.rfm
 
 import base.ViewSpecBase
-import forms.RfmSecondaryPhonePreferenceFormProvider
+import forms.RfmContactByPhoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import views.html.rfm.RfmSecondaryPhonePreferenceView
+import views.html.rfm.RfmContactByPhoneView
 
-class RfmSecondaryPhonePreferenceViewSpec extends ViewSpecBase {
+class RfmContactByPhoneViewSpec extends ViewSpecBase {
 
-  lazy val formProvider: RfmSecondaryPhonePreferenceFormProvider = new RfmSecondaryPhonePreferenceFormProvider
-  lazy val page:         RfmSecondaryPhonePreferenceView         = inject[RfmSecondaryPhonePreferenceView]
-  lazy val username:     String                                  = "John Doe"
-  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Can we contact by phone"
+  lazy val formProvider = new RfmContactByPhoneFormProvider
+  lazy val page:      RfmContactByPhoneView = inject[RfmContactByPhoneView]
+  lazy val username:  String                = "John Doe"
+  lazy val view:      Document              = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val pageTitle: String                = "Can we contact by phone"
 
-  "Rfm Secondary Phone Preference View" should {
+  "Rfm Contact By Phone View" should {
 
     "have a title" in {
+      view.getElementsByTag("title").text must include("Can we contact by phone?")
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -44,8 +49,12 @@ class RfmSecondaryPhonePreferenceViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe s"Can we contact $username by phone?"
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+    "have radio items" in {
+      val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioItems.size() mustBe 2
+      radioItems.get(0).text mustBe "Yes"
+      radioItems.get(1).text mustBe "No"
     }
 
     "have a 'Save and continue' button" in {
