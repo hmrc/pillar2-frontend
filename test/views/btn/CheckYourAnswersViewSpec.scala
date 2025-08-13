@@ -51,7 +51,6 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-
   def view(summaryList: SummaryList = summaryListCYA(), isAgent: Boolean = false): Document =
     Jsoup.parse(page(summaryList, isAgent, Some("orgName"))(request, appConfig, realMessagesApi.preferred(request)).toString())
 
