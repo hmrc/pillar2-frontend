@@ -80,7 +80,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       }
 
       "have a Return to Homepage link" in {
-        val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
+        val link: Element = view().getElementsByClass("govuk-body").last().getElementsByTag("a").first()
         link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
         link.attr("target") mustBe "_self"
@@ -117,7 +117,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       }
 
       "have a Return to Homepage link" in {
-        val link: Elements = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a")
+        val link: Element = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
         link.text mustBe "Return to homepage"
         link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url

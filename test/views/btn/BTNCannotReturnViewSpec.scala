@@ -30,10 +30,6 @@ class BTNCannotReturnViewSpec extends ViewSpecBase {
 
   "BTNCannotReturnView" should {
     "have a title" in {
-      // FIXME: inconsistent Title and H1
-      // Title: "Submission successful - Report Pillar 2 Top-up Taxes - GOV.UK"
-      // H1:    "You have submitted a Below-Threshold Notification"
-      //view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       view.title() mustBe "Submission successful - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
@@ -51,8 +47,7 @@ class BTNCannotReturnViewSpec extends ViewSpecBase {
       val link: Element = view.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
       link.text mustBe "Return to your group’s homepage"
-      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url // FIXME: which one is correct?
-      link.attr("href") mustBe controllers.routes.IndexController.onPageLoad.url // FIXME: which one is correct?
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
   }
 }

@@ -59,9 +59,6 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   "CheckYourAnswersView" must {
 
     "have a title" in {
-      // FIXME: inconsistent Title and H1
-      // Title: Check Your Answers - Report Pillar 2 Top-up Taxes - GOV.UK
-      // H1:    "Check your answers to submit your Below-Threshold Notification"
       view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
@@ -79,7 +76,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have an H2 heading" in {
       val h2Elements: Elements = view().getElementsByTag("h2")
       h2Elements.get(0).text() mustBe "Submit your Below-Threshold Notification"
-      h2Elements.get(0).hasClass("govuk-heading-s") mustBe true
+      h2Elements.get(0).hasClass("govuk-heading-s") mustBe true // FIXME: this is 's' while others are 'm'
     }
 
     "have a second paragraph" in {
