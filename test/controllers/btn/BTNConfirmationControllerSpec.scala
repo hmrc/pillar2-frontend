@@ -42,8 +42,9 @@ class BTNConfirmationControllerSpec extends SpecBase {
           .configure("features.phase2ScreensEnabled" -> true)
           .build()
 
-        val currentDate: String = LocalDate.now.format(DateTimeFormatter.ofPattern("d MMMM y"))
-        val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.format(DateTimeFormatter.ofPattern("d MMMM y"))
+        val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+        val currentDate:       String            = LocalDate.now.format(dateTimeFormatter)
+        val date:              String            = someSubscriptionLocalData.subAccountingPeriod.startDate.format(dateTimeFormatter)
 
         running(application) {
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)

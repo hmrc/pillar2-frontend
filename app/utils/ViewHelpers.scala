@@ -37,7 +37,7 @@ object ViewHelpers extends Logging {
     formattedDateTime + " (GMT)"
   }
 
-  private def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM y")
+  private def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM yyyy")
   private val defaultTimeZone: TimeZone = TimeZone.getTimeZone("Europe/London")
   private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
     val uLocale = new ULocale(messages.lang.code)
