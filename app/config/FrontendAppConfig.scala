@@ -101,10 +101,9 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val researchUrl:                  String  = configuration.get[String]("urls.researchUrl")
   val howToPayPillar2TaxesUrl:      String  = configuration.get[String]("urls.howToPayPillar2Taxes")
 
-  val opsBaseUrl:                String  = servicesConfig.baseUrl("ops")
-  val opsStartUrl:               String  = configuration.get[String]("microservice.services.ops.startUrl")
-  val enablePayByBankAccount:    Boolean = configuration.get[Boolean]("features.enablePayByBankAccount")
-  val googleAnalyticsTrackingId: String  = configuration.get[String]("google-analytics.trackingId")
+  val opsBaseUrl:             String  = servicesConfig.baseUrl("ops")
+  val opsStartUrl:            String  = configuration.get[String]("microservice.services.ops.startUrl")
+  val enablePayByBankAccount: Boolean = configuration.get[Boolean]("features.enablePayByBankAccount")
 
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
