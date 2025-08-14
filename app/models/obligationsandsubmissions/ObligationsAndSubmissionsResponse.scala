@@ -21,8 +21,9 @@ import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
 
-import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
+import utils.DateTimeUtils.dateFormatter
+
 import java.time.{LocalDate, ZonedDateTime}
 
 sealed trait ObligationsAndSubmissionsResponse
@@ -54,13 +55,12 @@ case class AccountingPeriodDetails(
   underEnquiry: Boolean,
   obligations:  Seq[Obligation]
 ) {
-  val formatter:            DateTimeFormatter  = DateTimeFormatter.ofPattern("d MMMM yyyy")
   val uktrObligation:       Option[Obligation] = obligations.find(_.obligationType == UKTR)
   val girObligation:        Option[Obligation] = obligations.find(_.obligationType == GIR)
   val dueDatePassed:        Boolean            = dueDate.isBefore(LocalDate.now())
   val hasAnyOpenObligation: Boolean            = obligations.exists(_.status == ObligationStatus.Open)
 
-  def formattedDates: String = s"${startDate.format(formatter)} to ${endDate.format(formatter)}"
+  def formattedDates: String = s"${startDate.format(dateFormatter)} to ${endDate.format(dateFormatter)}"
 
   def isInReceivedPeriod: Boolean =
     obligations

@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
+@import _root_.utils.DateTimeUtils.dateFormatter
 @import config.FrontendAppConfig
 @import models.obligationsandsubmissions._
-@import java.time.LocalDate
-@import java.time.format.DateTimeFormatter
 @import views.html.templates.Layout
 @import views.ViewUtils._
 @import views.html.styles.tableScrollStyles
 @import views.html.components.gds.ScrollWrapper
+@import java.time.LocalDate
 
 @this(
     layout: Layout,
@@ -33,9 +33,6 @@
 )
 
 @(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
-
-@dateFormatter = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
 
 @hasOpenObligations = @{
   data.accountingPeriodDetails.exists(period => 

@@ -24,18 +24,17 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import pages.{EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
+import utils.DateTimeUtils.dateFormatter
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 import views.html.btn.CheckYourAnswersView
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val startDate:         LocalDate            = LocalDate.of(2024, 10, 24)
   lazy val endDate:           LocalDate            = LocalDate.of(2025, 10, 24)
-  lazy val dateTimeFormatter: DateTimeFormatter    = DateTimeFormatter.ofPattern("d MMMM yyyy")
   lazy val accountingPeriod:  AccountingPeriod     = AccountingPeriod(startDate, endDate)
   lazy val page:              CheckYourAnswersView = inject[CheckYourAnswersView]
   lazy val pageTitle:         String               = "Check your answers to submit your Below-Threshold Notification"
@@ -97,7 +96,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
           summaryListElements.size() mustBe 1
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
-          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(dateTimeFormatter)} End date: ${endDate.format(dateTimeFormatter)}"
+          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(dateFormatter)} End date: ${endDate.format(dateFormatter)}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located only in the UK?"
           summaryListItems.get(1).text() mustBe "Yes"
@@ -139,7 +138,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
           summaryListElements.size() mustBe 1
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
-          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(dateTimeFormatter)} End date: ${endDate.format(dateTimeFormatter)}"
+          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(dateFormatter)} End date: ${endDate.format(dateFormatter)}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located in both the UK and outside the UK?"
           summaryListItems.get(1).text() mustBe "Yes"

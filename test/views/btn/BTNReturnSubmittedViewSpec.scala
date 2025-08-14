@@ -24,9 +24,9 @@ import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Su
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import utils.DateTimeUtils.dateFormatter
 import views.html.btn.BTNReturnSubmittedView
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
@@ -37,7 +37,6 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
   lazy val accountingPeriodDueDate:   LocalDate              = LocalDate.now().plusYears(1)
   lazy val formattedStartDate:        String                 = accountingPeriodStartDate.format(dateFormatter)
   lazy val formattedEndDate:          String                 = accountingPeriodEndDate.format(dateFormatter)
-  lazy val dateFormatter:             DateTimeFormatter      = DateTimeFormatter.ofPattern("d MMMM yyyy")
   lazy val pageTitle:      String = s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
   lazy val agentPageTitle: String = s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
 
@@ -57,7 +56,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a h1 heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view().getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
@@ -94,7 +93,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         view(isAgent = true).title() mustBe s"$agentPageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a h1 heading" in {
+      "have a unique H1 heading" in {
         val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe agentPageTitle

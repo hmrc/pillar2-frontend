@@ -21,18 +21,17 @@ import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import utils.DateTimeUtils.dateFormatter
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.Optional
 
 class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
-  lazy val currentDate:   LocalDate                = LocalDate.now()
-  lazy val page:          DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
-  lazy val dateFormatter: DateTimeFormatter        = DateTimeFormatter.ofPattern("d MMMM yyyy")
-  lazy val pageTitle:     String                   = "Due and overdue returns"
+  lazy val currentDate: LocalDate                = LocalDate.now()
+  lazy val page:        DueAndOverdueReturnsView = inject[DueAndOverdueReturnsView]
+  lazy val pageTitle:   String                   = "Due and overdue returns"
 
   def verifyCommonPageElements(view: Document): Unit = {
 
@@ -56,7 +55,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
   }
 
-  def verifyTableHeaders(table: org.jsoup.select.Elements): Unit = {
+  def verifyTableHeaders(table: Elements): Unit = {
     val headers: Elements = table.select("th")
     headers.size() mustBe 3
     headers.get(0).text mustBe "Type of return"

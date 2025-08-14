@@ -15,10 +15,11 @@
  */
 
 package utils
+
 import com.ibm.icu.text.SimpleDateFormat
 import com.ibm.icu.util.{TimeZone, ULocale}
-import play.api.Logging
 import play.api.i18n.Messages
+import utils.DateTimeUtils.datePattern
 
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
@@ -26,24 +27,24 @@ import java.util.Date
 import javax.inject.Singleton
 
 @Singleton
-object ViewHelpers extends Logging {
+object ViewHelpers {
   //only for date like Sunday 25 January 2015
   def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
     dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
   def getDateTimeGMT: String = {
-    val gmtDateTime = ZonedDateTime.now(ZoneId.of("GMT"))
-    val formatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, h:mma")
-    val formattedDateTime = gmtDateTime.format(formatter)
+    val gmtDateTime:       ZonedDateTime     = ZonedDateTime.now(ZoneId.of("GMT"))
+    val formatter:         DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, h:mma")
+    val formattedDateTime: String            = gmtDateTime.format(formatter)
     formattedDateTime + " (GMT)"
   }
 
-  private def dateFormat(implicit messages: Messages) = createDateFormatForPattern("d MMMM yyyy")
-  private val defaultTimeZone: TimeZone = TimeZone.getTimeZone("Europe/London")
+  private def dateFormat(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern(datePattern)
+  private val defaultTimeZone:                         TimeZone         = TimeZone.getTimeZone("Europe/London")
   private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
-    val uLocale = new ULocale(messages.lang.code)
-    val validLang: Boolean = ULocale.getAvailableLocales.contains(uLocale)
-    val locale:    ULocale = if (validLang) uLocale else ULocale.getDefault
-    val sdf = new SimpleDateFormat(pattern, locale)
+    val uLocale:   ULocale          = new ULocale(messages.lang.code)
+    val validLang: Boolean          = ULocale.getAvailableLocales.contains(uLocale)
+    val locale:    ULocale          = if (validLang) uLocale else ULocale.getDefault
+    val sdf:       SimpleDateFormat = new SimpleDateFormat(pattern, locale)
     sdf.setTimeZone(defaultTimeZone)
     sdf
   }
