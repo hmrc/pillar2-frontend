@@ -29,7 +29,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.rfm.RfmConfirmationView
 
 import java.util.UUID
@@ -64,7 +64,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+        val currentDate = HtmlFormat.escape(getDateTimeGMT)
         val view        = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK

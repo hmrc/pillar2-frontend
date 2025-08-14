@@ -32,7 +32,7 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
@@ -59,8 +59,8 @@ class BTNAccountingPeriodController @Inject() (
     with Logging {
 
   private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
-    val start = HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))
-    val end   = HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))
+    val start = HtmlFormat.escape(formatDateGDS(startDate))
+    val end   = HtmlFormat.escape(formatDateGDS(endDate))
 
     SummaryListViewModel(
       rows = Seq(

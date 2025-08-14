@@ -22,15 +22,15 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.SiteChange
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object SubAccountingPeriodSummary {
 
   def row(accountingPeriod: AccountingPeriod, multipleAccountingPeriods: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
-    val startDate = ViewHelpers.formatDateGDS(accountingPeriod.startDate)
-    val endDate   = ViewHelpers.formatDateGDS(accountingPeriod.endDate)
+    val startDate: String = formatDateGDS(accountingPeriod.startDate)
+    val endDate:   String = formatDateGDS(accountingPeriod.endDate)
 
     if (multipleAccountingPeriods) {
       Some(

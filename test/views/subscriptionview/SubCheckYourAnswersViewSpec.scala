@@ -25,7 +25,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
@@ -108,10 +108,10 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       summaryListItems.get(1).text() mustBe ""
 
       summaryListKeys.get(2).text() mustBe "Start date"
-      summaryListItems.get(2).text() mustBe ViewHelpers.formatDateGDS(LocalDate.of(2025, 7, 18))
+      summaryListItems.get(2).text() mustBe formatDateGDS(LocalDate.of(2025, 7, 18))
 
       summaryListKeys.get(3).text() mustBe "End date"
-      summaryListItems.get(3).text() mustBe ViewHelpers.formatDateGDS(LocalDate.of(2025, 7, 18))
+      summaryListItems.get(3).text() mustBe formatDateGDS(LocalDate.of(2025, 7, 18))
       summaryListActions.get(1).getElementsByClass("govuk-summary-list__actions").text() mustBe
         "Change the dates of the group’s consolidated accounting period"
       summaryListActions.get(1).getElementsByTag("a").attr("href") mustBe

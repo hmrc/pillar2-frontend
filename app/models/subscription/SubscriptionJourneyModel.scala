@@ -24,7 +24,7 @@ import models.registration.GrsResponse
 import pages._
 import play.api.i18n.Messages
 import queries.Query
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 
 final case class upeJourney(
   upeRegisteredInUK:                 Boolean,
@@ -372,8 +372,8 @@ object groupJourney {
   def from(answers: UserAnswers)(implicit messages: Messages): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
-      answers.getEither(SubAccountingPeriodPage).map(ap => ViewHelpers.formatDateGDS(ap.startDate)),
-      answers.getEither(SubAccountingPeriodPage).map(ap => ViewHelpers.formatDateGDS(ap.endDate))
+      answers.getEither(SubAccountingPeriodPage).map(ap => formatDateGDS(ap.startDate)),
+      answers.getEither(SubAccountingPeriodPage).map(ap => formatDateGDS(ap.endDate))
     ).parMapN {
       (
         mneOrDomestic,

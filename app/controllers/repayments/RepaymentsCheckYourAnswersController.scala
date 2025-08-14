@@ -31,7 +31,7 @@ import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ViewHelpers
+import utils.DateTimeUtils.getDateTimeGMT
 import viewmodels.checkAnswers.repayments._
 import viewmodels.govuk.summarylist._
 import views.html.repayments.RepaymentsCheckYourAnswersView
@@ -103,7 +103,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
-                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, ViewHelpers.getDateTimeGMT))
+                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, getDateTimeGMT))
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-

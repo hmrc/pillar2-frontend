@@ -38,7 +38,7 @@ import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
@@ -80,11 +80,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         rows = Seq(
           SummaryListRowViewModel(
             "btn.accountingPeriod.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(ViewHelpers.formatDateGDS(startDate))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(formatDateGDS(startDate))))
           ),
           SummaryListRowViewModel(
             "btn.accountingPeriod.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(ViewHelpers.formatDateGDS(endDate))))
+            value = ValueViewModel(HtmlContent(HtmlFormat.escape(formatDateGDS(endDate))))
           )
         )
       )

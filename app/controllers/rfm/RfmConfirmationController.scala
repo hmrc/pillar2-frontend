@@ -24,7 +24,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Pillar2Reference, ViewHelpers}
+import utils.Pillar2Reference
+import utils.DateTimeUtils._
 import views.html.rfm.RfmConfirmationView
 
 import javax.inject.Inject
@@ -42,7 +43,7 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+    val currentDate = HtmlFormat.escape(getDateTimeGMT)
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers

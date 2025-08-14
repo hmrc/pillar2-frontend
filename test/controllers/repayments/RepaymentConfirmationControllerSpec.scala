@@ -22,7 +22,7 @@ import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import play.twirl.api.HtmlFormat
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
@@ -30,7 +30,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+      val currentDate = HtmlFormat.escape(getDateTimeGMT)
       val testUserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
         .setOrException(RepaymentConfirmationTimestampPage, currentDate.toString())

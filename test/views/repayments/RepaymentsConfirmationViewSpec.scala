@@ -22,7 +22,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.{Html, HtmlFormat}
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
@@ -30,12 +30,12 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
   lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   lazy val testPillar2Ref: String                     = "XMPLR0012345674"
   lazy val pageTitle:      String                     = "Repayment request submitted"
-  lazy val currentDate:    Html                       = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+  lazy val currentDate:    Html                       = HtmlFormat.escape(getDateTimeGMT)
   lazy val view:           Document                   = Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
   lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
-    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
+    val currentDate = HtmlFormat.escape(getDateTimeGMT)
     val view: Document =
       Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
 
