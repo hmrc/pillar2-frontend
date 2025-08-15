@@ -19,7 +19,8 @@ package views.btn
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -28,17 +29,23 @@ import viewmodels.implicits._
 import views.html.btn.BTNAccountingPeriodView
 
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {
-  val list: SummaryList = SummaryListViewModel(
+
+  lazy val page:      BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
+  lazy val startDate: String                  = "7 January 2024"
+  lazy val endDate:   String                  = "7 January 2025"
+  lazy val agentView: Document                = view(isAgent = true)
+  lazy val pageTitle: String                  = "Confirm account period for Below-Threshold Notification"
+
+  lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
-      SummaryListRowViewModel("btn.accountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2024")))),
+      SummaryListRowViewModel("btn.accountingPeriod.startAccountDate", value = ValueViewModel(HtmlContent(HtmlFormat.escape(startDate)))),
       SummaryListRowViewModel(
         "btn.accountingPeriod.endAccountDate",
-        value = ValueViewModel(HtmlContent(HtmlFormat.escape("7 January 2025").toString))
+        value = ValueViewModel(HtmlContent(HtmlFormat.escape(endDate).toString))
       )
     )
   )
 
-  val page: BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
   def view(isAgent: Boolean = false, hasMultipleAccountingPeriods: Boolean = false, currentAP: Boolean = true): Document =
     Jsoup.parse(
       page(list, NormalMode, isAgent, Some("orgName"), hasMultipleAccountingPeriods, currentAP)(request, appConfig, messages).toString()
@@ -46,126 +53,147 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
+
       "have a title" in {
-        view().getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include("Confirm account period for Below-Threshold Notification")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
-      "have following contents" in {
-        view().getElementsByClass("govuk-body").text must include(
+      "have a paragraph" in {
+        view().getElementsByClass("govuk-body").first().text mustBe
           "Your group will keep below-threshold status from this accounting period onwards, unless you file a UK tax return."
-        )
-        view().getElementsByClass("govuk-summary-list__key").text must include(
-          "Start date of accounting period"
-        )
-        view().getElementsByClass("govuk-summary-list__key").text must include(
-          "End date of accounting period"
-        )
+      }
+
+      "have a summary list" in {
+        val summaryListElements: Elements = view().getElementsByClass("govuk-summary-list")
+        val summaryListKeys:     Elements = view().getElementsByClass("govuk-summary-list__key")
+        val summaryListItems:    Elements = view().getElementsByClass("govuk-summary-list__value")
+
+        summaryListElements.size() mustBe 1
+
+        summaryListKeys.get(0).text() mustBe "Start date of accounting period"
+        summaryListItems.get(0).text() mustBe startDate
+
+        summaryListKeys.get(1).text() mustBe "End date of accounting period"
+        summaryListItems.get(1).text() mustBe endDate
       }
 
       "have a link for selecting a different accounting period when they have multiple accounting periods" in {
-        val link = view(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
-        link.text must include("Select different accounting period")
-        link.attr("href") must include(
-          controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
-        )
+        val link: Element = view(hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a").first()
+
+        link.text mustBe "Select different accounting period"
+        link.attr("href") mustBe controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
       "have a paragraph with link if it's the current accounting period" in {
-        val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
-        view().getElementsByTag("p").text must include(
-          "If the accounting period dates are wrong,"
-        )
-        link.text         must include("update your group’s accounting period dates")
-        link.attr("href") must include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        view().getElementsByTag("p").text must include(
-          "before continuing."
-        )
+        val paragraph: Element = view().getElementsByClass("govuk-body").get(1)
+        val link:      Element = paragraph.getElementsByTag("a").first()
+
+        paragraph.text mustBe "If the accounting period dates are wrong, update your group’s accounting period dates before continuing."
+        link.text mustBe "update your group’s accounting period dates"
+        link.attr("href") mustBe
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
       "not have a paragraph with link if it's a previous accounting period" in {
-        val link = view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body").last().getElementsByTag("a")
-        view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
-          "If the accounting period dates are wrong,"
-        )
+        val paragraphs: Elements = view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
+        val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
+
+        paragraphs.text mustNot include("If the accounting period dates are wrong, update your group’s accounting period dates before continuing.")
         link.text mustNot include("update your group’s accounting period dates")
-        link.attr("href") mustNot include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        view(hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
-          "before continuing."
+        link.attr("href") mustNot include(
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
         )
       }
 
-      "have a button" in {
-        view().getElementsByClass("govuk-button").text must include("Continue")
+      "have a 'Continue' button" in {
+        val continueButton: Element = view().getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
-
     }
 
     "it's an agent" should {
-      "have a caption" in {
-        view(isAgent = true).getElementsByClass("govuk-caption-m").text must include("orgName")
-      }
-
       "have a title" in {
-        view(isAgent = true).getElementsByTag("title").text must include("Confirm account period for Below-Threshold Notification")
+        agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
-      "have a h1 heading" in {
-        view(isAgent = true).getElementsByTag("h1").text must include("Confirm account period for Below-Threshold Notification")
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = agentView.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
-      "have following contents" in {
-        view(isAgent = true).getElementsByClass("govuk-body").text must include(
-          "The group will keep below-threshold status from this accounting period onwards, unless a UK Tax Return is filed."
-        )
-        view(isAgent = true).getElementsByClass("govuk-summary-list__key").text must include(
-          "Start date of accounting period"
-        )
-        view(isAgent = true).getElementsByClass("govuk-summary-list__key").text must include(
-          "End date of accounting period"
-        )
+      "have a caption" in {
+        agentView.getElementsByClass("govuk-caption-m").text mustBe "orgName"
+      }
+
+      "have a paragraph" in {
+        agentView.getElementsByClass("govuk-body").first().text mustBe "The group will keep below-threshold status " +
+          "from this accounting period onwards, unless a UK Tax Return is filed."
+      }
+
+      "have a summary list" in {
+        val summaryListElements: Elements = agentView.getElementsByClass("govuk-summary-list")
+        val summaryListKeys:     Elements = agentView.getElementsByClass("govuk-summary-list__key")
+        val summaryListItems:    Elements = agentView.getElementsByClass("govuk-summary-list__value")
+
+        summaryListElements.size() mustBe 1
+
+        summaryListKeys.get(0).text() mustBe "Start date of accounting period"
+        summaryListItems.get(0).text() mustBe startDate
+
+        summaryListKeys.get(1).text() mustBe "End date of accounting period"
+        summaryListItems.get(1).text() mustBe endDate
       }
 
       "have a link for selecting a different accounting period when they have multiple accounting periods" in {
-        val link = view(isAgent = true, hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a")
-        link.text must include("Select different accounting period")
-        link.attr("href") must include(
+        val link: Element =
+          view(isAgent = true, hasMultipleAccountingPeriods = true).getElementsByClass("govuk-body").get(1).getElementsByTag("a").first()
+        link.text mustBe "Select different accounting period"
+        link.attr("href") mustBe
           controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
-        )
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
       "have a paragraph with link if it's the current accounting period" in {
-        val link = view(isAgent = true).getElementsByClass("govuk-body").last().getElementsByTag("a")
-        view(isAgent = true).getElementsByTag("p").text must include(
-          "If the accounting period dates are wrong,"
-        )
-        link.text         must include("update the group’s accounting period dates")
-        link.attr("href") must include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        view(isAgent = true).getElementsByTag("p").text must include(
-          "before continuing."
-        )
+        val paragraph: Element = agentView.getElementsByClass("govuk-body").get(1)
+        val link:      Element = paragraph.getElementsByTag("a").first()
+
+        paragraph.text mustBe "If the accounting period dates are wrong, update the group’s accounting period dates before continuing."
+        link.text mustBe "update the group’s accounting period dates"
+        link.attr("href") mustBe
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
       "not have a paragraph with link if it's a previous accounting period" in {
-        val link =
-          view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body").last().getElementsByTag("a")
-        view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
-          "If the accounting period dates are wrong,"
-        )
+        val paragraphs: Elements = view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByClass("govuk-body")
+        val link:       Element  = paragraphs.get(1).getElementsByTag("a").first()
+
+        paragraphs.text mustNot include("If the accounting period dates are wrong, update the group’s accounting period dates before continuing.")
         link.text mustNot include("update the group’s accounting period dates")
-        link.attr("href") mustNot include(controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
-        view(isAgent = true, hasMultipleAccountingPeriods = true, currentAP = false).getElementsByTag("p").text mustNot include(
-          "before continuing."
+        link.attr("href") mustNot include(
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
         )
       }
 
-      "have a button" in {
-        view(isAgent = true).getElementsByClass("govuk-button").text must include("Continue")
+      "have a 'Continue' button" in {
+        val continueButton: Element = agentView.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
-
     }
   }
 }

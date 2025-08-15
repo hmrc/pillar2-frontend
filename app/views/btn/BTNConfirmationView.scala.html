@@ -19,26 +19,24 @@
 
 @this(
         layout: templates.Layout,
-        formHelper: FormWithCSRF,
+        h2: HeadingH2,
         p: paragraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         link: link,
         printLink: printLink,
-        pdfLink: pdfLink,
         govukButton: GovukButton,
         govukPanel: GovukPanel,
-        h2: HeadingH2
+        formHelper: FormWithCSRF
 )
-
 
 @(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false) {
 
     @govukPanel(Panel(
-        title = Text(messages("btn.confirmation.heading")),
-        content = HtmlContent(""),
-        attributes = Map("id" -> "plr2-banner")
+      title = Text(messages("btn.confirmation.heading")),
+      content = HtmlContent(""),
+      attributes = Map("id" -> "plr2-banner")
     ))
 
     @if(isAgent && companyName.isDefined) {
@@ -46,6 +44,7 @@
     } else {
         @p(messages("btn.confirmation.group.p1", submissionDate))
     }
+
     @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
 
     @printLink(messages("site.print"))
@@ -54,5 +53,9 @@
     @p(messages("btn.confirmation.group.p3"))
     @p(messages("btn.confirmation.group.p4"))
 
-    @paragraphMessageWithLink(linkMessage = messages("btn.confirmation.p5.group.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url, classes = "govuk-body govuk-!-display-none-print")
+    @paragraphMessageWithLink(
+      linkMessage = messages("btn.confirmation.p5.group.link"),
+      linkUrl = controllers.routes.DashboardController.onPageLoad.url,
+      classes = "govuk-body govuk-!-display-none-print"
+    )
 }

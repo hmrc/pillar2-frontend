@@ -59,7 +59,6 @@ class RepaymentsContactEmailViewSpec extends ViewSpecBase with StringGenerators 
         view.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
-    //---
 
     "form is submitted with missing value" should {
       val errorView: Document = Jsoup.parse(
