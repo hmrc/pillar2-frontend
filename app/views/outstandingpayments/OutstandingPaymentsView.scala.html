@@ -103,7 +103,7 @@
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
-            @h2(messages("transactionHistory.title"))
+            @h2(messages("transactionHistory.title"), size = "m")
             @paragraphBody(messages("payments.outstanding.transactionHistory.p1"))
             @paragraphBody(messages("payments.outstanding.transactionHistory.p2"))
             @paragraphMessageWithLink(
@@ -111,7 +111,7 @@
                 linkUrl = routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url
             )
 
-            @h2(messages("payments.outstanding.penaltiesAndCharges.heading"))
+            @h2(messages("payments.outstanding.penaltiesAndCharges.heading"), size = "m")
             @paragraphBody(
                 userTypeDependentText(
                     messages("payments.outstanding.penaltiesAndCharges.p1"),
