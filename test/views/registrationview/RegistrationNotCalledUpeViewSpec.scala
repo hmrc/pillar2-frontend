@@ -1,0 +1,58 @@
+/*
+ * Copyright 2025 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package views.registrationview
+
+import base.ViewSpecBase
+import models.NormalMode
+import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import views.html.registrationview.RegistrationNotCalledUpeView
+
+class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
+
+  lazy val page:      RegistrationNotCalledUpeView = inject[RegistrationNotCalledUpeView]
+  lazy val view:      Document                     = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                       = "Sorry, there is a problem with the service"
+
+  "Registration Not Called Upe View" should {
+
+    "have a title" in {
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raising a ticket to resolve later
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+    }
+
+    "have paragraph contents" in {
+      val paragraphs = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe "Try again later."
+      paragraphs.get(1).text mustBe "Your company details could not be confirmed."
+    }
+
+    "have a paragraph with a link" in {
+      val paragraph = view.getElementsByClass("govuk-body").get(2)
+
+      paragraph.getElementsByTag("a").text mustBe "Go back to select the entity type to try again."
+      paragraph.getElementsByTag("a").attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
+    }
+
+  }
+}

@@ -22,6 +22,9 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.RfmContactByTelephoneView
 
 class RfmContactByTelephoneViewSpec extends ViewSpecBase {
@@ -29,7 +32,9 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   lazy val formProvider = new RfmContactByTelephoneFormProvider
   lazy val page:     RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
   lazy val username: String                    = "John Doe"
-  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url).withCSRFToken
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(rfmRequest, appConfig, messages).toString())
   lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Contact By Telephone View" should {
@@ -37,6 +42,12 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     "have a title" in {
       view.getElementsByTag("title").text must include("Can we contact by phone?")
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a caption" in {

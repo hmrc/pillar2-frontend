@@ -17,27 +17,24 @@
 package views.rfm
 
 import base.ViewSpecBase
-import forms.RfmSecurityCheckFormProvider
-import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
-import views.html.rfm.SecurityCheckView
+import views.html.rfm.RfmContactDetailsRegistrationView
 
-class SecurityCheckViewSpec extends ViewSpecBase {
-
-  lazy val formProvider: RfmSecurityCheckFormProvider = new RfmSecurityCheckFormProvider
+class RfmContactDetailsRegistrationViewSpec extends ViewSpecBase {
+  lazy val page:      RfmContactDetailsRegistrationView = inject[RfmContactDetailsRegistrationView]
+  lazy val pageTitle: String                            = "We need contact details for your Pillar 2 Top-up Taxes account"
   lazy val rfmRequest: Request[AnyContent] =
-    FakeRequest("GET", controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url).withCSRFToken
-  lazy val page:      SecurityCheckView = inject[SecurityCheckView]
-  lazy val view:      Document          = Jsoup.parse(page(formProvider(), NormalMode)(rfmRequest, appConfig, messages).toString())
-  lazy val pageTitle: String            = "Enter the group’s Pillar 2 Top-up Taxes ID"
+    FakeRequest("GET", controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url).withCSRFToken
 
-  "Security Check View" should {
+  lazy val view: Document =
+    Jsoup.parse(page()(rfmRequest, appConfig, messages).toString())
 
+  "Rfm Contact Details Registration View" should {
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -49,19 +46,19 @@ class SecurityCheckViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a unique H1 heading" in {
+    "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
+      h1Elements.hasClass("govuk-heading-l") mustBe true
     }
 
-    "have a hint description" in {
-      view.getElementsByClass("govuk-hint").get(0).text mustBe
-        "This is 15 characters, for example, " +
-        "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
+    "have a paragraph" in {
+      view.getElementsByClass("govuk-body").get(0).text mustBe
+        "We need information about the filing member of this group so we can contact the right person or team when reviewing your Pillar 2 Top-up Taxes compliance."
     }
 
     "have a button" in {
