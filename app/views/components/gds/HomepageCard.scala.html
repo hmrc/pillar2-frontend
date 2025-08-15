@@ -31,7 +31,7 @@
    <ul class="govuk-list @if(isManageAccountCard){columns}">
     @for((linkText, url, optDescription) <- links) {
      <li class="card-links @if(isManageAccountCard){manage-acc-li}">
-      @if(url.isEmpty) { <b>@linkText</b> } else { <a href="@url" class="govuk-link">@linkText</a> }
+      @if(url.isEmpty) { <strong>@linkText</strong> } else { <a href="@url" class="govuk-link">@linkText</a> }
       @optDescription.map { desc => <p class="govuk-body mng-acc-body-text-width">@desc</p> }
      </li>
     }
