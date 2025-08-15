@@ -46,9 +46,9 @@ class BTNBeforeStartViewSpec extends ViewSpecBase {
     "have two h2 headings" in {
       val h2Elements: Elements = view().getElementsByTag("h2")
       h2Elements.get(0).text mustBe "Who can submit a Below-Threshold Notification"
-      h2Elements.get(0).hasClass("govuk-heading-m") mustBe true // FIXME: other H2s use 's' others use 'm'????
+      h2Elements.get(0).hasClass("govuk-heading-m") mustBe true
       h2Elements.get(1).text mustBe "Before you start"
-      h2Elements.get(1).hasClass("govuk-heading-m") mustBe true // FIXME: other H2s use 's' others use 'm'????
+      h2Elements.get(1).hasClass("govuk-heading-m") mustBe true
     }
 
     "have group specific content" in {

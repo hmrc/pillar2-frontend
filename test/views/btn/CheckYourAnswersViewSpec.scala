@@ -38,7 +38,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   lazy val dateTimeFormatter: DateTimeFormatter    = DateTimeFormatter.ofPattern("d MMMM yyyy")
   lazy val accountingPeriod:  AccountingPeriod     = AccountingPeriod(startDate, endDate)
   lazy val page:              CheckYourAnswersView = inject[CheckYourAnswersView]
-  lazy val pageTitle:         String               = "Check your answers"
+  lazy val pageTitle:         String               = "Check your answers to submit your Below-Threshold Notification "
   lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)
@@ -65,7 +65,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view().getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers to submit your Below-Threshold Notification"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a paragraph" in {
@@ -76,7 +76,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have an H2 heading" in {
       val h2Elements: Elements = view().getElementsByTag("h2")
       h2Elements.get(0).text() mustBe "Submit your Below-Threshold Notification"
-      h2Elements.get(0).hasClass("govuk-heading-s") mustBe true // FIXME: this is 's' while others are 'm'
+      h2Elements.get(0).hasClass("govuk-heading-s") mustBe true
     }
 
     "have a second paragraph" in {

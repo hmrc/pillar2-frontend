@@ -30,7 +30,7 @@ class BTNCannotReturnViewSpec extends ViewSpecBase {
 
   "BTNCannotReturnView" should {
     "have a title" in {
-      view.title() mustBe "Submission successful - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
