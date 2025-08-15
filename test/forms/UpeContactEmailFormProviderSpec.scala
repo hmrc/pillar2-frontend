@@ -18,22 +18,26 @@ package forms
 
 import forms.Validation.EMAIL_REGEX
 import forms.behaviours.StringFieldBehaviours
+import mapping.Constants
 import mapping.Constants.MAX_LENGTH_132
 import play.api.data.FormError
 
-class RfmSecondaryContactEmailFormProviderSpec extends StringFieldBehaviours {
+class UpeContactEmailFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey  = "rfm.secondaryContactEmail.error.required"
-  val lengthKey    = "rfm.secondaryContactEmail.error.length"
-  val xssKey       = "rfm.secondaryContactEmail.error.format"
-  val formProvider = new RfmSecondaryContactEmailFormProvider()
+  val requiredKey = "upe-input-business-contact.email.error.required"
+  val lengthKey   = "upe-input-business-contact.email.error.length"
+  val invalidKey  = "upe-input-business-contact.email.error.invalid"
+  val contactName = "name"
+  val maxLength: Int = Constants.MAX_LENGTH_132
+  val validEmailAddress = "testteam@email.com"
+  val form              = new UpeContactEmailFormProvider()(contactName)
 
   ".emailAddress" - {
 
     val fieldName = "emailAddress"
 
     behave like fieldWithMaxLength(
-      formProvider("name"),
+      form,
       fieldName,
       maxLength = MAX_LENGTH_132,
       lengthError = FormError(fieldName, lengthKey, Seq(MAX_LENGTH_132)),
@@ -41,17 +45,17 @@ class RfmSecondaryContactEmailFormProviderSpec extends StringFieldBehaviours {
     )
 
     behave like fieldWithRegex(
-      formProvider("name"),
+      form,
       fieldName,
       regex = EMAIL_REGEX,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MAX_LENGTH_132),
-      regexError = FormError(fieldName, xssKey)
+      regexError = FormError(fieldName, invalidKey)
     )
 
     behave like mandatoryField(
-      formProvider("name"),
+      form,
       fieldName,
-      requiredError = FormError(fieldName, requiredKey, Seq("name"))
+      requiredError = FormError(fieldName, requiredKey, Seq(contactName))
     )
   }
 }

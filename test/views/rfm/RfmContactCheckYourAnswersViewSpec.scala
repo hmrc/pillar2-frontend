@@ -21,7 +21,7 @@ import models.grs.GrsRegistrationResult
 import models.grs.RegistrationStatus.Registered
 import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.rfm.CorporatePosition.Upe
-import models.{NonUKAddress, UserAnswers}
+import models.{CheckMode, NonUKAddress, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -149,6 +149,8 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
 
       "have a summary list links" in {
         view.getElementsByClass("govuk-summary-list__actions").get(0).text mustBe "Change the position in the group’s corporate structure"
+        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByTag("a").attr("href") mustBe
+          controllers.rfm.routes.CorporatePositionController.onPageLoad(CheckMode).url
       }
     }
 
@@ -174,8 +176,17 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       "have a summary list links" in {
         val summaryListLinks = view.getElementsByClass("govuk-summary-list__actions")
         summaryListLinks.get(1).text mustBe "Change the primary contact name"
+        summaryListLinks.get(1).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmPrimaryContactNameController
+          .onPageLoad(CheckMode)
+          .url
         summaryListLinks.get(2).text mustBe "Change the primary contact email address"
+        summaryListLinks.get(2).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmPrimaryContactEmailController
+          .onPageLoad(CheckMode)
+          .url
         summaryListLinks.get(3).text mustBe "Change can we contact the primary contact by phone"
+        summaryListLinks.get(3).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmContactByTelephoneController
+          .onPageLoad(CheckMode)
+          .url
       }
     }
 
@@ -194,6 +205,8 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
 
       "have a summary list links" in {
         view.getElementsByClass("govuk-summary-list__actions").get(4).text mustBe "Change do you have a secondary contact"
+        view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByTag("a").attr("href") mustBe
+          controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(CheckMode).url
       }
     }
 
@@ -212,6 +225,8 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
 
       "have a summary list links" in {
         view.getElementsByClass("govuk-summary-list__actions").get(5).text mustBe "Change the contact address"
+        view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByTag("a").attr("href") mustBe
+          controllers.rfm.routes.RfmContactAddressController.onPageLoad(CheckMode).url
       }
     }
 

@@ -51,7 +51,7 @@ class RfmSecurityCheckFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMinLength(
       form,
       FIELD_NAME,
-      maxLength = EQUAL_LENGTH,
+      minLength = EQUAL_LENGTH,
       lengthError = FormError(FIELD_NAME, LENGTH_KEY, Seq(EQUAL_LENGTH))
     )
 

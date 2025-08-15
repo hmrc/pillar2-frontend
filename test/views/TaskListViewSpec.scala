@@ -17,7 +17,7 @@
 package views
 
 import base.ViewSpecBase
-import models.NormalMode
+import models.{CheckMode, NormalMode}
 import models.tasklist.SectionStatus.{CannotStart, Completed, NotStarted}
 import models.tasklist.SectionViewModel
 import org.jsoup.Jsoup
@@ -31,7 +31,7 @@ class TaskListViewSpec extends ViewSpecBase {
     Seq(
       SectionViewModel(
         "Edit Ultimate Parent Entity details",
-        Some(controllers.registration.routes.StartPageRegistrationController.onPageLoad(NormalMode)),
+        Some(controllers.registration.routes.StartPageRegistrationController.onPageLoad(CheckMode)),
         Completed
       ),
       SectionViewModel(
@@ -88,8 +88,10 @@ class TaskListViewSpec extends ViewSpecBase {
       val statuses = view.getElementsByClass("hmrc-status-tag")
 
       tasks.first.text mustBe "Edit Ultimate Parent Entity details"
+      tasks.first.getElementsByTag("a").attr("href") mustBe controllers.registration.routes.StartPageRegistrationController.onPageLoad(CheckMode).url
       statuses.first.text mustBe "Completed"
       tasks.get(1).text mustBe "Add filing member details"
+      tasks.get(1).getElementsByTag("a").attr("href") mustBe controllers.fm.routes.NominateFilingMemberYesNoController.onPageLoad(NormalMode).url
       statuses.get(1).text mustBe "Not started"
       tasks.get(2).text mustBe "Further group details"
       statuses.get(2).text mustBe "Cannot start yet"
