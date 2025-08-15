@@ -193,14 +193,14 @@ grs.registration.error.b33 = and try again using different details if you think 
 
 payment.dashboard.title = Make a payment
 payment.dashboard.header = Make a payment
-payment.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
+payment.dashboard.message1 = Your unique payment reference is <strong>{0}</strong>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.dashboard.message2 = You can use the ''Pay Now'' button to pay online, or
 payment.dashboard.linkText = read more about other payment methods. (opens in a new tab)
 payment.dashboard.buttonText = Pay Now
 
 payment.legacy.dashboard.title = Make a payment
 payment.legacy.dashboard.header = Make a payment
-payment.legacy.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
+payment.legacy.dashboard.message1 = Your unique payment reference is <strong>{0}</strong>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.legacy.dashboard.message2 = Submit your return before making a payment. Your payment is due on the same date as your return.
 payment.legacy.dashboard.message3 = You can
 payment.legacy.dashboard.message4 = read the guidance to find the methods you can use to make a payment.

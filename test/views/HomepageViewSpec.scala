@@ -311,7 +311,7 @@ class HomepageViewSpec extends ViewSpecBase {
         "Amend your client's accounting period or update changes to entity locations."
 
       // This list item has no active link yet
-      manageCardListItems.get(2).getElementsByTag("b").first().text() mustBe "Replace filing member"
+      manageCardListItems.get(2).getElementsByTag("strong").first().text() mustBe "Replace filing member"
       manageCardHelpTexts.get(2).text() mustBe
         "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."
 
