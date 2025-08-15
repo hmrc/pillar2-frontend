@@ -111,8 +111,6 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
             summaryListActions.get(0).text mustBe "Change are the entities still located only in the UK?"
             summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
               controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(CheckMode).url
-            //summaryListActions.get(0).getElementsByTag("a").attr("target") mustBe "_self"
-            //summaryListActions.get(0).getElementsByTag("a").attr("rel") mustNot be("noopener noreferrer")
           }
 
           "multiple accounting periods" in {
