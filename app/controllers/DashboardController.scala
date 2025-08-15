@@ -27,7 +27,6 @@ import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{InternalIssueError, UserAnswers}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -75,33 +74,23 @@ class DashboardController @Inject() (
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
-        subscriptionData <- OptionT.liftF(
-                              subscriptionService
-                                .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                                .recover {
-                                  case InternalIssueError =>
-                                    logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
-                                    throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
-                                  case other => throw other
-                                }
-                            )
-        result <- OptionT.liftF(displayHomepage(subscriptionData, referenceNumber))
-      } yield result)
-        .recover {
-          case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
-            val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
-            Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
-          case InternalIssueError =>
-            logger.error(
-              "DashboardController - read subscription failed as no valid Json was returned from the controller"
-            )
-            Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-          case _ =>
-            logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
-            Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
-        }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+        result <-
+          OptionT.liftF {
+            subscriptionService
+              .maybeReadSubscription(referenceNumber)
+              .flatMap {
+                case Some(_) =>
+                  subscriptionService
+                    .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                    .flatMap(displayHomepage(_, referenceNumber))
+                case None =>
+                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
+              .recover { case UnprocessableEntityError =>
+                Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+              }
+          }
+      } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
