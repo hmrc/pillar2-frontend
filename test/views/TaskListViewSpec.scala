@@ -17,9 +17,9 @@
 package views
 
 import base.ViewSpecBase
-import models.{CheckMode, NormalMode}
 import models.tasklist.SectionStatus.{CannotStart, Completed, NotStarted}
 import models.tasklist.SectionViewModel
+import models.{CheckMode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
