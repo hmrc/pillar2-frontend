@@ -180,5 +180,26 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
+    "must display conditional error message with primary contact name" in {
+      val userAnswers = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "Test ContactName")
+        .setOrException(SubPrimaryEmailPage, "email")
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("value", ""))
+
+        val boundForm = formProvider("Test ContactName").bind(Map("value" -> ""))
+        val view      = application.injector.instanceOf[AddSecondaryContactView]
+
+        val result = route(application, request).value
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, "Test ContactName", NormalMode)(request, applicationConfig, messages(application)).toString
+      }
+    }
+
   }
 }

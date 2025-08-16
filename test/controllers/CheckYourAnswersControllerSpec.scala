@@ -676,5 +676,204 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         }
       }
     }
+
+    "must display specific test values" in {
+      val testDataWithSpecificValues = emptyUserAnswers
+        .setOrException(UpeNameRegistrationPage, "Medium Processing Corp")
+        .setOrException(UpeRegisteredAddressPage, UKAddress("Address Line 1 UPE", None, "City UPE", None, "INVALID", "GB"))
+        .setOrException(UpeContactNamePage, "UPE Test")
+        .setOrException(UpeContactEmailPage, "testcontactupe@email.com")
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, "1234569")
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15)))
+
+      val application = applicationBuilder(userAnswers = Some(testDataWithSpecificValues))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(testDataWithSpecificValues)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("Medium Processing Corp")
+        content must include("Address Line 1 UPE")
+        content must include("City UPE")
+        content must include("INVALID")
+        content must include("testcontactupe@email.com")
+        content must include("1234569")
+      }
+    }
+
+    "must display full UPE and contact combination details" in {
+      val fullCombinationTestData = emptyUserAnswers
+        .setOrException(UpeNameRegistrationPage, "Test")
+        .setOrException(UpeRegisteredAddressPage, UKAddress("Address Line 1", None, "City", None, "EH5 5WY", "GB"))
+        .setOrException(UpeContactNamePage, "UPE Test")
+        .setOrException(UpeContactEmailPage, "test&upe@email.com")
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, "123456")
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15)))
+        .setOrException(SubPrimaryContactNamePage, "Second Contact Name Change")
+        .setOrException(SubPrimaryEmailPage, "secondContact&change@email.com")
+        .setOrException(SubPrimaryPhonePreferencePage, true)
+        .setOrException(SubPrimaryCapturePhonePage, "71235643")
+        .setOrException(SubAddSecondaryContactPage, true)
+
+      val application = applicationBuilder(userAnswers = Some(fullCombinationTestData))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(fullCombinationTestData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("Address Line 1")
+        content must include("City")
+        content must include("United Kingdom")
+        content must include("UPE Test")
+        content must include("test&amp;upe@email.com")
+        content must include("123456")
+        content must include("In the UK and outside the UK")
+        content must include("15 January 2024")
+        content must include("15 January 2025")
+        content must include("Second Contact Name Change")
+        content must include("secondContact&amp;change@email.com")
+        content must include("71235643")
+      }
+    }
+
+    "must display specific row values on main CYA page" in {
+      val specificRowTestData = emptyUserAnswers
+        .setOrException(UpeNameRegistrationPage, "Test")
+        .setOrException(UpeRegisteredAddressPage, UKAddress("Address Change", None, "City", None, "EH5 5WY", "GB"))
+        .setOrException(UpeContactNamePage, "UPE Test")
+        .setOrException(UpeContactEmailPage, "test&upe@email.com")
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, "123456")
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15)))
+        .setOrException(SubAddSecondaryContactPage, false)
+
+      val application = applicationBuilder(userAnswers = Some(specificRowTestData))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(specificRowTestData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("UPE Test")
+        content must include("test&amp;upe@email.com")
+        content must include("123456")
+        content must include("Address Change")
+      }
+    }
+
+    "must verify task status transitions together" in {
+      val completeContactData = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "Contact Name Test")
+        .setOrException(SubPrimaryEmailPage, "testContact@email.com")
+        .setOrException(SubPrimaryPhonePreferencePage, true)
+        .setOrException(SubPrimaryCapturePhonePage, "123456")
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubSecondaryContactNamePage, "Second Contact Name Test")
+        .setOrException(SubSecondaryEmailPage, "secondContact@email.com")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "654321")
+
+      val application = applicationBuilder(userAnswers = Some(completeContactData))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(completeContactData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("Contact Name Test")
+        content must include("testContact@email.com")
+        content must include("123456")
+        content must include("Second Contact Name Test")
+        content must include("secondContact@email.com")
+        content must include("654321")
+      }
+    }
+
+    "must verify task status Edit contact details equals Completed when all contact fields are filled" in {
+      val completeContactFieldsData = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "Contact Name Test")
+        .setOrException(SubPrimaryEmailPage, "testContact@email.com")
+        .setOrException(SubPrimaryPhonePreferencePage, true)
+        .setOrException(SubPrimaryCapturePhonePage, "123456")
+        .setOrException(SubAddSecondaryContactPage, true)
+        .setOrException(SubSecondaryContactNamePage, "Second Contact Name Test")
+        .setOrException(SubSecondaryEmailPage, "secondContact@email.com")
+        .setOrException(SubSecondaryPhonePreferencePage, true)
+        .setOrException(SubSecondaryCapturePhonePage, "654321")
+
+      val application = applicationBuilder(userAnswers = Some(completeContactFieldsData))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(completeContactFieldsData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("Contact Name Test")
+        content must include("testContact@email.com")
+        content must include("123456")
+        content must include("Second Contact Name Test")
+        content must include("secondContact@email.com")
+        content must include("654321")
+      }
+    }
+
+    "must verify task status Check your answers equals Not started when accessing main CYA" in {
+      val basicTestData = emptyUserAnswers
+        .setOrException(UpeNameRegistrationPage, "Test Company")
+        .setOrException(UpeRegisteredAddressPage, UKAddress("Address Line 1", None, "City", None, "EH5 5WY", "GB"))
+
+      val application = applicationBuilder(userAnswers = Some(basicTestData))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(basicTestData)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+
+        status(result) mustBe OK
+        val content = contentAsString(result)
+        content must include("Test Company")
+        content must include("Address Line 1")
+        content must include("City")
+        content must include("United Kingdom")
+      }
+    }
   }
 }

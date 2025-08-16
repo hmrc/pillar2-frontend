@@ -340,5 +340,53 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) must include("31 January 2025")
       }
     }
+
+    "Agent Transaction History Error Combination Workflow" should {
+
+      "display error page when financial data connector fails" in {
+        val agentEnrolments: Set[Enrolment] = Set(
+          Enrolment(
+            key = "HMRC-AS-AGENT",
+            identifiers = Seq(
+              EnrolmentIdentifier("AgentReference", "1234")
+            ),
+            state = "activated"
+          ),
+          Enrolment(
+            key = "HMRC-PILLAR2-ORG",
+            identifiers = Seq(
+              EnrolmentIdentifier("PLRID", "XEPLR4000000000"),
+              EnrolmentIdentifier("UTR", "ABC12345")
+            ),
+            state = "activated"
+          )
+        )
+
+        val application = applicationBuilder(userAnswers = None, agentEnrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+            .thenReturn(Future.failed(UnexpectedResponse))
+
+          val errorPageRequest = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadError().url)
+          val errorPageResult  = route(application, errorPageRequest).value
+
+          status(errorPageResult) mustEqual OK
+
+          val view = application.injector.instanceOf[TransactionHistoryErrorView]
+          contentAsString(errorPageResult) mustEqual view()(
+            errorPageRequest,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
+    }
   }
 }

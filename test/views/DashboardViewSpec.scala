@@ -289,5 +289,29 @@ class DashboardViewSpec extends ViewSpecBase {
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
     }
+
+    "display Agent Services Account link in paragraph" in {
+
+      val asaLink = agentViewParagraphs.get(2).getElementsByTag("a")
+      asaLink.text() mustBe "Agent Services Account"
+      asaLink.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
+    }
+  }
+
+  "Dashboard User Details Section" should {
+
+    "display user details in dashboard page for organisation" in {
+      val userDetailsSection = organisationDashboardView.getElementsByTag("p")
+
+      userDetailsSection.get(2).text() must include(plrRef)
+      userDetailsSection.get(3).text() must include(date)
+      userDetailsSection.get(4).text() must include(organisationName)
+    }
+
+    "display contact name and value when user details present" in {
+      val organisationInfo = organisationDashboardView.getElementsByTag("p")
+      organisationInfo.get(4).text() must include(organisationName)
+    }
+
   }
 }
