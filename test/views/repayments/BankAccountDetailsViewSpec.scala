@@ -198,7 +198,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Enter the account number as it appears on your bank statement")
+      fieldErrors.text().contains("Enter the account number as it appears on your bank statement") mustBe true
     }
 
     "display BARS sort code error message" in {
@@ -211,7 +211,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Enter the sort code as it appears on your bank statement")
+      fieldErrors.text().contains("Enter the sort code as it appears on your bank statement") mustBe true
     }
 
     "display BARS account name error message" in {
@@ -224,7 +224,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Enter the name on the account as it appears on your bank statement")
+      fieldErrors.text().contains("Enter the name on the account as it appears on your bank statement") mustBe true
     }
   }
 
