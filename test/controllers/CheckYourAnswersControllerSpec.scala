@@ -741,18 +741,18 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustBe OK
         val content = contentAsString(result)
-        content must include("Address Line 1")
-        content must include("City")
-        content must include("United Kingdom")
-        content must include("UPE Test")
-        content must include("test&amp;upe@email.com")
-        content must include("123456")
-        content must include("In the UK and outside the UK")
-        content must include("15 January 2024")
-        content must include("15 January 2025")
-        content must include("Second Contact Name Change")
-        content must include("secondContact&amp;change@email.com")
-        content must include("71235643")
+        content.contains("Address Line 1") mustBe true
+        content.contains("City") mustBe true
+        content.contains("United Kingdom") mustBe true
+        content.contains("UPE Test") mustBe true
+        content.contains("test&amp;upe@email.com") mustBe true
+        content.contains("123456") mustBe true
+        content.contains("In the UK and outside the UK") mustBe true
+        content.contains("15 January 2024") mustBe true
+        content.contains("15 January 2025") mustBe true
+        content.contains("Second Contact Name Change") mustBe true
+        content.contains("secondContact&amp;change@email.com") mustBe true
+        content.contains("71235643") mustBe true
       }
     }
 
@@ -781,10 +781,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustBe OK
         val content = contentAsString(result)
-        content must include("UPE Test")
-        content must include("test&amp;upe@email.com")
-        content must include("123456")
-        content must include("Address Change")
+        content.contains("UPE Test") mustBe true
+        content.contains("test&amp;upe@email.com") mustBe true
+        content.contains("123456") mustBe true
+        content.contains("Address Change") mustBe true
       }
     }
 
@@ -812,12 +812,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustBe OK
         val content = contentAsString(result)
-        content must include("Contact Name Test")
-        content must include("testContact@email.com")
-        content must include("123456")
-        content must include("Second Contact Name Test")
-        content must include("secondContact@email.com")
-        content must include("654321")
+        content.contains("Contact Name Test") mustBe true
+        content.contains("testContact@email.com") mustBe true
+        content.contains("123456") mustBe true
+        content.contains("Second Contact Name Test") mustBe true
+        content.contains("secondContact@email.com") mustBe true
+        content.contains("654321") mustBe true
       }
     }
 
@@ -845,12 +845,12 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustBe OK
         val content = contentAsString(result)
-        content must include("Contact Name Test")
-        content must include("testContact@email.com")
-        content must include("123456")
-        content must include("Second Contact Name Test")
-        content must include("secondContact@email.com")
-        content must include("654321")
+        content.contains("Contact Name Test") mustBe true
+        content.contains("testContact@email.com") mustBe true
+        content.contains("123456") mustBe true
+        content.contains("Second Contact Name Test") mustBe true
+        content.contains("secondContact@email.com") mustBe true
+        content.contains("654321") mustBe true
       }
     }
 
@@ -871,10 +871,10 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         status(result) mustBe OK
         val content = contentAsString(result)
-        content must include("Test Company")
-        content must include("Address Line 1")
-        content must include("City")
-        content must include("United Kingdom")
+        content.contains("Test Company") mustBe true
+        content.contains("Address Line 1") mustBe true
+        content.contains("City") mustBe true
+        content.contains("United Kingdom") mustBe true
       }
     }
   }
