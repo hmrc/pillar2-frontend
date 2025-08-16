@@ -303,14 +303,9 @@ class DashboardViewSpec extends ViewSpecBase {
     "display user details in dashboard page for organisation" in {
       val userDetailsSection = organisationDashboardView.getElementsByTag("p")
 
-      userDetailsSection.get(2).text() must include(plrRef)
-      userDetailsSection.get(3).text() must include(date)
-      userDetailsSection.get(4).text() must include(organisationName)
-    }
-
-    "display contact name and value when user details present" in {
-      val organisationInfo = organisationDashboardView.getElementsByTag("p")
-      organisationInfo.get(4).text() must include(organisationName)
+      userDetailsSection.get(2).text().contains(plrRef) mustBe true
+      userDetailsSection.get(3).text().contains(date) mustBe true
+      userDetailsSection.get(4).text().contains(organisationName) mustBe true
     }
 
   }
