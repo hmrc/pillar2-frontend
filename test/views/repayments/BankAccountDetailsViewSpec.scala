@@ -186,4 +186,46 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
+  "when form has BARS validation errors" should {
+
+    "display BARS account number error message" in {
+      val barsErrorView: Document = Jsoup.parse(
+        page(formProvider().withError("accountNumber", "Enter the account number as it appears on your bank statement"), NormalMode)(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+      val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text().contains("Enter the account number as it appears on your bank statement") mustBe true
+    }
+
+    "display BARS sort code error message" in {
+      val barsErrorView: Document = Jsoup.parse(
+        page(formProvider().withError("sortCode", "Enter the sort code as it appears on your bank statement"), NormalMode)(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+      val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text().contains("Enter the sort code as it appears on your bank statement") mustBe true
+    }
+
+    "display BARS account name error message" in {
+      val barsErrorView: Document = Jsoup.parse(
+        page(formProvider().withError("accountHolderName", "Enter the name on the account as it appears on your bank statement"), NormalMode)(
+          request,
+          appConfig,
+          messages
+        ).toString()
+      )
+
+      val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text().contains("Enter the name on the account as it appears on your bank statement") mustBe true
+    }
+  }
+
 }

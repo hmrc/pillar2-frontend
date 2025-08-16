@@ -138,5 +138,60 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "must display error message for email address too long" in {
+      val userAnswers = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "Test ContactName")
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val longEmail =
+          "ContactNameCharacterLengthErrorValidation@andMaximumNFMCharacterLengthShouldBeEnteredMoreThanOneHundredThirtyTwoCharactersForEmailTextField.com"
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("emailAddress", longEmail))
+
+        val boundForm = formProvider("Test ContactName").bind(Map("emailAddress" -> longEmail))
+        val view      = application.injector.instanceOf[ContactEmailAddressView]
+
+        val result = route(application, request).value
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "Test ContactName")(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+      }
+    }
+
+    "must display error message for invalid email format" in {
+      val userAnswers = emptyUserAnswers
+        .setOrException(SubPrimaryContactNamePage, "Test ContactName")
+
+      val application = applicationBuilder(userAnswers = Some(userAnswers))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      running(application) {
+        val invalidEmail = "FormatErrorTest.com"
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onSubmit(NormalMode).url)
+          .withFormUrlEncodedBody(("emailAddress", invalidEmail))
+
+        val boundForm = formProvider("Test ContactName").bind(Map("emailAddress" -> invalidEmail))
+        val view      = application.injector.instanceOf[ContactEmailAddressView]
+
+        val result = route(application, request).value
+
+        status(result) mustBe BAD_REQUEST
+        contentAsString(result) mustEqual view(boundForm, NormalMode, "Test ContactName")(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+      }
+    }
   }
 }
