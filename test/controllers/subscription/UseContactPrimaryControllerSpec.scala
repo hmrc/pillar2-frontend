@@ -21,8 +21,8 @@ import connectors.UserAnswersConnectors
 import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import helpers.ViewInstances
-import models.NormalMode
 import models.subscription.AccountingPeriod
+import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages._
@@ -41,6 +41,10 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
   val name         = "name"
   val email        = "email@gmail.com"
   val telephone    = "1221312"
+
+  val acceptanceTestName      = "Contact Name Test"
+  val acceptanceTestEmail     = "testContact@email.com"
+  val acceptanceTestTelephone = "123456"
   "UseContact Primary Controller" when {
 
     "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously not answered" in {
@@ -702,9 +706,103 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
           FakeRequest(POST, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
 
-        status(result) mustEqual SEE_OTHER
+        status(result) mustBe SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
 
+      }
+    }
+
+    "must display contact details rows with specific values" in {
+      val testDataWithSpecificValues: UserAnswers = emptyUserAnswers
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, acceptanceTestName)
+        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+
+      val application = applicationBuilder(userAnswers = Some(testDataWithSpecificValues))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(testDataWithSpecificValues)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        status(result) mustBe OK
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+        )(request, applicationConfig, messages(application)).toString
+      }
+    }
+
+    "must display Saved contact heading on page" in {
+      val testDataWithContactDetails: UserAnswers = emptyUserAnswers
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, acceptanceTestName)
+        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+
+      val application = applicationBuilder(userAnswers = Some(testDataWithContactDetails))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(testDataWithContactDetails)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        status(result) mustBe OK
+        contentAsString(result) mustEqual view(
+          formProvider(),
+          NormalMode,
+          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+        )(request, applicationConfig, messages(application)).toString
+      }
+    }
+
+    "must display answer No remain selected when previously answered" in {
+      val testDataWithPreviousAnswer: UserAnswers = emptyUserAnswers
+        .setOrException(NominateFilingMemberPage, false)
+        .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
+        .setOrException(UpeContactNamePage, acceptanceTestName)
+        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeRegisteredInUKPage, false)
+        .setOrException(UpePhonePreferencePage, true)
+        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+        .setOrException(SubUsePrimaryContactPage, false)
+
+      val application = applicationBuilder(userAnswers = Some(testDataWithPreviousAnswer))
+        .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
+        .build()
+
+      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(testDataWithPreviousAnswer)))
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
+        val result  = route(application, request).value
+
+        val view = application.injector.instanceOf[UseContactPrimaryView]
+
+        status(result) mustBe OK
+        contentAsString(result) mustEqual view(
+          formProvider().fill(false),
+          NormalMode,
+          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+        )(request, applicationConfig, messages(application)).toString
       }
     }
 
