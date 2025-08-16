@@ -702,7 +702,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         status(result) mustBe OK
         val content = contentAsString(result)
 
-        // More efficient assertions - check for exact presence without substring search
         content.contains("Medium Processing Corp") mustBe true
         content.contains("Address Line 1 UPE") mustBe true
         content.contains("City UPE") mustBe true
