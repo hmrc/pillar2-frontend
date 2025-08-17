@@ -106,5 +106,13 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       fieldError.text mustBe
         "Error: The name you enter must not include the following characters <, >, \" or &"
     }
+
+    "validate hint text content" in {
+      view.getElementsByClass("govuk-hint").text mustBe "You can enter a person or team name."
+    }
+
+    "validate form field label" in {
+      view.getElementsByClass("govuk-label").text.contains("Who should we contact about compliance for Pillar 2 Top-up Taxes?") mustBe true
+    }
   }
 }
