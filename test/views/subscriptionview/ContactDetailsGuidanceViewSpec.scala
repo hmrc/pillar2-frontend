@@ -24,9 +24,9 @@ import views.html.subscriptionview.ContentView
 
 class ContactDetailsGuidanceViewSpec extends ViewSpecBase {
 
-  lazy val page: ContentView = inject[ContentView]
-  lazy val view: Document = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "We need contact details for the filing member"
+  lazy val page:      ContentView = inject[ContentView]
+  lazy val view:      Document    = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String      = "We need contact details for the filing member"
 
   "ContentView" should {
 
@@ -46,7 +46,9 @@ class ContactDetailsGuidanceViewSpec extends ViewSpecBase {
 
     "have the correct body content" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs.get(0).text mustBe "We need the contact details for the filing member of this group so we can contact the right person or team when about compliance for Pillar 2 Top-up Taxes."
+      paragraphs
+        .get(0)
+        .text mustBe "We need the contact details for the filing member of this group so we can contact the right person or team when about compliance for Pillar 2 Top-up Taxes."
       paragraphs.get(1).text mustBe "These may be different to any contact details you have already provided during this registration."
     }
 

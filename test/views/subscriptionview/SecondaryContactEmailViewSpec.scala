@@ -28,10 +28,10 @@ import views.html.subscriptionview.SecondaryContactEmailView
 class SecondaryContactEmailViewSpec extends ViewSpecBase {
 
   lazy val formProvider: SecondaryContactEmailFormProvider = new SecondaryContactEmailFormProvider
-  lazy val form: Form[String] = formProvider("Test Contact")
-  lazy val page: SecondaryContactEmailView = inject[SecondaryContactEmailView]
-  lazy val contactName: String = "Test Contact"
-  lazy val pageTitle: String = "What is the email address?"
+  lazy val form:         Form[String]                      = formProvider("Test Contact")
+  lazy val page:         SecondaryContactEmailView         = inject[SecondaryContactEmailView]
+  lazy val contactName:  String                            = "Test Contact"
+  lazy val pageTitle:    String                            = "What is the email address?"
 
   "SecondaryContactEmailView" should {
     val view: Document = Jsoup.parse(
