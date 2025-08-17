@@ -33,7 +33,7 @@
     @formHelper(action = controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
 
         @if(isAgent && organisationName.isDefined) {

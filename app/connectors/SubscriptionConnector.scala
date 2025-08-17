@@ -58,19 +58,19 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           Future.failed(InternalIssueError)
       }
 
-  def readSubscriptionAndCache(
+  def cacheSubscription(
     readSubscriptionParameter: ReadSubscriptionRequestParameters
-  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
       .get(url"$subscriptionUrl")
       .execute[HttpResponse]
-      .map {
-        case response if response.status == 200 =>
-          Some(Json.parse(response.body).as[SubscriptionData])
+      .flatMap {
+        case response if response.status == OK =>
+          Future.successful(Json.parse(response.body).as[SubscriptionData])
         case e =>
-          logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
-          None
+          logger.warn(s"Connection issue when calling cache subscription with status: ${e.status}")
+          Future.failed(InternalIssueError)
       }
   }
 
@@ -85,6 +85,8 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       .flatMap {
         case response if response.status == 200 =>
           Future.successful(Some(Json.parse(response.body).as[SubscriptionSuccess].success))
+        case response if response.status == UNPROCESSABLE_ENTITY =>
+          Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
         case e =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")

@@ -82,18 +82,25 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onSubmit(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
       logger.info(s"[ManageGroupDetailsCheckYourAnswers] Submission started for user ${request.userId}")
-
-      for {
-        userAnswers <- sessionRepository.get(request.userId)
-        updatedAnswers = userAnswers match {
-                           case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                           case None => UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                         }
-        _ <- sessionRepository.set(updatedAnswers)
-      } yield {
-        updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-        logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
-        Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
+      sessionRepository.get(request.userId).flatMap { userAnswers =>
+        userAnswers.flatMap(_.get(ManageGroupDetailsStatusPage)) match {
+          case Some(ManageGroupDetailsStatus.SuccessfullyCompleted) =>
+            Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+          case _ =>
+            for {
+              userAnswers <- sessionRepository.get(request.userId)
+              updatedAnswers = userAnswers match {
+                                 case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+                                 case None =>
+                                   UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+                               }
+              _ <- sessionRepository.set(updatedAnswers)
+            } yield {
+              updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
+              logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
+              Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
+            }
+        }
       }
     }
 

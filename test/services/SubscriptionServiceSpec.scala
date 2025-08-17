@@ -313,64 +313,43 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "readAndCacheSubscription" when {
-
-      "return SubscriptionData object when the connector returns valid data and transformation is successful" in {
+    "cacheSubscription" when {
+      "return SubscriptionData when the connector returns valid data" in {
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(subscriptionData)))
+          when(mockSubscriptionConnector.cacheSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.successful(subscriptionData))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+          val result = service.cacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
 
           result mustBe subscriptionData
         }
       }
 
-      "return InternalIssueError when the connector returns None" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier()
+      "return InternalIssueError when the connector returns an error" in {
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(None))
+          when(mockSubscriptionConnector.cacheSubscription(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+            .thenReturn(Future.failed(InternalIssueError))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.readAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
+          val result = service.cacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).failed.futureValue
 
-          result mustBe models.InternalIssueError
-        }
-      }
-
-      "handle exceptions thrown by the connector" in {
-
-        val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
-          .build()
-
-        running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.failed(new RuntimeException("Connection error")))
-          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val resultFuture = service.readAndCacheSubscription(requestParameters)
-
-          resultFuture.failed.futureValue shouldBe a[RuntimeException]
+          result mustBe InternalIssueError
         }
       }
     }
 
     "readSubscription" when {
 
-      "return SubscriptionDAta object when the connector returns valid data and transformation is successful" in {
+      "return SubscriptionData object when the connector returns valid data and transformation is successful" in {
 
         val application = applicationBuilder()
           .overrides(
@@ -423,43 +402,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     }
 
-    "getSubscriptionCache" when {
-
-      "return getSubscriptionCache object when the connector returns valid data and transformation is successful" in {
-
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
-          .build()
-        running(application) {
-          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.getSubscriptionCache("userid").futureValue
-
-          result mustBe someSubscriptionLocalData
-        }
-      }
-
-      "return InternalIssueError when the connector for getSubscriptionCache" in {
-        implicit val hc: HeaderCarrier = HeaderCarrier()
-        val application = applicationBuilder()
-          .overrides(
-            bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-          )
-          .build()
-        running(application) {
-          when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
-            .thenReturn(Future.failed(InternalIssueError))
-          val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.getSubscriptionCache("userid").failed.futureValue
-          result mustBe models.InternalIssueError
-        }
-      }
-    }
-
-    "maybeReadAndCacheSubscription" when {
+    "maybeReadSubscription" when {
 
       "return Some(SubscriptionData) when the connector returns valid data" in {
         val application = applicationBuilder()
@@ -468,10 +411,10 @@ class SubscriptionServiceSpec extends SpecBase {
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(any(), any()))
             .thenReturn(Future.successful(Some(subscriptionData)))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+          val result = service.maybeReadSubscription(plrReference).futureValue
 
           result mustBe Some(subscriptionData)
         }
@@ -484,17 +427,16 @@ class SubscriptionServiceSpec extends SpecBase {
           )
           .build()
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(any(), any()))
             .thenReturn(Future.successful(None))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val result = service.maybeReadAndCacheSubscription(ReadSubscriptionRequestParameters(id, plrReference)).futureValue
+          val result = service.maybeReadSubscription(plrReference).futureValue
 
           result mustBe None
         }
       }
 
       "handle exceptions thrown by the connector" in {
-        val requestParameters = ReadSubscriptionRequestParameters(id, plrReference)
         val application = applicationBuilder()
           .overrides(
             bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -502,10 +444,10 @@ class SubscriptionServiceSpec extends SpecBase {
           .build()
 
         running(application) {
-          when(mockSubscriptionConnector.readSubscriptionAndCache(any[ReadSubscriptionRequestParameters])(any[HeaderCarrier], any[ExecutionContext]))
+          when(mockSubscriptionConnector.readSubscription(any())(any(), any()))
             .thenReturn(Future.failed(new RuntimeException("Connection error")))
           val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
-          val resultFuture = service.maybeReadAndCacheSubscription(requestParameters)
+          val resultFuture = service.maybeReadSubscription(plrReference)
 
           resultFuture.failed.futureValue shouldBe a[RuntimeException]
         }
