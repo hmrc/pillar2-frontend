@@ -18,13 +18,14 @@ package views.registrationview
 
 import base.ViewSpecBase
 import forms.UpeContactNameFormProvider
+import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.registrationview.UpeContactNameView
 
-class UpeContactNameViewSpec extends ViewSpecBase {
+class UpeContactNameViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   lazy val page:         UpeContactNameView         = inject[UpeContactNameView]
@@ -55,6 +56,79 @@ class UpeContactNameViewSpec extends ViewSpecBase {
 
     "have a save and continue button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
+  }
+
+  "when form is submitted with missing values" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
+
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the name of the person or team from the Ultimate Parent Entity to keep on record"
+    }
+  }
+
+  "when form is submitted with values exceeding maximum length" should {
+    val longInput: String = randomAlphaNumericStringGenerator(201)
+    val errorView = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "value" -> longInput
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
+
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "The name of the person or team must be 200 characters or less"
+    }
+  }
+
+  "when form is submitted with an invalid special character" should {
+    val xssInput = Map(
+      "value" -> "&"
+    )
+
+    val errorView = Jsoup.parse(
+      page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+    )
+
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "The name you enter must not include the following characters <, >, \" or &"
     }
   }
 }

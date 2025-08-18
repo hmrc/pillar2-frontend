@@ -64,4 +64,29 @@ class EntityTypeViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
+
+  "when form is submitted with a missing value" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
+
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Select the entity type of the ultimate parent"
+    }
+  }
 }

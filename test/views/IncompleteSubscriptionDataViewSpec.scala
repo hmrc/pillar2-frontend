@@ -31,7 +31,7 @@ class IncompleteSubscriptionDataViewSpec extends ViewSpecBase {
   "Incomplete Subscription Data view" should {
     "have a title" in {
       view
-        .title() mustBe s"Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raising a ticket to resolve later
+        .title() mustBe s"Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raised ticket PIL-2374
     }
 
     "have a unique H1 heading" in {

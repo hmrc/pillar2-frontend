@@ -109,8 +109,11 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
   lazy val view: Document = Jsoup.parse(
     page(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address)(rfmRequest, appConfig, messages).toString()
   )
-  lazy val pageTitle:  String   = "Check your answers before submitting"
-  lazy val h2Elements: Elements = view.getElementsByTag("h2")
+  lazy val pageTitle:        String   = "Check your answers before submitting"
+  lazy val h2Elements:       Elements = view.getElementsByTag("h2")
+  lazy val summaryListKeys:  Elements = view.getElementsByClass("govuk-summary-list__key")
+  lazy val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+  lazy val summaryListLinks: Elements = view.getElementsByClass("govuk-summary-list__actions")
 
   "Rfm Contact Check Your Answers View" should {
 
@@ -140,16 +143,16 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a summary list key" in {
-        view.getElementsByClass("govuk-summary-list__key").get(0).text mustBe "Position in the group’s corporate structure"
+        summaryListKeys.get(0).text mustBe "Position in the group’s corporate structure"
       }
 
       "have a summary list item" in {
-        view.getElementsByClass("govuk-summary-list__value").get(0).text mustBe "Ultimate Parent Entity (UPE)"
+        summaryListItems.get(0).text mustBe "Ultimate Parent Entity (UPE)"
       }
 
       "have a summary list links" in {
-        view.getElementsByClass("govuk-summary-list__actions").get(0).text mustBe "Change the position in the group’s corporate structure"
-        view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByTag("a").attr("href") mustBe
+        summaryListLinks.get(0).text mustBe "Change the position in the group’s corporate structure"
+        summaryListLinks.get(0).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.CorporatePositionController.onPageLoad(CheckMode).url
       }
     }
@@ -160,21 +163,18 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a summary list key" in {
-        val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
         summaryListKeys.get(1).text mustBe "Contact name"
         summaryListKeys.get(2).text mustBe "Email address"
         summaryListKeys.get(3).text mustBe "Can we contact the primary contact by phone?"
       }
 
       "have a summary list item" in {
-        val summaryListItems = view.getElementsByClass("govuk-summary-list__value")
         summaryListItems.get(1).text mustBe "RFM test contact"
         summaryListItems.get(2).text mustBe "rfm@email.com"
         summaryListItems.get(3).text mustBe "No"
       }
 
       "have a summary list links" in {
-        val summaryListLinks = view.getElementsByClass("govuk-summary-list__actions")
         summaryListLinks.get(1).text mustBe "Change the primary contact name"
         summaryListLinks.get(1).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmPrimaryContactNameController
           .onPageLoad(CheckMode)
@@ -196,16 +196,16 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a summary list key" in {
-        view.getElementsByClass("govuk-summary-list__key").get(4).text mustBe "Do you have a secondary contact?"
+        summaryListKeys.get(4).text mustBe "Do you have a secondary contact?"
       }
 
       "have a summary list item" in {
-        view.getElementsByClass("govuk-summary-list__value").get(4).text mustBe "No"
+        summaryListItems.get(4).text mustBe "No"
       }
 
       "have a summary list links" in {
-        view.getElementsByClass("govuk-summary-list__actions").get(4).text mustBe "Change do you have a secondary contact"
-        view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByTag("a").attr("href") mustBe
+        summaryListLinks.get(4).text mustBe "Change do you have a secondary contact"
+        summaryListLinks.get(4).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(CheckMode).url
       }
     }
@@ -216,16 +216,16 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a summary list key" in {
-        view.getElementsByClass("govuk-summary-list__key").get(5).text mustBe "Address"
+        summaryListKeys.get(5).text mustBe "Address"
       }
 
       "have a summary list item" in {
-        view.getElementsByClass("govuk-summary-list__value").get(5).text mustBe "RFM Address Line 1 RFM City EH5 5WY United Kingdom"
+        summaryListItems.get(5).text mustBe "RFM Address Line 1 RFM City EH5 5WY United Kingdom"
       }
 
       "have a summary list links" in {
-        view.getElementsByClass("govuk-summary-list__actions").get(5).text mustBe "Change the contact address"
-        view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByTag("a").attr("href") mustBe
+        summaryListLinks.get(5).text mustBe "Change the contact address"
+        summaryListLinks.get(5).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(CheckMode).url
       }
     }

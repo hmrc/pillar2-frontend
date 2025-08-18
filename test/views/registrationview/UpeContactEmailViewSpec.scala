@@ -18,22 +18,24 @@ package views.registrationview
 
 import base.ViewSpecBase
 import forms.UpeContactEmailFormProvider
+import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.registrationview.UpeContactEmailView
 
-class UpeContactEmailViewSpec extends ViewSpecBase {
+class UpeContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: UpeContactEmailFormProvider = new UpeContactEmailFormProvider()
   lazy val page:         UpeContactEmailView         = inject[UpeContactEmailView]
   lazy val pageTitle:    String                      = "What is the email address?"
+  lazy val userName:     String                      = "userName"
+  val view: Document = Jsoup.parse(
+    page(formProvider(userName), NormalMode, "userName")(request, appConfig, messages).toString()
+  )
 
   "Upe Contact Email View" should {
-    val view: Document = Jsoup.parse(
-      page(formProvider("userName"), NormalMode, "userName")(request, appConfig, messages).toString()
-    )
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -55,6 +57,81 @@ class UpeContactEmailViewSpec extends ViewSpecBase {
 
     "have a save and continue button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
+  }
+
+  "when form is submitted with missing values" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider(userName).bind(
+          Map(
+            "emailAddress" -> ""
+          )
+        ),
+        NormalMode,
+        userName
+      )(request, appConfig, messages).toString()
+    )
+
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter the email address for userName"
+    }
+  }
+
+  "when form is submitted with values exceeding maximum length" should {
+    val longInput: String = randomAlphaNumericStringGenerator(133)
+    val errorView = Jsoup.parse(
+      page(
+        formProvider(userName).bind(
+          Map(
+            "emailAddress" -> longInput
+          )
+        ),
+        NormalMode,
+        userName
+      )(request, appConfig, messages).toString()
+    )
+
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Email address must be 132 characters or less"
+    }
+  }
+
+  "when form is submitted with an invalid special character" should {
+    val xssInput = Map(
+      "emailAddress" -> "<"
+    )
+
+    val errorView = Jsoup.parse(
+      page(formProvider(userName).bind(xssInput), NormalMode, userName)(request, appConfig, messages).toString()
+    )
+
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter an email address in the correct format, like name@example.com"
     }
   }
 }

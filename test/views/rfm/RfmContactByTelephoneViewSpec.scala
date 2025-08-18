@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RfmContactByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
@@ -68,6 +68,32 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
 
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
+  }
+
+  "when form is submitted with a missing value" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider(username).bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        NormalMode,
+        username
+      )(request, appConfig, messages).toString()
+    )
+
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by phone"
     }
   }
 }

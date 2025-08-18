@@ -18,9 +18,10 @@ package views.rfm
 
 import base.ViewSpecBase
 import forms.RfmSecondaryContactNameFormProvider
+import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import play.api.mvc.{AnyContent, Request}
@@ -28,7 +29,7 @@ import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import views.html.rfm.RfmSecondaryContactNameView
 
-class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
+class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: RfmSecondaryContactNameFormProvider = new RfmSecondaryContactNameFormProvider
   lazy val form:         Form[String]                        = formProvider()
@@ -69,49 +70,81 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase {
     "have a save and continue button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
+  }
 
-    "show required field error when form is submitted empty" in {
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> "")), NormalMode)(rfmRequest, appConfig, messages).toString()
-      )
+  "when form is submitted with missing values" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "Enter name of the person or team we should contact"
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError mustBe "Error: Enter name of the person or team we should contact"
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Enter name of the person or team we should contact"
     }
+  }
 
-    "show length validation error when input exceeds maximum length" in {
-      val longInput = "A" * 161
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> longInput)), NormalMode)(rfmRequest, appConfig, messages).toString()
-      )
+  "when form is submitted with values exceeding maximum length" should {
+    val longInput: String =
+      randomAlphaNumericStringGenerator(161)
+    val errorView = Jsoup.parse(
+      page(
+        formProvider().bind(
+          Map(
+            "value" -> longInput
+          )
+        ),
+        NormalMode
+      )(request, appConfig, messages).toString()
+    )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+    "show length validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "Name of the contact person or team should be 105 characters or less"
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError mustBe s"Error: Name of the contact person or team should be 105 characters or less"
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList
+        .get(0)
+        .text() mustBe "Name of the contact person or team should be 105 characters or less" //TODO: Raised ticket (PIL-2373) to query whether max length should be 160 or 105 characters
     }
+  }
 
-    "show XSS validation error when special characters are entered" in {
-      val invalidInput = "Test <script>alert('xss')</script> & Company"
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("value" -> invalidInput)), NormalMode)(rfmRequest, appConfig, messages).toString()
-      )
+  "when form is submitted with an invalid special character" should {
+    val xssInput = Map(
+      "value" -> "&"
+    )
 
-      errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
+    val errorView = Jsoup.parse(
+      page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+    )
 
-      val errorList = errorView.getElementsByClass("govuk-list govuk-error-summary__list").text
-      errorList mustBe "The name you enter must not include the following characters <, >, \" or &"
+    "show XSS validation error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message").text
-      fieldError mustBe s"Error: The name you enter must not include the following characters <, >, \" or &"
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "The name you enter must not include the following characters <, >, \" or &"
     }
   }
 }

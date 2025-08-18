@@ -32,7 +32,7 @@ class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
   "Registration Not Called Upe View" should {
 
     "have a title" in {
-      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raising a ticket to resolve later
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raised ticket PIL-2374
     }
 
     "have a unique H1 heading" in {
