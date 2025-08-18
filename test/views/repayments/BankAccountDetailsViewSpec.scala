@@ -186,7 +186,64 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
     }
   }
 
-  "when form has BARS validation errors" should {
+  "when form has validation errors" should {
+
+    "display error when account number is empty" in {
+      val formWithErrors = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "123456",
+          "accountNumber"     -> ""
+        )
+      )
+
+      val errorView: Document = Jsoup.parse(
+        page(formWithErrors, NormalMode)(request, appConfig, messages).toString()
+      )
+
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text() must include("Enter the account number")
+    }
+
+    "display error when sort code is invalid format" in {
+      val formWithErrors = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "12345", // Invalid - too short
+          "accountNumber"     -> "12345678"
+        )
+      )
+
+      val errorView: Document = Jsoup.parse(
+        page(formWithErrors, NormalMode)(request, appConfig, messages).toString()
+      )
+
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text() must include("Sort code must be 6 digits")
+    }
+
+    "display error when account number is invalid format" in {
+      val formWithErrors = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "123456",
+          "accountNumber"     -> "1234567" // Invalid - too short
+        )
+      )
+
+      val errorView: Document = Jsoup.parse(
+        page(formWithErrors, NormalMode)(request, appConfig, messages).toString()
+      )
+
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+      fieldErrors.text() must include("Account number must be 8 digits")
+    }
+  }
+
+  "when form has BARS validation errors from external service" should {
 
     "display BARS account number error message" in {
       val barsErrorView: Document = Jsoup.parse(
