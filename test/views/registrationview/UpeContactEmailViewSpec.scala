@@ -14,57 +14,45 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.registrationview
 
 import base.ViewSpecBase
-import forms.RfmSecondaryContactNameFormProvider
+import forms.UpeContactEmailFormProvider
 import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.api.data.Form
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.FakeRequest
-import views.html.rfm.RfmSecondaryContactNameView
+import views.html.registrationview.UpeContactEmailView
 
-class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators {
+class UpeContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
-  lazy val formProvider: RfmSecondaryContactNameFormProvider = new RfmSecondaryContactNameFormProvider
-  lazy val form:         Form[String]                        = formProvider()
-  lazy val page:         RfmSecondaryContactNameView         = inject[RfmSecondaryContactNameView]
-  lazy val pageTitle: String = "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-  lazy val rfmRequest: Request[AnyContent] =
-    FakeRequest("GET", controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url).withCSRFToken
+  lazy val formProvider: UpeContactEmailFormProvider = new UpeContactEmailFormProvider()
+  lazy val page:         UpeContactEmailView         = inject[UpeContactEmailView]
+  lazy val pageTitle:    String                      = "What is the email address?"
+  lazy val userName:     String                      = "userName"
+  val view: Document = Jsoup.parse(
+    page(formProvider(userName), NormalMode, "userName")(request, appConfig, messages).toString()
+  )
 
-  "RFM Secondary Contact Name View" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode)(rfmRequest, appConfig, messages).toString()
-    )
+  "Upe Contact Email View" should {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a non-clickable banner" in {
-      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
-      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
-      serviceName.getElementsByTag("a") mustBe empty
-    }
-
-    "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-    }
-
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe "What is the email address for userName?"
     }
 
-    "have the correct hint text" in {
-      view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
+    "have the correct section caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+    }
+
+    "have a hint" in {
+      view.getElementsByClass("govuk-hint").first.text mustBe "We will use this to confirm your records."
     }
 
     "have a save and continue button" in {
@@ -75,12 +63,13 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
   "when form is submitted with missing values" should {
     val errorView: Document = Jsoup.parse(
       page(
-        formProvider().bind(
+        formProvider(userName).bind(
           Map(
-            "value" -> ""
+            "emailAddress" -> ""
           )
         ),
-        NormalMode
+        NormalMode,
+        userName
       )(request, appConfig, messages).toString()
     )
 
@@ -93,27 +82,27 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Enter name of the person or team we should contact"
+      errorsList.get(0).text() mustBe "Enter the email address for userName"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Enter name of the person or team we should contact"
+      fieldErrors.get(0).text() mustBe "Error: Enter the email address for userName"
     }
   }
 
   "when form is submitted with values exceeding maximum length" should {
-    val longInput: String =
-      randomAlphaNumericStringGenerator(161)
+    val longInput: String = randomAlphaNumericStringGenerator(133)
     val errorView = Jsoup.parse(
       page(
-        formProvider().bind(
+        formProvider(userName).bind(
           Map(
-            "value" -> longInput
+            "emailAddress" -> longInput
           )
         ),
-        NormalMode
+        NormalMode,
+        userName
       )(request, appConfig, messages).toString()
     )
 
@@ -126,25 +115,23 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList
-        .get(0)
-        .text() mustBe "Name of the contact person or team should be 105 characters or less"
+      errorsList.get(0).text() mustBe "Email address must be 132 characters or less"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Name of the contact person or team should be 105 characters or less"
+      fieldErrors.get(0).text() mustBe "Error: Email address must be 132 characters or less"
     }
   }
 
   "when form is submitted with an invalid special character" should {
     val xssInput = Map(
-      "value" -> "&"
+      "emailAddress" -> "<"
     )
 
     val errorView = Jsoup.parse(
-      page(formProvider().bind(xssInput), NormalMode)(request, appConfig, messages).toString()
+      page(formProvider(userName).bind(xssInput), NormalMode, userName)(request, appConfig, messages).toString()
     )
 
     "show XSS validation error summary" in {
@@ -156,13 +143,13 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "The name you enter must not include the following characters <, >, \" or &"
+      errorsList.get(0).text() mustBe "Enter an email address in the correct format, like name@example.com"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
+      fieldErrors.get(0).text() mustBe "Error: Enter an email address in the correct format, like name@example.com"
     }
   }
 }

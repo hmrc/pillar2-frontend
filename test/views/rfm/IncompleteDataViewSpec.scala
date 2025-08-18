@@ -17,22 +17,31 @@
 package views.rfm
 
 import base.ViewSpecBase
-import forms.AgentClientPillar2ReferenceFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  lazy val formProvider: AgentClientPillar2ReferenceFormProvider = new AgentClientPillar2ReferenceFormProvider
-  lazy val page:         IncompleteDataView                      = inject[IncompleteDataView]
-  lazy val view:         Document                                = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle:    String                                  = "You have an incomplete task"
+  lazy val page: IncompleteDataView = inject[IncompleteDataView]
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url).withCSRFToken
+  lazy val view:      Document = Jsoup.parse(page()(rfmRequest, appConfig, messages).toString())
+  lazy val pageTitle: String   = "You have an incomplete task"
 
   "Replace filing member incomplete data view" should {
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName: Element = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a unique H1 heading" in {

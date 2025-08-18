@@ -14,47 +14,29 @@
  * limitations under the License.
  */
 
-package views.rfm
+package views.registrationview
 
 import base.ViewSpecBase
-import forms.RfmSecondaryContactNameFormProvider
+import forms.UpeContactNameFormProvider
 import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.api.data.Form
-import play.api.mvc.{AnyContent, Request}
-import play.api.test.CSRFTokenHelper.CSRFRequest
-import play.api.test.FakeRequest
-import views.html.rfm.RfmSecondaryContactNameView
+import views.html.registrationview.UpeContactNameView
 
-class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators {
+class UpeContactNameViewSpec extends ViewSpecBase with StringGenerators {
 
-  lazy val formProvider: RfmSecondaryContactNameFormProvider = new RfmSecondaryContactNameFormProvider
-  lazy val form:         Form[String]                        = formProvider()
-  lazy val page:         RfmSecondaryContactNameView         = inject[RfmSecondaryContactNameView]
-  lazy val pageTitle: String = "What is the name of the alternative person or team we should contact about compliance for Pillar 2 Top-up Taxes?"
-  lazy val rfmRequest: Request[AnyContent] =
-    FakeRequest("GET", controllers.rfm.routes.RfmSecondaryContactNameController.onPageLoad(NormalMode).url).withCSRFToken
+  lazy val formProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
+  lazy val page:         UpeContactNameView         = inject[UpeContactNameView]
+  lazy val pageTitle:    String                     = "What is the name of the person or team from the Ultimate Parent Entity to keep on record?"
+  lazy val view: Document = Jsoup.parse(
+    page(formProvider(), NormalMode)(request, appConfig, messages).toString()
+  )
 
-  "RFM Secondary Contact Name View" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode)(rfmRequest, appConfig, messages).toString()
-    )
-
+  "Upe Contact Name View" should {
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have a non-clickable banner" in {
-      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
-      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
-      serviceName.getElementsByTag("a") mustBe empty
-    }
-
-    "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -63,8 +45,12 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
       h1Elements.text() mustBe pageTitle
     }
 
-    "have the correct hint text" in {
-      view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
+    "have the correct section caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+    }
+
+    "have a hint" in {
+      view.getElementsByClass("govuk-hint").first.text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
     }
 
     "have a save and continue button" in {
@@ -93,19 +79,18 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Enter name of the person or team we should contact"
+      errorsList.get(0).text() mustBe "Enter the name of the person or team from the Ultimate Parent Entity to keep on record"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Enter name of the person or team we should contact"
+      fieldErrors.get(0).text() mustBe "Error: Enter the name of the person or team from the Ultimate Parent Entity to keep on record"
     }
   }
 
   "when form is submitted with values exceeding maximum length" should {
-    val longInput: String =
-      randomAlphaNumericStringGenerator(161)
+    val longInput: String = randomAlphaNumericStringGenerator(201)
     val errorView = Jsoup.parse(
       page(
         formProvider().bind(
@@ -126,15 +111,13 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList
-        .get(0)
-        .text() mustBe "Name of the contact person or team should be 105 characters or less"
+      errorsList.get(0).text() mustBe "The name of the person or team must be 200 characters or less"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Name of the contact person or team should be 105 characters or less"
+      fieldErrors.get(0).text() mustBe "Error: The name of the person or team must be 200 characters or less"
     }
   }
 
