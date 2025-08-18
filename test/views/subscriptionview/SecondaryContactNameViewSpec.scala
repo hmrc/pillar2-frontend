@@ -106,6 +106,5 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
       fieldError.text mustBe
         "Error: The name you enter must not include the following characters <, >, \" or &"
     }
-
   }
 }

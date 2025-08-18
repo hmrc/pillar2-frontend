@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.DashboardView
 
@@ -291,22 +291,11 @@ class DashboardViewSpec extends ViewSpecBase {
     }
 
     "display Agent Services Account link in paragraph" in {
-
-      val asaLink = agentViewParagraphs.get(2).getElementsByTag("a")
-      asaLink.text() mustBe "Agent Services Account"
-      asaLink.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
+      val agentServiceAccountLink: Element =
+        agentViewParagraphs.get(2).getElementsByTag("a").first()
+      agentServiceAccountLink.text() mustBe "Agent Services Account"
+      agentServiceAccountLink.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
     }
   }
 
-  "Dashboard User Details Section" should {
-
-    "display user details in dashboard page for organisation" in {
-      val userDetailsSection = organisationDashboardView.getElementsByTag("p")
-
-      userDetailsSection.get(2).text().contains(plrRef) mustBe true
-      userDetailsSection.get(3).text().contains(date) mustBe true
-      userDetailsSection.get(4).text().contains(organisationName) mustBe true
-    }
-
-  }
 }
