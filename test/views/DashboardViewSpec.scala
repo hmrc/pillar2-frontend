@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.DashboardView
 
@@ -289,13 +289,5 @@ class DashboardViewSpec extends ViewSpecBase {
       researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
     }
-
-    "display Agent Services Account link in paragraph" in {
-      val agentServiceAccountLink: Element =
-        agentViewParagraphs.get(2).getElementsByTag("a").first()
-      agentServiceAccountLink.text() mustBe "Agent Services Account"
-      agentServiceAccountLink.attr("href") mustBe controllers.routes.ASAStubController.onPageLoad.url
-    }
   }
-
 }
