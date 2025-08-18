@@ -21,38 +21,39 @@
 @import views.html.components.gds.{heading, paragraphBody, sectionHeader}
 
 @this(
-    layout: templates.Layout,
-    govukSummaryList: GovukSummaryList,
-    govukButton: GovukButton,
-    formHelper: FormWithCSRF,
-    sectionHeader: sectionHeader,
-    heading: heading,
-    paragraph: paragraphBody,
+        layout: templates.Layout,
+        heading: heading,
+        sectionHeader: sectionHeader,
+        paragraph: paragraphBody,
+        govukSummaryList: GovukSummaryList,
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF
 )
-@(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_],  appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.cya.title")), serviceBannerClickable = true) {
- @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
+@(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
- @if(isAgent && organisationName.isDefined) {
-  <span class="govuk-caption-m">@organisationName.get</span>
- }
+@layout(pageTitle = titleNoForm(messages("btn.cya.title"))) {
+  @formHelper(action = controllers.btn.routes.CheckYourAnswersController.onSubmit) {
 
- @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
- @paragraph(messages("btn.cya.p1"))
+    @if(isAgent && organisationName.isDefined) {
+      <span class="govuk-caption-m">@organisationName.get</span>
+    }
 
- @govukSummaryList(list)
+    @heading(messages("btn.cya.heading"), classes = "govuk-heading-l")
 
- @heading(messages("btn.cya.p2"), classes = "govuk-heading-s", tier = "h2")
- @paragraph(messages("btn.cya.p3"))
+    @paragraph(messages("btn.cya.p1"))
 
- @govukButton(Button(
-  element = Some("button"),
-  content = Text(messages("site.confirm.submit")),
-  preventDoubleClick = Some(true),
-  attributes = Map("id" -> "submit"),
-  classes = "govuk-!-display-none-print")
- )
+    @govukSummaryList(list)
 
- }
+    @heading(messages("btn.cya.p2"), classes = "govuk-heading-s", tier = "h2")
+    @paragraph(messages("btn.cya.p3"))
+
+    @govukButton(Button(
+      element = Some("button"),
+      content = Text(messages("site.confirm.submit")),
+      preventDoubleClick = Some(true),
+      attributes = Map("id" -> "submit"),
+      classes = "govuk-!-display-none-print")
+    )
+  }
 }

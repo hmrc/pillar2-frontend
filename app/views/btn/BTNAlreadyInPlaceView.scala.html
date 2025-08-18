@@ -19,8 +19,8 @@
 
 @this(
         layout: templates.Layout,
-        p: paragraphBody,
         heading: heading,
+        p: paragraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         formHelper: FormWithCSRF
 )
@@ -32,6 +32,9 @@
 
             @p(messages("btn.alreadyInPlace.p1"))
 
-            @paragraphMessageWithLink(linkMessage = messages("btn.alreadyInPlace.link"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+            @paragraphMessageWithLink(
+              linkMessage = messages("btn.alreadyInPlace.link"),
+              linkUrl = controllers.routes.DashboardController.onPageLoad.url
+            )
   }
 }

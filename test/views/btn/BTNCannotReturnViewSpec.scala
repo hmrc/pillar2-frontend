@@ -18,29 +18,36 @@ package views.btn
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.btn.BTNCannotReturnView
 
 class BTNCannotReturnViewSpec extends ViewSpecBase {
 
-  val page: BTNCannotReturnView = inject[BTNCannotReturnView]
-  val view: Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val page:      BTNCannotReturnView = inject[BTNCannotReturnView]
+  lazy val view:      Document            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String              = "You have submitted a Below-Threshold Notification"
 
   "BTNCannotReturnView" should {
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+    }
 
     "have no back link" in {
       view.getElementsByClass("govuk-back-link").size mustBe 0
     }
 
-    "have a h1 heading" in {
-      view.getElementsByTag("h1").text mustEqual "You have submitted a Below-Threshold Notification"
-    }
+    "have a Return to Group Homepage link" in {
+      val link: Element = view.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
-    "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-
-      link.text must include("Return to your group’s homepage")
-      link.attr("href") mustEqual controllers.routes.DashboardController.onPageLoad.url
+      link.text mustBe "Return to your group’s homepage"
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
   }
 }

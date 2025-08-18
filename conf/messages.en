@@ -1758,7 +1758,7 @@ btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your 
 btn.entitiesInsideOutsideUK.amend.agent.p2 = If this has changed, you must amend the group details to update the location of the entities before submitting a BTN.
 btn.entitiesInsideOutsideUK.amend.link = Amend group details
 
-btn.cya.title = Check Your Answers
+btn.cya.title = Check your answers to submit your Below-Threshold Notification
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.
 btn.cya.p2 = Submit your Below-Threshold Notification
@@ -1779,7 +1779,7 @@ btn.error.heading = Sorry, there is a problem with the service
 btn.error.tryAgainLater.p1 = You can try again later when the service is available.
 btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
 
-btn.cannotReturn.heading = Submission successful
+btn.cannotReturn.heading = You have submitted a Below-Threshold Notification
 btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
 btn.cannotReturn.link = Return to your group’s homepage
 btn.waitingRoom.submitting = Submitting your notification
@@ -1787,7 +1787,6 @@ btn.waitingRoom.title = Submitting your Below-Threshold Notification
 btn.waitingRoom.dontLeave = Don’t leave this page
 btn.waitingRoom.redirect = You will be redirected automatically when the submission is complete.
 
-###############################################
 
 ###############################################
 #
