@@ -17,6 +17,7 @@
 @import config.FrontendAppConfig
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
+
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
@@ -29,9 +30,7 @@
 
 @(isAgent: Boolean, hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(
-    pageTitle    = titleNoForm(messages("btn.beforeStart.title"))
-) {
+@layout(pageTitle = titleNoForm(messages("btn.beforeStart.title"))) {
     @heading(messages("btn.beforeStart.header"), classes = "govuk-heading-l")
 
     @if(isAgent) {

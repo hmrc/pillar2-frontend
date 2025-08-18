@@ -25,11 +25,9 @@
     govukButton: GovukButton
 )
 
-
 @(form: Form[_], isAgent: Boolean, organisationName: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("btn.entitiesInsideOutsideUK.title.uk"))) {
-
     @formHelper(action = controllers.btn.routes.BTNEntitiesInUKOnlyController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
@@ -46,7 +44,6 @@
                 legend = LegendViewModel(messages("btn.entitiesInsideOutsideUK.heading.uk")).asPageHeading(Large)
             )
         )
-
 
         @govukButton(
             ButtonViewModel(messages("site.continue"))

@@ -30,39 +30,32 @@
 
 @layout(
     pageTitle = if(isAgent) {
-        messages("btn.entitiesInsideOutsideUK.amend.agent.title")
+      titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.agent.title"))
     } else {
-        messages("btn.entitiesInsideOutsideUK.amend.title")
+      titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.title"))
     }
 ) {
 
     @if(isAgent) {
         @heading(messages("btn.entitiesInsideOutsideUK.amend.agent.heading"), classes = "govuk-heading-l")
-    } else {
-        @heading(messages("btn.entitiesInsideOutsideUK.amend.heading"), classes = "govuk-heading-l")
-    }
-
-    @{
-        if(isAgent) {
-            if(mneOrDomestic == UkAndOther) {
-                p(messages("btn.entitiesInsideOutsideUK.amend.agent.p1.ukAndOther"))
-            } else {
-                p(messages("btn.entitiesInsideOutsideUK.amend.agent.p1.ukOnly"))
-            }
+        @if(mneOrDomestic == UkAndOther) {
+            @p(messages("btn.entitiesInsideOutsideUK.amend.agent.p1.ukAndOther"))
         } else {
-            if(mneOrDomestic == UkAndOther) {
-                p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther"))
-            } else {
-                p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly"))
-            }
+            @p(messages("btn.entitiesInsideOutsideUK.amend.agent.p1.ukOnly"))
         }
-    }
-
-    @if(isAgent) {
         @p(messages("btn.entitiesInsideOutsideUK.amend.agent.p2"))
     } else {
+        @heading(messages("btn.entitiesInsideOutsideUK.amend.heading"), classes = "govuk-heading-l")
+        @if(mneOrDomestic == UkAndOther) {
+            @p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukAndOther"))
+        } else {
+            @p(messages("btn.entitiesInsideOutsideUK.amend.p1.ukOnly"))
+        }
         @p(messages("btn.entitiesInsideOutsideUK.amend.p2"))
     }
 
-    @paragraphMessageWithLink(linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url)
+    @paragraphMessageWithLink(
+      linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"),
+      linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+    )
 }

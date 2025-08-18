@@ -22,14 +22,13 @@
 
 @this(
     layout: templates.Layout,
-    formHelper: FormWithCSRF,
+    heading: heading,
+    paragraphBody: paragraphBody,
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    heading: heading,
-    paragraphBody: paragraphBody
+    formHelper: FormWithCSRF
 )
-
 
 @(form: Form[Int], mode: Mode, isAgent: Boolean, organisationName: Option[String], accountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
