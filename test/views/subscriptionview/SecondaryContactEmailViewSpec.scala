@@ -42,14 +42,14 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-    }
-
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe s"What is the email address for $contactName?"
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a hint description" in {
@@ -60,7 +60,7 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
-    "show error when email field is left empty" in {
+    "show appropriate error when the email field is left empty" in {
       val errorView = Jsoup.parse(
         page(form.bind(Map("emailAddress" -> "")), NormalMode, contactName)(request, appConfig, messages).toString()
       )
@@ -88,7 +88,7 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase {
       fieldError.text mustBe "Error: Enter an email address in the correct format, like name@example.com"
     }
 
-    "show error when email is too long" in {
+    "show error when email is too long (over 132 characters)" in {
       val longEmail = "a" * 130 + "@email.com"
       val errorView = Jsoup.parse(
         page(form.bind(Map("emailAddress" -> longEmail)), NormalMode, contactName)(request, appConfig, messages).toString()
@@ -103,12 +103,5 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase {
       fieldError.text mustBe "Error: Email address must be 132 characters or less"
     }
 
-    "validate email field label" in {
-      view.getElementsByClass("govuk-label").text.contains(s"What is the email address for $contactName?") mustBe true
-    }
-
-    "validate hint text content" in {
-      view.getElementsByClass("govuk-hint").text.contains("only use this to contact you about Pillar 2 Top-up Taxes") mustBe true
-    }
   }
 }
