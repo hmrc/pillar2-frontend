@@ -19,37 +19,34 @@ package views.subscriptionview
 import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.select.Elements
-import views.html.subscriptionview.ContentView
+import views.html.subscriptionview.ContactCheckYourAnswersView
+import viewmodels.govuk.SummaryListFluency
+import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
-class ContactDetailsGuidanceViewSpec extends ViewSpecBase {
+class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SummaryListFluency {
 
-  lazy val page:      ContentView = inject[ContentView]
-  lazy val view:      Document    = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String      = "We need contact details for the filing member"
+  private val primaryContactList   = SummaryList(rows = Seq.empty)
+  private val secondaryContactList = SummaryList(rows = Seq.empty)
+  private val addressList          = SummaryList(rows = Seq.empty)
 
-  "ContentView" should {
+  lazy val page: ContactCheckYourAnswersView = inject[ContactCheckYourAnswersView]
+  lazy val view:      Document = Jsoup.parse(page(primaryContactList, secondaryContactList, addressList)(request, appConfig, messages).toString())
+  lazy val pageTitle: String   = "Check your answers"
+
+  "ContactCheckYourAnswersView" should {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
+      val h1Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-    }
-
-    "have the correct body content" in {
-      val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs
-        .get(0)
-        .text mustBe "We need the contact details for the filing member of this group so we can contact the right person or team when about compliance for Pillar 2 Top-up Taxes."
-      paragraphs.get(1).text mustBe "These may be different to any contact details you have already provided during this registration."
     }
 
     "have a continue button" in {
