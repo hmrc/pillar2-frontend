@@ -18,7 +18,7 @@ package views.errors
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.errors.RegistrationOrSubscriptionFailedView
 
@@ -48,7 +48,7 @@ class RegistrationOrSubscriptionFailedViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      val link = paragraphs.last().getElementsByTag("a")
+      val link: Element = paragraphs.last().getElementsByTag("a").first()
 
       link.text mustBe "Return to registration to try again"
       link.attr("href") mustBe controllers.routes.TaskListController.onPageLoad.url
