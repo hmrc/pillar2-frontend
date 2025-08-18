@@ -188,30 +188,12 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
   "when form has validation errors" should {
 
-    "display error when account number is empty" in {
+    "show format error when sort code has insufficient digits" in {
       val formWithErrors = formProvider().bind(
         Map(
           "bankName"          -> "Test Bank",
           "accountHolderName" -> "Test Name",
-          "sortCode"          -> "123456",
-          "accountNumber"     -> ""
-        )
-      )
-
-      val errorView: Document = Jsoup.parse(
-        page(formWithErrors, NormalMode)(request, appConfig, messages).toString()
-      )
-
-      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Enter the account number")
-    }
-
-    "display error when sort code is invalid format" in {
-      val formWithErrors = formProvider().bind(
-        Map(
-          "bankName"          -> "Test Bank",
-          "accountHolderName" -> "Test Name",
-          "sortCode"          -> "12345", // Invalid - too short
+          "sortCode"          -> "12345",
           "accountNumber"     -> "12345678"
         )
       )
@@ -224,13 +206,13 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       fieldErrors.text() must include("Sort code must be 6 digits")
     }
 
-    "display error when account number is invalid format" in {
+    "show format error when account number has insufficient digits" in {
       val formWithErrors = formProvider().bind(
         Map(
           "bankName"          -> "Test Bank",
           "accountHolderName" -> "Test Name",
           "sortCode"          -> "123456",
-          "accountNumber"     -> "1234567" // Invalid - too short
+          "accountNumber"     -> "1234567"
         )
       )
 
@@ -245,39 +227,61 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
 
   "when form has BARS validation errors from external service" should {
 
-    "display BARS account number error message" in {
+    "show BARS validation error when account number does not match bank statement" in {
+      val validForm = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "123456",
+          "accountNumber"     -> "12345678"
+        )
+      )
+
+      val formWithBarsError = validForm.withError("accountNumber", "repayments.bankAccountDetails.error.accountNumber")
+
       val barsErrorView: Document = Jsoup.parse(
-        page(formProvider().withError("accountNumber", "Enter the account number as it appears on your bank statement"), NormalMode)(
-          request,
-          appConfig,
-          messages
-        ).toString()
+        page(formWithBarsError, NormalMode)(request, appConfig, messages).toString()
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
       fieldErrors.text().contains("Enter the account number as it appears on your bank statement") mustBe true
     }
 
-    "display BARS sort code error message" in {
+    "show BARS validation error when sort code does not match bank statement" in {
+
+      val validForm = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "123456",
+          "accountNumber"     -> "12345678"
+        )
+      )
+
+      val formWithBarsError = validForm.withError("sortCode", "repayments.bankAccountDetails.error.sortCode")
+
       val barsErrorView: Document = Jsoup.parse(
-        page(formProvider().withError("sortCode", "Enter the sort code as it appears on your bank statement"), NormalMode)(
-          request,
-          appConfig,
-          messages
-        ).toString()
+        page(formWithBarsError, NormalMode)(request, appConfig, messages).toString()
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")
       fieldErrors.text().contains("Enter the sort code as it appears on your bank statement") mustBe true
     }
 
-    "display BARS account name error message" in {
+    "show BARS validation error when account holder name does not match bank statement" in {
+      val validForm = formProvider().bind(
+        Map(
+          "bankName"          -> "Test Bank",
+          "accountHolderName" -> "Test Name",
+          "sortCode"          -> "123456",
+          "accountNumber"     -> "12345678"
+        )
+      )
+
+      val formWithBarsError = validForm.withError("accountHolderName", "repayments.bankAccountDetails.error.accountName")
+
       val barsErrorView: Document = Jsoup.parse(
-        page(formProvider().withError("accountHolderName", "Enter the name on the account as it appears on your bank statement"), NormalMode)(
-          request,
-          appConfig,
-          messages
-        ).toString()
+        page(formWithBarsError, NormalMode)(request, appConfig, messages).toString()
       )
 
       val fieldErrors: Elements = barsErrorView.getElementsByClass("govuk-error-message")

@@ -42,9 +42,6 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
   val email        = "email@gmail.com"
   val telephone    = "1221312"
 
-  val acceptanceTestName      = "Contact Name Test"
-  val acceptanceTestEmail     = "testContact@email.com"
-  val acceptanceTestTelephone = "123456"
   "UseContact Primary Controller" when {
 
     "must return OK and the correct view if filing member is nominated and they are not uk-based with no phone whilst page previously not answered" in {
@@ -712,15 +709,15 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must display contact details rows with specific values" in {
+    "must show ultimate parent entity contact details when nominated filing member is false" in {
       val testDataWithSpecificValues: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(UpeContactNamePage, acceptanceTestName)
-        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+        .setOrException(UpeCapturePhonePage, telephone)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithSpecificValues))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -738,20 +735,20 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+          contactSummaryList(name, email, Some(telephone))
         )(request, applicationConfig, messages(application)).toString
       }
     }
 
-    "must display Saved contact heading on page" in {
+    "must show saved contact information heading when contact details exist" in {
       val testDataWithContactDetails: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(UpeContactNamePage, acceptanceTestName)
-        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+        .setOrException(UpeCapturePhonePage, telephone)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithContactDetails))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -769,20 +766,20 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+          contactSummaryList(name, email, Some(telephone))
         )(request, applicationConfig, messages(application)).toString
       }
     }
 
-    "must display answer No remain selected when previously answered" in {
+    "must retain No selection when user previously declined to use primary contact" in {
       val testDataWithPreviousAnswer: UserAnswers = emptyUserAnswers
         .setOrException(NominateFilingMemberPage, false)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
-        .setOrException(UpeContactNamePage, acceptanceTestName)
-        .setOrException(UpeContactEmailPage, acceptanceTestEmail)
+        .setOrException(UpeContactNamePage, name)
+        .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, acceptanceTestTelephone)
+        .setOrException(UpeCapturePhonePage, telephone)
         .setOrException(SubUsePrimaryContactPage, false)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithPreviousAnswer))
@@ -801,7 +798,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider().fill(false),
           NormalMode,
-          contactSummaryList(acceptanceTestName, acceptanceTestEmail, Some(acceptanceTestTelephone))
+          contactSummaryList(name, email, Some(telephone))
         )(request, applicationConfig, messages(application)).toString
       }
     }
