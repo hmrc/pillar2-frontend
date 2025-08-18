@@ -20,21 +20,20 @@ import forms.Validation.EMAIL_REGEX
 import forms.behaviours.StringFieldBehaviours
 import mapping.Constants
 import mapping.Constants.MAX_LENGTH_132
-import play.api.data.FormError
+import play.api.data.{Form, FormError}
 
 class UpeContactEmailFormProviderSpec extends StringFieldBehaviours {
 
-  val requiredKey = "upe-input-business-contact.email.error.required"
-  val lengthKey   = "upe-input-business-contact.email.error.length"
-  val invalidKey  = "upe-input-business-contact.email.error.invalid"
-  val contactName = "name"
-  val maxLength: Int = Constants.MAX_LENGTH_132
-  val validEmailAddress = "testteam@email.com"
-  val form              = new UpeContactEmailFormProvider()(contactName)
+  lazy val requiredKey:       String       = "upe-input-business-contact.email.error.required"
+  lazy val lengthKey:         String       = "upe-input-business-contact.email.error.length"
+  lazy val invalidKey:        String       = "upe-input-business-contact.email.error.invalid"
+  lazy val contactName:       String       = "name"
+  lazy val maxLength:         Int          = Constants.MAX_LENGTH_132
+  lazy val validEmailAddress: String       = "testteam@email.com"
+  lazy val form:              Form[String] = new UpeContactEmailFormProvider()(contactName)
+  lazy val fieldName:         String       = "emailAddress"
 
   ".emailAddress" - {
-
-    val fieldName = "emailAddress"
 
     behave like fieldWithMaxLength(
       form,

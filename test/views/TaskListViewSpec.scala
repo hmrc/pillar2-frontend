@@ -84,8 +84,8 @@ class TaskListViewSpec extends ViewSpecBase {
 
     "have a group details section" in {
       view.getElementsByClass("app-task-list__item").get(1)
-      val tasks    = view.getElementsByClass("app-task-list__task-name")
-      val statuses = view.getElementsByClass("hmrc-status-tag")
+      val tasks:    Elements = view.getElementsByClass("app-task-list__task-name")
+      val statuses: Elements = view.getElementsByClass("hmrc-status-tag")
 
       tasks.first.text mustBe "Edit Ultimate Parent Entity details"
       tasks.first.getElementsByTag("a").attr("href") mustBe controllers.registration.routes.StartPageRegistrationController.onPageLoad(CheckMode).url

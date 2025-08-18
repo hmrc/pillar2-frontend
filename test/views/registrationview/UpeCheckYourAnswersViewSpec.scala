@@ -85,33 +85,21 @@ class UpeCheckYourAnswersViewSpec extends ViewSpecBase {
       h1Elements.text mustBe pageTitle
     }
 
-    "have a summary list keys" in {
+    "have a summary list" in {
       view.getElementsByClass("govuk-summary-list__key").get(0).text mustBe "Name"
-      view.getElementsByClass("govuk-summary-list__key").get(1).text mustBe "Address"
-      view.getElementsByClass("govuk-summary-list__key").get(2).text mustBe "Contact name"
-      view.getElementsByClass("govuk-summary-list__key").get(3).text mustBe "Email address"
-      view.getElementsByClass("govuk-summary-list__key").get(4).text mustBe "Can we contact by phone?"
-      view.getElementsByClass("govuk-summary-list__key").get(5).text mustBe "Phone number"
-    }
-
-    "have a summary list items" in {
       view.getElementsByClass("govuk-summary-list__value").get(0).text mustBe "Test UPE"
-      view.getElementsByClass("govuk-summary-list__value").get(1).text mustBe "Address Line 1 UPE City UPE INVALID United Arab Emirates"
-      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe "Contact UPE"
-      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe "testcontactupe@email.com"
-      view.getElementsByClass("govuk-summary-list__value").get(4).text mustBe "Yes"
-      view.getElementsByClass("govuk-summary-list__value").get(5).text mustBe "1234569"
-    }
-
-    "have a summary list links" in {
       view.getElementsByClass("govuk-summary-list__actions").get(0).text mustBe "Change the name of the Ultimate Parent Entity"
       view.getElementsByClass("govuk-summary-list__actions").get(0).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.UpeNameRegistrationController.onPageLoad(CheckMode).url
 
+      view.getElementsByClass("govuk-summary-list__key").get(1).text mustBe "Address"
+      view.getElementsByClass("govuk-summary-list__value").get(1).text mustBe "Address Line 1 UPE City UPE INVALID United Arab Emirates"
       view.getElementsByClass("govuk-summary-list__actions").get(1).text mustBe "Change the registered office address of the Ultimate Parent Entity"
       view.getElementsByClass("govuk-summary-list__actions").get(1).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(CheckMode).url
 
+      view.getElementsByClass("govuk-summary-list__key").get(2).text mustBe "Contact name"
+      view.getElementsByClass("govuk-summary-list__value").get(2).text mustBe "Contact UPE"
       view
         .getElementsByClass("govuk-summary-list__actions")
         .get(2)
@@ -119,14 +107,20 @@ class UpeCheckYourAnswersViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-summary-list__actions").get(2).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.UpeContactNameController.onPageLoad(CheckMode).url
 
+      view.getElementsByClass("govuk-summary-list__key").get(3).text mustBe "Email address"
+      view.getElementsByClass("govuk-summary-list__value").get(3).text mustBe "testcontactupe@email.com"
       view.getElementsByClass("govuk-summary-list__actions").get(3).text mustBe "Change the email address for the Ultimate Parent Entity contact"
       view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.UpeContactEmailController.onPageLoad(CheckMode).url
 
+      view.getElementsByClass("govuk-summary-list__key").get(4).text mustBe "Can we contact by phone?"
+      view.getElementsByClass("govuk-summary-list__value").get(4).text mustBe "Yes"
       view.getElementsByClass("govuk-summary-list__actions").get(4).text mustBe "Change can we contact the Ultimate Parent Entity by phone"
       view.getElementsByClass("govuk-summary-list__actions").get(4).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(CheckMode).url
 
+      view.getElementsByClass("govuk-summary-list__key").get(5).text mustBe "Phone number"
+      view.getElementsByClass("govuk-summary-list__value").get(5).text mustBe "1234569"
       view.getElementsByClass("govuk-summary-list__actions").get(5).text mustBe "Change the phone number for the Ultimate Parent Entity contact"
       view.getElementsByClass("govuk-summary-list__actions").get(5).getElementsByTag("a").attr("href") mustBe
         controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode).url

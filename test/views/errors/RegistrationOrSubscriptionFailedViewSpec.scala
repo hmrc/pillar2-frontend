@@ -24,9 +24,10 @@ import views.html.errors.RegistrationOrSubscriptionFailedView
 
 class RegistrationOrSubscriptionFailedViewSpec extends ViewSpecBase {
 
-  lazy val page:      RegistrationOrSubscriptionFailedView = inject[RegistrationOrSubscriptionFailedView]
-  lazy val view:      Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                               = "Sorry, there is a problem with the service"
+  lazy val page:       RegistrationOrSubscriptionFailedView = inject[RegistrationOrSubscriptionFailedView]
+  lazy val view:       Document                             = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                               = "Sorry, there is a problem with the service"
+  lazy val paragraphs: Elements                             = view.getElementsByClass("govuk-body")
 
   "Agent Error View" should {
 
@@ -41,13 +42,13 @@ class RegistrationOrSubscriptionFailedViewSpec extends ViewSpecBase {
     }
 
     "have paragraph contents" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe "You must still register, please try again later."
-      view.getElementsByClass("govuk-body").get(1).text mustBe
+      paragraphs.get(0).text mustBe "You must still register, please try again later."
+      paragraphs.get(1).text mustBe
         "We have saved your answers and they will be available for 28 days. After that time you will need to enter all of the information again."
     }
 
     "have a link" in {
-      val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      val link = paragraphs.last().getElementsByTag("a")
 
       link.text mustBe "Return to registration to try again"
       link.attr("href") mustBe controllers.routes.TaskListController.onPageLoad.url

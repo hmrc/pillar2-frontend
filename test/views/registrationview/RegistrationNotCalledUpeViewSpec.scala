@@ -25,14 +25,15 @@ import views.html.registrationview.RegistrationNotCalledUpeView
 
 class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
 
-  lazy val page:      RegistrationNotCalledUpeView = inject[RegistrationNotCalledUpeView]
-  lazy val view:      Document                     = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                       = "Sorry, there is a problem with the service"
+  lazy val page:       RegistrationNotCalledUpeView = inject[RegistrationNotCalledUpeView]
+  lazy val view:       Document                     = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String                       = "Sorry, there is a problem with the service"
+  lazy val paragraphs: Elements                     = view.getElementsByClass("govuk-body")
 
   "Registration Not Called Upe View" should {
 
     "have a title" in {
-      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK" //TODO: Different title/H1 - raised ticket PIL-2374
+      view.title() mustBe "Register your group - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
@@ -42,16 +43,13 @@ class RegistrationNotCalledUpeViewSpec extends ViewSpecBase {
     }
 
     "have paragraph contents" in {
-      val paragraphs = view.getElementsByClass("govuk-body")
       paragraphs.get(0).text mustBe "Try again later."
       paragraphs.get(1).text mustBe "Your company details could not be confirmed."
     }
 
     "have a paragraph with a link" in {
-      val paragraph = view.getElementsByClass("govuk-body").get(2)
-
-      paragraph.getElementsByTag("a").text mustBe "Go back to select the entity type to try again."
-      paragraph.getElementsByTag("a").attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
+      paragraphs.get(2).getElementsByTag("a").text mustBe "Go back to select the entity type to try again."
+      paragraphs.get(2).getElementsByTag("a").attr("href") mustBe controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url
     }
 
   }

@@ -21,11 +21,11 @@ import play.api.data.FormError
 
 class RfmNameRegistrationFormProviderSpec extends StringFieldBehaviours {
 
-  val REQUIRED_KEY = "rfm.nameRegistration.error.required"
-  val LENGTH_KEY   = "rfm.nameRegistration.error.length"
-  val MAX_LENGTH   = 105
-  val XSS_KEY      = "name.error.xss.allowAmpersand"
-  val XSS_REGEX    = """^[^<>"]*$"""
+  lazy val REQUIRED_KEY: String = "rfm.nameRegistration.error.required"
+  lazy val LENGTH_KEY:   String = "rfm.nameRegistration.error.length"
+  lazy val MAX_LENGTH:   Int    = 105
+  lazy val XSS_KEY:      String = "name.error.xss.allowAmpersand"
+  lazy val XSS_REGEX:    String = """^[^<>"]*$"""
 
   val form = new RfmNameRegistrationFormProvider()()
 

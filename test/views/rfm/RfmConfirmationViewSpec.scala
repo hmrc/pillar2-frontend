@@ -29,6 +29,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
   lazy val testDateTime:  String              = HtmlFormat.escape(ViewHelpers.getDateTimeGMT).toString
   lazy val page:          RfmConfirmationView = inject[RfmConfirmationView]
   lazy val pageTitle:     String              = "Replace filing member successful"
+  lazy val paragraphs:    Elements            = view.getElementsByClass("govuk-body")
 
   lazy val view: Document =
     Jsoup.parse(page(testPillar2ID, testDateTime)(request, appConfig, messages).toString())
@@ -46,9 +47,8 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 ID and date time confirmation paragraphs" in {
-      val paragraphText = view.getElementsByClass("govuk-body")
-      paragraphText.get(0).text mustEqual s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
-      paragraphText.get(1).text mustEqual s"Your group’s filing member was replaced on $testDateTime"
+      paragraphs.get(0).text mustEqual s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
+      paragraphs.get(1).text mustEqual s"Your group’s filing member was replaced on $testDateTime"
     }
 
     "have an H2 heading for new filing member obligations" in {
@@ -64,7 +64,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have paragraph for filing member obligations warning" in {
-      view.getElementsByClass("govuk-body").get(3).text mustBe
+      paragraphs.get(3).text mustBe
         "If you fail to meet your obligations as a filing member, you may be liable for penalties."
     }
 
@@ -73,9 +73,8 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph with link" in {
-      val paragraph = view.getElementsByClass("govuk-body").get(4)
-      paragraph.text mustBe "You can now report and manage your group's Pillar 2 Top-up Taxes on behalf of your group."
-      val link = paragraph.getElementsByTag("a")
+      paragraphs.get(4).text mustBe "You can now report and manage your group's Pillar 2 Top-up Taxes on behalf of your group."
+      val link = paragraphs.get(4).getElementsByTag("a")
       link.text mustBe "report and manage your group's Pillar 2 Top-up Taxes"
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }

@@ -95,6 +95,12 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorsList.get(0).text() mustBe "Enter name of the person or team we should contact"
     }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Enter name of the person or team we should contact"
+    }
   }
 
   "when form is submitted with values exceeding maximum length" should {
@@ -122,7 +128,13 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorsList
         .get(0)
-        .text() mustBe "Name of the contact person or team should be 105 characters or less" //TODO: Raised ticket (PIL-2373) to query whether max length should be 160 or 105 characters
+        .text() mustBe "Name of the contact person or team should be 105 characters or less"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Name of the contact person or team should be 105 characters or less"
     }
   }
 
@@ -145,6 +157,12 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
       errorsList.get(0).text() mustBe "The name you enter must not include the following characters <, >, \" or &"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
     }
   }
 }

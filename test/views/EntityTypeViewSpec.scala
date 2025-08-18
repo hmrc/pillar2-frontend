@@ -48,16 +48,15 @@ class EntityTypeViewSpec extends ViewSpecBase {
     }
 
     "have radio buttons with hint text" in {
-      val radioButtonSection: Element = view.getElementsByClass("govuk-radios").first
-      val radioButtons = radioButtonSection.getElementsByClass("govuk-label govuk-radios__label")
-
+      val radioButtonSection: Element  = view.getElementsByClass("govuk-radios").first
+      val radioButtons:       Elements = radioButtonSection.getElementsByClass("govuk-radios__item")
       radioButtons.size() mustBe 3
-      radioButtons.get(0).text mustBe "UK limited company"
-      radioButtonSection.getElementById("value_0-item-hint").text mustBe "This includes public limited companies."
+      radioButtons.get(0).getElementsByClass("govuk-label").text mustBe "UK limited company"
+      radioButtons.get(0).getElementsByClass("govuk-hint").text mustBe "This includes public limited companies."
       radioButtons.get(1).text mustBe "Limited liability partnership"
       radioButtonSection.getElementsByClass("govuk-radios__divider").text mustBe "or"
-      radioButtons.get(2).text mustBe "Entity type not listed"
-      radioButtonSection.getElementById("value_2-item-hint").text mustBe "Select to create a HMRC record."
+      radioButtons.get(2).getElementsByClass("govuk-label").text mustBe "Entity type not listed"
+      radioButtons.get(2).getElementsByClass("govuk-hint").text mustBe "Select to create a HMRC record."
     }
 
     "have a button" in {
@@ -87,6 +86,12 @@ class EntityTypeViewSpec extends ViewSpecBase {
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
       errorsList.get(0).text() mustBe "Select the entity type of the ultimate parent"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Select the entity type of the ultimate parent"
     }
   }
 }

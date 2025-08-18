@@ -95,5 +95,11 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
 
       errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by phone"
     }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Select yes if we can contact John Doe by phone"
+    }
   }
 }

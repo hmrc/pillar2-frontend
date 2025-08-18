@@ -142,15 +142,9 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         h2Elements.get(1).text mustBe "Filing member details"
       }
 
-      "have a summary list key" in {
+      "have a summary list" in {
         summaryListKeys.get(0).text mustBe "Position in the group’s corporate structure"
-      }
-
-      "have a summary list item" in {
         summaryListItems.get(0).text mustBe "Ultimate Parent Entity (UPE)"
-      }
-
-      "have a summary list links" in {
         summaryListLinks.get(0).text mustBe "Change the position in the group’s corporate structure"
         summaryListLinks.get(0).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.CorporatePositionController.onPageLoad(CheckMode).url
@@ -162,27 +156,23 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         h2Elements.get(2).text mustBe "Primary contact"
       }
 
-      "have a summary list key" in {
+      "have a summary list" in {
         summaryListKeys.get(1).text mustBe "Contact name"
-        summaryListKeys.get(2).text mustBe "Email address"
-        summaryListKeys.get(3).text mustBe "Can we contact the primary contact by phone?"
-      }
-
-      "have a summary list item" in {
         summaryListItems.get(1).text mustBe "RFM test contact"
-        summaryListItems.get(2).text mustBe "rfm@email.com"
-        summaryListItems.get(3).text mustBe "No"
-      }
-
-      "have a summary list links" in {
         summaryListLinks.get(1).text mustBe "Change the primary contact name"
         summaryListLinks.get(1).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmPrimaryContactNameController
           .onPageLoad(CheckMode)
           .url
+
+        summaryListKeys.get(2).text mustBe "Email address"
+        summaryListItems.get(2).text mustBe "rfm@email.com"
         summaryListLinks.get(2).text mustBe "Change the primary contact email address"
         summaryListLinks.get(2).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmPrimaryContactEmailController
           .onPageLoad(CheckMode)
           .url
+
+        summaryListKeys.get(3).text mustBe "Can we contact the primary contact by phone?"
+        summaryListItems.get(3).text mustBe "No"
         summaryListLinks.get(3).text mustBe "Change can we contact the primary contact by phone"
         summaryListLinks.get(3).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmContactByTelephoneController
           .onPageLoad(CheckMode)
@@ -195,15 +185,9 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         h2Elements.get(3).text mustBe "Secondary contact"
       }
 
-      "have a summary list key" in {
+      "have a summary list" in {
         summaryListKeys.get(4).text mustBe "Do you have a secondary contact?"
-      }
-
-      "have a summary list item" in {
         summaryListItems.get(4).text mustBe "No"
-      }
-
-      "have a summary list links" in {
         summaryListLinks.get(4).text mustBe "Change do you have a secondary contact"
         summaryListLinks.get(4).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(CheckMode).url
@@ -215,15 +199,9 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         h2Elements.get(4).text mustBe "Contact address"
       }
 
-      "have a summary list key" in {
+      "have a summary list" in {
         summaryListKeys.get(5).text mustBe "Address"
-      }
-
-      "have a summary list item" in {
         summaryListItems.get(5).text mustBe "RFM Address Line 1 RFM City EH5 5WY United Kingdom"
-      }
-
-      "have a summary list links" in {
         summaryListLinks.get(5).text mustBe "Change the contact address"
         summaryListLinks.get(5).getElementsByTag("a").attr("href") mustBe
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(CheckMode).url

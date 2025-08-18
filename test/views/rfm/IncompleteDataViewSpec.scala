@@ -39,7 +39,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
     }
 
     "have a non-clickable banner" in {
-      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      val serviceName: Element = view.getElementsByClass("govuk-header__service-name").first()
       serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
       serviceName.getElementsByTag("a") mustBe empty
     }

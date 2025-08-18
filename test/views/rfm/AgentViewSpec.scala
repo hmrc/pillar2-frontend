@@ -24,9 +24,10 @@ import views.html.rfm.AgentView
 
 class AgentViewSpec extends ViewSpecBase {
 
-  lazy val page:      AgentView = inject[AgentView]
-  lazy val view:      Document  = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String    = "Sorry, you’re unable to use this service"
+  lazy val page:       AgentView = inject[AgentView]
+  lazy val view:       Document  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String    = "Sorry, you’re unable to use this service"
+  lazy val paragraphs: Elements  = view.getElementsByClass("govuk-body")
 
   "Agent View" should {
 
@@ -41,7 +42,6 @@ class AgentViewSpec extends ViewSpecBase {
     }
 
     "have paragraph contents" in {
-      val paragraphs: Elements = view.getElementsByClass("govuk-body")
       paragraphs.get(0).text mustBe "You’ve signed in using an agent’s Government Gateway user ID."
       paragraphs.get(1).text mustBe "Agents cannot use this service to replace a nominated filing member."
       paragraphs.get(2).text mustBe
@@ -49,7 +49,7 @@ class AgentViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      val links: Elements = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+      val links: Elements = paragraphs.last().getElementsByTag("a")
       links.text mustBe "Find out more about who can use this service"
       links.attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
     }

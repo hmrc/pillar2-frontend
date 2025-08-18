@@ -46,11 +46,11 @@ class ErrorTemplateSpec extends ViewSpecBase {
     }
 
     "have a paragraph with a link" in {
-      val paragraphText: Element = view.getElementsByClass("govuk-body").get(1)
+      val paragraph: Element = view.getElementsByClass("govuk-body").get(1)
 
-      paragraphText.text mustBe "You must return to your Pillar 2 Top-up Taxes registration and complete the required tasks."
-      paragraphText.getElementsByTag("a").text() mustBe "return to your Pillar 2 Top-up Taxes registration"
-      paragraphText.getElementsByTag("a").attr("href") mustBe
+      paragraph.text mustBe "You must return to your Pillar 2 Top-up Taxes registration and complete the required tasks."
+      paragraph.getElementsByTag("a").text() mustBe "return to your Pillar 2 Top-up Taxes registration"
+      paragraph.getElementsByTag("a").attr("href") mustBe
         controllers.routes.TaskListController.onPageLoad.url
     }
 

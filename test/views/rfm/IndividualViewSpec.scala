@@ -24,9 +24,10 @@ import views.html.rfm.IndividualView
 
 class IndividualViewSpec extends ViewSpecBase {
 
-  lazy val page:      IndividualView = inject[IndividualView]
-  lazy val view:      Document       = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String         = "Sorry, you’re unable to use this service"
+  lazy val page:       IndividualView = inject[IndividualView]
+  lazy val view:       Document       = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle:  String         = "Sorry, you’re unable to use this service"
+  lazy val paragraphs: Elements       = view.getElementsByClass("govuk-body")
 
   "Individual View" should {
 
@@ -41,14 +42,13 @@ class IndividualViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe
+      paragraphs.get(0).text mustBe
         "You’ve signed in with an individual account. Only users with an organisation account can replace their nominated filing member."
     }
 
     "have a paragraph with link" in {
-      val paragraph = view.getElementsByClass("govuk-body").get(1)
-      paragraph.text mustBe "If you need to replace a nominated filing member, sign in to Government Gateway with an organisation account."
-      val paragraphLink = paragraph.select("a")
+      paragraphs.get(1).text mustBe "If you need to replace a nominated filing member, sign in to Government Gateway with an organisation account."
+      val paragraphLink = paragraphs.get(1).select("a")
       paragraphLink.text mustBe "sign in to Government Gateway with an organisation account"
       paragraphLink.attr("href") mustBe s"${appConfig.loginUrl}" + "?continue=" + s"${appConfig.rfmLoginContinueUrl}"
     }
