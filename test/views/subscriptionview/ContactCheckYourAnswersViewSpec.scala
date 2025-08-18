@@ -17,40 +17,131 @@
 package views.subscriptionview
 
 import base.ViewSpecBase
+import helpers.SubscriptionLocalDataFixture
+import models.requests.SubscriptionDataRequest
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+import play.api.mvc.AnyContent
+import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.ContactCheckYourAnswersView
-import viewmodels.govuk.SummaryListFluency
-import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 
-class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SummaryListFluency {
-
-  private val primaryContactList   = SummaryList(rows = Seq.empty)
-  private val secondaryContactList = SummaryList(rows = Seq.empty)
-  private val addressList          = SummaryList(rows = Seq.empty)
+class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
   lazy val page: ContactCheckYourAnswersView = inject[ContactCheckYourAnswersView]
-  lazy val view:      Document = Jsoup.parse(page(primaryContactList, secondaryContactList, addressList)(request, appConfig, messages).toString())
-  lazy val pageTitle: String   = "Check your answers"
 
-  "ContactCheckYourAnswersView" should {
+  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+    SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
+
+  lazy val view: Document = Jsoup.parse(
+    page(
+      subscriptionDataPrimaryContactList(),
+      subscriptionDataSecondaryContactList(),
+      subscriptionDataAddress(inject[CountryOptions])
+    )(
+      subscriptionDataRequest,
+      appConfig,
+      messages
+    ).toString()
+  )
+
+  lazy val contactNameLabel:          String = "Contact name"
+  lazy val contactNameValue:          String = "John"
+  lazy val emailAddressLabel:         String = "Email address"
+  lazy val emailAddressValue:         String = "john@email.com"
+  lazy val contactByPhoneLabel:       String = "Can we contact the primary contact by phone?"
+  lazy val contactByPhoneValue:       String = "Yes"
+  lazy val contactPhoneLabel:         String = "Primary phone number"
+  lazy val contactPhoneValue:         String = "123"
+  lazy val secondContactLabel:        String = "Do you have a second contact?"
+  lazy val secondContactValue:        String = "Yes"
+  lazy val secondContactNameLabel:    String = "Second contact name"
+  lazy val secondContactNameValue:    String = "Doe"
+  lazy val secondEmailAddressLabel:   String = "Second contact email address"
+  lazy val secondEmailAddressValue:   String = "doe@email.com"
+  lazy val secondContactByPhoneLabel: String = "Can we contact the secondary contact by phone?"
+  lazy val secondContactByPhoneValue: String = "Yes"
+  lazy val secondContactPhoneLabel:   String = "Second contact phone number"
+  lazy val secondContactPhoneValue:   String = "123"
+  lazy val addressLabel:              String = "Address"
+  lazy val addressValue:              String = "line1 line United Kingdom"
+
+  lazy val pageTitle: String = "Check your answers for contact details"
+
+  "Contact Check Your Answers View" should {
+
+    val summaryListKeys:    Elements = view.getElementsByClass("govuk-summary-list__key")
+    val summaryListItems:   Elements = view.getElementsByClass("govuk-summary-list__value")
+    val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements = view.getElementsByTag("h1")
+      val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+    "display contact details as below in summary list" in {
+      summaryListKeys.get(0).text() mustBe contactNameLabel
+      summaryListItems.get(0).text() mustBe contactNameValue
+      summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+
+      summaryListKeys.get(1).text() mustBe emailAddressLabel
+      summaryListItems.get(1).text() mustBe emailAddressValue
+      summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+
+      summaryListKeys.get(2).text() mustBe contactByPhoneLabel
+      summaryListItems.get(2).text() mustBe contactByPhoneValue
+      summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+
+      summaryListKeys.get(3).text() mustBe contactPhoneLabel
+      summaryListItems.get(3).text() mustBe contactPhoneValue
+      summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+    }
+
+    "display secondary contact details as below in summary list" in {
+      summaryListKeys.get(4).text() mustBe secondContactLabel
+      summaryListItems.get(4).text() mustBe secondContactValue
+      summaryListActions.get(4).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
+
+      summaryListKeys.get(5).text() mustBe secondContactNameLabel
+      summaryListItems.get(5).text() mustBe secondContactNameValue
+      summaryListActions.get(5).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+
+      summaryListKeys.get(6).text() mustBe secondEmailAddressLabel
+      summaryListItems.get(6).text() mustBe secondEmailAddressValue
+      summaryListActions.get(6).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+
+      summaryListKeys.get(7).text() mustBe secondContactByPhoneLabel
+      summaryListItems.get(7).text() mustBe secondContactByPhoneValue
+      summaryListActions.get(7).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+
+      summaryListKeys.get(8).text() mustBe secondContactPhoneLabel
+      summaryListItems.get(8).text() mustBe secondContactPhoneValue
+      summaryListActions.get(8).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
+
+      summaryListKeys.get(9).text() mustBe addressLabel
+      summaryListItems.get(9).text() must include(addressValue)
+      summaryListActions.get(9).getElementsByClass("govuk-link").attr("href") mustBe
+        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
+
   }
 }
