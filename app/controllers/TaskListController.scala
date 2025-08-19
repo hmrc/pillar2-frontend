@@ -57,7 +57,7 @@ class TaskListController @Inject() (
     sessionRepository.get(request.userId).flatMap { optionalUA =>
       optionalUA.map(UserAnswers => UserAnswers.get(PlrReferencePage).isDefined) match {
 
-        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case Some(true) => Future.successful(Redirect(routes.DashboardController.onPageLoad))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
             logger.info("Remove existing amend data from local database if exist")
