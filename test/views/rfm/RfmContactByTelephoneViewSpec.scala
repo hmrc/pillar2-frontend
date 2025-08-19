@@ -20,8 +20,11 @@ import base.ViewSpecBase
 import forms.RfmContactByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.RfmContactByTelephoneView
 
 class RfmContactByTelephoneViewSpec extends ViewSpecBase {
@@ -29,7 +32,9 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   lazy val formProvider = new RfmContactByTelephoneFormProvider
   lazy val page:     RfmContactByTelephoneView = inject[RfmContactByTelephoneView]
   lazy val username: String                    = "John Doe"
-  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url).withCSRFToken
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(rfmRequest, appConfig, messages).toString())
   lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Contact By Telephone View" should {
@@ -37,6 +42,12 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
     "have a title" in {
       view.getElementsByTag("title").text must include("Can we contact by phone?")
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a caption" in {
@@ -57,6 +68,38 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
 
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    }
+  }
+
+  "when form is submitted with a missing value" should {
+    val errorView: Document = Jsoup.parse(
+      page(
+        formProvider(username).bind(
+          Map(
+            "value" -> ""
+          )
+        ),
+        NormalMode,
+        username
+      )(request, appConfig, messages).toString()
+    )
+
+    "show missing values error summary" in {
+      val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+      errorSummaryElements.size() mustBe 1
+
+      val errorSummary: Element  = errorSummaryElements.first()
+      val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+      errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+      errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by phone"
+    }
+
+    "show field-specific errors" in {
+      val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+      fieldErrors.get(0).text() mustBe "Error: Select yes if we can contact John Doe by phone"
     }
   }
 }

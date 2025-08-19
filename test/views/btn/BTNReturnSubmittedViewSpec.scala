@@ -22,7 +22,8 @@ import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Submission}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
+import org.jsoup.select.Elements
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.format.DateTimeFormatter
@@ -30,98 +31,98 @@ import java.time.{LocalDate, ZonedDateTime}
 
 class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
-  val accountingPeriodStartDate: LocalDate = LocalDate.now().minusYears(1)
-  val accountingPeriodEndDate:   LocalDate = LocalDate.now()
+  lazy val page:                      BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
+  lazy val accountingPeriodStartDate: LocalDate              = LocalDate.now().minusYears(1)
+  lazy val accountingPeriodEndDate:   LocalDate              = LocalDate.now()
+  lazy val accountingPeriodDueDate:   LocalDate              = LocalDate.now().plusYears(1)
+  lazy val formattedStartDate:        String                 = accountingPeriodStartDate.format(dateFormatter)
+  lazy val formattedEndDate:          String                 = accountingPeriodEndDate.format(dateFormatter)
+  lazy val dateFormatter:             DateTimeFormatter      = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  lazy val pageTitle:      String = s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
+  lazy val agentPageTitle: String = s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
 
-  val accountingPeriodDetails: AccountingPeriodDetails = AccountingPeriodDetails(
+  lazy val accountingPeriodDetails: AccountingPeriodDetails = AccountingPeriodDetails(
     accountingPeriodStartDate,
     accountingPeriodEndDate,
-    LocalDate.now().plusYears(1),
+    accountingPeriodDueDate,
     underEnquiry = false,
     Seq(Obligation(UKTR, Fulfilled, canAmend = true, Seq(Submission(UKTR_CREATE, ZonedDateTime.now(), None))))
   )
 
-  val formattedStartDate: String = accountingPeriodStartDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-  val formattedEndDate:   String = accountingPeriodEndDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-
-  val page: BTNReturnSubmittedView = inject[BTNReturnSubmittedView]
   def view(isAgent: Boolean = false): Document = Jsoup.parse(page(isAgent, accountingPeriodDetails)(request, appConfig, messages).toString())
 
   "BTNAccountingPeriodView" when {
     "it's an organisation" should {
       "have a title" in {
-        view().getElementsByTag("title").text must include(
-          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        view().getElementsByTag("h1").text must include(
-          s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        val h1Elements: Elements = view().getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe pageTitle
       }
 
       "have a paragraph" in {
-        view().getElementsByClass("govuk-body").text must include(
+        view().getElementsByClass("govuk-body").get(0).text mustBe
           "By continuing, your UK Tax Return will be replaced for this period."
-        )
       }
 
       "have an inset text" in {
-        view().getElementsByClass("govuk-inset-text").text must include(
+        view().getElementsByClass("govuk-inset-text").text mustBe
           "If you need to submit a UK Tax Return for this accounting period you do not qualify for a Below-Threshold Notification."
-        )
       }
 
-      "have a button" in {
-        view().getElementsByClass("govuk-button").text must include("Continue")
+      "have a 'Continue' button" in {
+        val continueButton: Element = view().getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
 
-      "have a link" in {
-        val link = view().getElementsByClass("govuk-body").last().getElementsByTag("a")
-        link.text must include("Return to homepage")
-        link.attr("href") must include(
-          controllers.routes.DashboardController.onPageLoad.url
-        )
+      "have a Return to Homepage link" in {
+        val link: Element = view().getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+        link.text mustBe "Return to homepage"
+        link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
 
     }
 
     "it's an agent" should {
       "have a title" in {
-        view(isAgent = true).getElementsByTag("title").text must include(
-          s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        view(isAgent = true).title() mustBe s"$agentPageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a h1 heading" in {
-        view(isAgent = true).getElementsByTag("h1").text must include(
-          s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
-        )
+        val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe agentPageTitle
       }
 
       "have a paragraph" in {
-        view(isAgent = true).getElementsByClass("govuk-body").text must include(
+        view(isAgent = true).getElementsByClass("govuk-body").get(0).text mustBe
           "By continuing, the group’s UK Tax Return will be replaced for this period."
-        )
       }
 
       "have an inset text" in {
-        view(isAgent = true).getElementsByClass("govuk-inset-text").text must include(
+        view(isAgent = true).getElementsByClass("govuk-inset-text").text mustBe
           "If the group needs to submit a UK Tax Return for this accounting period they do not qualify for a Below-Threshold Notification."
-        )
       }
 
-      "have a button" in {
-        view(isAgent = true).getElementsByClass("govuk-button").text must include("Continue")
+      "have a 'Continue' button" in {
+        val continueButton: Element = view(isAgent = true).getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
 
-      "have a link" in {
-        val link = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a")
-        link.text must include("Return to homepage")
-        link.attr("href") must include(
-          controllers.routes.DashboardController.onPageLoad.url
-        )
+      "have a Return to Homepage link" in {
+        val link: Element = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a").first()
+
+        link.text mustBe "Return to homepage"
+        link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+        link.attr("target") mustBe "_self"
+        link.attr("rel") mustNot be("noopener noreferrer")
       }
     }
   }
