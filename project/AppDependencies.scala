@@ -1,18 +1,18 @@
 import sbt.*
 
 object AppDependencies {
-  val bootstrapVersion                      = "9.18.0"
+  val bootstrapVersion                      = "9.19.0"
   val catsCoreVersion                       = "2.13.0"
-  val commonsIoVersion                      = "2.19.0"
+  val commonsIoVersion                      = "2.20.0"
   val enumeratumPlayJsonVersion             = "1.9.0"
   val fopVersion                            = "2.11"
   val jsoupVersion                          = "1.21.1"
   val mockitoVersion                        = "3.2.18.0"
-  val mockitoScalaVersion                   = "1.17.45"
+  val mockitoScalaVersion                   = "2.0.0"
   val mongoVersion                          = "2.7.0"
   val pdfBoxVersion                         = "3.0.5"
   val playConditionalFormMappingPlayVersion = "3.3.0"
-  val playFrontendHmrcPlayVersion           = "12.6.0"
+  val playFrontendHmrcPlayVersion           = "12.8.0"
   val randomDataGeneratorVersion            = "2.9"
   val scalacheckGenRegexpVersion            = "1.1.0"
   val scalatestplusScalacheckVersion        = "3.1.0.0-RC2"
