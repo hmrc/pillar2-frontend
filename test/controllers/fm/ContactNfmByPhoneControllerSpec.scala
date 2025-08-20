@@ -18,7 +18,7 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactNfmByTelephoneFormProvider
+import forms.ContactNfmByPhoneFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,15 +27,15 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmview.ContactNfmByTelephoneView
+import views.html.fmview.ContactNfmByPhoneView
 
 import scala.concurrent.Future
 
 class ContactNfmByPhoneControllerSpec extends SpecBase {
 
-  val formProvider = new ContactNfmByTelephoneFormProvider()
+  val formProvider = new ContactNfmByPhoneFormProvider()
 
-  "ContactNfmByTelephone Controller" when {
+  "ContactNfmByPhone Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -49,7 +49,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactNfmByTelephoneView]
+        val view = application.injector.instanceOf[ContactNfmByPhoneView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("TestName"), NormalMode, "TestName")(
@@ -74,7 +74,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactNfmByTelephoneView]
+        val view = application.injector.instanceOf[ContactNfmByPhoneView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("TestName").fill(true), NormalMode, "TestName")(

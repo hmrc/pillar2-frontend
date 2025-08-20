@@ -24,15 +24,15 @@ import pages._
 import queries.Query
 
 final case class RepaymentJourneyModel(
-  refundAmount:               BigDecimal,
-  reasonForRequestingRefund:  String,
-  ukOrAbroadBankAccount:      UkOrAbroadBankAccount,
-  bankAccountDetails:         Option[BankAccountDetails],
-  nonUKBank:                  Option[NonUKBank],
-  repaymentsContactName:      String,
-  repaymentsContactEmail:     String,
-  repaymentsContactByPhone:   Boolean,
-  repaymentsTelephoneDetails: Option[String]
+  refundAmount:              BigDecimal,
+  reasonForRequestingRefund: String,
+  ukOrAbroadBankAccount:     UkOrAbroadBankAccount,
+  bankAccountDetails:        Option[BankAccountDetails],
+  nonUKBank:                 Option[NonUKBank],
+  repaymentsContactName:     String,
+  repaymentsContactEmail:    String,
+  repaymentsContactByPhone:  Boolean,
+  repaymentsPhoneDetails:    Option[String]
 )
 
 object RepaymentJourneyModel {
@@ -46,8 +46,8 @@ object RepaymentJourneyModel {
       getNonUkBankAccountDetails(answers),
       answers.getEither(RepaymentsContactNamePage),
       answers.getEither(RepaymentsContactEmailPage),
-      answers.getEither(RepaymentsContactByTelephonePage),
-      getContactTelephone(answers)
+      answers.getEither(RepaymentsContactByPhonePage),
+      getContactPhone(answers)
     ).parMapN {
       (
         refundAmount,
@@ -57,8 +57,8 @@ object RepaymentJourneyModel {
         nonUkBankAccountDetails,
         contactName,
         contactEmail,
-        contactByTelephone,
-        contactTelephone
+        contactByPhone,
+        contactPhone
       ) =>
         RepaymentJourneyModel(
           refundAmount,
@@ -68,8 +68,8 @@ object RepaymentJourneyModel {
           nonUkBankAccountDetails,
           contactName,
           contactEmail,
-          contactByTelephone,
-          contactTelephone
+          contactByPhone,
+          contactPhone
         )
     }
 
@@ -85,9 +85,9 @@ object RepaymentJourneyModel {
       case _                  => Right(None)
     }
 
-  private def getContactTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(RepaymentsContactByTelephonePage).flatMap {
-      case true  => answers.getEither(RepaymentsTelephoneDetailsPage).map(Some(_))
+  private def getContactPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
+    answers.getEither(RepaymentsContactByPhonePage).flatMap {
+      case true  => answers.getEither(RepaymentsPhoneDetailsPage).map(Some(_))
       case false => Right(None)
     }
 

@@ -103,7 +103,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(NonUKBankPage, models.repayments.NonUKBank("HSBC2", "Test Name2", Some("HBUKGB4C"), Some("GB29NWBK60161331926820")))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name change")
           .setOrException(RepaymentsContactEmailPage, "email@change.com")
-          .setOrException(RepaymentsContactByTelephonePage, false)
+          .setOrException(RepaymentsContactByPhonePage, false)
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(
@@ -139,8 +139,8 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611"))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
           .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-          .setOrException(RepaymentsContactByTelephonePage, true)
-          .setOrException(RepaymentsTelephoneDetailsPage, "789765423")
+          .setOrException(RepaymentsContactByPhonePage, true)
+          .setOrException(RepaymentsPhoneDetailsPage, "789765423")
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(
@@ -173,7 +173,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611"))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
           .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-          .setOrException(RepaymentsContactByTelephonePage, false)
+          .setOrException(RepaymentsContactByPhonePage, false)
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -200,7 +200,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611"))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
           .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-          .setOrException(RepaymentsContactByTelephonePage, false)
+          .setOrException(RepaymentsContactByPhonePage, false)
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -227,7 +227,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(NonUKBankPage, models.repayments.NonUKBank("HSBC", "Test Name", Some("HBUKGB4C"), Some("GB29NWBK60161331926820")))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
           .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-          .setOrException(RepaymentsContactByTelephonePage, false)
+          .setOrException(RepaymentsContactByPhonePage, false)
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -254,7 +254,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           .setOrException(NonUKBankPage, models.repayments.NonUKBank("HSBC", "Test Name", Some("HBUKGB4C"), Some("GB29NWBK60161331926820")))
           .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
           .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-          .setOrException(RepaymentsContactByTelephonePage, false)
+          .setOrException(RepaymentsContactByPhonePage, false)
 
         val application = applicationBuilder(userAnswers = Some(completeData))
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -281,7 +281,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
         .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
         .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-        .setOrException(RepaymentsContactByTelephonePage, false)
+        .setOrException(RepaymentsContactByPhonePage, false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -306,7 +306,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
         .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
         .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-        .setOrException(RepaymentsContactByTelephonePage, false)
+        .setOrException(RepaymentsContactByPhonePage, false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -331,7 +331,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .setOrException(BankAccountDetailsPage, models.repayments.BankAccountDetails("Natwest", "O'Connor Construction", "609593", "96863604"))
         .setOrException(RepaymentsContactNamePage, "Repayment Contact Name")
         .setOrException(RepaymentsContactEmailPage, "repayment@email.com")
-        .setOrException(RepaymentsContactByTelephonePage, false)
+        .setOrException(RepaymentsContactByPhonePage, false)
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))

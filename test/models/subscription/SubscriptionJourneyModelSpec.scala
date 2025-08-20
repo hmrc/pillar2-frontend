@@ -133,7 +133,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with contact telephone" in {
+      "must return a completed journey model when the user has selected none uk based with contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(UpeNameRegistrationPage, "upe name")
@@ -161,7 +161,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with no contact telephone" in {
+      "must return a completed journey model when the user has selected none uk based with no contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(UpeNameRegistrationPage, "upe name")
@@ -215,8 +215,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
           fmRegisteredAddress = None,
           fmContactName = None,
           fmEmailAddress = None,
-          fmTelephonePreference = None,
-          fmContactTelephone = None,
+          fmPhonePreference = None,
+          fmContactPhone = None,
           fmEntityTypeIncorporatedCompanyName = Some("ABC Limited"),
           fmEntityTypeIncorporatedCompanyReg = Some("1234"),
           fmEntityTypeIncorporatedCompanyUtr = Some("1234567890"),
@@ -241,8 +241,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
           fmRegisteredAddress = None,
           fmContactName = None,
           fmEmailAddress = None,
-          fmTelephonePreference = None,
-          fmContactTelephone = None,
+          fmPhonePreference = None,
+          fmContactPhone = None,
           fmEntityTypeIncorporatedCompanyName = None,
           fmEntityTypeIncorporatedCompanyReg = None,
           fmEntityTypeIncorporatedCompanyUtr = None,
@@ -253,7 +253,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with contact telephone" in {
+      "must return a completed journey model when the user has selected none uk based with contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, false)
@@ -271,8 +271,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
           fmRegisteredAddress = Some(nonUkAddress),
           fmContactName = Some("contact name"),
           fmEmailAddress = Some("test@test.com"),
-          fmTelephonePreference = Some(true),
-          fmContactTelephone = Some("1234567890"),
+          fmPhonePreference = Some(true),
+          fmContactPhone = Some("1234567890"),
           fmEntityTypeIncorporatedCompanyName = None,
           fmEntityTypeIncorporatedCompanyReg = None,
           fmEntityTypeIncorporatedCompanyUtr = None,
@@ -283,7 +283,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with no contact telephone" in {
+      "must return a completed journey model when the user has selected none uk based with no contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, false)
@@ -300,8 +300,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
           fmRegisteredAddress = Some(nonUkAddress),
           fmContactName = Some("contact name"),
           fmEmailAddress = Some("test@test.com"),
-          fmTelephonePreference = Some(false),
-          fmContactTelephone = None,
+          fmPhonePreference = Some(false),
+          fmContactPhone = None,
           fmEntityTypeIncorporatedCompanyName = None,
           fmEntityTypeIncorporatedCompanyReg = None,
           fmEntityTypeIncorporatedCompanyUtr = None,
@@ -386,13 +386,13 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
       val expected = contactJourney(
         primaryContactName = "primary name",
         primaryContactEmail = "primary@test.com",
-        primaryContactByTelephone = true,
-        primaryContactTelephone = Some("0191 123456789"),
+        primaryContactByPhone = true,
+        primaryContactPhone = Some("0191 123456789"),
         secondaryContact = true,
         secondaryContactName = Some("secondary name"),
         secondaryContactEmail = Some("secondary@test.com"),
-        secondaryContactByTelephone = Some(true),
-        secondaryContactTelephone = Some("0191 987654321"),
+        secondaryContactByPhone = Some(true),
+        secondaryContactPhone = Some("0191 987654321"),
         contactAddress = NonUKAddress("1 drive", None, "la la land", None, None, countryCode = "US")
       )
       contactJourney.from(answers).toOption.value mustEqual expected
@@ -418,13 +418,13 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
       val expected = contactJourney(
         primaryContactName = "primary name",
         primaryContactEmail = "primary@test.com",
-        primaryContactByTelephone = false,
-        primaryContactTelephone = None,
+        primaryContactByPhone = false,
+        primaryContactPhone = None,
         secondaryContact = false,
         secondaryContactName = None,
         secondaryContactEmail = None,
-        secondaryContactByTelephone = None,
-        secondaryContactTelephone = None,
+        secondaryContactByPhone = None,
+        secondaryContactPhone = None,
         contactAddress = NonUKAddress("1 drive", None, "la la land", None, None, countryCode = "US")
       )
       contactJourney.from(answers).toOption.value mustEqual expected

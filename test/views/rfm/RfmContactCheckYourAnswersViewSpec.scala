@@ -59,7 +59,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
     .setOrException(RfmCorporatePositionPage, Upe)
     .setOrException(RfmPrimaryContactNamePage, "RFM test contact")
     .setOrException(RfmPrimaryContactEmailPage, "rfm@email.com")
-    .setOrException(RfmContactByTelephonePage, false)
+    .setOrException(RfmContactByPhonePage, false)
     .setOrException(RfmAddSecondaryContactPage, false)
     .setOrException(RfmContactAddressPage, contactAddress)
 
@@ -84,8 +84,8 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
     rows = Seq(
       RfmPrimaryContactNameSummary.row(userAnswers),
       RfmPrimaryContactEmailSummary.row(userAnswers),
-      RfmContactByTelephoneSummary.row(userAnswers),
-      RfmCapturePrimaryTelephoneSummary.row(userAnswers)
+      RfmContactByPhoneSummary.row(userAnswers),
+      RfmCapturePrimaryPhoneSummary.row(userAnswers)
     ).flatten
   )
 
@@ -94,8 +94,8 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       RfmAddSecondaryContactSummary.row(userAnswers),
       RfmSecondaryContactNameSummary.row(userAnswers),
       RfmSecondaryContactEmailSummary.row(userAnswers),
-      RfmSecondaryTelephonePreferenceSummary.row(userAnswers),
-      RfmSecondaryTelephoneSummary.row(userAnswers)
+      RfmSecondaryPhonePreferenceSummary.row(userAnswers),
+      RfmSecondaryPhoneSummary.row(userAnswers)
     ).flatten
   )
 
@@ -174,7 +174,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         summaryListKeys.get(3).text mustBe "Can we contact the primary contact by phone?"
         summaryListItems.get(3).text mustBe "No"
         summaryListLinks.get(3).text mustBe "Change can we contact the primary contact by phone"
-        summaryListLinks.get(3).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmContactByTelephoneController
+        summaryListLinks.get(3).getElementsByTag("a").attr("href") mustBe controllers.rfm.routes.RfmContactByPhoneController
           .onPageLoad(CheckMode)
           .url
       }

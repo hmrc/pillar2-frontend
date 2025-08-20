@@ -105,8 +105,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
       ua.getSecondaryContact mustBe None
     }
 
-    "return ContactDetail with phone as None if no telephone is provided" in {
-      val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", telephone = None, emailAddress = "email")
+    "return ContactDetail with phone as None if no phone is provided" in {
+      val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", phone = None, emailAddress = "email")
       val ua = emptyUserAnswers
         .setOrException(RfmAddSecondaryContactPage, true)
         .setOrException(RfmSecondaryPhonePreferencePage, false)
@@ -116,8 +116,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
       ua.getSecondaryContact mustBe Some(expectedAnswer)
     }
 
-    "return ContactDetail with phone if telephone is provided" in {
-      val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", telephone = Some("12312123"), emailAddress = "email")
+    "return ContactDetail with phone if phone is provided" in {
+      val expectedAnswer: ContactDetailsType = ContactDetailsType(name = "name", phone = Some("12312123"), emailAddress = "email")
       val ua = emptyUserAnswers
         .setOrException(RfmAddSecondaryContactPage, true)
         .setOrException(RfmSecondaryCapturePhonePage, "12312123")
@@ -146,8 +146,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmContactAddressPage, nonUKAddress)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
       ua.getNewFilingMemberDetail mustBe None
     }
 
@@ -159,8 +159,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmContactAddressPage, nonUKAddress)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
       ua.getNewFilingMemberDetail mustBe None
     }
 
@@ -172,8 +172,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmPillar2ReferencePage, "plrReference")
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
       ua.getNewFilingMemberDetail mustBe None
     }
 
@@ -185,8 +185,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmPillar2ReferencePage, "plrReference")
         .setOrException(RfmContactAddressPage, nonUKAddress)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
       ua.getNewFilingMemberDetail mustBe None
     }
 
@@ -198,8 +198,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmContactAddressPage, nonUKAddress)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
       ua.getNewFilingMemberDetail mustBe None
     }
 
@@ -228,8 +228,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmContactAddressPage, nonUKAddress)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, true)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, true)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
         .setOrException(RfmRegistrationDatePage, date)
 
       ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
@@ -259,8 +259,8 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .setOrException(RfmPillar2ReferencePage, "plrReference")
         .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
         .setOrException(RfmAddSecondaryContactPage, false)
-        .setOrException(RfmContactByTelephonePage, false)
-        .setOrException(RfmCapturePrimaryTelephonePage, "12312")
+        .setOrException(RfmContactByPhonePage, false)
+        .setOrException(RfmCapturePrimaryPhonePage, "12312")
         .setOrException(RfmRegistrationDatePage, date)
 
       ua.getNewFilingMemberDetail mustBe Some(expectedAnswer)
@@ -331,7 +331,7 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .value
       ua.isRfmJourneyCompleted mustEqual false
     }
-    "return false if corporate position is upe and secondary contact and telephone nominated but no secondary phone can be found" in {
+    "return false if corporate position is upe and secondary contact and phone nominated but no secondary phone can be found" in {
       val ua = rfmUpe
         .remove(RfmSecondaryCapturePhonePage)
         .success
@@ -411,7 +411,7 @@ class ReplaceFilingMemberHelpersSpec extends SpecBase {
         .value
       ua.isRfmJourneyCompleted mustEqual false
     }
-    "return false if corporate position is new nfm and secondary contact and telephone nominated but no secondary phone can be found" in {
+    "return false if corporate position is new nfm and secondary contact and phone nominated but no secondary phone can be found" in {
       val ua = rfmNoID
         .remove(RfmSecondaryCapturePhonePage)
         .success

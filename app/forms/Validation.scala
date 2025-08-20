@@ -19,9 +19,9 @@ package forms
 object Validation {
   final val EMAIL_REGEX =
     """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX                = "^X[A-Z]PLR[0-9]{10}$"
-  final val REGISTRATION_TELEPHONE_REGEX = """^[A-Z0-9 )/(\-*#+]+$"""
-  final val TELEPHONE_REGEX =
+  final val GROUPID_REGEX            = "^X[A-Z]PLR[0-9]{10}$"
+  final val REGISTRATION_PHONE_REGEX = """^[A-Z0-9 )/(\-*#+]+$"""
+  final val PHONE_REGEX =
     "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[-. /]?)?((?:\\(?\\d{1,}\\)?[-. /]?){0,})(?:[-. /]?(?:#|ext\\.?|extension|x)[-. /]?(\\d+))?$"
   final val BIC_SWIFT_REGEX              = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
   final val IBAN_REGEX                   = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"

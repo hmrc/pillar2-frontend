@@ -34,8 +34,8 @@ class RepaymentsHelpersSpec extends SpecBase {
 
       "return true if all repayment details are provided, with contact by phone selected as no" in {
         val ua = completeRepaymentDataUkBankAccount
-          .setOrException(RepaymentsContactByTelephonePage, false)
-          .remove(RepaymentsTelephoneDetailsPage)
+          .setOrException(RepaymentsContactByPhonePage, false)
+          .remove(RepaymentsPhoneDetailsPage)
           .success
           .value
         ua.isRepaymentsJourneyCompleted mustEqual true
@@ -99,23 +99,23 @@ class RepaymentsHelpersSpec extends SpecBase {
 
       "return false for all repayment details but contact phone number is not provided " in {
         val ua = completeRepaymentDataUkBankAccount
-          .remove(RepaymentsContactByTelephonePage)
+          .remove(RepaymentsContactByPhonePage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but contact by telephone number is not provided " in {
+      "return false for all repayment details but contact by phone number is not provided " in {
         val ua = completeRepaymentDataUkBankAccount
-          .remove(RepaymentsContactByTelephonePage)
+          .remove(RepaymentsContactByPhonePage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but telephone number is not provided " in {
+      "return false for all repayment details but phone number is not provided " in {
         val ua = completeRepaymentDataUkBankAccount
-          .remove(RepaymentsTelephoneDetailsPage)
+          .remove(RepaymentsPhoneDetailsPage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
@@ -131,8 +131,8 @@ class RepaymentsHelpersSpec extends SpecBase {
 
       "return true if all repayment details are provided, with contact by phone selected as no" in {
         val ua = completeRepaymentDataNonUkBankAccount
-          .setOrException(RepaymentsContactByTelephonePage, false)
-          .remove(RepaymentsTelephoneDetailsPage)
+          .setOrException(RepaymentsContactByPhonePage, false)
+          .remove(RepaymentsPhoneDetailsPage)
           .success
           .value
         ua.isRepaymentsJourneyCompleted mustEqual true
@@ -196,23 +196,23 @@ class RepaymentsHelpersSpec extends SpecBase {
 
       "return false for all repayment details but contact phone number is not provided " in {
         val ua = completeRepaymentDataNonUkBankAccount
-          .remove(RepaymentsContactByTelephonePage)
+          .remove(RepaymentsContactByPhonePage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but contact by telephone number is not provided " in {
+      "return false for all repayment details but contact by phone number is not provided " in {
         val ua = completeRepaymentDataNonUkBankAccount
-          .remove(RepaymentsContactByTelephonePage)
+          .remove(RepaymentsContactByPhonePage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
       }
 
-      "return false for all repayment details but telephone number is not provided " in {
+      "return false for all repayment details but phone number is not provided " in {
         val ua = completeRepaymentDataNonUkBankAccount
-          .remove(RepaymentsTelephoneDetailsPage)
+          .remove(RepaymentsPhoneDetailsPage)
           .success
           .value
         ua.isRfmJourneyCompleted mustEqual false
@@ -245,8 +245,8 @@ class RepaymentsHelpersSpec extends SpecBase {
       .setOrException(BankAccountDetailsPage, ukBankAccountDetails)
       .setOrException(RepaymentsContactNamePage, "Contact name")
       .setOrException(RepaymentsContactEmailPage, "test@test.com")
-      .setOrException(RepaymentsContactByTelephonePage, true)
-      .setOrException(RepaymentsTelephoneDetailsPage, "1234567890")
+      .setOrException(RepaymentsContactByPhonePage, true)
+      .setOrException(RepaymentsPhoneDetailsPage, "1234567890")
 
     val completeRepaymentNonUkBankAccount = emptyUserAnswers
       .setOrException(RepaymentsRefundAmountPage, refundAmount)
@@ -255,8 +255,8 @@ class RepaymentsHelpersSpec extends SpecBase {
       .setOrException(NonUKBankPage, nonUkBankAccountDetails)
       .setOrException(RepaymentsContactNamePage, "Contact name")
       .setOrException(RepaymentsContactEmailPage, "test@test.com")
-      .setOrException(RepaymentsContactByTelephonePage, true)
-      .setOrException(RepaymentsTelephoneDetailsPage, "1234567890")
+      .setOrException(RepaymentsContactByPhonePage, true)
+      .setOrException(RepaymentsPhoneDetailsPage, "1234567890")
 
     "return None if repayment amount not found" in {
       val ua = completeRepaymentUkBankAccount.remove(RepaymentsRefundAmountPage).success.value
@@ -283,8 +283,8 @@ class RepaymentsHelpersSpec extends SpecBase {
       ua.getRepaymentAuditDetail mustBe None
     }
 
-    "return None if contact by telephone not found" in {
-      val ua = completeRepaymentUkBankAccount.remove(RepaymentsContactByTelephonePage).success.value
+    "return None if contact by phone not found" in {
+      val ua = completeRepaymentUkBankAccount.remove(RepaymentsContactByPhonePage).success.value
       ua.getRepaymentAuditDetail mustBe None
     }
 
@@ -298,7 +298,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         repaymentsContactName = "Contact name",
         repaymentsContactEmail = "test@test.com",
         repaymentsContactByPhone = true,
-        repaymentsTelephoneDetails = Some("1234567890")
+        repaymentsPhoneDetails = Some("1234567890")
       )
       val ua = completeRepaymentUkBankAccount
       ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
@@ -314,10 +314,10 @@ class RepaymentsHelpersSpec extends SpecBase {
         repaymentsContactName = "Contact name",
         repaymentsContactEmail = "test@test.com",
         repaymentsContactByPhone = false,
-        repaymentsTelephoneDetails = None
+        repaymentsPhoneDetails = None
       )
       val ua = completeRepaymentUkBankAccount
-        .setOrException(RepaymentsContactByTelephonePage, false)
+        .setOrException(RepaymentsContactByPhonePage, false)
       ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
     }
 
@@ -331,7 +331,7 @@ class RepaymentsHelpersSpec extends SpecBase {
         repaymentsContactName = "Contact name",
         repaymentsContactEmail = "test@test.com",
         repaymentsContactByPhone = true,
-        repaymentsTelephoneDetails = Some("1234567890")
+        repaymentsPhoneDetails = Some("1234567890")
       )
       val ua = completeRepaymentNonUkBankAccount
       ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
@@ -347,10 +347,10 @@ class RepaymentsHelpersSpec extends SpecBase {
         repaymentsContactName = "Contact name",
         repaymentsContactEmail = "test@test.com",
         repaymentsContactByPhone = false,
-        repaymentsTelephoneDetails = None
+        repaymentsPhoneDetails = None
       )
       val ua = completeRepaymentNonUkBankAccount
-        .setOrException(RepaymentsContactByTelephonePage, false)
+        .setOrException(RepaymentsContactByPhonePage, false)
       ua.getRepaymentAuditDetail mustBe Some(expectedAnswer)
     }
 

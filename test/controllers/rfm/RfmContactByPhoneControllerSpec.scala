@@ -18,26 +18,26 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.RfmContactByTelephoneFormProvider
+import forms.RfmContactByPhoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RfmContactByTelephonePage, RfmPrimaryContactNamePage}
+import pages.{RfmContactByPhonePage, RfmPrimaryContactNamePage}
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.rfm.RfmContactByTelephoneView
+import views.html.rfm.RfmContactByPhoneView
 
 import scala.concurrent.Future
 
 class RfmContactByPhoneControllerSpec extends SpecBase {
 
-  val form = new RfmContactByTelephoneFormProvider()
+  val form = new RfmContactByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")
 
-  "Rfm Can we contact by Telephone Controller" when {
+  "Rfm Can we contact by Phone Controller" when {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
@@ -46,11 +46,11 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmContactByTelephoneView]
+        val view = application.injector.instanceOf[RfmContactByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, NormalMode, "sad")(
           request,
@@ -67,7 +67,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -79,16 +79,16 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
     "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
-        .setOrException(RfmContactByTelephonePage, true)
+        .setOrException(RfmContactByPhonePage, true)
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[RfmContactByTelephoneView]
+        val view = application.injector.instanceOf[RfmContactByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "sad")(
           request,
@@ -99,7 +99,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to capture telephone page when valid data is submitted with value YES" in {
+    "redirect to capture phone page when valid data is submitted with value YES" in {
 
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "sad")
@@ -112,13 +112,13 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmCapturePrimaryPhoneController.onPageLoad(NormalMode).url
       }
     }
 
@@ -131,12 +131,12 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[RfmContactByTelephoneView]
+        val view = application.injector.instanceOf[RfmContactByPhoneView]
 
         val result = route(application, request).value
 
@@ -157,7 +157,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "false"))
 
         val result = route(application, request).value
@@ -171,7 +171,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None)
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode).url)
+        val request = FakeRequest(POST, controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url

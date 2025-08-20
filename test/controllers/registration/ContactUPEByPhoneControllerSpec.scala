@@ -18,7 +18,7 @@ package controllers.registration
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactUPEByTelephoneFormProvider
+import forms.ContactUPEByPhoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,16 +28,16 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.registrationview.ContactUPEByTelephoneView
+import views.html.registrationview.ContactUPEByPhoneView
 
 import scala.concurrent.Future
 
 class ContactUPEByPhoneControllerSpec extends SpecBase {
 
-  val form = new ContactUPEByTelephoneFormProvider()
+  val form = new ContactUPEByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")
 
-  "Can we contact UPE by Telephone Controller" when {
+  "Can we contact UPE by Phone Controller" when {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
@@ -50,7 +50,7 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactUPEByTelephoneView]
+        val view = application.injector.instanceOf[ContactUPEByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, NormalMode, "sad")(
           request,
@@ -73,7 +73,7 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactUPEByTelephoneView]
+        val view = application.injector.instanceOf[ContactUPEByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "sad")(
           request,
@@ -131,7 +131,7 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
             .withFormUrlEncodedBody(
               ("value", "")
             )
-        val view      = application.injector.instanceOf[ContactUPEByTelephoneView]
+        val view      = application.injector.instanceOf[ContactUPEByPhoneView]
         val boundForm = formProvider.bind(Map("value" -> ""))
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST

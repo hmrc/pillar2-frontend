@@ -17,26 +17,26 @@
 package controllers.repayments
 
 import base.SpecBase
-import forms.RepaymentsContactByTelephoneFormProvider
+import forms.RepaymentsContactByPhoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.{RepaymentsContactByTelephonePage, RepaymentsContactNamePage}
+import pages.{RepaymentsContactByPhonePage, RepaymentsContactNamePage}
 import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import views.html.repayments.RepaymentsContactByTelephoneView
+import views.html.repayments.RepaymentsContactByPhoneView
 
 import scala.concurrent.Future
 
 class RepaymentsContactByPhoneControllerSpec extends SpecBase {
 
-  val formProvider = new RepaymentsContactByTelephoneFormProvider()
+  val formProvider = new RepaymentsContactByPhoneFormProvider()
   val form: Form[Boolean] = formProvider("ABC Limited")
 
-  "Repayments Contact By Telephone Controller" when {
+  "Repayments Contact By Phone Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -49,8 +49,8 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
-        val view   = application.injector.instanceOf[RepaymentsContactByTelephoneView]
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByPhoneController.onPageLoad(NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactByPhoneView]
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(form, NormalMode, "ABC Limited")(
@@ -66,7 +66,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
         .set(RepaymentsContactNamePage, "ABC Limited")
         .success
         .value
-        .set(RepaymentsContactByTelephonePage, true)
+        .set(RepaymentsContactByPhonePage, true)
         .success
         .value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -80,8 +80,8 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
             )
           )
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
-        val view   = application.injector.instanceOf[RepaymentsContactByTelephoneView]
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByPhoneController.onPageLoad(NormalMode).url)
+        val view   = application.injector.instanceOf[RepaymentsContactByPhoneView]
         val result = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) mustEqual
@@ -93,7 +93,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Telephone Details page when valid data with values Yes is submitted" in {
+    "must redirect to Repayments Phone Details page when valid data with values Yes is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -102,12 +102,12 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsPhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
 
@@ -120,7 +120,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "false"))
         val result = route(application, request).value
 
@@ -137,10 +137,10 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
         .build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
         val boundForm = formProvider("ABC Limited").bind(Map("value" -> ""))
-        val view      = application.injector.instanceOf[RepaymentsContactByTelephoneView]
+        val view      = application.injector.instanceOf[RepaymentsContactByPhoneView]
         val result    = route(application, request).value
         status(result) mustEqual BAD_REQUEST
         contentAsString(result) mustEqual view(boundForm, NormalMode, "ABC Limited")(
@@ -158,7 +158,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode).url)
+          FakeRequest(GET, controllers.repayments.routes.RepaymentsContactByPhoneController.onPageLoad(NormalMode).url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.repayments.routes.RepaymentsJourneyRecoveryController.onPageLoad.url)
@@ -172,7 +172,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByTelephoneController.onSubmit(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.RepaymentsContactByPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

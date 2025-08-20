@@ -40,7 +40,7 @@ class UltimateParentNavigator @Inject() {
     case UpeRegisteredAddressPage => _ => controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode)
     case UpeContactNamePage       => _ => controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
     case UpeContactEmailPage      => _ => controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode)
-    case UpePhonePreferencePage   => telephonePreferenceLogic
+    case UpePhonePreferencePage   => phonePreferenceLogic
     case UpeCapturePhonePage      => _ => upeCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
   }
@@ -57,7 +57,7 @@ class UltimateParentNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
+  private def phonePreferenceLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(UpePhonePreferencePage)
       .map { provided =>
@@ -71,7 +71,7 @@ class UltimateParentNavigator @Inject() {
 
   private val checkRouteMap: Page => UserAnswers => Call = {
     case UpeRegisteredInUKPage  => domesticOrNotRoute
-    case UpePhonePreferencePage => telephoneCheckRouteLogic
+    case UpePhonePreferencePage => phoneCheckRouteLogic
     case _                      => whichCheckYourAnswerPageContact
   }
 
@@ -82,7 +82,7 @@ class UltimateParentNavigator @Inject() {
       upeCheckYourAnswers
     }
 
-  private def telephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
+  private def phoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(UpePhonePreferencePage)
       .map { nominatedPhoneNumber =>

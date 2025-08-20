@@ -247,8 +247,8 @@ POST        /contact-details/phone                                              
 GET         /contact-details/change-phone                                                        controllers.subscription.ContactByPhoneController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-phone                                                        controllers.subscription.ContactByPhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-phone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onPageLoad
-POST        /manage-account/contact-details/change-phone                                         controllers.subscription.manageAccount.ContactByTelephoneController.onSubmit
+GET         /manage-account/contact-details/change-phone                                         controllers.subscription.manageAccount.ContactByPhoneController.onPageLoad
+POST        /manage-account/contact-details/change-phone                                         controllers.subscription.manageAccount.ContactByPhoneController.onSubmit
 
 
 GET         /contact-details/input-phone                                                         controllers.subscription.ContactCapturePhoneDetailsController.onPageLoad(mode: Mode = NormalMode)
@@ -256,8 +256,8 @@ POST        /contact-details/input-phone                                        
 GET         /contact-details/change-input-phone                                                  controllers.subscription.ContactCapturePhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /contact-details/change-input-phone                                                  controllers.subscription.ContactCapturePhoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-input-phone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onPageLoad
-POST        /manage-account/contact-details/change-input-phone                                   controllers.subscription.manageAccount.ContactCaptureTelephoneDetailsController.onSubmit
+GET         /manage-account/contact-details/change-input-phone                                   controllers.subscription.manageAccount.ContactCapturePhoneDetailsController.onPageLoad
+POST        /manage-account/contact-details/change-input-phone                                   controllers.subscription.manageAccount.ContactCapturePhoneDetailsController.onSubmit
 
 
 GET         /contact-details/second-input-name                                                       controllers.subscription.SecondaryContactNameController.onPageLoad(mode: Mode = NormalMode)
@@ -278,22 +278,22 @@ GET         /manage-account/contact-details/change-second-input-email           
 POST        /manage-account/contact-details/change-second-input-email                                controllers.subscription.manageAccount.SecondaryContactEmailController.onSubmit
 
 
-GET         /contact-details/second-phone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/second-phone                                                        controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-second-phone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-second-phone                                                 controllers.subscription.SecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-phone                                                        controllers.subscription.SecondaryPhonePreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-phone                                                        controllers.subscription.SecondaryPhonePreferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-phone                                                 controllers.subscription.SecondaryPhonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-phone                                                 controllers.subscription.SecondaryPhonePreferenceController.onSubmit(mode: Mode = CheckMode)
 
-GET        /manage-account/contact-details/change-second-phone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onPageLoad
-POST       /manage-account/contact-details/change-second-phone                                   controllers.subscription.manageAccount.SecondaryTelephonePreferenceController.onSubmit
+GET        /manage-account/contact-details/change-second-phone                                   controllers.subscription.manageAccount.SecondaryPhonePreferenceController.onPageLoad
+POST       /manage-account/contact-details/change-second-phone                                   controllers.subscription.manageAccount.SecondaryPhonePreferenceController.onSubmit
 
 
-GET         /contact-details/second-input-phone                                                  controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /contact-details/second-input-phone                                                  controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /contact-details/second-input-phone                                                  controllers.subscription.SecondaryPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /contact-details/second-input-phone                                                  controllers.subscription.SecondaryPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /contact-details/change-second-input-phone                                           controllers.subscription.SecondaryPhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /manage-account/contact-details/change-second-input-phone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onPageLoad
-POST        /manage-account/contact-details/change-second-input-phone                            controllers.subscription.manageAccount.SecondaryTelephoneController.onSubmit
+GET         /manage-account/contact-details/change-second-input-phone                            controllers.subscription.manageAccount.SecondaryPhoneController.onPageLoad
+POST        /manage-account/contact-details/change-second-input-phone                            controllers.subscription.manageAccount.SecondaryPhoneController.onSubmit
 
 
 
@@ -384,16 +384,16 @@ GET         /replace-filing-member/contact-details/change-input-email           
 POST        /replace-filing-member/contact-details/change-input-email                                controllers.rfm.RfmPrimaryContactEmailController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /replace-filing-member/contact-details/telephone                                         controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/telephone                                         controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-telephone                                  controllers.rfm.RfmContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-telephone                                  controllers.rfm.RfmContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/phone                                         controllers.rfm.RfmContactByPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/phone                                         controllers.rfm.RfmContactByPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-phone                                  controllers.rfm.RfmContactByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-phone                                  controllers.rfm.RfmContactByPhoneController.onSubmit(mode: Mode = CheckMode)
 
 
-GET         /replace-filing-member/contact-details/input-telephone                                   controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/input-telephone                                   controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/change-input-telephone                            controllers.rfm.RfmCapturePrimaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-input-telephone                            controllers.rfm.RfmCapturePrimaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/input-phone                                   controllers.rfm.RfmCapturePrimaryPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/input-phone                                   controllers.rfm.RfmCapturePrimaryPhoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/change-input-phone                            controllers.rfm.RfmCapturePrimaryPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-input-phone                            controllers.rfm.RfmCapturePrimaryPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/address/input                                     controllers.rfm.RfmContactAddressController.onSubmit(mode: Mode = NormalMode)
@@ -436,10 +436,10 @@ GET         /replace-filing-member/contact-details/second-input-name            
 POST        /replace-filing-member/contact-details/second-input-name                                 controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/contact-details/second-input-email                                controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = NormalMode)
 POST        /replace-filing-member/contact-details/second-input-email                                controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/second-telephone                                  controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/second-telephone                                  controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = NormalMode)
-GET         /replace-filing-member/contact-details/second-input-telephone                            controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST        /replace-filing-member/contact-details/second-input-telephone                            controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-phone                                  controllers.rfm.RfmSecondaryPhonePreferenceController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-phone                                  controllers.rfm.RfmSecondaryPhonePreferenceController.onSubmit(mode: Mode = NormalMode)
+GET         /replace-filing-member/contact-details/second-input-phone                            controllers.rfm.RfmSecondaryPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST        /replace-filing-member/contact-details/second-input-phone                            controllers.rfm.RfmSecondaryPhoneController.onSubmit(mode: Mode = NormalMode)
 
 GET         /replace-filing-member/contact-details/change-second-contact                             controllers.rfm.RfmAddSecondaryContactController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-second-contact                             controllers.rfm.RfmAddSecondaryContactController.onSubmit(mode: Mode = CheckMode)
@@ -447,10 +447,10 @@ GET         /replace-filing-member/contact-details/change-second-input-name     
 POST        /replace-filing-member/contact-details/change-second-input-name                          controllers.rfm.RfmSecondaryContactNameController.onSubmit(mode: Mode = CheckMode)
 GET         /replace-filing-member/contact-details/change-second-input-email                         controllers.rfm.RfmSecondaryContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/contact-details/change-second-input-email                         controllers.rfm.RfmSecondaryContactEmailController.onSubmit(mode: Mode = CheckMode)
-GET         /replace-filing-member/contact-details/change-second-telephone                           controllers.rfm.RfmSecondaryTelephonePreferenceController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-second-telephone                           controllers.rfm.RfmSecondaryTelephonePreferenceController.onSubmit(mode: Mode = CheckMode)
-GET         /replace-filing-member/contact-details/change-second-input-telephone                     controllers.rfm.RfmSecondaryTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST        /replace-filing-member/contact-details/change-second-input-telephone                     controllers.rfm.RfmSecondaryTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-phone                           controllers.rfm.RfmSecondaryPhonePreferenceController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-phone                           controllers.rfm.RfmSecondaryPhonePreferenceController.onSubmit(mode: Mode = CheckMode)
+GET         /replace-filing-member/contact-details/change-second-input-phone                     controllers.rfm.RfmSecondaryPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST        /replace-filing-member/contact-details/change-second-input-phone                     controllers.rfm.RfmSecondaryPhoneController.onSubmit(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/review-submit/check-answers                                       controllers.rfm.RfmContactCheckYourAnswersController.onPageLoad
 POST        /replace-filing-member/review-submit/check-answers                                       controllers.rfm.RfmContactCheckYourAnswersController.onSubmit
@@ -488,15 +488,15 @@ POST        /repayment/contact-details/input-email                              
 GET         /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onPageLoad(mode: Mode = CheckMode)
 POST        /repayment/contact-details/change-input-email                                            controllers.repayments.RepaymentsContactEmailController.onSubmit(mode: Mode = CheckMode)
 
-GET         /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = NormalMode)
-POST       /repayment/contact-details/telephone                                                     controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = NormalMode)
-GET        /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onPageLoad(mode: Mode = CheckMode)
-POST       /repayment/contact-details/change-telephone                                              controllers.repayments.RepaymentsContactByTelephoneController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/phone                                                     controllers.repayments.RepaymentsContactByPhoneController.onPageLoad(mode: Mode = NormalMode)
+POST       /repayment/contact-details/phone                                                     controllers.repayments.RepaymentsContactByPhoneController.onSubmit(mode: Mode = NormalMode)
+GET        /repayment/contact-details/change-phone                                              controllers.repayments.RepaymentsContactByPhoneController.onPageLoad(mode: Mode = CheckMode)
+POST       /repayment/contact-details/change-phone                                              controllers.repayments.RepaymentsContactByPhoneController.onSubmit(mode: Mode = CheckMode)
 
-GET         /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = NormalMode)
-POST        /repayment/contact-details/input-telephone                                               controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = NormalMode)
-GET         /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onPageLoad(mode: Mode = CheckMode)
-POST        /repayment/contact-details/change-input-telephone                                        controllers.repayments.RepaymentsTelephoneDetailsController.onSubmit(mode: Mode = CheckMode)
+GET         /repayment/contact-details/input-phone                                               controllers.repayments.RepaymentsPhoneDetailsController.onPageLoad(mode: Mode = NormalMode)
+POST        /repayment/contact-details/input-phone                                               controllers.repayments.RepaymentsPhoneDetailsController.onSubmit(mode: Mode = NormalMode)
+GET         /repayment/contact-details/change-input-phone                                        controllers.repayments.RepaymentsPhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
+POST        /repayment/contact-details/change-input-phone                                        controllers.repayments.RepaymentsPhoneDetailsController.onSubmit(mode: Mode = CheckMode)
 
 GET         /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onPageLoad(mode: Mode = NormalMode)
 POST        /repayment/non-uk-details                                                                controllers.repayments.NonUKBankController.onSubmit(mode: Mode = NormalMode)
