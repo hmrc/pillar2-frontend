@@ -89,8 +89,10 @@
     headBlock   = Some(head),
     headerBlock = Some(hmrcStandardHeader(
         serviceUrl  = if (serviceBannerClickable) {
-                        if (request.uri.contains("/replace-filing-member/")) None else (bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url)))
-                      } else {None},
+                        if (request.uri.contains("/replace-filing-member/")) None
+                        else if (request.uri.endsWith("/review-submit/confirmation")) bannerUrl.orElse(Some(controllers.routes.DashboardController.onPageLoad.url))
+                        else bannerUrl.orElse(Some(controllers.routes.IndexController.onPageLoadBanner.url))
+                      } else None,
         signOutUrl  = if(showSignOut) Some(controllers.auth.routes.AuthController.signOut.url) else None,
         phaseBanner = Some(betaBanner(appConfig.feedbackUrl))
     )),

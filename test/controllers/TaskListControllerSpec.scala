@@ -121,7 +121,7 @@ class TaskListControllerSpec extends SpecBase {
       }
     }
 
-    "redirected to dashboard page if the user has already subscribed with a pillar 2 reference" in {
+    "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
       val userAnswer = UserAnswers("id").setOrException(PlrReferencePage, "id")
       val application = applicationBuilder(None)
         .overrides(
@@ -133,7 +133,7 @@ class TaskListControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.RegistrationConfirmationController.onPageLoad.url
       }
     }
 
