@@ -74,22 +74,21 @@ lazy val scoverageSettings = Seq(
   coverageMinimumBranchTotal := 86.55,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
-  // FIXME: why are utils and models excluded?
   coverageExcludedFiles :=
-    """.*handlers.*;
-      |.*queries.*;
-      |.*viewmodels.*;
-      |.*components.*;
-      |.*config.*;
-      |.*models.*;
-      |.*mapping.*;
-      |.*stubsonly.*;
-      |.*utils.*;
-      |.*Routes.*;
-      |.*views.xml.pdf.*;
-      |.*views.ViewUtils;
-      |.*views.html.templates.*;
-      |""".stripMargin
+    """|.*handlers.*;
+       |.*queries.*;
+       |.*viewmodels.*;
+       |.*components.*;
+       |.*config.*;
+       |.*models.*;
+       |.*mapping.*;
+       |.*stubsonly.*;
+       |.*utils.*;
+       |.*Routes.*;
+       |.*views.xml.pdf.*;
+       |.*views.ViewUtils;
+       |.*views.html.templates.*;
+       |""".stripMargin.replaceAll("\n", ";")
 )
 
 lazy val twirlImports: Seq[String] = Seq(
