@@ -18,7 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.ContactByTelephoneFormProvider
+import forms.ContactByPhoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -28,16 +28,16 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.subscriptionview.ContactByTelephoneView
+import views.html.subscriptionview.ContactByPhoneView
 
 import scala.concurrent.Future
 
 class ContactByPhoneControllerSpec extends SpecBase {
 
-  val form = new ContactByTelephoneFormProvider()
+  val form = new ContactByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("name")
 
-  "Can we contact  by Telephone Controller" should {
+  "Can we contact  by Phone Controller" should {
 
     "return OK and the correct view for a GET" in {
       val ua =
@@ -50,7 +50,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactByTelephoneView]
+        val view = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider, NormalMode, "name")(
           request,
@@ -78,7 +78,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactByTelephoneView]
+        val view = application.injector.instanceOf[ContactByPhoneView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider.fill(true), NormalMode, "name")(
           request,

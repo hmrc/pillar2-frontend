@@ -25,7 +25,7 @@ case class FilingMemberNonUKData(
   contactName:         String,
   emailAddress:        String,
   phonePreference:     Boolean,
-  telephone:           Option[String] = None
+  phone:               Option[String] = None
 )
 
 object FilingMemberNonUKData {

@@ -47,8 +47,8 @@ class ContactCheckYourAnswersController @Inject() (
       rows = Seq(
         ContactNameComplianceSummary.row(request.userAnswers),
         ContactEmailAddressSummary.row(request.userAnswers),
-        ContactByTelephoneSummary.row(request.userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(request.userAnswers)
+        ContactByPhoneSummary.row(request.userAnswers),
+        ContactCapturePhoneDetailsSummary.row(request.userAnswers)
       ).flatten
     )
     val secondaryContactList = SummaryListViewModel(
@@ -56,8 +56,8 @@ class ContactCheckYourAnswersController @Inject() (
         AddSecondaryContactSummary.row(request.userAnswers),
         SecondaryContactNameSummary.row(request.userAnswers),
         SecondaryContactEmailSummary.row(request.userAnswers),
-        SecondaryTelephonePreferenceSummary.row(request.userAnswers),
-        SecondaryTelephoneSummary.row(request.userAnswers)
+        SecondaryPhonePreferenceSummary.row(request.userAnswers),
+        SecondaryPhoneSummary.row(request.userAnswers)
       ).flatten
     )
     val address = SummaryListViewModel(

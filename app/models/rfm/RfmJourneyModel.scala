@@ -25,21 +25,21 @@ import pages._
 import queries.Query
 
 final case class RfmJourneyModel(
-  corporateStructurePosition:  CorporatePosition,
-  ukRegistered:                Option[Boolean],
-  grsUkLimited:                Option[GrsRegistrationData],
-  name:                        Option[String],
-  registeredOfficeAddress:     Option[NonUKAddress],
-  primaryContactName:          String,
-  primaryContactEmail:         String,
-  primaryContactByTelephone:   Boolean,
-  primaryContactTelephone:     Option[String],
-  secondaryContact:            Boolean,
-  secondaryContactName:        Option[String],
-  secondaryContactEmail:       Option[String],
-  secondaryContactByTelephone: Option[Boolean],
-  secondaryContactTelephone:   Option[String],
-  contactAddress:              NonUKAddress
+  corporateStructurePosition: CorporatePosition,
+  ukRegistered:               Option[Boolean],
+  grsUkLimited:               Option[GrsRegistrationData],
+  name:                       Option[String],
+  registeredOfficeAddress:    Option[NonUKAddress],
+  primaryContactName:         String,
+  primaryContactEmail:        String,
+  primaryContactByPhone:      Boolean,
+  primaryContactPhone:        Option[String],
+  secondaryContact:           Boolean,
+  secondaryContactName:       Option[String],
+  secondaryContactEmail:      Option[String],
+  secondaryContactByPhone:    Option[Boolean],
+  secondaryContactPhone:      Option[String],
+  contactAddress:             NonUKAddress
 )
 
 object RfmJourneyModel {
@@ -53,13 +53,13 @@ object RfmJourneyModel {
       getRegisteredAddress(answers),
       answers.getEither(RfmPrimaryContactNamePage),
       answers.getEither(RfmPrimaryContactEmailPage),
-      answers.getEither(RfmContactByTelephonePage),
-      getPrimaryTelephone(answers),
+      answers.getEither(RfmContactByPhonePage),
+      getPrimaryPhone(answers),
       answers.getEither(RfmAddSecondaryContactPage),
       getSecondaryContactName(answers),
       getSecondaryContactEmail(answers),
       getSecondaryPhonePreference(answers),
-      getSecondaryTelephone(answers),
+      getSecondaryPhone(answers),
       answers.getEither(RfmContactAddressPage)
     ).parMapN {
       (
@@ -134,9 +134,9 @@ object RfmJourneyModel {
       case Upe => Right(None)
     }
 
-  private def getPrimaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
-    answers.getEither(RfmContactByTelephonePage).flatMap {
-      case true  => answers.getEither(RfmCapturePrimaryTelephonePage).map(Some(_))
+  private def getPrimaryPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
+    answers.getEither(RfmContactByPhonePage).flatMap {
+      case true  => answers.getEither(RfmCapturePrimaryPhonePage).map(Some(_))
       case false => Right(None)
     }
 
@@ -158,7 +158,7 @@ object RfmJourneyModel {
       case false => Right(None)
     }
 
-  private def getSecondaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
+  private def getSecondaryPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(RfmAddSecondaryContactPage).flatMap {
       case true =>
         answers.getEither(RfmSecondaryPhonePreferencePage).flatMap {

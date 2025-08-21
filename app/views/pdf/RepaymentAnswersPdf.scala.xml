@@ -210,23 +210,23 @@
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Contact by telephone ? -->
+                    <!-- Contact by phone ? -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsContactByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsContactByPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
                                 <fo:block>@if(model.repaymentsContactByPhone){Yes}else{No}</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Contact telephone -->
-                    @model.repaymentsTelephoneDetails.map { repaymentsTelephoneDetails =>
+                    <!-- Contact phone -->
+                    @model.repaymentsPhoneDetails.map { repaymentsPhoneDetails =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
-                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("repaymentsPhoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@repaymentsTelephoneDetails</fo:block>
+                                    <fo:block>@repaymentsPhoneDetails</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>

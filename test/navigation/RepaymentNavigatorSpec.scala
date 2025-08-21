@@ -77,7 +77,7 @@ class RepaymentNavigatorSpec extends SpecBase {
       }
 
       "go to journey recovery page from request repayment amount page" in {
-        navigator.nextPage(RepaymentsContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
+        navigator.nextPage(RepaymentsContactByPhonePage, NormalMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
       "go to reason for requesting a repayment page from request repayment amount page" in {
@@ -107,47 +107,47 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
       }
 
-      "must go to Repayments Contact By Telephone page from Repayments contact email page" in {
+      "must go to Repayments Contact By Phone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           NormalMode,
           emptyUserAnswers.setOrException(RepaymentsContactEmailPage, "hello@bye.com")
         ) mustBe
-          controllers.repayments.routes.RepaymentsContactByTelephoneController.onPageLoad(NormalMode)
+          controllers.repayments.routes.RepaymentsContactByPhoneController.onPageLoad(NormalMode)
       }
 
-      "must go to Repayments Telephone Details page from Repayments Contact By Telephone page when True" in {
+      "must go to Repayments Phone Details page from Repayments Contact By Phone page when True" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, true)
+          emptyUserAnswers.setOrException(RepaymentsContactByPhonePage, true)
         ) mustBe
-          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(NormalMode)
+          controllers.repayments.routes.RepaymentsPhoneDetailsController.onPageLoad(NormalMode)
       }
 
-      "must go to UnderConstruction page from Repayments Contact By Telephone page when False" in {
+      "must go to UnderConstruction page from Repayments Contact By Phone page when False" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
+          emptyUserAnswers.setOrException(RepaymentsContactByPhonePage, false)
         ) mustBe
           repaymentsQuestionsCYA
       }
 
-      "must go to recovery  page from if incomplete info provided for telephone preference in normal mode" in {
+      "must go to recovery  page from if incomplete info provided for phone preference in normal mode" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           NormalMode,
           emptyUserAnswers
         ) mustBe
           journeyRecovery
       }
 
-      "must go to Repayments CYA page from Repayments Telephone Details page" in {
+      "must go to Repayments CYA page from Repayments Phone Details page" in {
         navigator.nextPage(
-          RepaymentsTelephoneDetailsPage,
+          RepaymentsPhoneDetailsPage,
           NormalMode,
-          emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "12345")
+          emptyUserAnswers.setOrException(RepaymentsPhoneDetailsPage, "12345")
         ) mustBe
           repaymentsQuestionsCYA
       }
@@ -285,44 +285,44 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
-      "go to telephone details page if contact by answer yes" in {
+      "go to phone details page if contact by answer yes" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           CheckMode,
-          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, true)
+          emptyUserAnswers.setOrException(RepaymentsContactByPhonePage, true)
         ) mustBe
-          controllers.repayments.routes.RepaymentsTelephoneDetailsController.onPageLoad(CheckMode)
+          controllers.repayments.routes.RepaymentsPhoneDetailsController.onPageLoad(CheckMode)
       }
 
       "go to Repayment questions CYA page if contact by answer No" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           CheckMode,
-          emptyUserAnswers.setOrException(RepaymentsContactByTelephonePage, false)
+          emptyUserAnswers.setOrException(RepaymentsContactByPhonePage, false)
         ) mustBe
           repaymentsQuestionsCYA
       }
 
-      "go to recovery page if correct information is not provided for telephone preference" in {
+      "go to recovery page if correct information is not provided for phone preference" in {
         navigator.nextPage(
-          RepaymentsContactByTelephonePage,
+          RepaymentsContactByPhonePage,
           CheckMode,
           emptyUserAnswers
         ) mustBe
           journeyRecovery
       }
 
-      "go to Repayment questions CYA page from repayments telephone detailsPage" in {
+      "go to Repayment questions CYA page from repayments phone detailsPage" in {
         navigator.nextPage(
-          RepaymentsTelephoneDetailsPage,
+          RepaymentsPhoneDetailsPage,
           CheckMode,
-          emptyUserAnswers.setOrException(RepaymentsTelephoneDetailsPage, "123456789")
+          emptyUserAnswers.setOrException(RepaymentsPhoneDetailsPage, "123456789")
         ) mustBe
           repaymentsQuestionsCYA
       }
 
       "go to journey recovery page from request repayment amount page" in {
-        navigator.nextPage(RepaymentsContactByTelephonePage, CheckMode, emptyUserAnswers) mustBe journeyRecovery
+        navigator.nextPage(RepaymentsContactByPhonePage, CheckMode, emptyUserAnswers) mustBe journeyRecovery
       }
 
       "go to contact name page from partial account name page if user selects Yes" in {

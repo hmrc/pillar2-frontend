@@ -52,10 +52,10 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, true)
+          .set(RfmContactByPhonePage, true)
           .success
           .value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .set(RfmCapturePrimaryPhonePage, "0191 123456789")
           .success
           .value
           .set(RfmAddSecondaryContactPage, true)
@@ -84,13 +84,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = Some(NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")),
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = true,
-          primaryContactTelephone = Some("0191 123456789"),
+          primaryContactByPhone = true,
+          primaryContactPhone = Some("0191 123456789"),
           secondaryContact = true,
           secondaryContactName = Some("secondary name"),
           secondaryContactEmail = Some("secondary@test.com"),
-          secondaryContactByTelephone = Some(true),
-          secondaryContactTelephone = Some("0191 987654321"),
+          secondaryContactByPhone = Some(true),
+          secondaryContactPhone = Some("0191 987654321"),
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
@@ -116,7 +116,7 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, false)
+          .set(RfmContactByPhonePage, false)
           .success
           .value
           .set(RfmAddSecondaryContactPage, false)
@@ -133,13 +133,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = Some(NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")),
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = false,
-          primaryContactTelephone = None,
+          primaryContactByPhone = false,
+          primaryContactPhone = None,
           secondaryContact = false,
           secondaryContactName = None,
           secondaryContactEmail = None,
-          secondaryContactByTelephone = None,
-          secondaryContactTelephone = None,
+          secondaryContactByPhone = None,
+          secondaryContactPhone = None,
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
@@ -162,10 +162,10 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, true)
+          .set(RfmContactByPhonePage, true)
           .success
           .value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .set(RfmCapturePrimaryPhonePage, "0191 123456789")
           .success
           .value
           .set(RfmAddSecondaryContactPage, true)
@@ -194,13 +194,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = None,
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = true,
-          primaryContactTelephone = Some("0191 123456789"),
+          primaryContactByPhone = true,
+          primaryContactPhone = Some("0191 123456789"),
           secondaryContact = true,
           secondaryContactName = Some("secondary name"),
           secondaryContactEmail = Some("secondary@test.com"),
-          secondaryContactByTelephone = Some(true),
-          secondaryContactTelephone = Some("0191 987654321"),
+          secondaryContactByPhone = Some(true),
+          secondaryContactPhone = Some("0191 987654321"),
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
@@ -223,7 +223,7 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, false)
+          .set(RfmContactByPhonePage, false)
           .success
           .value
           .set(RfmAddSecondaryContactPage, false)
@@ -240,13 +240,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = None,
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = false,
-          primaryContactTelephone = None,
+          primaryContactByPhone = false,
+          primaryContactPhone = None,
           secondaryContact = false,
           secondaryContactName = None,
           secondaryContactEmail = None,
-          secondaryContactByTelephone = None,
-          secondaryContactTelephone = None,
+          secondaryContactByPhone = None,
+          secondaryContactPhone = None,
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
@@ -258,7 +258,7 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           RfmCorporatePositionPage,
           RfmPrimaryContactNamePage,
           RfmPrimaryContactEmailPage,
-          RfmContactByTelephonePage,
+          RfmContactByPhonePage,
           RfmAddSecondaryContactPage,
           RfmContactAddressPage
         )
@@ -279,10 +279,10 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, true)
+          .set(RfmContactByPhonePage, true)
           .success
           .value
-          .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+          .set(RfmCapturePrimaryPhonePage, "0191 123456789")
           .success
           .value
           .set(RfmAddSecondaryContactPage, true)
@@ -311,13 +311,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = None,
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = true,
-          primaryContactTelephone = Some("0191 123456789"),
+          primaryContactByPhone = true,
+          primaryContactPhone = Some("0191 123456789"),
           secondaryContact = true,
           secondaryContactName = Some("secondary name"),
           secondaryContactEmail = Some("secondary@test.com"),
-          secondaryContactByTelephone = Some(true),
-          secondaryContactTelephone = Some("0191 987654321"),
+          secondaryContactByPhone = Some(true),
+          secondaryContactPhone = Some("0191 987654321"),
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected
@@ -334,7 +334,7 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           .set(RfmPrimaryContactEmailPage, "primary@test.com")
           .success
           .value
-          .set(RfmContactByTelephonePage, false)
+          .set(RfmContactByPhonePage, false)
           .success
           .value
           .set(RfmAddSecondaryContactPage, false)
@@ -351,13 +351,13 @@ class RfmJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues wi
           registeredOfficeAddress = None,
           primaryContactName = "primary name",
           primaryContactEmail = "primary@test.com",
-          primaryContactByTelephone = false,
-          primaryContactTelephone = None,
+          primaryContactByPhone = false,
+          primaryContactPhone = None,
           secondaryContact = false,
           secondaryContactName = None,
           secondaryContactEmail = None,
-          secondaryContactByTelephone = None,
-          secondaryContactTelephone = None,
+          secondaryContactByPhone = None,
+          secondaryContactPhone = None,
           contactAddress = NonUKAddress("addressLine1", None, "addressLine3", None, None, countryCode = "US")
         )
         RfmJourneyModel.from(answers).toOption.value mustEqual expected

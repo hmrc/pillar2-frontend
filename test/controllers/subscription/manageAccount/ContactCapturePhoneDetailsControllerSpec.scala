@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import base.SpecBase
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.TestAuthRetrievals.Ops
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -30,19 +30,19 @@ import play.api.test.Helpers._
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
-import views.html.subscriptionview.manageAccount.ContactCaptureTelephoneDetailsView
+import views.html.subscriptionview.manageAccount.ContactCapturePhoneDetailsView
 
 import java.util.UUID
 import scala.concurrent.Future
 
 class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
+  val formProvider = new CapturePhoneDetailsFormProvider()
   val id:           String = UUID.randomUUID().toString
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "ContactCaptureTelephoneDetails Controller for Organisation View Contact details" when {
+  "ContactCapturePhoneDetails Controller for Organisation View Contact details" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers =
@@ -50,11 +50,11 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"))(
@@ -74,11 +74,11 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"))(
@@ -99,7 +99,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onSubmit.url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -110,7 +110,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -129,7 +129,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onSubmit.url)
           .withFormUrlEncodedBody("phoneNumber" -> "34323323333")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -139,7 +139,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
     "must redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -149,7 +149,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   }
 
-  "ContactCaptureTelephoneDetails Controller for Agent View Contact details" when {
+  "ContactCapturePhoneDetails Controller for Agent View Contact details" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers =
@@ -167,10 +167,10 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
-        val view   = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view   = application.injector.instanceOf[ContactCapturePhoneDetailsView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), "name", isAgent = false, Some("OrgName"))(
           request,
@@ -199,10 +199,10 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
-        val view   = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view   = application.injector.instanceOf[ContactCapturePhoneDetailsView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), "name", isAgent = false, Some("OrgName"))(
           request,
@@ -229,7 +229,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onSubmit.url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -251,7 +251,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -273,7 +273,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
         )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

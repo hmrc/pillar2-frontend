@@ -216,7 +216,7 @@
                         @upeModel.upePhonePreference.map { upePhonePreference =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
-                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactUPEByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactUPEByPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
                                     <fo:block>@if(upePhonePreference){Yes}else{No}</fo:block>
                                 </fo:list-item-body>
@@ -228,7 +228,7 @@
                         @upeModel.upeCapturePhone.map { upeCapturePhone =>
                             <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                 <fo:list-item  margin-bottom="3mm">
-                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("captureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("capturePhoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
                                         <fo:block>@upeCapturePhone</fo:block>
                                     </fo:list-item-body>
@@ -378,25 +378,25 @@
                                 </fo:list-block>
                                 }
 
-                                <!-- fmTelephonePreference -->
-                                @fmModel.fmTelephonePreference.map { fmTelephonePreference =>
+                                <!-- fmPhonePreference -->
+                                @fmModel.fmPhonePreference.map { fmPhonePreference =>
                                 <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                     <fo:list-item  margin-bottom="3mm">
-                                        <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactNfmByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                        <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactNfmByPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                         <fo:list-item-body start-indent="body-start()">
-                                            <fo:block>@if(fmTelephonePreference){Yes}else{No}</fo:block>
+                                            <fo:block>@if(fmPhonePreference){Yes}else{No}</fo:block>
                                         </fo:list-item-body>
                                     </fo:list-item>
                                 </fo:list-block>
                                 }
 
                                 <!-- upeCapturePhone -->
-                                @fmModel.fmContactTelephone.map { fmContactTelephone =>
+                                @fmModel.fmContactPhone.map { fmContactPhone =>
                                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                         <fo:list-item  margin-bottom="3mm">
-                                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("nfmCapturePhoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                             <fo:list-item-body start-indent="body-start()">
-                                                <fo:block>@fmContactTelephone</fo:block>
+                                                <fo:block>@fmContactPhone</fo:block>
                                             </fo:list-item-body>
                                         </fo:list-item>
                                     </fo:list-block>
@@ -470,23 +470,23 @@
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Contact by telephone ? -->
+                    <!-- Contact by phone ? -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactByPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@if(contactModel.primaryContactByTelephone){Yes}else{No}</fo:block>
+                                <fo:block>@if(contactModel.primaryContactByPhone){Yes}else{No}</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Telephone number -->
-                    @contactModel.primaryContactTelephone.map { primaryContactTelephone =>
+                    <!-- Phone number -->
+                    @contactModel.primaryContactPhone.map { primaryContactPhone =>
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("contactCapturePhoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@primaryContactTelephone</fo:block>
+                                <fo:block>@primaryContactPhone</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
@@ -536,25 +536,25 @@
                     </fo:list-block>
                     }
 
-                    <!-- Secondary contact by telephone ? -->
-                    @contactModel.secondaryContactByTelephone.map { secondaryContactByTelephone =>
+                    <!-- Secondary contact by phone ? -->
+                    @contactModel.secondaryContactByPhone.map { secondaryContactByPhone =>
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("secondaryTelephonePreference.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("secondaryPhonePreference.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@if(secondaryContactByTelephone){Yes}else{No}</fo:block>
+                                <fo:block>@if(secondaryContactByPhone){Yes}else{No}</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
                     }
 
-                    @contactModel.secondaryContactTelephone.map { secondaryContactTelephone =>
-                    <!-- Secondary contact telephone number -->
+                    @contactModel.secondaryContactPhone.map { secondaryContactPhone =>
+                    <!-- Secondary contact phone number -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("secondaryTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("secondaryPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@secondaryContactTelephone</fo:block>
+                                <fo:block>@secondaryContactPhone</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>

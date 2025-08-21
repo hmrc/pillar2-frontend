@@ -62,10 +62,10 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           .set(RepaymentsContactEmailPage, "contact@test.com")
           .success
           .value
-          .set(RepaymentsContactByTelephonePage, true)
+          .set(RepaymentsContactByPhonePage, true)
           .success
           .value
-          .set(RepaymentsTelephoneDetailsPage, "0191 123456789")
+          .set(RepaymentsPhoneDetailsPage, "0191 123456789")
           .success
           .value
 
@@ -78,7 +78,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = true,
-          repaymentsTelephoneDetails = Some("0191 123456789")
+          repaymentsPhoneDetails = Some("0191 123456789")
         )
         RepaymentJourneyModel.from(answers).toOption.value mustEqual expected
       }
@@ -103,7 +103,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           .set(RepaymentsContactEmailPage, "contact@test.com")
           .success
           .value
-          .set(RepaymentsContactByTelephonePage, false)
+          .set(RepaymentsContactByPhonePage, false)
           .success
           .value
         val expected = RepaymentJourneyModel(
@@ -115,7 +115,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = false,
-          repaymentsTelephoneDetails = None
+          repaymentsPhoneDetails = None
         )
         RepaymentJourneyModel.from(answers).toOption.value mustEqual expected
       }
@@ -128,7 +128,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           UkOrAbroadBankAccountPage,
           RepaymentsContactNamePage,
           RepaymentsContactEmailPage,
-          RepaymentsContactByTelephonePage
+          RepaymentsContactByPhonePage
         )
       }
 
@@ -156,10 +156,10 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           .set(RepaymentsContactEmailPage, "contact@test.com")
           .success
           .value
-          .set(RepaymentsContactByTelephonePage, true)
+          .set(RepaymentsContactByPhonePage, true)
           .success
           .value
-          .set(RepaymentsTelephoneDetailsPage, "0191 123456789")
+          .set(RepaymentsPhoneDetailsPage, "0191 123456789")
           .success
           .value
 
@@ -172,7 +172,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = true,
-          repaymentsTelephoneDetails = Some("0191 123456789")
+          repaymentsPhoneDetails = Some("0191 123456789")
         )
         RepaymentJourneyModel.from(answers).toOption.value mustEqual expected
       }
@@ -197,7 +197,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           .set(RepaymentsContactEmailPage, "contact@test.com")
           .success
           .value
-          .set(RepaymentsContactByTelephonePage, false)
+          .set(RepaymentsContactByPhonePage, false)
           .success
           .value
         val expected = RepaymentJourneyModel(
@@ -209,7 +209,7 @@ class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionVal
           repaymentsContactName = "contact name",
           repaymentsContactEmail = "contact@test.com",
           repaymentsContactByPhone = false,
-          repaymentsTelephoneDetails = None
+          repaymentsPhoneDetails = None
         )
         RepaymentJourneyModel.from(answers).toOption.value mustEqual expected
       }

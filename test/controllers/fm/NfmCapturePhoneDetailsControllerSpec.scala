@@ -18,7 +18,7 @@ package controllers.fm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,15 +27,15 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.fmview.NfmCaptureTelephoneDetailsView
+import views.html.fmview.NfmCapturePhoneDetailsView
 
 import scala.concurrent.Future
 
 class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
+  val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "NfmCaptureTelephoneDetails Controller" when {
+  "NfmCapturePhoneDetails Controller" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -50,7 +50,7 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[NfmCapturePhoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
@@ -71,7 +71,7 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(GET, controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode).url)
 
-        val view = application.injector.instanceOf[NfmCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[NfmCapturePhoneDetailsView]
 
         val result = route(application, request).value
 

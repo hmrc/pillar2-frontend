@@ -21,15 +21,15 @@ import models.repayments.{BankAccountDetails, NonUKBank}
 import play.api.libs.json._
 
 case class RepaymentsAuditEvent(
-  refundAmount:               BigDecimal,
-  reasonForRequestingRefund:  String,
-  ukOrAbroadBankAccount:      UkOrAbroadBankAccount,
-  uKBankAccountDetails:       Option[BankAccountDetails],
-  nonUKBank:                  Option[NonUKBank],
-  repaymentsContactName:      String,
-  repaymentsContactEmail:     String,
-  repaymentsContactByPhone:   Boolean,
-  repaymentsTelephoneDetails: Option[String]
+  refundAmount:              BigDecimal,
+  reasonForRequestingRefund: String,
+  ukOrAbroadBankAccount:     UkOrAbroadBankAccount,
+  uKBankAccountDetails:      Option[BankAccountDetails],
+  nonUKBank:                 Option[NonUKBank],
+  repaymentsContactName:     String,
+  repaymentsContactEmail:    String,
+  repaymentsContactByPhone:  Boolean,
+  repaymentsPhoneDetails:    Option[String]
 ) extends AuditEvent {
   override val auditType:  String  = "Pillar2ClaimRepayments"
   override val detailJson: JsValue = Json.toJson(this)

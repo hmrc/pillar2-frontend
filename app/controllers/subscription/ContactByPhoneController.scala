@@ -19,7 +19,7 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.ContactByTelephoneFormProvider
+import forms.ContactByPhoneFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -29,7 +29,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.ContactByTelephoneView
+import views.html.subscriptionview.ContactByPhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -40,9 +40,9 @@ class ContactByPhoneController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 SubscriptionNavigator,
-  formProvider:              ContactByTelephoneFormProvider,
+  formProvider:              ContactByPhoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactByTelephoneView
+  view:                      ContactByPhoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
