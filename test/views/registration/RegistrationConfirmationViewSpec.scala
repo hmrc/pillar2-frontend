@@ -44,6 +44,15 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       viewDomestic.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
+    "should return to dashboard when top banner link is clicked" in {
+      val element = "govuk-header__link govuk-header__service-name"
+      val viewList = List(
+        viewDomestic.getElementsByClass(element),
+        viewMne.getElementsByClass(element)
+      )
+      viewList.map(_.attr("href") must endWith(appConfig.dashboardUrl))
+    }
+
     "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = viewDomestic.getElementsByTag("h1")
       h1Elements.size() mustBe 1

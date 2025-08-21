@@ -61,6 +61,17 @@ class DashboardViewSpec extends ViewSpecBase {
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
     }
 
+    "should return to dashboard when top banner link is clicked" in {
+      val element = "govuk-header__link govuk-header__service-name"
+      val viewList = List(
+        organisationDashboardView.getElementsByClass(element),
+        agentDashboardView.getElementsByClass(element),
+        activeOrganisationDashboardView.getElementsByClass(element),
+        activeAgentDashboardView.getElementsByClass(element)
+      )
+      viewList.map(_.attr("href") must endWith(appConfig.dashboardUrl))
+    }
+
     "have an inactive status banner if there is an inactive status" in {
       val bannerHeading: Elements = organisationDashboardView.getElementsByClass("govuk-notification-banner__heading")
       val bannerLink:    Elements = bannerHeading.first().getElementsByClass("govuk-notification-banner__link")
