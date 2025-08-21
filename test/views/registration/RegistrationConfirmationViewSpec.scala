@@ -17,6 +17,7 @@
 package views.registration
 
 import base.ViewSpecBase
+import controllers.routes
 import models.MneOrDomestic
 import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
@@ -44,15 +45,6 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       viewDomestic.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "should return to dashboard when top banner link is clicked" in {
-      val element = "govuk-header__link govuk-header__service-name"
-      val viewList = List(
-        viewDomestic.getElementsByClass(element),
-        viewMne.getElementsByClass(element)
-      )
-      viewList.map(_.attr("href") must endWith(appConfig.dashboardUrl))
-    }
-
     "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = viewDomestic.getElementsByTag("h1")
       h1Elements.size() mustBe 1
@@ -60,6 +52,12 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
       h1Elements.hasClass("govuk-panel__title") mustBe true
       h1Elements.next().hasClass("govuk-panel__body") mustBe true
       h1Elements.next().text() mustBe s"Group’s Pillar 2 Top-up Taxes ID $testPillar2ID"
+    }
+
+    "have a banner with a link to the Dashboard" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      viewDomestic.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      viewMne.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have an H2 heading" in {
