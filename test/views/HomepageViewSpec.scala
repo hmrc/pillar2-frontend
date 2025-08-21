@@ -52,6 +52,15 @@ class HomepageViewSpec extends ViewSpecBase {
       organisationView.title() mustBe pageTitle
     }
 
+    "should return to homepage when top banner link is clicked" in {
+      val element = "govuk-header__link govuk-header__service-name"
+      val viewList = List(
+        organisationView.getElementsByClass(element),
+        agentView.getElementsByClass(element)
+      )
+      viewList.map(_.attr("href") must endWith(appConfig.dashboardUrl))
+    }
+
     "have a unique H1 heading" in {
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
