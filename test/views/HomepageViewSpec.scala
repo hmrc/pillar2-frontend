@@ -238,7 +238,7 @@ class HomepageViewSpec extends ViewSpecBase {
         controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
 
-    "display UKTR Received status tag with red style when Received scenario is provided" in {
+    "display UKTR Received status tag with green style when Received scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
           page(organisationName, date, None, Some("Received"), plrRef, isAgent = false)(request, appConfig, messages)
