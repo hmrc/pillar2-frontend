@@ -35,6 +35,7 @@ import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Constants.RECEIVED_PERIOD_IN_DAYS
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -174,7 +175,7 @@ class DashboardController @Inject() (
           )
           .maxByOption(_.receivedDate)
           .exists { submission =>
-            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= DashboardController.RECEIVED_PERIOD_IN_DAYS
+            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= RECEIVED_PERIOD_IN_DAYS
           }
 
         (uktrObligation, girObligation) match {
@@ -214,8 +215,4 @@ class DashboardController @Inject() (
       .maxOption
 
   }
-}
-
-object DashboardController {
-  val RECEIVED_PERIOD_IN_DAYS = 60
 }
