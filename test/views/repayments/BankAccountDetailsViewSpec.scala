@@ -209,7 +209,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Sort code must be 6 digits")
+      fieldErrors.text() mustBe "Sort code must be 6 digits"
     }
 
     "show format error when account number has insufficient digits" in {
@@ -227,7 +227,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       )
 
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
-      fieldErrors.text() must include("Account number must be 8 digits")
+      fieldErrors.text() mustBe "Account number must be 8 digits"
     }
   }
 

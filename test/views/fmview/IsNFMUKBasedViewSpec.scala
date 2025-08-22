@@ -34,15 +34,15 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
   "IsNFMUKBasedView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Is the nominated filing member registered in the UK?")
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+      view.getElementsByTag("title").text mustBe "Is the nominated filing member registered in the UK?"
     }
 
     "have a heading" in {
       view.getElementsByTag("h1").text mustBe "Is the nominated filing member registered in the UK?"
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have Yes and No radio options" in {
@@ -60,9 +60,8 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Select yes if the nominated filing member is registered in the UK"
-      )
     }
   }
 }

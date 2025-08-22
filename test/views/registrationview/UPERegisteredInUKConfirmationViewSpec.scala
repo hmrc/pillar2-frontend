@@ -34,7 +34,7 @@ class UPERegisteredInUKConfirmationViewSpec extends ViewSpecBase {
   "UPERegisteredInUKConfirmationView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Is the Ultimate Parent Entity registered in the UK?")
+      view.getElementsByTag("title").text mustBe "Is the Ultimate Parent Entity registered in the UK?"
     }
 
     "have a caption" in {
@@ -60,9 +60,8 @@ class UPERegisteredInUKConfirmationViewSpec extends ViewSpecBase {
       )
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
-      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text must include(
+      errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
         "Select yes if the Ultimate Parent Entity is registered in the UK"
-      )
     }
   }
 }
