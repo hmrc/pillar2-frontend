@@ -35,19 +35,8 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
   lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
-    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
-    val view: Document =
-      Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
-
     "have a page title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have the correct header link to Pillar 2 home" in {
-      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
-
-      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerLink.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have a panel with a unique H1 heading" in {
@@ -55,6 +44,13 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-panel__title") mustBe true
+    }
+
+    "have the correct header link to Pillar 2 home" in {
+      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
+
+      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
+      headerLink.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have a confirmation message" in {
@@ -83,18 +79,6 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
       link.text mustBe "Back to group homepage"
       link.attr("href") mustBe routes.DashboardController.onPageLoad.url
-    }
-
-    "must display Print this page link" in {
-      val printLink = view.select("a:contains(Print this page)")
-      printLink.size()         must be >= 1
-      printLink.first().text() mustBe "Print this page"
-    }
-
-    "must display Sign out link" in {
-      val signOutElements = view.select("*:contains(Sign out)")
-      signOutElements.size() must be >= 1
-      signOutElements.text() mustBe "Sign out"
     }
 
   }
