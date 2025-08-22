@@ -25,10 +25,10 @@ import views.html.fmview.ContactNfmByTelephoneView
 
 class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new ContactNfmByTelephoneFormProvider
-  val page: ContactNfmByTelephoneView = inject[ContactNfmByTelephoneView]
+  lazy val formProvider = new ContactNfmByTelephoneFormProvider
+  lazy val page: ContactNfmByTelephoneView = inject[ContactNfmByTelephoneView]
 
-  val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  lazy val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
 
   "ContactNfmByTelephoneView" should {
 

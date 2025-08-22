@@ -26,9 +26,9 @@ import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 class NfmCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider:  CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
-  val page:          NfmCaptureTelephoneDetailsView      = inject[NfmCaptureTelephoneDetailsView]
-  lazy val username: String                              = "John Doe"
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         NfmCaptureTelephoneDetailsView      = inject[NfmCaptureTelephoneDetailsView]
+  lazy val username:     String                              = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "What is the phone number"
 
