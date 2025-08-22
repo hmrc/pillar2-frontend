@@ -26,9 +26,9 @@ import views.html.fmview.NfmCapturePhoneDetailsView
 
 class NfmCapturePhoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider:  CapturePhoneDetailsFormProvider = new CapturePhoneDetailsFormProvider
-  val page:          NfmCapturePhoneDetailsView      = inject[NfmCapturePhoneDetailsView]
-  lazy val username: String                          = "John Doe"
+  lazy val formProvider: CapturePhoneDetailsFormProvider = new CapturePhoneDetailsFormProvider
+  lazy val page:         NfmCapturePhoneDetailsView      = inject[NfmCapturePhoneDetailsView]
+  lazy val username:     String                          = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "What is the phone number"
 
@@ -38,24 +38,24 @@ class NfmCapturePhoneDetailsViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
-    }
-
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe s"$pageTitle for $username?"
     }
 
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+    }
+
     "have a hint description" in {
       view
         .getElementsByClass("govuk-hint")
-        .text mustEqual "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
+        .text mustBe "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Save and continue"
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
