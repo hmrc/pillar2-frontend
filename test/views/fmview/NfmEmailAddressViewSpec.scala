@@ -21,32 +21,30 @@ import forms.NfmEmailAddressFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.fmview.NfmEmailAddressView
 
 class NfmEmailAddressViewSpec extends ViewSpecBase {
 
-  lazy val formProvider = new NfmEmailAddressFormProvider
-  lazy val page: NfmEmailAddressView = inject[NfmEmailAddressView]
-  lazy val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  lazy val formProvider: NfmEmailAddressFormProvider = new NfmEmailAddressFormProvider
+  lazy val page:         NfmEmailAddressView         = inject[NfmEmailAddressView]
+  lazy val userName:     String                      = "John Doe"
+  lazy val view: Document = Jsoup.parse(page(formProvider(userName), NormalMode, userName)(request, appConfig, messages).toString())
+
+  def pageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" for $username" else username
+    s"What is the email address$usernamePart?"
+  }
 
   "NfmEmailAddressView" should {
-
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "What is the email address?"
+      view.title() mustBe s"${pageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "What is the email address for Contact CYA?"
-    }
-
-    "have the correct page title" in {
-      view.getElementsByTag("title").text mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    // FIXME: title description
-    "must have exact page title from acceptance test scenario" in {
-      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
-      titleText must startWith("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle(userName)
     }
 
     "have hint text" in {
