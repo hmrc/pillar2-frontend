@@ -25,10 +25,9 @@ import views.html.fmview.ContactNfmByPhoneView
 
 class ContactNfmByPhoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new ContactNfmByPhoneFormProvider
-  val page: ContactNfmByPhoneView = inject[ContactNfmByPhoneView]
-
-  val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  lazy val formProvider: ContactNfmByPhoneFormProvider = new ContactNfmByPhoneFormProvider
+  lazy val page:         ContactNfmByPhoneView         = inject[ContactNfmByPhoneView]
+  lazy val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
 
   "ContactNfmByPhoneView" should {
 
@@ -38,12 +37,6 @@ class ContactNfmByPhoneViewSpec extends ViewSpecBase {
 
     "have the correct page title" in {
       view.getElementsByTag("title").text mustBe "Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    // FIXME:
-    "must have exact page title from acceptance test scenario" in {
-      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
-      titleText must startWith("Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have a caption" in {

@@ -25,14 +25,12 @@ import views.html.registrationview.UPERegisteredInUKConfirmationView
 
 class UPERegisteredInUKConfirmationViewSpec extends ViewSpecBase {
 
-  val formProvider = new UPERegisteredInUKConfirmationFormProvider
-  val page: UPERegisteredInUKConfirmationView = inject[UPERegisteredInUKConfirmationView]
-
-  val view: Document =
+  lazy val formProvider = new UPERegisteredInUKConfirmationFormProvider
+  lazy val page: UPERegisteredInUKConfirmationView = inject[UPERegisteredInUKConfirmationView]
+  lazy val view: Document =
     Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "UPERegisteredInUKConfirmationView" should {
-
     "have a title" in {
       view.getElementsByTag("title").text mustBe "Is the Ultimate Parent Entity registered in the UK?"
     }
