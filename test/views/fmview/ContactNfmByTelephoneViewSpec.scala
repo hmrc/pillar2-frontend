@@ -21,36 +21,34 @@ import forms.ContactNfmByTelephoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.fmview.ContactNfmByTelephoneView
 
 class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
 
-  val formProvider = new ContactNfmByTelephoneFormProvider
-  val page: ContactNfmByTelephoneView = inject[ContactNfmByTelephoneView]
+  lazy val formProvider: ContactNfmByTelephoneFormProvider = new ContactNfmByTelephoneFormProvider
+  lazy val page:         ContactNfmByTelephoneView         = inject[ContactNfmByTelephoneView]
+  lazy val username:     String                            = "John Doe"
+  lazy val view: Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
 
-  val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  def pageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" $username" else username
+    s"Can we contact$usernamePart by phone?"
+  }
 
   "ContactNfmByTelephoneView" should {
-
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by phone?")
+      view.title() mustBe s"${pageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct page title" in {
-      view.getElementsByTag("title").text must include("Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK")
-    }
-
-    "must have exact page title from acceptance test scenario" in {
-      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
-      titleText must startWith("Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK")
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle(username)
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
-    }
-
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Can we contact Contact CYA by phone?"
     }
 
     "have hint text" in {

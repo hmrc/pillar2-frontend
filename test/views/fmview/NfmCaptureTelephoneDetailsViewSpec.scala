@@ -26,26 +26,25 @@ import views.html.fmview.NfmCaptureTelephoneDetailsView
 
 class NfmCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
 
-  val formProvider:  CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
-  val page:          NfmCaptureTelephoneDetailsView      = inject[NfmCaptureTelephoneDetailsView]
-  lazy val username: String                              = "John Doe"
+  lazy val formProvider: CaptureTelephoneDetailsFormProvider = new CaptureTelephoneDetailsFormProvider
+  lazy val page:         NfmCaptureTelephoneDetailsView      = inject[NfmCaptureTelephoneDetailsView]
+  lazy val username:     String                              = "John Doe"
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "What is the phone number"
 
   "CaptureTelephoneDetailsView" should {
-
     "have a title" in {
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe s"$pageTitle for $username?"
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
     }
 
     "have a hint description" in {
