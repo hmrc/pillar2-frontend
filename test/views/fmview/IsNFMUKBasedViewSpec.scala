@@ -46,7 +46,7 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
-    "have Yes/No radio items" in {
+    "have Yes/No radio buttons" in {
       val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
 
       radioButtons.size() mustBe 2
@@ -59,7 +59,7 @@ class IsNFMUKBasedViewSpec extends ViewSpecBase {
     }
 
     "show error summary when form has errors" in {
-      val errorView = Jsoup.parse(
+      val errorView: Document = Jsoup.parse(
         page(formProvider().bind(Map("value" -> "")), NormalMode)(request, appConfig, messages).toString()
       )
 
