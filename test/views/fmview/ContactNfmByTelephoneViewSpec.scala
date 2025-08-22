@@ -28,19 +28,23 @@ class ContactNfmByTelephoneViewSpec extends ViewSpecBase {
 
   lazy val formProvider: ContactNfmByTelephoneFormProvider = new ContactNfmByTelephoneFormProvider
   lazy val page:         ContactNfmByTelephoneView         = inject[ContactNfmByTelephoneView]
-  lazy val contactName:  String                            = "John Doe"
-  lazy val pageTitle:    String                            = "Can we contact by telephone"
-  lazy val view: Document = Jsoup.parse(page(formProvider(contactName), NormalMode, contactName)(request, appConfig, messages).toString())
+  lazy val username:     String                            = "John Doe"
+  lazy val view: Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
+
+  def pageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" $username" else username
+    s"Can we contact$usernamePart by phone?"
+  }
 
   "ContactNfmByTelephoneView" should {
     "have a title" in {
-      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"${pageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"Can we contact $contactName by telephone?"
+      h1Elements.text() mustBe pageTitle(username)
     }
 
     "have a caption" in {
