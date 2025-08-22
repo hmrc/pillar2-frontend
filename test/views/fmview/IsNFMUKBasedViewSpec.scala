@@ -25,11 +25,9 @@ import views.html.fmview.IsNFMUKBasedView
 
 class IsNFMUKBasedViewSpec extends ViewSpecBase {
 
-  val formProvider = new IsNFMUKBasedFormProvider
-  val page: IsNFMUKBasedView = inject[IsNFMUKBasedView]
-
-  val view: Document =
-    Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider: IsNFMUKBasedFormProvider = new IsNFMUKBasedFormProvider
+  lazy val page:         IsNFMUKBasedView         = inject[IsNFMUKBasedView]
+  lazy val view:         Document                 = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "IsNFMUKBasedView" should {
 

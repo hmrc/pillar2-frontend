@@ -25,10 +25,9 @@ import views.html.bta.HavePillar2TopUpTaxIdView
 
 class HavePillar2TopUpTaxIdViewSpec extends ViewSpecBase {
 
-  val formProvider = new HavePillar2TopUpTaxIdFormProvider
-  val page: HavePillar2TopUpTaxIdView = inject[HavePillar2TopUpTaxIdView]
-
-  val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
+  lazy val formProvider = new HavePillar2TopUpTaxIdFormProvider
+  lazy val page: HavePillar2TopUpTaxIdView = inject[HavePillar2TopUpTaxIdView]
+  lazy val view: Document                  = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "HavePillar2TopUpTaxIdView" should {
 
