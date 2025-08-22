@@ -40,7 +40,7 @@ class RfmContactByTelephoneViewSpec extends ViewSpecBase {
   "Rfm Contact By Telephone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Can we contact by phone?")
+      view.getElementsByTag("title").text mustBe "Can we contact by phone?"
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
