@@ -237,6 +237,25 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCardLinks.get(1).attr("href") mustBe
         controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
+
+    "display UKTR Received status tag with red style when Received scenario is provided" in {
+      val organisationViewWithOverdueScenario: Document =
+        Jsoup.parse(
+          page(organisationName, date, None, Some("Received"), plrRef, isAgent = false)(request, appConfig, messages)
+            .toString()
+        )
+      val returnsCard: Element  = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
+      val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--green")
+
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Returns"
+
+      statusTags.size() mustBe 1
+
+      val receivedStatusTag: Element = statusTags.first()
+      receivedStatusTag.text() mustBe "Received"
+      receivedStatusTag.attr("aria-label") mustBe "Received returns"
+      receivedStatusTag.attr("title") mustBe "Received returns"
+    }
   }
 
   "HomepageView for an agent" should {

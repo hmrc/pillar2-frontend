@@ -22,9 +22,9 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
-import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import pages._
@@ -116,6 +116,7 @@ class DashboardController @Inject() (
                       case Due        => Some("Due")
                       case Overdue    => Some("Overdue")
                       case Incomplete => Some("Incomplete")
+                      case Received   => Some("Received")
                     }
                 },
                 plrReference,
@@ -160,24 +161,35 @@ class DashboardController @Inject() (
       if (period.obligations.isEmpty) {
         None
       } else {
-        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
-        val girObligation  = period.obligations.find(_.obligationType == GIR)
-        val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
-
+        val uktrObligation       = period.obligations.find(_.obligationType == UKTR)
+        val girObligation        = period.obligations.find(_.obligationType == GIR)
+        val dueDatePassed        = period.dueDate.isBefore(LocalDate.now())
         val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
+        val isInReceivedPeriod = period.obligations
+          .filter(_.status == ObligationStatus.Fulfilled)
+          .flatMap(_.submissions)
+          .filter(submission =>
+            submission.submissionType == UKTR_CREATE
+              || submission.submissionType == SubmissionType.GIR
+          )
+          .maxByOption(_.receivedDate)
+          .exists { submission =>
+            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= DashboardController.RECEIVED_PERIOD_IN_DAYS
+          }
 
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>
-            (uktr.status, gir.status, dueDatePassed) match {
-              case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
-              case _ if hasAnyOpenObligation && !dueDatePassed                => Some(Due)
-              case _ if hasAnyOpenObligation && dueDatePassed                 => Some(Overdue)
-              case _                                                          => None
+            (uktr.status, gir.status, dueDatePassed, isInReceivedPeriod) match {
+              case (ObligationStatus.Open, ObligationStatus.Open, false, _)          => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false, _)     => Some(Due)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false, _)     => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Open, true, _)           => Some(Overdue)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
+              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
+              case _                                                                 => None
             }
           case (Some(uktr), None) =>
             (uktr.status, dueDatePassed) match {
@@ -202,4 +214,8 @@ class DashboardController @Inject() (
       .maxOption
 
   }
+}
+
+object DashboardController {
+  val RECEIVED_PERIOD_IN_DAYS = 60
 }
