@@ -33,19 +33,18 @@ class NfmCaptureTelephoneDetailsViewSpec extends ViewSpecBase {
   lazy val pageTitle: String   = "What is the phone number"
 
   "CaptureTelephoneDetailsView" should {
-
     "have a title" in {
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe s"$pageTitle for $username?"
+    }
+
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustEqual "Group details"
     }
 
     "have a hint description" in {
