@@ -25,10 +25,9 @@ import views.html.fmview.NfmEmailAddressView
 
 class NfmEmailAddressViewSpec extends ViewSpecBase {
 
-  val formProvider = new NfmEmailAddressFormProvider
-  val page: NfmEmailAddressView = inject[NfmEmailAddressView]
-
-  val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  lazy val formProvider = new NfmEmailAddressFormProvider
+  lazy val page: NfmEmailAddressView = inject[NfmEmailAddressView]
+  lazy val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
 
   "NfmEmailAddressView" should {
 
