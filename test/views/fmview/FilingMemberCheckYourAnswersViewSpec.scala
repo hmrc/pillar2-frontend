@@ -40,19 +40,19 @@ class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with Subscriptio
   "FilingMemberCheckYourAnswersView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Check your answers")
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+      view.getElementsByTag("title").text mustBe "Check your answers"
     }
 
     "have a heading" in {
       view.getElementsByTag("h1").text mustBe "Check your answers for filing member details"
     }
 
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+    }
+
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must include("Confirm and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
     }
   }
 }

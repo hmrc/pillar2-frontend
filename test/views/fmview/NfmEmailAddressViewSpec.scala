@@ -33,20 +33,21 @@ class NfmEmailAddressViewSpec extends ViewSpecBase {
   "NfmEmailAddressView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("What is the email address?")
-    }
-
-    "have the correct page title" in {
-      view.getElementsByTag("title").text must include("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
-    }
-
-    "must have exact page title from acceptance test scenario" in {
-      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
-      titleText must startWith("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.getElementsByTag("title").text mustBe "What is the email address?"
     }
 
     "have a heading" in {
       view.getElementsByTag("h1").text mustBe "What is the email address for Contact CYA?"
+    }
+
+    "have the correct page title" in {
+      view.getElementsByTag("title").text mustBe "What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    // FIXME: title description
+    "must have exact page title from acceptance test scenario" in {
+      val titleText = view.getElementsByTag("title").text.replaceAll("\\s+", " ").trim
+      titleText must startWith("What is the email address? - Report Pillar 2 Top-up Taxes - GOV.UK")
     }
 
     "have hint text" in {
