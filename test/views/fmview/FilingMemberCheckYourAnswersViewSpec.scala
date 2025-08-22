@@ -20,31 +20,25 @@ import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
 
-  val page: FilingMemberCheckYourAnswersView = inject[FilingMemberCheckYourAnswersView]
-
-  val view: Document = Jsoup.parse(
-    page(
-      SummaryListViewModel(Seq.empty)
-    )(
-      request,
-      appConfig,
-      messages
-    ).toString()
-  )
+  lazy val page:      FilingMemberCheckYourAnswersView = inject[FilingMemberCheckYourAnswersView]
+  lazy val pageTitle: String                           = "Check your answers for filing member details"
+  lazy val view:      Document                         = Jsoup.parse(page(SummaryListViewModel(Seq.empty))(request, appConfig, messages).toString())
 
   "FilingMemberCheckYourAnswersView" should {
-
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "Check your answers"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Check your answers for filing member details"
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe "Check your answers for filing member details"
     }
 
     "have a caption" in {

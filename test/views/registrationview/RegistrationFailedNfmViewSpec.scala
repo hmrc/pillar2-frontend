@@ -25,9 +25,10 @@ import views.html.registrationview.RegistrationFailedNfmView
 
 class RegistrationFailedNfmViewSpec extends ViewSpecBase {
 
-  lazy val page:      RegistrationFailedNfmView = inject[RegistrationFailedNfmView]
-  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                    = "Register your group"
+  lazy val page:       RegistrationFailedNfmView = inject[RegistrationFailedNfmView]
+  lazy val pageTitle:  String                    = "Register your group"
+  lazy val view:       Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val paragraphs: Elements                  = view.getElementsByClass("govuk-body")
 
   "Registration Failed Nfm View" should {
 
@@ -38,6 +39,9 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
+      // FIXME: inconsistency between title and H1
+      // Title: "Register your group"
+      // H1: "The details you entered did not match our records"
       h1Elements.text() mustBe "The details you entered did not match our records"
     }
 
@@ -46,14 +50,14 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text mustBe "We could not match the details you entered with records held by HMRC."
-      view.getElementsByClass("govuk-body").get(1).text mustBe "You can confirm your details with the records held by HMRC by:"
+      paragraphs.get(0).text mustBe "We could not match the details you entered with records held by HMRC."
+      paragraphs.get(1).text mustBe "You can confirm your details with the records held by HMRC by:"
     }
 
     "have a paragraph links" in {
       val link1 = view.getElementsByTag("ul").first().getElementsByTag("a").first()
       val link2 = view.getElementsByTag("ul").first().getElementsByTag("a").get(1)
-      val link3 = view.getElementsByClass("govuk-body").get(4)
+      val link3 = paragraphs.get(4)
 
       link1.text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
       link1.attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
