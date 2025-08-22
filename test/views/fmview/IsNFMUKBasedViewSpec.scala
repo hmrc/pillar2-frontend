@@ -21,31 +21,37 @@ import forms.IsNFMUKBasedFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.fmview.IsNFMUKBasedView
 
 class IsNFMUKBasedViewSpec extends ViewSpecBase {
 
   lazy val formProvider: IsNFMUKBasedFormProvider = new IsNFMUKBasedFormProvider
   lazy val page:         IsNFMUKBasedView         = inject[IsNFMUKBasedView]
+  lazy val pageTitle:    String                   = "Is the nominated filing member registered in the UK?"
   lazy val view:         Document                 = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "IsNFMUKBasedView" should {
-
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "Is the nominated filing member registered in the UK?"
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Is the nominated filing member registered in the UK?"
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
-    "have Yes and No radio options" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text mustBe "Yes"
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text mustBe "No"
+    "have Yes/No radio items" in {
+      val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text mustBe "Yes"
+      radioButtons.get(1).text mustBe "No"
     }
 
     "have a save and continue button" in {
