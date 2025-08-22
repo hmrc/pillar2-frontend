@@ -21,30 +21,31 @@ import forms.ContactNfmByPhoneFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
+
 import views.html.fmview.ContactNfmByPhoneView
 
 class ContactNfmByPhoneViewSpec extends ViewSpecBase {
 
   lazy val formProvider: ContactNfmByPhoneFormProvider = new ContactNfmByPhoneFormProvider
   lazy val page:         ContactNfmByPhoneView         = inject[ContactNfmByPhoneView]
-  lazy val view: Document = Jsoup.parse(page(formProvider("Contact CYA"), NormalMode, "Contact CYA")(request, appConfig, messages).toString())
+  lazy val contactName:  String                        = "John Doe"
+  lazy val pageTitle:    String                        = "Can we contact by telephone"
+  lazy val view: Document = Jsoup.parse(page(formProvider(contactName), NormalMode, contactName)(request, appConfig, messages).toString())
 
-  "ContactNfmByPhoneView" should {
-
+  "ContactNfmByTelephoneView" should {
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "Can we contact by phone?"
+      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct page title" in {
-      view.getElementsByTag("title").text mustBe "Can we contact by phone? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"Can we contact $contactName by telephone?"
     }
 
     "have a caption" in {
       view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
-    }
-
-    "have a heading" in {
-      view.getElementsByTag("h1").text mustBe "Can we contact Contact CYA by phone?"
     }
 
     "have hint text" in {
