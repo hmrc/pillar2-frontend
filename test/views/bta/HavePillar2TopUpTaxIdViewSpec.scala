@@ -33,11 +33,11 @@ class HavePillar2TopUpTaxIdViewSpec extends ViewSpecBase {
   "HavePillar2TopUpTaxIdView" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text must include("Do you have a Pillar 2 Top-up Taxes ID?")
+      view.getElementsByTag("title").text mustBe "Do you have a Pillar 2 Top-up Taxes ID?"
     }
 
     "have the correct page title" in {
-      view.getElementsByTag("title").text must include("Do you have a Pillar 2 Top-up Taxes ID? - Report Pillar 2 Top-up Taxes - GOV.UK")
+      view.getElementsByTag("title").text mustBe "Do you have a Pillar 2 Top-up Taxes ID? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a heading" in {
