@@ -33,23 +33,25 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val form:         Form[NonUKAddress]               = formProvider()
   lazy val page:         NfmRegisteredAddressView         = inject[NfmRegisteredAddressView]
   lazy val userName:     String                           = "Test Company"
-  lazy val pageTitle:    String                           = "What is the registered office address"
+
+  def registeredOfficeAddressPageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" of $username" else username
+    s"What is the registered office address$usernamePart?"
+  }
 
   "NFM Registered Address View" when {
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(
-        page(form, NormalMode, userName, Seq.empty)(request, appConfig, messages).toString()
-      )
+      val view: Document = Jsoup.parse(page(form, NormalMode, userName, Seq.empty)(request, appConfig, messages).toString())
 
       "have a title" in {
-        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view.title() mustBe s"${registeredOfficeAddressPageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
-        h1Elements.text() mustBe s"$pageTitle of $userName?"
+        h1Elements.text() mustBe registeredOfficeAddressPageTitle(userName)
       }
 
       "have the correct section caption" in {
