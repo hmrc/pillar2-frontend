@@ -87,17 +87,15 @@
     <div class="card-half-width">
         <div class="govuk-summary-card__title-wrapper card-with-tag">
           <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
-          @maybeUktrBannerScenario.map { scenario =>
-              @if(scenario == "Overdue" || scenario == "Incomplete" || scenario == "Received") {
+            @maybeUktrBannerScenario.filter(tag => tag == "Overdue" || tag == "Incomplete" || tag == "Received").map { scenario =>
                 <span class="govuk-tag @{
-                  scenario match {
-                    case "Overdue" => "govuk-tag--red"
-                    case "Incomplete" => "govuk-tag--purple"
-                    case "Received" => "govuk-tag--green"
-                  }
+                    scenario match {
+                        case "Overdue" => "govuk-tag--red"
+                        case "Incomplete" => "govuk-tag--purple"
+                        case "Received" => "govuk-tag--green"
+                    }
                 }" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
-              }
-          }
+            }
         </div>
       <div class="card-content">
        <ul class="govuk-list">
