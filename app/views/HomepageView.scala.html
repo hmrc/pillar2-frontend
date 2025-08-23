@@ -87,7 +87,7 @@
     <div class="card-half-width">
         <div class="govuk-summary-card__title-wrapper card-with-tag">
           <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
-            @maybeUktrBannerScenario.filter(tag => tag == "Overdue" || tag == "Incomplete" || tag == "Received").map { scenario =>
+            @maybeUktrBannerScenario.filter(Set("Overdue", "Incomplete", "Received").contains).map { scenario =>
                 <span class="govuk-tag @{
                     scenario match {
                         case "Overdue" => "govuk-tag--red"
