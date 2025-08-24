@@ -24,6 +24,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
+import models.obligationsandsubmissions.SubmissionType.BTN
 import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
@@ -141,17 +142,12 @@ class DashboardController @Inject() (
   private def btnBannerDate(response: ObligationsAndSubmissionsSuccess): Option[LocalDate] = {
     val accountingPeriods = response.accountingPeriodDetails
 
-    if (
-      accountingPeriods.head.obligations
-        .find(_.obligationType == UKTR)
-        .get
-        .submissions
-        .nonEmpty
-    ) {
-      Some(accountingPeriods.head.endDate)
-    } else {
-      accountingPeriods.find(_.obligations.head.submissions.nonEmpty).map(_.endDate)
-    }
+    accountingPeriods.head.obligations
+      .find(_.obligationType == UKTR)
+      .flatMap(_.submissions.headOption)
+      .collect {
+        case submission if submission.submissionType == BTN => accountingPeriods.head.endDate
+      }
   }
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
