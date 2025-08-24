@@ -17,6 +17,7 @@
 package views
 
 import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -56,6 +57,12 @@ class HomepageViewSpec extends ViewSpecBase {
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageHeading
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "display organisation information correctly" in {
