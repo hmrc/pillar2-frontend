@@ -28,7 +28,7 @@ object FinancialDataHelper {
   private lazy val ETMP_INTEREST_DTT  = "6239"
 
   lazy val PILLAR2_UKTR     = "UK tax return"
-  lazy val PILLAR2_INTEREST = "UK tax return interest"
+  lazy val PILLAR2_INTEREST = "Late Payment Interest"
 
   lazy val PLR_MAIN_TRANSACTIONS: Set[String] = Set(ETMP_UKTR, ETMP_INTEREST)
   lazy val PLR_SUB_TRANSACTIONS: Set[String] =
