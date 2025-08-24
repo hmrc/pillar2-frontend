@@ -64,15 +64,22 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "should display total amount due correctly" in {
-      organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Total amount due: £1,000.00"
+      organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Amount due: £1,000.00"
     }
 
     "should display the leading paragraphs correctly" in {
-      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may be over more than one " +
-        "accounting period. It also includes any penalties or late payment interest."
+      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may include more than one " +
+        "accounting period. It also includes any penalties."
       paragraphs.get(1).text() mustBe "Any payments made to your account before submitting your tax return have " +
-        "been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to " +
-        "your account."
+        "been deducted from your amount due."
+    }
+
+    "should display interest inset text section" in {
+      organisationView
+        .getElementsByClass("govuk-inset-text")
+        .first()
+        .text() mustBe "Your UK Tax Return payment is overdue and is subject to late payment interest. " +
+        "We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment."
     }
 
     "should display payment button with correct link" in {
@@ -146,16 +153,25 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       penaltiesLink.attr("href") mustBe UnderConstructionController.onPageLoad.url
     }
 
-    "should display agent-specific content" in {
-      val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
+    "display agent-specific content" should {
+      "should display agent-specific paragraphs" in {
+        val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-      agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
-        "return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be " +
-        "added to the group’s account."
-      agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-      agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
-        "payment for this group."
-      agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
+          "return have been deducted from the amount due."
+        agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+        agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+          "payment for this group."
+        agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+      }
+
+      "should display interest inset text section" in {
+        agentView
+          .getElementsByClass("govuk-inset-text")
+          .first()
+          .text() mustBe "The group has an overdue UK Tax Return payment and is subject to late payment interest. " +
+          "We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment."
+      }
     }
   }
 }
