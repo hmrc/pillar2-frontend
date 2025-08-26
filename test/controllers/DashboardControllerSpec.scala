@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
-import models.{UserAnswers, Due, Received, Incomplete, Overdue}
+import models.{Due, Incomplete, Overdue, Received, UserAnswers}
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
