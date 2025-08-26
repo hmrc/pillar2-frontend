@@ -31,7 +31,7 @@
         govukTable: GovukTable
 )
 
-@(table: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false) {
 
@@ -48,7 +48,7 @@
     @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
 
     @ScrollWrapper {
-        @govukTable(table)
+        @govukTable(transactionHistoryTable)
     }
 
     @pagination.map { pag =>
