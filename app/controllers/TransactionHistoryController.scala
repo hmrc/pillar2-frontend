@@ -47,7 +47,7 @@ class TransactionHistoryController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
-  view:                                   TransactionHistoryView,
+  transactionHistoryView:                 TransactionHistoryView,
   noTransactionHistoryView:               NoTransactionHistoryView,
   errorView:                              TransactionHistoryErrorView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
@@ -73,12 +73,12 @@ class TransactionHistoryController @Inject() (
                   .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
               )
             )
-        updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
-        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+        updatedAnswers          <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
+        _                       <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        transactionHistoryTable <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
       } yield Ok(
-        view(table, pagination, request.isAgent)
+        transactionHistoryView(transactionHistoryTable, pagination, request.isAgent)
       )
 
       result
@@ -110,7 +110,8 @@ class TransactionHistoryController @Inject() (
 }
 
 object TransactionHistoryController {
-  val ROWS_ON_PAGE = 10
+  // FIXME: move this to application.conf
+  private val ROWS_ON_PAGE: Int = 10
 
   private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
     messages:                                                   Messages
@@ -118,8 +119,8 @@ object TransactionHistoryController {
     val paginationIndex = page.getOrElse(1)
     val numberOfPages   = financialHistory.grouped(ROWS_ON_PAGE).size
 
-    if (numberOfPages < 2) None
-    else
+    if (numberOfPages < 2) { None }
+    else {
       Some(
         Pagination(
           items = Some(generatePaginationItems(paginationIndex, numberOfPages)),
@@ -129,6 +130,7 @@ object TransactionHistoryController {
           attributes = Map.empty
         )
       )
+    }
   }
 
   private def generatePaginationItems(paginationIndex: Int, numberOfPages: Int): Seq[PaginationItem] =
@@ -146,7 +148,7 @@ object TransactionHistoryController {
       )
 
   private def generatePreviousLink(paginationIndex: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == 1) None
+    if (paginationIndex == 1) { None }
     else {
       Some(
         PaginationLink(
@@ -159,7 +161,7 @@ object TransactionHistoryController {
     }
 
   private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == numberOfPages) None
+    if (paginationIndex == numberOfPages) { None }
     else {
       Some(
         PaginationLink(
@@ -196,10 +198,9 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val df = new DecimalFormat("#,###.00")
-
-    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
-    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+    val df:           DecimalFormat = new DecimalFormat("#,###.00")
+    val amountPaid:   String        = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
+    val amountRepaid: String        = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
 
     Seq(
       TableRow(
