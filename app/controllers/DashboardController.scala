@@ -20,16 +20,16 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models._
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus, ObligationsAndSubmissionsSuccess, SubmissionType}
+import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{Due, DueAndOverdueReturnBannerScenario, Incomplete, Overdue, Received, UnprocessableEntityError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome, RepaymentCompletionStatus, RepaymentsStatusPage, RepaymentsWaitingRoomVisited, RfmStatusPage}
+import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
