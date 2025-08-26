@@ -17,20 +17,19 @@
 package controllers
 
 import cats.data.OptionT
-import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models._
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import pages._
+import models.{Due, DueAndOverdueReturnBannerScenario, Incomplete, Overdue, Received, UnprocessableEntityError, UserAnswers}
+import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, RedirectToASAHome, RepaymentCompletionStatus, RepaymentsStatusPage, RepaymentsWaitingRoomVisited, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
 import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -110,16 +109,7 @@ class DashboardController @Inject() (
                 subscriptionData.upeDetails.organisationName,
                 subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
                 if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
-                getDueOrOverdueReturnsStatus(response) match {
-                  case None => None
-                  case Some(value) =>
-                    value match {
-                      case Due        => Some("Due")
-                      case Overdue    => Some("Overdue")
-                      case Incomplete => Some("Incomplete")
-                      case Received   => Some("Received")
-                    }
-                },
+                getDueOrOverdueReturnsStatus(response).map(_.toString),
                 plrReference,
                 isAgent = request.isAgent
               )
