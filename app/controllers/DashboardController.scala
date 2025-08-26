@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus, ObligationsAndSubmissionsSuccess, SubmissionType}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import models.{Due, DueAndOverdueReturnBannerScenario, Incomplete, Overdue, Received, UnprocessableEntityError, UserAnswers}
