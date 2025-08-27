@@ -35,8 +35,8 @@ trait RepaymentHelpers {
       get(NonUKBankPage).isDefined,
       get(RepaymentsContactNamePage).isDefined,
       get(RepaymentsContactEmailPage).isDefined,
-      get(RepaymentsContactByTelephonePage),
-      get(RepaymentsTelephoneDetailsPage).isDefined
+      get(RepaymentsContactByPhonePage),
+      get(RepaymentsPhoneDetailsPage).isDefined
     ) match {
       case (true, true, Some(UkBankAccount), true, false, true, true, Some(true), true)        => true
       case (true, true, Some(UkBankAccount), true, false, true, true, Some(false), false)      => true
@@ -52,7 +52,7 @@ trait RepaymentHelpers {
       ukOrAbroadBankAccount     <- get(UkOrAbroadBankAccountPage)
       repaymentsContactName     <- get(RepaymentsContactNamePage)
       repaymentsContactEmail    <- get(RepaymentsContactEmailPage)
-      repaymentsContactByPhone  <- get(RepaymentsContactByTelephonePage)
+      repaymentsContactByPhone  <- get(RepaymentsContactByPhonePage)
     } yield RepaymentsAuditEvent(
       refundAmount,
       reasonForRequestingRefund,
@@ -62,7 +62,7 @@ trait RepaymentHelpers {
       repaymentsContactName,
       repaymentsContactEmail,
       repaymentsContactByPhone,
-      getRepaymentsTelephoneDetails
+      getRepaymentsPhoneDetails
     )
 
   private def getUkBankAccountDetails: Option[BankAccountDetails] =
@@ -77,9 +77,9 @@ trait RepaymentHelpers {
       case _                                              => None
     }
 
-  private def getRepaymentsTelephoneDetails: Option[String] =
-    get(RepaymentsContactByTelephonePage).flatMap { nominated =>
-      if (nominated) get(RepaymentsTelephoneDetailsPage) else None
+  private def getRepaymentsPhoneDetails: Option[String] =
+    get(RepaymentsContactByPhonePage).flatMap { nominated =>
+      if (nominated) get(RepaymentsPhoneDetailsPage) else None
     }
 
 }

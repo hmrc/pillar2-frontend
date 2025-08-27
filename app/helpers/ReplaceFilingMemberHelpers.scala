@@ -45,8 +45,8 @@ trait ReplaceFilingMemberHelpers {
     rows = Seq(
       RfmPrimaryContactNameSummary.row(self),
       RfmPrimaryContactEmailSummary.row(self),
-      RfmContactByTelephoneSummary.row(self),
-      RfmCapturePrimaryTelephoneSummary.row(self)
+      RfmContactByPhoneSummary.row(self),
+      RfmCapturePrimaryPhoneSummary.row(self)
     ).flatten
   ).withCssClass(GovUKMarginBottom9.toString)
 
@@ -70,8 +70,8 @@ trait ReplaceFilingMemberHelpers {
       RfmAddSecondaryContactSummary.row(self),
       RfmSecondaryContactNameSummary.row(self),
       RfmSecondaryContactEmailSummary.row(self),
-      RfmSecondaryTelephonePreferenceSummary.row(self),
-      RfmSecondaryTelephoneSummary.row(self)
+      RfmSecondaryPhonePreferenceSummary.row(self),
+      RfmSecondaryPhoneSummary.row(self)
     ).flatten
   ).withCssClass(GovUKMarginBottom9.toString)
 
@@ -91,13 +91,13 @@ trait ReplaceFilingMemberHelpers {
         for {
           secondaryName  <- get(RfmSecondaryContactNamePage)
           secondaryEmail <- get(RfmSecondaryEmailPage)
-        } yield ContactDetailsType(name = secondaryName, telephone = getSecondaryTelephone, emailAddress = secondaryEmail)
+        } yield ContactDetailsType(name = secondaryName, phone = getSecondaryPhone, emailAddress = secondaryEmail)
       } else {
         None
       }
     }
 
-  private def getSecondaryTelephone: Option[String] =
+  private def getSecondaryPhone: Option[String] =
     get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
       if (nominated) get(RfmSecondaryCapturePhonePage) else None
     }
@@ -108,7 +108,7 @@ trait ReplaceFilingMemberHelpers {
       securityAnswerRegistrationDate <- get(RfmRegistrationDatePage)
       plrReference                   <- get(RfmPillar2ReferencePage)
       corporatePosition              <- get(RfmCorporatePositionPage)
-      primaryContactPhonePreference  <- get(RfmContactByTelephonePage)
+      primaryContactPhonePreference  <- get(RfmContactByPhonePage)
       primaryContactName             <- get(RfmPrimaryContactNamePage)
       primaryContactEmail            <- get(RfmPrimaryContactEmailPage)
       contactAddress                 <- get(RfmContactAddressPage)
@@ -124,7 +124,7 @@ trait ReplaceFilingMemberHelpers {
       primaryContactName = primaryContactName,
       primaryContactEmail = primaryContactEmail,
       primaryContactPhonePreference = primaryContactPhonePreference,
-      primaryContactPhoneNumber = getPrimaryTelephone,
+      primaryContactPhoneNumber = getPrimaryPhone,
       addSecondaryContact = addSecondaryContact,
       secondaryContactInformation = getSecondaryContact,
       contactAddress = contactAddress
@@ -146,9 +146,9 @@ trait ReplaceFilingMemberHelpers {
       if (ukBased) None else get(RfmRegisteredAddressPage)
     }
 
-  private def getPrimaryTelephone: Option[String] =
-    get(RfmContactByTelephonePage).flatMap { nominated =>
-      if (nominated) get(RfmCapturePrimaryTelephonePage) else None
+  private def getPrimaryPhone: Option[String] =
+    get(RfmContactByPhonePage).flatMap { nominated =>
+      if (nominated) get(RfmCapturePrimaryPhonePage) else None
     }
 
   private def isAllSecondaryInfoProvided: Boolean =
@@ -176,10 +176,10 @@ trait ReplaceFilingMemberHelpers {
       _                     <- get(RfmPrimaryContactNamePage)
       _                     <- get(RfmPrimaryContactEmailPage)
       _                     <- get(RfmContactAddressPage)
-      primaryPhoneNominated <- get(RfmContactByTelephonePage)
+      primaryPhoneNominated <- get(RfmContactByPhonePage)
     } yield
       if (primaryPhoneNominated) {
-        get(RfmCapturePrimaryTelephonePage).map(_ => true).getOrElse(false)
+        get(RfmCapturePrimaryPhonePage).map(_ => true).getOrElse(false)
       } else {
         true
       }).getOrElse(false)

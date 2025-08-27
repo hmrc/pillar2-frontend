@@ -192,23 +192,23 @@
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Contact by telephone ? -->
+                    <!-- Contact by phone ? -->
                     <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                         <fo:list-item  margin-bottom="3mm">
-                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmContactByTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                            <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmContactByPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                             <fo:list-item-body start-indent="body-start()">
-                                <fo:block>@if(model.primaryContactByTelephone){Yes}else{No}</fo:block>
+                                <fo:block>@if(model.primaryContactByPhone){Yes}else{No}</fo:block>
                             </fo:list-item-body>
                         </fo:list-item>
                     </fo:list-block>
 
-                    <!-- Telephone number -->
-                    @model.primaryContactTelephone.map { primaryContactTelephone =>
+                    <!-- Phone number -->
+                    @model.primaryContactPhone.map { primaryContactPhone =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                             <fo:list-item  margin-bottom="3mm">
-                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmCaptureTelephoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfmCapturePhoneDetails.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                 <fo:list-item-body start-indent="body-start()">
-                                    <fo:block>@model.primaryContactTelephone</fo:block>
+                                    <fo:block>@model.primaryContactPhone</fo:block>
                                 </fo:list-item-body>
                             </fo:list-item>
                         </fo:list-block>
@@ -258,25 +258,25 @@
                             </fo:list-block>
                         }
 
-                        <!-- Secondary contact by telephone ? -->
-                        @model.secondaryContactByTelephone.map { secondaryContactByTelephone =>
+                        <!-- Secondary contact by phone ? -->
+                        @model.secondaryContactByPhone.map { secondaryContactByPhone =>
                         <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                 <fo:list-item  margin-bottom="3mm">
-                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryTelephonePreference.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryPhonePreference.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
-                                        <fo:block>@if(secondaryContactByTelephone){Yes}else{No}</fo:block>
+                                        <fo:block>@if(secondaryContactByPhone){Yes}else{No}</fo:block>
                                     </fo:list-item-body>
                                 </fo:list-item>
                             </fo:list-block>
                         }
 
-                        @model.secondaryContactTelephone.map { secondaryContactTelephone =>
-                            <!-- Secondary contact telephone number -->
+                        @model.secondaryContactPhone.map { secondaryContactPhone =>
+                            <!-- Secondary contact phone number -->
                             <fo:list-block margin-bottom="3mm" border-color="#b1b4b6" border-after-style="solid" border-after-width="0.5pt" provisional-label-separation="1em" provisional-distance-between-starts="14em">
                                 <fo:list-item  margin-bottom="3mm">
-                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryTelephone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
+                                    <fo:list-item-label end-indent="label-end()" font-weight="bold"><fo:block>@messages("rfm.secondaryPhone.checkYourAnswersLabel")</fo:block></fo:list-item-label>
                                     <fo:list-item-body start-indent="body-start()">
-                                        <fo:block>@secondaryContactTelephone</fo:block>
+                                        <fo:block>@secondaryContactPhone</fo:block>
                                     </fo:list-item-body>
                                 </fo:list-item>
                             </fo:list-block>
