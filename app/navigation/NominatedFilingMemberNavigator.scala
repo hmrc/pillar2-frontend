@@ -44,7 +44,7 @@ class NominatedFilingMemberNavigator @Inject() {
     case FmRegisteredAddressPage  => _ => controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode)
     case FmContactNamePage        => _ => controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode)
     case FmContactEmailPage       => _ => controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode)
-    case FmPhonePreferencePage    => telephonePreferenceLogic
+    case FmPhonePreferencePage    => phonePreferenceLogic
     case FmCapturePhonePage       => _ => nfmCheckYourAnswers
     case _                        => _ => routes.IndexController.onPageLoad
   }
@@ -85,7 +85,7 @@ class NominatedFilingMemberNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def telephonePreferenceLogic(userAnswers: UserAnswers): Call =
+  private def phonePreferenceLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(FmPhonePreferencePage)
       .map { provided =>
@@ -98,7 +98,7 @@ class NominatedFilingMemberNavigator @Inject() {
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
   private val checkRouteMap: Page => UserAnswers => Call = {
-    case FmPhonePreferencePage    => telephoneCheckRouteLogic
+    case FmPhonePreferencePage    => phoneCheckRouteLogic
     case NominateFilingMemberPage => nominatedFilingMemberCheckRoute
     case _                        => whichCheckYourAnswerPageContact
   }
@@ -122,7 +122,7 @@ class NominatedFilingMemberNavigator @Inject() {
       nfmCheckYourAnswers
     }
 
-  private def telephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
+  private def phoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(FmPhonePreferencePage)
       .map { nominatedPhoneNumber =>

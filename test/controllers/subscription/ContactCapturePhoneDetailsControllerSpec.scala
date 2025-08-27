@@ -18,7 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -27,15 +27,15 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
+import views.html.subscriptionview.ContactCapturePhoneDetailsView
 
 import scala.concurrent.Future
 
 class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
-  val formProvider = new CaptureTelephoneDetailsFormProvider()
+  val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "ContactCaptureTelephoneDetails Controller" when {
+  "ContactCapturePhoneDetails Controller" when {
 
     "must return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers: UserAnswers =
@@ -47,7 +47,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name"), NormalMode, "name")(
@@ -71,7 +71,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[ContactCaptureTelephoneDetailsView]
+        val view = application.injector.instanceOf[ContactCapturePhoneDetailsView]
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(formProvider("name").fill("123132"), NormalMode, "name")(

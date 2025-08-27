@@ -50,8 +50,8 @@ class NfmCheckYourAnswersController @Inject() (
           NfmRegisteredAddressSummary.row(request.userAnswers, countryOptions),
           NfmContactNameSummary.row(request.userAnswers),
           NfmEmailAddressSummary.row(request.userAnswers),
-          NfmTelephonePreferenceSummary.row(request.userAnswers),
-          NfmContactTelephoneSummary.row(request.userAnswers)
+          NfmPhonePreferenceSummary.row(request.userAnswers),
+          NfmContactPhoneSummary.row(request.userAnswers)
         ).flatten
       )
       Ok(view(list))

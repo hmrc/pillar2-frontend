@@ -19,7 +19,7 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.CaptureTelephoneDetailsView
+import views.html.registrationview.CapturePhoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,10 +38,10 @@ class CapturePhoneDetailsController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              CaptureTelephoneDetailsFormProvider,
+  formProvider:              CapturePhoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
-  view:                      CaptureTelephoneDetailsView
+  view:                      CapturePhoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

@@ -106,7 +106,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to RFM Telephone Preference page with valid data" in {
+    "must redirect to RFM Phone Preference page with valid data" in {
 
       val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -124,7 +124,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode).url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onPageLoad(NormalMode).url
       }
     }
 

@@ -159,14 +159,14 @@ class SubscriptionService @Inject() (
       upeCorrespAddressDetails = address,
       primaryContactDetails = ContactDetailsType(
         name = userData.subPrimaryContactName,
-        telephone = userData.subPrimaryCapturePhone,
+        phone = userData.subPrimaryCapturePhone,
         emailAddress = userData.subPrimaryEmail
       ),
       secondaryContactDetails = if (userData.subAddSecondaryContact) {
         for {
           name  <- userData.subSecondaryContactName
           email <- userData.subSecondaryEmail
-        } yield ContactDetailsType(name = name, telephone = userData.subSecondaryCapturePhone, emailAddress = email)
+        } yield ContactDetailsType(name = name, phone = userData.subSecondaryCapturePhone, emailAddress = email)
       } else {
         None
       },
@@ -208,7 +208,7 @@ class SubscriptionService @Inject() (
       ),
       primaryContactDetails = ContactDetailsType(
         name = requiredInfo.primaryContactName,
-        telephone = requiredInfo.primaryContactPhoneNumber,
+        phone = requiredInfo.primaryContactPhoneNumber,
         emailAddress = requiredInfo.primaryContactEmail
       ),
       secondaryContactDetails = requiredInfo.secondaryContactInformation,
@@ -243,7 +243,7 @@ class SubscriptionService @Inject() (
       ),
       primaryContactDetails = ContactDetailsType(
         name = requiredInfo.primaryContactName,
-        telephone = requiredInfo.primaryContactPhoneNumber,
+        phone = requiredInfo.primaryContactPhoneNumber,
         emailAddress = requiredInfo.primaryContactEmail
       ),
       secondaryContactDetails = requiredInfo.secondaryContactInformation,

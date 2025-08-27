@@ -319,16 +319,16 @@ class SubscriptionHelpersSpec extends SpecBase {
           .value
           .contactsFinalStatusChecker mustEqual true
       }
-      "return true if no primary telephone contact and all other contact questions are answered" in {
+      "return true if no primary phone contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData.setOrException(SubPrimaryPhonePreferencePage, false).contactsFinalStatusChecker mustEqual true
       }
-      "return true if no primary & secondary telephone contact and all other contact questions are answered" in {
+      "return true if no primary & secondary phone contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData
           .setOrException(SubPrimaryPhonePreferencePage, false)
           .setOrException(SubSecondaryPhonePreferencePage, false)
           .contactsFinalStatusChecker mustEqual true
       }
-      "return true if primary telephone and no secondary contact and all other contact questions are answered" in {
+      "return true if primary phone and no secondary contact and all other contact questions are answered" in {
         groupPrimaryAndSecondaryContactData
           .setOrException(SubPrimaryPhonePreferencePage, false)
           .setOrException(SubAddSecondaryContactPage, false)
@@ -353,7 +353,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .value
           .contactsFinalStatusChecker mustBe false
       }
-      "return false if primary contact by telephone is true and primary telephone is not answered" in {
+      "return false if primary contact by phone is true and primary phone is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubPrimaryCapturePhonePage)
           .success
@@ -374,7 +374,7 @@ class SubscriptionHelpersSpec extends SpecBase {
           .value
           .contactsFinalStatusChecker mustBe false
       }
-      "return false if secondary contact by telephone is true and secondary contact telephone is not answered" in {
+      "return false if secondary contact by phone is true and secondary contact phone is not answered" in {
         groupPrimaryAndSecondaryContactData
           .remove(SubSecondaryCapturePhonePage)
           .success

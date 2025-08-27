@@ -42,7 +42,7 @@ final case class UpeDetailsAmend(
 
 final case class ContactDetailsType(
   name:         String,
-  telephone:    Option[String],
+  phone:        Option[String],
   emailAddress: String
 )
 

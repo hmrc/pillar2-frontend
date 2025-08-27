@@ -60,10 +60,10 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       .set(RfmPrimaryContactEmailPage, "primary@test.com")
       .success
       .value
-      .set(RfmContactByTelephonePage, true)
+      .set(RfmContactByPhonePage, true)
       .success
       .value
-      .set(RfmCapturePrimaryTelephonePage, "0191 123456789")
+      .set(RfmCapturePrimaryPhonePage, "0191 123456789")
       .success
       .value
       .set(RfmAddSecondaryContactPage, true)
@@ -184,10 +184,10 @@ class PrintPdfControllerSpec extends SpecBase with EitherValues with MockitoSuga
       .set(RepaymentsContactEmailPage, "contact@test.com")
       .success
       .value
-      .set(RepaymentsContactByTelephonePage, true)
+      .set(RepaymentsContactByPhonePage, true)
       .success
       .value
-      .set(RepaymentsTelephoneDetailsPage, "0191 123456789")
+      .set(RepaymentsPhoneDetailsPage, "0191 123456789")
       .success
       .value
 

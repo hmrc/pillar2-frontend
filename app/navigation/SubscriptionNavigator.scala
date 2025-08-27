@@ -46,7 +46,7 @@ class SubscriptionNavigator @Inject() {
     case SubPrimaryCapturePhonePage      => _ => controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode)
     case SubAddSecondaryContactPage      => addSecondaryContactRoute
     case SubSecondaryContactNamePage     => _ => controllers.subscription.routes.SecondaryContactEmailController.onPageLoad(NormalMode)
-    case SubSecondaryEmailPage           => _ => controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(NormalMode)
+    case SubSecondaryEmailPage           => _ => controllers.subscription.routes.SecondaryPhonePreferenceController.onPageLoad(NormalMode)
     case SubSecondaryPhonePreferencePage => secondaryPhonePreference
     case SubSecondaryCapturePhonePage    => _ => controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
     case SubRegisteredAddressPage        => _ => contactDetailCheckYourAnswersRoute
@@ -94,7 +94,7 @@ class SubscriptionNavigator @Inject() {
       .get(SubSecondaryPhonePreferencePage)
       .map { provided =>
         if (provided) {
-          controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(NormalMode)
+          controllers.subscription.routes.SecondaryPhoneController.onPageLoad(NormalMode)
         } else {
           controllers.subscription.routes.CaptureSubscriptionAddressController.onPageLoad(NormalMode)
         }
@@ -106,12 +106,12 @@ class SubscriptionNavigator @Inject() {
     case SubAccountingPeriodPage         => whichCheckYourAnswerPageGroup
     case SubPrimaryContactNamePage       => whichCheckYourAnswerPageContact
     case SubPrimaryEmailPage             => whichCheckYourAnswerPageContact
-    case SubPrimaryPhonePreferencePage   => primaryTelephoneCheckRouteLogic
+    case SubPrimaryPhonePreferencePage   => primaryPhoneCheckRouteLogic
     case SubPrimaryCapturePhonePage      => whichCheckYourAnswerPageContact
     case SubAddSecondaryContactPage      => addSecondaryContactCheckRoute
     case SubSecondaryContactNamePage     => secondaryContactNameRoute
     case SubSecondaryEmailPage           => secondaryContactEmailRoute
-    case SubSecondaryPhonePreferencePage => secondaryTelephoneCheckRouteLogic
+    case SubSecondaryPhonePreferencePage => secondaryPhoneCheckRouteLogic
     case SubSecondaryCapturePhonePage    => whichCheckYourAnswerPageContact
     case SubRegisteredAddressPage        => whichCheckYourAnswerPageContact
     case _                               => whichCheckYourAnswerPageContact
@@ -138,7 +138,7 @@ class SubscriptionNavigator @Inject() {
 
   private def secondaryContactEmailRoute(userAnswers: UserAnswers): Call =
     if (!userAnswers.finalStatusCheck) {
-      controllers.subscription.routes.SecondaryTelephonePreferenceController.onPageLoad(CheckMode)
+      controllers.subscription.routes.SecondaryPhonePreferenceController.onPageLoad(CheckMode)
     } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
       reviewAndSubmitCheckYourAnswers
     } else {
@@ -159,7 +159,7 @@ class SubscriptionNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def primaryTelephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
+  private def primaryPhoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(SubPrimaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
@@ -173,12 +173,12 @@ class SubscriptionNavigator @Inject() {
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
 
-  private def secondaryTelephoneCheckRouteLogic(userAnswers: UserAnswers): Call =
+  private def secondaryPhoneCheckRouteLogic(userAnswers: UserAnswers): Call =
     userAnswers
       .get(SubSecondaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
         if (nominatedPhoneNumber & userAnswers.get(SubSecondaryCapturePhonePage).isEmpty) {
-          controllers.subscription.routes.SecondaryTelephoneController.onPageLoad(CheckMode)
+          controllers.subscription.routes.SecondaryPhoneController.onPageLoad(CheckMode)
         } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
           reviewAndSubmitCheckYourAnswers
         } else {

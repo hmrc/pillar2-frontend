@@ -105,18 +105,18 @@
                         </fo:block>
                     </fo:block-container>
 
-                    <!-- Contact by telephone ? -->
+                    <!-- Contact by phone ? -->
                     <fo:block-container margin-bottom="3mm">
                         <fo:block>
-                            <fo:inline font-weight="bold">Can we contact by telephone?: </fo:inline>
+                            <fo:inline font-weight="bold">Can we contact by phone?: </fo:inline>
                             <fo:inline>true</fo:inline>
                         </fo:block>
                     </fo:block-container>
 
-                    <!-- Telephone number -->
+                    <!-- Phone number -->
                     <fo:block-container margin-bottom="3mm">
                         <fo:block>
-                            <fo:inline font-weight="bold">Telephone number: </fo:inline>
+                            <fo:inline font-weight="bold">Phone number: </fo:inline>
                             <fo:inline>0191 123456789</fo:inline>
                         </fo:block>
                     </fo:block-container>
@@ -152,18 +152,18 @@
                         </fo:block>
                     </fo:block-container>
 
-                    <!-- Secondary contact by telephone ? -->
+                    <!-- Secondary contact by phone ? -->
                     <fo:block-container margin-bottom="3mm">
                         <fo:block>
-                            <fo:inline font-weight="bold">Can we contact by telephone?: </fo:inline>
+                            <fo:inline font-weight="bold">Can we contact by phone?: </fo:inline>
                             <fo:inline>true</fo:inline>
                         </fo:block>
                     </fo:block-container>
 
-                    <!-- Secondary contact telephone number -->
+                    <!-- Secondary contact phone number -->
                     <fo:block-container margin-bottom="3mm">
                         <fo:block>
-                            <fo:inline font-weight="bold">Second contact telephone number: </fo:inline>
+                            <fo:inline font-weight="bold">Second contact phone number: </fo:inline>
                             <fo:inline>0191 987654321</fo:inline>
                         </fo:block>
                     </fo:block-container>

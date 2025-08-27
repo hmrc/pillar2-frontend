@@ -71,48 +71,48 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(NormalMode)
       }
 
-      "go to telephone preference page from contact email page" in {
+      "go to phone preference page from contact email page" in {
         navigator.nextPage(
           RfmPrimaryContactEmailPage,
           NormalMode,
           emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")
         ) mustBe
-          controllers.rfm.routes.RfmContactByTelephoneController.onPageLoad(NormalMode)
+          controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode)
       }
 
-      "go to secondary contact  from Rfm Capture Primary Telephone Page" in {
+      "go to secondary contact  from Rfm Capture Primary Phone Page" in {
         navigator.nextPage(
-          RfmCapturePrimaryTelephonePage,
+          RfmCapturePrimaryPhonePage,
           NormalMode,
           emptyUserAnswers
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
 
-      "if user select yes on contact by telephone page  then go to a page where we capture primary telephone number" in {
-        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByTelephonePage, true)) mustBe
-          controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(NormalMode)
+      "if user select yes on contact by phone page  then go to a page where we capture primary phone number" in {
+        navigator.nextPage(RfmContactByPhonePage, NormalMode, emptyUserAnswers.setOrException(RfmContactByPhonePage, true)) mustBe
+          controllers.rfm.routes.RfmCapturePrimaryPhoneController.onPageLoad(NormalMode)
       }
 
-      "go to journey recovery if no answer for contact by telephone page can be found" in {
-        navigator.nextPage(RfmContactByTelephonePage, NormalMode, emptyUserAnswers) mustBe
+      "go to journey recovery if no answer for contact by phone page can be found" in {
+        navigator.nextPage(RfmContactByPhonePage, NormalMode, emptyUserAnswers) mustBe
           jr
       }
 
-      "if user select no  on contact by telephone page then go to RfmAddSecondaryContact page " in {
+      "if user select no  on contact by phone page then go to RfmAddSecondaryContact page " in {
         navigator.nextPage(
-          RfmContactByTelephonePage,
+          RfmContactByPhonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmContactByTelephonePage, false)
+          emptyUserAnswers.setOrException(RfmContactByPhonePage, false)
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
 
       "go to Add Secondary Contact details page when they enter their phone details" in {
         navigator.nextPage(
-          RfmCapturePrimaryTelephonePage,
+          RfmCapturePrimaryPhonePage,
           NormalMode,
-          emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "12321321")
+          emptyUserAnswers.setOrException(RfmCapturePrimaryPhonePage, "12321321")
         ) mustBe
           controllers.rfm.routes.RfmAddSecondaryContactController.onPageLoad(NormalMode)
       }
@@ -161,17 +161,17 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmSecondaryContactEmailController.onPageLoad(NormalMode)
       }
 
-      "go to RfmSecondaryTelephonePreference page from RfmSecondaryEmailPage page" in {
+      "go to RfmSecondaryPhonePreference page from RfmSecondaryEmailPage page" in {
         navigator.nextPage(RfmSecondaryEmailPage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryEmailPage, "someone@unknown.com")) mustBe
-          controllers.rfm.routes.RfmSecondaryTelephonePreferenceController.onPageLoad(NormalMode)
+          controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onPageLoad(NormalMode)
       }
 
       "go to RfmSecondaryCapturePhonePage page if they choose to nominate a secondary contact number" in {
         navigator.nextPage(RfmSecondaryPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(RfmSecondaryPhonePreferencePage, true)) mustBe
-          controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(NormalMode)
+          controllers.rfm.routes.RfmSecondaryPhoneController.onPageLoad(NormalMode)
       }
 
-      "go to Contact Address page from Rfm Secondary Telephone Controller" in {
+      "go to Contact Address page from Rfm Secondary Phone Controller" in {
         navigator.nextPage(
           RfmSecondaryCapturePhonePage,
           NormalMode,
@@ -194,7 +194,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.rfm.routes.RfmContactAddressController.onPageLoad(NormalMode)
       }
 
-      "go to RfmContactAddress page from secondary contact telephone page" in {
+      "go to RfmContactAddress page from secondary contact phone page" in {
 
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryCapturePhonePage, "1234567890")
@@ -290,28 +290,28 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           submitAndReview
       }
 
-      "go to ask input telephone number if contact by answer yes" in {
+      "go to ask input phone number if contact by answer yes" in {
         val ua = emptyUserAnswers
-          .setOrException(RfmContactByTelephonePage, true)
-        navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
-          controllers.rfm.routes.RfmCapturePrimaryTelephoneController.onPageLoad(CheckMode)
+          .setOrException(RfmContactByPhonePage, true)
+        navigator.nextPage(RfmContactByPhonePage, CheckMode, ua) mustBe
+          controllers.rfm.routes.RfmCapturePrimaryPhoneController.onPageLoad(CheckMode)
       }
       "go to recovery if correct info not provided" in {
         val ua = emptyUserAnswers
-        navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
+        navigator.nextPage(RfmContactByPhonePage, CheckMode, ua) mustBe
           controllers.routes.JourneyRecoveryController.onPageLoad()
       }
 
-      "go to submit and review CYA page from primary contact by telephone page if Primary Telephone Number not exists" in {
+      "go to submit and review CYA page from primary contact by phone page if Primary Phone Number not exists" in {
         val ua = emptyUserAnswers
-          .setOrException(RfmContactByTelephonePage, false)
-        navigator.nextPage(RfmContactByTelephonePage, CheckMode, ua) mustBe
+          .setOrException(RfmContactByPhonePage, false)
+        navigator.nextPage(RfmContactByPhonePage, CheckMode, ua) mustBe
           submitAndReview
       }
 
-      "go to submit and review CYA page from primary contact telephone page" in {
-        val ua = emptyUserAnswers.setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
-        navigator.nextPage(RfmCapturePrimaryTelephonePage, CheckMode, ua) mustBe
+      "go to submit and review CYA page from primary contact phone page" in {
+        val ua = emptyUserAnswers.setOrException(RfmCapturePrimaryPhonePage, "1234567890")
+        navigator.nextPage(RfmCapturePrimaryPhonePage, CheckMode, ua) mustBe
           submitAndReview
       }
 
@@ -410,7 +410,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryPhonePreferencePage, true)
         navigator.nextPage(RfmSecondaryPhonePreferencePage, CheckMode, ua) mustBe
-          controllers.rfm.routes.RfmSecondaryTelephoneController.onPageLoad(CheckMode)
+          controllers.rfm.routes.RfmSecondaryPhoneController.onPageLoad(CheckMode)
       }
 
       "go to submit and review CYA page from secondary contact email page" in {
@@ -436,7 +436,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.routes.JourneyRecoveryController.onPageLoad()
       }
 
-      "go to submit and review CYA page from secondary contact by telephone page" in {
+      "go to submit and review CYA page from secondary contact by phone page" in {
         val ua = emptyUserAnswers
           .setOrException(RfmSecondaryPhonePreferencePage, false)
         navigator.nextPage(RfmSecondaryCapturePhonePage, CheckMode, ua) mustBe
@@ -460,7 +460,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
           controllers.routes.JourneyRecoveryController.onPageLoad()
       }
 
-      "go to submit and review CYA page from secondary contact telephone page" in {
+      "go to submit and review CYA page from secondary contact phone page" in {
 
         val ua = emptyUserAnswers.setOrException(RfmSecondaryCapturePhonePage, "1234567890").setOrException(RfmSecondaryPhonePreferencePage, true)
         navigator.nextPage(RfmSecondaryCapturePhonePage, CheckMode, ua) mustBe

@@ -111,7 +111,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
               updatedAnswers1 <-
                 if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
               updatedAnswers2 <-
-                if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByTelephonePage)) else Future.successful(updatedAnswers1)
+                if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByPhonePage)) else Future.successful(updatedAnswers1)
               updatedAnswers3 <-
                 if (success) Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
               updatedAnswers4 <-
@@ -119,7 +119,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
               updatedAnswers5 <-
                 if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
               updatedAnswers6 <-
-                if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsTelephoneDetailsPage)) else Future.successful(updatedAnswers5)
+                if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsPhoneDetailsPage)) else Future.successful(updatedAnswers5)
               updatedAnswers7 <-
                 if (success) Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
               updatedAnswers8 <-
@@ -140,8 +140,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
       rows = Seq(
         RepaymentsContactNameSummary.row(userAnswers),
         RepaymentsContactEmailSummary.row(userAnswers),
-        RepaymentsContactByTelephoneSummary.row(userAnswers),
-        RepaymentsTelephoneDetailsSummary.row(userAnswers)
+        RepaymentsContactByPhoneSummary.row(userAnswers),
+        RepaymentsPhoneDetailsSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 

@@ -20,12 +20,12 @@ import models.UKAddress
 import play.api.libs.json.{Json, OFormat}
 
 case class WithoutIdRegData(
-  upeNameRegistration:   String,
-  upeRegisteredAddress:  UKAddress,
-  upeContactName:        String,
-  emailAddress:          String,
-  contactUpeByTelephone: Boolean,
-  telephoneNumber:       Option[String] = None
+  upeNameRegistration:  String,
+  upeRegisteredAddress: UKAddress,
+  upeContactName:       String,
+  emailAddress:         String,
+  contactUpeByPhone:    Boolean,
+  phoneNumber:          Option[String] = None
 )
 
 object WithoutIdRegData {

@@ -95,11 +95,11 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(FmContactNamePage, NormalMode, emptyUserAnswers.setOrException(FmContactNamePage, "Paddington")) mustBe
           controllers.fm.routes.NfmEmailAddressController.onPageLoad(NormalMode)
       }
-      "go to telephone preference page from contact email page" in {
+      "go to phone preference page from contact email page" in {
         navigator.nextPage(FmContactEmailPage, NormalMode, emptyUserAnswers.setOrException(FmContactEmailPage, "something@something.com")) mustBe
           controllers.fm.routes.ContactNfmByPhoneController.onPageLoad(NormalMode)
       }
-      "go to a page where we capture their telephone number if they have chosen to nominate one" in {
+      "go to a page where we capture their phone number if they have chosen to nominate one" in {
         navigator.nextPage(FmPhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
           controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode)
       }
@@ -145,7 +145,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(FmContactEmailPage, CheckMode, emptyUserAnswers.setOrException(FmContactEmailPage, "something@something.com")) mustBe
           nfmCYA
       }
-      "go to a page where we capture their telephone number if they have chosen to nominate one" in {
+      "go to a page where we capture their phone number if they have chosen to nominate one" in {
         navigator.nextPage(FmPhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(FmPhonePreferencePage, true)) mustBe
           controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)
       }
@@ -188,7 +188,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
         navigator.nextPage(FmContactEmailPage, CheckMode, ua) mustBe
           submitAndReview
       }
-      "go to capture telephone page if they have chosen to nominate one even if they have have answered all other mandatory questions on the tasklist" in {
+      "go to capture phone page if they have chosen to nominate one even if they have have answered all other mandatory questions on the tasklist" in {
         val ua = emptyUserAnswers.setOrException(FmPhonePreferencePage, true).setOrException(CheckYourAnswersLogicPage, true)
         navigator.nextPage(FmPhonePreferencePage, CheckMode, ua) mustBe
           controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)

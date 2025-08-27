@@ -19,7 +19,7 @@ package controllers.subscription
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.ContactCaptureTelephoneDetailsView
+import views.html.subscriptionview.ContactCapturePhoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,9 +39,9 @@ class ContactCapturePhoneDetailsController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 SubscriptionNavigator,
-  formProvider:              CaptureTelephoneDetailsFormProvider,
+  formProvider:              CapturePhoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      ContactCaptureTelephoneDetailsView
+  view:                      ContactCapturePhoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

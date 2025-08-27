@@ -50,8 +50,8 @@ class UpeCheckYourAnswersController @Inject() (
           UpeRegisteredAddressSummary.row(request.userAnswers, countryOptions),
           UpeContactNameSummary.row(request.userAnswers),
           UpeContactEmailSummary.row(request.userAnswers),
-          UpeTelephonePreferenceSummary.row(request.userAnswers),
-          UPEContactTelephoneSummary.row(request.userAnswers)
+          UpePhonePreferenceSummary.row(request.userAnswers),
+          UPEContactPhoneSummary.row(request.userAnswers)
         ).flatten
       )
       Ok(view(list))

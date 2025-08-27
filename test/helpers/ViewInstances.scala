@@ -217,13 +217,13 @@ trait ViewInstances extends StubMessageControllerComponents {
       govukSelect
     )
 
-  val viewContactUPEByTelephoneView: ContactUPEByTelephoneView =
-    new ContactUPEByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
-  val viewContactByTelephoneView: ContactByTelephoneView =
-    new ContactByTelephoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
+  val viewContactUPEByPhoneView: ContactUPEByPhoneView =
+    new ContactUPEByPhoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
+  val viewContactByPhoneView: ContactByPhoneView =
+    new ContactByPhoneView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukRadios, govukButton)
 
-  val viewCaptureTelephoneDetailsView: CaptureTelephoneDetailsView =
-    new CaptureTelephoneDetailsView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
+  val viewCapturePhoneDetailsView: CapturePhoneDetailsView =
+    new CapturePhoneDetailsView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewCheckYourAnswersUPE: UpeCheckYourAnswersView =
     new UpeCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
