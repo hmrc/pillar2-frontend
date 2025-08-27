@@ -81,8 +81,8 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(plrReference)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(ViewHelpers.formatDateGDS(registrationDate))
+      view.getElementsByClass("govuk-summary-list__value").get(0).text mustBe plrReference
+      view.getElementsByClass("govuk-summary-list__value").get(1).text mustBe ViewHelpers.formatDateGDS(registrationDate)
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
       summaryListItems.get(0).text mustBe plrReference
       summaryListItems.get(1).text mustBe ViewHelpers.formatDateGDS(registrationDate)

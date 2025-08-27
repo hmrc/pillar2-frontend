@@ -104,7 +104,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
       summaryListActions.get(0).getElementsByTag("a").attr("href") mustBe
         controllers.subscription.routes.MneOrDomesticController.onPageLoad(CheckMode).url
 
-      summaryListKeys.get(1).text() must include("consolidated accounting period")
+      summaryListKeys.get(1).text() mustBe "consolidated accounting period"
       summaryListItems.get(1).text() mustBe ""
 
       summaryListKeys.get(2).text() mustBe "Start date"

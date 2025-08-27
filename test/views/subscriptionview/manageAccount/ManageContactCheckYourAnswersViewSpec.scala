@@ -207,9 +207,8 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
 
         summaryListKeys.get(3).text() mustBe contactPhoneLabel
         summaryListItems.get(3).text() mustBe contactPhoneValue
-        summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") must include(
+        summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
           controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
-        )
       }
 
       "have second contact header" in {
