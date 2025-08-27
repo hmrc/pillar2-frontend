@@ -74,8 +74,8 @@ trait ViewInstances extends StubMessageControllerComponents {
 
   val assetsConfig = new AssetsConfig()
 
-  val hmrcScripts        = new HmrcScripts(assetsConfig)
-  val hmrcTimeoutDilogue = new HmrcTimeoutDialog
+  val hmrcScripts         = new HmrcScripts(assetsConfig)
+  val hmrcTimeoutDialogue = new HmrcTimeoutDialog
 
   private val govukHintAndErrorMessage: GovukHintAndErrorMessage =
     new GovukHintAndErrorMessage(new GovukHint(), new GovukErrorMessage())
@@ -133,7 +133,7 @@ trait ViewInstances extends StubMessageControllerComponents {
     hmrcStandardFooter,
     hmrcTrackingConsent,
     new HmrcLanguageSelect(),
-    hmrcTimeoutDilogue,
+    hmrcTimeoutDialogue,
     new HmrcReportTechnicalIssueHelper(new HmrcReportTechnicalIssue(), new ContactFrontendConfig(configuration)),
     new HmrcAccessibleAutocompleteJavascript(assetsConfig),
     hmrcScripts,
