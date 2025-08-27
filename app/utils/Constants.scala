@@ -22,4 +22,5 @@ object Constants {
   final val SITE_YES                      = "site.yes"
   final val SITE_NO                       = "site.no"
   final val SITE_CHANGE                   = "site.change"
+  final val RECEIVED_PERIOD_IN_DAYS       = 60
 }

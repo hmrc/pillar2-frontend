@@ -19,10 +19,9 @@ package controllers
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
-import models.UserAnswers
+import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
-import models.{Due, Incomplete, Overdue}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -785,6 +784,236 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
         result mustBe Some(Overdue)
+      }
+    }
+
+    "return Received when UKTR and GIR obligations are both fulfilled and within 60 day period" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate          = LocalDate.now().minusDays(7)
+        val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.UKTR_CREATE,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.GIR,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Received)
+      }
+    }
+
+    "return None when UKTR and GIR obligations are both fulfilled and outside 60 day period" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(70)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.UKTR_CREATE,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.GIR,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return None when only UKTR is fulfilled and within 60 day period" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.UKTR_CREATE,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return None when only GIR is fulfilled and within 60 day period" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.GIR,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe None
+      }
+    }
+
+    "return Received when multiple submissions exist and most recent for both obligations is within 60 days" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate          = LocalDate.now().minusDays(7)
+        val oldSubmissionDate    = java.time.ZonedDateTime.now().minusDays(70)
+        val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(5)
+
+        val obligations = Seq(
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.UKTR_CREATE,
+                receivedDate = oldSubmissionDate,
+                country = None
+              )
+            )
+          ),
+          models.obligationsandsubmissions.Obligation(
+            obligationType = models.obligationsandsubmissions.ObligationType.GIR,
+            status = ObligationStatus.Fulfilled,
+            canAmend = false,
+            submissions = Seq(
+              models.obligationsandsubmissions.Submission(
+                submissionType = models.obligationsandsubmissions.SubmissionType.GIR,
+                receivedDate = recentSubmissionDate,
+                country = None
+              )
+            )
+          )
+        )
+        val accountingPeriod = models.obligationsandsubmissions.AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(12),
+          endDate = LocalDate.now(),
+          dueDate = pastDueDate,
+          underEnquiry = false,
+          obligations = obligations
+        )
+        val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
+          processingDate = java.time.ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(accountingPeriod)
+        )
+
+        val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
+
+        result mustBe Some(Received)
       }
     }
   }

@@ -21,12 +21,14 @@ sealed trait DueAndOverdueReturnBannerScenario
 case object Due extends DueAndOverdueReturnBannerScenario
 case object Overdue extends DueAndOverdueReturnBannerScenario
 case object Incomplete extends DueAndOverdueReturnBannerScenario
+case object Received extends DueAndOverdueReturnBannerScenario
 
 object DueAndOverdueReturnBannerScenario {
   implicit val ordering: Ordering[DueAndOverdueReturnBannerScenario] =
     Ordering.by {
-      case Overdue    => 3
-      case Incomplete => 2
-      case Due        => 1
+      case Overdue    => 4
+      case Incomplete => 3
+      case Due        => 2
+      case Received   => 1
     }
 }
