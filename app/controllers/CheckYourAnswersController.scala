@@ -167,8 +167,8 @@ class CheckYourAnswersController @Inject() (
         AddSecondaryContactSummary.row(userAnswers),
         SecondaryContactNameSummary.row(userAnswers),
         SecondaryContactEmailSummary.row(userAnswers),
-        SecondaryTelephonePreferenceSummary.row(userAnswers),
-        SecondaryTelephoneSummary.row(userAnswers)
+        SecondaryPhonePreferenceSummary.row(userAnswers),
+        SecondaryPhoneSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
@@ -177,8 +177,8 @@ class CheckYourAnswersController @Inject() (
       rows = Seq(
         ContactNameComplianceSummary.row(userAnswers),
         ContactEmailAddressSummary.row(userAnswers),
-        ContactByTelephoneSummary.row(userAnswers),
-        ContactCaptureTelephoneDetailsSummary.row(userAnswers)
+        ContactByPhoneSummary.row(userAnswers),
+        ContactCapturePhoneDetailsSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
@@ -190,8 +190,8 @@ class CheckYourAnswersController @Inject() (
         NfmRegisteredAddressSummary.row(userAnswers, countryOptions),
         NfmContactNameSummary.row(userAnswers),
         NfmEmailAddressSummary.row(userAnswers),
-        NfmTelephonePreferenceSummary.row(userAnswers),
-        NfmContactTelephoneSummary.row(userAnswers),
+        NfmPhonePreferenceSummary.row(userAnswers),
+        NfmContactPhoneSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyNameNfmSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyRegNfmSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyUtrNfmSummary.row(userAnswers),
@@ -208,8 +208,8 @@ class CheckYourAnswersController @Inject() (
         UpeRegisteredAddressSummary.row(userAnswers, countryOptions),
         UpeContactNameSummary.row(userAnswers),
         UpeContactEmailSummary.row(userAnswers),
-        UpeTelephonePreferenceSummary.row(userAnswers),
-        UPEContactTelephoneSummary.row(userAnswers),
+        UpePhonePreferenceSummary.row(userAnswers),
+        UPEContactPhoneSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyNameUpeSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyRegUpeSummary.row(userAnswers),
         EntityTypeIncorporatedCompanyUtrUpeSummary.row(userAnswers),

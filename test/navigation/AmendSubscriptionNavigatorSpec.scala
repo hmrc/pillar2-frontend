@@ -85,12 +85,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       ) mustBe
         contactCYA
     }
-    "go primary capture telephone page if they have chosen to nominate a primary contact number but they have not provided a number" in {
+    "go primary capture phone page if they have chosen to nominate a primary contact number but they have not provided a number" in {
       navigator.nextPage(
         SubPrimaryPhonePreferencePage,
         emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value
       ) mustBe
-        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad
+        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad
     }
     "go contact CYA page if they have chosen to nominate a primary contact number and they have already provided one" in {
       val ua =
@@ -130,12 +130,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         subSecondaryPhonePreference = None
       )
       navigator.nextPage(SubSecondaryEmailPage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad
     }
-    "go secondary capture telephone page if they have chosen to nominate a secondary contact number and non provided" in {
+    "go secondary capture phone page if they have chosen to nominate a secondary contact number and non provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad
     }
     "go contact CYA page if they have chosen to nominate a secondary contact number and they have already provided one" in {
       val ua =
@@ -200,12 +200,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
       ) mustBe
         agentContactCYA
     }
-    "go primary capture telephone page if they have chosen to nominate a primary contact number but they have not provided a number" in {
+    "go primary capture phone page if they have chosen to nominate a primary contact number but they have not provided a number" in {
       navigator.nextPage(
         SubPrimaryPhonePreferencePage,
         emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value
       ) mustBe
-        controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad
+        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad
     }
     "go contact CYA page if they have chosen to nominate a primary contact number and they have already provided one" in {
       val ua =
@@ -248,12 +248,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         subSecondaryPhonePreference = None
       )
       navigator.nextPage(SubSecondaryEmailPage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad
     }
-    "go secondary capture telephone page if they have chosen to nominate a secondary contact number and non provided" in {
+    "go secondary capture phone page if they have chosen to nominate a secondary contact number and non provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad
     }
     "go contact CYA page if they have chosen to nominate a secondary contact number and they have already provided one" in {
       val ua =

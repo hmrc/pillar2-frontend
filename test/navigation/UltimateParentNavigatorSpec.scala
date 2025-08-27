@@ -60,11 +60,11 @@ class UltimateParentNavigatorSpec extends SpecBase {
         navigator.nextPage(UpeContactNamePage, NormalMode, emptyUserAnswers.setOrException(UpeContactNamePage, "Paddington")) mustBe
           controllers.registration.routes.UpeContactEmailController.onPageLoad(NormalMode)
       }
-      "go to telephone preference page from contact email page" in {
+      "go to phone preference page from contact email page" in {
         navigator.nextPage(UpeContactEmailPage, NormalMode, emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")) mustBe
           controllers.registration.routes.ContactUPEByPhoneController.onPageLoad(NormalMode)
       }
-      "go to a page where we capture their telephone number if they have chosen to nominate one" in {
+      "go to a page where we capture their phone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, NormalMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
           controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode)
       }
@@ -117,7 +117,7 @@ class UltimateParentNavigatorSpec extends SpecBase {
         navigator.nextPage(UpeContactEmailPage, CheckMode, emptyUserAnswers.setOrException(UpeContactEmailPage, "something@something.com")) mustBe
           upeCYA
       }
-      "go to a page where we capture their telephone number if they have chosen to nominate one" in {
+      "go to a page where we capture their phone number if they have chosen to nominate one" in {
         navigator.nextPage(UpePhonePreferencePage, CheckMode, emptyUserAnswers.setOrException(UpePhonePreferencePage, true)) mustBe
           controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode)
       }

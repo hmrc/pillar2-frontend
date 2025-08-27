@@ -135,8 +135,8 @@ trait SubscriptionLocalDataFixture {
     rows = Seq(
       ContactNameComplianceSummary.row(),
       ContactEmailAddressSummary.row(),
-      ContactByTelephoneSummary.row(),
-      ContactCaptureTelephoneDetailsSummary.row()
+      ContactByPhoneSummary.row(),
+      ContactCapturePhoneDetailsSummary.row()
     ).flatten
   )
 
@@ -145,8 +145,8 @@ trait SubscriptionLocalDataFixture {
       AddSecondaryContactSummary.row(),
       SecondaryContactNameSummary.row(),
       SecondaryContactEmailSummary.row(),
-      SecondaryTelephonePreferenceSummary.row(),
-      SecondaryTelephoneSummary.row()
+      SecondaryPhonePreferenceSummary.row(),
+      SecondaryPhoneSummary.row()
     ).flatten
   )
 

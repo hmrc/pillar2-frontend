@@ -19,7 +19,7 @@ package controllers.registration
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import forms.ContactUPEByTelephoneFormProvider
+import forms.ContactUPEByPhoneFormProvider
 import models.Mode
 import navigation.UltimateParentNavigator
 import pages.{UpeContactEmailPage, UpeContactNamePage, UpePhonePreferencePage}
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.registrationview.ContactUPEByTelephoneView
+import views.html.registrationview.ContactUPEByPhoneView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -38,10 +38,10 @@ class ContactUPEByPhoneController @Inject() (
   identify:                  IdentifierAction,
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
-  formProvider:              ContactUPEByTelephoneFormProvider,
+  formProvider:              ContactUPEByPhoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
-  view:                      ContactUPEByTelephoneView
+  view:                      ContactUPEByPhoneView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

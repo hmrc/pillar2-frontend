@@ -174,7 +174,7 @@ class AuditService @Inject() (
         repaymentAuditDetail.repaymentsContactName,
         repaymentAuditDetail.repaymentsContactEmail,
         repaymentAuditDetail.repaymentsContactByPhone,
-        repaymentAuditDetail.repaymentsTelephoneDetails
+        repaymentAuditDetail.repaymentsPhoneDetails
       ).extendedDataEvent
     )
 
@@ -194,8 +194,8 @@ class AuditService @Inject() (
         nfmDetail.addSecondaryContact,
         nfmDetail.secondaryContactInformation.map(scInfo => scInfo.name),
         nfmDetail.secondaryContactInformation.map(scInfo => scInfo.emailAddress),
-        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.telephone.isDefined),
-        nfmDetail.secondaryContactInformation.flatMap(scInfo => scInfo.telephone.map(tel => tel)),
+        nfmDetail.secondaryContactInformation.map(scInfo => scInfo.phone.isDefined),
+        nfmDetail.secondaryContactInformation.flatMap(scInfo => scInfo.phone.map(tel => tel)),
         nfmDetail.contactAddress
       ).extendedDataEvent
     )
