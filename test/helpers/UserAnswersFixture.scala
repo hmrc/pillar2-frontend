@@ -105,8 +105,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmCorporatePositionPage, CorporatePosition.Upe)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmContactByPhonePage, true)
+    .setOrException(RfmCapturePrimaryPhonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, true)
     .setOrException(RfmSecondaryContactNamePage, "secondary name")
     .setOrException(RfmSecondaryEmailPage, "email@address.com")
@@ -121,8 +121,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmRegisteredAddressPage, nonUkAddress)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmContactByPhonePage, true)
+    .setOrException(RfmCapturePrimaryPhonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, true)
     .setOrException(RfmSecondaryContactNamePage, "secondary name")
     .setOrException(RfmSecondaryEmailPage, "email@address.com")
@@ -137,8 +137,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RfmGRSUkLimitedPage, rfmLimitedGrsResponse)
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmContactByPhonePage, true)
+    .setOrException(RfmCapturePrimaryPhonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, true)
     .setOrException(RfmSecondaryContactNamePage, "secondary name")
     .setOrException(RfmSecondaryEmailPage, "email@address.com")
@@ -635,8 +635,8 @@ trait UserAnswersFixture extends TryValues {
   val rfmPrimaryAndSecondaryContactData: UserAnswers = emptyUserAnswers
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmContactByPhonePage, true)
+    .setOrException(RfmCapturePrimaryPhonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, true)
     .setOrException(RfmSecondaryContactNamePage, "secondary name")
     .setOrException(RfmSecondaryEmailPage, "email@address.com")
@@ -647,8 +647,8 @@ trait UserAnswersFixture extends TryValues {
   val rfmMissingContactData: UserAnswers = emptyUserAnswers
     .setOrException(RfmPrimaryContactNamePage, "primary name")
     .setOrException(RfmPrimaryContactEmailPage, "email@address.com")
-    .setOrException(RfmContactByTelephonePage, true)
-    .setOrException(RfmCapturePrimaryTelephonePage, "1234567890")
+    .setOrException(RfmContactByPhonePage, true)
+    .setOrException(RfmCapturePrimaryPhonePage, "1234567890")
     .setOrException(RfmAddSecondaryContactPage, false)
     .setOrException(RfmContactAddressPage, NonUKAddress("line1", None, "line3", None, None, countryCode = "US"))
   private val ukBankAccount = BankAccountDetails(
@@ -670,8 +670,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsContactByTelephonePage, true)
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsContactByPhonePage, true)
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
     .setOrException(BankAccountDetailsPage, ukBankAccount)
 
@@ -681,8 +681,8 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsContactByTelephonePage, true)
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsContactByPhonePage, true)
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
     .setOrException(NonUKBankPage, nonUkBankAccount)
 
@@ -691,7 +691,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
     .setOrException(BankAccountDetailsPage, ukBankAccount)
 
@@ -700,7 +700,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
     .setOrException(BankAccountDetailsPage, ukBankAccount)
 
@@ -709,7 +709,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(RepaymentsContactNamePage, "name")
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
     .setOrException(BankAccountDetailsPage, ukBankAccount)
 
@@ -719,7 +719,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(NonUKBankPage, nonUkBankAccount)
 
   val repaymentNoBankAccountDetailForeign: UserAnswers = emptyUserAnswers
@@ -728,7 +728,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.ForeignBankAccount)
 
   val repaymentNoUKBankAccountDetail: UserAnswers = emptyUserAnswers
@@ -737,7 +737,7 @@ trait UserAnswersFixture extends TryValues {
     .setOrException(ReasonForRequestingRefundPage, "???")
     .setOrException(RepaymentsRefundAmountPage, refundAmount)
     .setOrException(RepaymentsContactEmailPage, "paddington@peru.com")
-    .setOrException(RepaymentsTelephoneDetailsPage, "marmalade sandwich")
+    .setOrException(RepaymentsPhoneDetailsPage, "marmalade sandwich")
     .setOrException(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount)
 
 }

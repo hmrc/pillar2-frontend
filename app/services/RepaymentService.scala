@@ -41,12 +41,12 @@ class RepaymentService @Inject() (
       bankDetails     <- getBankDetails(userAnswers)
       email           <- userAnswers.get(RepaymentsContactEmailPage)
     } yield {
-      val telephone = userAnswers.get(RepaymentsTelephoneDetailsPage).getOrElse("")
+      val phone = userAnswers.get(RepaymentsPhoneDetailsPage).getOrElse("")
       SendRepaymentDetails(
         repaymentDetails =
           RepaymentDetails(plrReference = referenceNumber, name = name, utr = None, reasonForRepayment = reason, refundAmount = repaymentAmount),
         bankDetails = bankDetails,
-        contactDetails = RepaymentContactDetails(contactDetails = s"$name, $email, $telephone")
+        contactDetails = RepaymentContactDetails(contactDetails = s"$name, $email, $phone")
       )
     }
 

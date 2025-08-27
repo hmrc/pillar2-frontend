@@ -40,7 +40,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
   val formProvider = new UseContactPrimaryFormProvider()
   val name         = "name"
   val email        = "email@gmail.com"
-  val telephone    = "1221312"
+  val phone        = "1221312"
 
   "UseContact Primary Controller" when {
 
@@ -78,7 +78,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(FmContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(FmPhonePreferencePage, true)
-        .setOrException(FmCapturePhonePage, telephone)
+        .setOrException(FmCapturePhonePage, phone)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -91,7 +91,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(
           request,
           applicationConfig,
@@ -138,7 +138,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(FmContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(FmPhonePreferencePage, true)
-        .setOrException(FmCapturePhonePage, telephone)
+        .setOrException(FmCapturePhonePage, phone)
         .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -152,7 +152,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider().fill(false),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(
           request,
           applicationConfig,
@@ -195,7 +195,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.UseContactPrimaryController.onPageLoad(NormalMode).url)
@@ -208,7 +208,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(
           request,
           applicationConfig,
@@ -255,7 +255,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
         .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -269,7 +269,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider().fill(false),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(
           request,
           applicationConfig,
@@ -425,7 +425,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
         .setOrException(SubUsePrimaryContactPage, false)
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -439,7 +439,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider().fill(false),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(
           request,
           applicationConfig,
@@ -717,7 +717,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithSpecificValues))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -735,7 +735,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(request, applicationConfig, messages(application)).toString
       }
     }
@@ -748,7 +748,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithContactDetails))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -766,7 +766,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider(),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(request, applicationConfig, messages(application)).toString
       }
     }
@@ -779,7 +779,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         .setOrException(UpeContactEmailPage, email)
         .setOrException(UpeRegisteredInUKPage, false)
         .setOrException(UpePhonePreferencePage, true)
-        .setOrException(UpeCapturePhonePage, telephone)
+        .setOrException(UpeCapturePhonePage, phone)
         .setOrException(SubUsePrimaryContactPage, false)
 
       val application = applicationBuilder(userAnswers = Some(testDataWithPreviousAnswer))
@@ -798,7 +798,7 @@ class UseContactPrimaryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) mustEqual view(
           formProvider().fill(false),
           NormalMode,
-          contactSummaryList(name, email, Some(telephone))
+          contactSummaryList(name, email, Some(phone))
         )(request, applicationConfig, messages(application)).toString
       }
     }

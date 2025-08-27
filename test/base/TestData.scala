@@ -359,7 +359,7 @@ trait TestData {
        |        "repaymentsContactByPhone": true,
        |        "repaymentsContactEmail": "test@test.com",
        |        "repaymentsContactName": "Contact name",
-       |        "repaymentsTelephoneDetails": "01234567890",
+       |        "repaymentsPhoneDetails": "01234567890",
        |        "ukOrAbroadBankAccount": "nonUkBankAccount"
        |  }
        """.stripMargin

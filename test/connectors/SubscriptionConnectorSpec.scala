@@ -241,12 +241,12 @@ object SubscriptionConnectorSpec {
       |      },
       |      "primaryContactDetails": {
       |          "name": "Fred Flintstone",
-      |          "telephone": "0115 9700 700",
+      |          "phone": "0115 9700 700",
       |          "emailAddress": "fred.flintstone@aol.com"
       |      },
       |      "secondaryContactDetails": {
       |          "name": "Donald Trump",
-      |          "telephone": "0115 9700 701",
+      |          "phone": "0115 9700 701",
       |          "emailAddress": "donald.trump@potus.com"
       |
       |      },
@@ -292,12 +292,12 @@ object SubscriptionConnectorSpec {
       |      },
       |      "primaryContactDetails": {
       |          "name": "Fred Flintstone",
-      |          "telephone": "0115 9700 700",
+      |          "phone": "0115 9700 700",
       |          "emailAddress": "fred.flintstone@aol.com"
       |      },
       |      "secondaryContactDetails": {
       |          "name": "Donald Trump",
-      |          "telephone": "0115 9700 701",
+      |          "phone": "0115 9700 701",
       |          "emailAddress": "donald.trump@potus.com"
       |
       |      },

@@ -37,8 +37,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     .setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
     .setOrException(RepaymentsContactNamePage, "contact name")
     .setOrException(RepaymentsContactEmailPage, "test@test.com")
-    .setOrException(RepaymentsContactByTelephonePage, true)
-    .setOrException(RepaymentsTelephoneDetailsPage, "1234567")
+    .setOrException(RepaymentsContactByPhonePage, true)
+    .setOrException(RepaymentsPhoneDetailsPage, "1234567")
 
   lazy val listRefund: SummaryList = SummaryListViewModel(
     rows = Seq(
@@ -61,8 +61,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
     rows = Seq(
       RepaymentsContactNameSummary.row(userAnswer)(messages),
       RepaymentsContactEmailSummary.row(userAnswer)(messages),
-      RepaymentsContactByTelephoneSummary.row(userAnswer)(messages),
-      RepaymentsTelephoneDetailsSummary.row(userAnswer)(messages)
+      RepaymentsContactByPhoneSummary.row(userAnswer)(messages),
+      RepaymentsPhoneDetailsSummary.row(userAnswer)(messages)
     ).flatten
   )
 
@@ -104,8 +104,8 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListKeys.get(6).text mustBe "IBAN"
       summaryListKeys.get(7).text mustBe "Contact name"
       summaryListKeys.get(8).text mustBe "Email address"
-      summaryListKeys.get(9).text mustBe "Can we contact by telephone?"
-      summaryListKeys.get(10).text mustBe "Telephone number"
+      summaryListKeys.get(9).text mustBe "Can we contact by phone?"
+      summaryListKeys.get(10).text mustBe "Phone number"
     }
 
     "have a summary list items" in {

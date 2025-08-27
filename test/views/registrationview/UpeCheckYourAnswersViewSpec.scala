@@ -58,8 +58,8 @@ class UpeCheckYourAnswersViewSpec extends ViewSpecBase {
       UpeRegisteredAddressSummary.row(userAnswers, mockCountryOptions),
       UpeContactNameSummary.row(userAnswers),
       UpeContactEmailSummary.row(userAnswers),
-      UpeTelephonePreferenceSummary.row(userAnswers),
-      UPEContactTelephoneSummary.row(userAnswers)
+      UpePhonePreferenceSummary.row(userAnswers),
+      UPEContactPhoneSummary.row(userAnswers)
     ).flatten
   )
 
