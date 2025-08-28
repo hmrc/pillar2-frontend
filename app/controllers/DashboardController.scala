@@ -109,7 +109,7 @@ class DashboardController @Inject() (
               homepageView(
                 subscriptionData.upeDetails.organisationName,
                 subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
+                subscriptionData.accountStatus.exists(_.inactive),
                 getDueOrOverdueReturnsStatus(response) match {
                   case None => None
                   case Some(value) =>
@@ -138,17 +138,6 @@ class DashboardController @Inject() (
         )
       )
     }
-
-  private def btnBannerDate(response: ObligationsAndSubmissionsSuccess): Option[LocalDate] = {
-    val accountingPeriods = response.accountingPeriodDetails
-
-    accountingPeriods.head.obligations
-      .find(_.obligationType == UKTR)
-      .flatMap(_.submissions.headOption)
-      .collect {
-        case submission if submission.submissionType == BTN => accountingPeriods.head.endDate
-      }
-  }
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 

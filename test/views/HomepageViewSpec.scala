@@ -23,16 +23,11 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.HomepageView
 
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
-
 class HomepageViewSpec extends ViewSpecBase {
-  lazy val page:                      HomepageView      = inject[HomepageView]
-  lazy val organisationName:          String            = "Some Org name"
-  lazy val plrRef:                    String            = "XMPLR0012345678"
-  lazy val date:                      String            = "1 June 2020"
-  lazy val apEndDate:                 Option[LocalDate] = Option(LocalDate.of(2024, 1, 1))
-  private lazy val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
+  lazy val page:             HomepageView = inject[HomepageView]
+  lazy val organisationName: String       = "Some Org name"
+  lazy val plrRef:           String       = "XMPLR0012345678"
+  lazy val date:             String       = "1 June 2020"
 
   // This is only case where the page Title and the H1 heading are inconsistent in the service
   lazy val pageTitle:   String = "Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -40,12 +35,12 @@ class HomepageViewSpec extends ViewSpecBase {
 
   lazy val organisationView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
+      page(organisationName, date, btnActive = false, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
     )
 
   lazy val agentView: Document =
     Jsoup.parse(
-      page(organisationName, date, None, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
+      page(organisationName, date, btnActive = false, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
     )
 
   "HomepageView for a group" should {
@@ -152,16 +147,15 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveOrgView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
+          page(organisationName, date, btnActive = true, None, plrRef, isAgent = false)(request, appConfig, messages).toString()
         )
 
       val bannerContent: Element = accountInactiveOrgView.getElementsByClass("govuk-notification-banner").first()
 
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe "Your account has a Below-Threshold Notification."
       bannerContent.text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need " +
-        s"to submit a UK Tax Return for the accounting period ending ${apEndDate.get.format(dateTimeFormatter)} or " +
-        s"for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 " +
-        s"Top-up Taxes, you should submit a UK Tax Return. Find out more about Below-Threshold Notification"
+        s"to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria the future. " +
+        s"Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
       bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }
@@ -169,7 +163,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Returns card with no tag when Due scenario is provided" in {
       val organisationViewWithDueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, Some("Due"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard:      Element  = organisationViewWithDueScenario.getElementsByClass("card-half-width").first()
@@ -192,7 +186,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, Some("Overdue"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard:      Element  = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
@@ -220,7 +214,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val organisationViewWithIncompleteScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, Some("Incomplete"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard:      Element  = organisationViewWithIncompleteScenario.getElementsByClass("card-half-width").first()
@@ -347,17 +341,15 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveAgentView: Document =
         Jsoup.parse(
-          page(organisationName, date, apEndDate, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
+          page(organisationName, date, btnActive = true, None, plrRef, isAgent = true)(request, appConfig, messages).toString()
         )
 
       val bannerContent = accountInactiveAgentView.getElementsByClass("govuk-notification-banner").first()
 
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe s"$organisationName has a Below-Threshold Notification."
-      bannerContent.text() mustBe s"Important $organisationName has a Below-Threshold Notification. You or your " +
-        s"client have told us the group does not need to submit a UK Tax Return for the accounting period " +
-        s"ending ${apEndDate.get.format(dateTimeFormatter)} or for any future accounting periods. If your client " +
-        s"meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be " +
-        s"submitted. Find out more about Below-Threshold Notification"
+      bannerContent.text() mustBe s"Important $organisationName has a Below-Threshold Notification. You or your client have told us the group " +
+        s"does not need to submit a UK Tax Return. You or your client must submit a UK Tax Return if they meet the Pillar 2 Top-up Taxes criteria " +
+        s"in the future. Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
       bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
     }

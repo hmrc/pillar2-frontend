@@ -25,7 +25,7 @@
 
 @this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
 
-@(organisationName: String, registrationDate: String, maybeBTNBannerDate: Option[LocalDate], maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, btnActive: Boolean, maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
@@ -44,7 +44,7 @@
 @bannerHtml = {
  <div class="btn-banner">
   @paragraphBody(messages("homepage.btnActiveBanner.title", if(isAgent) organisationName else "Your account"), "govuk-notification-banner__heading")
-  @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body", maybeBTNBannerDate.get.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))))
+  @paragraphBody(messages(s"homepage.btnActiveBanner$maybeAgentKey.body"))
   @link(
    text = messages("homepage.btnActiveBanner.linkText"),
    call = Call("GET", btnUrl),
@@ -55,7 +55,7 @@
 
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
-  @if(maybeBTNBannerDate.isDefined) {
+  @if(btnActive) {
     @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
   }
 
