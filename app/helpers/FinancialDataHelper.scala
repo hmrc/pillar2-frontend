@@ -36,7 +36,7 @@ object FinancialDataHelper {
 
   val Pillar2UktrName:                        String = "UK tax return"
   private val Pillar2LatePaymentInterestName: String = "Late Payment Interest"
-  private val Pillar2RepaymentInterestName:   String = "Repayment interest"
+  val Pillar2RepaymentInterestName:           String = "Repayment interest"
 
   private val TransactionRefsAndNames: Map[TransactionRef, String] = Map(
     EtmpUktrMainRef            -> Pillar2UktrName,

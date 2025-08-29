@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.FinancialDataConnector
-import helpers.FinancialDataHelper.Pillar2UktrName
+import helpers.FinancialDataHelper.{Pillar2RepaymentInterestName, Pillar2UktrName}
 import models._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
@@ -150,7 +150,13 @@ object OutstandingPaymentsServiceSpec {
     FinancialData(financialTransactions = Seq(firstApUktrDTT, firstApUktrMTT, secondApUktrDTT, fistAccountingPeriodUktrRepaymentInterest))
 
   val validResponseExpectedSummary: Seq[FinancialSummary] = Seq(
-    FinancialSummary(AccountingPeriod(periodFrom, periodTo), Seq(TransactionSummary(Pillar2UktrName, 2000.00, testDate))),
+    FinancialSummary(
+      AccountingPeriod(periodFrom, periodTo),
+      Seq(
+        TransactionSummary(Pillar2UktrName, 2000.00, testDate),
+        TransactionSummary(Pillar2RepaymentInterestName, 1234.56, testDate)
+      )
+    ),
     FinancialSummary(
       AccountingPeriod(periodFrom.minusYears(1), periodTo.minusYears(1)),
       Seq(TransactionSummary(Pillar2UktrName, 1000.00, testDate.minusYears(1)))

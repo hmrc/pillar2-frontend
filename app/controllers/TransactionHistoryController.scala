@@ -40,23 +40,23 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val financialDataConnector:             FinancialDataConnector,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                DataRetrievalAction,
-  val controllerComponents:               MessagesControllerComponents,
-  referenceNumberService:                 ReferenceNumberService,
-  subscriptionService:                    SubscriptionService,
-  sessionRepository:                      SessionRepository,
-  transactionHistoryView:                 TransactionHistoryView,
-  noTransactionHistoryView:               NoTransactionHistoryView,
-  errorView:                              TransactionHistoryErrorView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  val financialDataConnector:                     FinancialDataConnector,
+  @Named("EnrolmentIdentifier") identifierAction: IdentifierAction,
+  dataRetrievalAction:                            DataRetrievalAction,
+  val controllerComponents:                       MessagesControllerComponents,
+  referenceNumberService:                         ReferenceNumberService,
+  subscriptionService:                            SubscriptionService,
+  sessionRepository:                              SessionRepository,
+  transactionHistoryView:                         TransactionHistoryView,
+  noTransactionHistoryView:                       NoTransactionHistoryView,
+  transactionHistoryErrorView:                    TransactionHistoryErrorView
+)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
-    (identify andThen getData).async { implicit request =>
+    (identifierAction andThen dataRetrievalAction).async { implicit request =>
       val result: OptionT[Future, Result] = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -77,9 +77,7 @@ class TransactionHistoryController @Inject() (
         _                       <- OptionT.liftF(sessionRepository.set(updatedAnswers))
         transactionHistoryTable <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
-      } yield Ok(
-        transactionHistoryView(transactionHistoryTable, pagination, request.isAgent)
-      )
+      } yield Ok(transactionHistoryView(transactionHistoryTable, pagination, request.isAgent))
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -90,7 +88,7 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
-    (identify andThen getData).async { implicit request =>
+    (identifierAction andThen dataRetrievalAction).async { implicit request =>
       val result = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -105,12 +103,11 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(errorView()))
+    Future.successful(Ok(transactionHistoryErrorView()))
   }
 }
 
 object TransactionHistoryController {
-  // FIXME: move this to application.conf
   private val ROWS_ON_PAGE: Int = 10
 
   private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
