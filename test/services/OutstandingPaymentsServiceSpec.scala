@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.FinancialDataConnector
-import helpers.FinancialDataHelper.Pillar2UktrName
+import helpers.FinancialDataHelper.{Pillar2LatePaymentInterestName, Pillar2UktrName}
 import models._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
@@ -96,8 +96,6 @@ object OutstandingPaymentsServiceSpec {
     items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
   )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
   val secondApInterestDTT: FinancialTransaction = FinancialTransaction(
     taxPeriodFrom = Some(periodFrom.minusYears(1)),
     taxPeriodTo = Some(periodTo.minusYears(1)),
@@ -132,36 +130,11 @@ object OutstandingPaymentsServiceSpec {
   val validResponseExpectedSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(TransactionSummary("UK tax return", 3000.00, LocalDate.of(2024, 1, 1)))
+      Seq(TransactionSummary(Pillar2UktrName, 3000.00, LocalDate.of(2024, 1, 1)))
     ),
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1).minusYears(1), LocalDate.of(2023, 12, 31).minusYears(1)),
-      Seq(TransactionSummary("Late Payment Interest", 3000.00, LocalDate.of(2024, 1, 1).minusYears(1)))
-=======
-  lazy val fistAccountingPeriodUktrRepaymentInterest: FinancialTransaction = FinancialTransaction(
-    mainTransaction = Some("6504"),
-    subTransaction = Some("6237"),
-    taxPeriodFrom = Some(periodFrom),
-    taxPeriodTo = Some(periodTo),
-    outstandingAmount = Some(1234.56),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
-  )
-
-  val validResponse: FinancialData =
-    FinancialData(financialTransactions = Seq(firstApUktrDTT, firstApUktrMTT, secondApUktrDTT, fistAccountingPeriodUktrRepaymentInterest))
-=======
-  val validResponse: FinancialData = FinancialData(financialTransactions = Seq(firstApUktrDTT, firstApUktrMTT, secondApUktrDTT))
->>>>>>> e9b531d0 (Fixed test)
-
-  val validResponseExpectedSummary: Seq[FinancialSummary] = Seq(
-    FinancialSummary(
-      AccountingPeriod(periodFrom, periodTo),
-      Seq(TransactionSummary(Pillar2UktrName, 2000.00, testDate))
-    ),
-    FinancialSummary(
-      AccountingPeriod(periodFrom.minusYears(1), periodTo.minusYears(1)),
-      Seq(TransactionSummary(Pillar2UktrName, 1000.00, testDate.minusYears(1)))
->>>>>>> 081bf916 (Refactored ETMP Reference numbers in FinancialDataHelper)
+      Seq(TransactionSummary(Pillar2LatePaymentInterestName, 3000.00, LocalDate.of(2024, 1, 1).minusYears(1)))
     )
   )
 

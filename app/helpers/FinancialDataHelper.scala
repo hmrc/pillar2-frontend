@@ -34,9 +34,9 @@ object FinancialDataHelper {
   private val EtmpMttIirLatePaymentInterestRef:  TransactionRef = "6238"
   private val EtmpMttUtprLatePaymentInterestRef: TransactionRef = "6239"
 
-  val Pillar2UktrName:                        String = "UK tax return"
-  private val Pillar2LatePaymentInterestName: String = "Late Payment Interest"
-  val Pillar2RepaymentInterestName:           String = "Repayment interest"
+  val Pillar2UktrName:                String = "UK tax return"
+  val Pillar2LatePaymentInterestName: String = "Late Payment Interest"
+  val Pillar2RepaymentInterestName:   String = "Repayment interest"
 
   private val TransactionRefsAndNames: Map[TransactionRef, String] = Map(
     EtmpUktrMainRef            -> Pillar2UktrName,
