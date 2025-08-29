@@ -20,6 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
+import helpers.FinancialDataHelper.PILLAR2_UKTR
 import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
@@ -33,7 +34,7 @@ import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.outstandingpayments.OutstandingPaymentsView
 
-import java.time.LocalDate
+import java.time.LocalDate.now
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,10 +65,16 @@ class OutstandingPaymentsController @Inject() (
         plrRef <- OptionT
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        toDate   = LocalDate.now()
-        fromDate = toDate.minusYears(SUBMISSION_ACCOUNTING_PERIODS)
-        data <- OptionT.liftF(outstandingPaymentsService.retrieveData(plrRef, fromDate, toDate))
-      } yield Ok(view(data, plrRef))).value
+        data <-
+          OptionT.liftF(
+            outstandingPaymentsService.retrieveData(plrRef, now(), now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
+          )
+      } yield {
+        val amountDue               = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+        val hasOverdueReturnPayment = data.exists(_.transactions.exists(t => t.name == PILLAR2_UKTR && t.dueDate.isBefore(now())))
+
+        Ok(view(data, plrRef, amountDue, hasOverdueReturnPayment))
+      }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
         .recover { case e =>
           logger.error(s"Error calling OutstandingPaymentsService: ${e.getMessage}", e)
