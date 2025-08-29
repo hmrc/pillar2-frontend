@@ -17,8 +17,7 @@
 package services
 
 import connectors.FinancialDataConnector
-import helpers.FinancialDataHelper
-import helpers.FinancialDataHelper.{PLR_MAIN_TRANSACTIONS, PLR_SUB_TRANSACTIONS}
+import helpers.FinancialDataHelper.{PlrMainTransactionsRefs, PlrSubTransactionsRefs, toPillar2Transaction}
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -30,13 +29,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class OutstandingPaymentsService @Inject() (financialDataConnector: FinancialDataConnector)(implicit ec: ExecutionContext) {
 
   def retrieveData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[Seq[FinancialSummary]] =
-    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate).map {
-      _.financialTransactions
+    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate).map { financialData =>
+      financialData.financialTransactions
         .filter { transaction =>
           transaction.taxPeriodFrom.isDefined &&
           transaction.taxPeriodTo.isDefined &&
-          transaction.mainTransaction.exists(PLR_MAIN_TRANSACTIONS.contains) &&
-          transaction.subTransaction.exists(PLR_SUB_TRANSACTIONS.contains) &&
+          transaction.mainTransaction.exists(PlrMainTransactionsRefs.contains) &&
+          transaction.subTransaction.exists(PlrSubTransactionsRefs.contains) &&
           transaction.outstandingAmount.exists(_ > 0) &&
           transaction.items.headOption.exists(_.dueDate.isDefined)
         }
@@ -45,9 +44,9 @@ class OutstandingPaymentsService @Inject() (financialDataConnector: FinancialDat
         .sortBy(_._1)
         .reverse
         .map { case ((periodFrom, periodTo), transactions) =>
-          val transactionSummaries =
+          val transactionSummaries: Seq[TransactionSummary] =
             transactions
-              .groupBy(transaction => FinancialDataHelper.toPillar2Transaction(transaction.mainTransaction.get))
+              .groupBy(transaction => toPillar2Transaction(transaction.mainTransaction.get))
               .map { case (parentTransaction, groupedTransactions) =>
                 TransactionSummary(
                   parentTransaction,
