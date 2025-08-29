@@ -29,8 +29,8 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
   lazy val table: Table = Table(
     List(
       List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
-      List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00"))),
-      List(TableRow(Text("1 July 2024")), TableRow(Text("Payment")), TableRow(Text("£-5000.00")), TableRow(Text("£0.00")))
+      List(TableRow(Text("11 July 2024")), TableRow(Text("Repayment")), TableRow(Text("£0.00")), TableRow(Text("£-3000.00"))),
+      List(TableRow(Text("21 July 2024")), TableRow(Text("Repayment interest")), TableRow(Text("£0.00")), TableRow(Text("£-250.00")))
     ),
     head = Some(
       Seq(
@@ -44,49 +44,37 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
   lazy val pagination: Some[Pagination] = Some(
     Pagination(
-      Some(
+      items = Some(
         Vector(
           PaginationItem(
-            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(1)).url,
-            Some("1"),
-            None,
-            Some(true),
-            None,
-            Map()
+            href = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(1)).url,
+            number = Some("1"),
+            current = Some(true)
           ),
           PaginationItem(
-            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url,
-            Some("2"),
-            None,
-            Some(false),
-            None,
-            Map()
+            href = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url,
+            number = Some("2"),
+            current = Some(false)
           ),
           PaginationItem(
-            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(3)).url,
-            Some("3"),
-            None,
-            Some(false),
-            None,
-            Map()
+            href = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(3)).url,
+            number = Some("3"),
+            current = Some(false)
           ),
           PaginationItem(
-            controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(4)).url,
-            Some("4"),
-            None,
-            Some(false),
-            None,
-            Map()
+            href = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(4)).url,
+            number = Some("4"),
+            current = Some(false)
           )
         )
       ),
-      None,
-      Some(
-        PaginationLink(controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url, Some("Next"), None, Map())
-      ),
-      None,
-      "",
-      Map()
+      previous = None,
+      next = Some(
+        PaginationLink(
+          href = controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(2)).url,
+          text = Some("Next")
+        )
+      )
     )
   )
 
@@ -94,6 +82,8 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
   lazy val groupView: Document               = Jsoup.parse(page(table, pagination, isAgent = false)(request, appConfig, messages).toString())
   lazy val agentView: Document               = Jsoup.parse(page(table, pagination, isAgent = true)(request, appConfig, messages).toString())
   lazy val pageTitle: String                 = "Transaction history"
+  lazy val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
+  lazy val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
   "Transaction History View" should {
 
@@ -108,8 +98,6 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraphs for a group" in {
-      val groupViewParagraphs: Elements = groupView.getElementsByClass("govuk-body")
-
       groupViewParagraphs.get(0).text() mustBe "You can find all transactions made by your group during this " +
         "accounting period and the previous 6 accounting periods."
       groupViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
@@ -117,8 +105,6 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraphs for an agent" in {
-      val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
-
       agentViewParagraphs.get(0).text() mustBe "You can find all transactions made by your client during this " +
         "accounting period and the previous 6 accounting periods."
       agentViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
@@ -129,22 +115,36 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       val tableElements: Elements = groupView.select("table.govuk-table")
       tableElements.size() mustBe 1
 
-      val table: Element = tableElements.first()
+      val tableHead: Elements = tableElements.first().getElementsByClass("govuk-table__head")
+      val tableHeadColumns = tableHead.first().getElementsByClass("govuk-table__header")
 
-      val tableHeaders: Elements = table.getElementsByClass("govuk-table__header")
-      tableHeaders.get(0).text mustBe "Date"
-      tableHeaders.get(1).text mustBe "Transaction description"
-      tableHeaders.get(2).text mustBe "You paid HMRC"
-      tableHeaders.get(3).text mustBe "HMRC paid you"
+      tableHead.size() mustBe 1
+      tableHeadColumns.get(0).text mustBe "Date"
+      tableHeadColumns.get(1).text mustBe "Transaction description"
+      tableHeadColumns.get(2).text mustBe "You paid HMRC"
+      tableHeadColumns.get(3).text mustBe "HMRC paid you"
 
-      val tableBodyRows: Elements = table.getElementsByClass("govuk-table__body").first().getElementsByClass("govuk-table__row")
-      tableBodyRows.forEach { row =>
-        val rowCells: Elements = row.getElementsByClass("govuk-table__cell")
-        rowCells.get(0).text() mustBe "1 July 2024"
-        rowCells.get(1).text() mustBe "Payment"
-        rowCells.get(2).text() mustBe "£-5000.00"
-        rowCells.get(3).text() mustBe "£0.00"
-      }
+      val tableBodyRows: Elements = tableElements.first().getElementsByClass("govuk-table__body").first().getElementsByClass("govuk-table__row")
+      tableBodyRows.size() mustBe 3
+
+      val firstRowCells:  Elements = tableBodyRows.get(0).getElementsByClass("govuk-table__cell")
+      val secondRowCells: Elements = tableBodyRows.get(1).getElementsByClass("govuk-table__cell")
+      val thirdRowCells:  Elements = tableBodyRows.get(2).getElementsByClass("govuk-table__cell")
+
+      firstRowCells.get(0).text() mustBe "1 July 2024"
+      firstRowCells.get(1).text() mustBe "Payment"
+      firstRowCells.get(2).text() mustBe "£-5000.00"
+      firstRowCells.get(3).text() mustBe "£0.00"
+
+      secondRowCells.get(0).text() mustBe "11 July 2024"
+      secondRowCells.get(1).text() mustBe "Repayment"
+      secondRowCells.get(2).text() mustBe "£0.00"
+      secondRowCells.get(3).text() mustBe "£-3000.00"
+
+      thirdRowCells.get(0).text() mustBe "21 July 2024"
+      thirdRowCells.get(1).text() mustBe "Repayment interest"
+      thirdRowCells.get(2).text() mustBe "£0.00"
+      thirdRowCells.get(3).text() mustBe "£-250.00"
     }
 
     "have pagination" in {
@@ -163,5 +163,27 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
       paginationLinks.get(3).attr("href") mustBe
         controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(page = Some(4)).url
     }
+
+    "have an 'Outstanding payments' heading" in {
+      val h2Elements: Elements = groupView.getElementsByTag("h2")
+      h2Elements.first.text() mustBe "Outstanding payments"
+    }
+
+    "have an 'Outstanding payments' paragraph with a link for a group" in {
+      groupViewParagraphs.get(2).text mustBe "You can find details of what your group currently owes on the " +
+        "Outstanding payments page."
+
+      groupViewParagraphs.get(2).getElementsByTag("a").first().attr("href") mustBe
+        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+    }
+
+    "have an 'Outstanding payments' paragraph with a link for an agent" in {
+      agentViewParagraphs.get(2).text mustBe "You can find details of what your client currently owes on the " +
+        "Outstanding payments page."
+
+      agentViewParagraphs.get(2).getElementsByTag("a").first().attr("href") mustBe
+        controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+    }
+
   }
 }
