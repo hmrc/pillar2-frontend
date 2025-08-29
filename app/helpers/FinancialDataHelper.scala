@@ -18,25 +18,46 @@ package helpers
 
 object FinancialDataHelper {
 
-  private lazy val ETMP_UKTR          = "6500"
-  private lazy val ETMP_UKTR_DTT      = "6233"
-  private lazy val ETMP_UKTR_IIR      = "6234"
-  private lazy val ETMP_UKTR_UTPR     = "6235"
-  private lazy val ETMP_INTEREST      = "6503"
-  private lazy val ETMP_INTEREST_IIR  = "6236"
-  private lazy val ETMP_INTEREST_UTPR = "6238"
-  private lazy val ETMP_INTEREST_DTT  = "6239"
+  private type TransactionRef = String
 
-  lazy val PILLAR2_UKTR     = "UK tax return"
-  lazy val PILLAR2_INTEREST = "Late Payment Interest"
+  /** Main Transaction Reference Numbers */
+  private val EtmpUktrMainRef:            TransactionRef = "6500"
+  private val EtmpLatePaymentInterestRef: TransactionRef = "6503"
+  private val EtmpRepaymentInterestRef:   TransactionRef = "6504"
 
-  lazy val PLR_MAIN_TRANSACTIONS: Set[String] = Set(ETMP_UKTR, ETMP_INTEREST)
-  lazy val PLR_SUB_TRANSACTIONS: Set[String] =
-    Set(ETMP_UKTR_DTT, ETMP_UKTR_IIR, ETMP_UKTR_UTPR, ETMP_INTEREST_IIR, ETMP_INTEREST_UTPR, ETMP_INTEREST_DTT)
+  /** Subtransaction Reference Numbers */
+  private val EtmpDttRef:                        TransactionRef = "6233"
+  private val EtmpMttRef:                        TransactionRef = "6234"
+  private val EtmpUktrIirIrrMttUtprDiscDetRef:   TransactionRef = "6235"
+  private val EtmpUktrRepaymentInterestRef:      TransactionRef = "6237"
+  private val EtmpDttLatePaymentInterestRef:     TransactionRef = "6236"
+  private val EtmpMttIirLatePaymentInterestRef:  TransactionRef = "6238"
+  private val EtmpMttUtprLatePaymentInterestRef: TransactionRef = "6239"
 
-  def toPillar2Transaction(mainTransaction: String): String =
-    Map(
-      ETMP_UKTR     -> PILLAR2_UKTR,
-      ETMP_INTEREST -> PILLAR2_INTEREST
-    ).getOrElse(mainTransaction, mainTransaction)
+  val Pillar2UktrName:                        String = "UK tax return"
+  private val Pillar2LatePaymentInterestName: String = "Late Payment Interest"
+  private val Pillar2RepaymentInterestName:   String = "Repayment interest"
+
+  private val TransactionRefsAndNames: Map[TransactionRef, String] = Map(
+    EtmpUktrMainRef            -> Pillar2UktrName,
+    EtmpLatePaymentInterestRef -> Pillar2LatePaymentInterestName,
+    EtmpRepaymentInterestRef   -> Pillar2RepaymentInterestName
+  )
+
+  val PlrMainTransactionsRefs: Set[TransactionRef] = TransactionRefsAndNames.keySet
+
+  val PlrSubTransactionsRefs: Set[TransactionRef] =
+    Set(
+      EtmpDttRef,
+      EtmpMttRef,
+      EtmpUktrIirIrrMttUtprDiscDetRef,
+      EtmpDttLatePaymentInterestRef,
+      EtmpMttIirLatePaymentInterestRef,
+      EtmpMttUtprLatePaymentInterestRef,
+      EtmpUktrRepaymentInterestRef
+    )
+
+  def toPillar2Transaction(mainTransaction: TransactionRef): String =
+    TransactionRefsAndNames.getOrElse(mainTransaction, mainTransaction)
+
 }
