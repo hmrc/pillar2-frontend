@@ -19,7 +19,8 @@ package controllers.payments
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
 import controllers.payments.OutstandingPaymentsControllerSpec._
-import helpers.FinancialDataHelper.PILLAR2_UKTR
+import controllers.payments.OutstandingPaymentsControllerSpec.{enrolments, pillar2Id, samplePaymentsData}
+import helpers.FinancialDataHelper.Pillar2UktrName
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
 import org.mockito.ArgumentMatchers.any
@@ -125,11 +126,11 @@ object OutstandingPaymentsControllerSpec {
   val samplePaymentsData: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(TransactionSummary(PILLAR2_UKTR, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
+      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
     ),
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(TransactionSummary(PILLAR2_UKTR, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
+      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
     )
   )
 

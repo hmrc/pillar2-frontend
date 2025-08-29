@@ -40,23 +40,23 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class TransactionHistoryController @Inject() (
-  val financialDataConnector:             FinancialDataConnector,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                DataRetrievalAction,
-  val controllerComponents:               MessagesControllerComponents,
-  referenceNumberService:                 ReferenceNumberService,
-  subscriptionService:                    SubscriptionService,
-  sessionRepository:                      SessionRepository,
-  view:                                   TransactionHistoryView,
-  noTransactionHistoryView:               NoTransactionHistoryView,
-  errorView:                              TransactionHistoryErrorView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  val financialDataConnector:                     FinancialDataConnector,
+  @Named("EnrolmentIdentifier") identifierAction: IdentifierAction,
+  dataRetrievalAction:                            DataRetrievalAction,
+  val controllerComponents:                       MessagesControllerComponents,
+  referenceNumberService:                         ReferenceNumberService,
+  subscriptionService:                            SubscriptionService,
+  sessionRepository:                              SessionRepository,
+  transactionHistoryView:                         TransactionHistoryView,
+  noTransactionHistoryView:                       NoTransactionHistoryView,
+  transactionHistoryErrorView:                    TransactionHistoryErrorView
+)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
-    (identify andThen getData).async { implicit request =>
+    (identifierAction andThen dataRetrievalAction).async { implicit request =>
       val result: OptionT[Future, Result] = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -73,13 +73,11 @@ class TransactionHistoryController @Inject() (
                   .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
               )
             )
-        updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
-        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+        updatedAnswers          <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
+        _                       <- OptionT.liftF(sessionRepository.set(updatedAnswers))
+        transactionHistoryTable <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
-      } yield Ok(
-        view(table, pagination, request.isAgent)
-      )
+      } yield Ok(transactionHistoryView(transactionHistoryTable, pagination, request.isAgent))
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -90,7 +88,7 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
-    (identify andThen getData).async { implicit request =>
+    (identifierAction andThen dataRetrievalAction).async { implicit request =>
       val result = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -105,12 +103,12 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
-    Future.successful(Ok(errorView()))
+    Future.successful(Ok(transactionHistoryErrorView()))
   }
 }
 
 object TransactionHistoryController {
-  val ROWS_ON_PAGE = 10
+  private val ROWS_ON_PAGE: Int = 10
 
   private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
     messages:                                                   Messages
@@ -118,8 +116,8 @@ object TransactionHistoryController {
     val paginationIndex = page.getOrElse(1)
     val numberOfPages   = financialHistory.grouped(ROWS_ON_PAGE).size
 
-    if (numberOfPages < 2) None
-    else
+    if (numberOfPages < 2) { None }
+    else {
       Some(
         Pagination(
           items = Some(generatePaginationItems(paginationIndex, numberOfPages)),
@@ -129,6 +127,7 @@ object TransactionHistoryController {
           attributes = Map.empty
         )
       )
+    }
   }
 
   private def generatePaginationItems(paginationIndex: Int, numberOfPages: Int): Seq[PaginationItem] =
@@ -146,7 +145,7 @@ object TransactionHistoryController {
       )
 
   private def generatePreviousLink(paginationIndex: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == 1) None
+    if (paginationIndex == 1) { None }
     else {
       Some(
         PaginationLink(
@@ -159,7 +158,7 @@ object TransactionHistoryController {
     }
 
   private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == numberOfPages) None
+    if (paginationIndex == numberOfPages) { None }
     else {
       Some(
         PaginationLink(
@@ -196,10 +195,9 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val df = new DecimalFormat("#,###.00")
-
-    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
-    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+    val df:           DecimalFormat = new DecimalFormat("#,###.00")
+    val amountPaid:   String        = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
+    val amountRepaid: String        = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
 
     Seq(
       TableRow(
