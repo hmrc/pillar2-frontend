@@ -69,7 +69,16 @@ object OutstandingPaymentsServiceSpec {
     items = Seq(FinancialItem(dueDate = Some(testDate)))
   )
 
-  val firstApUktrMTT: FinancialTransaction = FinancialTransaction(
+  val firstApUktrUTPR: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom),
+    taxPeriodTo = Some(periodTo),
+    mainTransaction = Some("6500"),
+    subTransaction = Some("6235"),
+    outstandingAmount = Some(1000.00),
+    items = Seq(FinancialItem(dueDate = Some(testDate)))
+  )
+
+  val firstApUktrIIR: FinancialTransaction = FinancialTransaction(
     taxPeriodFrom = Some(periodFrom),
     taxPeriodTo = Some(periodTo),
     mainTransaction = Some("6500"),
@@ -87,13 +96,45 @@ object OutstandingPaymentsServiceSpec {
     items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
   )
 
-  val validResponse: FinancialData = FinancialData(financialTransactions = Seq(firstApUktrDTT, firstApUktrMTT, secondApUktrDTT))
+  val secondApInterestDTT: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom.minusYears(1)),
+    taxPeriodTo = Some(periodTo.minusYears(1)),
+    mainTransaction = Some("6503"),
+    subTransaction = Some("6239"),
+    outstandingAmount = Some(1000.00),
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+  )
+
+  val secondApInterestIIR: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom.minusYears(1)),
+    taxPeriodTo = Some(periodTo.minusYears(1)),
+    mainTransaction = Some("6503"),
+    subTransaction = Some("6236"),
+    outstandingAmount = Some(1000.00),
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+  )
+
+  val secondApInterestUTPR: FinancialTransaction = FinancialTransaction(
+    taxPeriodFrom = Some(periodFrom.minusYears(1)),
+    taxPeriodTo = Some(periodTo.minusYears(1)),
+    mainTransaction = Some("6503"),
+    subTransaction = Some("6238"),
+    outstandingAmount = Some(1000.00),
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+  )
+
+  val validResponse: FinancialData = FinancialData(financialTransactions =
+    Seq(firstApUktrDTT, firstApUktrIIR, firstApUktrUTPR, secondApInterestDTT, secondApInterestIIR, secondApInterestUTPR)
+  )
 
   val validResponseExpectedSummary: Seq[FinancialSummary] = Seq(
-    FinancialSummary(AccountingPeriod(periodFrom, periodTo), Seq(TransactionSummary(PILLAR2_UKTR, 2000.00, testDate))),
     FinancialSummary(
-      AccountingPeriod(periodFrom.minusYears(1), periodTo.minusYears(1)),
-      Seq(TransactionSummary(PILLAR2_UKTR, 1000.00, testDate.minusYears(1)))
+      AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
+      Seq(TransactionSummary("UK tax return", 3000.00, LocalDate.of(2024, 1, 1)))
+    ),
+    FinancialSummary(
+      AccountingPeriod(LocalDate.of(2023, 1, 1).minusYears(1), LocalDate.of(2023, 12, 31).minusYears(1)),
+      Seq(TransactionSummary("Late Payment Interest", 3000.00, LocalDate.of(2024, 1, 1).minusYears(1)))
     )
   )
 

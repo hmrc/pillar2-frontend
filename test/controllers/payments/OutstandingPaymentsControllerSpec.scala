@@ -18,7 +18,7 @@ package controllers.payments
 
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
-import controllers.payments.OutstandingPaymentsControllerSpec.{enrolments, pillar2Id, samplePaymentsData}
+import controllers.payments.OutstandingPaymentsControllerSpec._
 import helpers.FinancialDataHelper.PILLAR2_UKTR
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
@@ -59,7 +59,12 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(samplePaymentsData, pillar2Id)(request, applicationConfig, messages(application), isAgent = false).toString
+          view(samplePaymentsData, pillar2Id, amountDue, hasOverdueReturnPayment = true)(
+            request,
+            applicationConfig,
+            messages(application),
+            isAgent = false
+          ).toString
       }
     }
 
@@ -127,4 +132,6 @@ object OutstandingPaymentsControllerSpec {
       Seq(TransactionSummary(PILLAR2_UKTR, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
     )
   )
+
+  val amountDue: BigDecimal = samplePaymentsData.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
 }
