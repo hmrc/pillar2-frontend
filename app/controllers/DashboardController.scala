@@ -24,6 +24,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
+import models.obligationsandsubmissions.SubmissionType.BTN
 import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
