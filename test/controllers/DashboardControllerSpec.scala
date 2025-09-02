@@ -99,7 +99,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-            None,
+            btnActive = false,
             None,
             "12345678",
             isAgent = false
