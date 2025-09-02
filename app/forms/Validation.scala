@@ -25,7 +25,7 @@ object Validation {
     "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[-. /]?)?((?:\\(?\\d{1,}\\)?[-. /]?){0,})(?:[-. /]?(?:#|ext\\.?|extension|x)[-. /]?(\\d+))?$"
   final val BIC_SWIFT_REGEX              = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
   final val IBAN_REGEX                   = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
-  final val MONETARY_REGEX               = """^-?(\d{1,11}(\.\d{1,2})?)$"""
+  final val MONETARY_REGEX               = """^-?(\d*(\.\d{1,2})?)$"""
   final val SORT_CODE_REGEX              = """^[0-9]{6}$"""
   final val ACCOUNT_NUMBER_REGEX         = """^[0-9]{8}$"""
   final val XSS_REGEX                    = """^[^<>"&]*$"""

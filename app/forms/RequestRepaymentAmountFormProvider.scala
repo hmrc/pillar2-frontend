@@ -28,7 +28,8 @@ class RequestRepaymentAmountFormProvider @Inject() extends Mappings {
       "value" -> currency(
         requiredKey = "repayment.requestRepaymentAmount.error.required",
         invalidCurrency = "repayment.requestRepaymentAmount.error.format"
-      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRepaymentAmount.error.minValue"))
+      ).verifying(bigDecimalMonetaryLimit("repayment.requestRepaymentAmount.error.format"))
+        .verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRepaymentAmount.error.minValue"))
         .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRepaymentAmount.error.maxValue"))
     )
 }

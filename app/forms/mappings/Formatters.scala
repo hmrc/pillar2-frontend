@@ -22,7 +22,6 @@ import models.Enumerable
 import play.api.data.FormError
 import play.api.data.format.Formatter
 
-import scala.util.control.Exception.nonFatalCatch
 import scala.util.{Failure, Success, Try}
 
 trait Formatters extends Transforms with Constraints {
@@ -180,15 +179,11 @@ trait Formatters extends Transforms with Constraints {
             case s if !s.replace("£", "").matches(MONETARY_REGEX) =>
               Left(Seq(FormError(key, invalidCurrency, args)))
             case s =>
-              val cleanValue = s.replace("£", "")
-              Try(BigDecimal(cleanValue)) match {
-                case Success(value) =>
-                  val wholePart = value.abs.setScale(0, BigDecimal.RoundingMode.DOWN)
-                  if (wholePart.toString.length <= 11) Right(value)
-                  else Left(Seq(FormError(key, invalidCurrency, args)))
-                case _ =>
-                  Left(Seq(FormError(key, invalidCurrency, args)))
-              }
+              Try(BigDecimal(s.replace("£", "")))
+                .map(_.setScale(2, BigDecimal.RoundingMode.HALF_UP))
+                .toEither
+                .left
+                .map(e => Seq(FormError(key, invalidCurrency, args)))
           }
 
       override def unbind(key: String, value: BigDecimal): Map[String, String] =

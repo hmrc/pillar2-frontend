@@ -168,4 +168,11 @@ trait Constraints {
       }
     }
 
+  protected def bigDecimalMonetaryLimit(errorKey: String): Constraint[BigDecimal] =
+    Constraint { input =>
+      val wholePart = input.abs.setScale(0, BigDecimal.RoundingMode.DOWN)
+      if (wholePart.toString.length <= 11) Valid
+      else Invalid(errorKey)
+    }
+
 }

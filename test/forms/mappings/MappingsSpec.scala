@@ -256,34 +256,9 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.get mustEqual BigDecimal.valueOf(99999999999.99)
     }
 
-    "fail to bind number with more than 11 whole digits" in {
-      val result = testForm.bind(Map("value" -> "999999999999.99"))
-      result.errors must contain(FormError("value", "error.invalidNumeric"))
-    }
-
-    "successfully bind number with exactly 11 whole digits" in {
-      val result = testForm.bind(Map("value" -> "12345678901.99"))
-      result.get mustEqual BigDecimal.valueOf(12345678901.99)
-    }
-
-    "fail to bind number with 12 whole digits" in {
-      val result = testForm.bind(Map("value" -> "123456789012.99"))
-      result.errors must contain(FormError("value", "error.invalidNumeric"))
-    }
-
     "successfully bind single digit with decimals" in {
       val result = testForm.bind(Map("value" -> "1.23"))
       result.get mustEqual BigDecimal.valueOf(1.23)
-    }
-
-    "successfully bind with pound sign and 11 digits" in {
-      val result = testForm.bind(Map("value" -> "£12345678901.50"))
-      result.get mustEqual BigDecimal.valueOf(12345678901.50)
-    }
-
-    "fail to bind with pound sign and 12 digits" in {
-      val result = testForm.bind(Map("value" -> "£123456789012.50"))
-      result.errors must contain(FormError("value", "error.invalidNumeric"))
     }
 
     "fail to bind invalid input with different currency symbol" in {
