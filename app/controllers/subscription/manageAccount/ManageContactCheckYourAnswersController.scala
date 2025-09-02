@@ -67,8 +67,8 @@ class ManageContactCheckYourAnswersController @Inject() (
               rows = Seq(
                 ContactNameComplianceSummary.row(),
                 ContactEmailAddressSummary.row(),
-                ContactByTelephoneSummary.row(),
-                ContactCaptureTelephoneDetailsSummary.row()
+                ContactByPhoneSummary.row(),
+                ContactCapturePhoneDetailsSummary.row()
               ).flatten
             )
 
@@ -77,8 +77,8 @@ class ManageContactCheckYourAnswersController @Inject() (
                 AddSecondaryContactSummary.row(),
                 SecondaryContactNameSummary.row(),
                 SecondaryContactEmailSummary.row(),
-                SecondaryTelephonePreferenceSummary.row(),
-                SecondaryTelephoneSummary.row()
+                SecondaryPhonePreferenceSummary.row(),
+                SecondaryPhoneSummary.row()
               ).flatten
             )
 
@@ -95,18 +95,24 @@ class ManageContactCheckYourAnswersController @Inject() (
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     logger.info(s"[ManageContactCheckYourAnswers] Submission started for user ${request.userId}")
-
-    for {
-      userAnswers <- sessionRepository.get(request.userId)
-      updatedAnswers = userAnswers match {
-                         case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-                         case None =>
-                           UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-                       }
-      _ <- sessionRepository.set(updatedAnswers)
-    } yield {
-      updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-      Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
+    sessionRepository.get(request.userId).flatMap { userAnswers =>
+      userAnswers.flatMap(_.get(ManageContactDetailsStatusPage)) match {
+        case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
+          Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
+        case _ =>
+          for {
+            userAnswers <- sessionRepository.get(request.userId)
+            updatedAnswers = userAnswers match {
+                               case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                               case None =>
+                                 UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+                             }
+            _ <- sessionRepository.set(updatedAnswers)
+          } yield {
+            updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
+            Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
+          }
+      }
     }
   }
 

@@ -117,16 +117,21 @@ class AgentController @Inject() (
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
-      request.userAnswers
-        .get(UnauthorisedClientPillar2ReferencePage)
-        .map { clientPillar2Reference =>
-          for {
-            updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
-            dataToSave     <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
-            _              <- sessionRepository.set(dataToSave)
-          } yield Redirect(routes.DashboardController.onPageLoad)
-        }
-        .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      request.userAnswers.get(AgentClientPillar2ReferencePage) match {
+        case Some(_) =>
+          Future.successful(Redirect(routes.DashboardController.onPageLoad))
+        case None =>
+          request.userAnswers
+            .get(UnauthorisedClientPillar2ReferencePage)
+            .map { clientPillar2Reference =>
+              for {
+                updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
+                dataToSave     <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
+                _              <- sessionRepository.set(dataToSave)
+              } yield Redirect(routes.DashboardController.onPageLoad)
+            }
+            .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
+      }
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =

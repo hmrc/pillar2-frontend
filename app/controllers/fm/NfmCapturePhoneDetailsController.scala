@@ -19,7 +19,7 @@ package controllers.fm
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions._
-import forms.CaptureTelephoneDetailsFormProvider
+import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
 import pages.{FmCapturePhonePage, FmContactNamePage, FmPhonePreferencePage}
@@ -28,7 +28,7 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.fmview.NfmCaptureTelephoneDetailsView
+import views.html.fmview.NfmCapturePhoneDetailsView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -39,9 +39,9 @@ class NfmCapturePhoneDetailsController @Inject() (
   getData:                   DataRetrievalAction,
   requireData:               DataRequiredAction,
   navigator:                 NominatedFilingMemberNavigator,
-  formProvider:              CaptureTelephoneDetailsFormProvider,
+  formProvider:              CapturePhoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
-  view:                      NfmCaptureTelephoneDetailsView
+  view:                      NfmCapturePhoneDetailsView
 )(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

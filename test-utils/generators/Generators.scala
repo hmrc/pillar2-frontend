@@ -180,11 +180,18 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .from(regex)
       .map(_.padTo(minLength + 1, 'a'))
 
-  def stringsLongerThan(minLength: Int): Gen[String] = for {
-    maxLength <- (minLength * 2).max(100)
-    length    <- Gen.chooseNum(minLength + 1, maxLength)
-    chars     <- listOfN(length, arbitrary[Char])
-  } yield chars.mkString
+  def stringsLongerThan(minLength: Int): Gen[String] =
+    for {
+      maxLength <- (minLength * 2).max(100)
+      length    <- Gen.chooseNum(minLength + 1, maxLength)
+      chars     <- Gen.listOfN(length, Gen.alphaNumChar)
+    } yield chars.mkString
+
+  def stringsShorterThan(maxLength: Int): Gen[String] =
+    for {
+      size  <- Gen.chooseNum(1, maxLength - 1)
+      chars <- Gen.listOfN(size, Gen.alphaNumChar)
+    } yield chars.mkString
 
   def stringsExceptSpecificValues(excluded: Seq[String]): Gen[String] =
     nonEmptyString suchThat (!excluded.contains(_))

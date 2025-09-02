@@ -34,10 +34,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
   lazy val page: OutstandingPaymentsView = inject[OutstandingPaymentsView]
 
   lazy val organisationView: Document =
-    Jsoup.parse(page(data, plrRef)(request, appConfig, messages, isAgent = false).toString())
+    Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = false).toString())
 
   lazy val agentView: Document =
-    Jsoup.parse(page(data, plrRef)(request, appConfig, messages, isAgent = true).toString())
+    Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = true)(request, appConfig, messages, isAgent = true).toString())
 
   lazy val pageTitle:  String   = "Outstanding payments"
   lazy val h2Elements: Elements = organisationView.getElementsByTag("h2")
@@ -64,15 +64,31 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "should display total amount due correctly" in {
-      organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Total amount due: £1,000.00"
+      organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Amount due: £1,000.00"
     }
 
     "should display the leading paragraphs correctly" in {
-      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may be over more than one " +
-        "accounting period. It also includes any penalties or late payment interest."
+      paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may include more than one " +
+        "accounting period. It also includes any penalties."
       paragraphs.get(1).text() mustBe "Any payments made to your account before submitting your tax return have " +
-        "been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to " +
-        "your account."
+        "been deducted from your amount due."
+    }
+
+    "display interest inset text section" should {
+      "group has overdue payment" in {
+        organisationView
+          .getElementsByClass("govuk-inset-text")
+          .first()
+          .text() mustBe "Your UK Tax Return payment is overdue and is subject to late payment interest. " +
+          "We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment."
+      }
+
+      "group has no overdue payment" in {
+        val orgViewNoOverduePayments: Document =
+          Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
+
+        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustEqual 0
+      }
     }
 
     "should display payment button with correct link" in {
@@ -118,8 +134,10 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
 
       "a 'No payments due' message if no payments are outstanding" in {
-        val noPaymentsData: Seq[FinancialSummary] = Seq(financialSummary.copy(transactions = Seq(transaction.copy(outstandingAmount = 0.00))))
-        val noPaymentsView: Document = Jsoup.parse(page(noPaymentsData, plrRef)(request, appConfig, messages, isAgent = false).toString())
+        val noPaymentsView: Document = Jsoup.parse(
+          page(noPaymentsData, plrRef, amountDue(noPaymentsData), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false)
+            .toString()
+        )
 
         noPaymentsView.getElementsByClass("govuk-body").get(6).text() mustBe "No payments due."
         noPaymentsView.getElementsByClass("govuk-table").size() mustBe 0
@@ -146,16 +164,34 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       penaltiesLink.attr("href") mustBe UnderConstructionController.onPageLoad.url
     }
 
-    "should display agent-specific content" in {
-      val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
+    "display agent-specific content" should {
+      "should display agent-specific paragraphs" in {
+        val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-      agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
-        "return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be " +
-        "added to the group’s account."
-      agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
-      agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
-        "payment for this group."
-      agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+        agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +
+          "return have been deducted from the amount due."
+        agentViewParagraphs.get(2).text() mustBe "Pillar 2 reference: XMPLR0012345678"
+        agentViewParagraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual " +
+          "payment for this group."
+        agentViewParagraphs.get(9).text() mustBe "Find out how HMRC may charge the group penalties and interest."
+      }
+
+      "display interest inset text section" should {
+        "group has overdue payment" in {
+          agentView
+            .getElementsByClass("govuk-inset-text")
+            .first()
+            .text() mustBe "The group has an overdue UK Tax Return payment and is subject to late payment interest. " +
+            "We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment."
+        }
+
+        "group has no overdue payment" in {
+          val agentViewNoOverduePayments: Document =
+            Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
+
+          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustEqual 0
+        }
+      }
     }
   }
 }
@@ -170,4 +206,8 @@ object OutstandingPaymentsViewSpec {
   val financialSummary: FinancialSummary = FinancialSummary(accountingPeriod = accountingPeriod, transactions = Seq(transaction))
 
   val data: Seq[FinancialSummary] = Seq(financialSummary)
+
+  val noPaymentsData: Seq[FinancialSummary] = Seq(financialSummary.copy(transactions = Seq(transaction.copy(outstandingAmount = 0.00))))
+
+  def amountDue(data: Seq[FinancialSummary]): BigDecimal = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
 }

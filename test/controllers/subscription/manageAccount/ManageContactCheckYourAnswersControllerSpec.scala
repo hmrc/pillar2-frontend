@@ -72,7 +72,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           contactName = "Ashley Smith",
           emailAddress = "test@test.com",
           phonePreference = true,
-          telephone = Some("122223444"),
+          phone = Some("122223444"),
           registeredFmAddress = nonUkAddress
         )
       )

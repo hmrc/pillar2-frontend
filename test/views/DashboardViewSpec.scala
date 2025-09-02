@@ -17,6 +17,7 @@
 package views
 
 import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -59,6 +60,12 @@ class DashboardViewSpec extends ViewSpecBase {
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
+    }
+
+    "have a banner with a link to the Dashboard" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      organisationDashboardView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      activeOrganisationDashboardView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have an inactive status banner if there is an inactive status" in {
@@ -186,6 +193,12 @@ class DashboardViewSpec extends ViewSpecBase {
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
       h1Elements.hasClass("govuk-heading-l govuk-!-margin-bottom-7") mustBe true
+    }
+
+    "have a banner with a link to the Dashboard" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      agentDashboardView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      activeAgentDashboardView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have an inactive status banner if there is an inactive status" in {

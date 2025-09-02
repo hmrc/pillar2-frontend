@@ -22,19 +22,30 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
+import play.api.mvc.{AnyContent, Request}
+import play.api.test.CSRFTokenHelper.CSRFRequest
+import play.api.test.FakeRequest
 import views.html.rfm.SecurityCheckView
 
 class SecurityCheckViewSpec extends ViewSpecBase {
 
   lazy val formProvider: RfmSecurityCheckFormProvider = new RfmSecurityCheckFormProvider
-  lazy val page:         SecurityCheckView            = inject[SecurityCheckView]
-  lazy val view:         Document                     = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
-  lazy val pageTitle:    String                       = "Enter the group’s Pillar 2 Top-up Taxes ID"
+  lazy val rfmRequest: Request[AnyContent] =
+    FakeRequest("GET", controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url).withCSRFToken
+  lazy val page:      SecurityCheckView = inject[SecurityCheckView]
+  lazy val view:      Document          = Jsoup.parse(page(formProvider(), NormalMode)(rfmRequest, appConfig, messages).toString())
+  lazy val pageTitle: String            = "Enter the group’s Pillar 2 Top-up Taxes ID"
 
   "Security Check View" should {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a non-clickable banner" in {
+      val serviceName = view.getElementsByClass("govuk-header__service-name").first()
+      serviceName.text mustBe "Report Pillar 2 Top-up Taxes"
+      serviceName.getElementsByTag("a") mustBe empty
     }
 
     "have a caption" in {

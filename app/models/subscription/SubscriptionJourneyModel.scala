@@ -51,8 +51,8 @@ final case class fmJourney(
   fmRegisteredAddress:                 Option[NonUKAddress],
   fmContactName:                       Option[String],
   fmEmailAddress:                      Option[String],
-  fmTelephonePreference:               Option[Boolean],
-  fmContactTelephone:                  Option[String],
+  fmPhonePreference:                   Option[Boolean],
+  fmContactPhone:                      Option[String],
   fmEntityTypeIncorporatedCompanyName: Option[String],
   fmEntityTypeIncorporatedCompanyReg:  Option[String],
   fmEntityTypeIncorporatedCompanyUtr:  Option[String],
@@ -68,16 +68,16 @@ final case class groupJourney(
 )
 
 final case class contactJourney(
-  primaryContactName:          String,
-  primaryContactEmail:         String,
-  primaryContactByTelephone:   Boolean,
-  primaryContactTelephone:     Option[String],
-  secondaryContact:            Boolean,
-  secondaryContactName:        Option[String],
-  secondaryContactEmail:       Option[String],
-  secondaryContactByTelephone: Option[Boolean],
-  secondaryContactTelephone:   Option[String],
-  contactAddress:              NonUKAddress
+  primaryContactName:      String,
+  primaryContactEmail:     String,
+  primaryContactByPhone:   Boolean,
+  primaryContactPhone:     Option[String],
+  secondaryContact:        Boolean,
+  secondaryContactName:    Option[String],
+  secondaryContactEmail:   Option[String],
+  secondaryContactByPhone: Option[Boolean],
+  secondaryContactPhone:   Option[String],
+  contactAddress:          NonUKAddress
 )
 
 object upeJourney {
@@ -395,12 +395,12 @@ object contactJourney {
       answers.getEither(SubPrimaryContactNamePage),
       answers.getEither(SubPrimaryEmailPage),
       answers.getEither(SubPrimaryPhonePreferencePage),
-      getPrimaryTelephone(answers),
+      getPrimaryPhone(answers),
       answers.getEither(SubAddSecondaryContactPage),
       getSecondaryContactName(answers),
       getSecondaryContactEmail(answers),
       getSecondaryPhonePreference(answers),
-      getSecondaryTelephone(answers),
+      getSecondaryPhone(answers),
       answers.getEither(SubRegisteredAddressPage)
     ).parMapN {
       (
@@ -429,7 +429,7 @@ object contactJourney {
         )
     }
 
-  private def getPrimaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
+  private def getPrimaryPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(SubPrimaryPhonePreferencePage).flatMap {
       case true  => answers.getEither(SubPrimaryCapturePhonePage).map(Some(_))
       case false => Right(None)
@@ -453,7 +453,7 @@ object contactJourney {
       case false => Right(None)
     }
 
-  private def getSecondaryTelephone(answers: UserAnswers): EitherNec[Query, Option[String]] =
+  private def getSecondaryPhone(answers: UserAnswers): EitherNec[Query, Option[String]] =
     answers.getEither(SubAddSecondaryContactPage).flatMap {
       case true =>
         answers.getEither(SubSecondaryPhonePreferencePage).flatMap {

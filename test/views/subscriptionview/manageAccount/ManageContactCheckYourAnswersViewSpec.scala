@@ -115,12 +115,12 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListKeys.get(2).text() mustBe contactByPhoneLabel
         summaryListItems.get(2).text() mustBe contactByPhoneValue
         summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactByPhoneController.onPageLoad.url
 
         summaryListKeys.get(3).text() mustBe contactPhoneLabel
         summaryListItems.get(3).text() mustBe contactPhoneValue
         summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
       }
 
       "have second contact header" in {
@@ -146,12 +146,12 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListKeys.get(7).text() mustBe secondContactByPhoneLabel
         summaryListItems.get(7).text() mustBe secondContactByPhoneValue
         summaryListActions.get(7).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad.url
 
         summaryListKeys.get(8).text() mustBe secondContactPhoneLabel
         summaryListItems.get(8).text() mustBe secondContactPhoneValue
         summaryListActions.get(8).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url
       }
 
       "have a contact address header" in {
@@ -203,20 +203,12 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListKeys.get(2).text() mustBe contactByPhoneLabel
         summaryListItems.get(2).text() mustBe contactByPhoneValue
         summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ContactByTelephoneController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactByPhoneController.onPageLoad.url
 
-        val telephone      = "Primary phone number"
-        val telephoneValue = "123"
-        view.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
-        view.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
-        view.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
-        )
-
-        agentView.getElementsByClass("govuk-summary-list__key").get(3).text() mustBe telephone
-        agentView.getElementsByClass("govuk-summary-list__value").get(3).text() mustBe telephoneValue
-        agentView.getElementsByClass("govuk-summary-list__actions").get(3).getElementsByClass("govuk-link").attr("href") must include(
-          controllers.subscription.manageAccount.routes.ContactCaptureTelephoneDetailsController.onPageLoad.url
+        summaryListKeys.get(3).text() mustBe contactPhoneLabel
+        summaryListItems.get(3).text() mustBe contactPhoneValue
+        summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") must include(
+          controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
         )
       }
 
@@ -243,12 +235,12 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
         summaryListKeys.get(7).text() mustBe secondContactByPhoneLabel
         summaryListItems.get(7).text() mustBe secondContactByPhoneValue
         summaryListActions.get(7).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.SecondaryTelephonePreferenceController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad.url
 
         summaryListKeys.get(8).text() mustBe secondContactPhoneLabel
         summaryListItems.get(8).text() mustBe secondContactPhoneValue
         summaryListActions.get(8).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.SecondaryTelephoneController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url
       }
 
       "have a contact address header" in {

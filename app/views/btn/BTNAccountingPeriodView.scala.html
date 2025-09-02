@@ -18,22 +18,22 @@
 @import uk.gov.hmrc.govukfrontend.views.html.components.HtmlContent
 @import views.html.components.gds._
 @import uk.gov.hmrc.govukfrontend.views.Aliases.SummaryList
+
 @this(
         layout: templates.Layout,
         govukButton: GovukButton,
         paragraphMessageWithLink : ParagraphMessageWithLink,
-        p: paragraphBody,
         heading: heading,
+        p: paragraphBody,
         htmlHeading: HtmlHeading,
         govukSummaryList: GovukSummaryList,
         govukLink: govUkLink,
-        formHelper: FormWithCSRF,
+        formHelper: FormWithCSRF
 )
 
 @(list: SummaryList, mode: Mode, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-@layout(
-    pageTitle = titleNoForm(messages("btn.accountingPeriod.title"))
-) {
+
+@layout(pageTitle = titleNoForm(messages("btn.accountingPeriod.title"))) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(isAgent && organisationName.isDefined) {
@@ -51,14 +51,27 @@
         @govukSummaryList(list)
 
         @if(hasMultipleAccountingPeriods) {
-          @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"), linkUrl = controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url)
+          @paragraphMessageWithLink(
+            linkMessage = messages("btn.accountingPeriod.selectAccountingPeriodLink"),
+            linkUrl = controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(NormalMode).url
+          )
         }
 
         @if(currentAP) {
             @if(isAgent) {
-                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.agent.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+                @paragraphMessageWithLink(
+                  linkMessage = messages("btn.accountingPeriod.agent.link"),
+                  linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url,
+                  message1 = Some(messages("btn.accountingPeriod.p2.before")),
+                  message2 = Some(messages("btn.accountingPeriod.p2"))
+                )
             } else {
-                @paragraphMessageWithLink(linkMessage = messages("btn.accountingPeriod.link"), linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url, linkClass = "govuk-link", linkRel = "noopener noreferrer",message1 = Some(messages("btn.accountingPeriod.p2.before")), message2 = Some(messages("btn.accountingPeriod.p2")))
+                @paragraphMessageWithLink(
+                  linkMessage = messages("btn.accountingPeriod.link"),
+                  linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url,
+                  message1 = Some(messages("btn.accountingPeriod.p2.before")),
+                  message2 = Some(messages("btn.accountingPeriod.p2"))
+                )
             }
         }
 

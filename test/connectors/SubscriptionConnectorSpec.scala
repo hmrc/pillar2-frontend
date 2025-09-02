@@ -19,6 +19,7 @@ package connectors
 import base.{SpecBase, WireMockServerHandler}
 import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.SubscriptionConnectorSpec._
+import models.UnprocessableEntityError
 import models.subscription._
 import models.{InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
@@ -67,45 +68,23 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
       }
     }
 
-    "readSubscriptionAndCache" should {
+    "cacheSubscription" should {
 
-      "return Some(json) when the backend has returned 200 OK with data" in {
+      "return SubscriptionData when the backend has returned 200 OK with data" in {
         stubGet(s"$readSubscriptionPath/$id/$plrReference", OK, successfulResponseJson)
-        val result: Option[SubscriptionData] = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
+        val result: SubscriptionData = connector.cacheSubscription(readSubscriptionParameters).futureValue
 
-        result mustBe defined
-        result mustBe Some(subscriptionDataJson)
-
+        result mustBe subscriptionDataJson
       }
 
-      "return None when the backend has returned 404 Not Found" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(NOT_FOUND).withBody(unsuccessfulNotFoundJson))
-        )
-
-        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
-        result mustBe None
-      }
-
-      "return None when the backend has returned 422 Unprocessable Entity" in {
-        server.stubFor(
-          get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
-            .willReturn(aResponse().withStatus(UNPROCESSABLE_ENTITY).withBody(unsuccessfulResponseJson))
-        )
-
-        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
-        result mustBe None
-      }
-
-      "return None when the backend has returned other error status codes" in {
+      "return InternalIssueError when the backend has returned other error status codes" in {
         server.stubFor(
           get(urlEqualTo(s"$readSubscriptionPath/$id/$plrReference"))
             .willReturn(aResponse().withStatus(INTERNAL_SERVER_ERROR).withBody(unsuccessfulResponseJson))
         )
 
-        val result = connector.readSubscriptionAndCache(readSubscriptionParameters).futureValue
-        result mustBe None
+        val result = connector.cacheSubscription(readSubscriptionParameters).failed.futureValue
+        result mustBe InternalIssueError
       }
     }
 
@@ -124,6 +103,12 @@ class SubscriptionConnectorSpec extends SpecBase with WireMockServerHandler {
         stubGet(s"$readSubscriptionPath/$plrReference", NOT_FOUND, unsuccessfulNotFoundJson)
         val result = connector.readSubscription(plrReference).futureValue
         result mustBe None
+      }
+
+      "return UnprocessableEntityError when the backend has returned a 422 status" in {
+        stubGet(s"$readSubscriptionPath/$plrReference", UNPROCESSABLE_ENTITY, unsuccessfulResponseJson)
+        val result = connector.readSubscription(plrReference).failed.futureValue
+        result mustBe UnprocessableEntityError
       }
 
       "return None when the backend has returned a response else than 200 or 404 status" in {
@@ -256,12 +241,12 @@ object SubscriptionConnectorSpec {
       |      },
       |      "primaryContactDetails": {
       |          "name": "Fred Flintstone",
-      |          "telephone": "0115 9700 700",
+      |          "phone": "0115 9700 700",
       |          "emailAddress": "fred.flintstone@aol.com"
       |      },
       |      "secondaryContactDetails": {
       |          "name": "Donald Trump",
-      |          "telephone": "0115 9700 701",
+      |          "phone": "0115 9700 701",
       |          "emailAddress": "donald.trump@potus.com"
       |
       |      },
@@ -307,12 +292,12 @@ object SubscriptionConnectorSpec {
       |      },
       |      "primaryContactDetails": {
       |          "name": "Fred Flintstone",
-      |          "telephone": "0115 9700 700",
+      |          "phone": "0115 9700 700",
       |          "emailAddress": "fred.flintstone@aol.com"
       |      },
       |      "secondaryContactDetails": {
       |          "name": "Donald Trump",
-      |          "telephone": "0115 9700 701",
+      |          "phone": "0115 9700 701",
       |          "emailAddress": "donald.trump@potus.com"
       |
       |      },

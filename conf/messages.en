@@ -193,14 +193,14 @@ grs.registration.error.b33 = and try again using different details if you think 
 
 payment.dashboard.title = Make a payment
 payment.dashboard.header = Make a payment
-payment.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
+payment.dashboard.message1 = Your unique payment reference is <strong>{0}</strong>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.dashboard.message2 = You can use the ''Pay Now'' button to pay online, or
 payment.dashboard.linkText = read more about other payment methods. (opens in a new tab)
 payment.dashboard.buttonText = Pay Now
 
 payment.legacy.dashboard.title = Make a payment
 payment.legacy.dashboard.header = Make a payment
-payment.legacy.dashboard.message1 = Your unique payment reference is <b>{0}</b>. You must use this when making Pillar 2 Top-up Taxes payments.
+payment.legacy.dashboard.message1 = Your unique payment reference is <strong>{0}</strong>. You must use this when making Pillar 2 Top-up Taxes payments.
 payment.legacy.dashboard.message2 = Submit your return before making a payment. Your payment is due on the same date as your return.
 payment.legacy.dashboard.message3 = You can
 payment.legacy.dashboard.message4 = read the guidance to find the methods you can use to make a payment.
@@ -289,17 +289,17 @@ rfm-input-business-contact.email.error.invalid = Enter an email address in the c
 rfm-input-business-email.change.hidden = the primary contact email address
 rfm-input-business-email.checkYourAnswersLabel = Email address
 
-rfmContactByTelephone.heading.caption = Contact details
-rfmContactByTelephone.title = Can we contact by phone?
-rfmContactByTelephone.heading = Can we contact {0} by phone?
-rfmContactByTelephone.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
-rfmContactByTelephone.error.required = Select yes if we can contact {0} by phone
-rfmContactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by phone?
-rfmContactByTelephone.change.hidden = can we contact the primary contact by phone
+rfmContactByPhone.heading.caption = Contact details
+rfmContactByPhone.title = Can we contact by phone?
+rfmContactByPhone.heading = Can we contact {0} by phone?
+rfmContactByPhone.hint = We will only use this to contact you about Pillar 2 Top-up Taxes.
+rfmContactByPhone.error.required = Select yes if we can contact {0} by phone
+rfmContactByPhone.checkYourAnswersLabel = Can we contact the primary contact by phone?
+rfmContactByPhone.change.hidden = can we contact the primary contact by phone
 
-rfmCaptureTelephoneDetails.heading.caption = Contact details
-rfmCaptureTelephoneDetails.change.hidden = the phone number for the primary contact
-rfmCaptureTelephoneDetails.checkYourAnswersLabel = Phone number
+rfmCapturePhoneDetails.heading.caption = Contact details
+rfmCapturePhoneDetails.change.hidden = the phone number for the primary contact
+rfmCapturePhoneDetails.checkYourAnswersLabel = Phone number
 
 under_construction.heading = Under Construction
 under_construction.error.heading = Under Construction Error
@@ -395,26 +395,26 @@ isNFMRegisteredInUK.no = No
 isNFMRegisteredInUK.error.required = Select yes if the new nominated filing member is registered in the UK
 isNFMRegisteredInUK.title = Is the new nominated filing member registered in the UK?
 
-contactUPEByTelephone.heading.caption = Group details
-contactUPEByTelephone.title = Can we contact by phone?
-contactUPEByTelephone.heading = Can we contact {0} by phone?
-contactUPEByTelephone.hint = We will use this to confirm your records.
-contactUPEByTelephone.yes = Yes
-contactUPEByTelephone.no = No
-contactUPEByTelephone.error.required = Select yes if we can contact {0} by phone
-contactUPEByTelephone.checkYourAnswersLabel = Can we contact by phone?
-contactUPEByTelephone.change.hidden = can we contact the Ultimate Parent Entity by phone
+contactUPEByPhone.heading.caption = Group details
+contactUPEByPhone.title = Can we contact by phone?
+contactUPEByPhone.heading = Can we contact {0} by phone?
+contactUPEByPhone.hint = We will use this to confirm your records.
+contactUPEByPhone.yes = Yes
+contactUPEByPhone.no = No
+contactUPEByPhone.error.required = Select yes if we can contact {0} by phone
+contactUPEByPhone.checkYourAnswersLabel = Can we contact by phone?
+contactUPEByPhone.change.hidden = can we contact the Ultimate Parent Entity by phone
 
-captureTelephoneDetails.heading.caption = Group details
-captureTelephoneDetails.title = What is the phone number?
-captureTelephoneDetails.heading = What is the phone number for {0}?
-captureTelephoneDetails.hint = For international numbers include the country code, for example<br>+44 808 157 0192 or 0044 808 157 0192.<br><br>To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123.
-captureTelephoneDetails.sub.hint = Enter the phone number for {0}, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192.
-captureTelephoneDetails.error.required = Enter the phone number for {0}
-captureTelephoneDetails.messages.error.length = Phone number should be 24 characters or less
-captureTelephoneDetails.messages.error.format = Enter the phone number using numbers and the allowed symbols, # ( ) + -
-captureTelephoneDetails.change.hidden = the phone number for the Ultimate Parent Entity contact
-captureTelephoneDetails.checkYourAnswersLabel = Phone number
+capturePhoneDetails.heading.caption = Group details
+capturePhoneDetails.title = What is the phone number?
+capturePhoneDetails.heading = What is the phone number for {0}?
+capturePhoneDetails.hint = For international numbers include the country code, for example<br>+44 808 157 0192 or 0044 808 157 0192.<br><br>To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123.
+capturePhoneDetails.sub.hint = Enter the phone number for {0}, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192.
+capturePhoneDetails.error.required = Enter the phone number for {0}
+capturePhoneDetails.messages.error.length = Phone number should be 24 characters or less
+capturePhoneDetails.messages.error.format = Enter the phone number using numbers and the allowed symbols, # ( ) + -
+capturePhoneDetails.change.hidden = the phone number for the Ultimate Parent Entity contact
+capturePhoneDetails.checkYourAnswersLabel = Phone number
 
 NominateFilingMemberYesNo.title = Nominated filing member
 NominateFilingMemberYesNo.heading = Nominated filing member
@@ -570,11 +570,11 @@ nfmEmailAddress.change.hidden = the contact email address for the nominated fili
 nfmNameRegistrationController.checkYourAnswersLabel = Name
 nfmNameRegistrationController.change.hidden = the name of the nominated filing member
 
-contactNfmByTelephone.checkYourAnswersLabel = Can we contact by phone?
-contactNfmByTelephone.change.hidden = can we contact the nominated filing member by phone
+contactNfmByPhone.checkYourAnswersLabel = Can we contact by phone?
+contactNfmByPhone.change.hidden = can we contact the nominated filing member by phone
 
-nfmCaptureTelephoneDetails.checkYourAnswersLabel = Phone number
-nfmCaptureTelephoneDetails.change.hidden = the phone number for the nominated filing member
+nfmCapturePhoneDetails.checkYourAnswersLabel = Phone number
+nfmCapturePhoneDetails.change.hidden = the phone number for the nominated filing member
 
 groupAccountingPeriod.heading.caption = Group details
 groupAccountingPeriod.title = When did the group’s first accounting period start and end after 31 December 2023?
@@ -624,17 +624,17 @@ groupAccountingPeriod.error.endDate.month.length = End date must be a real date
 groupAccountingPeriod.error.endDate.year.length = End date must be a real date
 groupAccountingPeriod.change.hidden = the dates of the group’s consolidated accounting period
 
-contactNfmByTelephone.heading.caption = Group details
-contactNfmByTelephone.title = Can we contact by phone?
-contactNfmByTelephone.heading = Can we contact {0} by phone?
-contactNfmByTelephone.hint = We will use this to confirm your records.
-contactNfmByTelephone.checkYourAnswersLabel = Can we contact by phone?
-contactNfmByTelephone.error.required = Select yes if we can contact {0} by phone
+contactNfmByPhone.heading.caption = Group details
+contactNfmByPhone.title = Can we contact by phone?
+contactNfmByPhone.heading = Can we contact {0} by phone?
+contactNfmByPhone.hint = We will use this to confirm your records.
+contactNfmByPhone.checkYourAnswersLabel = Can we contact by phone?
+contactNfmByPhone.error.required = Select yes if we can contact {0} by phone
 
-nfmCaptureTelephoneDetails.heading.caption = Group details
+nfmCapturePhoneDetails.heading.caption = Group details
 
-nfmCaptureTelephoneDetails.checkYourAnswersLabel.hidden = the phone number for the nominated filing member
-contactNfmByTelephone.checkYourAnswersLabel.hidden = can we contact the nominated filing member by phone
+nfmCapturePhoneDetails.checkYourAnswersLabel.hidden = the phone number for the nominated filing member
+contactNfmByPhone.checkYourAnswersLabel.hidden = can we contact the nominated filing member by phone
 nfmEmailAddress.checkYourAnswersLabel.hidden = the contact email address for the nominated filing member
 nfmContactName.checkYourAnswersLabel.hidden = the name of the person or team we should contact from the nominated filing member
 nfmRegisteredAddress.checkYourAnswersLabel.hidden = the registered office address of the nominated filing member
@@ -701,31 +701,31 @@ contactEmailAddress.error.length = Email address must be 132 characters or less
 contactEmailAddress.error.format = Enter an email address in the correct format, like name@example.com
 contactEmailAddress.change.hidden = the primary contact email address
 
-contactByTelephone.heading.caption = Contact details
-contactByTelephone.title = Can we contact by phone?
-contactByTelephone.heading = Can we contact {0} by phone?
-contactByTelephone.hint = We’ll only use this to contact you about Pillar 2 Top-up Taxes.
-contactByTelephone.checkYourAnswersLabel = Can we contact the primary contact by phone?
-contactByTelephone.error.required = Select yes if we can contact {0} by phone
-contactByTelephone.change.hidden = can we contact the primary contact by phone?
+contactByPhone.heading.caption = Contact details
+contactByPhone.title = Can we contact by phone?
+contactByPhone.heading = Can we contact {0} by phone?
+contactByPhone.hint = We’ll only use this to contact you about Pillar 2 Top-up Taxes.
+contactByPhone.checkYourAnswersLabel = Can we contact the primary contact by phone?
+contactByPhone.error.required = Select yes if we can contact {0} by phone
+contactByPhone.change.hidden = can we contact the primary contact by phone?
 
-contactCaptureTelephoneDetails.heading.caption = Contact details
+contactCapturePhoneDetails.heading.caption = Contact details
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
 contactNameCompliance.change.hidden = the primary contact name
-contactCaptureTelephoneDetails.checkYourAnswersLabel = Primary phone number
-contactCaptureTelephoneDetails.change.hidden = the phone number for the primary contact
+contactCapturePhoneDetails.checkYourAnswersLabel = Primary phone number
+contactCapturePhoneDetails.change.hidden = the phone number for the primary contact
 addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-secondaryTelephonePreference.checkYourAnswersLabel = Can we contact by phone?
-secondaryTelephone.checkYourAnswersLabel = Second contact phone number
+secondaryPhonePreference.checkYourAnswersLabel = Can we contact by phone?
+secondaryPhone.checkYourAnswersLabel = Second contact phone number
 
 addSecondaryContact.change.hidden = do you have a secondary contact?
 secondaryContactName.change.hidden = the secondary contact name
 secondaryContactEmail.change.hidden = the secondary contact email address
-secondaryTelephonePreference.change.hidden = can we contact the secondary contact by phone?
-secondaryTelephone.change.hidden = the phone number for the secondary contact
+secondaryPhonePreference.change.hidden = can we contact the secondary contact by phone?
+secondaryPhone.change.hidden = the phone number for the secondary contact
 contactCorrespondenceAddress.checkYourAnswersLabel = Address
 contactCorrespondenceAddress.change.hidden = the contact address
 
@@ -780,14 +780,14 @@ secondaryContactEmail.error.required = Enter the email address for {0}
 secondaryContactEmail.error.length = Email address must be 132 characters or less
 secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
-secondaryTelephonePreference.title = Can we contact by phone?
-secondaryTelephonePreference.heading = Can we contact {0} by phone?
-secondaryTelephonePreference.heading.caption = Contact details
-secondaryTelephonePreference.hint = We’ll only use this to contact you about Pillar 2 Top-up Taxes.
-secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
-secondaryTelephonePreference.error.required = Select yes if we can contact {0} by phone
+secondaryPhonePreference.title = Can we contact by phone?
+secondaryPhonePreference.heading = Can we contact {0} by phone?
+secondaryPhonePreference.heading.caption = Contact details
+secondaryPhonePreference.hint = We’ll only use this to contact you about Pillar 2 Top-up Taxes.
+secondaryPhonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
+secondaryPhonePreference.error.required = Select yes if we can contact {0} by phone
 
-secondaryTelephone.checkYourAnswersLabel = Second contact phone number
+secondaryPhone.checkYourAnswersLabel = Second contact phone number
 
 checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 Top-up Taxes
@@ -873,8 +873,8 @@ homepage.manageAccount.btn.body = If your group does not expect to meet the annu
 homepage.manageAccount.agent.btn.body = Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.
 
 homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
-homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. In the future, if you meet the annual revenue threshold for Pillar 2 Top-up Taxes, you should submit a UK Tax Return.
-homepage.btnActiveBanner.agent.body = You or your client have told us the group does not need to submit a UK Tax Return for the accounting period ending {0} or for any future accounting periods. If your client meets the annual revenue threshold for Pillar 2 Top-up Taxes in future, a UK Tax Return should be submitted.
+homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria the future.
+homepage.btnActiveBanner.agent.body = You or your client have told us the group does not need to submit a UK Tax Return. You or your client must submit a UK Tax Return if they meet the Pillar 2 Top-up Taxes criteria in the future.
 homepage.btnActiveBanner.linkText = Find out more about Below-Threshold Notification
 
 homepage.uktrBanner.Due.title = You have one or more returns due
@@ -1087,14 +1087,14 @@ rfm.registeredAddress.change.hidden = the address of the new nominated filing me
 rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
-rfm.secondaryTelephone.checkYourAnswersLabel = Second contact phone number
+rfm.secondaryPhonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
+rfm.secondaryPhone.checkYourAnswersLabel = Second contact phone number
 
 rfm.addsecondaryContact.change.hidden = do you have a secondary contact
 rfm.secondaryContactName.change.hidden = the secondary contact name
 rfm.secondaryContactEmail.change.hidden = the secondary contact email address
-rfm.secondaryTelephonePreference.change.hidden = can we contact the secondary contact by phone
-rfm.secondaryTelephone.change.hidden = the phone number for the secondary contact
+rfm.secondaryPhonePreference.change.hidden = can we contact the secondary contact by phone
+rfm.secondaryPhone.change.hidden = the phone number for the secondary contact
 
 rfm.addSecondaryContact.title = Add a secondary contact
 rfm.addSecondaryContact.p1 = We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible.
@@ -1119,13 +1119,13 @@ rfm.secondaryContactEmail.error.required = You need to enter the email address f
 rfm.secondaryContactEmail.error.length = Email address must be 132 characters or less
 rfm.secondaryContactEmail.error.format = Enter an email address in the correct format, like name@example.com
 
-rfm.secondaryTelephonePreference.title = Can we contact by phone?
-rfm.secondaryTelephonePreference.heading = Can we contact {0} by phone?
-rfm.secondaryTelephonePreference.hint = We will call if we have any questions about your Pillar 2 Top-up Taxes compliance.
-rfm.secondaryTelephonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
-rfm.secondaryTelephonePreference.error.required = Select yes if we can contact {0} by phone
+rfm.secondaryPhonePreference.title = Can we contact by phone?
+rfm.secondaryPhonePreference.heading = Can we contact {0} by phone?
+rfm.secondaryPhonePreference.hint = We will call if we have any questions about your Pillar 2 Top-up Taxes compliance.
+rfm.secondaryPhonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
+rfm.secondaryPhonePreference.error.required = Select yes if we can contact {0} by phone
 
-rfm.secondaryTelephone.checkYourAnswersLabel = Second contact phone number
+rfm.secondaryPhone.checkYourAnswersLabel = Second contact phone number
 
 rfm.journeyRecoveryView.title = There has been an error
 rfm.journeyRecoveryView.heading = There has been an error
@@ -1419,12 +1419,12 @@ repayments.accountNameConfirm.p1 = Is this who you want the repayment to be sent
 repayments.accountNameConfirm.p2 = We may not be able to recover your money if it goes to the wrong account.
 repayments.accountNameConfirm.error.required = Enter if you want to continue with these bank details?
 
-repayments.contactByTelephone.title = Can we contact by telephone?
-repayments.contactByTelephone.heading = Can we contact {0} by telephone?
-repayments.contactByTelephone.hint = We will only use this to contact you about this repayment request.
-repayments.contactByTelephone.error.required = Select yes if we can contact {0} by telephone
+repayments.contactByPhone.title = Can we contact by phone?
+repayments.contactByPhone.heading = Can we contact {0} by phone?
+repayments.contactByPhone.hint = We will only use this to contact you about this repayment request.
+repayments.contactByPhone.error.required = Select yes if we can contact {0} by phone
 
-repayments.telephoneDetails.heading.caption = Contact details
+repayments.phoneDetails.heading.caption = Contact details
 
 repayments.incompleteDataView.title = Repayment request has missing information
 repayments.incompleteDataView.heading = Repayment request has missing information
@@ -1493,10 +1493,10 @@ repaymentsContactName.checkYourAnswersLabel = Contact name
 repaymentsContactName.change.hidden = the contact name
 repaymentsContactEmail.checkYourAnswersLabel = Email address
 repaymentsContactEmail.change.hidden = the contact email address
-repaymentsContactByTelephone.checkYourAnswersLabel = Can we contact by telephone?
-repaymentsContactByTelephone.change.hidden = can we contact by telephone?
-repaymentsTelephoneDetails.checkYourAnswersLabel = Telephone number
-repaymentsTelephoneDetails.change.hidden = the telephone number
+repaymentsContactByPhone.checkYourAnswersLabel = Can we contact by phone?
+repaymentsContactByPhone.change.hidden = can we contact by phone?
+repaymentsPhoneDetails.checkYourAnswersLabel = Phone number
+repaymentsPhoneDetails.change.hidden = the phone number
 
 repayments.confirmation.title = Repayment request submitted
 repayments.confirmation.bannerText = Repayment request submitted
@@ -1758,7 +1758,7 @@ btn.entitiesInsideOutsideUK.amend.p2 = If this has changed, you must amend your 
 btn.entitiesInsideOutsideUK.amend.agent.p2 = If this has changed, you must amend the group details to update the location of the entities before submitting a BTN.
 btn.entitiesInsideOutsideUK.amend.link = Amend group details
 
-btn.cya.title = Check Your Answers
+btn.cya.title = Check your answers to submit your Below-Threshold Notification
 btn.cya.heading = Check your answers to submit your Below-Threshold Notification
 btn.cya.p1 = If you submit a Below-Threshold Notification for a previous accounting period, any return you have submitted this accounting period will be removed.
 btn.cya.p2 = Submit your Below-Threshold Notification
@@ -1779,7 +1779,7 @@ btn.error.heading = Sorry, there is a problem with the service
 btn.error.tryAgainLater.p1 = You can try again later when the service is available.
 btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
 
-btn.cannotReturn.heading = Submission successful
+btn.cannotReturn.heading = You have submitted a Below-Threshold Notification
 btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
 btn.cannotReturn.link = Return to your group’s homepage
 btn.waitingRoom.submitting = Submitting your notification
@@ -1787,7 +1787,6 @@ btn.waitingRoom.title = Submitting your Below-Threshold Notification
 btn.waitingRoom.dontLeave = Don’t leave this page
 btn.waitingRoom.redirect = You will be redirected automatically when the submission is complete.
 
-###############################################
 
 ###############################################
 #
@@ -1795,10 +1794,12 @@ btn.waitingRoom.redirect = You will be redirected automatically when the submiss
 #
 ###############################################
 payments.outstanding.title = Outstanding payments
-payments.outstanding.amountDue = Total amount due: £{0}
-payments.outstanding.p1 = The amount includes all liabilities due. This may be over more than one accounting period. It also includes any penalties or late payment interest.
-payments.outstanding.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due. If you have recently made a payment, it takes 3-5 days to be added to your account.
-payments.outstanding.agent.p2 = Any payments made to the group’s account before submitting the tax return have been deducted from the amount due. If you have recently made a payment, it takes 3-5 days to be added to the group’s account.
+payments.outstanding.amountDue = Amount due: £{0}
+payments.outstanding.p1 = The amount includes all liabilities due. This may include more than one accounting period. It also includes any penalties.
+payments.outstanding.p2 = Any payments made to your account before submitting your tax return have been deducted from your amount due.
+payments.outstanding.agent.p2 = Any payments made to the group’s account before submitting the tax return have been deducted from the amount due.
+payments.outstanding.insetText = Your UK Tax Return payment is overdue and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of your UK Tax Return payment.
+payments.outstanding.agent.insetText = The group has an overdue UK Tax Return payment and is subject to late payment interest. We’ll calculate and show the interest due within 3-5 working days of the UK Tax Return payment.
 
 payments.outstanding.pay.buttonText = Pay online
 payments.outstanding.otherWaysToPay.heading = Other ways to pay
@@ -1812,7 +1813,7 @@ payments.outstanding.details.heading = Details of outstanding payments
 payments.outstanding.details.p1 = We have separated any payments due by accounting period.
 payments.outstanding.details.nothingDue = No payments due.
 
-payments.outstanding.transactionHistory.p1 = Find details on payments and refunds.
+payments.outstanding.transactionHistory.p1 = Find details on payments and repayments.
 payments.outstanding.transactionHistory.p2 = Payments will appear in the transaction history page within 3-5 working days.
 
 payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charges

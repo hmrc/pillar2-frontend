@@ -17,17 +17,15 @@
 package controllers
 
 import cats.data.OptionT
-import cats.implicits._
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
-import models.obligationsandsubmissions.ObligationStatus
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationsAndSubmissionsSuccess}
+import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{InternalIssueError, UserAnswers}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -36,6 +34,7 @@ import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.Constants.RECEIVED_PERIOD_IN_DAYS
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -75,33 +74,23 @@ class DashboardController @Inject() (
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
-        subscriptionData <- OptionT.liftF(
-                              subscriptionService
-                                .readAndCacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
-                                .recover {
-                                  case InternalIssueError =>
-                                    logger.info(s"DashboardController - subscription is in progress for PLR reference: $referenceNumber")
-                                    throw new RuntimeException("REGISTRATION_IN_PROGRESS:" + referenceNumber)
-                                  case other => throw other
-                                }
-                            )
-        result <- OptionT.liftF(displayHomepage(subscriptionData, referenceNumber))
-      } yield result)
-        .recover {
-          case ex: RuntimeException if ex.getMessage.startsWith("REGISTRATION_IN_PROGRESS:") =>
-            val plrRef = ex.getMessage.drop("REGISTRATION_IN_PROGRESS:".length)
-            Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plrRef))
-          case InternalIssueError =>
-            logger.error(
-              "DashboardController - read subscription failed as no valid Json was returned from the controller"
-            )
-            Redirect(routes.ViewAmendSubscriptionFailedController.onPageLoad)
-          case _ =>
-            logger.error("DashboardController - read subscription failed as no valid Json was returned from the controller")
-            Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
-        }
-        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-
+        result <-
+          OptionT.liftF {
+            subscriptionService
+              .maybeReadSubscription(referenceNumber)
+              .flatMap {
+                case Some(_) =>
+                  subscriptionService
+                    .cacheSubscription(ReadSubscriptionRequestParameters(request.userId, referenceNumber))
+                    .flatMap(displayHomepage(_, referenceNumber))
+                case None =>
+                  Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+              }
+              .recover { case UnprocessableEntityError =>
+                Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
+              }
+          }
+      } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
@@ -119,16 +108,8 @@ class DashboardController @Inject() (
               homepageView(
                 subscriptionData.upeDetails.organisationName,
                 subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                if (subscriptionData.accountStatus.exists(_.inactive)) btnBannerDate(response) else None,
-                getDueOrOverdueReturnsStatus(response) match {
-                  case None => None
-                  case Some(value) =>
-                    value match {
-                      case Due        => Some("Due")
-                      case Overdue    => Some("Overdue")
-                      case Incomplete => Some("Incomplete")
-                    }
-                },
+                subscriptionData.accountStatus.exists(_.inactive),
+                getDueOrOverdueReturnsStatus(response).map(_.toString),
                 plrReference,
                 isAgent = request.isAgent
               )
@@ -149,46 +130,41 @@ class DashboardController @Inject() (
       )
     }
 
-  private def btnBannerDate(response: ObligationsAndSubmissionsSuccess): Option[LocalDate] = {
-    val accountingPeriods = response.accountingPeriodDetails
-
-    if (
-      accountingPeriods.head.obligations
-        .find(_.obligationType == UKTR)
-        .get
-        .submissions
-        .nonEmpty
-    ) {
-      Some(accountingPeriods.head.endDate)
-    } else {
-      accountingPeriods.find(_.obligations.head.submissions.nonEmpty).map(_.endDate)
-    }
-  }
-
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
     def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
       if (period.obligations.isEmpty) {
         None
       } else {
-        val uktrObligation = period.obligations.find(_.obligationType == UKTR)
-        val girObligation  = period.obligations.find(_.obligationType == GIR)
-        val dueDatePassed  = period.dueDate.isBefore(LocalDate.now())
-
+        val uktrObligation       = period.obligations.find(_.obligationType == UKTR)
+        val girObligation        = period.obligations.find(_.obligationType == GIR)
+        val dueDatePassed        = period.dueDate.isBefore(LocalDate.now())
         val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
+        val isInReceivedPeriod = period.obligations
+          .filter(_.status == ObligationStatus.Fulfilled)
+          .flatMap(_.submissions)
+          .filter(submission =>
+            submission.submissionType == UKTR_CREATE
+              || submission.submissionType == SubmissionType.GIR
+          )
+          .maxByOption(_.receivedDate)
+          .exists { submission =>
+            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= RECEIVED_PERIOD_IN_DAYS
+          }
 
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>
-            (uktr.status, gir.status, dueDatePassed) match {
-              case (ObligationStatus.Open, ObligationStatus.Open, false)      => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false) => Some(Due)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false) => Some(Due)
-              case (ObligationStatus.Open, ObligationStatus.Open, true)       => Some(Overdue)
-              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true)  => Some(Incomplete)
-              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true)  => Some(Incomplete)
-              case _ if hasAnyOpenObligation && !dueDatePassed                => Some(Due)
-              case _ if hasAnyOpenObligation && dueDatePassed                 => Some(Overdue)
-              case _                                                          => None
+            (uktr.status, gir.status, dueDatePassed, isInReceivedPeriod) match {
+              case (ObligationStatus.Open, ObligationStatus.Open, false, _)          => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, false, _)     => Some(Due)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, false, _)     => Some(Due)
+              case (ObligationStatus.Open, ObligationStatus.Open, true, _)           => Some(Overdue)
+              case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
+              case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
+              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
+              case _                                                                 => None
             }
           case (Some(uktr), None) =>
             (uktr.status, dueDatePassed) match {
