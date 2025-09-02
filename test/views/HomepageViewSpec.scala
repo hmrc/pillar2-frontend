@@ -242,7 +242,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Received status tag with green style when Received scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, None, Some("Received"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, Some("Received"), plrRef, isAgent = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard: Element  = organisationViewWithOverdueScenario.getElementsByClass("card-half-width").first()
