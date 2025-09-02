@@ -180,10 +180,15 @@ trait Formatters extends Transforms with Constraints {
             case s if !s.replace("£", "").matches(MONETARY_REGEX) =>
               Left(Seq(FormError(key, invalidCurrency, args)))
             case s =>
-              nonFatalCatch
-                .either(BigDecimal(s.replace("£", "")))
-                .left
-                .map(_ => Seq(FormError(key, invalidCurrency, args)))
+              val cleanValue = s.replace("£", "")
+              Try(BigDecimal(cleanValue)) match {
+                case Success(value) =>
+                  val wholePart = value.abs.setScale(0, BigDecimal.RoundingMode.DOWN)
+                  if (wholePart.toString.length <= 11) Right(value)
+                  else Left(Seq(FormError(key, invalidCurrency, args)))
+                case _ =>
+                  Left(Seq(FormError(key, invalidCurrency, args)))
+              }
           }
 
       override def unbind(key: String, value: BigDecimal): Map[String, String] =

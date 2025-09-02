@@ -212,4 +212,67 @@ class ConstraintsSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyC
       }
     }
   }
+
+  "monetaryLimit" - {
+
+    "must return Valid for a number with 11 whole digits" in {
+      val result = monetaryLimit("error.limit")("12345678901.99")
+      result mustEqual Valid
+    }
+
+    "must return Valid for a number with fewer than 11 whole digits" in {
+      val result = monetaryLimit("error.limit")("1234.99")
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a number with more than 11 whole digits" in {
+      val result = monetaryLimit("error.limit")("123456789012.99")
+      result mustEqual Invalid("error.limit")
+    }
+
+    "must return Valid for a number with pound sign and 11 digits" in {
+      val result = monetaryLimit("error.limit")("£12345678901.99")
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a number with pound sign and 12 digits" in {
+      val result = monetaryLimit("error.limit")("£123456789012.99")
+      result mustEqual Invalid("error.limit")
+    }
+
+    "must return Valid for a number with commas and 11 digits" in {
+      val result = monetaryLimit("error.limit")("1,234,567,890.99")
+      result mustEqual Valid
+    }
+
+    "must return Invalid for a number with commas and 12 digits" in {
+      val result = monetaryLimit("error.limit")("123,456,789,012.99")
+      result mustEqual Invalid("error.limit")
+    }
+
+    "must return Valid for zero" in {
+      val result = monetaryLimit("error.limit")("0")
+      result mustEqual Valid
+    }
+
+    "must return Valid for single digit" in {
+      val result = monetaryLimit("error.limit")("5.4")
+      result mustEqual Valid
+    }
+
+    "must handle negative numbers correctly" in {
+      val result = monetaryLimit("error.limit")("-12345678901.99")
+      result mustEqual Valid
+    }
+
+    "must reject negative numbers with more than 11 digits" in {
+      val result = monetaryLimit("error.limit")("-123456789012.99")
+      result mustEqual Invalid("error.limit")
+    }
+
+    "must return Invalid for non-numeric input" in {
+      val result = monetaryLimit("error.limit")("abc")
+      result mustEqual Invalid("error.limit")
+    }
+  }
 }

@@ -34,7 +34,6 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableR
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
-import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -196,10 +195,10 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val df = new DecimalFormat("#,###.00")
+    import views.ViewUtils.formattedCurrency
 
-    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
-    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + formattedCurrency(history.amountPaid)
+    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + formattedCurrency(history.amountRepaid)
 
     Seq(
       TableRow(
