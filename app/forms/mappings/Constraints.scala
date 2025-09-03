@@ -156,23 +156,4 @@ trait Constraints {
       }
     }
 
-  protected def monetaryLimit(errorKey: String): Constraint[String] =
-    Constraint { input =>
-      val cleanInput = input.replace(",", "").replace("£", "").replace(" ", "")
-      Try(BigDecimal(cleanInput)) match {
-        case Success(value) =>
-          val wholePart = value.abs.setScale(0, BigDecimal.RoundingMode.DOWN)
-          if (wholePart.toString.length <= 11) Valid
-          else Invalid(errorKey)
-        case _ => Invalid(errorKey)
-      }
-    }
-
-  protected def bigDecimalMonetaryLimit(errorKey: String): Constraint[BigDecimal] =
-    Constraint { input =>
-      val wholePart = input.abs.setScale(0, BigDecimal.RoundingMode.DOWN)
-      if (wholePart.toString.length <= 11) Valid
-      else Invalid(errorKey)
-    }
-
 }
