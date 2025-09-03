@@ -16,59 +16,79 @@
 
 package views
 
-import org.scalatest.freespec.AnyFreeSpec
-import org.scalatest.matchers.must.Matchers
-import views.ViewUtils._
+import base.SpecBase
+import forms.GroupAccountingPeriodFormProvider
+import models.subscription.AccountingPeriod
+import play.api.data.Form
+import views.ViewUtils.errorKey
 
-class ViewUtilsSpec extends AnyFreeSpec with Matchers {
+class ViewUtilsSpec extends SpecBase {
 
-  "formattedCurrency" - {
+  val formProvider = new GroupAccountingPeriodFormProvider()
+  val form: Form[AccountingPeriod] = formProvider()
 
-    "must format whole numbers without decimals" in {
-      formattedCurrency(BigDecimal(1000)) mustEqual "1,000"
-    }
+  "View Utils" should {
+    "provide the right field key" when {
+      "only the day is incorrect" in {
+        val startDateDay:   String = "1char"
+        val startDateMonth: String = "1"
+        val startDateYear:  String = "1"
 
-    "must format single decimal place numbers with trailing zero" in {
-      formattedCurrency(BigDecimal(1000.5)) mustEqual "1,000.50"
-    }
+        val data = Map(
+          "startDate.day"   -> startDateDay,
+          "startDate.month" -> startDateMonth,
+          "startDate.year"  -> startDateYear
+        )
 
-    "must format two decimal place numbers correctly" in {
-      formattedCurrency(BigDecimal(1000.55)) mustEqual "1,000.55"
-    }
+        val testErrorKey = errorKey(form.bind(data), "startDate")
+        testErrorKey mustEqual "startDate.day"
+      }
 
-    "must format large numbers with correct comma separation" in {
-      formattedCurrency(BigDecimal(12345678901.99)) mustEqual "12,345,678,901.99"
-    }
+      "only the month is incorrect" in {
+        val startDateDay:   String = "1"
+        val startDateMonth: String = "1char"
+        val startDateYear:  String = "1"
 
-    "must format zero correctly" in {
-      formattedCurrency(BigDecimal(0)) mustEqual "0"
-    }
+        val data = Map(
+          "startDate.day"   -> startDateDay,
+          "startDate.month" -> startDateMonth,
+          "startDate.year"  -> startDateYear
+        )
 
-    "must format small decimal numbers correctly" in {
-      formattedCurrency(BigDecimal(0.99)) mustEqual "0.99"
-    }
+        val testErrorKey = errorKey(form.bind(data), "startDate")
+        testErrorKey mustEqual "startDate.month"
+      }
 
-    "must format single digit with decimals" in {
-      formattedCurrency(BigDecimal(5.4)) mustEqual "5.40"
-    }
+      "only the year is incorrect" in {
+        val startDateDay:   String = "1"
+        val startDateMonth: String = "1"
+        val startDateYear:  String = "1char"
 
-    "must format numbers with exact two decimal places" in {
-      formattedCurrency(BigDecimal(10.81)) mustEqual "10.81"
-    }
+        val data = Map(
+          "startDate.day"   -> startDateDay,
+          "startDate.month" -> startDateMonth,
+          "startDate.year"  -> startDateYear
+        )
 
-    "must handle BigDecimal with scale 0" in {
-      val amount = BigDecimal(2000).setScale(0)
-      formattedCurrency(amount) mustEqual "2,000"
-    }
+        val testErrorKey = errorKey(form.bind(data), "startDate")
+        testErrorKey mustEqual "startDate.year"
+      }
 
-    "must handle BigDecimal with scale 1" in {
-      val amount = BigDecimal(2000.5).setScale(1)
-      formattedCurrency(amount) mustEqual "2,000.50"
-    }
+      "no values have been provided" in {
+        val startDateDay:   String = ""
+        val startDateMonth: String = ""
+        val startDateYear:  String = ""
 
-    "must handle BigDecimal with scale 2" in {
-      val amount = BigDecimal(2000.55).setScale(2)
-      formattedCurrency(amount) mustEqual "2,000.55"
+        val data = Map(
+          "startDate.day"   -> startDateDay,
+          "startDate.month" -> startDateMonth,
+          "startDate.year"  -> startDateYear
+        )
+
+        val testErrorKey = errorKey(form.bind(data), "startDate")
+        testErrorKey mustEqual "startDate.day"
+      }
     }
   }
+
 }

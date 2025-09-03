@@ -32,7 +32,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.ViewUtils.formattedCurrency
+
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
 import java.time.format.DateTimeFormatter
@@ -196,8 +196,15 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val amountPaid   = "£" + formattedCurrency(history.amountPaid)
-    val amountRepaid = "£" + formattedCurrency(history.amountRepaid)
+    def formatCurrency(amount: BigDecimal): String =
+      amount match {
+        case n if n.scale <= 0 => f"$n%,.0f" // No decimals for whole numbers
+        case n if n.scale == 1 => f"$n%,.2f" // Pad 1 decimal to 2 decimals
+        case n                 => f"$n%,.2f" // Keep 2+ decimals as retrieved
+      }
+
+    val amountPaid   = "£" + formatCurrency(history.amountPaid)
+    val amountRepaid = "£" + formatCurrency(history.amountRepaid)
 
     Seq(
       TableRow(
