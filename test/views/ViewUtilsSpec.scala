@@ -24,8 +24,8 @@ class ViewUtilsSpec extends AnyFreeSpec with Matchers {
 
   "formattedCurrency" - {
 
-    "must format whole numbers with .00" in {
-      formattedCurrency(BigDecimal(1000)) mustEqual "1,000.00"
+    "must format whole numbers without decimals" in {
+      formattedCurrency(BigDecimal(1000)) mustEqual "1,000"
     }
 
     "must format single decimal place numbers with trailing zero" in {
@@ -41,7 +41,7 @@ class ViewUtilsSpec extends AnyFreeSpec with Matchers {
     }
 
     "must format zero correctly" in {
-      formattedCurrency(BigDecimal(0)) mustEqual "0.00"
+      formattedCurrency(BigDecimal(0)) mustEqual "0"
     }
 
     "must format small decimal numbers correctly" in {
@@ -58,7 +58,7 @@ class ViewUtilsSpec extends AnyFreeSpec with Matchers {
 
     "must handle BigDecimal with scale 0" in {
       val amount = BigDecimal(2000).setScale(0)
-      formattedCurrency(amount) mustEqual "2,000.00"
+      formattedCurrency(amount) mustEqual "2,000"
     }
 
     "must handle BigDecimal with scale 1" in {
