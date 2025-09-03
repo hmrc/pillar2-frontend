@@ -196,8 +196,8 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + formattedCurrency(history.amountPaid)
-    val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + formattedCurrency(history.amountRepaid)
+    val amountPaid   = "£" + formattedCurrency(history.amountPaid)
+    val amountRepaid = "£" + formattedCurrency(history.amountRepaid)
 
     Seq(
       TableRow(
