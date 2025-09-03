@@ -33,6 +33,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, Pagina
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
+import views.ViewUtils.formattedCurrency
 
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
@@ -195,8 +196,6 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    import views.ViewUtils.formattedCurrency
-
     val amountPaid   = if (history.amountPaid == 0.00) "£0" else "£" + formattedCurrency(history.amountPaid)
     val amountRepaid = if (history.amountRepaid == 0.00) "£0" else "£" + formattedCurrency(history.amountRepaid)
 
