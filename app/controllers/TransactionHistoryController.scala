@@ -198,9 +198,9 @@ object TransactionHistoryController {
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
     def formatCurrency(amount: BigDecimal): String =
       amount match {
-        case n if n.scale <= 0 => f"$n%,.0f" // No decimals for whole numbers
-        case n if n.scale == 1 => f"$n%,.2f" // Pad 1 decimal to 2 decimals
-        case n                 => f"$n%,.2f" // Keep 2+ decimals as retrieved
+        case n if n.scale <= 0 => f"$n%,.0f"
+        case n if n.scale == 1 => f"$n%,.2f"
+        case n                 => f"$n%,.2f"
       }
 
     val amountPaid   = "£" + formatCurrency(history.amountPaid)
