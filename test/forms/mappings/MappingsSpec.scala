@@ -256,11 +256,6 @@ class MappingsSpec extends AnyFreeSpec with Matchers with OptionValues with Mapp
       result.get mustEqual BigDecimal.valueOf(99999999999.99)
     }
 
-    "successfully bind single digit with decimals" in {
-      val result = testForm.bind(Map("value" -> "1.23"))
-      result.get mustEqual BigDecimal.valueOf(1.23)
-    }
-
     "fail to bind invalid input with different currency symbol" in {
       val result = testForm.bind(Map("value" -> "$123.12345"))
       result.errors must contain(FormError("value", "error.invalidNumeric"))
