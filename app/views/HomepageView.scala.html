@@ -160,11 +160,6 @@
           Some(messages(s"homepage.manageAccount$maybeAgentKey.manageGroupDetails.body"))
   ),
   (
-          messages("homepage.manageAccount.rfm.linkText"),
-          if(isAgent) "" else controllers.rfm.routes.StartPageController.onPageLoad.url,
-          Some(messages(s"homepage.manageAccount$maybeAgentKey.rfm.body"))
-  ),
-  (
           messages("homepage.manageAccount.btn.linkText"),
           btnUrl,
           Some(messages(s"homepage.manageAccount$maybeAgentKey.btn.body"))
