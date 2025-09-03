@@ -305,7 +305,6 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display manage account card with correct content" in {
       val manageCard:          Element  = agentView.getElementsByClass("card-full-width").first()
-      val manageCardListItems: Elements = manageCard.getElementsByTag("li")
       val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
       val manageCardHelpTexts: Elements = manageCard.select(".govuk-list p")
 
