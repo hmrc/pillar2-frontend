@@ -126,7 +126,8 @@
             )
             @paragraphMessageWithLink(
                 linkMessage = messages("payments.outstanding.penaltiesAndCharges.linkText"),
-                linkUrl = routes.UnderConstructionController.onPageLoad.url
+                linkUrl = appConfig.penaltiesInformationUrl,
+                target = "_blank"
             )
         </div>
     </div>
