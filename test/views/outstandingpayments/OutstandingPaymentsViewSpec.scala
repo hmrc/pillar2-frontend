@@ -161,7 +161,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       val penaltiesLink: Element = links.get(4)
 
       penaltiesLink.text() mustBe "Pillar 2 Top-up Taxes penalties information (opens in a new page)"
-      penaltiesLink.attr("href") mustBe UnderConstructionController.onPageLoad.url
+      penaltiesLink.attr("href") mustBe appConfig.penaltiesInformationUrl
+      penaltiesLink.attr("target") mustBe "_blank"
     }
 
     "display agent-specific content" should {
