@@ -196,8 +196,8 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val amountPaid   = formatCurrencyAmount(history.amountPaid)
-    val amountRepaid = formatCurrencyAmount(history.amountRepaid)
+    val amountPaid:   String = formatCurrencyAmount(history.amountPaid)
+    val amountRepaid: String = formatCurrencyAmount(history.amountRepaid)
 
     Seq(
       TableRow(

@@ -85,9 +85,8 @@ object ViewUtils {
   }
 
   def formatCurrencyAmount(amount: BigDecimal, includeCurrencySymbol: Boolean = true): String = {
-    val formatted = amount match {
+    val formatted: String = amount match {
       case n if n.scale <= 0 => f"$n%,.0f"
-      case n if n.scale == 1 => f"$n%,.2f"
       case n                 => f"$n%,.2f"
     }
     if (includeCurrencySymbol) s"£$formatted" else formatted
