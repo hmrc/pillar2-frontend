@@ -128,13 +128,13 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
 
       errorsList
         .get(0)
-        .text() mustBe "Name of the contact person or team should be 105 characters or less"
+        .text() mustBe "Name of the contact person or team should be 160 characters or less"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Name of the contact person or team should be 105 characters or less"
+      fieldErrors.get(0).text() mustBe "Error: Name of the contact person or team should be 160 characters or less"
     }
   }
 
