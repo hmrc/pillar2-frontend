@@ -40,8 +40,13 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
   "Rfm Contact By Phone View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "Can we contact by phone?"
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
+
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe s"Can we contact $username by phone?"
     }
 
     "have a non-clickable banner" in {
@@ -54,14 +59,10 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
-      h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"Can we contact $username by phone?"
-    }
-
     "have radio items" in {
       val radioItems: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+
+      radioItems.size() mustBe 2
       radioItems.get(0).text mustBe "Yes"
       radioItems.get(1).text mustBe "No"
     }
@@ -72,17 +73,8 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
   }
 
   "when form is submitted with a missing value" should {
-    val errorView: Document = Jsoup.parse(
-      page(
-        formProvider(username).bind(
-          Map(
-            "value" -> ""
-          )
-        ),
-        NormalMode,
-        username
-      )(request, appConfig, messages).toString()
-    )
+    val errorView: Document =
+      Jsoup.parse(page(formProvider(username).bind(Map("value" -> "")), NormalMode, username)(request, appConfig, messages).toString())
 
     "show missing values error summary" in {
       val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
