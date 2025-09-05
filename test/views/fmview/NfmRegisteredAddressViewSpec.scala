@@ -69,20 +69,13 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "form is submitted with missing values" should {
-      val errorView: Document = Jsoup.parse(
-        page(
-          form.bind(
-            Map(
-              "addressLine1" -> "",
-              "addressLine3" -> "",
-              "countryCode"  -> ""
-            )
-          ),
-          NormalMode,
-          userName,
-          Seq.empty
-        )(request, appConfig, messages).toString()
+      val emptyAddress: Map[String, String] = Map(
+        "addressLine1" -> "",
+        "addressLine3" -> "",
+        "countryCode"  -> ""
       )
+
+      val errorView: Document = Jsoup.parse(page(form.bind(emptyAddress), NormalMode, userName, Seq.empty)(request, appConfig, messages).toString())
 
       "show missing values error summary" in {
         val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
