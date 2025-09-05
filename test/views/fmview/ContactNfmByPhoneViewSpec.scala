@@ -22,7 +22,6 @@ import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-
 import views.html.fmview.ContactNfmByPhoneView
 
 class ContactNfmByPhoneViewSpec extends ViewSpecBase {
