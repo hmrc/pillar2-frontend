@@ -62,14 +62,16 @@
       message1 = Some(messages("transactionHistory.agent.p3")),
       linkMessage = messages("transactionHistory.link"),
       message2 = Some(messages("transactionHistory.p4")),
-      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
+      classes = "govuk-body govuk-!-width-two-thirds"
     )
   } else {
     @paragraphMessageWithLink(
       message1 = Some(messages("transactionHistory.group.p3")),
       linkMessage = messages("transactionHistory.link"),
       message2 = Some(messages("transactionHistory.p4")),
-      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
+      classes = "govuk-body govuk-!-width-two-thirds"
     )
   }
 
