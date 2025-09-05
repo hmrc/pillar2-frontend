@@ -39,7 +39,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @h1(messages("payments.outstanding.title"))
-            @h2(messages("payments.outstanding.amountDue", formattedCurrency(amountDue)), size = "m")
+            @h2(messages("payments.outstanding.amountDue", formatAmount(amountDue)), size = "m")
             @paragraphBody(messages("payments.outstanding.p1"))
             @paragraphBody(userTypeDependentText(
                 messages("payments.outstanding.p2"),
@@ -96,7 +96,7 @@
                     rows =  summary.transactions.map { tx =>
                         Seq(
                             TableRow(content = Text(tx.name)),
-                            TableRow(content = Text(s"£${formattedCurrency(tx.outstandingAmount)}"), format = Some("numeric")),
+                            TableRow(content = Text(formatCurrencyAmount(tx.outstandingAmount)), format = Some("numeric")),
                             TableRow(content = Text(tx.dueDate.format(dateFormatter)))
                         )
                     },
