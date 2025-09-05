@@ -64,7 +64,7 @@ class FrontendAppConfigSpec extends SpecBase {
 
     ".accessibilityStatementPath" must {
       "return correct accessibility statement path" in {
-        config.accessibilityStatementPath mustBe "/accessibility-statement/pillar2-frontend"
+        config.accessibilityStatementPath mustBe "/accessibility-statement/pillar2"
       }
     }
 
