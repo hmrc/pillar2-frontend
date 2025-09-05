@@ -65,17 +65,11 @@ class TransactionHistoryController @Inject() (
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
         transactionHistory <-
-          OptionT
-            .fromOption[Future](mayBeUserAnswer.flatMap(_.get(TransactionHistoryPage)))
-            .orElse(
-              OptionT.liftF(
-                financialDataConnector
-                  .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
-              )
-            )
-        updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
-        _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        table          <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+          OptionT.liftF(
+            financialDataConnector
+              .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+          )
+        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
       } yield Ok(
         view(table, pagination, request.isAgent)
