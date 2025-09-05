@@ -26,22 +26,22 @@ import views.html.rfm.RfmSecondaryPhonePreferenceView
 
 class RfmSecondaryPhonePreferenceViewSpec extends ViewSpecBase {
 
-  lazy val formProvider = new RfmSecondaryPhonePreferenceFormProvider
-  lazy val page: RfmSecondaryPhonePreferenceView = inject[RfmSecondaryPhonePreferenceView]
-  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val formProvider: RfmSecondaryPhonePreferenceFormProvider = new RfmSecondaryPhonePreferenceFormProvider
+  lazy val page:         RfmSecondaryPhonePreferenceView         = inject[RfmSecondaryPhonePreferenceView]
+  lazy val username:     String                                  = "John Doe"
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "Can we contact by phone"
 
   "Rfm Secondary Phone Preference View" should {
 
     "have a title" in {
-      view.getElementsByTag("title").text mustBe "Can we contact by phone?"
       view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Can we contact John Doe by phone?"
+      h1Elements.text() mustBe s"Can we contact $username by phone?"
     }
 
     "have a caption" in {
