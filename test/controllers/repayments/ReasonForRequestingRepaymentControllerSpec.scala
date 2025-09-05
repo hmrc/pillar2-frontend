@@ -24,7 +24,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
 import pages.ReasonForRequestingRefundPage
-import play.api.Application
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
@@ -82,7 +81,7 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider().bind(Map("value" -> ""))
@@ -112,7 +111,7 @@ class ReasonForRequestingRepaymentControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onPageLoad(NormalMode).url)
+          FakeRequest(POST, controllers.repayments.routes.ReasonForRequestingRepaymentController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "valid reason"))
 
         val result = route(application, request).value
