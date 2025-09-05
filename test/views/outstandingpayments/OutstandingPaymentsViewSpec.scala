@@ -18,7 +18,7 @@ package views.outstandingpayments
 
 import base.ViewSpecBase
 import controllers.routes._
-import helpers.FinancialDataHelper.PILLAR2_UKTR
+import helpers.FinancialDataHelper.Pillar2UktrName
 import models.subscription.AccountingPeriod
 import models.{FinancialSummary, TransactionSummary}
 import org.jsoup.Jsoup
@@ -200,7 +200,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 object OutstandingPaymentsViewSpec {
   val plrRef: String = "XMPLR0012345678"
 
-  val transaction: TransactionSummary = TransactionSummary(PILLAR2_UKTR, 1000.00, LocalDate.of(2024, 3, 31))
+  val transaction: TransactionSummary = TransactionSummary(Pillar2UktrName, 1000.00, LocalDate.of(2024, 3, 31))
 
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 
