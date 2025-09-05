@@ -22,7 +22,7 @@ import connectors.FinancialDataConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
-import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
