@@ -124,59 +124,6 @@ class ViewUtilsSpec extends SpecBase {
     }
   }
 
-  "formatCurrencyAmount with optional parameter" should {
-    "with currency symbol (default)" should {
-      "format whole numbers without decimals" in {
-        formatCurrencyAmount(BigDecimal(1000)) mustEqual "£1,000"
-      }
-
-      "format single decimal place numbers with trailing zero" in {
-        formatCurrencyAmount(BigDecimal(1000.5)) mustEqual "£1,000.50"
-      }
-
-      "format two decimal place numbers correctly" in {
-        formatCurrencyAmount(BigDecimal(1000.55)) mustEqual "£1,000.55"
-      }
-
-      "format zero correctly" in {
-        formatCurrencyAmount(BigDecimal(0)) mustEqual "£0"
-      }
-    }
-
-    "without currency symbol" should {
-      "format whole numbers without decimals" in {
-        formatCurrencyAmount(BigDecimal(1000), false) mustEqual "1,000"
-      }
-
-      "format single decimal place numbers with trailing zero" in {
-        formatCurrencyAmount(BigDecimal(1000.5), false) mustEqual "1,000.50"
-      }
-
-      "format two decimal place numbers correctly" in {
-        formatCurrencyAmount(BigDecimal(1000.55), false) mustEqual "1,000.55"
-      }
-
-      "format zero correctly" in {
-        formatCurrencyAmount(BigDecimal(0), false) mustEqual "0"
-      }
-
-      "handle BigDecimal with scale 0" in {
-        val amount = BigDecimal(2000).setScale(0)
-        formatCurrencyAmount(amount, false) mustEqual "2,000"
-      }
-
-      "handle BigDecimal with scale 1" in {
-        val amount = BigDecimal(2000.5).setScale(1)
-        formatCurrencyAmount(amount, false) mustEqual "2,000.50"
-      }
-
-      "handle BigDecimal with scale 2" in {
-        val amount = BigDecimal(2000.55).setScale(2)
-        formatCurrencyAmount(amount, false) mustEqual "2,000.55"
-      }
-    }
-  }
-
   "formatAmount" should {
     "format whole numbers without decimals" in {
       formatAmount(BigDecimal(1000)) mustEqual "1,000"

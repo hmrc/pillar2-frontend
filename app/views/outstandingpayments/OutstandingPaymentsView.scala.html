@@ -39,7 +39,7 @@
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">
             @h1(messages("payments.outstanding.title"))
-            @h2(messages("payments.outstanding.amountDue", formatCurrencyAmount(amountDue, false)), size = "m")
+            @h2(messages("payments.outstanding.amountDue", formatAmount(amountDue)), size = "m")
             @paragraphBody(messages("payments.outstanding.p1"))
             @paragraphBody(userTypeDependentText(
                 messages("payments.outstanding.p2"),

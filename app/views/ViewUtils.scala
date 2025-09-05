@@ -90,10 +90,7 @@ object ViewUtils {
       case n                 => f"$n%,.2f"
     }
 
-  def formatCurrencyAmount(amount: BigDecimal, includeCurrencySymbol: Boolean = true): String = {
-    val formatted: String = formatAmount(amount)
-    if (includeCurrencySymbol) s"£$formatted" else formatted
-  }
+  def formatCurrencyAmount(amount: BigDecimal): String = s"£${formatAmount(amount)}"
 
   def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
     if (isAgent) agentText else groupText
