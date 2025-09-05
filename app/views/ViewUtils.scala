@@ -84,11 +84,14 @@ object ViewUtils {
     formattedTime
   }
 
-  def formatCurrencyAmount(amount: BigDecimal, includeCurrencySymbol: Boolean = true): String = {
-    val formatted: String = amount match {
+  def formatAmount(amount: BigDecimal): String =
+    amount match {
       case n if n.scale <= 0 => f"$n%,.0f"
       case n                 => f"$n%,.2f"
     }
+
+  def formatCurrencyAmount(amount: BigDecimal, includeCurrencySymbol: Boolean = true): String = {
+    val formatted: String = formatAmount(amount)
     if (includeCurrencySymbol) s"£$formatted" else formatted
   }
 
