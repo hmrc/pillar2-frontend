@@ -119,7 +119,7 @@ class AgentController @Inject() (
     (identify andThen getData andThen requireData).async { implicit request =>
       request.userAnswers.get(AgentClientPillar2ReferencePage) match {
         case Some(_) =>
-          Future.successful(Redirect(routes.DashboardController.onPageLoad))
+          Future.successful(Redirect(appConfig.asaHomePageUrl))
         case None =>
           request.userAnswers
             .get(UnauthorisedClientPillar2ReferencePage)
@@ -128,7 +128,7 @@ class AgentController @Inject() (
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(AgentClientPillar2ReferencePage, clientPillar2Reference))
                 dataToSave     <- Future.fromTry(updatedAnswers.remove(UnauthorisedClientPillar2ReferencePage))
                 _              <- sessionRepository.set(dataToSave)
-              } yield Redirect(routes.DashboardController.onPageLoad)
+              } yield Redirect(appConfig.asaHomePageUrl)
             }
             .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
       }
