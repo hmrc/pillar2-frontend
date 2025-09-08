@@ -62,19 +62,12 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
         s"You have successfully submitted your repayment request on ${currentDate.toString()}."
     }
 
-    "have a bullet list with download and print links" in {
-      val bulletItems: Elements = view.getElementsByClass("govuk-list--bullet").select("li")
-
-      bulletItems.get(0).text mustBe "Print this page"
-      bulletItems.get(1).text mustBe "Download as PDF"
-    }
-
     "have a 'What happens next' heading" in {
       view.getElementsByTag("h2").first().text mustBe "What happens next"
     }
 
     "have a paragraph" in {
-      paragraphs.get(2).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
+      paragraphs.get(1).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
         "contact the relevant person or team from the information you provided."
     }
 

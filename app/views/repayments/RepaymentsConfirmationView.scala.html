@@ -24,9 +24,7 @@
         h2: HeadingH2,
         paragraph: paragraph,
         paragraphBody: paragraphBody,
-        bulletList: bulletList,
         printLink: printLink,
-        pdfLink: pdfLink,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         link: link,
         heading: heading
@@ -47,14 +45,9 @@
     title = Text(messages("repayments.confirmation.bannerText"))
   ))
 
-  <p class="govuk-body">
-    @messages("repayments.confirmation.message") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span>.
-  </p>
+  @paragraphBody(messages("repayments.confirmation.message", currentDate))
 
-  @bulletList(items = List(
-    printLink(messages("site.print")),
-    pdfLink(messages("site.pdf"), controllers.pdf.routes.PrintPdfController.onDownloadRepaymentConfirmation.url)
-  ), additionalListClasses = Some("govuk-list govuk-list--bullet govuk-!-display-none-print"))
+  @printLink(messages("site.print"))
 
   @h2(messages("repayments.confirmation.heading"))
   @paragraphBody(messages("repayments.confirmation.paragraph"))

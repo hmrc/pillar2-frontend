@@ -161,7 +161,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
-            "Ultimate parent"
+            "Ultimate Parent Entity"
           )
         }
       }

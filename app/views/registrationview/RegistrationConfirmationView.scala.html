@@ -48,9 +48,6 @@
   @paragraphBody(messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), currentDate, currentTime))
 
   @bulletList(items = List(
-    link(text = messages("registrationConfirmation.downloadPdf"),
-      call = Call("GET", controllers.pdf.routes.PrintPdfController.printRegistrationConfirmation.url),
-      fullStop = false),
     printLink(messages("registrationConfirmation.print"))
   ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
 

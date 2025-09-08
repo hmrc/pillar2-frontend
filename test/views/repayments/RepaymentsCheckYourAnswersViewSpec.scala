@@ -131,6 +131,20 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListActions.get(1).text mustBe "Change the reason for the repayment request"
     }
 
+    "have paragraph content" in {
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
+      paragraphs
+        .get(1)
+        .text mustBe "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
+    }
+
+    "display print this page link" in {
+      val printLink = view.select("a:contains(Print this page)")
+      printLink.size()         must be >= 1
+      printLink.first().text() must include("Print this page")
+    }
+
     "have a button" in {
       view.getElementsByClass("govuk-button").text mustBe "Confirm and submit"
     }

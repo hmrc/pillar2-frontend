@@ -68,7 +68,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
           "Second contact"
         )
         contentAsString(result) must include(
-          "Filing member contact address"
+          "Contact address"
         )
       }
     }
