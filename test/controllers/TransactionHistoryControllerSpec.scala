@@ -340,5 +340,43 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         contentAsString(result) must include("31 January 2025")
       }
     }
+
+    "return OK and correct view confirming that decimal amounts are formatted correctly" in {
+      val transactionHistoryWithDecimals: TransactionHistory =
+        TransactionHistory(
+          PlrReference,
+          List(
+            FinancialHistory(LocalDate.of(2024, 12, 1), "Payment", 1000.0, 0.0),
+            FinancialHistory(LocalDate.of(2024, 12, 2), "Payment", 1000.5, 0.0),
+            FinancialHistory(LocalDate.of(2024, 12, 3), "Repayment", 0.0, 1000.55)
+          )
+        )
+
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+          .thenReturn(Future.successful(transactionHistoryWithDecimals))
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        contentAsString(result) must include("£1,000")
+        contentAsString(result) must include("£1,000.50")
+        contentAsString(result) must include("£1,000.55")
+      }
+    }
   }
 }

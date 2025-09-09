@@ -116,16 +116,10 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardHelpTexts.get(1).text() mustBe
         "Amend your group's accounting period or update changes to your entity's locations."
 
-      manageCardLinks.get(2).text() mustBe "Replace filing member"
+      manageCardLinks.get(2).text() mustBe "Submit a Below-Threshold Notification"
       manageCardLinks.get(2).attr("href") mustBe
-        controllers.rfm.routes.StartPageController.onPageLoad.url
-      manageCardHelpTexts.get(2).text() mustBe
-        "Change the filing member for your group's Pillar 2 Top-up Taxes account."
-
-      manageCardLinks.get(3).text() mustBe "Submit a Below-Threshold Notification"
-      manageCardLinks.get(3).attr("href") mustBe
         controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
-      manageCardHelpTexts.get(3).text() mustBe
+      manageCardHelpTexts.get(2).text() mustBe
         "If your group does not expect to meet the annual revenue threshold, you may be able to submit a Below-Threshold Notification."
     }
 
@@ -311,7 +305,6 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "display manage account card with correct content" in {
       val manageCard:          Element  = agentView.getElementsByClass("card-full-width").first()
-      val manageCardListItems: Elements = manageCard.getElementsByTag("li")
       val manageCardLinks:     Elements = manageCard.getElementsByTag("a")
       val manageCardHelpTexts: Elements = manageCard.select(".govuk-list p")
 
@@ -330,15 +323,10 @@ class HomepageViewSpec extends ViewSpecBase {
       manageCardHelpTexts.get(1).text() mustBe
         "Amend your client's accounting period or update changes to entity locations."
 
-      // This list item has no active link yet
-      manageCardListItems.get(2).getElementsByTag("strong").first().text() mustBe "Replace filing member"
-      manageCardHelpTexts.get(2).text() mustBe
-        "As an agent, you cannot replace a filing member. Your client can visit their Pillar 2 account to do this."
-
       manageCardLinks.get(2).text() mustBe "Submit a Below-Threshold Notification"
       manageCardLinks.get(2).attr("href") mustBe
         controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
-      manageCardHelpTexts.get(3).text() mustBe
+      manageCardHelpTexts.get(2).text() mustBe
         "Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold."
     }
 

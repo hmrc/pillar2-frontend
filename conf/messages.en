@@ -1104,7 +1104,7 @@ rfm.secondaryContactName.heading = What is the name of the alternative person or
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactName.hint = For example, ‘Tax team’ or ‘Ashley Smith’.
 rfm.secondaryContactName.error.required = Enter name of the person or team we should contact
-rfm.secondaryContactName.error.length = Name of the contact person or team should be 105 characters or less
+rfm.secondaryContactName.error.length = Name of the contact person or team should be 160 characters or less
 rfm.secondaryContactName.error.invalid = The name of the contact person or team must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
 rfm.secondaryContactEmail.title = What is the email address?
@@ -1536,11 +1536,9 @@ manageGroupDetails.heading = Submitting your group details
 manageGroupDetails.h1 = Submitting your group details
 manageGroupDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
-###################
-
-# - Transaction History
-
-###################
+# ---------------------------------------------
+# Transaction History
+# ---------------------------------------------
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
 transactionHistory.group.p1 = You can find all transactions made by your group during this accounting period and the previous 6 accounting periods.
@@ -1801,6 +1799,7 @@ payments.outstanding.penaltiesAndCharges.heading = Penalties and interest charge
 payments.outstanding.penaltiesAndCharges.p1 = Find out how HMRC may charge your group penalties and interest.
 payments.outstanding.penaltiesAndCharges.agent.p1 = Find out how HMRC may charge the group penalties and interest.
 payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalties information (opens in a new page)
+
 # ---------------------------------------------
 # Pillar 2 Research
 # ---------------------------------------------

@@ -20,7 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
-import helpers.FinancialDataHelper.PILLAR2_UKTR
+import helpers.FinancialDataHelper.Pillar2UktrName
 import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
@@ -71,7 +71,7 @@ class OutstandingPaymentsController @Inject() (
           )
       } yield {
         val amountDue               = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = data.exists(_.transactions.exists(t => t.name == PILLAR2_UKTR && t.dueDate.isBefore(now())))
+        val hasOverdueReturnPayment = data.exists(_.transactions.exists(t => t.name == Pillar2UktrName && t.dueDate.isBefore(now())))
 
         Ok(view(data, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
