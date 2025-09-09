@@ -29,7 +29,7 @@ class ContactNfmByPhoneViewSpec extends ViewSpecBase {
   lazy val formProvider: ContactNfmByPhoneFormProvider = new ContactNfmByPhoneFormProvider
   lazy val page:         ContactNfmByPhoneView         = inject[ContactNfmByPhoneView]
   lazy val username:     String                        = "John Doe"
-  lazy val pageTitle:    String                        = "Can we contact by telephone"
+  lazy val pageTitle:    String                        = "Can we contact by telephone" // FIXME: telephone?
   lazy val view: Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
 
   def pageTitle(username: String = ""): String = {
@@ -37,7 +37,7 @@ class ContactNfmByPhoneViewSpec extends ViewSpecBase {
     s"Can we contact$usernamePart by phone?"
   }
 
-  "ContactNfmByTelephoneView" should {
+  "ContactNfmByPhoneView" should {
     "have a title" in {
       view.title() mustBe s"${pageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }

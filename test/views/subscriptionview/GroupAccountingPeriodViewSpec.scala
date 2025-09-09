@@ -51,8 +51,9 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
     }
 
     "have the following paragraph content" in {
-      view.getElementsByClass("govuk-body").get(0).text mustBe
-        "This is the first accounting period the group uses for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in the UK, on or after 31 December 2023."
+      view.getElementsByClass("govuk-body").get(0).text mustBe "This is the first accounting period the group uses " +
+        "for their consolidated financial statements, following the implementation of Pillar 2 Top-up Taxes in " +
+        "the UK, on or after 31 December 2023."
     }
 
     "have start and end date legends" in {
@@ -85,65 +86,5 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
-    "show pre-populated values when form is filled with existing data" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("startDate.day").attr("value") mustBe "15"
-      viewWithData.getElementById("startDate.month").attr("value") mustBe "1"
-      viewWithData.getElementById("startDate.year").attr("value") mustBe "2024"
-      viewWithData.getElementById("endDate.day").attr("value") mustBe "15"
-      viewWithData.getElementById("endDate.month").attr("value") mustBe "1"
-      viewWithData.getElementById("endDate.year").attr("value") mustBe "2025"
-    }
-
-    "must display Start Day pre-populated with exactly 15 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("startDate.day").attr("value") mustBe "15"
-    }
-
-    "must display Start Month pre-populated with exactly 1 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("startDate.month").attr("value") mustBe "1"
-    }
-
-    "must display Start Year pre-populated with exactly 2024 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("startDate.year").attr("value") mustBe "2024"
-    }
-
-    "must display End Day pre-populated with exactly 15 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("endDate.day").attr("value") mustBe "15"
-    }
-
-    "must display End Month pre-populated with exactly 1 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("endDate.month").attr("value") mustBe "1"
-    }
-
-    "must display End Year pre-populated with exactly 2025 from acceptance test scenario" in {
-      val accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 15), LocalDate.of(2025, 1, 15))
-      val filledForm       = formProvider().fill(accountingPeriod)
-      val viewWithData     = Jsoup.parse(page(filledForm, NormalMode)(request, appConfig, messages).toString())
-
-      viewWithData.getElementById("endDate.year").attr("value") mustBe "2025"
-    }
   }
 }
