@@ -177,7 +177,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a summary list" in {
-        summaryListKeys.get(4).text mustBe "Do you have a secondary contact?"
+        summaryListKeys.get(4).text mustBe "Do you have a second contact?"
         summaryListItems.get(4).text mustBe "No"
         summaryListLinks.get(4).text mustBe "Change do you have a secondary contact"
         summaryListLinks.get(4).getElementsByTag("a").attr("href") mustBe

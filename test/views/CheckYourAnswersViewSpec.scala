@@ -211,7 +211,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListKeys.get(11).text mustBe "Contact name"
       summaryListKeys.get(12).text mustBe "Email address"
       summaryListKeys.get(13).text mustBe "Can we contact the primary contact by phone?"
-      summaryListKeys.get(14).text mustBe "Primary phone number"
+      summaryListKeys.get(14).text mustBe "Phone number"
       summaryListKeys.get(15).text mustBe "Do you have a second contact?"
       summaryListKeys.get(16).text mustBe "Second contact name"
       summaryListKeys.get(17).text mustBe "Second contact email address"

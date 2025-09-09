@@ -81,10 +81,10 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
         "You can now report and manage your Pillar 2 Top-up Taxes."
     }
 
-    "have a bullet list with print link" in {
-      val bulletItems: Elements = viewDomestic.getElementsByClass("govuk-list--bullet").select("li")
-
-      bulletItems.get(0).text mustBe "Print this page"
+    "display print this page link" in {
+      val printLink = viewDomestic.select("a:contains(Print this page)")
+      printLink.size()         must be >= 1
+      printLink.first().text() must include("Print this page")
     }
 
     "have warning text" in {

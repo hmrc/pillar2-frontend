@@ -27,7 +27,6 @@
         printLink: printLink,
         paragraphMessageWithLink: ParagraphMessageWithLink,
         paragraphBodyLink: paragraphBodyLink,
-        bulletList: bulletList,
         warningText: warningText,
         govukButton: GovukButton,
         govukPanel: GovukPanel
@@ -47,9 +46,7 @@
 
   @paragraphBody(messages("registrationConfirmation.p1", companyName, messages(s"mneOrDom.${mneOrDomestic}"), currentDate, currentTime))
 
-  @bulletList(items = List(
-    printLink(messages("registrationConfirmation.print"))
-  ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
+  @printLink(messages("registrationConfirmation.print"))
 
   @warningText(Html(messages("registrationConfirmation.p2")))
 
