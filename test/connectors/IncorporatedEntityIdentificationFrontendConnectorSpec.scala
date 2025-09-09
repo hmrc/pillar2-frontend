@@ -48,7 +48,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends MockitoStubU
           optServiceName = Some(serviceName.en.optServiceName),
           deskProServiceId = "pillar2-frontend",
           signOutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state",
-          accessibilityUrl = "/accessibility-statement/pillar2-frontend",
+          accessibilityUrl = "/accessibility-statement/pillar2",
           labels = serviceName
         )
 
@@ -70,7 +70,7 @@ class IncorporatedEntityIdentificationFrontendConnectorSpec extends MockitoStubU
           optServiceName = Some(serviceName.en.optServiceName),
           deskProServiceId = "pillar2-frontend",
           signOutUrl = "http://localhost:9553/bas-gateway/sign-out-without-state",
-          accessibilityUrl = "/accessibility-statement/pillar2-frontend",
+          accessibilityUrl = "/accessibility-statement/pillar2",
           labels = serviceName
         )
 
