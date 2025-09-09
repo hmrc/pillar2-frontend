@@ -22,7 +22,7 @@ import connectors.FinancialDataConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models._
-import pages.{AgentClientPillar2ReferencePage, TransactionHistoryPage}
+import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc._
@@ -32,9 +32,9 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
-import java.text.DecimalFormat
 import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -65,19 +65,13 @@ class TransactionHistoryController @Inject() (
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
         transactionHistory <-
-          OptionT
-            .fromOption[Future](mayBeUserAnswer.flatMap(_.get(TransactionHistoryPage)))
-            .orElse(
-              OptionT.liftF(
-                financialDataConnector
-                  .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
-              )
-            )
-        updatedAnswers          <- OptionT.liftF(Future.fromTry(userAnswers.set(TransactionHistoryPage, transactionHistory)))
-        _                       <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        transactionHistoryTable <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
+          OptionT.liftF(
+            financialDataConnector
+              .retrieveTransactionHistory(referenceNumber, subscriptionData.upeDetails.registrationDate, appConfig.transactionHistoryEndDate)
+          )
+        table <- OptionT.fromOption[Future](generateTransactionHistoryTable(page.getOrElse(1), transactionHistory.financialHistory))
         pagination = generatePagination(transactionHistory.financialHistory, page)
-      } yield Ok(transactionHistoryView(transactionHistoryTable, pagination, request.isAgent))
+      } yield Ok(transactionHistoryView(table, pagination, request.isAgent))
 
       result
         .getOrElse(Redirect(routes.TransactionHistoryController.onPageLoadError()))
@@ -195,9 +189,8 @@ object TransactionHistoryController {
     )
 
   private def createTableRows(history: FinancialHistory): Seq[TableRow] = {
-    val df:           DecimalFormat = new DecimalFormat("#,###.00")
-    val amountPaid:   String        = if (history.amountPaid == 0.00) "£0" else "£" + df.format(history.amountPaid.setScale(2))
-    val amountRepaid: String        = if (history.amountRepaid == 0.00) "£0" else "£" + df.format(history.amountRepaid.setScale(2))
+    val amountPaid:   String = formatCurrencyAmount(history.amountPaid)
+    val amountRepaid: String = formatCurrencyAmount(history.amountRepaid)
 
     Seq(
       TableRow(

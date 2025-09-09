@@ -84,11 +84,13 @@ object ViewUtils {
     formattedTime
   }
 
-  def formattedCurrency(amount: BigDecimal): String =
+  def formatAmount(amount: BigDecimal): String =
     amount match {
       case n if n.scale <= 0 => f"$n%,.0f"
       case n                 => f"$n%,.2f"
     }
+
+  def formatCurrencyAmount(amount: BigDecimal): String = s"£${formatAmount(amount)}"
 
   def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
     if (isAgent) agentText else groupText
