@@ -18,7 +18,7 @@ package services
 
 import base.SpecBase
 import connectors.FinancialDataConnector
-import helpers.FinancialDataHelper.PILLAR2_UKTR
+import helpers.FinancialDataHelper.{Pillar2LatePaymentInterestName, Pillar2UktrName}
 import models._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
@@ -130,11 +130,11 @@ object OutstandingPaymentsServiceSpec {
   val validResponseExpectedSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(TransactionSummary("UK tax return", 3000.00, LocalDate.of(2024, 1, 1)))
+      Seq(TransactionSummary(Pillar2UktrName, 3000.00, LocalDate.of(2024, 1, 1)))
     ),
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1).minusYears(1), LocalDate.of(2023, 12, 31).minusYears(1)),
-      Seq(TransactionSummary("Late Payment Interest", 3000.00, LocalDate.of(2024, 1, 1).minusYears(1)))
+      Seq(TransactionSummary(Pillar2LatePaymentInterestName, 3000.00, LocalDate.of(2024, 1, 1).minusYears(1)))
     )
   )
 
@@ -196,6 +196,6 @@ object OutstandingPaymentsServiceSpec {
   )
 
   val redundantTransactionExpectedSummary: Seq[FinancialSummary] = Seq(
-    FinancialSummary(AccountingPeriod(periodFrom, periodTo), Seq(TransactionSummary(PILLAR2_UKTR, 2000.00, testDate)))
+    FinancialSummary(AccountingPeriod(periodFrom, periodTo), Seq(TransactionSummary(Pillar2UktrName, 2000.00, testDate)))
   )
 }

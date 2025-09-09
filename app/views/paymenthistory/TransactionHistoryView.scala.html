@@ -23,7 +23,7 @@
 
 @this(
         layout: templates.Layout,
-        heading: heading,
+        h1: heading,
         h2: HeadingH2,
         p: paragraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink,
@@ -31,27 +31,48 @@
         govukTable: GovukTable
 )
 
-@(table: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false) {
 
-    @tableScrollStyles()
+  @tableScrollStyles()
 
-    @heading(messages("transactionHistory.heading"))
+  @h1(messages("transactionHistory.heading"))
 
-    @if(isAgent) {
-        @p(messages("transactionHistory.agent.p1"), classes = "govuk-body govuk-!-width-two-thirds")
-    } else {
-        @p(messages("transactionHistory.group.p1"), classes = "govuk-body govuk-!-width-two-thirds")
-    }
+  @if(isAgent) {
+    @p(messages("transactionHistory.agent.p1"), classes = "govuk-body govuk-!-width-two-thirds")
+  } else {
+    @p(messages("transactionHistory.group.p1"), classes = "govuk-body govuk-!-width-two-thirds")
+  }
 
-    @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
+  @p(messages("transactionHistory.p2"), classes = "govuk-body govuk-!-width-two-thirds")
 
-    @ScrollWrapper {
-        @govukTable(table)
-    }
+  @ScrollWrapper {
+    @govukTable(transactionHistoryTable)
+  }
 
-    @pagination.map { pag =>
-        @govukPagination(pag)
-    }
+  @pagination.map { pag =>
+    @govukPagination(pag)
+  }
+
+  @h2(messages("transactionHistory.h2"), size = "m")
+
+  @if(isAgent) {
+    @paragraphMessageWithLink(
+      message1 = Some(messages("transactionHistory.agent.p3")),
+      linkMessage = messages("transactionHistory.link"),
+      message2 = Some(messages("transactionHistory.p4")),
+      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
+      classes = "govuk-body govuk-!-width-two-thirds"
+    )
+  } else {
+    @paragraphMessageWithLink(
+      message1 = Some(messages("transactionHistory.group.p3")),
+      linkMessage = messages("transactionHistory.link"),
+      message2 = Some(messages("transactionHistory.p4")),
+      linkUrl = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url,
+      classes = "govuk-body govuk-!-width-two-thirds"
+    )
+  }
+
 }
