@@ -31,7 +31,7 @@
      @heading(messages("asa.agent.heading"), "govuk-heading-l")
      @paragraphBody(messages("asa.agent.p1"))
      @govukButton(
-      ButtonViewModel(messages("site.continue")).asLink(controllers.routes.AgentController.onPageLoadClientPillarId.url)
+      ButtonViewModel(messages("site.continue")).asLink(controllers.routes.DashboardController.onPageLoad.url)
      )
 }
 
