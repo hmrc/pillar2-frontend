@@ -40,7 +40,7 @@
         attributes = Map("id" -> "plr2-banner")
     ))
     @paragraphBody(messages("rfmConfirmation.topup", pil2Id))
-    @paragraphBody(messages("rfmConfirmation.reg-date", currentDate))
+    <p class="govuk-body">@messages("rfmConfirmation.reg-date") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span></p>
     @heading(messages("rfmConfirmation.h2"), "govuk-heading-s govuk-!-margin-top-5", "h2")
 
     @bulletList(Seq(Html(messages("rfmConfirmation.li1")),Html(messages("rfmConfirmation.li2")),Html(messages("rfmConfirmation.li3"))))

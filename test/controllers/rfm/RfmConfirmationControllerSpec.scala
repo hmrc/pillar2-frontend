@@ -102,7 +102,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "You can now"
         )
         contentAsString(result) must include(
-          "report and manage Pillar 2 Top-up Taxes"
+          "report and manage your group's Pillar 2 Top-up Taxes"
         )
         contentAsString(result) must include(
           "on behalf of your group."

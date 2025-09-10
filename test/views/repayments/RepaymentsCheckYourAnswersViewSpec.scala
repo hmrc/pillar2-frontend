@@ -136,7 +136,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       paragraphs.get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
       paragraphs
         .get(1)
-        .text mustBe "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
+        .text mustBe "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
     }
 
     "display print this page link" in {

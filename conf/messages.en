@@ -712,9 +712,9 @@ contactCapturePhoneDetails.heading.caption = Contact details
 
 contactNameCompliance.checkYourAnswersLabel = Contact name
 contactNameCompliance.change.hidden = the primary contact name
-contactCapturePhoneDetails.checkYourAnswersLabel = Phone number
+contactCapturePhoneDetails.checkYourAnswersLabel = Primary phone number
 contactCapturePhoneDetails.change.hidden = the phone number for the primary contact
-addSecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+addSecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 secondaryContactName.checkYourAnswersLabel = Second contact name
 secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 secondaryPhonePreference.checkYourAnswersLabel = Can we contact by phone?
@@ -733,7 +733,7 @@ contactCheckYourAnswers.heading = Check your answers for contact details
 contactCheckYourAnswers.title = Check your answers for contact details
 contactCheckYourAnswers.heading.caption = Contact details
 contactCheckYourAnswers.second = Secondary contact
-contactCheckYourAnswers.address = Contact address
+contactCheckYourAnswers.address = Filing member contact address
 
 manageContactCheckYourAnswers.title = Contact details
 manageContactCheckYourAnswers.heading.caption = Contact details
@@ -753,7 +753,7 @@ checkYourAnswers.first = Primary contact
 checkYourAnswers.heading = Check your answers before submitting your registration
 checkYourAnswers.title = Check your answers before submitting your registration
 checkYourAnswers.heading.caption = Review and submit
-checkYourAnswers.upe = Ultimate Parent Entity
+checkYourAnswers.upe = Ultimate parent
 checkYourAnswers.nfm = Nominated filing member
 
 addSecondaryContact.title = Add a secondary contact
@@ -790,9 +790,10 @@ secondaryPhone.checkYourAnswersLabel = Second contact phone number
 
 checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 Top-up Taxes
-checkYourAnswers.submit.p = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
+checkYourAnswers.submit.p = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
 checkYourAnswers.save.h2 = Do you need to keep a record of your answers?
 checkYourAnswers.save.p = You can print or save a copy of your answers using the ''Print this page'' link.
+site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
 registrationConfirmation.registrationComplete = Registration complete
@@ -1080,7 +1081,7 @@ rfm.nameRegistration.change.hidden = the name of the new nominated filing member
 rfm.registeredAddress.checkYourAnswersLabel = Address
 rfm.registeredAddress.change.hidden = the address of the new nominated filing member
 
-rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a second contact?
+rfm.addsecondaryContact.checkYourAnswersLabel = Do you have a secondary contact?
 rfm.secondaryContactName.checkYourAnswersLabel = Second contact name
 rfm.secondaryContactEmail.checkYourAnswersLabel = Second contact email address
 rfm.secondaryPhonePreference.checkYourAnswersLabel = Can we contact the secondary contact by phone?
@@ -1427,7 +1428,7 @@ repayments.submission.error.p2.link = Return to your account homepage
 
 rfmConfirmation.title = Replace filing member successful
 rfmConfirmation.rfmComplete = Replace filing member successful
-rfmConfirmation.reg-date = Your group’s filing member was replaced on {0}.
+rfmConfirmation.reg-date = Your group’s filing member was replaced on
 rfmConfirmation.topup = Group Pillar 2 Top-up Taxes ID: {0}
 rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
 rfmConfirmation.li1 = act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance
@@ -1437,7 +1438,7 @@ rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, yo
 rfmConfirmation.next = What happens next
 rfmConfirmation.now = You can now {0} {1}
 rfmConfirmation.now.group = on behalf of your group.
-rfmConfirmation.link-home = report and manage Pillar 2 Top-up Taxes
+rfmConfirmation.link-home = report and manage your group''s Pillar 2 Top-up Taxes
 rfmConfirmation.whatDidYouThink = What did you think of this service
 rfmConfirmation.print = Print this page
 
@@ -1463,7 +1464,7 @@ repaymentsCheckYourAnswers.request-details.h2 = Request details
 repaymentsCheckYourAnswers.bank.account-details.h2 = Bank account details
 repaymentsCheckYourAnswers.bank.contact-details.h2 = Contact details
 repaymentsCheckYourAnswers.bank.submit-details.h2 = Now submit your details to request for a repayment
-repaymentsCheckYourAnswers.bank.submit-p1 = By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge.
+repaymentsCheckYourAnswers.bank.submit-p1 = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
 requestRepaymentAmount.checkYourAnswersLabel = Repayment amount
 requestRepaymentAmount.change.hidden = the repayment amount
 reasonForRequestingRepayment.checkYourAnswersLabel = Reason for repayment request
@@ -1480,7 +1481,7 @@ repaymentsPhoneDetails.change.hidden = the phone number
 
 repayments.confirmation.title = Repayment request submitted
 repayments.confirmation.bannerText = Repayment request submitted
-repayments.confirmation.message = You have successfully submitted your repayment request on {0}.
+repayments.confirmation.message = You have successfully submitted your repayment request on
 repayments.confirmation.heading = What happens next
 repayments.confirmation.paragraph = We may need more information to complete the repayment. If we do, we’ll contact the relevant person or team from the information you provided.
 repayments.confirmation.back = Back to group homepage

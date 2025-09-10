@@ -67,7 +67,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a paragraph" in {
-      paragraphs.get(1).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
+      paragraphs.get(2).text mustBe "We may need more information to complete the repayment. If we do, we’ll " +
         "contact the relevant person or team from the information you provided."
     }
 

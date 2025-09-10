@@ -45,7 +45,9 @@
     title = Text(messages("repayments.confirmation.bannerText"))
   ))
 
-  @paragraphBody(messages("repayments.confirmation.message", currentDate))
+  <p class="govuk-body">
+    @messages("repayments.confirmation.message") <span class="govuk-body govuk-!-font-weight-bold">@currentDate</span>.
+  </p>
 
   @printLink(messages("site.print"))
 

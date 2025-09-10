@@ -186,12 +186,12 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have the correct H2 headings" in {
       val h2Elements: Elements = view.getElementsByTag("h2")
 
-      h2Elements.get(1).text mustBe "Ultimate Parent Entity"
+      h2Elements.get(1).text mustBe "Ultimate parent"
       h2Elements.get(2).text mustBe "Nominated filing member"
       h2Elements.get(3).text mustBe "Further group details"
       h2Elements.get(4).text mustBe "Primary contact"
       h2Elements.get(5).text mustBe "Secondary contact"
-      h2Elements.get(6).text mustBe "Contact address"
+      h2Elements.get(6).text mustBe "Filing member contact address"
       h2Elements.get(7).text mustBe "Do you need to keep a record of your answers?"
       h2Elements.get(8).text mustBe "Now submit your registration to report Pillar 2 Top-up Taxes"
     }
@@ -211,7 +211,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListKeys.get(11).text mustBe "Contact name"
       summaryListKeys.get(12).text mustBe "Email address"
       summaryListKeys.get(13).text mustBe "Can we contact the primary contact by phone?"
-      summaryListKeys.get(14).text mustBe "Phone number"
+      summaryListKeys.get(14).text mustBe "Primary phone number"
       summaryListKeys.get(15).text mustBe "Do you have a second contact?"
       summaryListKeys.get(16).text mustBe "Second contact name"
       summaryListKeys.get(17).text mustBe "Second contact email address"
@@ -268,7 +268,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       paragraphs.get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
       paragraphs
         .get(1)
-        .text mustBe "By submitting these details, you are confirming that the information is correct and complete to the best of your knowledge."
+        .text mustBe "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
     }
 
     "display print this page link" in {
@@ -278,7 +278,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and submit"
+      view.getElementsByClass("govuk-button").text mustBe "Confirm and send"
     }
   }
 }
