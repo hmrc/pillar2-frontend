@@ -1560,8 +1560,8 @@ manageGroupDetails.h2 = Do not press back in your browser or leave this page. It
 # ---------------------------------------------
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.group.p1 = You can find all transactions made by your group during this accounting period and the previous 6 accounting periods.
-transactionHistory.agent.p1 = You can find all transactions made by your client during this accounting period and the previous 6 accounting periods.
+transactionHistory.group.p1 = You can find all transactions made by your group over the last 7 years.
+transactionHistory.agent.p1 = You can find all transactions made by your client over the last 7 years.
 transactionHistory.p2 = It will take up to 5 working days for payments to appear after each transaction.
 transactionHistory.h2 = Outstanding payments
 transactionHistory.group.p3 = You can find details of what your group currently owes on the
@@ -1583,8 +1583,8 @@ transactionHistory.error.p3 = Return to your account homepage
 
 transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
-transactionHistory.group.none.p1 = You can find all transactions made by your group during this accounting period and the previous 6 accounting periods.
-transactionHistory.agent.none.p1 = You can find all transactions made by your client during this accounting period and the previous 6 accounting periods.
+transactionHistory.group.none.p1 = You can find all transactions made by your group over the last 7 years.
+transactionHistory.agent.none.p1 = You can find all transactions made by your client over the last 7 years.
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
 transactionHistory.none.p3 = No transactions made.
 
@@ -1619,9 +1619,9 @@ site.important = Important
 
 submissionHistory.title = Submission history
 submissionHistory.heading = Submission history
-submissionHistory.group.p1 = You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods.
+submissionHistory.group.p1 = You can find all submissions and amendments made by your group over the last 7 years.
 submissionHistory.group.p2 = Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions.
-submissionHistory.agent.p1 = You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods.
+submissionHistory.agent.p1 = You can find all submissions and amendments made by your client over the last 7 years.
 submissionHistory.agent.p2 = Where your client makes changes to a tax return or information return, we’ll list these as individual submissions.
 submissionHistory.insetText = You can amend submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline.
 submissionHistory.typeOfReturn = Type of return
@@ -1633,8 +1633,8 @@ submissionHistory.link = due and overdue returns
 
 submissionHistoryNoSubmissions.title = Submission history
 submissionHistoryNoSubmissions.heading = Submission history
-submissionHistoryNoSubmissions.group.p1 = You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods.
-submissionHistoryNoSubmissions.agent.p1 = You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods.
+submissionHistoryNoSubmissions.group.p1 = You can find all submissions and amendments made by your group over the last 7 years.
+submissionHistoryNoSubmissions.agent.p1 = You can find all submissions and amendments made by your client over the last 7 years.
 submissionHistoryNoSubmissions.p2 = No submissions made.
 submissionHistoryNoSubmissions.h2 = Due and overdue returns
 submissionHistoryNoSubmissions.group.p3 = Information on your group’s
