@@ -40,7 +40,7 @@ class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClien
         reference = pillar2Id,
         amountInPence = 0,
         returnUrl = s"${config.host}${routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url}",
-        backUrl = s"${config.host}${paymentRoutes.MakeAPaymentDashboardController.onPageLoad.url}"
+        backUrl = s"${config.host}${paymentRoutes.OutstandingPaymentsController.onPageLoad.url}"
       )
     http
       .post(URI.create(opsUrl).toURL)
