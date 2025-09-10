@@ -212,7 +212,7 @@ trait ObligationsAndSubmissionsDataFixture {
         processingDate = testZonedDateTime,
         accountingPeriodDetails = Seq(
           AccountingPeriodDetails(
-            startDate = fromDate,
+            startDate = toDate.minusYears(1),
             endDate = toDate,
             dueDate = toDate.plusMonths(10),
             underEnquiry = underEnquiry,
