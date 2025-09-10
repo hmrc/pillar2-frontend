@@ -807,7 +807,6 @@ registrationConfirmation.now = You can now {0}
 registrationConfirmation.link-home = report and manage your Pillar 2 Top-up Taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
-registrationConfirmation.print = Print this page
 registrationConfirmation.pdf.title = Report Pillar 2 Top-up Taxes
 mneOrDom.ukAndOther = Domestic Top-up Tax and Multinational Top-up Tax
 mneOrDom.uk = Domestic Top-up Tax
