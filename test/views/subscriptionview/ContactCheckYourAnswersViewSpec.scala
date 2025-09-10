@@ -133,10 +133,9 @@ class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLoca
         controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url
 
       summaryListKeys.get(9).text() mustBe addressLabel
-      summaryListItems.get(9).text() must include(addressValue)
+      summaryListItems.get(9).text() mustBe addressValue
       summaryListActions.get(9).getElementsByClass("govuk-link").attr("href") mustBe
         controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
-
     }
 
     "have a continue button" in {

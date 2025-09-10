@@ -31,7 +31,7 @@ class NfmContactNameViewSpec extends ViewSpecBase {
   lazy val form:         Form[String]               = formProvider()
   lazy val page:         NfmContactNameView         = inject[NfmContactNameView]
   lazy val pageTitle:    String                     = "What is the name of the person or team from the nominated filing member to keep on record?"
-  val view:              Document                   = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
+  lazy val view:         Document                   = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
   "NFM Contact Name View" should {
     "have a title" in {
@@ -60,13 +60,9 @@ class NfmContactNameViewSpec extends ViewSpecBase {
         "Enter the name of the person or team from the nominated filing member to keep on record"
     }
 
-    "display the submit button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
-    }
-
     "display an error when input exceeds maximum length" in {
-      val longInput = "A" * 106
-      val view: Document = Jsoup.parse(page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString())
+      val longInput: String   = "A" * 106
+      val view:      Document = Jsoup.parse(page(form.bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString())
 
       view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
       view.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
@@ -74,11 +70,8 @@ class NfmContactNameViewSpec extends ViewSpecBase {
     }
 
     "display XSS validation error messages when special characters are entered" in {
-      val xssInput = Map(
-        "value" -> "Test <script>alert('xss')</script> & Company"
-      )
-
-      val view: Document = Jsoup.parse(page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString())
+      val xssInput: Map[String, String] = Map("value" -> "Test <script>alert('xss')</script> & Company")
+      val view:     Document            = Jsoup.parse(page(form.bind(xssInput), NormalMode)(request, appConfig, messages).toString())
 
       view.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
 
@@ -87,6 +80,10 @@ class NfmContactNameViewSpec extends ViewSpecBase {
 
       val fieldErrors = view.getElementsByClass("govuk-error-message").text
       fieldErrors mustBe "Error: The name you enter must not include the following characters <, >, \" or &"
+    }
+
+    "display the submit button" in {
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
 
   }
