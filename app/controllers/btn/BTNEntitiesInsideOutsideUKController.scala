@@ -61,7 +61,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
 
           Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
         case _ =>
-          logger.error("user answers not found, redirecting to journey start")
+          logger.error("user answers not found")
           Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
       }
     }

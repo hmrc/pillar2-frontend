@@ -65,7 +65,7 @@ class BTNChooseAccountingPeriodController @Inject() (
               .getOrElse(form)
             Future.successful(Ok(view(preparedForm, mode, request.isAgent, request.subscriptionLocalData.organisationName, accountingPeriods)))
           case None =>
-            logger.error("user answers not found, redirecting to journey start")
+            logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
         }
       }

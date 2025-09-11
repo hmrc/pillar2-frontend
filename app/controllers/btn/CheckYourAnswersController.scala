@@ -91,7 +91,7 @@ class CheckYourAnswersController @Inject() (
               Redirect(controllers.routes.IndexController.onPageLoad)
           }
         case None =>
-          logger.error("user answers not found, redirecting to journey start")
+          logger.error("user answers not found")
           Redirect(controllers.routes.DashboardController.onPageLoad)
       }
     }

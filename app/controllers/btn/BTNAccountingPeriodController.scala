@@ -119,7 +119,7 @@ class BTNAccountingPeriodController @Inject() (
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
               }
           case _ =>
-            logger.error("user answers not found, redirecting to journey start")
+            logger.error("user answers not found")
             Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
         }
       }
