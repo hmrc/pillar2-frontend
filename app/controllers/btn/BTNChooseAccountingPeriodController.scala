@@ -39,7 +39,6 @@ class BTNChooseAccountingPeriodController @Inject() (
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
-  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNChooseAccountingPeriodView,
@@ -50,7 +49,7 @@ class BTNChooseAccountingPeriodController @Inject() (
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
@@ -66,13 +65,13 @@ class BTNChooseAccountingPeriodController @Inject() (
               .getOrElse(form)
             Future.successful(Ok(view(preparedForm, mode, request.isAgent, request.subscriptionLocalData.organisationName, accountingPeriods)))
           case None =>
-            logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            logger.error("user answers not found, redirecting to journey start")
+            Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
         }
       }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>

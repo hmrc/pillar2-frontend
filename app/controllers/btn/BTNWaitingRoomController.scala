@@ -48,12 +48,12 @@ class BTNWaitingRoomController @Inject() (
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
           val status = userAnswers.get(BTNStatus)
-
           logger.info(s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status")
 
           status match {
             case Some(BTNStatus.submitted) =>
               logger.info(s"BTNWaitingRoomController: Status is submitted, redirecting to confirmation page")
+              sessionRepository.clear(userAnswers.id)
               Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
 
             case Some(BTNStatus.error) =>
@@ -72,8 +72,8 @@ class BTNWaitingRoomController @Inject() (
               )
           }
         case None =>
-          logger.error("user answers not found")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          logger.error("user answers not found, redirecting to journey start")
+          Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
       }
   }
 }

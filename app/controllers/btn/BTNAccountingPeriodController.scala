@@ -45,7 +45,6 @@ class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
-  btnStatus:                              BTNStatusAction,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
   accountingPeriodView:                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
@@ -77,10 +76,10 @@ class BTNAccountingPeriodController @Inject() (
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
-          case Some(userAnswers) =>
+          case Some(userAnswers) if userAnswers.get(BTNChooseAccountingPeriodPage).isDefined =>
             val accountingPeriodDetails: Future[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage) match {
               case Some(details) =>
                 Future.successful(details)
@@ -119,9 +118,9 @@ class BTNAccountingPeriodController @Inject() (
               .recover { case _ =>
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
               }
-          case None =>
-            logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          case _ =>
+            logger.error("user answers not found, redirecting to journey start")
+            Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
         }
       }
 

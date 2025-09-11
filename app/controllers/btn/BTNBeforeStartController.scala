@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
 import models.{Mode, UserAnswers}
-import pages.PlrReferencePage
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, PlrReferencePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
@@ -68,8 +68,18 @@ class BTNBeforeStartController @Inject() (
           case Some(subscriptionData) =>
             obligationsAndSubmissionsService
               .handleData(subscriptionData.plrReference, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now)
-              .map(success => filteredAccountingPeriodDetails(success.accountingPeriodDetails).size > 1)
-              .map(hasMultipleAccountingPeriods => Ok(view(request.isAgent, hasMultipleAccountingPeriods, mode)))
+              .map { success =>
+                val filteredAps = filteredAccountingPeriodDetails(success.accountingPeriodDetails)
+                if (filteredAps.size > 1) {
+                  Ok(view(request.isAgent, hasMultipleAccountingPeriods = true, mode))
+                } else {
+                  request.userAnswers
+                    .set(BTNChooseAccountingPeriodPage, filteredAps.head)
+                    .map(sessionRepository.set)
+
+                  Ok(view(request.isAgent, hasMultipleAccountingPeriods = false, mode))
+                }
+              }
           case None =>
             Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         }
