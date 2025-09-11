@@ -24,57 +24,11 @@ trait SubscriptionHelpers {
 
   self: UserAnswers =>
 
-  private def upeStatusChecker: Boolean =
-    (
-      get(UpeRegisteredInUKPage),
-      get(UpeNameRegistrationPage).isDefined,
-      get(UpeRegisteredAddressPage).isDefined,
-      get(UpeContactNamePage).isDefined,
-      get(UpeContactEmailPage).isDefined,
-      get(UpePhonePreferencePage),
-      get(UpeCapturePhonePage).isDefined,
-      get(UpeEntityTypePage).isDefined,
-      get(UpeGRSResponsePage).isDefined,
-      get(GrsUpeStatusPage).isDefined
-    ) match {
-      case (Some(false), true, true, true, true, Some(true), true, _, _, _) => true
-      case (Some(false), true, true, true, true, Some(false), _, _, _, _)   => true
-      case (Some(true), _, _, _, _, _, _, true, true, true)                 => true
-      case _                                                                => false
-    }
-
   def upeStatus: RowStatus =
-    (get(UpeRegisteredInUKPage), get(CheckYourAnswersLogicPage)) match {
-      case (Some(_), Some(true)) if !upeFinalStatusChecker => RowStatus.InProgress
-      case (Some(_), _) if upeStatusChecker                => RowStatus.Completed
-      case (None, _)                                       => RowStatus.NotStarted
-      case _                                               => RowStatus.InProgress
-    }
-
-  def upeFinalStatusChecker: Boolean =
-    (
-      get(UpeRegisteredInUKPage),
-      get(UpeNameRegistrationPage).isDefined,
-      get(UpeRegisteredAddressPage).isDefined,
-      get(UpeContactNamePage).isDefined,
-      get(UpeContactEmailPage).isDefined,
-      get(UpePhonePreferencePage),
-      get(UpeCapturePhonePage).isDefined,
-      get(UpeEntityTypePage).isDefined,
-      get(UpeGRSResponsePage).isDefined,
-      get(GrsUpeStatusPage).isDefined
-    ) match {
-      case (Some(false), true, true, true, true, Some(true), true, _, false, false)   => true
-      case (Some(false), true, true, true, true, Some(false), false, _, false, false) => true
-      case (Some(true), false, false, false, false, None, false, _, true, true)       => true
-      case _                                                                          => false
-    }
-
-  def upeFinalStatus: RowStatus =
-    get(UpeRegisteredInUKPage) match {
-      case Some(_) if upeFinalStatusChecker => RowStatus.Completed
-      case None                             => RowStatus.NotStarted
-      case _                                => RowStatus.InProgress
+    (get(UpeRegisteredInUKPage), get(UpeCyaCompletedPage)) match {
+      case (_, Some(true)) => RowStatus.Completed
+      case (Some(_), _)    => RowStatus.InProgress
+      case _               => RowStatus.NotStarted
     }
 
   def fmFinalStatusChecker: Boolean =
@@ -206,7 +160,7 @@ trait SubscriptionHelpers {
   def finalStatusCheck: Boolean =
     groupDetailStatus == RowStatus.Completed &
       fmFinalStatus == RowStatus.Completed &
-      upeFinalStatus == RowStatus.Completed &
+      upeStatus == RowStatus.Completed &
       contactsFinalStatus == RowStatus.Completed
 
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =

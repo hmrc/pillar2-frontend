@@ -22,26 +22,26 @@
         sectionHeader: sectionHeader,
         heading: heading,
         govukSummaryList: GovukSummaryList,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        formHelper: FormWithCSRF
 )
 
 
 @(list: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("upeCheckYourAnswers.title"))) {
+    @formHelper(action = controllers.registration.routes.UpeCheckYourAnswersController.onSubmit) {
 
-    @sectionHeader(messages("upeCheckYourAnswers.heading.caption"))
+        @sectionHeader(messages("upeCheckYourAnswers.heading.caption"))
 
-    @heading(messages("upeCheckYourAnswers.heading"), "govuk-heading-l")
+        @heading(messages("upeCheckYourAnswers.heading"), "govuk-heading-l")
 
-    @govukSummaryList(list)
+        @govukSummaryList(list)
 
-    @govukButton(
-        ButtonViewModel(messages("site.confirm-and-continue"))
-        .withAttribute("id", "continue")
-        .asLink(controllers.routes.TaskListController.onPageLoad.url)
-    )
-
-
+        @govukButton(Button(
+            element = Some("button"),
+            content = messages("site.confirm-and-continue"),
+            attributes = Map("id" -> "submit")))
+    }
 }
 
