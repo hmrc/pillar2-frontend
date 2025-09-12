@@ -30,6 +30,8 @@ import play.api.test.Helpers._
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
+import helpers.SectionHash
+import pages.UpeSectionConfirmationHashPage
 
 class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
@@ -43,6 +45,18 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     .setOrException(UpeContactNamePage, "another name")
     .setOrException(UpeContactEmailPage, "email")
     .setOrException(UpePhonePreferencePage, false)
+    .setOrException(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeNameRegistrationPage, "name")
+          .setOrException(UpeRegisteredAddressPage, UkAddress)
+          .setOrException(UpeContactNamePage, "another name")
+          .setOrException(UpeContactEmailPage, "email")
+          .setOrException(UpePhonePreferencePage, false)
+      )
+    )
 
   "Nominate filing member Controller" must {
 

@@ -1,0 +1,11 @@
+{
+    "origin": "HIP",
+    "response": {
+        "failures": [
+            {
+                "type": "body.schema.oneOf",
+                "reason": "Path '/liabilities' validation failed."
+            }
+        ]
+    }
+}

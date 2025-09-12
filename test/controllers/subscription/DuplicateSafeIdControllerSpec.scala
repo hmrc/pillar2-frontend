@@ -30,6 +30,8 @@ import play.api.test.Helpers._
 import views.html.subscriptionview.DuplicateSafeIdView
 
 import scala.concurrent.Future
+import helpers.SectionHash
+import pages.UpeSectionConfirmationHashPage
 
 class DuplicateSafeIdControllerSpec extends SpecBase {
 
@@ -43,6 +45,18 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
     .setOrException(UpeContactNamePage, "contact name")
     .setOrException(UpeContactEmailPage, "email@email.com")
     .setOrException(UpePhonePreferencePage, false)
+    .setOrException(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeNameRegistrationPage, "name")
+          .setOrException(UpeRegisteredAddressPage, UkAddress)
+          .setOrException(UpeContactNamePage, "contact name")
+          .setOrException(UpeContactEmailPage, "email@email.com")
+          .setOrException(UpePhonePreferencePage, false)
+      )
+    )
 
   "Duplicate SafeId Controller" must {
 

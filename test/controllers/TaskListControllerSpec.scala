@@ -35,6 +35,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import utils.RowStatus
+import helpers.SectionHash
+import pages.UpeSectionConfirmationHashPage
 
 import java.time.LocalDate
 import scala.concurrent.Future
@@ -166,7 +168,7 @@ class TaskListControllerSpec extends SpecBase {
     }
 
     "build filingMemberInfo with 'edit' action when ultimateParentStatus is 'Completed' and filingMemberStatus is 'Completed'" in {
-      val userAnswers = emptyUserAnswers
+      val baseUa = emptyUserAnswers
         .setOrException(UpeRegisteredInUKPage, true)
         .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(UpeGRSResponsePage, grsResponse)
@@ -176,6 +178,7 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(FmGRSResponsePage, grsResponse)
         .setOrException(GrsFilingMemberStatusPage, RowStatus.Completed)
+      val userAnswers = baseUa.set(UpeSectionConfirmationHashPage, SectionHash.computeUpeHash(baseUa)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -336,7 +339,7 @@ class TaskListControllerSpec extends SpecBase {
     }
 
     "build contactDetailsInfo with 'edit' action when all statuses are 'Completed'" in {
-      val userAnswers = emptyUserAnswers
+      val baseUa = emptyUserAnswers
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, accountingPeriod)
         .setOrException(UpeRegisteredInUKPage, true)
@@ -348,6 +351,7 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubPrimaryContactNamePage, "name")
         .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val userAnswers = baseUa.set(UpeSectionConfirmationHashPage, SectionHash.computeUpeHash(baseUa)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -380,7 +384,7 @@ class TaskListControllerSpec extends SpecBase {
     }
 
     "build correct TaskInfo when ultimateParentStatus is 'Completed' and filingMemberStatus is 'Completed'" in {
-      val userAnswers = emptyUserAnswers
+      val baseUa = emptyUserAnswers
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, accountingPeriod)
         .setOrException(UpeRegisteredInUKPage, true)
@@ -395,6 +399,7 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(FmContactEmailPage, "test@test.com")
         .setOrException(FmPhonePreferencePage, false)
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val userAnswers = baseUa.set(UpeSectionConfirmationHashPage, SectionHash.computeUpeHash(baseUa)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -422,7 +427,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo when filingMemberStatus is 'Completed' and groupDetailStatus is 'InProgress'" in {
 
-      val userAnswers = emptyUserAnswers
+      val baseUa = emptyUserAnswers
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, accountingPeriod)
         .setOrException(UpeRegisteredInUKPage, true)
@@ -438,6 +443,7 @@ class TaskListControllerSpec extends SpecBase {
         .setOrException(SubPrimaryEmailPage, "test@test.com")
         .setOrException(SubPrimaryPhonePreferencePage, false)
         .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+      val userAnswers = baseUa.set(UpeSectionConfirmationHashPage, SectionHash.computeUpeHash(baseUa)).success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(
@@ -467,7 +473,7 @@ class TaskListControllerSpec extends SpecBase {
 
     "build correct TaskInfo when ultimateParentStatus is 'Completed', filingMemberStatus is 'Completed'" +
       "'groupDetailStatus' is Completed and contactDetailsStatus is 'Completed'" in {
-        val userAnswers = emptyUserAnswers
+        val baseUa = emptyUserAnswers
           .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
           .setOrException(SubAccountingPeriodPage, accountingPeriod)
@@ -487,6 +493,7 @@ class TaskListControllerSpec extends SpecBase {
           .setOrException(FmContactNamePage, "name")
           .setOrException(FmContactEmailPage, "test@test.com")
           .setOrException(FmPhonePreferencePage, false)
+        val userAnswers = baseUa.set(UpeSectionConfirmationHashPage, SectionHash.computeUpeHash(baseUa)).success.value
 
         val application = applicationBuilder(userAnswers = Some(userAnswers))
           .overrides(

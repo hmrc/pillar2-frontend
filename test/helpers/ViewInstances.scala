@@ -225,7 +225,7 @@ trait ViewInstances extends StubMessageControllerComponents {
   val viewCapturePhoneDetailsView: CapturePhoneDetailsView =
     new CapturePhoneDetailsView(pillar2layout, formWithCSRF, sectionHeader, govukErrorSummary, govukInput, govukButton)
   val viewCheckYourAnswersUPE: UpeCheckYourAnswersView =
-    new UpeCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
+    new UpeCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton, formWithCSRF)
   val viewCheckYourAnswersFilingMember: FilingMemberCheckYourAnswersView =
     new FilingMemberCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =

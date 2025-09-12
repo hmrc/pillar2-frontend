@@ -42,6 +42,19 @@ class SubscriptionHelpersSpec extends SpecBase {
           .value
         userAnswers.upeStatus mustEqual RowStatus.InProgress
       }
+
+      "return Completed when fields complete and stored hash matches current answers" in {
+        val ua           = upeCompletedNoPhoneNumber
+        val storedHashUa = ua.set(pages.UpeSectionConfirmationHashPage, helpers.SectionHash.computeUpeHash(ua)).success.value
+        storedHashUa.upeStatus mustEqual RowStatus.Completed
+      }
+
+      "return InProgress when fields complete but stored hash mismatches after edit" in {
+        val ua           = upeCompletedNoPhoneNumber
+        val confirmedUa  = ua.set(pages.UpeSectionConfirmationHashPage, helpers.SectionHash.computeUpeHash(ua)).success.value
+        val changedValue = confirmedUa.set(UpeContactNamePage, "Different Name").success.value
+        changedValue.upeStatus mustEqual RowStatus.InProgress
+      }
     }
 
     "fm status" should {

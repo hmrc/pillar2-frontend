@@ -17,11 +17,22 @@
 package controllers.registration
 
 import base.SpecBase
+import helpers.SectionHash
+import org.mockito.ArgumentMatchers.{any, eq => eqTo}
+import org.mockito.Mockito.{times, verify, when}
+import org.scalatestplus.mockito.MockitoSugar
+import pages.UpeSectionConfirmationHashPage
+import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
+import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
+import connectors.UserAnswersConnectors
+import play.api.libs.json.Json
 
-class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
+import scala.concurrent.Future
+
+class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
 
   "UPE no ID Check Your Answers Controller" must {
 
@@ -48,6 +59,34 @@ class UpeCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
         contentAsString(result) must include("Check your answers for ultimate parent details")
       }
 
+    }
+
+    "store confirmation hash and redirect to task list on submit" in {
+      val mockSessionRepository    = mock[SessionRepository]
+      val mockUserAnswersConnector = mock[UserAnswersConnectors]
+      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockUserAnswersConnector.save(any(), any())(any())) thenReturn Future.successful(Json.toJson(Json.obj()))
+
+      val ua              = upeCompletedNoPhoneNumber
+      val expectedHash    = SectionHash.computeUpeHash(ua)
+      val expectedAnswers = ua.set(UpeSectionConfirmationHashPage, expectedHash).success.value
+
+      val application = applicationBuilder(userAnswers = Some(ua))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[UserAnswersConnectors].toInstance(mockUserAnswersConnector)
+        )
+        .build()
+
+      running(application) {
+        val request = FakeRequest(POST, controllers.registration.routes.UpeCheckYourAnswersController.onSubmit.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.routes.TaskListController.onPageLoad.url
+        verify(mockSessionRepository, times(1)).set(eqTo(expectedAnswers))
+        verify(mockUserAnswersConnector, times(1)).save(eqTo(expectedAnswers.id), eqTo(Json.toJson(expectedAnswers.data)))(any())
+      }
     }
   }
 }
