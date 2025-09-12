@@ -70,13 +70,13 @@ class FrontendAppConfigSpec extends SpecBase {
 
     ".phase2ScreensEnabled" must {
       "return correct feature flag value" in {
-        config.phase2ScreensEnabled mustBe false
+        config.phase2ScreensEnabled mustBe true
       }
     }
 
     ".newHomepageEnabled" must {
       "return correct feature flag value" in {
-        config.newHomepageEnabled mustBe false
+        config.newHomepageEnabled mustBe true
       }
     }
 

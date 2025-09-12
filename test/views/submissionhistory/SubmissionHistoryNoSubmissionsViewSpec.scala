@@ -44,8 +44,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
     "have a first paragraph" in {
       organisationViewParagraphs.get(1).text() mustBe
-        "You can find all submissions and amendments made by your group during this accounting period and the " +
-        "previous 6 accounting periods."
+        "Submission and amendment dates for your group's returns over the last 7 years from today's date."
     }
 
     "have a second paragraph" in {
@@ -69,8 +68,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
 
     "have a first paragraph" in {
       agentViewParagraphs.get(1).text() mustBe
-        "You can find all submissions and amendments made by your client during this accounting period and the " +
-        "previous 6 accounting periods."
+        "Submission and amendment dates for your client's returns over the last 7 years from today's date."
     }
 
     "have a second paragraph" in {
