@@ -16,11 +16,11 @@
 
 package helpers
 
+import helpers.SectionHash
 import models.{EnrolmentInfo, UserAnswers}
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import utils.RowStatus
-import helpers.SectionHash
-import pages.UpeSectionConfirmationHashPage
 
 trait SubscriptionHelpers {
 

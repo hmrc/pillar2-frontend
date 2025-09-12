@@ -19,9 +19,11 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.DuplicateSafeIdFormProvider
+import helpers.SectionHash
 import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -30,8 +32,6 @@ import play.api.test.Helpers._
 import views.html.subscriptionview.DuplicateSafeIdView
 
 import scala.concurrent.Future
-import helpers.SectionHash
-import pages.UpeSectionConfirmationHashPage
 
 class DuplicateSafeIdControllerSpec extends SpecBase {
 

@@ -18,6 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import helpers.SectionHash
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
 import models.registration._
 import models.subscription.AccountingPeriod
@@ -27,6 +28,7 @@ import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import play.api
 import play.api.inject
@@ -35,8 +37,6 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import utils.RowStatus
-import helpers.SectionHash
-import pages.UpeSectionConfirmationHashPage
 
 import java.time.LocalDate
 import scala.concurrent.Future

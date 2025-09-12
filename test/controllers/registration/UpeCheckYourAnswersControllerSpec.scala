@@ -17,18 +17,18 @@
 package controllers.registration
 
 import base.SpecBase
+import connectors.UserAnswersConnectors
 import helpers.SectionHash
 import org.mockito.ArgumentMatchers.{any, eq => eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import org.scalatestplus.mockito.MockitoSugar
 import pages.UpeSectionConfirmationHashPage
 import play.api.inject.bind
+import play.api.libs.json.Json
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import viewmodels.govuk.SummaryListFluency
-import connectors.UserAnswersConnectors
-import play.api.libs.json.Json
 
 import scala.concurrent.Future
 

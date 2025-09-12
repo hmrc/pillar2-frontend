@@ -19,6 +19,7 @@ package helpers
 import models.UserAnswers
 import pages._
 import play.api.libs.json.Json
+
 import java.security.MessageDigest
 
 object SectionHash {
