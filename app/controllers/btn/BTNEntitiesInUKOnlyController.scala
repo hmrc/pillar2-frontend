@@ -21,7 +21,7 @@ import controllers.actions._
 import forms.BTNEntitiesInUKOnlyFormProvider
 import models.Mode
 import navigation.BTNNavigator
-import pages.EntitiesInsideOutsideUKPage
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -39,7 +39,6 @@ class BTNEntitiesInUKOnlyController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
-  btnStatus:                              BTNStatusAction,
   formProvider:                           BTNEntitiesInUKOnlyFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNEntitiesInUKOnlyView,
@@ -50,21 +49,20 @@ class BTNEntitiesInUKOnlyController @Inject() (
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async {
-      implicit request =>
-        sessionRepository.get(request.userId).flatMap {
-          case Some(userAnswers) =>
-            val form = formProvider()
-            val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
-              case None        => form
-              case Some(value) => form.fill(value)
-            }
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
+      sessionRepository.get(request.userId).flatMap {
+        case Some(userAnswers) if userAnswers.get(BTNChooseAccountingPeriodPage).isDefined =>
+          val form = formProvider()
+          val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
+            case None        => form
+            case Some(value) => form.fill(value)
+          }
 
-            Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
-          case None =>
-            logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-        }
+          Future.successful(Ok(view(preparedForm, request.isAgent, request.subscriptionLocalData.organisationName, mode)))
+        case _ =>
+          logger.error("user answers not found")
+          Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+      }
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =

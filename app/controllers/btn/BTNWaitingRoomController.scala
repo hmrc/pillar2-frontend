@@ -19,6 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import models.btn.BTNStatus
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -48,12 +49,19 @@ class BTNWaitingRoomController @Inject() (
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
           val status = userAnswers.get(BTNStatus)
-
           logger.info(s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status")
 
           status match {
             case Some(BTNStatus.submitted) =>
               logger.info(s"BTNWaitingRoomController: Status is submitted, redirecting to confirmation page")
+              userAnswers
+                .removeMultiple(
+                  BTNChooseAccountingPeriodPage,
+                  EntitiesInsideOutsideUKPage,
+                  BTNStatus
+                )
+                .map(updatedAnswers => sessionRepository.set(updatedAnswers))
+
               Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
 
             case Some(BTNStatus.error) =>
@@ -73,7 +81,7 @@ class BTNWaitingRoomController @Inject() (
           }
         case None =>
           logger.error("user answers not found")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+          Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
       }
   }
 }

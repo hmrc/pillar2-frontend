@@ -43,7 +43,6 @@ import scala.concurrent.{ExecutionContext, Future}
 class CheckYourAnswersController @Inject() (
   getData:                                SubscriptionDataRetrievalAction,
   requireData:                            SubscriptionDataRequiredAction,
-  btnStatus:                              BTNStatusAction,
   sessionRepository:                      SessionRepository,
   view:                                   CheckYourAnswersView,
   cannotReturnView:                       BTNCannotReturnView,
@@ -58,7 +57,7 @@ class CheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
           userAnswers.get(EntitiesInsideOutsideUKPage) match {
@@ -93,7 +92,7 @@ class CheckYourAnswersController @Inject() (
           }
         case None =>
           logger.error("user answers not found")
-          Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
+          Redirect(controllers.routes.DashboardController.onPageLoad)
       }
     }
 

@@ -19,8 +19,9 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
-import models.obligationsandsubmissions.SubmissionType.BTN
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
+import models.obligationsandsubmissions.{AccountingPeriodDetails, SubmissionType}
 import models.{MneOrDomestic, Mode}
 import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.Logging
@@ -44,7 +45,6 @@ class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   getSubscriptionData:                    SubscriptionDataRetrievalAction,
   requireSubscriptionData:                SubscriptionDataRequiredAction,
-  btnStatus:                              BTNStatusAction,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
   accountingPeriodView:                   BTNAccountingPeriodView,
   viewReturnSubmitted:                    BTNReturnSubmittedView,
@@ -76,12 +76,10 @@ class BTNAccountingPeriodController @Inject() (
   }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
-          case Some(userAnswers) =>
-            val accountStatus = request.subscriptionLocalData.accountStatus.forall(_.inactive)
-
+          case Some(userAnswers) if userAnswers.get(BTNChooseAccountingPeriodPage).isDefined =>
             val accountingPeriodDetails: Future[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage) match {
               case Some(details) =>
                 Future.successful(details)
@@ -95,17 +93,11 @@ class BTNAccountingPeriodController @Inject() (
             }
 
             accountingPeriodDetails
-              .map {
-                case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
-                  Ok(btnAlreadyInPlaceView())
-                case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
-                  Ok(
-                    viewReturnSubmitted(
-                      request.isAgent,
-                      period
-                    )
-                  )
-                case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
+              .map { period =>
+                if (isLastSubmission(period, Set(BTN))) Ok(btnAlreadyInPlaceView())
+                else if (isLastSubmission(period, Set(UKTR_CREATE, UKTR_AMEND))) {
+                  Ok(viewReturnSubmitted(request.isAgent, period))
+                } else {
                   val currentYear = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails) match {
                     case head :: _ if head == period => true
                     case _                           => false
@@ -121,15 +113,14 @@ class BTNAccountingPeriodController @Inject() (
                       currentYear
                     )
                   )
-                case _ =>
-                  Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
+                }
               }
               .recover { case _ =>
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
               }
-          case None =>
+          case _ =>
             logger.error("user answers not found")
-            Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+            Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
         }
       }
 
@@ -145,4 +136,10 @@ class BTNAccountingPeriodController @Inject() (
       }
       .getOrElse(Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
   }
+
+  private def isLastSubmission(period: AccountingPeriodDetails, submissionTypes: Set[SubmissionType]): Boolean =
+    period.obligations
+      .find(_.obligationType == UKTR)
+      .flatMap(_.submissions.sortBy(_.receivedDate).lastOption)
+      .exists(submission => submissionTypes.contains(submission.submissionType))
 }
