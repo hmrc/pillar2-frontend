@@ -17,16 +17,16 @@
 package controllers.btn
 
 import cats.data.OptionT
-import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
 import models.{Mode, UserAnswers}
-import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage}
+import pages.{AgentClientPillar2ReferencePage, BTNChooseAccountingPeriodPage}
 import play.api.i18n.I18nSupport
+import play.api.i18n.Lang.logger
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, SubscriptionService}
+import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -42,8 +42,8 @@ class BTNBeforeStartController @Inject() (
   view:                                   BTNBeforeStartView,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
+  referenceNumberService:                 ReferenceNumberService,
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
-  subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   checkPhase2Screens:                     Phase2ScreensAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
@@ -53,37 +53,29 @@ class BTNBeforeStartController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
-      implicit val hc: HeaderCarrier =
-        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      (
-        for {
-          maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
-          userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
-          maybeSubscriptionData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
-          updatedAnswers        <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
-          _                     <- OptionT.liftF(sessionRepository.set(updatedAnswers))
-        } yield maybeSubscriptionData
-      ).value
-        .flatMap {
-          case Some(subscriptionData) =>
-            obligationsAndSubmissionsService
-              .handleData(subscriptionData.plrReference, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now)
-              .map { success =>
-                val filteredAps = filteredAccountingPeriodDetails(success.accountingPeriodDetails)
-                if (filteredAps.size > 1) {
-                  Ok(view(request.isAgent, hasMultipleAccountingPeriods = true, mode))
-                } else {
-                  request.userAnswers
-                    .set(BTNChooseAccountingPeriodPage, filteredAps.head)
-                    .map(sessionRepository.set)
+      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      (for {
+        maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
+        userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
+        plrId <- OptionT
+                   .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
+                   .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
+        osData <- OptionT.liftF(obligationsAndSubmissionsService.handleData(plrId, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now))
+      } yield {
+        val filteredAps = filteredAccountingPeriodDetails(osData.accountingPeriodDetails)
+        if (filteredAps.size > 1) {
+          Ok(view(request.isAgent, hasMultipleAccountingPeriods = true, mode))
+        } else {
+          request.userAnswers
+            .set(BTNChooseAccountingPeriodPage, filteredAps.head)
+            .map(sessionRepository.set)
 
-                  Ok(view(request.isAgent, hasMultipleAccountingPeriods = false, mode))
-                }
-              }
-          case None =>
-            Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+          Ok(view(request.isAgent, hasMultipleAccountingPeriods = false, mode))
         }
-        .recover { case _ =>
+      }).value
+        .map(_.getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
+        .recover { case e =>
+          logger.error(s"Error calling obligationsAndSubmissionsService.handleData: ${e.getMessage}", e)
           Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
         }
     }
