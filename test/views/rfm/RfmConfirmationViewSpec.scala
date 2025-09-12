@@ -79,11 +79,10 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
-    "have a bullet list with download and print links" in {
-      val bulletItems: Elements = view.getElementsByClass("govuk-list--bullet").select("li")
-
-      bulletItems.get(3).text mustBe "Print this page"
-      bulletItems.get(4).text mustBe "Download as PDF"
+    "display print this page link" in {
+      val printLink = view.select("a:contains(Print this page)")
+      printLink.size()         must be >= 1
+      printLink.first().text() must include("Print this page")
     }
   }
 }

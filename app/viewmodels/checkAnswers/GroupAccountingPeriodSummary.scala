@@ -16,7 +16,7 @@
 
 package viewmodels.checkAnswers
 
-import models.UserAnswers
+import models.{CheckMode, UserAnswers}
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
@@ -27,10 +27,14 @@ import viewmodels.implicits._
 object GroupAccountingPeriodSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubAccountingPeriodPage).map { answer =>
+    answers.get(SubAccountingPeriodPage).map { _ =>
       SummaryListRowViewModel(
         key = "groupAccountingPeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(""))
+        value = ValueViewModel(HtmlContent("")),
+        actions = Seq(
+          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
+            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
+        )
       ).withCssClass("no-border-bottom")
     }
 

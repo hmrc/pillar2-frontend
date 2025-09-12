@@ -16,7 +16,6 @@
 
 package viewmodels.checkAnswers
 
-import models.CheckMode
 import models.UserAnswers
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
@@ -33,12 +32,8 @@ object GroupAccountingPeriodEndDateSummary {
       val startDate = HtmlFormat.escape(ViewHelpers.formatDateGDS(answer.endDate))
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate)),
-        actions = Seq(
-          ActionItemViewModel("site.change", controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url)
-            .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
-            .withCssClass("govuk-!-display-none-print")
-        )
+        value = ValueViewModel(HtmlContent(startDate))
+          .withCssClass("govuk-!-display-none-print")
       )
 
     }

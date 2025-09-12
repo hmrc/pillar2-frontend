@@ -543,13 +543,6 @@ GET        /payment/history-empty                                               
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 GET        /payment/outstanding                                                                     controllers.payments.OutstandingPaymentsController.onPageLoad
 
-GET        /review-submit/download-registration-answers.pdf                                         controllers.pdf.PrintPdfController.onDownloadRegistrationAnswers
-GET        /review-submit/download-registration-confirmation-pdf                                    controllers.pdf.PrintPdfController.printRegistrationConfirmation
-GET        /replace-filing-member/download-answers-pdf                                              controllers.pdf.PrintPdfController.onDownloadRfmAnswers
-GET        /replace-filing-member/download-confirmation-pdf                                         controllers.pdf.PrintPdfController.onDownloadRfmConfirmation
-GET        /repayment/download-answers-pdf                                                          controllers.pdf.PrintPdfController.onDownloadRepaymentAnswers
-GET        /repayment/download-confirmation-pdf                                                     controllers.pdf.PrintPdfController.onDownloadRepaymentConfirmation
-
 GET        /manage-account/contact/waiting-room                                                     controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
 
