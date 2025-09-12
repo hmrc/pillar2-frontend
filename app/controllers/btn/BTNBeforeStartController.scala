@@ -66,9 +66,9 @@ class BTNBeforeStartController @Inject() (
         if (filteredAps.size > 1) {
           Ok(view(request.isAgent, hasMultipleAccountingPeriods = true, mode))
         } else {
-          request.userAnswers
+          userAnswers
             .set(BTNChooseAccountingPeriodPage, filteredAps.head)
-            .map(sessionRepository.set)
+            .map(updatedAnswers => sessionRepository.set(updatedAnswers))
 
           Ok(view(request.isAgent, hasMultipleAccountingPeriods = false, mode))
         }

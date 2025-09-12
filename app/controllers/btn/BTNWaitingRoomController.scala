@@ -19,6 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import models.btn.BTNStatus
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -53,7 +54,14 @@ class BTNWaitingRoomController @Inject() (
           status match {
             case Some(BTNStatus.submitted) =>
               logger.info(s"BTNWaitingRoomController: Status is submitted, redirecting to confirmation page")
-              sessionRepository.clear(userAnswers.id)
+              userAnswers
+                .removeMultiple(
+                  BTNChooseAccountingPeriodPage,
+                  EntitiesInsideOutsideUKPage,
+                  BTNStatus
+                )
+                .map(updatedAnswers => sessionRepository.set(updatedAnswers))
+
               Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
 
             case Some(BTNStatus.error) =>
