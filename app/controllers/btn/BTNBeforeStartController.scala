@@ -22,7 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
 import models.{Mode, UserAnswers}
-import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, PlrReferencePage}
+import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
