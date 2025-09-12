@@ -16,6 +16,7 @@
 
 package helpers
 
+import helpers.SectionHash
 import models._
 import models.grs._
 import models.registration._
@@ -23,6 +24,7 @@ import models.repayments.{BankAccountDetails, NonUKBank}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
 import org.scalatest.TryValues
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import utils.RowStatus
 
@@ -264,6 +266,35 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
     .set(UpeCapturePhonePage, "12312")
+    .success
+    .value
+    .set(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .set(UpeNameRegistrationPage, "name")
+          .success
+          .value
+          .set(UpeRegisteredInUKPage, false)
+          .success
+          .value
+          .set(UpeContactNamePage, "name")
+          .success
+          .value
+          .set(UpeRegisteredAddressPage, ukAddress)
+          .success
+          .value
+          .set(UpeContactEmailPage, email)
+          .success
+          .value
+          .set(UpePhonePreferencePage, true)
+          .success
+          .value
+          .set(UpeCapturePhonePage, "12312")
+          .success
+          .value
+      )
+    )
     .success
     .value
 
@@ -584,6 +615,35 @@ trait UserAnswersFixture extends TryValues {
     .success
     .value
     .set(UpeCapturePhonePage, "12312")
+    .success
+    .value
+    .set(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .set(UpeNameRegistrationPage, "name")
+          .success
+          .value
+          .set(UpeRegisteredInUKPage, false)
+          .success
+          .value
+          .set(UpeContactNamePage, "name")
+          .success
+          .value
+          .set(UpeRegisteredAddressPage, ukAddress)
+          .success
+          .value
+          .set(UpeContactEmailPage, email)
+          .success
+          .value
+          .set(UpePhonePreferencePage, true)
+          .success
+          .value
+          .set(UpeCapturePhonePage, "12312")
+          .success
+          .value
+      )
+    )
     .success
     .value
     .set(FmEntityTypePage, EntityType.UkLimitedCompany)

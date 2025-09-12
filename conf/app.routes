@@ -66,7 +66,8 @@ GET         /business-matching/ultimate-parent/no-id/input-phone                
 POST        /business-matching/ultimate-parent/no-id/input-phone                                 controllers.registration.CapturePhoneDetailsController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/ultimate-parent/no-id/change-input-phone                          controllers.registration.CapturePhoneDetailsController.onPageLoad(mode: Mode = CheckMode)
 POST        /business-matching/ultimate-parent/no-id/change-input-phone                          controllers.registration.CapturePhoneDetailsController.onSubmit(mode: Mode = CheckMode)
-GET         /business-matching/ultimate-parent/no-id/check-answers                                   controllers.registration.UpeCheckYourAnswersController.onPageLoad
+GET         /business-matching/ultimate-parent/no-id/check-answers                               controllers.registration.UpeCheckYourAnswersController.onPageLoad
+POST        /business-matching/ultimate-parent/no-id/check-answers                               controllers.registration.UpeCheckYourAnswersController.onSubmit
 
 
 GET         /eligibility/activities-within-the-uk                                                    controllers.eligibility.BusinessActivityUKController.onPageLoad

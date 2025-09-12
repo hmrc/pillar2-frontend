@@ -19,9 +19,11 @@ package controllers.subscription
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.DuplicateSafeIdFormProvider
+import helpers.SectionHash
 import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -43,6 +45,18 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
     .setOrException(UpeContactNamePage, "contact name")
     .setOrException(UpeContactEmailPage, "email@email.com")
     .setOrException(UpePhonePreferencePage, false)
+    .setOrException(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeNameRegistrationPage, "name")
+          .setOrException(UpeRegisteredAddressPage, UkAddress)
+          .setOrException(UpeContactNamePage, "contact name")
+          .setOrException(UpeContactEmailPage, "email@email.com")
+          .setOrException(UpePhonePreferencePage, false)
+      )
+    )
 
   "Duplicate SafeId Controller" must {
 

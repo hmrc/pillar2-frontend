@@ -18,16 +18,21 @@ package controllers.registration
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
+import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.CheckYourAnswersLogicPage
+import helpers.SectionHash
+import pages.UpeSectionConfirmationHashPage
 import play.api.i18n.I18nSupport
+import play.api.libs.json.Json
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.registrationview.UpeCheckYourAnswersView
+
+import scala.concurrent.{ExecutionContext, Future}
 
 class UpeCheckYourAnswersController @Inject() (
   identify:                 IdentifierAction,
@@ -35,15 +40,15 @@ class UpeCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     UpeCheckYourAnswersView,
-  countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig)
+  countryOptions:           CountryOptions,
+  sessionRepository:        SessionRepository,
+  userAnswersConnectors:    UserAnswersConnectors
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val upeStatus = request.userAnswers.upeStatus
-    val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
-    if (upeStatus == RowStatus.Completed | upeStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
+    if (request.userAnswers.isUpeSectionFieldsComplete) {
       val list = SummaryListViewModel(
         rows = Seq(
           UpeNameRegistrationSummary.row(request.userAnswers),
@@ -60,4 +65,12 @@ class UpeCheckYourAnswersController @Inject() (
     }
   }
 
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+    val hash = SectionHash.computeUpeHash(request.userAnswers)
+    for {
+      updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeSectionConfirmationHashPage, hash))
+      _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
+      _              <- sessionRepository.set(updatedAnswers)
+    } yield Redirect(controllers.routes.TaskListController.onPageLoad)
+  }
 }

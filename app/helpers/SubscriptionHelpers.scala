@@ -16,7 +16,9 @@
 
 package helpers
 
+import helpers.SectionHash
 import models.{EnrolmentInfo, UserAnswers}
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import utils.RowStatus
 
@@ -24,7 +26,7 @@ trait SubscriptionHelpers {
 
   self: UserAnswers =>
 
-  private def upeStatusChecker: Boolean =
+  def isUpeSectionFieldsComplete: Boolean =
     (
       get(UpeRegisteredInUKPage),
       get(UpeNameRegistrationPage).isDefined,
@@ -43,13 +45,16 @@ trait SubscriptionHelpers {
       case _                                                                => false
     }
 
-  def upeStatus: RowStatus =
-    (get(UpeRegisteredInUKPage), get(CheckYourAnswersLogicPage)) match {
-      case (Some(_), Some(true)) if !upeFinalStatusChecker => RowStatus.InProgress
-      case (Some(_), _) if upeStatusChecker                => RowStatus.Completed
-      case (None, _)                                       => RowStatus.NotStarted
-      case _                                               => RowStatus.InProgress
+  def upeStatus: RowStatus = {
+    val isConfirmed = get(UpeSectionConfirmationHashPage).exists(_ == SectionHash.computeUpeHash(this))
+    if (get(UpeRegisteredInUKPage).isEmpty) {
+      RowStatus.NotStarted
+    } else if (isUpeSectionFieldsComplete && isConfirmed) {
+      RowStatus.Completed
+    } else {
+      RowStatus.InProgress
     }
+  }
 
   def upeFinalStatusChecker: Boolean =
     (
@@ -98,13 +103,6 @@ trait SubscriptionHelpers {
       case _                                                                                      => false
     }
 
-  def fmFinalStatus: RowStatus =
-    get(NominateFilingMemberPage) match {
-      case Some(_) if fmFinalStatusChecker => RowStatus.Completed
-      case None                            => RowStatus.NotStarted
-      case _                               => RowStatus.InProgress
-    }
-
   private def fmStatusChecker: Boolean =
     (
       get(NominateFilingMemberPage),
@@ -135,6 +133,13 @@ trait SubscriptionHelpers {
       case (Some(_), _) if fmStatusChecker                => RowStatus.Completed
       case (None, _)                                      => RowStatus.NotStarted
       case _                                              => RowStatus.InProgress
+    }
+
+  def fmFinalStatus: RowStatus =
+    get(NominateFilingMemberPage) match {
+      case Some(_) if fmFinalStatusChecker => RowStatus.Completed
+      case None                            => RowStatus.NotStarted
+      case _                               => RowStatus.InProgress
     }
 
   def groupDetailStatus: RowStatus =

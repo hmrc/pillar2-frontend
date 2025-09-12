@@ -19,9 +19,11 @@ package controllers.fm
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import forms.NominateFilingMemberYesNoFormProvider
+import helpers.SectionHash
 import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.UpeSectionConfirmationHashPage
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -43,6 +45,18 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     .setOrException(UpeContactNamePage, "another name")
     .setOrException(UpeContactEmailPage, "email")
     .setOrException(UpePhonePreferencePage, false)
+    .setOrException(
+      UpeSectionConfirmationHashPage,
+      SectionHash.computeUpeHash(
+        emptyUserAnswers
+          .setOrException(UpeRegisteredInUKPage, false)
+          .setOrException(UpeNameRegistrationPage, "name")
+          .setOrException(UpeRegisteredAddressPage, UkAddress)
+          .setOrException(UpeContactNamePage, "another name")
+          .setOrException(UpeContactEmailPage, "email")
+          .setOrException(UpePhonePreferencePage, false)
+      )
+    )
 
   "Nominate filing member Controller" must {
 
