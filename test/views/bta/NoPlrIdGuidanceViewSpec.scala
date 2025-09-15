@@ -48,7 +48,7 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
 
       link.text mustBe "Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)"
-      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/check-if-you-need-to-report-pillar-2-top-up-taxes"
       link.attr("target") mustBe "_blank"
     }
 

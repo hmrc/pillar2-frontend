@@ -54,7 +54,7 @@ class UnauthorisedIndividualViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.text mustBe "Find out more about who can use this service"
-      link.attr("href") mustBe appConfig.startPagePillar2Url
+      link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
 
   }

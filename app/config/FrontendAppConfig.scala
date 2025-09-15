@@ -47,7 +47,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val rfmLoginContinueUrl:         String = configuration.get[String]("urls.rfmLoginContinue")
   val rfmSecurityLoginContinueUrl: String = configuration.get[String]("urls.rfmSecurityLoginContinue")
   val signOutUrl:                  String = configuration.get[String]("urls.signOut")
-  val startPagePillar2Url:         String = configuration.get[String]("urls.startPagePillar2")
+  val plr2RegistrationGuidanceUrl: String = configuration.get[String]("urls.plr2RegistrationGuidance")
   val penaltiesInformationUrl:     String = configuration.get[String]("urls.penaltiesInformation")
 
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
@@ -91,8 +91,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val phase2ScreensEnabled: Boolean = configuration.get[Boolean]("features.phase2ScreensEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
-
-  val serviceStartLink: String = servicesConfig.getString("urls.serviceStartLink")
 
   val btaAccessEnabled:             Boolean = configuration.get[Boolean]("features.btaAccessEnabled")
   val btaHomePageUrl:               String  = configuration.get[String]("urls.btaHomePage")
