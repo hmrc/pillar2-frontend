@@ -83,9 +83,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("can we contact the secondary contact by phone")
         contentAsString(result) must include("the phone number for the secondary contact")
         contentAsString(result) must include("Do you need to keep a record of your answers?")
-        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("You can print or save a copy of your answers using the 'Print this page' link.")
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include("Download as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
@@ -134,9 +133,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("can we contact the secondary contact by phone")
         contentAsString(result) must include("the phone number for the secondary contact")
         contentAsString(result) must include("Do you need to keep a record of your answers?")
-        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("You can print or save a copy of your answers using the 'Print this page' link.")
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include("Download as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
@@ -188,9 +186,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("can we contact the secondary contact by phone")
         contentAsString(result) must include("the phone number for the secondary contact")
         contentAsString(result) must include("Do you need to keep a record of your answers?")
-        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("You can print or save a copy of your answers using the 'Print this page' link.")
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include("Download as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
@@ -228,9 +225,8 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         contentAsString(result) must include("Contact address")
         contentAsString(result) must include("Address")
         contentAsString(result) must include("Do you need to keep a record of your answers?")
-        contentAsString(result) must include("If you need to keep a record of your answers, you can:")
+        contentAsString(result) must include("You can print or save a copy of your answers using the 'Print this page' link.")
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include("Download as PDF")
         contentAsString(result) must include("Now submit your details to replace the current filing member")
         contentAsString(result) must include(
           "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
