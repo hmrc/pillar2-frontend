@@ -53,7 +53,7 @@ class Kb750IneligibleViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.text mustBe "Find out more about who is eligible for Pillar 2 Top-up Taxes"
-      link.attr("href") mustBe appConfig.startPagePillar2Url
+      link.attr("href") mustBe appConfig.plr2RegistrationGuidanceUrl
     }
 
   }
