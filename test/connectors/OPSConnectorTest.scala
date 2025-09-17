@@ -43,7 +43,7 @@ class OPSConnectorTest extends SpecBase with WireMockServerHandler {
         reference = "pillar2Id",
         amountInPence = 0,
         returnUrl = s"http://localhost:10050${routes.TransactionHistoryController.onPageLoadTransactionHistory(None)}",
-        backUrl = s"http://localhost:10050${paymentRoutes.MakeAPaymentDashboardController.onPageLoad.url}"
+        backUrl = s"http://localhost:10050${paymentRoutes.OutstandingPaymentsController.onPageLoad.url}"
       )
       stubResponse(opsEndpoint, expectedRequest)(CREATED, Json.toJson(response).toString())
       val result = classUnderTest.getRedirectLocation("pillar2Id").futureValue
