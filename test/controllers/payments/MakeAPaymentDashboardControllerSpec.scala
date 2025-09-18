@@ -248,7 +248,6 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-
   }
 
 }
