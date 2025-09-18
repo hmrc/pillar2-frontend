@@ -20,6 +20,7 @@ import base.SpecBase
 import org.mockito.Mockito.when
 import play.api.inject.Injector
 import play.api.mvc.RequestHeader
+import play.api.test.Helpers.running
 
 class FrontendAppConfigSpec extends SpecBase {
 
@@ -69,14 +70,42 @@ class FrontendAppConfigSpec extends SpecBase {
     }
 
     ".phase2ScreensEnabled" must {
-      "return correct feature flag value" in {
-        config.phase2ScreensEnabled mustBe true
+      "be configurable" in {
+        val appWithTrue = applicationBuilder()
+          .configure("features.phase2ScreensEnabled" -> true)
+          .build()
+        running(appWithTrue) {
+          val testConfig = appWithTrue.injector.instanceOf[FrontendAppConfig]
+          testConfig.phase2ScreensEnabled mustBe true
+        }
+
+        val appWithFalse = applicationBuilder()
+          .configure("features.phase2ScreensEnabled" -> false)
+          .build()
+        running(appWithFalse) {
+          val testConfig = appWithFalse.injector.instanceOf[FrontendAppConfig]
+          testConfig.phase2ScreensEnabled mustBe false
+        }
       }
     }
 
     ".newHomepageEnabled" must {
-      "return correct feature flag value" in {
-        config.newHomepageEnabled mustBe true
+      "be configurable" in {
+        val appWithTrue = applicationBuilder()
+          .configure("features.newHomepageEnabled" -> true)
+          .build()
+        running(appWithTrue) {
+          val testConfig = appWithTrue.injector.instanceOf[FrontendAppConfig]
+          testConfig.newHomepageEnabled mustBe true
+        }
+
+        val appWithFalse = applicationBuilder()
+          .configure("features.newHomepageEnabled" -> false)
+          .build()
+        running(appWithFalse) {
+          val testConfig = appWithFalse.injector.instanceOf[FrontendAppConfig]
+          testConfig.newHomepageEnabled mustBe false
+        }
       }
     }
 
