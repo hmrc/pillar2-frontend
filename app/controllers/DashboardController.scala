@@ -100,11 +100,10 @@ class DashboardController @Inject() (
     hc:                                         HeaderCarrier
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
-      val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
-          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(7), LocalDate.now())
           financialData       <- opService.retrieveData(plrReference, LocalDate.now(), LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
         } yield Ok(
           homepageView(
@@ -200,12 +199,11 @@ class DashboardController @Inject() (
       if (transactions.isEmpty) {
         None
       } else {
-        val hasPaymentToBeMade = transactions.exists(_.outstandingAmount > 0)
-        val isOutstanding      = transactions.exists(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
+        val hasOutstandingPayment = transactions.exists(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
 
-        (hasPaymentToBeMade, isOutstanding) match {
-          case (true, true) => Some(Outstanding)
-          case _            => None
+        hasOutstandingPayment match {
+          case true => Some(Outstanding)
+          case _    => None
         }
       }
     }
