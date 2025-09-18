@@ -35,12 +35,18 @@ class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClien
   lazy private val opsUrl   = s"${config.opsBaseUrl}$startUrl"
 
   def getRedirectLocation(pillar2Id: String)(implicit hc: HeaderCarrier): Future[String] = {
+    val backUrl = if (config.phase2ScreensEnabled) {
+      s"${config.host}${paymentRoutes.OutstandingPaymentsController.onPageLoad.url}"
+    } else {
+      s"${config.host}${paymentRoutes.MakeAPaymentDashboardController.onPageLoad.url}"
+    }
+
     val request =
       OPSRedirectRequest(
         reference = pillar2Id,
         amountInPence = 0,
         returnUrl = s"${config.host}${routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url}",
-        backUrl = s"${config.host}${paymentRoutes.OutstandingPaymentsController.onPageLoad.url}"
+        backUrl = backUrl
       )
     http
       .post(URI.create(opsUrl).toURL)
