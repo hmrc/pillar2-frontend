@@ -37,34 +37,27 @@ class OPSConnectorTest extends SpecBase with WireMockServerHandler {
 
   "OPS Connector" should {
     "connect to OPS for a redirect journey with phase2ScreensEnabled false" in {
-      val appWithPhase2Disabled = applicationBuilder()
-        .configure("features.phase2ScreensEnabled" -> false)
-        .configure("microservice.services.ops.port" -> server.port())
-        .build()
-      val classUnderTestWithPhase2Disabled = appWithPhase2Disabled.injector.instanceOf[OPSConnector]
-      val opsEndpointWithPhase2Disabled    = appWithPhase2Disabled.injector.instanceOf[FrontendAppConfig].opsStartUrl
-
-      val response = OPSRedirectResponse("journeyId", "nextUrl")
-      stubResponse(opsEndpointWithPhase2Disabled, CREATED, Json.toJson(response).toString())
-      implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
-      val result = classUnderTestWithPhase2Disabled.getRedirectLocation("pillar2Id").futureValue
-      result mustEqual response.nextUrl
+      testOPSConnector(phase2ScreensEnabled = false)
     }
 
     "connect to OPS for a redirect journey with phase2ScreensEnabled true" in {
-      val appWithPhase2Enabled = applicationBuilder()
-        .configure("features.phase2ScreensEnabled" -> true)
-        .configure("microservice.services.ops.port" -> server.port())
-        .build()
-      val classUnderTestWithPhase2Enabled = appWithPhase2Enabled.injector.instanceOf[OPSConnector]
-      val opsEndpointWithPhase2Enabled    = appWithPhase2Enabled.injector.instanceOf[FrontendAppConfig].opsStartUrl
-
-      val response = OPSRedirectResponse("journeyId", "nextUrl")
-      stubResponse(opsEndpointWithPhase2Enabled, CREATED, Json.toJson(response).toString())
-      implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
-      val result = classUnderTestWithPhase2Enabled.getRedirectLocation("pillar2Id").futureValue
-      result mustEqual response.nextUrl
+      testOPSConnector(phase2ScreensEnabled = true)
     }
+  }
+
+  private def testOPSConnector(phase2ScreensEnabled: Boolean): Unit = {
+    val app = applicationBuilder()
+      .configure("features.phase2ScreensEnabled" -> phase2ScreensEnabled)
+      .configure("microservice.services.ops.port" -> server.port())
+      .build()
+    val connector = app.injector.instanceOf[OPSConnector]
+    val endpoint  = app.injector.instanceOf[FrontendAppConfig].opsStartUrl
+
+    val response = OPSRedirectResponse("journeyId", "nextUrl")
+    stubResponse(endpoint, CREATED, Json.toJson(response).toString())
+    implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
+    val result = connector.getRedirectLocation("pillar2Id").futureValue
+    result mustEqual response.nextUrl
   }
 
 }
