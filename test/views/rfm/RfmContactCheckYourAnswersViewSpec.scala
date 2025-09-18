@@ -17,9 +17,6 @@
 package views.rfm
 
 import base.ViewSpecBase
-import models.grs.GrsRegistrationResult
-import models.grs.RegistrationStatus.Registered
-import models.registration.{CompanyProfile, IncorporatedEntityAddress, IncorporatedEntityRegistrationData}
 import models.rfm.CorporatePosition.Upe
 import models.{CheckMode, NonUKAddress, UserAnswers}
 import org.jsoup.Jsoup
@@ -39,13 +36,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val countryCode: String = "GB"
   lazy val country:     String = "United Kingdom"
-  lazy val incorporatedEntityRegistrationData: IncorporatedEntityRegistrationData = IncorporatedEntityRegistrationData(
-    CompanyProfile("companyName", "companyNumber", None, IncorporatedEntityAddress(None, None, None, None, None, None, None, None)),
-    "ctutr",
-    identifiersMatch = false,
-    None,
-    GrsRegistrationResult(Registered, None, None)
-  )
+
   lazy val contactAddress: NonUKAddress = NonUKAddress(
     addressLine1 = "RFM Address Line 1",
     addressLine2 = None,
@@ -214,14 +205,13 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
       }
 
       "have a paragraph" in {
-        view.getElementsByClass("govuk-body").get(0).text mustBe "If you need to keep a record of your answers, you can:"
+        view.getElementsByClass("govuk-body").get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
       }
 
-      "have bullet items" in {
-        val bulletItems: Elements = view.getElementsByClass("govuk-list--bullet").select("li")
-
-        bulletItems.get(0).text mustBe "Print this page"
-        bulletItems.get(1).text mustBe "Download as PDF"
+      "display print this page link" in {
+        val printLink = view.select("a:contains(Print this page)")
+        printLink.size()         must be >= 1
+        printLink.first().text() must include("Print this page")
       }
     }
 

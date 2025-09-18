@@ -15,7 +15,6 @@ site.confirm.submit = Confirm and submit
 site.manage.save-and-continue = Save and return to homepage
 site.address.country.select = Select a country
 site.print = Print this page
-site.pdf = Download as PDF
 site.warning = Warning
 
 date.day = Day
@@ -793,7 +792,7 @@ checkYourAnswers.furtherRegistrationDetail = Further group details
 checkYourAnswers.submit.registration = Now submit your registration to report Pillar 2 Top-up Taxes
 checkYourAnswers.submit.p = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
 checkYourAnswers.save.h2 = Do you need to keep a record of your answers?
-checkYourAnswers.save.p = If you need to keep a record of your answers, you can:
+checkYourAnswers.save.p = You can print or save a copy of your answers using the ''Print this page'' link.
 site.confirm.send = Confirm and send
 
 registrationConfirmation.title = Registration complete
@@ -809,8 +808,6 @@ registrationConfirmation.now = You can now {0}
 registrationConfirmation.link-home = report and manage your Pillar 2 Top-up Taxes
 registrationConfirmation.whatDidYouThink = What did you think of this service
 registrationConfirmation.takes30 = (takes 30 seconds)
-registrationConfirmation.print = Print this page
-registrationConfirmation.downloadPdf = Download as PDF
 registrationConfirmation.pdf.title = Report Pillar 2 Top-up Taxes
 mneOrDom.ukAndOther = Domestic Top-up Tax and Multinational Top-up Tax
 mneOrDom.uk = Domestic Top-up Tax
@@ -1148,7 +1145,7 @@ rfm.contactCheckYourAnswers.title = Check your answers before submitting
 rfm.contactCheckYourAnswers.heading = Check your answers before submitting
 rfm.contactCheckYourAnswers.filingmember = Filing member details
 rfm.contactCheckYourAnswers.record.subheading = Do you need to keep a record of your answers?
-rfm.checkYourAnswers.submit.record.p = If you need to keep a record of your answers, you can:
+rfm.checkYourAnswers.submit.record.p = You can print or save a copy of your answers using the ''Print this page'' link.
 rfm.contactCheckYourAnswers.submit.registration = Now submit your details to replace the current filing member
 rfm.checkYourAnswers.submit.p = By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge.
 rfm.contactCheckYourAnswers.first = Primary contact
@@ -1290,22 +1287,6 @@ rfm.saveProgressInform.title = Saving progress
 rfm.saveProgressInform.heading = Saving progress
 rfm.saveProgressInform.heading.caption = Replace filing member
 rfm.saveProgressInform.p1 = From this point, the information you enter will be saved as you progress. If you sign out, the information you have already entered will be saved for 28 days. After that time you will need to enter all of the information again.
-
-rfmConfirmation.title = Replace filing member successful
-rfmConfirmation.rfmComplete = Replace filing member successful
-rfmConfirmation.reg-date = Filing member was replaced on
-rfmConfirmation.topup = Group Pillar 2 Top-up Taxes ID: {0}
-rfmConfirmation.h2 = As the new filing member, you have taken over the obligations to:
-rfmConfirmation.li1 = act as HMRC''s primary contact in relation to the group''s Pillar 2 Top-up Taxes compliance
-rfmConfirmation.li2 = submit your group''s Pillar 2 Top-up Taxes returns
-rfmConfirmation.li3 = ensure your group''s Pillar 2 Top-up Taxes account accurately reflects their records.
-rfmConfirmation.p1 = If you fail to meet your obligations as a filing member, you may be liable for penalties.
-rfmConfirmation.next = What happens next
-rfmConfirmation.now = You can now {0} {1}
-rfmConfirmation.now.group = on behalf of your group.
-rfmConfirmation.link-home = report and manage your group''s Pillar 2 Top-up Taxes
-rfmConfirmation.whatDidYouThink = What did you think of this service
-rfmConfirmation.print = Print this page
 
 ###################
 
@@ -1534,7 +1515,7 @@ repayments.bank-account-details.accountNameFormatError = The name on the account
 repayments.bank-account-details.lengthError = Sort code must be 6 digits
 repayments.bank-account-details.accountNumberLengthError = Account number must be between 6 and 8 digits
 repaymentsCheckYourAnswers.download = Do you need to keep a record of your answers?
-repaymentsCheckYourAnswers.bank.submit-p2 = If you need to keep a record of your answers, you can:
+repaymentsCheckYourAnswers.bank.submit-p2 = You can print or save a copy of your answers using the ''Print this page'' link.
 
 rfmWaitingRoom.title = Submitting...
 rfmWaitingRoom.h1 = Submitting...
@@ -1560,8 +1541,8 @@ manageGroupDetails.h2 = Do not press back in your browser or leave this page. It
 # ---------------------------------------------
 transactionHistory.title = Transaction history
 transactionHistory.heading = Transaction history
-transactionHistory.group.p1 = You can find all transactions made by your group during this accounting period and the previous 6 accounting periods.
-transactionHistory.agent.p1 = You can find all transactions made by your client during this accounting period and the previous 6 accounting periods.
+transactionHistory.group.p1 = Details of payments made to and by your group over the last 7 years from today''s date.
+transactionHistory.agent.p1 = Details of payments made to and by your client over the last 7 years from today''s date.
 transactionHistory.p2 = It will take up to 5 working days for payments to appear after each transaction.
 transactionHistory.h2 = Outstanding payments
 transactionHistory.group.p3 = You can find details of what your group currently owes on the
@@ -1583,8 +1564,8 @@ transactionHistory.error.p3 = Return to your account homepage
 
 transactionHistory.none.title = Transaction history
 transactionHistory.none.heading = Transaction history
-transactionHistory.group.none.p1 = You can find all transactions made by your group during this accounting period and the previous 6 accounting periods.
-transactionHistory.agent.none.p1 = You can find all transactions made by your client during this accounting period and the previous 6 accounting periods.
+transactionHistory.group.none.p1 = Details of payments made to and by your group over the last 7 years from today''s date.
+transactionHistory.agent.none.p1 = Details of payments made to and by your client over the last 7 years from today''s date.
 transactionHistory.none.p2 = It will take up to 5 working days for payments to appear after each transaction.
 transactionHistory.none.p3 = No transactions made.
 
@@ -1619,9 +1600,9 @@ site.important = Important
 
 submissionHistory.title = Submission history
 submissionHistory.heading = Submission history
-submissionHistory.group.p1 = You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods.
+submissionHistory.group.p1 = Submission and amendment dates for your group''s returns over the last 7 years from today''s date.
 submissionHistory.group.p2 = Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions.
-submissionHistory.agent.p1 = You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods.
+submissionHistory.agent.p1 = Submission and amendment dates for your client''s returns over the last 7 years from today''s date.
 submissionHistory.agent.p2 = Where your client makes changes to a tax return or information return, we’ll list these as individual submissions.
 submissionHistory.insetText = You can amend submissions at any time, except for the UK Tax Return, which must be updated within 12 months of the submission deadline.
 submissionHistory.typeOfReturn = Type of return
@@ -1633,8 +1614,8 @@ submissionHistory.link = due and overdue returns
 
 submissionHistoryNoSubmissions.title = Submission history
 submissionHistoryNoSubmissions.heading = Submission history
-submissionHistoryNoSubmissions.group.p1 = You can find all submissions and amendments made by your group during this accounting period and the previous 6 accounting periods.
-submissionHistoryNoSubmissions.agent.p1 = You can find all submissions and amendments made by your client during this accounting period and the previous 6 accounting periods.
+submissionHistoryNoSubmissions.group.p1 = Submission and amendment dates for your group''s returns over the last 7 years from today''s date.
+submissionHistoryNoSubmissions.agent.p1 = Submission and amendment dates for your client''s returns over the last 7 years from today''s date.
 submissionHistoryNoSubmissions.p2 = No submissions made.
 submissionHistoryNoSubmissions.h2 = Due and overdue returns
 submissionHistoryNoSubmissions.group.p3 = Information on your group’s

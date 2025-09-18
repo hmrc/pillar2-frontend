@@ -98,15 +98,13 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
     }
 
     "have correct paragraphs for a group" in {
-      groupViewParagraphs.get(0).text() mustBe "You can find all transactions made by your group during this " +
-        "accounting period and the previous 6 accounting periods."
+      groupViewParagraphs.get(0).text() mustBe "Details of payments made to and by your group over the last 7 years from today's date."
       groupViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
         "each transaction."
     }
 
     "have correct paragraphs for an agent" in {
-      agentViewParagraphs.get(0).text() mustBe "You can find all transactions made by your client during this " +
-        "accounting period and the previous 6 accounting periods."
+      agentViewParagraphs.get(0).text() mustBe "Details of payments made to and by your client over the last 7 years from today's date."
       agentViewParagraphs.get(1).text() mustBe "It will take up to 5 working days for payments to appear after " +
         "each transaction."
     }

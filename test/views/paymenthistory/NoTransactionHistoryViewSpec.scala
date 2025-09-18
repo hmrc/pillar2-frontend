@@ -45,7 +45,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       groupViewParagraphs.get(0).text mustBe
-        "You can find all transactions made by your group during this accounting period and the previous 6 accounting periods."
+        "Details of payments made to and by your group over the last 7 years from today's date."
     }
 
     "have paragraph 2" in {
@@ -72,7 +72,7 @@ class NoTransactionHistoryViewSpec extends ViewSpecBase {
 
     "have paragraph 1" in {
       agentViewParagraphs.get(0).text mustBe
-        "You can find all transactions made by your client during this accounting period and the previous 6 accounting periods."
+        "Details of payments made to and by your client over the last 7 years from today's date."
     }
 
     "have paragraph 2" in {
