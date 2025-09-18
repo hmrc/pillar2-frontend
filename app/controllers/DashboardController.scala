@@ -31,12 +31,12 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, OutstandingPaymentsService, ReferenceNumberService, SubscriptionService}
+import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.RECEIVED_PERIOD_IN_DAYS
-import views.html.{DashboardView, HomepageView}
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
