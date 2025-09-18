@@ -23,9 +23,10 @@ import play.api.mvc.{ActionRefiner, Result}
 import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import utils.JourneyCheck
 
-import java.time.LocalDate
+import java.time.LocalDate.now
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -39,7 +40,7 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     obligationsAndSubmissionsService
-      .handleData(request.subscriptionLocalData.plrReference, request.subscriptionLocalData.subAccountingPeriod.startDate, LocalDate.now)
+      .handleData(request.subscriptionLocalData.plrReference, now.minusYears(SUBMISSION_ACCOUNTING_PERIODS), now)
       .map { obligationData =>
         Right(
           ObligationsAndSubmissionsSuccessDataRequest(

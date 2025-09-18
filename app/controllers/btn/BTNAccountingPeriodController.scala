@@ -19,8 +19,9 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
-import models.obligationsandsubmissions.SubmissionType.BTN
-import models.obligationsandsubmissions.{AccountingPeriodDetails, ObligationStatus}
+import models.obligationsandsubmissions.ObligationType.UKTR
+import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
+import models.obligationsandsubmissions.{AccountingPeriodDetails, SubmissionType}
 import models.{MneOrDomestic, Mode}
 import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.Logging
@@ -80,13 +81,11 @@ class BTNAccountingPeriodController @Inject() (
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
-            val accountStatus = request.subscriptionLocalData.accountStatus.forall(_.inactive)
-
             val accountingPeriodDetails: Future[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage) match {
               case Some(details) =>
                 Future.successful(details)
               case None =>
-                filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails) match {
+                filteredAccountingPeriodDetails match {
                   case singleAccountingPeriod :: Nil =>
                     Future.successful(singleAccountingPeriod)
                   case e =>
@@ -95,18 +94,12 @@ class BTNAccountingPeriodController @Inject() (
             }
 
             accountingPeriodDetails
-              .map {
-                case period if !accountStatus && period.obligations.exists(_.submissions.exists(_.submissionType == BTN)) =>
-                  Ok(btnAlreadyInPlaceView())
-                case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Fulfilled) =>
-                  Ok(
-                    viewReturnSubmitted(
-                      request.isAgent,
-                      period
-                    )
-                  )
-                case period if !accountStatus && period.obligations.exists(_.status == ObligationStatus.Open) =>
-                  val currentYear = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails) match {
+              .map { period =>
+                if (lastSubmissionType(period, Set(BTN))) Ok(btnAlreadyInPlaceView())
+                else if (lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND))) {
+                  Ok(viewReturnSubmitted(request.isAgent, period))
+                } else {
+                  val currentYear = filteredAccountingPeriodDetails match {
                     case head :: _ if head == period => true
                     case _                           => false
                   }
@@ -117,12 +110,11 @@ class BTNAccountingPeriodController @Inject() (
                       mode,
                       request.isAgent,
                       request.subscriptionLocalData.organisationName,
-                      userAnswers.get(BTNChooseAccountingPeriodPage).isDefined,
+                      filteredAccountingPeriodDetails.size > 1,
                       currentYear
                     )
                   )
-                case _ =>
-                  Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
+                }
               }
               .recover { case _ =>
                 Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
@@ -145,4 +137,10 @@ class BTNAccountingPeriodController @Inject() (
       }
       .getOrElse(Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)))
   }
+
+  private def lastSubmissionType(period: AccountingPeriodDetails, submissionTypes: Set[SubmissionType]): Boolean =
+    period.obligations
+      .find(_.obligationType == UKTR)
+      .flatMap(_.submissions.sortBy(_.receivedDate).lastOption)
+      .exists(submission => submissionTypes.contains(submission.submissionType))
 }

@@ -18,7 +18,6 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
@@ -37,52 +36,24 @@ import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.btn.BTNChooseAccountingPeriodView
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
   val mode: Mode = NormalMode
   val formProvider = new BTNChooseAccountingPeriodFormProvider()
-  val form: Form[Int] = formProvider()
+  val form: Form[Int]                     = formProvider()
+  val view: BTNChooseAccountingPeriodView = application.injector.instanceOf[BTNChooseAccountingPeriodView]
 
   val plrReference     = "testPlrRef"
   val organisationName = "orgName"
   val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
 
-  val obligationsAndSubmissionsSuccess: ObligationsAndSubmissionsSuccess =
-    ObligationsAndSubmissionsSuccess(
-      ZonedDateTime.now,
-      Seq(
-        AccountingPeriodDetails(
-          LocalDate.now.minusYears(3),
-          LocalDate.now.minusYears(2),
-          LocalDate.now,
-          underEnquiry = false,
-          obligationData
-        ),
-        AccountingPeriodDetails(
-          LocalDate.now.minusYears(2),
-          LocalDate.now.minusYears(1),
-          LocalDate.now.plusYears(1),
-          underEnquiry = false,
-          obligationData
-        ),
-        AccountingPeriodDetails(
-          LocalDate.now.minusYears(1),
-          LocalDate.now,
-          LocalDate.now.plusYears(2),
-          underEnquiry = false,
-          obligationData
-        )
-      )
-    )
-
-  val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] = filteredAccountingPeriodDetails(
-    obligationsAndSubmissionsSuccess.accountingPeriodDetails
-  ).zipWithIndex
+  val zippedAccountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)] =
+    obligationsAndSubmissionsSuccessResponseMultipleAccounts().accountingPeriodDetails.zipWithIndex
   val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.headOption.value
 
-  def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+  def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
     .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
       bind[SessionRepository].toInstance(mockSessionRepository),
@@ -95,12 +66,10 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
         val result  = route(application, request).value
-
-        val view = application.injector.instanceOf[BTNChooseAccountingPeriodView]
 
         status(result) mustEqual OK
 
@@ -113,25 +82,14 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-
       val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountingPeriod._1).success.value
-
-      def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(userAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
 
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
-
-        val view = application.injector.instanceOf[BTNChooseAccountingPeriodView]
 
         val result = route(application, request).value
 
@@ -155,7 +113,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request =
           FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
@@ -179,8 +137,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
         val boundForm = form.bind(Map("value" -> ""))
 
-        val view = application.injector.instanceOf[BTNChooseAccountingPeriodView]
-
         val result = route(application, request).value
 
         status(result) mustEqual BAD_REQUEST
@@ -193,7 +149,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "redirect to BTN error page when no subscription data is found" in {
-      def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
+      def application: Application = applicationBuilder()
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -202,9 +158,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
-
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
         val result  = route(application, request).value
 
@@ -214,15 +167,8 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     }
 
     "redirect to BTN error page if obligations service fails" in {
-      val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
-        .overrides(
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-        )
-        .build()
-
       running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
 
@@ -236,7 +182,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
     "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
       def application: Application =
-        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
+        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -247,7 +193,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
         val result  = route(application, request).value
@@ -269,9 +215,8 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccess))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request =
           FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
