@@ -71,6 +71,12 @@ class FrontendAppConfigSpec extends SpecBase {
 
     ".phase2ScreensEnabled" must {
       "be configurable" in {
+        val appWithDefault = applicationBuilder().build()
+        running(appWithDefault) {
+          val testConfig = appWithDefault.injector.instanceOf[FrontendAppConfig]
+          testConfig.phase2ScreensEnabled mustBe false
+        }
+
         val appWithTrue = applicationBuilder()
           .configure("features.phase2ScreensEnabled" -> true)
           .build()
@@ -91,6 +97,13 @@ class FrontendAppConfigSpec extends SpecBase {
 
     ".newHomepageEnabled" must {
       "be configurable" in {
+  
+        val appWithDefault = applicationBuilder().build()
+        running(appWithDefault) {
+          val testConfig = appWithDefault.injector.instanceOf[FrontendAppConfig]
+          testConfig.newHomepageEnabled mustBe false
+        }
+
         val appWithTrue = applicationBuilder()
           .configure("features.newHomepageEnabled" -> true)
           .build()
@@ -99,6 +112,7 @@ class FrontendAppConfigSpec extends SpecBase {
           testConfig.newHomepageEnabled mustBe true
         }
 
+  
         val appWithFalse = applicationBuilder()
           .configure("features.newHomepageEnabled" -> false)
           .build()
