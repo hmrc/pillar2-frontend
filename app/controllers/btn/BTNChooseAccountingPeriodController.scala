@@ -54,7 +54,7 @@ class BTNChooseAccountingPeriodController @Inject() (
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
-            val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+            val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
             val form              = formProvider()
             val preparedForm = userAnswers
               .get(BTNChooseAccountingPeriodPage)
@@ -76,7 +76,7 @@ class BTNChooseAccountingPeriodController @Inject() (
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
-            val accountingPeriods = filteredAccountingPeriodDetails(request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails).zipWithIndex
+            val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
             val form              = formProvider()
             form
               .bindFromRequest()

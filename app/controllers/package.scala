@@ -15,6 +15,7 @@
  */
 
 import models.obligationsandsubmissions.AccountingPeriodDetails
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 
 import java.time.LocalDate
 
@@ -25,8 +26,11 @@ package object controllers {
     *   is a sequence of AccountingPeriodDetails
     * @return
     *   a filtered sequence of AccountingPeriodDetails, sorted in reverse chronological order, ensuring that we remove any periods where the start
-    *   date is after today and any periods where the due date is before today
+    *   date is after today
     */
-  def filteredAccountingPeriodDetails(accountingDetails: Seq[AccountingPeriodDetails]): Seq[AccountingPeriodDetails] =
-    accountingDetails.filterNot(_.startDate.isAfter(now)).filterNot(_.dueDate.isBefore(now)).sortBy(_.startDate).reverse
+  def filteredAccountingPeriodDetails(implicit request: ObligationsAndSubmissionsSuccessDataRequest[_]): Seq[AccountingPeriodDetails] =
+    request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails
+      .filterNot(_.startDate.isAfter(now))
+      .sortBy(_.startDate)
+      .reverse
 }
