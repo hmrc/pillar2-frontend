@@ -104,6 +104,7 @@ class DashboardController @Inject() (
         osService
           .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
           .map { response =>
+            val hasReturnsUnderEnquiry = response.accountingPeriodDetails.exists(_.underEnquiry)
             Ok(
               homepageView(
                 subscriptionData.upeDetails.organisationName,
@@ -111,7 +112,8 @@ class DashboardController @Inject() (
                 subscriptionData.accountStatus.exists(_.inactive),
                 getDueOrOverdueReturnsStatus(response).map(_.toString),
                 plrReference,
-                isAgent = request.isAgent
+                isAgent = request.isAgent,
+                hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
               )
             )
           }

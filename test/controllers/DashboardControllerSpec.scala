@@ -102,7 +102,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             btnActive = false,
             None,
             "12345678",
-            isAgent = false
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
           )(
             request,
             applicationConfig,
