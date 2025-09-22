@@ -31,10 +31,11 @@ import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, ReferenceNumberService, SubscriptionService}
+import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.RECEIVED_PERIOD_IN_DAYS
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -53,7 +54,8 @@ class DashboardController @Inject() (
   homepageView:                           HomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
-  osService:                              ObligationsAndSubmissionsService
+  osService:                              ObligationsAndSubmissionsService,
+  opService:                              OutstandingPaymentsService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -98,25 +100,29 @@ class DashboardController @Inject() (
     hc:                                         HeaderCarrier
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
-      val sevenAPs = 7 * ChronoUnit.DAYS.between(subscriptionData.accountingPeriod.startDate, subscriptionData.accountingPeriod.endDate)
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-        osService
-          .handleData(plrReference, LocalDate.now().minusDays(sevenAPs), LocalDate.now())
-          .map { response =>
-            val hasReturnsUnderEnquiry = response.accountingPeriodDetails.exists(_.underEnquiry)
-            Ok(
-              homepageView(
-                subscriptionData.upeDetails.organisationName,
-                subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                subscriptionData.accountStatus.exists(_.inactive),
-                getDueOrOverdueReturnsStatus(response).map(_.toString),
-                plrReference,
-                isAgent = request.isAgent,
-                hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
-              )
+        for {
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          financialData <-
+            opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
+              case _ => None
+            }
+        } yield {
+          val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          Ok(
+            homepageView(
+              subscriptionData.upeDetails.organisationName,
+              subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+              subscriptionData.accountStatus.exists(_.inactive),
+              getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
+              getOutstandingPaymentsStatus(financialData).map(_.toString),
+              plrReference,
+              isAgent = request.isAgent,
+              hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
             )
-          }
+          )
+        }
       }
     } else {
       Future.successful(
@@ -191,4 +197,29 @@ class DashboardController @Inject() (
       .maxOption
 
   }
+
+  def getOutstandingPaymentsStatus(financialSummaries: Option[Seq[FinancialSummary]]): Option[OutstandingPaymentBannerScenario] = {
+
+    def summaryStatus(summary: FinancialSummary): Option[OutstandingPaymentBannerScenario] = {
+      val transactions = summary.transactions
+
+      if (transactions.isEmpty) {
+        None
+      } else {
+        val hasOutstandingPayment = transactions.exists(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
+
+        hasOutstandingPayment match {
+          case true => Some(Outstanding)
+          case _    => None
+        }
+      }
+    }
+
+    financialSummaries
+      .getOrElse(Seq.empty)
+      .flatMap(summaryStatus)
+      .maxOption
+
+  }
+
 }

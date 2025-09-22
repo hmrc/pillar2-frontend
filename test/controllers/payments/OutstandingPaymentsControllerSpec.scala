@@ -134,5 +134,12 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
+  val samplePaymentsDataWithNoTag: Seq[FinancialSummary] = Seq(
+    FinancialSummary(
+      AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))
+    )
+  )
+
   val amountDue: BigDecimal = samplePaymentsData.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
 }

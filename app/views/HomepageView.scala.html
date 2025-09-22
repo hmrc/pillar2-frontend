@@ -25,7 +25,7 @@
 
 @this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
 
-@(organisationName: String, registrationDate: String, btnActive: Boolean, maybeUktrBannerScenario: Option[String], plrReference: String, isAgent: Boolean, hasReturnsUnderEnquiry: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(organisationName: String, registrationDate: String, btnActive: Boolean, maybeUktrBannerScenario: Option[String], maybePaymentBannerScenario: Option[String], plrReference: String, isAgent: Boolean, hasReturnsUnderEnquiry: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
@@ -144,14 +144,47 @@
     }
    }
 
-   @card(
-    title = messages("homepage.payments.title"),
-    links = Seq(
-     (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
-     (messages("homepage.payments.outstandingPayments.linkText"), controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url, None),
-     (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url, None),
-    )
-   )
+ @if(maybePaymentBannerScenario.isDefined) {
+     <div class="card-half-width">
+         <div class="govuk-summary-card__title-wrapper card-with-tag">
+             <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
+             @maybePaymentBannerScenario.map { scenario =>
+                 <span class="govuk-tag @{
+                     scenario match {
+                         case "Outstanding" => "govuk-tag--red"
+                     }
+                 }" aria-label="@{
+                     scenario
+                 } payments" title="@{
+                     scenario
+                 } payments">@scenario</span>
+             }
+         </div>
+         <div class="card-content">
+             <ul class="govuk-list">
+                 <li class="card-links">
+                     <a href="@controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url" class="govuk-link">@messages("homepage.payments.transactionHistory.linkText")</a>
+                 </li>
+                 <li class="card-links">
+                     <a href="@controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url" class="govuk-link">@messages("homepage.payments.outstandingPayments.linkText")</a>
+                 </li>
+                 <li class="card-links">
+                     <a href="@controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url" class="govuk-link">@messages("homepage.payments.repayments.linkText")</a>
+                 </li>
+             </ul>
+         </div>
+     </div>
+ } else {
+     @card(
+         title = messages("homepage.payments.title"),
+         links = Seq(
+             (messages("homepage.payments.transactionHistory.linkText"), controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url, None),
+             (messages("homepage.payments.outstandingPayments.linkText"), controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url, None),
+             (messages("homepage.payments.repayments.linkText"), controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url, None),
+         )
+     )
+ }
+
 
    @{
     val registrationContent = Html(
