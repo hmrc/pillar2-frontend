@@ -35,13 +35,21 @@ class HomepageViewSpec extends ViewSpecBase {
 
   lazy val organisationView: Document =
     Jsoup.parse(
-      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+        request,
+        appConfig,
+        messages
+      )
         .toString()
     )
 
   lazy val agentView: Document =
     Jsoup.parse(
-      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(
+        request,
+        appConfig,
+        messages
+      )
         .toString()
     )
 
@@ -143,7 +151,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveOrgView: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
 
@@ -274,7 +286,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message in returns card when hasReturnsUnderEnquiry is true" in {
       val organisationViewWithEnquiry: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
       val returnsCard: Element = organisationViewWithEnquiry.getElementsByClass("card-half-width").first()
@@ -303,7 +319,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Payments card with no tag when no scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
       val returnsCard:       Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
@@ -330,7 +350,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some("Outstanding"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, None, Some("Outstanding"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
       val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
@@ -440,7 +464,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveAgentView: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
 
@@ -457,7 +485,11 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message in returns card when hasReturnsUnderEnquiry is true" in {
       val agentViewWithEnquiry: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = true)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = true)(
+            request,
+            appConfig,
+            messages
+          )
             .toString()
         )
       val returnsCard: Element = agentViewWithEnquiry.getElementsByClass("card-half-width").first()
