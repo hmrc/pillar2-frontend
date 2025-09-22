@@ -104,7 +104,10 @@ class DashboardController @Inject() (
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
           obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
-          financialData       <- opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          financialData <-
+            opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
+              case _ => None
+            }
         } yield Ok(
           homepageView(
             subscriptionData.upeDetails.organisationName,
@@ -191,7 +194,7 @@ class DashboardController @Inject() (
 
   }
 
-  def getOutstandingPaymentsStatus(financialSummaries: Seq[FinancialSummary]): Option[OutstandingPaymentBannerScenario] = {
+  def getOutstandingPaymentsStatus(financialSummaries: Option[Seq[FinancialSummary]]): Option[OutstandingPaymentBannerScenario] = {
 
     def summaryStatus(summary: FinancialSummary): Option[OutstandingPaymentBannerScenario] = {
       val transactions = summary.transactions
@@ -209,6 +212,7 @@ class DashboardController @Inject() (
     }
 
     financialSummaries
+      .getOrElse(Seq.empty)
       .flatMap(summaryStatus)
       .maxOption
 
