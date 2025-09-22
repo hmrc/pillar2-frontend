@@ -18,6 +18,7 @@ package views
 
 import base.ViewSpecBase
 import models.MneOrDomestic.UkAndOther
+import models.grs.EntityType
 import models.subscription.AccountingPeriod
 import models.{NonUKAddress, UKAddress, UserAnswers}
 import org.jsoup.Jsoup
@@ -37,20 +38,12 @@ import java.time.LocalDate
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val accountingPeriod: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
-  lazy val countryCode:      String           = "GB"
-  lazy val country:          String           = "United Kingdom"
 
-  val countryOptions: CountryOptions = mock[CountryOptions]
-  when(countryOptions.getCountryNameFromCode(countryCode)).thenReturn(country)
+  lazy val countryCodeUK: String = "GB"
+  lazy val countryUK:     String = "United Kingdom"
 
-  lazy val contactAddress: NonUKAddress = NonUKAddress(
-    addressLine1 = "Address Line 1",
-    addressLine2 = None,
-    addressLine3 = "City",
-    addressLine4 = None,
-    postalCode = Some("EH5 5WY"),
-    countryCode = "GB"
-  )
+  lazy val countryOptions: CountryOptions = mock[CountryOptions]
+  when(countryOptions.getCountryNameFromCode(countryCodeUK)).thenReturn(countryUK)
 
   lazy val upeRegisteredAddress: UKAddress = UKAddress(
     addressLine1 = "Address Line 1",
@@ -61,8 +54,18 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     countryCode = "GB"
   )
 
+  lazy val contactAddress: NonUKAddress = NonUKAddress(
+    addressLine1 = "Spanish Address Line 1",
+    addressLine2 = None,
+    addressLine3 = "Spanish City",
+    addressLine4 = None,
+    postalCode = None,
+    countryCode = "ES"
+  )
+
   lazy val userAnswers: UserAnswers = emptyUserAnswers
     .setOrException(UpeNameRegistrationPage, "Test UPE")
+    .setOrException(UpeEntityTypePage, EntityType.Other)
     .setOrException(UpeRegisteredAddressPage, upeRegisteredAddress)
     .setOrException(UpeContactNamePage, "UPE Contact Name")
     .setOrException(UpeContactEmailPage, "testcontactupe@email.com")
@@ -149,10 +152,15 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       ).flatten
     )
 
-  lazy val addressSummaryList: SummaryList =
+  lazy val addressSummaryList: SummaryList = {
+    lazy val countryCodeES: String = "ES"
+    lazy val countryES:     String = "Spain"
+    when(countryOptions.getCountryNameFromCode(countryCodeES)).thenReturn(countryES)
+
     SummaryListViewModel(
-      rows = Seq(ContactCorrespondenceAddressSummary.row(userAnswers, mockCountryOptions)).flatten
+      rows = Seq(ContactCorrespondenceAddressSummary.row(userAnswers, countryOptions)).flatten
     )
+  }
 
   lazy val page: CheckYourAnswersView = inject[CheckYourAnswersView]
   lazy val view: Document = Jsoup.parse(
@@ -221,7 +229,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list items" in {
       summaryListItems.get(0).text mustBe "Test UPE"
-      //summaryListItems.get(1).text mustBe "Address Line 1 City EH5 5WY United Kingdom" TODO: Ticket raised (PIL-2453) to resolve country code issue
+      summaryListItems.get(1).text mustBe "Address Line 1 City EH5 5WY United Kingdom"
       summaryListItems.get(2).text mustBe "UPE Contact Name"
       summaryListItems.get(3).text mustBe "testcontactupe@email.com"
       summaryListItems.get(4).text mustBe "Yes"
@@ -239,7 +247,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListItems.get(16).text mustBe "Second Contact Name"
       summaryListItems.get(17).text mustBe "secondcontact@email.com"
       summaryListItems.get(18).text mustBe "01632 960 002"
-      //summaryListItems.get(19).text mustBe "Address Line 1 City EH5 5WY United Kingdom" TODO: Ticket raised (PIL-2453) to resolve country code issue
+      summaryListItems.get(19).text mustBe "Spanish Address Line 1 Spanish City Spain"
     }
 
     "have a summary list links" in {

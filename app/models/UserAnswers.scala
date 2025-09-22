@@ -77,6 +77,9 @@ final case class UserAnswers(
       page.cleanup(None, updatedAnswers)
     }
   }
+
+  def removeMultiple(pages: Settable[_]*): Try[UserAnswers] =
+    pages.foldLeft[Try[UserAnswers]](Success(this))((acc, page) => acc.flatMap(_.remove(page)))
 }
 
 object UserAnswers {
