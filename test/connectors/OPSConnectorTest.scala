@@ -18,12 +18,11 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import config.FrontendAppConfig
-import controllers.payments.{routes => paymentRoutes}
-import controllers.routes
-import models.{OPSRedirectRequest, OPSRedirectResponse}
+import models.OPSRedirectResponse
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
+import uk.gov.hmrc.http.{HeaderCarrier, SessionId}
 
 class OPSConnectorTest extends SpecBase with WireMockServerHandler {
 
@@ -37,18 +36,28 @@ class OPSConnectorTest extends SpecBase with WireMockServerHandler {
   lazy val opsEndpoint:    String       = app.injector.instanceOf[FrontendAppConfig].opsStartUrl
 
   "OPS Connector" should {
-    "connect to OPS for a redirect journey" in {
-      val response = OPSRedirectResponse("journeyId", "nextUrl")
-      val expectedRequest = OPSRedirectRequest(
-        reference = "pillar2Id",
-        amountInPence = 0,
-        returnUrl = s"http://localhost:10050${routes.TransactionHistoryController.onPageLoadTransactionHistory(None)}",
-        backUrl = s"http://localhost:10050${paymentRoutes.MakeAPaymentDashboardController.onPageLoad.url}"
-      )
-      stubResponse(opsEndpoint, expectedRequest)(CREATED, Json.toJson(response).toString())
-      val result = classUnderTest.getRedirectLocation("pillar2Id").futureValue
-      result mustEqual response.nextUrl
+    "connect to OPS for a redirect journey with phase2ScreensEnabled false" in {
+      testOPSConnector(phase2ScreensEnabled = false)
     }
+
+    "connect to OPS for a redirect journey with phase2ScreensEnabled true" in {
+      testOPSConnector(phase2ScreensEnabled = true)
+    }
+  }
+
+  private def testOPSConnector(phase2ScreensEnabled: Boolean): Unit = {
+    val app = applicationBuilder()
+      .configure("features.phase2ScreensEnabled" -> phase2ScreensEnabled)
+      .configure("microservice.services.ops.port" -> server.port())
+      .build()
+    val connector = app.injector.instanceOf[OPSConnector]
+    val endpoint  = app.injector.instanceOf[FrontendAppConfig].opsStartUrl
+
+    val response = OPSRedirectResponse("journeyId", "nextUrl")
+    stubResponse(endpoint, CREATED, Json.toJson(response).toString())
+    implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
+    val result = connector.getRedirectLocation("pillar2Id").futureValue
+    result mustEqual response.nextUrl
   }
 
 }
