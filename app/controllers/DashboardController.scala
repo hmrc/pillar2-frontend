@@ -103,8 +103,8 @@ class DashboardController @Inject() (
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
-          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(7), LocalDate.now())
-          financialData       <- opService.retrieveData(plrReference, LocalDate.now(), LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          financialData       <- opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
         } yield Ok(
           homepageView(
             subscriptionData.upeDetails.organisationName,
