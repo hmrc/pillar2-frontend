@@ -17,8 +17,11 @@
 package controllers
 
 import base.SpecBase
+import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
+import controllers.payments.OutstandingPaymentsControllerSpec.samplePaymentsDataWithNoTag
 import generators.ModelGenerators
+import helpers.FinancialDataHelper.Pillar2UktrName
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
@@ -28,7 +31,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, SubscriptionService}
+import services.{ObligationsAndSubmissionsService, OutstandingPaymentsService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -77,7 +80,9 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             .overrides(
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[SubscriptionService].toInstance(mockSubscriptionService),
-              bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+              bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+              bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService),
+              bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
             )
             .build()
 
@@ -91,6 +96,8 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+          when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
+            .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
 
           val result = route(application, request).value
           val view   = application.injector.instanceOf[HomepageView]
@@ -100,6 +107,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
             btnActive = false,
+            None,
             None,
             "12345678",
             isAgent = false
@@ -1014,6 +1022,58 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val result = controller.getDueOrOverdueReturnsStatus(obligationsAndSubmissions)
 
         result mustBe Some(Received)
+      }
+    }
+
+  }
+
+  "getOutstandingPaymentsStatus" should {
+
+    "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val pastDueDate = LocalDate.now.minusDays(7)
+        val transactions = Seq(
+          TransactionSummary(
+            name = Pillar2UktrName,
+            outstandingAmount = 100,
+            dueDate = pastDueDate
+          )
+        )
+        val financialSummary = FinancialSummary(
+          accountingPeriod = AccountingPeriod(LocalDate.now.minusMonths(12), LocalDate.now),
+          transactions = transactions
+        )
+
+        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
+
+        result mustBe Some(Outstanding)
+      }
+    }
+
+    "return None when there is an outstanding payment that has not exceeded the due date to be made" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val futureDueDate = LocalDate.now.plusDays(7)
+        val transactions = Seq(
+          TransactionSummary(
+            name = Pillar2UktrName,
+            outstandingAmount = 100,
+            dueDate = futureDueDate
+          )
+        )
+        val financialSummary = FinancialSummary(
+          accountingPeriod = AccountingPeriod(LocalDate.now.minusMonths(12), LocalDate.now),
+          transactions = transactions
+        )
+
+        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
+
+        result mustBe None
       }
     }
   }
