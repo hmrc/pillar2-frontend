@@ -1047,7 +1047,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           transactions = transactions
         )
 
-        val result = controller.getOutstandingPaymentsStatus(Seq(financialSummary))
+        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
         result mustBe Some(Outstanding)
       }
@@ -1071,7 +1071,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           transactions = transactions
         )
 
-        val result = controller.getOutstandingPaymentsStatus(Seq(financialSummary))
+        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
         result mustBe None
       }
