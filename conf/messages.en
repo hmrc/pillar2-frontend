@@ -848,6 +848,8 @@ homepage.id = ID
 homepage.returns.title = Returns
 homepage.returns.dueOverdueReturns.linkText = View all due and overdue returns
 homepage.returns.submissionHistory.linkText = View submission history
+homepage.returns.underEnquiry.message = You have one or more returns under enquiry
+homepage.returns.underEnquiry.agent.message = Your client has one or more returns under enquiry
 
 homepage.payments.title = Payments
 homepage.payments.transactionHistory.linkText = View transaction history

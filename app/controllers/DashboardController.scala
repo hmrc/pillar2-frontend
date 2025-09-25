@@ -109,17 +109,17 @@ class DashboardController @Inject() (
     hc:                                         HeaderCarrier
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
-      sessionRepository
-        .get(request.userId)
-        .flatMap { maybeUserAnswers =>
-          maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-          for {
-            obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
-            financialData <-
-              opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
-                case _ => None
-              }
-          } yield Ok(
+      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+        for {
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          financialData <-
+            opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
+              case _ => None
+            }
+        } yield {
+          val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          Ok(
             homepageView(
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
@@ -127,10 +127,12 @@ class DashboardController @Inject() (
               getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
               getOutstandingPaymentsStatus(financialData).map(_.toString),
               plrReference,
-              request.isAgent
+              isAgent = request.isAgent,
+              hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
             )
           )
         }
+      }
     } else {
       Future.successful(
         Ok(
