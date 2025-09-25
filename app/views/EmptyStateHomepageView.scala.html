@@ -1,0 +1,55 @@
+@*
+ * Copyright 2024 HM Revenue & Customs
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *@
+
+@import config.FrontendAppConfig
+@import uk.gov.hmrc.govukfrontend.views.html.components._
+@import views.html.components.gds._
+@import views.html.templates.Layout
+
+@this(layout: Layout, heading: heading, paragraphBody: paragraphBody, govukNotificationBanner: GovukNotificationBanner)
+
+@(plrReference: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+
+@maybeAgentKey = @{if(isAgent) ".agent" else ""}
+
+@bannerHtml = {
+ <div class="registration-not-processed-banner">
+  @paragraphBody(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.title"), "govuk-notification-banner__heading")
+  @paragraphBody(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.body"))
+ </div>
+}
+
+@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+
+  @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
+
+  <h1 class="govuk-heading-l">@messages("homepage.title")</h1>
+
+  <p class="govuk-body homepage-title">
+   <span><strong>@{messages("homepage.id")}:</strong> @plrReference</span>
+  </p>
+
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      @heading(messages("homepage.registrationInProgress"), "govuk-heading-s")
+      @paragraphBody(messages("homepage.registrationMessage"))
+    </div>
+  </div>
+  
+  <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+}

@@ -309,6 +309,7 @@ POST        /manage-account/contact-details/address/change-input                
 
 
 GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad
+GET         /pillar2-top-up-tax-home/empty-state                                                      controllers.DashboardController.emptyStatePage
 
 GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm
