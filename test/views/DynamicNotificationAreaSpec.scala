@@ -17,7 +17,8 @@
 package views
 
 import base.ViewSpecBase
-import models.{Due, DueAndOverdueReturnBannerScenario, Incomplete, Overdue, Received}
+import models.DueAndOverdueReturnBannerScenario
+import models.DueAndOverdueReturnBannerScenario._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalacheck.Gen
@@ -43,7 +44,9 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
 
   "Dynamic notification area" should {
     "not render anything" when {
-      "return is nonexistent or already received" in forAll(anyNotificationArea, Gen.oneOf(Some(Received), None)) { (template, uktr) =>
+      val doNotRenderScenarios = Gen.oneOf(Set(None, Some(Received)))
+
+      "return is nonexistent or already received" in forAll(anyNotificationArea, doNotRenderScenarios) { (template, uktr) =>
         val page = template(uktr)
         Option(page.getElementById(firstSectionBreakId)) must not be defined
         Option(page.getElementById(lastSectionBreakId))  must not be defined
@@ -54,7 +57,9 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
     }
 
     "render a uktr notification" which {
-      val scenariosWhichRenderNotification = Gen.oneOf(Set(Due, Overdue, Incomplete).map(Some.apply))
+      val scenariosWhichRenderNotification = Gen.oneOf(
+        DueAndOverdueReturnBannerScenario.values.filter(_ != Received).map(Some.apply)
+      )
 
       "includes the section breaks" in forAll(anyNotificationArea, scenariosWhichRenderNotification) { (template, uktrScenario) =>
         val page = template(uktrScenario)
