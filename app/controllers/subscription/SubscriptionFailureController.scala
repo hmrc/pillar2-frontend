@@ -18,23 +18,39 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
+import models.UserAnswers
+import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.SubscriptionFailureView
+import views.html.EmptyStateHomepageView
+
+import scala.concurrent.ExecutionContext
 
 import javax.inject.Inject
 
 class SubscriptionFailureController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     SubscriptionFailureView
-)(implicit appConfig:       FrontendAppConfig)
+  view:                     SubscriptionFailureView,
+  emptyStateHomepageView:   EmptyStateHomepageView,
+  sessionRepository:        SessionRepository
+)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     Ok(view(appConfig.supportUrl))
+  }
+
+  def emptyStatePage: Action[AnyContent] = identify.async { implicit request =>
+    sessionRepository.get(request.userId).map { maybeUserAnswers =>
+      val userAnswers  = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+      val plrReference = userAnswers.get(PlrReferencePage).getOrElse("")
+      Ok(emptyStateHomepageView(plrReference, request.isAgent))
+    }
   }
 
 }
