@@ -25,16 +25,7 @@
 
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
-@bannerHtml = {
- <div class="registration-not-processed-banner">
-  @paragraphBody(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.title"), "govuk-notification-banner__heading")
-  @paragraphBody(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.body"))
- </div>
-}
-
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
-
-  @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
 
   <h1 class="govuk-heading-l">@messages("homepage.title")</h1>
 
