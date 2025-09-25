@@ -32,7 +32,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc._
 import repositories.SessionRepository
 import services._
-import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
+import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.RECEIVED_PERIOD_IN_DAYS
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
