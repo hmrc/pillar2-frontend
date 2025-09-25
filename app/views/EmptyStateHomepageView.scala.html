@@ -46,8 +46,8 @@
 
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-      @heading(messages("homepage.registrationInProgress"), "govuk-heading-s")
-      @paragraphBody(messages("homepage.registrationMessage"))
+      @heading(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.title"), "govuk-heading-s")
+      @paragraphBody(messages(s"homepage.registrationNotProcessedBanner$maybeAgentKey.body"))
     </div>
   </div>
   
