@@ -98,7 +98,7 @@ class DashboardController @Inject() (
                   Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
               }
               .recover { case UnprocessableEntityError =>
-                Redirect(controllers.routes.DashboardController.emptyStatePage)
+                Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(referenceNumber))
               }
           }
       } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

@@ -24,7 +24,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.RegistrationInProgressView
+import views.html.{EmptyStateHomepageView, RegistrationInProgressView}
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -33,6 +33,7 @@ class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   view:                     RegistrationInProgressView,
+  emptyStateHomepageView:   EmptyStateHomepageView,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -50,7 +51,7 @@ class RegistrationInProgressController @Inject() (
       }
       .recover {
         case UnprocessableEntityError =>
-          Ok(view(plrReference))
+          Ok(emptyStateHomepageView(plrReference, request.isAgent))
         case e: Throwable =>
           logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
           Redirect(routes.JourneyRecoveryController.onPageLoad())
