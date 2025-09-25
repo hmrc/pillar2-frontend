@@ -36,7 +36,7 @@ import uk.gov.hmrc.http.{HeaderCarrier, UpstreamErrorResponse}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.RECEIVED_PERIOD_IN_DAYS
 import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
-import views.html.{DashboardView, EmptyStateHomepageView, HomepageView}
+import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -52,7 +52,6 @@ class DashboardController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   dashboardView:                          DashboardView,
   homepageView:                           HomepageView,
-  emptyStateHomepageView:                 EmptyStateHomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
@@ -61,14 +60,6 @@ class DashboardController @Inject() (
     extends FrontendBaseController
     with I18nSupport
     with Logging {
-
-  def emptyStatePage: Action[AnyContent] = identify.async { implicit request =>
-    sessionRepository.get(request.userId).map { maybeUserAnswers =>
-      val userAnswers  = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-      val plrReference = userAnswers.get(PlrReferencePage).getOrElse("")
-      Ok(emptyStateHomepageView(plrReference, request.isAgent))
-    }
-  }
 
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
@@ -109,35 +100,30 @@ class DashboardController @Inject() (
     hc:                                         HeaderCarrier
   ): Future[Result] =
     if (appConfig.newHomepageEnabled) {
-      sessionRepository
-        .get(request.userId)
-        .flatMap { maybeUserAnswers =>
-          maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-          for {
-            obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
-            financialData <-
-              opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
-                case _ => None
-              }
-          } yield {
-            val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
-            Ok(
-              homepageView(
-                subscriptionData.upeDetails.organisationName,
-                subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-                subscriptionData.accountStatus.exists(_.inactive),
-                getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
-                getOutstandingPaymentsStatus(financialData).map(_.toString),
-                plrReference,
-                isAgent = request.isAgent,
-                hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
-              )
+      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+        for {
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          financialData <-
+            opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
+              case _ => None
+            }
+        } yield {
+          val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          Ok(
+            homepageView(
+              subscriptionData.upeDetails.organisationName,
+              subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+              subscriptionData.accountStatus.exists(_.inactive),
+              getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
+              getOutstandingPaymentsStatus(financialData).map(_.toString),
+              plrReference,
+              isAgent = request.isAgent,
+              hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
             )
-          }
+          )
         }
-        .recover { case _: UpstreamErrorResponse =>
-          Redirect(controllers.routes.DashboardController.emptyStatePage)
-        }
+      }
     } else {
       Future.successful(
         Ok(
