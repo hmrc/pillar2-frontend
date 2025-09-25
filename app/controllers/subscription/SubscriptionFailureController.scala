@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
-import models.UserAnswers
+import models._
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

@@ -123,6 +123,7 @@ GET         /error/page-not-found                                               
 GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
 GET         /error/subscription-failure                                                              controllers.subscription.SubscriptionFailureController.onPageLoad
+GET         /error/subscription-failure/empty-state                                                  controllers.subscription.SubscriptionFailureController.emptyStatePage
 
 GET         /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
@@ -309,7 +310,7 @@ POST        /manage-account/contact-details/address/change-input                
 
 
 GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad
-GET         /pillar2-top-up-tax-home/empty-state                                                      controllers.subscription.SubscriptionFailureController.emptyStatePage
+GET         /pillar2-top-up-tax-home/empty-state                                                      controllers.DashboardController.emptyStatePage
 
 GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm

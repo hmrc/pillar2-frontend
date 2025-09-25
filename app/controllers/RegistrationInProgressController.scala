@@ -50,7 +50,7 @@ class RegistrationInProgressController @Inject() (
       }
       .recover {
         case UnprocessableEntityError =>
-          Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+          Redirect(controllers.routes.DashboardController.emptyStatePage)
         case e: Throwable =>
           logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
           Redirect(routes.JourneyRecoveryController.onPageLoad())
