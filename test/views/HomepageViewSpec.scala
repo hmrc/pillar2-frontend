@@ -18,6 +18,7 @@ package views
 
 import base.ViewSpecBase
 import controllers.routes
+import models.{Due, Incomplete, Outstanding, Overdue, Received}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -172,7 +173,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Returns card with no tag when Due scenario is provided" in {
       val organisationViewWithDueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Due"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, Some(Due), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages
@@ -199,7 +200,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Overdue"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, Some(Overdue), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages
@@ -231,7 +232,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val organisationViewWithIncompleteScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Incomplete"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, Some(Incomplete), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages
@@ -263,7 +264,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Received status tag with green style when Received scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Received"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, Some(Received), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages
@@ -350,7 +351,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some("Outstanding"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, None, Some(Outstanding), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages

@@ -25,7 +25,16 @@
 
 @this(layout: Layout, heading: heading, paragraphBody: paragraphBody, link: link, card: HomepageCard, govukNotificationBanner : GovukNotificationBanner)
 
-@(organisationName: String, registrationDate: String, btnActive: Boolean, maybeUktrBannerScenario: Option[String], maybePaymentBannerScenario: Option[String], plrReference: String, isAgent: Boolean, hasReturnsUnderEnquiry: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(
+    organisationName: String,
+    registrationDate: String,
+    btnActive: Boolean,
+    maybeUktrBannerScenario: Option[DueAndOverdueReturnBannerScenario],
+    maybePaymentBannerScenario: Option[OutstandingPaymentBannerScenario],
+    plrReference: String,
+    isAgent: Boolean,
+    hasReturnsUnderEnquiry: Boolean
+)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
@@ -66,98 +75,109 @@
    <span><strong>@{messages("homepage.id")}:</strong> @plrReference</span>
   </p>
 
- @maybeUktrBannerScenario.map { scenario =>
-  @if(!maybeUktrBannerScenario.contains("Received")) {
-   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-   <h2 class="govuk-heading-m">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title")</h2>
-   <p class="govuk-body">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body")</p>
-   <p class="govuk-body">
-     @link(
-       text = messages("homepage.uktrBanner.linkText"),
-       call = Call("GET", dueAndOverdueReturnsUrl),
-       id = Some("submission-link")
-     )
-   </p>
-   <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-  }
- }
+@maybeUktrBannerScenario.map { scenario =>
+    @if(!maybeUktrBannerScenario.contains(Received)) {
+        @defining(scenario.toString) { scenario =>
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+            <h2 class="govuk-heading-m">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title")</h2>
+            <p class="govuk-body">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body")</p>
+            <p class="govuk-body">
+              @link(
+                text = messages("homepage.uktrBanner.linkText"),
+                call = Call("GET", dueAndOverdueReturnsUrl),
+                id = Some("submission-link")
+              )
+            </p>
+            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        }
+    }
+}
 
  <div class="card-group">
-      @if(maybeUktrBannerScenario.isDefined) {
-    <div class="card-half-width">
-        <div class="govuk-summary-card__title-wrapper card-with-tag">
-          <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
-            @maybeUktrBannerScenario.filter(Set("Overdue", "Incomplete", "Received").contains).map { scenario =>
-                <span class="govuk-tag @{
-                    scenario match {
-                        case "Overdue" => "govuk-tag--red"
-                        case "Incomplete" => "govuk-tag--purple"
-                        case "Received" => "govuk-tag--green"
+    @maybeUktrBannerScenario match {
+        case Some(returnScenario) => {
+            <div class="card-half-width">
+                <div class="govuk-summary-card__title-wrapper card-with-tag">
+                    <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
+                    @returnScenario match {
+                        case scenario @ (Overdue | Incomplete | Received) => {@defining(scenario.toString) { scenarioString =>
+                            <span class="govuk-tag @{
+                                scenario match {
+                                    case Overdue => "govuk-tag--red"
+                                    case Incomplete => "govuk-tag--purple"
+                                    case Received => "govuk-tag--green"
+                                }
+                            }" aria-label="@{scenarioString} returns" title="@{scenarioString} returns">@scenarioString</span>
+                        }}
+                        case Due => {}
                     }
-                }" aria-label="@{scenario} returns" title="@{scenario} returns">@scenario</span>
+                </div>
+                <div class="card-content">
+                    @if(hasReturnsUnderEnquiry) {
+                        <p class="govuk-body govuk-!-margin-bottom-4">
+                        @messages(s"homepage.returns.underEnquiry$maybeAgentKey.message")
+                        </p>
+                    }
+                    <ul class="govuk-list">
+                        <li class="card-links">
+                            <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
+                        </li>
+                        <li class="card-links">
+                            <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        }
+        case None => {
+            @if(hasReturnsUnderEnquiry) {
+                <div class="card-half-width">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
+                    </div>
+                    <div class="card-content">
+                        <p class="govuk-body govuk-!-margin-bottom-4">
+                        @messages(s"homepage.returns.underEnquiry$maybeAgentKey.message")
+                        </p>
+                        <ul class="govuk-list">
+                            <li class="card-links">
+                                <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
+                            </li>
+                            <li class="card-links">
+                                <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            } else {
+                @card(
+                    title = messages("homepage.returns.title"),
+                    links = Seq(
+                        (messages("homepage.returns.dueOverdueReturns.linkText"), dueAndOverdueReturnsUrl, None),
+                        (messages("homepage.returns.submissionHistory.linkText"), submissionHistoryUrl, None),
+                    )
+                )
             }
-        </div>
-      <div class="card-content">
-              @if(hasReturnsUnderEnquiry) {
-               <p class="govuk-body govuk-!-margin-bottom-4">
-                @messages(s"homepage.returns.underEnquiry$maybeAgentKey.message")
-               </p>
-              }
-       <ul class="govuk-list">
-        <li class="card-links">
-         <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
-        </li>
-        <li class="card-links">
-         <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
-        </li>
-       </ul>
-      </div>
-     </div>
-   } else {
-    @if(hasReturnsUnderEnquiry) {
-     <div class="card-half-width">
-        <div class="govuk-summary-card__title-wrapper">
-          <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.returns.title")</h2>
-        </div>
-               <div class="card-content">
-                <p class="govuk-body govuk-!-margin-bottom-4">
-                 @messages(s"homepage.returns.underEnquiry$maybeAgentKey.message")
-                </p>
-         <ul class="govuk-list">
-          <li class="card-links">
-           <a href="@dueAndOverdueReturnsUrl" class="govuk-link">@messages("homepage.returns.dueOverdueReturns.linkText")</a>
-          </li>
-          <li class="card-links">
-           <a href="@submissionHistoryUrl" class="govuk-link">@messages("homepage.returns.submissionHistory.linkText")</a>
-          </li>
-         </ul>
-        </div>
-       </div>
-    } else {
-     @card(
-      title = messages("homepage.returns.title"),
-      links = Seq(
-       (messages("homepage.returns.dueOverdueReturns.linkText"), dueAndOverdueReturnsUrl, None),
-       (messages("homepage.returns.submissionHistory.linkText"), submissionHistoryUrl, None),
-      )
-     )
+        }
     }
-   }
 
  @if(maybePaymentBannerScenario.isDefined) {
      <div class="card-half-width">
          <div class="govuk-summary-card__title-wrapper card-with-tag">
              <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
-             @maybePaymentBannerScenario.map { scenario =>
-                 <span class="govuk-tag @{
-                     scenario match {
-                         case "Outstanding" => "govuk-tag--red"
-                     }
-                 }" aria-label="@{
-                     scenario
-                 } payments" title="@{
-                     scenario
-                 } payments">@scenario</span>
+             @maybePaymentBannerScenario.map { paymentScenario =>
+                 @defining(paymentScenario.toString) { paymentScenarioString =>
+                     <span class="govuk-tag @{
+                         paymentScenario match {
+                             case Outstanding => "govuk-tag--red"
+                             case _ => ""
+                         }
+                     }" aria-label="@{
+                         paymentScenarioString
+                     } payments" title="@{
+                         paymentScenarioString
+                     } payments">@paymentScenarioString</span>
+                 }
              }
          </div>
          <div class="card-content">

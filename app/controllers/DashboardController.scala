@@ -115,8 +115,8 @@ class DashboardController @Inject() (
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               subscriptionData.accountStatus.exists(_.inactive),
-              getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
-              getOutstandingPaymentsStatus(financialData).map(_.toString),
+              getDueOrOverdueReturnsStatus(obligationsResponse),
+              getOutstandingPaymentsStatus(financialData),
               plrReference,
               isAgent = request.isAgent,
               hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
