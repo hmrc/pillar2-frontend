@@ -71,14 +71,14 @@
       }
     ){ scenarioKey => @insideSectionBreaks {
         <h2 class="govuk-heading-m" id="return-expected-notification-subheading">
-            @messages(s"homepage.uktrBanner$maybeAgentKey.$scenarioKey.title")
+            @messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.title")
         </h2>
         <p class="govuk-body" id="return-expected-notification-body">
-            @messages(s"homepage.uktrBanner$maybeAgentKey.$scenarioKey.body")
+            @messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.body")
         </p>
         <p class="govuk-body">
             @link(
-                text = messages("homepage.uktrBanner.linkText"),
+                text = messages("homepage.dna.returnExpected.linkText"),
                 call = Call("GET", dueAndOverdueReturnsUrl),
                 id = Some("return-expected-notification-submission-link")
             )
