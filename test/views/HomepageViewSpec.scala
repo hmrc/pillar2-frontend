@@ -350,14 +350,14 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
+      val amountOutstanding = 100000.00
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some(Outstanding), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(organisationName, date, btnActive = false, None, Some(Outstanding(amountOutstanding)), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
             request,
             appConfig,
             messages
-          )
-            .toString()
+          ).toString()
         )
       val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
       val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--red")

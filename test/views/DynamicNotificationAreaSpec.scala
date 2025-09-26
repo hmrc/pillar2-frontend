@@ -38,7 +38,7 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
     Option[DueAndOverdueReturnBannerScenario],
     Option[OutstandingPaymentBannerScenario]
   ) => Document = (uktrScenario, paymentScenario) => Jsoup.parse(component(uktrScenario, paymentScenario, isAgent = true).toString())
-  lazy val anyNotificationArea: Gen[
+  lazy val agentOrOrgNotificationArea: Gen[
     (
       Option[DueAndOverdueReturnBannerScenario],
       Option[OutstandingPaymentBannerScenario]
@@ -46,45 +46,101 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
   ] =
     Gen.oneOf(organisationNotificationArea, agentNotificationArea)
 
-  lazy val firstSectionBreakId = "notifications-break-begin"
-  lazy val lastSectionBreakId  = "notifications-break-end"
-  lazy val subheadingId        = "notifications-subheading"
-  lazy val messageId           = "notifications-body"
-  lazy val trSubmissionLinkId  = "submission-link"
+  val firstSectionBreakId       = "notifications-break-begin"
+  val lastSectionBreakId        = "notifications-break-end"
+  val accruingInterestSubheadId = "accruing-interest-notification-subheading"
+  val uktrExpectedSubheadId     = "return-expected-notification-subheading"
+  val accruingInterestBodyId    = "accruing-interest-notification-body"
+  val uktrExpectedBodyId        = "return-expected-notification-body"
+  val submitUktrLinkId          = "return-expected-notification-submission-link"
+  val outstandingPaymentsLinkId = "accruing-interest-notification-outstanding-payments-link"
 
-  "Dynamic notification area" should {
+  "Dynamic notification area" must {
     "not render anything" when {
-      val anyPaymentScenario: Gen[Option[OutstandingPaymentBannerScenario]] = Gen.option(Outstanding)
-      val doNotRenderScenarios = Gen.option(Received)
+      val doNotExpectUktrScenario = Gen.option(Received)
+      val anyPaymentScenario: Gen[Option[OutstandingPaymentBannerScenario]] = Gen.option(Outstanding(amountOutstanding = 12345.67))
 
-      "return is nonexistent or already received" in forAll(anyNotificationArea, doNotRenderScenarios, anyPaymentScenario) {
+      "UKTR is nonexistent or already received" in forAll(agentOrOrgNotificationArea, doNotExpectUktrScenario, anyPaymentScenario) {
         (template, uktr, payment) =>
           val page = template(uktr, payment)
-          Option(page.getElementById(firstSectionBreakId)) must not be defined
-          Option(page.getElementById(lastSectionBreakId))  must not be defined
-          Option(page.getElementById(subheadingId))        must not be defined
-          Option(page.getElementById(messageId))           must not be defined
-          Option(page.getElementById(trSubmissionLinkId))  must not be defined
+          val allIds = Seq(
+            firstSectionBreakId,
+            lastSectionBreakId,
+            accruingInterestSubheadId,
+            uktrExpectedSubheadId,
+            accruingInterestBodyId,
+            uktrExpectedBodyId,
+            submitUktrLinkId,
+            outstandingPaymentsLinkId
+          )
+
+          allIds.flatMap(id => Option(page.getElementById(id))) mustBe empty
       }
     }
 
     "render a notification" when {
-      "payment is not outstanding" which {
+      "an outstanding payment is accruing interest" which {
+        val outstandingPayment = Some(Outstanding(amountOutstanding = 12345.67))
+        val overdueUktr        = Some(Overdue)
+
+        "includes the section breaks" in forAll(agentOrOrgNotificationArea) { template =>
+          val page = template(overdueUktr, outstandingPayment)
+          behave like includesSectionBreaks(page)
+        }
+
+        "has the proper link" when {
+          "user is an organisation" in {
+            val page = organisationNotificationArea(overdueUktr, outstandingPayment)
+            val link = page.getElementById(outstandingPaymentsLinkId)
+            link.text() mustBe "View outstanding payments"
+            link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+          }
+
+          "user is an agent" in {
+            val page = agentNotificationArea(overdueUktr, outstandingPayment)
+            val link = page.getElementById(outstandingPaymentsLinkId)
+            link.text() mustBe "View outstanding payments"
+            link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+          }
+        }
+
+        "has the correct subheading and message" when {
+          "user is an organisation" in {
+            val page = organisationNotificationArea(overdueUktr, outstandingPayment)
+            behave like hasAccruingInterestNotification(
+              page,
+              expectedHeading = "You owe £12,345.67",
+              expectedMessage = "Your overdue payment is now subject to daily interest."
+            )
+          }
+
+          "user is an agent" in {
+            val page = agentNotificationArea(overdueUktr, outstandingPayment)
+            behave like hasAccruingInterestNotification(
+              page,
+              expectedHeading = "Your client owes £12,345.67",
+              expectedMessage = "This payment is overdue, and is now subject to daily interest."
+            )
+          }
+        }
+
+      }
+
+      "a UKTR is expected" which {
         val notOutstandingPayment = Option.empty[OutstandingPaymentBannerScenario]
 
-        val scenariosWhichRenderNotification = Gen.oneOf(
+        val uktrExpectedScenarios = Gen.oneOf(
           DueAndOverdueReturnBannerScenario.values.filter(_ != Received).map(Some.apply)
         )
 
-        "includes the section breaks" in forAll(anyNotificationArea, scenariosWhichRenderNotification) { (template, uktrScenario) =>
+        "includes the section breaks" in forAll(agentOrOrgNotificationArea, uktrExpectedScenarios) { (template, uktrScenario) =>
           val page = template(uktrScenario, notOutstandingPayment)
-          Option(page.getElementById(firstSectionBreakId)) mustBe defined
-          Option(page.getElementById(lastSectionBreakId)) mustBe defined
+          behave like includesSectionBreaks(page)
         }
 
-        "has the proper link" in forAll(anyNotificationArea, scenariosWhichRenderNotification) { (template, uktrScenario) =>
+        "has the proper link" in forAll(agentOrOrgNotificationArea, uktrExpectedScenarios) { (template, uktrScenario) =>
           val page = template(uktrScenario, notOutstandingPayment)
-          val link = page.getElementById(trSubmissionLinkId)
+          val link = page.getElementById(submitUktrLinkId)
           link.text() mustBe "View all due and overdue returns"
           link.attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
         }
@@ -92,7 +148,7 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
         "has the proper heading and message" when {
 
           val orgExpectations = Table(
-            ("Return scenario", "subhead", "message"),
+            ("UKTR scenario", "subhead", "message"),
             (Due, "You have one or more returns due", "Submit your returns before the due date to avoid penalties."),
             (Overdue, "You have overdue or incomplete returns", "You must submit or complete these returns as soon as possible."),
             (Incomplete, "You have overdue or incomplete returns", "You must submit or complete these returns as soon as possible.")
@@ -100,11 +156,11 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
 
           "user is an organisation" in forAll(orgExpectations) { case (scenario, expSubhead, expMessage) =>
             val page = organisationNotificationArea(Some(scenario), notOutstandingPayment)
-            behave like hasHeadingAndMessage(page, expSubhead, expMessage)
+            behave like hasUktrExpectedNotification(page, expSubhead, expMessage)
           }
 
           val agentExpectations = Table(
-            ("Return scenario", "subhead", "message"),
+            ("UKTR scenario", "subhead", "message"),
             (Due, "One or more returns are now due", "Submit returns before the due date to avoid penalties."),
             (Overdue, "Overdue or incomplete returns", "Submit or complete these returns as soon as possible."),
             (Incomplete, "Overdue or incomplete returns", "Submit or complete these returns as soon as possible.")
@@ -112,15 +168,26 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
 
           "user is an agent" in forAll(agentExpectations) { case (scenario, expSubhead, expMessage) =>
             val page = agentNotificationArea(Some(scenario), notOutstandingPayment)
-            behave like hasHeadingAndMessage(page, expSubhead, expMessage)
+            behave like hasUktrExpectedNotification(page, expSubhead, expMessage)
           }
         }
       }
     }
 
-    def hasHeadingAndMessage(page: Document, expectedHeading: String, expectedMessage: String): Assertion = {
-      val subhead = page.getElementById(subheadingId)
-      val message = page.getElementById(messageId)
+    def includesSectionBreaks(page: Document) =
+      Seq(firstSectionBreakId, lastSectionBreakId).flatMap(id => Option(page.getElementById(id))) must have(length(2))
+
+    def hasAccruingInterestNotification(page: Document, expectedHeading: String, expectedMessage: String): Assertion = {
+      val subhead = page.getElementById(accruingInterestSubheadId)
+      val message = page.getElementById(accruingInterestBodyId)
+
+      subhead.text() mustBe expectedHeading
+      message.text() mustBe expectedMessage
+    }
+
+    def hasUktrExpectedNotification(page: Document, expectedHeading: String, expectedMessage: String): Assertion = {
+      val subhead = page.getElementById(uktrExpectedSubheadId)
+      val message = page.getElementById(uktrExpectedBodyId)
 
       subhead.text() mustBe expectedHeading
       message.text() mustBe expectedMessage

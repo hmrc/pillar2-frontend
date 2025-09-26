@@ -201,20 +201,10 @@ class DashboardController @Inject() (
 
   def getOutstandingPaymentsStatus(financialSummaries: Option[Seq[FinancialSummary]]): Option[OutstandingPaymentBannerScenario] = {
 
-    def summaryStatus(summary: FinancialSummary): Option[OutstandingPaymentBannerScenario] = {
-      val transactions = summary.transactions
-
-      if (transactions.isEmpty) {
-        None
-      } else {
-        val hasOutstandingPayment = transactions.exists(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
-
-        hasOutstandingPayment match {
-          case true => Some(Outstanding)
-          case _    => None
-        }
-      }
-    }
+    def summaryStatus(summary: FinancialSummary): Option[OutstandingPaymentBannerScenario] =
+      summary.transactions
+        .find(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
+        .map(transaction => Outstanding(amountOutstanding = transaction.outstandingAmount))
 
     financialSummaries
       .getOrElse(Seq.empty)

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import models.DueAndOverdueReturnBannerScenario.Received
+@import models.DueAndOverdueReturnBannerScenario.{Overdue, Received}
 @import views.html.components.gds._
 
 @this(
@@ -33,20 +33,56 @@
     controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
 }
 
-@maybeUktrBannerScenario.map { scenario =>
-    @if(!maybeUktrBannerScenario.contains(Received)) {
-        @defining(scenario.toString) { scenario =>
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-begin">
-            <h2 class="govuk-heading-m" id="notifications-subheading">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.title")</h2>
-            <p class="govuk-body" id="notifications-body">@messages(s"homepage.uktrBanner$maybeAgentKey.$scenario.body")</p>
-            <p class="govuk-body">
+@viewOutstandingPaymentsUrl = @{
+    controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+}
+
+@insideSectionBreaks(content: Html) = {
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-begin">
+    @content
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-end">
+}
+
+@(maybeUktrBannerScenario, maybePaymentBannerScenario) match {
+  case (None | Some(Received), _) => {}
+  case (Some(Overdue), Some(Outstanding(amountOutstanding))) => {
+      @insideSectionBreaks {
+          <h2 class="govuk-heading-m" id="accruing-interest-notification-subheading">
+              @messages(s"homepage.dna.accruingInterest$maybeAgentKey.title", formatAmount(amountOutstanding))
+          </h2>
+          <p class="govuk-body" id="accruing-interest-notification-body">
+              @messages(s"homepage.dna.accruingInterest$maybeAgentKey.body")
+          </p>
+          <p class="govuk-body">
+          @link(
+              text = messages("homepage.dna.accruingInterest.outstandingPayments.linkText"),
+              call = Call("GET", viewOutstandingPaymentsUrl),
+              id = Some("accruing-interest-notification-outstanding-payments-link")
+          )
+          </p>
+      }
+  }
+  case (Some(scenario), _) => {
+    @defining(
+      scenario match {
+          case DueAndOverdueReturnBannerScenario.Due => "Due"
+          case DueAndOverdueReturnBannerScenario.Overdue => "Overdue"
+          case DueAndOverdueReturnBannerScenario.Incomplete => "Incomplete"
+      }
+    ){ scenarioKey => @insideSectionBreaks {
+        <h2 class="govuk-heading-m" id="return-expected-notification-subheading">
+            @messages(s"homepage.uktrBanner$maybeAgentKey.$scenarioKey.title")
+        </h2>
+        <p class="govuk-body" id="return-expected-notification-body">
+            @messages(s"homepage.uktrBanner$maybeAgentKey.$scenarioKey.body")
+        </p>
+        <p class="govuk-body">
             @link(
                 text = messages("homepage.uktrBanner.linkText"),
                 call = Call("GET", dueAndOverdueReturnsUrl),
-                id = Some("submission-link")
+                id = Some("return-expected-notification-submission-link")
             )
-            </p>
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-end">
-        }
-    }
+        </p>
+    }}
+  }
 }

@@ -156,17 +156,14 @@
      <div class="card-half-width">
          <div class="govuk-summary-card__title-wrapper card-with-tag">
              <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
-             @maybePaymentBannerScenario.map { paymentScenario =>
-                 @defining(paymentScenario.toString) { paymentScenarioString =>
-                     <span class="govuk-tag @{
-                         paymentScenario match {
-                             case Outstanding => "govuk-tag--red"
-                         }
-                     }" aria-label="@{
-                         paymentScenarioString
-                     } payments" title="@{
-                         paymentScenarioString
-                     } payments">@paymentScenarioString</span>
+             @maybePaymentBannerScenario.map {
+                 case Outstanding(_) => {
+                     <span
+                        class="govuk-tag govuk-tag--red"
+                        aria-label="Outstanding payments"
+                        title="Outstanding payments">
+                       @messages("homepage.payments.tags.outstanding")
+                     </span>
                  }
              }
          </div>

@@ -1034,13 +1034,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val amountOutstanding = 100
+        val controller        = application.injector.instanceOf[DashboardController]
 
         val pastDueDate = LocalDate.now.minusDays(7)
         val transactions = Seq(
           TransactionSummary(
             name = Pillar2UktrName,
-            outstandingAmount = 100,
+            outstandingAmount = amountOutstanding,
             dueDate = pastDueDate
           )
         )
@@ -1051,7 +1052,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
-        result mustBe Some(Outstanding)
+        result mustBe Some(Outstanding(amountOutstanding))
       }
     }
 

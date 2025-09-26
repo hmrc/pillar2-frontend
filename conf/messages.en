@@ -854,6 +854,7 @@ homepage.returns.underEnquiry.agent.message = Your client has one or more return
 homepage.payments.title = Payments
 homepage.payments.transactionHistory.linkText = View transaction history
 homepage.payments.outstandingPayments.linkText = View outstanding payments
+homepage.payments.tags.outstanding = Outstanding
 homepage.payments.repayments.linkText = Request a repayment
 
 homepage.manageAccount.title = Manage account
@@ -892,6 +893,13 @@ homepage.uktrBanner.agent.Incomplete.title = Overdue or incomplete returns
 homepage.uktrBanner.agent.Incomplete.body = Submit or complete these returns as soon as possible.
 
 homepage.uktrBanner.linkText = View all due and overdue returns
+
+homepage.dna.accruingInterest.title = You owe £{0}
+homepage.dna.accruingInterest.agent.title = Your client owes £{0}
+homepage.dna.accruingInterest.body = Your overdue payment is now subject to daily interest.
+homepage.dna.accruingInterest.agent.body = This payment is overdue, and is now subject to daily interest.
+homepage.dna.accruingInterest.outstandingPayments.linkText = View outstanding payments
+
 ###############################################
 #
 # Dashboard
