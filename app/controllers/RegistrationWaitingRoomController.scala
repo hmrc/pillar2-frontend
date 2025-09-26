@@ -42,10 +42,20 @@ class RegistrationWaitingRoomController @Inject() (
   def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(SubscriptionStatusPage) match {
-      case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad)
-      case Some(RegistrationInProgress)                   => Ok(view(Some(RegistrationInProgress)))
-      case Some(FailedWithDuplicatedSubmission)           => Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
-      case Some(FailedWithUnprocessableEntity)            => Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+      case Some(SuccessfullyCompletedSubscription) => Redirect(routes.RegistrationConfirmationController.onPageLoad)
+      case Some(RegistrationInProgress)            => Ok(view(Some(RegistrationInProgress)))
+      case Some(FailedWithDuplicatedSubmission) =>
+        if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
+          Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+        } else {
+          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+        }
+      case Some(FailedWithUnprocessableEntity) =>
+        if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
+          Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+        } else {
+          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+        }
       case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
       case Some(FailedWithNoMneOrDomesticValueFoundError) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       case Some(FailedWithDuplicatedSafeIdError)          => Redirect(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad)

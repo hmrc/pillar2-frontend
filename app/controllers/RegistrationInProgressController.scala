@@ -50,7 +50,11 @@ class RegistrationInProgressController @Inject() (
       }
       .recover {
         case UnprocessableEntityError =>
-          Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+          if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
+            Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
+          } else {
+            Ok(view(plrReference))
+          }
         case e: Throwable =>
           logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
           Redirect(routes.JourneyRecoveryController.onPageLoad())

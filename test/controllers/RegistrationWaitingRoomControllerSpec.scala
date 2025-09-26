@@ -55,9 +55,11 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
       }
     }
-    " redirect to error page in case of a duplicated submission response" in {
+    " redirect to empty state page in case of a duplicated submission response when both flags are true" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(Some(ua))
+        .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
@@ -68,9 +70,26 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to error page in case of a unprocessable entity response" in {
+    " redirect to old error page in case of a duplicated submission response when flags are false" in {
+      val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
+      val application = applicationBuilder(Some(ua))
+        .configure("features.phase2ScreensEnabled" -> false, "features.newHomepageEnabled" -> false)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url
+      }
+    }
+
+    " redirect to empty state page in case of a unprocessable entity response when both flags are true" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
-      val application = applicationBuilder(Some(ua)).build()
+      val application = applicationBuilder(Some(ua))
+        .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
+        .build()
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
@@ -78,6 +97,21 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.emptyStatePage.url
+      }
+    }
+
+    " redirect to old error page in case of a unprocessable entity response when flags are false" in {
+      val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
+      val application = applicationBuilder(Some(ua))
+        .configure("features.phase2ScreensEnabled" -> false, "features.newHomepageEnabled" -> false)
+        .build()
+
+      running(application) {
+        val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url
       }
     }
 
