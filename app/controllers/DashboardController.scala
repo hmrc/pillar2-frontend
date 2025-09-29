@@ -221,11 +221,11 @@ class DashboardController @Inject() (
     uktr:    Option[DueAndOverdueReturnBannerScenario],
     payment: Option[OutstandingPaymentBannerScenario]
   ): DynamicNotificationAreaState = (uktr, payment) match {
-    case (_, Some(Outstanding(amountOutstanding)))               => DynamicNotificationAreaState.AccruingInterestNotification(amountOutstanding)
-    case (Some(DueAndOverdueReturnBannerScenario.Due), _)        => DynamicNotificationAreaState.ReturnExpectedNotification.Due
-    case (Some(DueAndOverdueReturnBannerScenario.Overdue), _)    => DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-    case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _) => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-    case _                                                       => DynamicNotificationAreaState.NoNotification
+    case (_, Some(Outstanding(amountOutstanding)))                    => DynamicNotificationAreaState.AccruingInterestNotification(amountOutstanding)
+    case (Some(DueAndOverdueReturnBannerScenario.Due), _)             => DynamicNotificationAreaState.ReturnExpectedNotification.Due
+    case (Some(DueAndOverdueReturnBannerScenario.Overdue), _)         => DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+    case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _)      => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+    case (Some(DueAndOverdueReturnBannerScenario.Received) | None, _) => DynamicNotificationAreaState.NoNotification
   }
 
 }

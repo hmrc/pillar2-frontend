@@ -19,11 +19,10 @@ package views
 import base.ViewSpecBase
 import models.DynamicNotificationAreaState
 import models.DynamicNotificationAreaState._
-import models.DynamicNotificationAreaState.ReturnExpectedNotification._
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.scalacheck.Gen
 import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import views.html.DynamicNotificationAreaView
