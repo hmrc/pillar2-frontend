@@ -55,5 +55,23 @@ class SubscriptionFailureControllerSpec extends SpecBase {
         content must include(messages(application)("subscriptionFailure.support.linkText"))
       }
     }
+
+    "emptyStatePage" when {
+      "must return OK and the empty state homepage view" in {
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.SubscriptionFailureController.emptyStatePage.url)
+
+          val result = route(application, request).value
+
+          status(result) mustEqual OK
+
+          val content = contentAsString(result)
+          content must include(messages(application)("registrationInProgress.banner.heading"))
+          content must include(messages(application)("registrationInProgress.banner.message"))
+        }
+      }
+    }
   }
 }
