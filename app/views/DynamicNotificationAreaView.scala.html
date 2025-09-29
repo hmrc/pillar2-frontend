@@ -14,11 +14,15 @@
  * limitations under the License.
  *@
 
-@import models.DueAndOverdueReturnBannerScenario.{Overdue, Received}
+@import models.DueAndOverdueReturnBannerScenario.Received
 @import views.html.components.gds._
 
 @this(
+    h2: HeadingH2,
     link: link,
+    paragraphBody: paragraphBody,
+    paragraphBodyLink: paragraphBodyLink,
+    sectionBreak: SectionBreak
 )
 
 @(
@@ -38,27 +42,28 @@
 }
 
 @insideSectionBreaks(content: Html) = {
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-begin">
+    @sectionBreak(id=Some("notifications-break-begin"))
     @content
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" id="notifications-break-end">
+    @sectionBreak(id=Some("notifications-break-end"))
 }
 
 @(maybeUktrBannerScenario, maybePaymentBannerScenario) match {
   case (_, Some(Outstanding(amountOutstanding))) => {
       @insideSectionBreaks {
-          <h2 class="govuk-heading-m" id="accruing-interest-notification-subheading">
-              @messages(s"homepage.dna.accruingInterest$maybeAgentKey.title", formatAmount(amountOutstanding))
-          </h2>
-          <p class="govuk-body" id="accruing-interest-notification-body">
-              @messages(s"homepage.dna.accruingInterest$maybeAgentKey.body")
-          </p>
-          <p class="govuk-body">
-          @link(
-              text = messages("homepage.dna.accruingInterest.outstandingPayments.linkText"),
-              call = Call("GET", viewOutstandingPaymentsUrl),
-              id = Some("accruing-interest-notification-outstanding-payments-link")
+          @h2(
+              message = messages(s"homepage.dna.accruingInterest$maybeAgentKey.title", formatAmount(amountOutstanding)),
+              size = "m",
+              id = Some("accruing-interest-notification-subheading")
           )
-          </p>
+          @paragraphBody(
+            message = messages(s"homepage.dna.accruingInterest$maybeAgentKey.body"),
+            id = Some("accruing-interest-notification-body")
+          )
+          @paragraphBodyLink(
+            message = messages("homepage.dna.accruingInterest.outstandingPayments.linkText"),
+            linkUrl = viewOutstandingPaymentsUrl,
+            linkId = Some("accruing-interest-notification-outstanding-payments-link")
+          )
       }
   }
   case (None | Some(Received), _) => {}
@@ -70,19 +75,20 @@
           case DueAndOverdueReturnBannerScenario.Incomplete => "Incomplete"
       }
     ){ scenarioKey => @insideSectionBreaks {
-        <h2 class="govuk-heading-m" id="return-expected-notification-subheading">
-            @messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.title")
-        </h2>
-        <p class="govuk-body" id="return-expected-notification-body">
-            @messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.body")
-        </p>
-        <p class="govuk-body">
-            @link(
-                text = messages("homepage.dna.returnExpected.linkText"),
-                call = Call("GET", dueAndOverdueReturnsUrl),
-                id = Some("return-expected-notification-submission-link")
-            )
-        </p>
+        @h2(
+            message = messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.title"),
+            size = "m",
+            id = Some("return-expected-notification-subheading")
+        )
+        @paragraphBody(
+            message = messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.body"),
+            id = Some("return-expected-notification-body")
+        )
+        @paragraphBodyLink(
+            message = messages("homepage.dna.returnExpected.linkText"),
+            linkUrl = dueAndOverdueReturnsUrl,
+            linkId = Some("return-expected-notification-submission-link")
+        )
     }}
   }
 }
