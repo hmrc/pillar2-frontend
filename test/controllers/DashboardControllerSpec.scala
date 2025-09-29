@@ -28,6 +28,9 @@ import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -44,7 +47,7 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 import scala.concurrent.Future
 
-class DashboardControllerSpec extends SpecBase with ModelGenerators {
+class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -110,6 +113,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             btnActive = false,
             None,
             None,
+            DynamicNotificationAreaState.NoNotification,
             "12345678",
             isAgent = false,
             hasReturnsUnderEnquiry = false
@@ -1077,6 +1081,48 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
         result mustBe None
+      }
+    }
+  }
+
+  "determineNotificationArea" should {
+
+    val application = applicationBuilder().build()
+    val controller  = application.injector.instanceOf[DashboardController]
+
+    val noOutstandingPayment: Option[OutstandingPaymentBannerScenario] = Option.empty[OutstandingPaymentBannerScenario]
+    val anyReturnStatus = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
+
+    "choose to show an accruing interest notification" when {
+
+      "there's a payment outstanding" in forAll(anyReturnStatus, arbitrary[BigDecimal]) { (returnStatus, owed) =>
+        val result = controller.determineNotificationArea(returnStatus, Some(Outstanding(owed)))
+        result mustBe DynamicNotificationAreaState.AccruingInterestNotification(owed)
+      }
+    }
+
+    "choose to show a 'return expected' notification" when {
+
+      val returnExpectedNotificationMappings = Table(
+        "Return status"                              -> "Notification state",
+        DueAndOverdueReturnBannerScenario.Due        -> DynamicNotificationAreaState.ReturnExpectedNotification.Due,
+        DueAndOverdueReturnBannerScenario.Overdue    -> DynamicNotificationAreaState.ReturnExpectedNotification.Overdue,
+        DueAndOverdueReturnBannerScenario.Incomplete -> DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+      )
+
+      "there is no outstanding payment and a return is expected" in forAll(returnExpectedNotificationMappings) { (returnStatus, notificationState) =>
+        val result = controller.determineNotificationArea(Some(returnStatus), noOutstandingPayment)
+        result mustBe notificationState
+      }
+
+    }
+
+    "choose to avoid displaying a notification" when {
+
+      "there is no outstanding payment and a return is not expected" in forAll(Gen.option(DueAndOverdueReturnBannerScenario.Received)) {
+        noNotificationState =>
+          val result = controller.determineNotificationArea(noNotificationState, noOutstandingPayment)
+          result mustBe DynamicNotificationAreaState.NoNotification
       }
     }
   }

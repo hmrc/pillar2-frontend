@@ -111,13 +111,17 @@ class DashboardController @Inject() (
             }
         } yield {
           val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
+          val paymentsStatus         = getOutstandingPaymentsStatus(financialData)
+          val notificationArea       = determineNotificationArea(returnsStatus, paymentsStatus)
           Ok(
             homepageView(
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               subscriptionData.accountStatus.exists(_.inactive),
-              getDueOrOverdueReturnsStatus(obligationsResponse),
-              getOutstandingPaymentsStatus(financialData),
+              returnsStatus,
+              paymentsStatus,
+              notificationArea,
               plrReference,
               isAgent = request.isAgent,
               hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
@@ -211,6 +215,17 @@ class DashboardController @Inject() (
       .flatMap(summaryStatus)
       .maxOption
 
+  }
+
+  def determineNotificationArea(
+    uktr:    Option[DueAndOverdueReturnBannerScenario],
+    payment: Option[OutstandingPaymentBannerScenario]
+  ): DynamicNotificationAreaState = (uktr, payment) match {
+    case (_, Some(Outstanding(amountOutstanding)))               => DynamicNotificationAreaState.AccruingInterestNotification(amountOutstanding)
+    case (Some(DueAndOverdueReturnBannerScenario.Due), _)        => DynamicNotificationAreaState.ReturnExpectedNotification.Due
+    case (Some(DueAndOverdueReturnBannerScenario.Overdue), _)    => DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+    case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _) => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+    case _                                                       => DynamicNotificationAreaState.NoNotification
   }
 
 }
