@@ -118,5 +118,37 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
+    "when feature flags are enabled" when {
+      "must redirect to empty state page for 422 errors" in {
+        val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
+        val application = applicationBuilder(Some(ua))
+          .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.emptyStatePage.url
+        }
+      }
+
+      "must redirect to empty state page for 409 errors" in {
+        val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
+        val application = applicationBuilder(Some(ua))
+          .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
+          .build()
+
+        running(application) {
+          val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.emptyStatePage.url
+        }
+      }
+    }
+
   }
 }
