@@ -48,13 +48,13 @@ class RegistrationWaitingRoomController @Inject() (
         if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
           Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
         } else {
-          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+          Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
         }
       case Some(FailedWithUnprocessableEntity) =>
         if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
           Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
         } else {
-          Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
+          Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
         }
       case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
       case Some(FailedWithNoMneOrDomesticValueFoundError) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
