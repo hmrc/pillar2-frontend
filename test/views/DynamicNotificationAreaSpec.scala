@@ -38,12 +38,7 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
     Option[DueAndOverdueReturnBannerScenario],
     Option[OutstandingPaymentBannerScenario]
   ) => Document = (uktrScenario, paymentScenario) => Jsoup.parse(component(uktrScenario, paymentScenario, isAgent = true).toString())
-  lazy val agentOrOrgNotificationArea: Gen[
-    (
-      Option[DueAndOverdueReturnBannerScenario],
-      Option[OutstandingPaymentBannerScenario]
-    ) => Document
-  ] =
+  lazy val agentOrOrgNotificationArea: Gen[(Option[DueAndOverdueReturnBannerScenario], Option[OutstandingPaymentBannerScenario]) => Document] =
     Gen.oneOf(organisationNotificationArea, agentNotificationArea)
 
   val firstSectionBreakId       = "notifications-break-begin"
@@ -58,11 +53,10 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
   "Dynamic notification area" must {
     "not render anything" when {
       val doNotExpectUktrScenario = Gen.option(Received)
-      val anyPaymentScenario: Gen[Option[OutstandingPaymentBannerScenario]] = Gen.option(Outstanding(amountOutstanding = 12345.67))
 
-      "UKTR is nonexistent or already received" in forAll(agentOrOrgNotificationArea, doNotExpectUktrScenario, anyPaymentScenario) {
-        (template, uktr, payment) =>
-          val page = template(uktr, payment)
+      "UKTR is nonexistent or already received and there is no payment outstanding" in forAll(agentOrOrgNotificationArea, doNotExpectUktrScenario) {
+        (template, uktr) =>
+          val page = template(uktr, Option.empty[OutstandingPaymentBannerScenario])
           val allIds = Seq(
             firstSectionBreakId,
             lastSectionBreakId,
@@ -81,23 +75,23 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
     "render a notification" when {
       "an outstanding payment is accruing interest" which {
         val outstandingPayment = Some(Outstanding(amountOutstanding = 12345.67))
-        val overdueUktr        = Some(Overdue)
+        val anyUktrScenario    = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
 
-        "includes the section breaks" in forAll(agentOrOrgNotificationArea) { template =>
-          val page = template(overdueUktr, outstandingPayment)
+        "includes the section breaks" in forAll(agentOrOrgNotificationArea, anyUktrScenario) { (template, uktrScenario) =>
+          val page = template(uktrScenario, outstandingPayment)
           behave like includesSectionBreaks(page)
         }
 
         "has the proper link" when {
-          "user is an organisation" in {
-            val page = organisationNotificationArea(overdueUktr, outstandingPayment)
+          "user is an organisation" in forAll(anyUktrScenario) { uktrScenario =>
+            val page = organisationNotificationArea(uktrScenario, outstandingPayment)
             val link = page.getElementById(outstandingPaymentsLinkId)
             link.text() mustBe "View outstanding payments"
             link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
           }
 
-          "user is an agent" in {
-            val page = agentNotificationArea(overdueUktr, outstandingPayment)
+          "user is an agent" in forAll(anyUktrScenario) { uktrScenario =>
+            val page = agentNotificationArea(uktrScenario, outstandingPayment)
             val link = page.getElementById(outstandingPaymentsLinkId)
             link.text() mustBe "View outstanding payments"
             link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
@@ -105,8 +99,8 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
         }
 
         "has the correct subheading and message" when {
-          "user is an organisation" in {
-            val page = organisationNotificationArea(overdueUktr, outstandingPayment)
+          "user is an organisation" in forAll(anyUktrScenario) { uktrScenario =>
+            val page = organisationNotificationArea(uktrScenario, outstandingPayment)
             behave like hasAccruingInterestNotification(
               page,
               expectedHeading = "You owe £12,345.67",
@@ -114,8 +108,8 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
             )
           }
 
-          "user is an agent" in {
-            val page = agentNotificationArea(overdueUktr, outstandingPayment)
+          "user is an agent" in forAll(anyUktrScenario) { uktrScenario =>
+            val page = agentNotificationArea(uktrScenario, outstandingPayment)
             behave like hasAccruingInterestNotification(
               page,
               expectedHeading = "Your client owes £12,345.67",
@@ -126,7 +120,7 @@ class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyCh
 
       }
 
-      "a UKTR is expected" which {
+      "a UKTR is expected and there is no outstanding payment" which {
         val notOutstandingPayment = Option.empty[OutstandingPaymentBannerScenario]
 
         val uktrExpectedScenarios = Gen.oneOf(

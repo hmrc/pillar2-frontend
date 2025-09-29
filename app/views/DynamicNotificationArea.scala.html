@@ -44,8 +44,7 @@
 }
 
 @(maybeUktrBannerScenario, maybePaymentBannerScenario) match {
-  case (None | Some(Received), _) => {}
-  case (Some(Overdue), Some(Outstanding(amountOutstanding))) => {
+  case (_, Some(Outstanding(amountOutstanding))) => {
       @insideSectionBreaks {
           <h2 class="govuk-heading-m" id="accruing-interest-notification-subheading">
               @messages(s"homepage.dna.accruingInterest$maybeAgentKey.title", formatAmount(amountOutstanding))
@@ -62,6 +61,7 @@
           </p>
       }
   }
+  case (None | Some(Received), _) => {}
   case (Some(scenario), _) => {
     @defining(
       scenario match {

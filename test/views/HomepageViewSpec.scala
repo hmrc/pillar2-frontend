@@ -304,7 +304,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message with status tag when both enquiry and status scenario are present" in {
       val organisationViewWithEnquiryAndOverdue: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Overdue"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(
+          page(organisationName, date, btnActive = false, Some(Overdue), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(
             request,
             appConfig,
             messages
@@ -353,7 +353,16 @@ class HomepageViewSpec extends ViewSpecBase {
       val amountOutstanding = 100000.00
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some(Outstanding(amountOutstanding)), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            Some(Outstanding(amountOutstanding)),
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
