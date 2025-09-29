@@ -17,8 +17,8 @@
 package views
 
 import base.ViewSpecBase
-import models.{DueAndOverdueReturnBannerScenario, Outstanding, OutstandingPaymentBannerScenario}
 import models.DueAndOverdueReturnBannerScenario._
+import models.{DueAndOverdueReturnBannerScenario, Outstanding, OutstandingPaymentBannerScenario}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.scalacheck.Gen
