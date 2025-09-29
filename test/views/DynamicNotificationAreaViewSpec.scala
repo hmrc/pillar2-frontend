@@ -24,11 +24,11 @@ import org.jsoup.nodes.Document
 import org.scalacheck.Gen
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import views.html.DynamicNotificationArea
+import views.html.DynamicNotificationAreaView
 
-class DynamicNotificationAreaSpec extends ViewSpecBase with ScalaCheckPropertyChecks {
+class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckPropertyChecks {
 
-  lazy val component: DynamicNotificationArea = inject[DynamicNotificationArea]
+  lazy val component: DynamicNotificationAreaView = inject[DynamicNotificationAreaView]
 
   lazy val organisationNotificationArea: (
     Option[DueAndOverdueReturnBannerScenario],
