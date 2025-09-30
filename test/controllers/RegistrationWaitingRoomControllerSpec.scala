@@ -118,7 +118,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    "when feature flags are enabled" when {
+    "feature flags are enabled" when {
       "redirect to empty state page for 422 errors" in {
         val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
         val application = applicationBuilder(Some(ua))

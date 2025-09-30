@@ -57,7 +57,7 @@ class SubscriptionFailureControllerSpec extends SpecBase {
     }
 
     "emptyStatePage" when {
-      "must return OK and the empty state homepage view" in {
+      "return OK and the empty state homepage view" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
         running(application) {
