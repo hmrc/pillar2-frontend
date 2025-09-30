@@ -33,7 +33,7 @@ import scala.concurrent.ExecutionContext
 class SubscriptionFailureController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
-  view:                     SubscriptionFailureView,
+  subscriptionFailureView:  SubscriptionFailureView,
   emptyStateHomepageView:   EmptyStateHomepageView,
   sessionRepository:        SessionRepository
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
@@ -41,13 +41,13 @@ class SubscriptionFailureController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    Ok(view(appConfig.supportUrl))
+    Ok(subscriptionFailureView(appConfig.supportUrl))
   }
 
   def emptyStatePage: Action[AnyContent] = identify.async { implicit request =>
     sessionRepository.get(request.userId).map { maybeUserAnswers =>
-      val userAnswers  = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-      val plrReference = userAnswers.get(PlrReferencePage).getOrElse("")
+      val userAnswers:  UserAnswers = maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+      val plrReference: String      = userAnswers.get(PlrReferencePage).getOrElse("")
       Ok(emptyStateHomepageView(plrReference, request.isAgent))
     }
   }

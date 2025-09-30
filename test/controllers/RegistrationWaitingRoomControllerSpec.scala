@@ -119,7 +119,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
     }
 
     "when feature flags are enabled" when {
-      "must redirect to empty state page for 422 errors" in {
+      "redirect to empty state page for 422 errors" in {
         val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
         val application = applicationBuilder(Some(ua))
           .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
@@ -134,7 +134,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         }
       }
 
-      "must redirect to empty state page for 409 errors" in {
+      "redirect to empty state page for 409 errors" in {
         val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
         val application = applicationBuilder(Some(ua))
           .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)

@@ -44,13 +44,7 @@ class RegistrationWaitingRoomController @Inject() (
       .get(SubscriptionStatusPage) match {
       case Some(SuccessfullyCompletedSubscription) => Redirect(routes.RegistrationConfirmationController.onPageLoad)
       case Some(RegistrationInProgress)            => Ok(view(Some(RegistrationInProgress)))
-      case Some(FailedWithDuplicatedSubmission) =>
-        if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
-          Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
-        } else {
-          Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
-        }
-      case Some(FailedWithUnprocessableEntity) =>
+      case Some(FailedWithDuplicatedSubmission) | Some(FailedWithUnprocessableEntity) =>
         if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
           Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
         } else {
