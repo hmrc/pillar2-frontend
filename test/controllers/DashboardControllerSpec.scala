@@ -21,7 +21,6 @@ import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.payments.OutstandingPaymentsControllerSpec.samplePaymentsDataWithNoTag
 import generators.ModelGenerators
-import helpers.FinancialDataHelper.Pillar2UktrName
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
@@ -96,7 +95,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
           when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-          when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
+          when(mockOutstandingPaymentsService.retrieveRawData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
 
           val result = route(application, request).value
@@ -1035,19 +1034,17 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val controller = application.injector.instanceOf[DashboardController]
 
         val pastDueDate = LocalDate.now.minusDays(7)
-        val transactions = Seq(
-          TransactionSummary(
-            name = Pillar2UktrName,
-            outstandingAmount = 100,
-            dueDate = pastDueDate
-          )
+        val financialTransaction = FinancialTransaction(
+          mainTransaction = Some("6500"),
+          subTransaction = Some("1234"),
+          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+          taxPeriodTo = Some(LocalDate.now),
+          outstandingAmount = Some(BigDecimal(1000.00)),
+          items = Seq(FinancialItem(dueDate = Some(pastDueDate), clearingDate = None))
         )
-        val financialSummary = FinancialSummary(
-          accountingPeriod = AccountingPeriod(LocalDate.now.minusMonths(12), LocalDate.now),
-          transactions = transactions
-        )
+        val financialData = FinancialData(Seq(financialTransaction))
 
-        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
+        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
 
         result mustBe Some(Outstanding)
       }
@@ -1059,21 +1056,58 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val controller = application.injector.instanceOf[DashboardController]
 
         val futureDueDate = LocalDate.now.plusDays(7)
-        val transactions = Seq(
-          TransactionSummary(
-            name = Pillar2UktrName,
-            outstandingAmount = 100,
-            dueDate = futureDueDate
-          )
+        val financialTransaction = FinancialTransaction(
+          mainTransaction = Some("6500"),
+          subTransaction = Some("1234"),
+          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+          taxPeriodTo = Some(LocalDate.now),
+          outstandingAmount = Some(BigDecimal(1000.00)),
+          items = Seq(FinancialItem(dueDate = Some(futureDueDate), clearingDate = None))
         )
-        val financialSummary = FinancialSummary(
-          accountingPeriod = AccountingPeriod(LocalDate.now.minusMonths(12), LocalDate.now),
-          transactions = transactions
-        )
+        val financialData = FinancialData(Seq(financialTransaction))
 
-        val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
+        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
 
         result mustBe None
+      }
+    }
+
+    "return Paid when there is a payment made in the last 60 days and no outstanding payment on any transaction" in {
+      val application = applicationBuilder(userAnswers = None, enrolments).build()
+      running(application) {
+        val controller = application.injector.instanceOf[DashboardController]
+
+        val chargeFinancialTransaction = FinancialTransaction(
+          mainTransaction = Some("6500"),
+          subTransaction = Some("1234"),
+          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+          taxPeriodTo = Some(LocalDate.now),
+          outstandingAmount = Some(BigDecimal(0)),
+          items = Seq(
+            FinancialItem(
+              dueDate = Some(LocalDate.now.minusDays(26)),
+              clearingDate = Some(LocalDate.now.minusDays(25))
+            )
+          )
+        )
+        val paymentFinancialTransaction = FinancialTransaction(
+          mainTransaction = Some("0060"),
+          subTransaction = Some("1234"),
+          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+          taxPeriodTo = Some(LocalDate.now),
+          outstandingAmount = Some(BigDecimal(0)),
+          items = Seq(
+            FinancialItem(
+              dueDate = Some(LocalDate.now.minusDays(26)),
+              clearingDate = Some(LocalDate.now.minusDays(25))
+            )
+          )
+        )
+        val financialData = FinancialData(Seq(chargeFinancialTransaction, paymentFinancialTransaction))
+
+        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
+
+        result mustBe Some(Paid)
       }
     }
   }

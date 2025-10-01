@@ -34,8 +34,7 @@ import repositories.SessionRepository
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.RECEIVED_PERIOD_IN_DAYS
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.{RECEIVED_PERIOD_IN_DAYS, SUBMISSION_ACCOUNTING_PERIODS}
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -104,8 +103,8 @@ class DashboardController @Inject() (
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
           obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
-          financialData <-
-            opService.retrieveData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
+          rawFinancialData <-
+            opService.retrieveRawData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
               case _ => None
             }
         } yield Ok(
@@ -114,7 +113,7 @@ class DashboardController @Inject() (
             subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
             subscriptionData.accountStatus.exists(_.inactive),
             getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
-            getOutstandingPaymentsStatus(financialData).map(_.toString),
+            getOutstandingPaymentsStatus(rawFinancialData).map(_.toString),
             plrReference,
             isAgent = request.isAgent
           )
@@ -194,26 +193,46 @@ class DashboardController @Inject() (
 
   }
 
-  def getOutstandingPaymentsStatus(financialSummaries: Option[Seq[FinancialSummary]]): Option[OutstandingPaymentBannerScenario] = {
+  def getOutstandingPaymentsStatus(
+    rawFinancialData: Option[FinancialData]
+  ): Option[OutstandingPaymentBannerScenario] = {
 
-    def summaryStatus(summary: FinancialSummary): Option[OutstandingPaymentBannerScenario] = {
-      val transactions = summary.transactions
+    def financialStatus(data: FinancialData): Option[OutstandingPaymentBannerScenario] = {
+      val transactions = data.financialTransactions
 
       if (transactions.isEmpty) {
         None
       } else {
-        val hasOutstandingPayment = transactions.exists(t => t.outstandingAmount > 0 && t.dueDate.isBefore(LocalDate.now))
+        val currentDate = LocalDate.now
+        val totalOutstandingAmount = rawFinancialData.map(
+          _.financialTransactions
+            .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
+            .flatMap(_.outstandingAmount)
+            .sum
+        )
+        val hasOutstandingPayment = rawFinancialData.exists(
+          _.financialTransactions
+            .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
+            .exists(_.items.flatMap(_.dueDate).maxOption.exists(_.isBefore(currentDate)))
+        )
+        val hasRecentPayment = rawFinancialData.exists(
+          _.financialTransactions
+            .filter(_.mainTransaction.contains("0060"))
+            .flatMap(_.items.flatMap(_.clearingDate))
+            .maxOption
+            .exists(ChronoUnit.DAYS.between(_, LocalDate.now) < 60)
+        )
 
-        hasOutstandingPayment match {
-          case true => Some(Outstanding)
-          case _    => None
+        (hasOutstandingPayment, hasRecentPayment) match {
+          case (true, _)                                        => Some(Outstanding)
+          case (false, true) if totalOutstandingAmount.get == 0 => Some(Paid)
+          case _                                                => None
         }
       }
     }
 
-    financialSummaries
-      .getOrElse(Seq.empty)
-      .flatMap(summaryStatus)
+    rawFinancialData
+      .flatMap(financialStatus)
       .maxOption
 
   }

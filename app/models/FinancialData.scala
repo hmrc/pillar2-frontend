@@ -40,7 +40,7 @@ object FinancialTransaction {
   implicit val format: OFormat[FinancialTransaction] = Json.format[FinancialTransaction]
 }
 
-final case class FinancialItem(dueDate: Option[LocalDate])
+final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
 
 object FinancialItem {
   implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]

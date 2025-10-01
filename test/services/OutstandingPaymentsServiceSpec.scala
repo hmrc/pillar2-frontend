@@ -66,7 +66,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val firstApUktrUTPR: FinancialTransaction = FinancialTransaction(
@@ -75,7 +75,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6235"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val firstApUktrIIR: FinancialTransaction = FinancialTransaction(
@@ -84,7 +84,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6234"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val secondApUktrDTT: FinancialTransaction = FinancialTransaction(
@@ -93,7 +93,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1)), clearingDate = Some(testDate)))
   )
 
   val secondApInterestDTT: FinancialTransaction = FinancialTransaction(
@@ -102,7 +102,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6503"),
     subTransaction = Some("6239"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1)), clearingDate = Some(testDate.minusYears(1))))
   )
 
   val secondApInterestIIR: FinancialTransaction = FinancialTransaction(
@@ -111,7 +111,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6503"),
     subTransaction = Some("6236"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1)), clearingDate = Some(testDate.minusYears(1))))
   )
 
   val secondApInterestUTPR: FinancialTransaction = FinancialTransaction(
@@ -120,7 +120,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6503"),
     subTransaction = Some("6238"),
     outstandingAmount = Some(1000.00),
-    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1))))
+    items = Seq(FinancialItem(dueDate = Some(testDate.minusYears(1)), clearingDate = Some(testDate.minusYears(1))))
   )
 
   val validResponse: FinancialData = FinancialData(financialTransactions =
@@ -144,7 +144,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     outstandingAmount = Some(1000),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val transactionMissingAmount: FinancialTransaction = FinancialTransaction(
@@ -153,7 +153,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     outstandingAmount = None,
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val transactionInvalidMainTransaction: FinancialTransaction = FinancialTransaction(
@@ -162,7 +162,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("0"),
     subTransaction = Some("6233"),
     outstandingAmount = Some(1000),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val transactionInvalidSubTransaction: FinancialTransaction = FinancialTransaction(
@@ -171,7 +171,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("0"),
     outstandingAmount = Some(1000),
-    items = Seq(FinancialItem(dueDate = Some(testDate)))
+    items = Seq(FinancialItem(dueDate = Some(testDate), clearingDate = Some(testDate)))
   )
 
   val transactionNoDueDate: FinancialTransaction = FinancialTransaction(
@@ -180,7 +180,7 @@ object OutstandingPaymentsServiceSpec {
     mainTransaction = Some("6500"),
     subTransaction = Some("6230"),
     outstandingAmount = Some(1000),
-    items = Seq(FinancialItem(dueDate = None))
+    items = Seq(FinancialItem(dueDate = None, clearingDate = None))
   )
 
   val redundantTransaction: FinancialData = FinancialData(financialTransactions =

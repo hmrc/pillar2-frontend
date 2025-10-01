@@ -19,10 +19,9 @@ package controllers.payments
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
 import controllers.payments.OutstandingPaymentsControllerSpec._
-import controllers.payments.OutstandingPaymentsControllerSpec.{enrolments, pillar2Id, samplePaymentsData}
 import helpers.FinancialDataHelper.Pillar2UktrName
+import models._
 import models.subscription.AccountingPeriod
-import models.{FinancialSummary, TransactionSummary}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -134,7 +133,20 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
-  val samplePaymentsDataWithNoTag: Seq[FinancialSummary] = Seq(
+  val samplePaymentsDataWithNoTag: FinancialData = FinancialData(
+    Seq(
+      FinancialTransaction(
+        mainTransaction = Some("6500"),
+        subTransaction = Some("1234"),
+        taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+        taxPeriodTo = Some(LocalDate.now),
+        outstandingAmount = Some(BigDecimal(1000.00)),
+        items = Seq(FinancialItem(dueDate = None, clearingDate = None))
+      )
+    )
+  )
+
+  val samplePaymentsDataWithNoTag2: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))

@@ -295,6 +295,23 @@ class HomepageViewSpec extends ViewSpecBase {
       outstandingTag.attr("aria-label") mustBe "Outstanding payments"
       outstandingTag.attr("title") mustBe "Outstanding payments"
     }
+
+    "display Payments Paid tag with green style when Paid scenario is provided" in {
+      val organisationViewWithOutstandingScenario: Document =
+        Jsoup.parse(
+          page(organisationName, date, btnActive = false, None, Some("Paid"), plrRef, isAgent = false)(request, appConfig, messages)
+            .toString()
+        )
+      val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
+      val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--green")
+
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+
+      val paidTag: Element = statusTags.first()
+      paidTag.text() mustBe "Paid"
+      paidTag.attr("aria-label") mustBe "Paid payments"
+      paidTag.attr("title") mustBe "Paid payments"
+    }
   }
 
   "HomepageView for an agent" should {

@@ -19,7 +19,7 @@ package services
 import connectors.FinancialDataConnector
 import helpers.FinancialDataHelper.{PlrMainTransactionsRefs, PlrSubTransactionsRefs, toPillar2Transaction}
 import models.subscription.AccountingPeriod
-import models.{FinancialSummary, TransactionSummary}
+import models.{FinancialData, FinancialSummary, TransactionSummary}
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.LocalDate
@@ -59,4 +59,8 @@ class OutstandingPaymentsService @Inject() (financialDataConnector: FinancialDat
           FinancialSummary(AccountingPeriod(periodFrom, periodTo), transactionSummaries.sortBy(_.dueDate).reverse)
         }
     }
+
+  def retrieveRawData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
+    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate)
+
 }
