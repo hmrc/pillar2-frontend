@@ -217,7 +217,7 @@ class DashboardController @Inject() (
         val hasOutstandingPayment = rawFinancialData.exists(
           _.financialTransactions
             .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
-            .exists(_.items.flatMap(_.dueDate).maxOption.exists(_.isBefore(currentDate)))
+            .exists(_.items.flatMap(_.dueDate).minOption.exists(_.isBefore(currentDate)))
         )
         val hasRecentPayment = rawFinancialData.exists(
           _.financialTransactions
