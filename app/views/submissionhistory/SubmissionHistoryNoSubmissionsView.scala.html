@@ -29,7 +29,8 @@
 
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle    = titleNoForm(messages("submissionHistoryNoSubmissions.title"))
+    pageTitle = titleNoForm(messages("submissionHistoryNoSubmissions.title")),
+    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
     @heading(messages("submissionHistoryNoSubmissions.heading"), classes = "govuk-heading-l")
     @if(isAgent) {
