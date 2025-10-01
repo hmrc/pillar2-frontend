@@ -107,17 +107,21 @@ class DashboardController @Inject() (
             opService.retrieveRawData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now()).map(Some(_)).recover {
               case _ => None
             }
-        } yield Ok(
-          homepageView(
-            subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
-            subscriptionData.accountStatus.exists(_.inactive),
-            getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
-            getOutstandingPaymentsStatus(rawFinancialData).map(_.toString),
-            plrReference,
-            isAgent = request.isAgent
+        } yield {
+          val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          Ok(
+            homepageView(
+              subscriptionData.upeDetails.organisationName,
+              subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+              subscriptionData.accountStatus.exists(_.inactive),
+              getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
+              getOutstandingPaymentsStatus(rawFinancialData).map(_.toString),
+              plrReference,
+              isAgent = request.isAgent,
+              hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
+            )
           )
-        )
+        }
       }
     } else {
       Future.successful(
