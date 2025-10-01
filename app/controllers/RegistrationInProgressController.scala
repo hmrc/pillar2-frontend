@@ -32,7 +32,8 @@ import scala.concurrent.ExecutionContext
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  view:                     RegistrationInProgressView,
+  viewOldHomepage:          RegistrationInProgressView,
+  viewNewHomepage:          RegistrationInProgressViewNew,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -40,6 +41,7 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
+    val view = if (appConfig.newHomepageEnabled) viewNewHomepage else viewOldHomepage
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
