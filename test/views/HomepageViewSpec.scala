@@ -371,7 +371,7 @@ class HomepageViewSpec extends ViewSpecBase {
     "display Payments Paid tag with green style when Paid scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some("Paid"), plrRef, isAgent = false)(request, appConfig, messages)
+          page(organisationName, date, btnActive = false, None, Some("Paid"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(request, appConfig, messages)
             .toString()
         )
       val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
