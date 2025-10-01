@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressView
-import views.html.EmptyStateHomepageView
+import views.html.RegistrationInProgressNewView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -34,7 +34,7 @@ class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
   viewOldHomepage:          RegistrationInProgressView,
-  viewNewHomepage:          EmptyStateHomepageView,
+  viewNewHomepage:          RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -42,11 +42,16 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
-    val view: String => play.twirl.api.Html = if (appConfig.newHomepageEnabled) 
-      (ref: String) => viewNewHomepage(ref, request.isAgent)
-    else 
-      (ref: String) => viewOldHomepage(ref)
-    
+    logger.info(s"newHomepageEnabled: ${appConfig.newHomepageEnabled}")
+    val view: String => play.twirl.api.Html =
+      if (appConfig.newHomepageEnabled) {
+        logger.info("Using new homepage view")
+        (ref: String) => viewNewHomepage(ref)
+      } else {
+        logger.info("Using old homepage view")
+        (ref: String) => viewOldHomepage(ref)
+      }
+
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {

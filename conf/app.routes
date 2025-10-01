@@ -123,7 +123,6 @@ GET         /error/page-not-found                                               
 GET         /error/view                                                                              controllers.ViewAmendSubscriptionFailedController.onPageLoad
 
 GET         /error/subscription-failure                                                              controllers.subscription.SubscriptionFailureController.onPageLoad
-GET         /error/subscription-failure/empty-state                                                  controllers.subscription.SubscriptionFailureController.emptyStatePage
 
 GET         /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/ultimate-parent/uk-based/entity-type                                  controllers.registration.EntityTypeController.onSubmit(mode: Mode = NormalMode)
