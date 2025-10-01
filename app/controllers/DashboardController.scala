@@ -228,9 +228,9 @@ class DashboardController @Inject() (
         )
 
         (hasOutstandingPayment, hasRecentPayment) match {
-          case (true, _)                                        => Some(Outstanding)
+          case (true, _)                                           => Some(Outstanding)
           case (false, true) if totalOutstandingAmount.contains(0) => Some(Paid)
-          case _                                                => None
+          case _                                                   => None
         }
       }
     }
