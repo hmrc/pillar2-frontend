@@ -19,13 +19,12 @@ package controllers
 import base.SpecBase
 import models.UserAnswers
 import models.subscription.SubscriptionStatus._
-import org.scalatest.wordspec.AnyWordSpec
 import pages.SubscriptionStatusPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.registrationview.RegistrationWaitingRoomView
 
-class RegistrationWaitingRoomControllerSpec extends AnyWordSpec with SpecBase {
+class RegistrationWaitingRoomControllerSpec extends SpecBase {
 
   "RegistrationWaitingRoom Controller" when {
 
@@ -116,38 +115,6 @@ class RegistrationWaitingRoomControllerSpec extends AnyWordSpec with SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url
-      }
-    }
-
-    "feature flags are enabled" should {
-      "redirect to empty state page for 422 errors" in {
-        val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
-        val application = applicationBuilder(Some(ua))
-          .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.emptyStatePage.url
-        }
-      }
-
-      "redirect to empty state page for 409 errors" in {
-        val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
-        val application = applicationBuilder(Some(ua))
-          .configure("features.phase2ScreensEnabled" -> true, "features.newHomepageEnabled" -> true)
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.RegistrationWaitingRoomController.onPageLoad().url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailureController.emptyStatePage.url
-        }
       }
     }
 

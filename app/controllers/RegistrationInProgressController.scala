@@ -25,6 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressView
+import views.html.EmptyStateHomepageView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -32,7 +33,8 @@ import scala.concurrent.ExecutionContext
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  view:                     RegistrationInProgressView,
+  viewOldHomepage:          RegistrationInProgressView,
+  viewNewHomepage:          EmptyStateHomepageView,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -40,6 +42,11 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
+    val view: String => play.twirl.api.Html = if (appConfig.newHomepageEnabled) 
+      (ref: String) => viewNewHomepage(ref, request.isAgent)
+    else 
+      (ref: String) => viewOldHomepage(ref)
+    
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
@@ -50,11 +57,7 @@ class RegistrationInProgressController @Inject() (
       }
       .recover {
         case UnprocessableEntityError =>
-          if (appConfig.phase2ScreensEnabled && appConfig.newHomepageEnabled) {
-            Redirect(controllers.subscription.routes.SubscriptionFailureController.emptyStatePage)
-          } else {
-            Ok(view(plrReference))
-          }
+          Ok(view(plrReference))
         case e: Throwable =>
           logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
           Redirect(routes.JourneyRecoveryController.onPageLoad())
