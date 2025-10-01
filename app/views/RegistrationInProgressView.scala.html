@@ -37,6 +37,7 @@
 
 @layout(pageTitle = titleNoForm(messages("registrationInProgress.title")), showBackLink = false) {
 
+    <!-- DEBUG: RegistrationInProgressView (old) is being rendered -->
     @govukNotificationBanner(NotificationBanner(
         title = Text(messages("site.important")),
         content = HtmlContent(Html(
