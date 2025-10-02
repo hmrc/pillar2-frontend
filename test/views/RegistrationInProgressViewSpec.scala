@@ -23,8 +23,8 @@ import org.jsoup.select.Elements
 import views.html.RegistrationInProgressView
 
 class RegistrationInProgressViewSpec extends ViewSpecBase {
-  lazy val page: RegistrationInProgressView = inject[RegistrationInProgressView]
-  lazy val plrRef: String                  = "XMPLR0012345678"
+  lazy val page:   RegistrationInProgressView = inject[RegistrationInProgressView]
+  lazy val plrRef: String                     = "XMPLR0012345678"
 
   lazy val view: Document = Jsoup.parse(
     page(plrRef)(request, messages, appConfig).toString()
@@ -49,8 +49,8 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
     "have a notification banner with registration in progress message" in {
       val banners: Elements = view.getElementsByClass("govuk-notification-banner")
       banners.size() mustBe 1
-      
-      val banner: Element = banners.first()
+
+      val banner:        Element = banners.first()
       val bannerHeading: Element = banner.getElementsByClass("govuk-notification-banner__heading").first()
       bannerHeading.text() mustBe "Your registration is in progress"
 
@@ -70,7 +70,7 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
     "have correct notification banner structure" in {
       val banners: Elements = view.getElementsByClass("govuk-notification-banner")
       banners.size() mustBe 1
-      
+
       val banner = banners.first()
       banner.getElementsByClass("govuk-notification-banner__title").size() mustBe 1
       banner.getElementsByClass("govuk-notification-banner__heading").size() mustBe 1

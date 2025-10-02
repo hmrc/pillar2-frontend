@@ -24,8 +24,8 @@ import org.jsoup.select.Elements
 import views.html.RegistrationInProgressNewView
 
 class RegistrationInProgressNewViewSpec extends ViewSpecBase {
-  lazy val page: RegistrationInProgressNewView = inject[RegistrationInProgressNewView]
-  lazy val plrRef: String                     = "XMPLR0012345678"
+  lazy val page:   RegistrationInProgressNewView = inject[RegistrationInProgressNewView]
+  lazy val plrRef: String                        = "XMPLR0012345678"
 
   lazy val view: Document = Jsoup.parse(
     page(plrRef)(request, appConfig, messages).toString()
@@ -67,7 +67,7 @@ class RegistrationInProgressNewViewSpec extends ViewSpecBase {
     "have correct structure with horizontal rules" in {
       val horizontalRules: Elements = view.getElementsByClass("govuk-section-break")
       horizontalRules.size() mustBe 2
-      
+
       val visibleRules: Elements = view.getElementsByClass("govuk-section-break--visible")
       visibleRules.size() mustBe 2
     }
