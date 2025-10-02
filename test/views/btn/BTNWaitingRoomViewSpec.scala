@@ -14,24 +14,21 @@
  * limitations under the License.
  */
 
-package views
+package views.btn
 
 import base.ViewSpecBase
-import models.subscription.SubscriptionStatus.SuccessfullyCompletedSubscription
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import views.html.registrationview.RegistrationWaitingRoomView
+import views.html.btn.BTNWaitingRoomView
 
-class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
+class BTNWaitingRoomViewSpec extends ViewSpecBase {
 
-  lazy val page: RegistrationWaitingRoomView = inject[RegistrationWaitingRoomView]
-  lazy val view: Document = Jsoup.parse(
-    page(Some(SuccessfullyCompletedSubscription))(request, appConfig, messages).toString()
-  )
-  lazy val pageTitle: String = "Submitting your registration"
+  lazy val page:      BTNWaitingRoomView = inject[BTNWaitingRoomView]
+  lazy val view:      Document           = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String             = "Submitting your Below-Threshold Notification"
 
-  "Rfm Waiting Room View" should {
+  "BTN Waiting Room View" should {
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -40,7 +37,7 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe "Submitting your notification"
     }
 
     "have a banner with without a link" in {
@@ -49,8 +46,17 @@ class RegistrationWaitingRoomViewSpec extends ViewSpecBase {
     }
 
     "have a sub heading" in {
-      view.getElementsByTag("h2").first().text() mustBe "Do not leave this page."
+      view.getElementsByTag("h2").first().text() mustBe
+        "Don’t leave this page"
     }
 
+    "have a paragraph body" in {
+      val paragraph: Element = view.getElementsByClass("govuk-body").first()
+      paragraph.text mustBe "You will be redirected automatically when the submission is complete."
+    }
+
+    "display spinner" in {
+      view.getElementsByClass("hods-loading-spinner__spinner").size() must be > 0
+    }
   }
 }
