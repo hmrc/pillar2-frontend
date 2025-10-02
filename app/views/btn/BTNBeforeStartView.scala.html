@@ -30,7 +30,7 @@
 
 @(isAgent: Boolean, hasMultipleAccountingPeriods: Boolean, mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.beforeStart.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("btn.beforeStart.title"))) {
     @heading(messages("btn.beforeStart.header"), classes = "govuk-heading-l")
 
     @if(isAgent) {

@@ -29,7 +29,7 @@
 
 @(listPrimary: SummaryList, listSecondary: SummaryList, address: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("manageContactCheckYourAnswers.title")), showBackLink = true) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit) {
 
             @if(isAgent && organisationName.isDefined) {
