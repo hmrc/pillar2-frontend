@@ -20,6 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.DueAndOverdueReturnBannerScenario._
 import models._
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
@@ -109,13 +110,17 @@ class DashboardController @Inject() (
             }
         } yield {
           val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+          val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
+          val paymentsStatus         = getOutstandingPaymentsStatus(rawFinancialData)
+          val notificationArea       = determineNotificationArea(returnsStatus, paymentsStatus)
           Ok(
             homepageView(
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
               subscriptionData.accountStatus.exists(_.inactive),
-              getDueOrOverdueReturnsStatus(obligationsResponse).map(_.toString),
-              getOutstandingPaymentsStatus(rawFinancialData).map(_.toString),
+              returnsStatus,
+              paymentsStatus,
+              notificationArea,
               plrReference,
               isAgent = request.isAgent,
               hasReturnsUnderEnquiry = hasReturnsUnderEnquiry
@@ -214,7 +219,7 @@ class DashboardController @Inject() (
             .flatMap(_.outstandingAmount)
             .sum
         )
-        val hasOutstandingPayment = rawFinancialData.exists(
+        val hasOutstandingPayment = rawFinancialData.find(
           _.financialTransactions
             .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
             .exists(_.items.flatMap(_.dueDate).minOption.exists(_.isBefore(currentDate)))
@@ -231,6 +236,9 @@ class DashboardController @Inject() (
           case (true, _)                                                       => Some(Outstanding)
           case (false, true) if totalOutstandingAmount.contains(BigDecimal(0)) => Some(Paid)
           case _                                                               => None
+        hasOutstandingPayment match {
+          case Some(outstandingTransaction) => Some(Outstanding(outstandingTransaction.outstandingAmount))
+          case _                            => None
         }
       }
     }
@@ -239,6 +247,17 @@ class DashboardController @Inject() (
       .flatMap(financialStatus)
       .maxOption
 
+  }
+
+  def determineNotificationArea(
+    uktr:    Option[DueAndOverdueReturnBannerScenario],
+    payment: Option[OutstandingPaymentBannerScenario]
+  ): DynamicNotificationAreaState = (uktr, payment) match {
+    case (_, Some(Outstanding(amountOutstanding)))                    => DynamicNotificationAreaState.AccruingInterestNotification(amountOutstanding)
+    case (Some(DueAndOverdueReturnBannerScenario.Due), _)             => DynamicNotificationAreaState.ReturnExpectedNotification.Due
+    case (Some(DueAndOverdueReturnBannerScenario.Overdue), _)         => DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+    case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _)      => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+    case (Some(DueAndOverdueReturnBannerScenario.Received) | None, _) => DynamicNotificationAreaState.NoNotification
   }
 
 }
