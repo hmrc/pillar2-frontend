@@ -25,6 +25,6 @@ object OutstandingPaymentBannerScenario {
   implicit val ordering: Ordering[OutstandingPaymentBannerScenario] =
     Ordering.by {
       case Outstanding(_) => 2
-      case Paid        => 1
+      case Paid           => 1
     }
 }

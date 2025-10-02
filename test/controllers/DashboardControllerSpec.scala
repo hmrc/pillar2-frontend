@@ -21,7 +21,6 @@ import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.payments.OutstandingPaymentsControllerSpec.samplePaymentsDataWithNoTag
 import generators.ModelGenerators
-import helpers.FinancialDataHelper.Pillar2UktrName
 import models.DueAndOverdueReturnBannerScenario._
 import models._
 import models.obligationsandsubmissions.ObligationStatus
@@ -1047,7 +1046,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           subTransaction = Some("1234"),
           taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
           taxPeriodTo = Some(LocalDate.now),
-          outstandingAmount = Some(BigDecimal(1000.00)),
+          outstandingAmount = Some(BigDecimal(amountOutstanding)),
           items = Seq(FinancialItem(dueDate = Some(pastDueDate), clearingDate = None))
         )
         val financialData = FinancialData(Seq(financialTransaction))

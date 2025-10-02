@@ -213,13 +213,15 @@ class DashboardController @Inject() (
         None
       } else {
         val currentDate = LocalDate.now
-        val totalOutstandingAmount = rawFinancialData.map(
-          _.financialTransactions
-            .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
-            .flatMap(_.outstandingAmount)
-            .sum
-        )
-        val hasOutstandingPayment = rawFinancialData.find(
+        val totalOutstandingAmount = rawFinancialData
+          .map(
+            _.financialTransactions
+              .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
+              .flatMap(_.outstandingAmount)
+              .sum
+          )
+          .getOrElse(BigDecimal(0))
+        val hasOutstandingPayment = rawFinancialData.exists(
           _.financialTransactions
             .filter(_.outstandingAmount.exists(_ > BigDecimal(0)))
             .exists(_.items.flatMap(_.dueDate).minOption.exists(_.isBefore(currentDate)))
@@ -233,12 +235,9 @@ class DashboardController @Inject() (
         )
 
         (hasOutstandingPayment, hasRecentPayment) match {
-          case (true, _)                                                       => Some(Outstanding)
-          case (false, true) if totalOutstandingAmount.contains(BigDecimal(0)) => Some(Paid)
-          case _                                                               => None
-        hasOutstandingPayment match {
-          case Some(outstandingTransaction) => Some(Outstanding(outstandingTransaction.outstandingAmount))
-          case _                            => None
+          case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))
+          case (false, true) if totalOutstandingAmount == 0 => Some(Paid)
+          case _                                            => None
         }
       }
     }
@@ -259,5 +258,4 @@ class DashboardController @Inject() (
     case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _)      => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
     case (Some(DueAndOverdueReturnBannerScenario.Received) | None, _) => DynamicNotificationAreaState.NoNotification
   }
-
 }

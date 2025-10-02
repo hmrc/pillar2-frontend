@@ -19,7 +19,7 @@ package views
 import base.ViewSpecBase
 import controllers.routes
 import models.DueAndOverdueReturnBannerScenario._
-import models.{DynamicNotificationAreaState, Outstanding}
+import models.{DynamicNotificationAreaState, Outstanding, Paid}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -483,7 +483,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display Payments Paid tag with green style when Paid scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some("Paid"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            Some(Paid),
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
