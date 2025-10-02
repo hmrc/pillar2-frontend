@@ -22,11 +22,15 @@ import controllers.actions.TestAuthRetrievals.Ops
 import controllers.payments.OutstandingPaymentsControllerSpec.samplePaymentsDataWithNoTag
 import generators.ModelGenerators
 import helpers.FinancialDataHelper.Pillar2UktrName
+import models.DueAndOverdueReturnBannerScenario._
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -43,7 +47,7 @@ import java.time.format.DateTimeFormatter
 import java.util.UUID
 import scala.concurrent.Future
 
-class DashboardControllerSpec extends SpecBase with ModelGenerators {
+class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -109,6 +113,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
             btnActive = false,
             None,
             None,
+            DynamicNotificationAreaState.NoNotification,
             "12345678",
             isAgent = false,
             hasReturnsUnderEnquiry = false
@@ -1033,13 +1038,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
     "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val amountOutstanding = 100
+        val controller        = application.injector.instanceOf[DashboardController]
 
         val pastDueDate = LocalDate.now.minusDays(7)
         val transactions = Seq(
           TransactionSummary(
             name = Pillar2UktrName,
-            outstandingAmount = 100,
+            outstandingAmount = amountOutstanding,
             dueDate = pastDueDate
           )
         )
@@ -1050,7 +1056,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
 
         val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
-        result mustBe Some(Outstanding)
+        result mustBe Some(Outstanding(amountOutstanding))
       }
     }
 
@@ -1075,6 +1081,48 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators {
         val result = controller.getOutstandingPaymentsStatus(Some(Seq(financialSummary)))
 
         result mustBe None
+      }
+    }
+  }
+
+  "determineNotificationArea" should {
+
+    val application = applicationBuilder().build()
+    val controller  = application.injector.instanceOf[DashboardController]
+
+    val noOutstandingPayment: Option[OutstandingPaymentBannerScenario] = Option.empty[OutstandingPaymentBannerScenario]
+    val anyReturnStatus = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
+
+    "choose to show an accruing interest notification" when {
+
+      "there's a payment outstanding" in forAll(anyReturnStatus, arbitrary[BigDecimal]) { (returnStatus, owed) =>
+        val result = controller.determineNotificationArea(returnStatus, Some(Outstanding(owed)))
+        result mustBe DynamicNotificationAreaState.AccruingInterestNotification(owed)
+      }
+    }
+
+    "choose to show a 'return expected' notification" when {
+
+      val returnExpectedNotificationMappings = Table(
+        "Return status"                              -> "Notification state",
+        DueAndOverdueReturnBannerScenario.Due        -> DynamicNotificationAreaState.ReturnExpectedNotification.Due,
+        DueAndOverdueReturnBannerScenario.Overdue    -> DynamicNotificationAreaState.ReturnExpectedNotification.Overdue,
+        DueAndOverdueReturnBannerScenario.Incomplete -> DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+      )
+
+      "there is no outstanding payment and a return is expected" in forAll(returnExpectedNotificationMappings) { (returnStatus, notificationState) =>
+        val result = controller.determineNotificationArea(Some(returnStatus), noOutstandingPayment)
+        result mustBe notificationState
+      }
+
+    }
+
+    "choose to avoid displaying a notification" when {
+
+      "there is no outstanding payment and a return is not expected" in forAll(Gen.option(DueAndOverdueReturnBannerScenario.Received)) {
+        noNotificationState =>
+          val result = controller.determineNotificationArea(noNotificationState, noOutstandingPayment)
+          result mustBe DynamicNotificationAreaState.NoNotification
       }
     }
   }

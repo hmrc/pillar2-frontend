@@ -16,7 +16,14 @@
 
 @this()
 
-@(message: String, linkUrl: String, classes: String = "govuk-body", linkClass: String = "govuk-link", target: Option[String] = None)
+@(
+    message: String,
+    linkUrl: String,
+    classes: String = "govuk-body",
+    linkClass: String = "govuk-link",
+    target: Option[String] = None,
+    linkId: Option[String] = None
+)
 
 @targetAttrs = @{
   target.map { t =>
@@ -25,4 +32,4 @@
   }
 }
 
-<p class="@classes"><a class="@linkClass" href="@linkUrl" @targetAttrs>@message</a></p>
+<p class="@classes"><a class="@linkClass" href="@linkUrl" @targetAttrs @linkId.map { id => id="@id" }>@message</a></p>
