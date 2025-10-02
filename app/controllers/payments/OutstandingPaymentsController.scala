@@ -56,9 +56,6 @@ class OutstandingPaymentsController @Inject() (
     with I18nSupport
     with Logging {
 
-  /** Converts raw financial data to processed financial summaries for outstanding payments This is controller-specific logic for formatting data for
-    * the outstanding payments view
-    */
   private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
     // Use the shared filter from FinancialData to get outstanding charges
     val outstandingCharges = financialData.outstandingCharges
@@ -99,12 +96,12 @@ class OutstandingPaymentsController @Inject() (
           OptionT.liftF(
             financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
           )
-        data = toOutstandingPaymentsSummaries(rawFinancialData)
+        outstandingPaymentSummaries = toOutstandingPaymentsSummaries(rawFinancialData)
       } yield {
-        val amountDue               = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = data.exists(_.hasOverdueReturnPayment(now()))
+        val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.hasOverdueReturnPayment(now()))
 
-        Ok(view(data, plrRef, amountDue, hasOverdueReturnPayment))
+        Ok(view(outstandingPaymentSummaries, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
         .recover { case e =>

@@ -91,11 +91,6 @@ object FinancialItem {
 
 case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
 
-  /** Gets the total amount due for this financial summary
-    */
-  def getAmountDue: BigDecimal =
-    transactions.map(_.outstandingAmount).sum.max(0)
-
   /** Checks if there are overdue return payments in this summary
     */
   def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
@@ -104,23 +99,6 @@ case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Se
 
 object FinancialSummary {
   implicit val format: OFormat[FinancialSummary] = Json.format[FinancialSummary]
-}
-
-/** Extension methods for Seq[FinancialSummary] to provide convenient operations
-  */
-object FinancialSummarySeqOps {
-  implicit class FinancialSummarySeqOps(summaries: Seq[FinancialSummary]) {
-
-    /** Gets the total amount due across all financial summaries
-      */
-    def getTotalAmountDue: BigDecimal =
-      summaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-
-    /** Checks if there are any overdue return payments across all summaries
-      */
-    def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
-      summaries.exists(_.hasOverdueReturnPayment(currentDate))
-  }
 }
 
 case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)

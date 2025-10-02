@@ -161,10 +161,12 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
           taxPeriodFrom = Some(currentDate.minusMonths(1)),
           taxPeriodTo = Some(currentDate),
           outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(FinancialItem(
-            dueDate = Some(currentDate.minusDays(30)),
-            clearingDate = Some(currentDate.minusDays(25)) // Recent payment
-          ))
+          items = Seq(
+            FinancialItem(
+              dueDate = Some(currentDate.minusDays(30)),
+              clearingDate = Some(currentDate.minusDays(25)) // Recent payment
+            )
+          )
         )
 
         val financialData = FinancialData(Seq(recentPaymentTransaction))
@@ -180,10 +182,12 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
           taxPeriodFrom = Some(currentDate.minusMonths(1)),
           taxPeriodTo = Some(currentDate),
           outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(FinancialItem(
-            dueDate = Some(currentDate.minusDays(100)),
-            clearingDate = Some(currentDate.minusDays(90)) // Old payment
-          ))
+          items = Seq(
+            FinancialItem(
+              dueDate = Some(currentDate.minusDays(100)),
+              clearingDate = Some(currentDate.minusDays(90)) // Old payment
+            )
+          )
         )
 
         val financialData = FinancialData(Seq(oldPaymentTransaction))
@@ -210,30 +214,6 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
   }
 
   "FinancialSummary" should {
-    "getAmountDue" should {
-      "return the sum of all transaction outstanding amounts" in {
-        val currentDate = LocalDate.now
-        val transaction1 = TransactionSummary("UK tax return", BigDecimal(100), currentDate.plusDays(1))
-        val transaction2 = TransactionSummary("Late Payment Interest", BigDecimal(50), currentDate.plusDays(2))
-
-        val summary = FinancialSummary(
-          AccountingPeriod(currentDate.minusMonths(1), currentDate),
-          Seq(transaction1, transaction2)
-        )
-
-        summary.getAmountDue mustBe BigDecimal(150)
-      }
-
-      "return 0 when there are no transactions" in {
-        val currentDate = LocalDate.now
-        val summary = FinancialSummary(
-          AccountingPeriod(currentDate.minusMonths(1), currentDate),
-          Seq.empty
-        )
-
-        summary.getAmountDue mustBe BigDecimal(0)
-      }
-    }
 
     "hasOverdueReturnPayment" should {
       "return true when there is an overdue UK tax return payment" in {

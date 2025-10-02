@@ -41,16 +41,18 @@ class FinancialDataServiceSpec extends SpecBase {
 
         val service = application.injector.instanceOf[FinancialDataService]
 
-        val expectedFinancialData = FinancialData(Seq(
-          FinancialTransaction(
-            mainTransaction = Some("6500"),
-            subTransaction = Some("6233"),
-            taxPeriodFrom = Some(LocalDate.now.minusMonths(1)),
-            taxPeriodTo = Some(LocalDate.now),
-            outstandingAmount = Some(BigDecimal(100)),
-            items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusDays(1)), clearingDate = None))
+        val expectedFinancialData = FinancialData(
+          Seq(
+            FinancialTransaction(
+              mainTransaction = Some("6500"),
+              subTransaction = Some("6233"),
+              taxPeriodFrom = Some(LocalDate.now.minusMonths(1)),
+              taxPeriodTo = Some(LocalDate.now),
+              outstandingAmount = Some(BigDecimal(100)),
+              items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusDays(1)), clearingDate = None))
+            )
           )
-        ))
+        )
 
         when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(expectedFinancialData))

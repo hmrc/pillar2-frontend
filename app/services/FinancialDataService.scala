@@ -26,11 +26,9 @@ import scala.concurrent.Future
 
 class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector) {
 
-  /**
-   * Retrieves raw financial data from the API
-   */
+  /** Retrieves raw financial data from the API
+    */
   def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
     financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate)
-
 
 }
