@@ -22,6 +22,7 @@ import models.UnprocessableEntityError
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressNewView
@@ -42,7 +43,7 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
-    val view: String => play.twirl.api.Html =
+    val view: String => Html =
       if (appConfig.newHomepageEnabled) { (ref: String) =>
         viewNewHomepage(ref)
       } else { (ref: String) =>
@@ -52,17 +53,16 @@ class RegistrationInProgressController @Inject() (
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
-        case Some(subscription) =>
+        case Some(_) =>
           Redirect(controllers.routes.DashboardController.onPageLoad)
         case None =>
-          val result = Ok(view(plrReference))
-          result
+          Ok(view(plrReference))
       }
       .recover {
         case UnprocessableEntityError =>
-          val result = Ok(view(plrReference))
-          result
+          Ok(view(plrReference))
         case e: Throwable =>
+          logger.warn(s"Registration in progress page failed with error: ${e.getMessage}")
           Redirect(routes.JourneyRecoveryController.onPageLoad())
       }
   }
