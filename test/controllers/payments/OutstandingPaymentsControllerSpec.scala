@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.OutstandingPaymentsService
+import services.FinancialDataService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.outstandingpayments.OutstandingPaymentsView
@@ -44,13 +44,13 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 
       running(application) {
-        when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(samplePaymentsData))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -59,7 +59,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(samplePaymentsData, pillar2Id, amountDue, hasOverdueReturnPayment = true)(
+          view(Seq.empty, pillar2Id, BigDecimal(0), hasOverdueReturnPayment = false)(
             request,
             applicationConfig,
             messages(application),
@@ -73,12 +73,12 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 
       running(application) {
-        when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Test error")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -97,7 +97,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> false)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 

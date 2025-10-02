@@ -16,12 +16,55 @@
 
 package models
 
+import helpers.FinancialDataHelper._
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
+import java.time.temporal.ChronoUnit
 
-final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
+final case class FinancialData(financialTransactions: Seq[FinancialTransaction]) {
+
+  /** Filters transactions to only include outstanding charges that are due for payment This includes transactions that:
+    *   - Have valid tax periods (from and to dates)
+    *   - Are main pillar 2 transactions (UKTR, Late Payment Interest, Repayment Interest)
+    *   - Have valid sub-transactions for pillar 2
+    *   - Have an outstanding amount greater than 0
+    *   - Have a due date defined
+    */
+  def outstandingCharges: Seq[FinancialTransaction] =
+    financialTransactions.filter { transaction =>
+      transaction.taxPeriodFrom.isDefined &&
+      transaction.taxPeriodTo.isDefined &&
+      transaction.mainTransaction.exists(PlrMainTransactionsRefs.contains) &&
+      transaction.subTransaction.exists(PlrSubTransactionsRefs.contains) &&
+      transaction.outstandingAmount.exists(_ > 0) &&
+      transaction.items.headOption.exists(_.dueDate.isDefined)
+    }
+
+  /** Calculates the total outstanding amount from financial data
+    */
+  def getTotalOutstandingAmount: BigDecimal =
+    outstandingCharges
+      .flatMap(_.outstandingAmount)
+      .sum
+
+  /** Checks if there are any outstanding payments that are overdue
+    */
+  def hasOverdueOutstandingPayments(currentDate: LocalDate = LocalDate.now): Boolean =
+    outstandingCharges
+      .exists(_.items.flatMap(_.dueDate).minOption.exists(_.isBefore(currentDate)))
+
+  /** Checks if there has been a recent payment (within the last 60 days)
+    */
+  def hasRecentPayment(daysThreshold: Int = 60, currentDate: LocalDate = LocalDate.now): Boolean =
+    financialTransactions
+      .filter(_.mainTransaction.contains(EtmpPaymentTransactionRef))
+      .flatMap(_.items.flatMap(_.clearingDate))
+      .maxOption
+      .exists(ChronoUnit.DAYS.between(_, currentDate) < daysThreshold)
+
+}
 
 object FinancialData {
   implicit val format: OFormat[FinancialData] = Json.format[FinancialData]
@@ -46,10 +89,38 @@ object FinancialItem {
   implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
 }
 
-case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary])
+case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
+
+  /** Gets the total amount due for this financial summary
+    */
+  def getAmountDue: BigDecimal =
+    transactions.map(_.outstandingAmount).sum.max(0)
+
+  /** Checks if there are overdue return payments in this summary
+    */
+  def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
+    transactions.exists(t => t.name == Pillar2UktrName && t.dueDate.isBefore(currentDate))
+}
 
 object FinancialSummary {
   implicit val format: OFormat[FinancialSummary] = Json.format[FinancialSummary]
+}
+
+/** Extension methods for Seq[FinancialSummary] to provide convenient operations
+  */
+object FinancialSummarySeqOps {
+  implicit class FinancialSummarySeqOps(summaries: Seq[FinancialSummary]) {
+
+    /** Gets the total amount due across all financial summaries
+      */
+    def getTotalAmountDue: BigDecimal =
+      summaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
+
+    /** Checks if there are any overdue return payments across all summaries
+      */
+    def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
+      summaries.exists(_.hasOverdueReturnPayment(currentDate))
+  }
 }
 
 case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)

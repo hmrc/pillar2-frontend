@@ -20,14 +20,15 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
-import helpers.FinancialDataHelper.Pillar2UktrName
-import models.UserAnswers
+import helpers.FinancialDataHelper.toPillar2Transaction
+import models._
+import models.subscription.AccountingPeriod
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.{OutstandingPaymentsService, ReferenceNumberService}
+import services.{FinancialDataService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
@@ -45,7 +46,7 @@ class OutstandingPaymentsController @Inject() (
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
   checkPhase2Screens:                     Phase2ScreensAction,
-  outstandingPaymentsService:             OutstandingPaymentsService,
+  financialDataService:                   FinancialDataService,
   view:                                   OutstandingPaymentsView,
   sessionRepository:                      SessionRepository
 )(implicit
@@ -54,6 +55,35 @@ class OutstandingPaymentsController @Inject() (
 ) extends FrontendBaseController
     with I18nSupport
     with Logging {
+
+  /** Converts raw financial data to processed financial summaries for outstanding payments This is controller-specific logic for formatting data for
+    * the outstanding payments view
+    */
+  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
+    // Use the shared filter from FinancialData to get outstanding charges
+    val outstandingCharges = financialData.outstandingCharges
+
+    outstandingCharges
+      .groupBy(transaction => (transaction.taxPeriodFrom.get, transaction.taxPeriodTo.get))
+      .toSeq
+      .sortBy(_._1)
+      .reverse
+      .map { case ((periodFrom, periodTo), transactions) =>
+        val transactionSummaries: Seq[TransactionSummary] =
+          transactions
+            .groupBy(transaction => toPillar2Transaction(transaction.mainTransaction.get))
+            .map { case (parentTransaction, groupedTransactions) =>
+              TransactionSummary(
+                parentTransaction,
+                groupedTransactions.flatMap(_.outstandingAmount).sum,
+                groupedTransactions.head.items.head.dueDate.get
+              )
+            }
+            .toSeq
+
+        FinancialSummary(AccountingPeriod(periodFrom, periodTo), transactionSummaries.sortBy(_.dueDate).reverse)
+      }
+  }
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
@@ -65,19 +95,20 @@ class OutstandingPaymentsController @Inject() (
         plrRef <- OptionT
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        data <-
+        rawFinancialData <-
           OptionT.liftF(
-            outstandingPaymentsService.retrieveData(plrRef, now(), now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
+            financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
           )
+        data = toOutstandingPaymentsSummaries(rawFinancialData)
       } yield {
         val amountDue               = data.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = data.exists(_.transactions.exists(t => t.name == Pillar2UktrName && t.dueDate.isBefore(now())))
+        val hasOverdueReturnPayment = data.exists(_.hasOverdueReturnPayment(now()))
 
         Ok(view(data, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
         .map(_.getOrElse(Redirect(JourneyRecoveryController.onPageLoad())))
         .recover { case e =>
-          logger.error(s"Error calling OutstandingPaymentsService: ${e.getMessage}", e)
+          logger.error(s"Error calling FinancialDataService: ${e.getMessage}", e)
           Redirect(JourneyRecoveryController.onPageLoad())
         }
     }
