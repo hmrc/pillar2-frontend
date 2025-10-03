@@ -24,6 +24,7 @@ object FinancialDataHelper {
   private val EtmpUktrMainRef:            TransactionRef = "6500"
   private val EtmpLatePaymentInterestRef: TransactionRef = "6503"
   private val EtmpRepaymentInterestRef:   TransactionRef = "6504"
+  val EtmpPaymentTransactionRef:          TransactionRef = "0060"
 
   /** Subtransaction Reference Numbers */
   private val EtmpDttRef:                        TransactionRef = "6233"

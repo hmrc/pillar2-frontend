@@ -34,7 +34,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.{ObligationsAndSubmissionsService, OutstandingPaymentsService, SubscriptionService}
+import services.{FinancialDataService, ObligationsAndSubmissionsService, SubscriptionService}
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -84,7 +84,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
               bind[SessionRepository].toInstance(mockSessionRepository),
               bind[SubscriptionService].toInstance(mockSubscriptionService),
               bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-              bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService),
+              bind[FinancialDataService].toInstance(mockFinancialDataService),
               bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
             )
             .build()
@@ -99,7 +99,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-          when(mockOutstandingPaymentsService.retrieveRawData(any(), any(), any())(any[HeaderCarrier]))
+          when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
 
           val result = route(application, request).value
@@ -1043,7 +1043,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         val pastDueDate = LocalDate.now.minusDays(7)
         val financialTransaction = FinancialTransaction(
           mainTransaction = Some("6500"),
-          subTransaction = Some("1234"),
+          subTransaction = Some("6233"),
           taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
           taxPeriodTo = Some(LocalDate.now),
           outstandingAmount = Some(BigDecimal(amountOutstanding)),
@@ -1051,7 +1051,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         )
         val financialData = FinancialData(Seq(financialTransaction))
 
-        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
+        val result = controller.getPaymentBannerScenario(financialData)
 
         result mustBe Some(Outstanding(amountOutstanding))
       }
@@ -1065,7 +1065,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         val futureDueDate = LocalDate.now.plusDays(7)
         val financialTransaction = FinancialTransaction(
           mainTransaction = Some("6500"),
-          subTransaction = Some("1234"),
+          subTransaction = Some("6233"),
           taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
           taxPeriodTo = Some(LocalDate.now),
           outstandingAmount = Some(BigDecimal(1000.00)),
@@ -1073,7 +1073,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         )
         val financialData = FinancialData(Seq(financialTransaction))
 
-        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
+        val result = controller.getPaymentBannerScenario(financialData)
 
         result mustBe None
       }
@@ -1086,7 +1086,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
 
         val chargeFinancialTransaction = FinancialTransaction(
           mainTransaction = Some("6500"),
-          subTransaction = Some("1234"),
+          subTransaction = Some("6233"),
           taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
           taxPeriodTo = Some(LocalDate.now),
           outstandingAmount = Some(BigDecimal(0)),
@@ -1099,7 +1099,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         )
         val paymentFinancialTransaction = FinancialTransaction(
           mainTransaction = Some("0060"),
-          subTransaction = Some("1234"),
+          subTransaction = Some("6233"),
           taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
           taxPeriodTo = Some(LocalDate.now),
           outstandingAmount = Some(BigDecimal(0)),
@@ -1112,7 +1112,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         )
         val financialData = FinancialData(Seq(chargeFinancialTransaction, paymentFinancialTransaction))
 
-        val result = controller.getOutstandingPaymentsStatus(Some(financialData))
+        val result = controller.getPaymentBannerScenario(financialData)
 
         result mustBe Some(Paid)
       }
