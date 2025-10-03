@@ -50,7 +50,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
       running(application) {
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
+          .thenReturn(Future.successful(sampleChargeTransactionWithNoTag))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -133,7 +133,7 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
-  val samplePaymentsDataWithNoTag: FinancialData = FinancialData(
+  val sampleChargeTransactionWithNoTag: FinancialData = FinancialData(
     Seq(
       FinancialTransaction(
         mainTransaction = Some("6500"),
@@ -146,7 +146,7 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
-  val sampleFinancialDataWithNoTag: Seq[FinancialSummary] = Seq(
+  val sampleFinancialSummaryWithNoTag: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))

@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
-import controllers.payments.OutstandingPaymentsControllerSpec.samplePaymentsDataWithNoTag
+import controllers.payments.OutstandingPaymentsControllerSpec.sampleChargeTransactionWithNoTag
 import generators.ModelGenerators
 import models.DueAndOverdueReturnBannerScenario._
 import models._
@@ -100,7 +100,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
           when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(samplePaymentsDataWithNoTag))
+            .thenReturn(Future.successful(sampleChargeTransactionWithNoTag))
 
           val result = route(application, request).value
           val view   = application.injector.instanceOf[HomepageView]
