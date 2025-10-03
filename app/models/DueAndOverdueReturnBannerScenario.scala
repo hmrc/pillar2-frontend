@@ -16,14 +16,17 @@
 
 package models
 
-sealed trait DueAndOverdueReturnBannerScenario
+import enumeratum.{Enum, EnumEntry}
 
-case object Due extends DueAndOverdueReturnBannerScenario
-case object Overdue extends DueAndOverdueReturnBannerScenario
-case object Incomplete extends DueAndOverdueReturnBannerScenario
-case object Received extends DueAndOverdueReturnBannerScenario
+sealed trait DueAndOverdueReturnBannerScenario extends EnumEntry
 
-object DueAndOverdueReturnBannerScenario {
+object DueAndOverdueReturnBannerScenario extends Enum[DueAndOverdueReturnBannerScenario] {
+
+  case object Due extends DueAndOverdueReturnBannerScenario
+  case object Overdue extends DueAndOverdueReturnBannerScenario
+  case object Incomplete extends DueAndOverdueReturnBannerScenario
+  case object Received extends DueAndOverdueReturnBannerScenario
+
   implicit val ordering: Ordering[DueAndOverdueReturnBannerScenario] =
     Ordering.by {
       case Overdue    => 4
@@ -31,4 +34,6 @@ object DueAndOverdueReturnBannerScenario {
       case Due        => 2
       case Received   => 1
     }
+
+  val values = findValues
 }

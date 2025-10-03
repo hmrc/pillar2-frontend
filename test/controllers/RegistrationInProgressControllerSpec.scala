@@ -17,6 +17,7 @@
 package controllers
 
 import base.SpecBase
+import models.UnprocessableEntityError
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -30,8 +31,9 @@ class RegistrationInProgressControllerSpec extends SpecBase {
 
   "RegistrationInProgressController" must {
 
-    "return OK and the correct view when no subscription data is found" in {
+    "return OK and the old homepage view when no subscription data is found and newHomepageEnabled is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.newHomepageEnabled" -> false)
         .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
 
@@ -47,15 +49,30 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         val content = contentAsString(result)
         content must include("PLRREF123")
         content must include("Registration in progress")
+      }
+    }
+
+    "return OK and the new homepage view when no subscription data is found and newHomepageEnabled is true" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .build()
+
+      running(application) {
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+          .thenReturn(Future.successful(None))
+
+        val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val content = contentAsString(result)
+        content must include("PLRREF123")
+        content must include("Pillar 2 Top-up Taxes")
+        content must include("ID:")
         content must include("Your registration is in progress")
         content must include("We are processing your registration")
-        content must include("Your Pillar 2 Top-up Taxes account")
-        content must include("When to submit your returns")
-        content must include("Your group must submit your Pillar 2 Top-up Taxes returns no later than:")
-        content must include("18 months after the last day of the group's accounting period")
-        content must include("30 June 2026")
-        content must include("HMRC are currently delivering this service on a phased approach")
-        content must include("Refer to the Pillar 2 Top-up Taxes manual")
       }
     }
 
@@ -77,7 +94,52 @@ class RegistrationInProgressControllerSpec extends SpecBase {
       }
     }
 
-    "handle errors from subscription service gracefully" in {
+    "return OK and the old homepage view when UnprocessableEntityError occurs and newHomepageEnabled is false" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.newHomepageEnabled" -> false)
+        .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .build()
+
+      running(application) {
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+
+        val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val content = contentAsString(result)
+        content must include("PLRREF123")
+        content must include("Registration in progress")
+      }
+    }
+
+    "return OK and the new homepage view when UnprocessableEntityError occurs and newHomepageEnabled is true" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .configure("features.newHomepageEnabled" -> true)
+        .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
+        .build()
+
+      running(application) {
+        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+          .thenReturn(Future.failed(UnprocessableEntityError))
+
+        val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
+
+        val result = route(application, request).value
+
+        status(result) mustEqual OK
+        val content = contentAsString(result)
+        content must include("PLRREF123")
+        content must include("Pillar 2 Top-up Taxes")
+        content must include("ID:")
+        content must include("Your registration is in progress")
+        content must include("We are processing your registration")
+      }
+    }
+
+    "handle other errors from subscription service gracefully" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()

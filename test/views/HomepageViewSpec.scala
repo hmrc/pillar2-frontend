@@ -18,6 +18,8 @@ package views
 
 import base.ViewSpecBase
 import controllers.routes
+import models.DueAndOverdueReturnBannerScenario._
+import models.{DynamicNotificationAreaState, Outstanding}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -35,7 +37,17 @@ class HomepageViewSpec extends ViewSpecBase {
 
   lazy val organisationView: Document =
     Jsoup.parse(
-      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+      page(
+        organisationName,
+        date,
+        btnActive = false,
+        None,
+        None,
+        DynamicNotificationAreaState.NoNotification,
+        plrRef,
+        isAgent = false,
+        hasReturnsUnderEnquiry = false
+      )(
         request,
         appConfig,
         messages
@@ -45,7 +57,17 @@ class HomepageViewSpec extends ViewSpecBase {
 
   lazy val agentView: Document =
     Jsoup.parse(
-      page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(
+      page(
+        organisationName,
+        date,
+        btnActive = false,
+        None,
+        None,
+        DynamicNotificationAreaState.NoNotification,
+        plrRef,
+        isAgent = true,
+        hasReturnsUnderEnquiry = false
+      )(
         request,
         appConfig,
         messages
@@ -151,7 +173,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveOrgView: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = true,
+            None,
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -172,7 +204,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Returns card with no tag when Due scenario is provided" in {
       val organisationViewWithDueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Due"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            Some(Due),
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -199,7 +241,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Overdue status tag with red style when Overdue scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Overdue"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            Some(Overdue),
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -231,7 +283,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Incomplete status tag with purple style when Incomplete scenario is provided" in {
       val organisationViewWithIncompleteScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Incomplete"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            Some(Incomplete),
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -263,7 +325,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display UKTR Received status tag with green style when Received scenario is provided" in {
       val organisationViewWithOverdueScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Received"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            Some(Received),
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -286,7 +358,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message in returns card when hasReturnsUnderEnquiry is true" in {
       val organisationViewWithEnquiry: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = true
+          )(
             request,
             appConfig,
             messages
@@ -302,7 +384,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message with status tag when both enquiry and status scenario are present" in {
       val organisationViewWithEnquiryAndOverdue: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, Some("Overdue"), None, plrRef, isAgent = false, hasReturnsUnderEnquiry = true)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            Some(Overdue),
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = true
+          )(
             request,
             appConfig,
             messages
@@ -319,7 +411,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "show clean Payments card with no tag when no scenario is provided" in {
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -348,14 +450,24 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
+      val amountOutstanding = 100000.00
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, Some("Outstanding"), plrRef, isAgent = false, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            Some(Outstanding(amountOutstanding)),
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
-          )
-            .toString()
+          ).toString()
         )
       val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
       val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--red")
@@ -464,7 +576,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display notification banner" in {
       val accountInactiveAgentView: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = true, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = false)(
+          page(
+            organisationName,
+            date,
+            btnActive = true,
+            None,
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = true,
+            hasReturnsUnderEnquiry = false
+          )(
             request,
             appConfig,
             messages
@@ -485,7 +607,17 @@ class HomepageViewSpec extends ViewSpecBase {
     "display enquiry message in returns card when hasReturnsUnderEnquiry is true" in {
       val agentViewWithEnquiry: Document =
         Jsoup.parse(
-          page(organisationName, date, btnActive = false, None, None, plrRef, isAgent = true, hasReturnsUnderEnquiry = true)(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            None,
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = true,
+            hasReturnsUnderEnquiry = true
+          )(
             request,
             appConfig,
             messages

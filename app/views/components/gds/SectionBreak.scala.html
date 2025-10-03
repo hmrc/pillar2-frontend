@@ -16,6 +16,6 @@
 
 @this()
 
-@()
+@(id: Option[String] = None)
 
-<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+<hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible" @id.map { id => id="@id" }>
