@@ -44,6 +44,11 @@ class RegisteringNfmForThisGroupViewSpec extends ViewSpecBase {
         h1Elements.text() mustBe pageTitle
       }
 
+      "have a banner with a link to pillar 2 guidance" in {
+        val className: String = "govuk-header__link govuk-header__service-name"
+        view.getElementsByClass(className).attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+      }
+
       "have an H2 heading" in {
         view.getElementsByTag("h2").get(0).text() mustBe "Check if you need to report Pillar 2 Top-up Taxes"
       }

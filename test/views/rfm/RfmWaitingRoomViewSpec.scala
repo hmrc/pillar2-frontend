@@ -52,6 +52,11 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    "have a banner with without a link" in {
+      val className: String = "govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe empty
+    }
+
     "have a sub heading" in {
       view.getElementsByTag("h2").first().text() mustBe "Do not leave this page."
     }

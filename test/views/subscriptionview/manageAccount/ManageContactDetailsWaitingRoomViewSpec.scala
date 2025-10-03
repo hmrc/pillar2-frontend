@@ -44,6 +44,11 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
         h1Elements.text() mustBe pageTitle
       }
 
+      "have a banner with without a link" in {
+        val className: String = "govuk-header__service-name"
+        inProgressView.getElementsByClass(className).attr("href") mustBe empty
+      }
+
       "have a sub heading" in {
         inProgressView.getElementsByTag("h2").first().text() mustBe
           "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
@@ -68,6 +73,11 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
         val h1Elements: Elements = completedView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with without a link" in {
+        val className: String = "govuk-header__service-name"
+        completedView.getElementsByClass(className).attr("href") mustBe empty
       }
 
       "have a sub heading" in {

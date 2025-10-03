@@ -25,7 +25,7 @@
 
 @(repaymentsStatus: Option[RepaymentsStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repaymentsWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("repaymentsWaitingRoom.title")), showSignOut= false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
   <meta http-equiv="refresh" content="2" />
   <div class="hods-loading-spinner">
     <div
