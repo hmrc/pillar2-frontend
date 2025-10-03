@@ -146,7 +146,7 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
-  val samplePaymentsDataWithNoTag2: Seq[FinancialSummary] = Seq(
+  val sampleFinancialDataWithNoTag: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))
