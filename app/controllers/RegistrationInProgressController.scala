@@ -22,8 +22,10 @@ import models.UnprocessableEntityError
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.twirl.api.Html
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import views.html.RegistrationInProgressNewView
 import views.html.RegistrationInProgressView
 
 import javax.inject.Inject
@@ -32,7 +34,8 @@ import scala.concurrent.ExecutionContext
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  view:                     RegistrationInProgressView,
+  viewOldHomepage:          RegistrationInProgressView,
+  viewNewHomepage:          RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -40,6 +43,13 @@ class RegistrationInProgressController @Inject() (
     with Logging {
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
+    val view: String => Html =
+      if (appConfig.newHomepageEnabled) { (ref: String) =>
+        viewNewHomepage(ref)
+      } else { (ref: String) =>
+        viewOldHomepage(ref)
+      }
+
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
