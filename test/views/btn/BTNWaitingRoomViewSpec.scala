@@ -37,7 +37,7 @@ class BTNWaitingRoomViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Submitting your notification"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with without a link" in {
