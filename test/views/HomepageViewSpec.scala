@@ -19,7 +19,7 @@ package views
 import base.ViewSpecBase
 import controllers.routes
 import models.DueAndOverdueReturnBannerScenario._
-import models.{DynamicNotificationAreaState, Outstanding}
+import models.{DynamicNotificationAreaState, Outstanding, Paid}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -478,6 +478,37 @@ class HomepageViewSpec extends ViewSpecBase {
       outstandingTag.text() mustBe "Outstanding"
       outstandingTag.attr("aria-label") mustBe "Outstanding payments"
       outstandingTag.attr("title") mustBe "Outstanding payments"
+    }
+
+    "display Payments Paid tag with green style when Paid scenario is provided" in {
+      val organisationViewWithOutstandingScenario: Document =
+        Jsoup.parse(
+          page(
+            organisationName,
+            date,
+            btnActive = false,
+            None,
+            Some(Paid),
+            DynamicNotificationAreaState.NoNotification,
+            plrRef,
+            isAgent = false,
+            hasReturnsUnderEnquiry = false
+          )(
+            request,
+            appConfig,
+            messages
+          )
+            .toString()
+        )
+      val returnsCard: Element  = organisationViewWithOutstandingScenario.getElementsByClass("card-half-width").get(1)
+      val statusTags:  Elements = returnsCard.getElementsByClass("govuk-tag--green")
+
+      returnsCard.getElementsByTag("h2").first().ownText() mustBe "Payments"
+
+      val paidTag: Element = statusTags.first()
+      paidTag.text() mustBe "Paid"
+      paidTag.attr("aria-label") mustBe "Paid payments"
+      paidTag.attr("title") mustBe "Paid payments"
     }
   }
 

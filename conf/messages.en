@@ -856,6 +856,7 @@ homepage.payments.transactionHistory.linkText = View transaction history
 homepage.payments.outstandingPayments.linkText = View outstanding payments
 homepage.payments.tags.outstanding = Outstanding
 homepage.payments.repayments.linkText = Request a repayment
+homepage.payments.tags.paid = Paid
 
 homepage.manageAccount.title = Manage account
 homepage.manageAccount.registrationDate = Registration date
