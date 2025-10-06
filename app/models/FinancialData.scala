@@ -62,7 +62,7 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
       .filter(_.mainTransaction.contains(EtmpPaymentTransactionRef))
       .flatMap(_.items.flatMap(_.clearingDate))
       .maxOption
-      .exists(ChronoUnit.DAYS.between(_, currentDate) < daysThreshold)
+      .exists(ChronoUnit.DAYS.between(_, currentDate) <= daysThreshold)
 
 }
 
