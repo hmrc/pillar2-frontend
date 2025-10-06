@@ -174,6 +174,27 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
         financialData.hasRecentPayment(60, currentDate) mustBe true
       }
 
+      "return true when there has been a payment cleared exactly 60 days before today" in {
+        val currentDate = LocalDate.now
+        val recentPaymentTransaction = FinancialTransaction(
+          mainTransaction = Some(FinancialDataHelper.EtmpPaymentTransactionRef),
+          subTransaction = Some("1234"),
+          taxPeriodFrom = Some(currentDate.minusMonths(1)),
+          taxPeriodTo = Some(currentDate),
+          outstandingAmount = Some(BigDecimal(0)),
+          items = Seq(
+            FinancialItem(
+              dueDate = Some(currentDate.minusDays(61)),
+              clearingDate = Some(currentDate.minusDays(60)) // Recent payment
+            )
+          )
+        )
+
+        val financialData = FinancialData(Seq(recentPaymentTransaction))
+
+        financialData.hasRecentPayment(60, currentDate) mustBe true
+      }
+
       "return false when there has been no recent payment" in {
         val currentDate = LocalDate.now
         val oldPaymentTransaction = FinancialTransaction(
