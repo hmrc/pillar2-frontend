@@ -27,7 +27,7 @@ import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.DateTimeUtils.formatDateGDS
+import utils.DateTimeUtils.defaultDateFormatter
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -237,8 +237,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListItems.get(6).text mustBe "No"
       summaryListItems.get(7).text mustBe "In the UK and outside the UK"
       summaryListItems.get(8).text mustBe ""
-      summaryListItems.get(9).text mustBe formatDateGDS(LocalDate.now)
-      summaryListItems.get(10).text mustBe formatDateGDS(LocalDate.now.plusYears(1))
+      summaryListItems.get(9).text mustBe LocalDate.now.format(defaultDateFormatter)
+      summaryListItems.get(10).text mustBe LocalDate.now.plusYears(1).format(defaultDateFormatter)
       summaryListItems.get(11).text mustBe "UPE Contact Name"
       summaryListItems.get(12).text mustBe "testcontactupe@email.com"
       summaryListItems.get(13).text mustBe "Yes"
@@ -274,11 +274,11 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
     "have paragraph content" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       paragraphs.get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
-      paragraphs
-        .get(1)
-        .text mustBe "By submitting these details, you are confirming that you are able to act as a new filing member for your group and the information is correct and complete to the best of your knowledge."
+      paragraphs.get(1).text mustBe "By submitting these details, you are confirming that you are able to act as a " +
+        "new filing member for your group and the information is correct and complete to the best of your knowledge."
     }
 
+    // FIXME:
     "display print this page link" in {
       val printLink = view.select("a:contains(Print this page)")
       printLink.size()         must be >= 1
