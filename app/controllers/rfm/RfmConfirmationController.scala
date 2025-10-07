@@ -21,10 +21,9 @@ import controllers.actions._
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.getCurrentTimestampGMT
 import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
@@ -43,14 +42,13 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(getDateTimeGMT)
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } yield Ok(view(pillar2Id, getCurrentTimestampGMT))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }

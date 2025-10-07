@@ -17,11 +17,11 @@
 package controllers.repayments
 
 import base.SpecBase
+import models.UserAnswers
 import pages.RepaymentCompletionStatus
 import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import utils.DateTimeUtils._
 import views.html.repayments.RepaymentsConfirmationView
 
@@ -30,21 +30,19 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentDate = HtmlFormat.escape(getDateTimeGMT)
-      val testUserAnswers = emptyUserAnswers
+      val currentTimestamp: String = getCurrentTimestampGMT
+      val testUserAnswers: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
-        .setOrException(RepaymentConfirmationTimestampPage, currentDate.toString())
+        .setOrException(RepaymentConfirmationTimestampPage, currentTimestamp)
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
-
-        val result = route(application, request).value
-
-        val view = application.injector.instanceOf[RepaymentsConfirmationView]
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(currentDate.toString())(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(currentTimestamp)(request, applicationConfig, messages(application)).toString
       }
     }
 
@@ -54,8 +52,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RepaymentConfirmationController.onPageLoad().url)
-
-        val result = route(application, request).value
+        val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)

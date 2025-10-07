@@ -50,14 +50,4 @@ object DateTimeUtils {
       .format(dateTimeFormatter)
       .concat(" (GMT")
 
-  // 3 December 2011, 10:15am (GMT)
-  def getDateTimeGMT: String = {
-    val gmtDateTime:       ZonedDateTime     = ZonedDateTime.now(ZoneId.of("GMT"))
-    val formatter:         DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, h:mma")
-    val formattedDateTime: String            = gmtDateTime.format(formatter)
-    val result = formattedDateTime + " (GMT)"
-    println(s"\n\n\nGET DATE TIME GMT: $result\n")
-    result
-  }
-
 }

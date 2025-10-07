@@ -21,24 +21,19 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.twirl.api.{Html, HtmlFormat}
 import utils.DateTimeUtils._
 import views.html.repayments.RepaymentsConfirmationView
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
-  lazy val testPillar2Ref: String                     = "XMPLR0012345674"
-  lazy val pageTitle:      String                     = "Repayment request submitted"
-  lazy val currentDate:    Html                       = HtmlFormat.escape(getDateTimeGMT)
-  lazy val view:           Document                   = Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
-  lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
+  lazy val page:             RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
+  lazy val testPillar2Ref:   String                     = "XMPLR0012345674"
+  lazy val pageTitle:        String                     = "Repayment request submitted"
+  lazy val currentTimestamp: String                     = getCurrentTimestampGMT
+  lazy val view:             Document                   = Jsoup.parse(page(currentTimestamp)(request, appConfig, messages).toString())
+  lazy val paragraphs:       Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
-    val currentDate = HtmlFormat.escape(getDateTimeGMT)
-    val view: Document =
-      Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
-
     "have a page title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -58,8 +53,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a confirmation message" in {
-      paragraphs.get(0).text mustBe
-        s"You have successfully submitted your repayment request on ${currentDate.toString()}."
+      paragraphs.get(0).text mustBe s"You have successfully submitted your repayment request on $currentTimestamp."
     }
 
     "have a 'What happens next' heading" in {

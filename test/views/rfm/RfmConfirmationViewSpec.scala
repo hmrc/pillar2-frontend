@@ -20,19 +20,18 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import play.twirl.api.HtmlFormat
-import utils.DateTimeUtils.getDateTimeGMT
+import utils.DateTimeUtils.getCurrentTimestampGMT
 import views.html.rfm.RfmConfirmationView
 
 class RfmConfirmationViewSpec extends ViewSpecBase {
-  lazy val testPillar2ID: String              = "PLR2ID123"
-  lazy val testDateTime:  String              = HtmlFormat.escape(getDateTimeGMT).toString
-  lazy val page:          RfmConfirmationView = inject[RfmConfirmationView]
-  lazy val pageTitle:     String              = "Replace filing member successful"
-  lazy val paragraphs:    Elements            = view.getElementsByClass("govuk-body")
+  lazy val testPillar2ID:    String              = "PLR2ID123"
+  lazy val currentTimestamp: String              = getCurrentTimestampGMT
+  lazy val page:             RfmConfirmationView = inject[RfmConfirmationView]
+  lazy val pageTitle:        String              = "Replace filing member successful"
+  lazy val paragraphs:       Elements            = view.getElementsByClass("govuk-body")
 
   lazy val view: Document =
-    Jsoup.parse(page(testPillar2ID, testDateTime)(request, appConfig, messages).toString())
+    Jsoup.parse(page(testPillar2ID, currentTimestamp)(request, appConfig, messages).toString())
 
   "Rfm Confirmation View" should {
     "have a title" in {
@@ -48,7 +47,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
 
     "have pillar 2 ID and date time confirmation paragraphs" in {
       paragraphs.get(0).text mustEqual s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
-      paragraphs.get(1).text mustEqual s"Your group’s filing member was replaced on $testDateTime"
+      paragraphs.get(1).text mustEqual s"Your group’s filing member was replaced on $currentTimestamp"
     }
 
     "have an H2 heading for new filing member obligations" in {
