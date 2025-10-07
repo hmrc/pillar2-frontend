@@ -126,9 +126,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe formatDateGDS(currentDate)
+        summaryListItems.get(2).text() mustBe currentDate.format(defaultDateFormatter)
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe formatDateGDS(currentDate.plusYears(1))
+        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).format(defaultDateFormatter)
       }
 
       "have a button" in {
