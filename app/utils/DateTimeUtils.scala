@@ -24,10 +24,15 @@ object DateTimeUtils {
 
   TimeZone.getTimeZone("Europe/London")
 
-  private lazy val defaultDatePattern: String = "d MMMM yyyy"
+  // Patterns
+  private lazy val defaultDatePattern:     String = "d MMMM yyyy"
+  private lazy val defaultDateTimePattern: String = "d MMMM yyyy, h:mma"
 
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
+
+  // 3 December 2011, 10:15am (GMT)
+  lazy val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDateTimePattern)
 
   // '2011-12-03T10:15:30', '2011-12-03T10:15:30+01:00' or '2011-12-03T10:15:30+01:00[Europe/London]'
   lazy val isoDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
@@ -37,6 +42,13 @@ object DateTimeUtils {
 
   // 2011-12-03T10:15:30
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+  // 3 December 2011, 10:15am (GMT)
+  def getCurrentTimestampGMT: String =
+    ZonedDateTime
+      .now(ZoneId.of("GMT"))
+      .format(dateTimeFormatter)
+      .concat(" (GMT")
 
   // 3 December 2011, 10:15am (GMT)
   def getDateTimeGMT: String = {
