@@ -27,15 +27,15 @@ import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object GroupAccountingPeriodEndDateSummary {
+
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubAccountingPeriodPage).map { answer =>
-      val startDate = HtmlFormat.escape(formatDateGDS(answer.endDate))
+    answers.get(SubAccountingPeriodPage).map { accountingPeriod =>
+      val startDate: String = accountingPeriod.endDate.format(defaultDateFormatter)
+
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate))
-          .withCssClass("govuk-!-display-none-print")
+        value = ValueViewModel(startDate).withCssClass("govuk-!-display-none-print")
       )
-
     }
 
 }
