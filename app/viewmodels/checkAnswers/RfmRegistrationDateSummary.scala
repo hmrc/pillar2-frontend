@@ -28,17 +28,14 @@ import viewmodels.implicits._
 
 object RfmRegistrationDateSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RfmRegistrationDatePage).map { answer =>
-      val startDate = HtmlFormat.escape(formatDateGDS(answer))
+    answers.get(RfmRegistrationDatePage).map { registrationDate =>
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate)),
+        value = ValueViewModel(registrationDate.format(defaultDateFormatter)),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfmRegistrationDate.change.hidden"))
         )
       )
-
     }
-
 }
