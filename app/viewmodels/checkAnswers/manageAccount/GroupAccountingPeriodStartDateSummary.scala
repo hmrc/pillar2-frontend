@@ -29,11 +29,10 @@ import viewmodels.implicits._
 object GroupAccountingPeriodStartDateSummary {
 
   def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
-    request.subscriptionLocalData.get(SubAccountingPeriodPage).map { answer =>
-      val startDate: Html = HtmlFormat.escape(formatDateGDS(answer.startDate))
+    request.subscriptionLocalData.get(SubAccountingPeriodPage).map { accountingPeriod =>
       SummaryListRowViewModel(
         key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate))
+        value = ValueViewModel(accountingPeriod.startDate.format(defaultDateFormatter))
       ).withCssClass("no-border-bottom")
     }
 
