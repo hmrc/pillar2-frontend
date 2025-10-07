@@ -39,7 +39,7 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.DateTimeUtils.dateFormatter
+import utils.DateTimeUtils.defaultDateFormatter
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -108,7 +108,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(dateFormatter),
+            subscriptionData.upeDetails.registrationDate.format(defaultDateFormatter),
             btnActive = false,
             None,
             None,
@@ -148,7 +148,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(dateFormatter),
+            subscriptionData.upeDetails.registrationDate.format(defaultDateFormatter),
             "12345678",
             inactiveStatus = false,
             agentView = false

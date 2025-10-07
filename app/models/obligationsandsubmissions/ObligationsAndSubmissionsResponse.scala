@@ -22,7 +22,7 @@ import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
 
 import java.time.temporal.ChronoUnit
-import utils.DateTimeUtils.dateFormatter
+import utils.DateTimeUtils.defaultDateFormatter
 
 import java.time.{LocalDate, ZonedDateTime}
 
@@ -60,7 +60,7 @@ case class AccountingPeriodDetails(
   val dueDatePassed:        Boolean            = dueDate.isBefore(LocalDate.now())
   val hasAnyOpenObligation: Boolean            = obligations.exists(_.status == ObligationStatus.Open)
 
-  def formattedDates: String = s"${startDate.format(dateFormatter)} to ${endDate.format(dateFormatter)}"
+  def formattedDates: String = s"${startDate.format(defaultDateFormatter)} to ${endDate.format(defaultDateFormatter)}"
 
   def isInReceivedPeriod: Boolean =
     obligations
