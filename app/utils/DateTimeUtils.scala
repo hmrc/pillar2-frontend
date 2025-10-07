@@ -29,6 +29,7 @@ object DateTimeUtils {
   private lazy val defaultTimeZone:    TimeZone = TimeZone.getTimeZone("Europe/London")
   private lazy val defaultDatePattern: String   = "d MMMM yyyy"
 
+  // FIXME
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
 
@@ -41,16 +42,6 @@ object DateTimeUtils {
   // 2011-12-03T10:15:30
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-  // FIXME: this uses IBM's library
-  private def dateFormat(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern(defaultDatePattern)
-
-  // FIXME
-  def formatDateGDS(date: LocalDate)(implicit messages: Messages): String = {
-    val result = dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
-    println(s"\n\n\nFORMAT DATE GDS: $result\n")
-    result
-  }
-
   // 3 December 2011, 10:15am (GMT)
   def getDateTimeGMT: String = {
     val gmtDateTime:       ZonedDateTime     = ZonedDateTime.now(ZoneId.of("GMT"))
@@ -59,15 +50,6 @@ object DateTimeUtils {
     val result = formattedDateTime + " (GMT)"
     println(s"\n\n\nGET DATE TIME GMT: $result\n")
     result
-  }
-
-  private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
-    val uLocale:   ULocale          = new ULocale(messages.lang.code)
-    val validLang: Boolean          = ULocale.getAvailableLocales.contains(uLocale)
-    val locale:    ULocale          = if (validLang) uLocale else ULocale.getDefault
-    val sdf:       SimpleDateFormat = new SimpleDateFormat(pattern, locale)
-    sdf.setTimeZone(defaultTimeZone)
-    sdf
   }
 
 }
