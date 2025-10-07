@@ -32,10 +32,8 @@ import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DateTimeUtils._
@@ -80,11 +78,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         rows = Seq(
           SummaryListRowViewModel(
             "btn.accountingPeriod.startAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(formatDateGDS(startDate))))
+            ValueViewModel(startDate.format(defaultDateFormatter))
           ),
           SummaryListRowViewModel(
             "btn.accountingPeriod.endAccountDate",
-            value = ValueViewModel(HtmlContent(HtmlFormat.escape(formatDateGDS(endDate))))
+            ValueViewModel(endDate.format(defaultDateFormatter))
           )
         )
       )
