@@ -40,8 +40,8 @@ class BTNConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData) { implicit request =>
-    val submissionDate            = formatDateGDS(LocalDate.now())
-    val accountingPeriodStartDate = formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
+    val submissionDate:            String = LocalDate.now().format(defaultDateFormatter)
+    val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.format(defaultDateFormatter)
 
     Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent))
   }
