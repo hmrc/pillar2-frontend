@@ -27,9 +27,7 @@ import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
-import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils._
@@ -58,23 +56,19 @@ class BTNAccountingPeriodController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList = {
-    val start = HtmlFormat.escape(formatDateGDS(startDate))
-    val end   = HtmlFormat.escape(formatDateGDS(endDate))
-
+  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList =
     SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(HtmlContent(start))
+          value = ValueViewModel(startDate.format(defaultDateFormatter))
         ),
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(HtmlContent(end))
+          value = ValueViewModel(endDate.format(defaultDateFormatter))
         )
       )
     )
-  }
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
