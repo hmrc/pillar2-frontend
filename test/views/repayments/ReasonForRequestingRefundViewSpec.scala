@@ -17,6 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import forms.ReasonForRequestingRepaymentFormProvider
 import generators.{Generators, StringGenerators}
 import models.NormalMode
@@ -44,6 +45,11 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with a link to the Homepage" in {
+        val className: String = "govuk-header__link govuk-header__service-name"
+        view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a hint description" in {

@@ -29,7 +29,8 @@ paragraphMessageWithLink: ParagraphMessageWithLink
 @layout(
 pageTitle = titleNoForm(messages("repayments.incompleteDataView.title")),
 authorised = false,
-showBackLink = true
+showBackLink = true,
+bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
 @heading(messages("repayments.incompleteDataView.heading"), "govuk-heading-l")
 @paragraphMessageWithLink(Some(messages("repayments.incompleteDataView.paragraphStart")), messages("repayments.incompleteDataView.link.text"), Some(messages("repayments.incompleteDataView.paragraphStop")), linkUrl = controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url, linkFullStop= false)

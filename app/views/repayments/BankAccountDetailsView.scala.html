@@ -29,7 +29,7 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-    @layout(pageTitle = title(form, messages("repayments.bankAccountDetails.title"))) {
+    @layout(pageTitle = title(form, messages("repayments.bankAccountDetails.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
         @formHelper(action = controllers.repayments.routes.BankAccountDetailsController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 

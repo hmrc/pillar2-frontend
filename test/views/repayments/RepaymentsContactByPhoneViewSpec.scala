@@ -17,6 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import forms.RepaymentsContactByPhoneFormProvider
 import generators.StringGenerators
 import models.{Mode, NormalMode}
@@ -49,6 +50,11 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
         val h1Elements: Elements = view.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe s"Can we contact $contactName by phone?"
+      }
+
+      "have a banner with a link to the Homepage" in {
+        val className: String = "govuk-header__link govuk-header__service-name"
+        view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a hint" in {

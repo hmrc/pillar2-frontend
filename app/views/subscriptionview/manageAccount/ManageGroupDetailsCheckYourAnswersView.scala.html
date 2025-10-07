@@ -28,7 +28,7 @@
 
 @(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true) {
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
     @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
         @if(isAgent && organisationName.isDefined) {
             @sectionHeader(organisationName.get)

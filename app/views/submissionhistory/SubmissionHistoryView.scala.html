@@ -35,7 +35,8 @@
 
 @(accountPeriods: Seq[AccountingPeriodDetails],isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
-    pageTitle = titleNoForm(messages("submissionHistory.title"))
+    pageTitle = titleNoForm(messages("submissionHistory.title")),
+    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
     @heading(messages("submissionHistory.heading"), classes = "govuk-heading-l")
     @if(isAgent) {

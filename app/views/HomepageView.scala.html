@@ -70,7 +70,7 @@
  </div>
 }
 
-@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false) {
+@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
   @if(btnActive) {
     @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
