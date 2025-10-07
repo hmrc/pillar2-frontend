@@ -1770,6 +1770,13 @@ btn.error.heading = Sorry, there is a problem with the service
 btn.error.tryAgainLater.p1 = You can try again later when the service is available.
 btn.error.returnToHomePageText.link = Return to your account homepage to submit a Below-Threshold Notification again
 
+btn.underEnquiryWarning.title = You have one or more returns under enquiry
+btn.underEnquiryWarning.heading = You have one or more returns under enquiry
+btn.underEnquiryWarning.p1 = You cannot add a Below-Threshold Notification to an accounting period that is currently under enquiry.
+btn.underEnquiryWarning.p2 = If you continue, the Below-Threshold Notification will still be processed but will not apply to any accounting periods under enquiry.
+btn.underEnquiryWarning.continue = Continue
+btn.underEnquiryWarning.returnToHomePageText.link = Return to your group's homepage
+
 btn.cannotReturn.heading = You have submitted a Below-Threshold Notification
 btn.cannotReturn.p1 = You have submitted a Below-Threshold Notification
 btn.cannotReturn.link = Return to your group’s homepage
