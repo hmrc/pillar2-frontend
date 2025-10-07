@@ -20,7 +20,6 @@ import play.api.data.Form
 import play.api.i18n.Messages
 import utils.DateTimeUtils.defaultDateFormatter
 
-// TODO: remove all DateTimeFormatters
 import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
@@ -75,8 +74,10 @@ object ViewUtils {
     extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
   }
 
+  // TODO: move to DateTimeUtils
   def formattedCurrentDate: String = LocalDate.now().format(defaultDateFormatter)
 
+  // TODO: move to DateTimeUtils
   def currentTimeGMT: String = {
     val zonedTime     = ZonedDateTime.now(ZoneId.of("GMT"))
     val formatter     = DateTimeFormatter.ofPattern("hh:mma (zzz)")

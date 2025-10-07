@@ -21,12 +21,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
-import utils.ViewHelpers
+import utils.DateTimeUtils.getDateTimeGMT
 import views.html.rfm.RfmConfirmationView
 
 class RfmConfirmationViewSpec extends ViewSpecBase {
   lazy val testPillar2ID: String              = "PLR2ID123"
-  lazy val testDateTime:  String              = HtmlFormat.escape(ViewHelpers.getDateTimeGMT).toString
+  lazy val testDateTime:  String              = HtmlFormat.escape(getDateTimeGMT).toString
   lazy val page:          RfmConfirmationView = inject[RfmConfirmationView]
   lazy val pageTitle:     String              = "Replace filing member successful"
   lazy val paragraphs:    Elements            = view.getElementsByClass("govuk-body")

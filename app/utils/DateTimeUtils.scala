@@ -21,8 +21,8 @@ import com.ibm.icu.text.SimpleDateFormat
 import com.ibm.icu.util.{TimeZone, ULocale}
 import play.api.i18n.Messages
 
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.time.format.DateTimeFormatter
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 import java.util.Date
 
 object DateTimeUtils {
@@ -41,21 +41,25 @@ object DateTimeUtils {
   // 2011-12-03T10:15:30
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-  // FIXME: refactor the following code which was moved over from ViewHelpers
-  // - remove ibm date/time library and use Java
+  // FIXME: this uses IBM's library
+  private def dateFormat(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern(defaultDatePattern)
 
-  //only for date like Sunday 25 January 2015
-  def formatDateGDS(date: LocalDate)(implicit messages: Messages): String =
-    dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
+  // FIXME
+  def formatDateGDS(date: LocalDate)(implicit messages: Messages): String = {
+    val result = dateFormat.format(Date.from(date.atStartOfDay(ZoneId.systemDefault).toInstant))
+    println(s"\n\n\nFORMAT DATE GDS: $result\n")
+    result
+  }
 
+  // 3 December 2011, 10:15am (GMT)
   def getDateTimeGMT: String = {
     val gmtDateTime:       ZonedDateTime     = ZonedDateTime.now(ZoneId.of("GMT"))
     val formatter:         DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy, h:mma")
     val formattedDateTime: String            = gmtDateTime.format(formatter)
-    formattedDateTime + " (GMT)"
+    val result = formattedDateTime + " (GMT)"
+    println(s"\n\n\nGET DATE TIME GMT: $result\n")
+    result
   }
-
-  private def dateFormat(implicit messages: Messages): SimpleDateFormat = createDateFormatForPattern(defaultDatePattern)
 
   private def createDateFormatForPattern(pattern: String)(implicit messages: Messages): SimpleDateFormat = {
     val uLocale:   ULocale          = new ULocale(messages.lang.code)

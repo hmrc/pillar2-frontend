@@ -32,9 +32,9 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateTimeUtils.defaultDateFormatter
 import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
-import utils.DateTimeUtils.defaultDateFormatter
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}

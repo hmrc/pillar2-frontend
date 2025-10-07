@@ -33,11 +33,11 @@ import java.time.LocalDate
 
 class CheckYourAnswersViewSpec extends ViewSpecBase {
 
-  lazy val startDate:         LocalDate            = LocalDate.of(2024, 10, 24)
-  lazy val endDate:           LocalDate            = LocalDate.of(2025, 10, 24)
-  lazy val accountingPeriod:  AccountingPeriod     = AccountingPeriod(startDate, endDate)
-  lazy val page:              CheckYourAnswersView = inject[CheckYourAnswersView]
-  lazy val pageTitle:         String               = "Check your answers to submit your Below-Threshold Notification"
+  lazy val startDate:        LocalDate            = LocalDate.of(2024, 10, 24)
+  lazy val endDate:          LocalDate            = LocalDate.of(2025, 10, 24)
+  lazy val accountingPeriod: AccountingPeriod     = AccountingPeriod(startDate, endDate)
+  lazy val page:             CheckYourAnswersView = inject[CheckYourAnswersView]
+  lazy val pageTitle:        String               = "Check your answers to submit your Below-Threshold Notification"
   lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)
@@ -96,7 +96,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
           summaryListElements.size() mustBe 1
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
-          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
+          summaryListItems.get(0).text() mustBe
+            s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located only in the UK?"
           summaryListItems.get(1).text() mustBe "Yes"
@@ -138,7 +139,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
           summaryListElements.size() mustBe 1
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
-          summaryListItems.get(0).text() mustBe s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
+          summaryListItems.get(0).text() mustBe
+            s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located in both the UK and outside the UK?"
           summaryListItems.get(1).text() mustBe "Yes"

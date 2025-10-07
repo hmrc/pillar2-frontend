@@ -27,7 +27,7 @@ import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages._
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.ViewHelpers
+import utils.DateTimeUtils.formatDateGDS
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -237,8 +237,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListItems.get(6).text mustBe "No"
       summaryListItems.get(7).text mustBe "In the UK and outside the UK"
       summaryListItems.get(8).text mustBe ""
-      summaryListItems.get(9).text mustBe ViewHelpers.formatDateGDS(LocalDate.now)
-      summaryListItems.get(10).text mustBe ViewHelpers.formatDateGDS(LocalDate.now.plusYears(1))
+      summaryListItems.get(9).text mustBe formatDateGDS(LocalDate.now)
+      summaryListItems.get(10).text mustBe formatDateGDS(LocalDate.now.plusYears(1))
       summaryListItems.get(11).text mustBe "UPE Contact Name"
       summaryListItems.get(12).text mustBe "testcontactupe@email.com"
       summaryListItems.get(13).text mustBe "Yes"

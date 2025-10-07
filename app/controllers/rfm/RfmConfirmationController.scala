@@ -24,8 +24,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Pillar2Reference
 import utils.DateTimeUtils._
+import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
 import javax.inject.Inject
