@@ -76,16 +76,16 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
+
       summaryListKeys.get(0).text mustBe "Pillar 2 Top-up Taxes ID"
       summaryListKeys.get(1).text mustBe "Registration date"
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(plrReference)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(formatDateGDS(registrationDate))
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+
       summaryListItems.get(0).text mustBe plrReference
-      summaryListItems.get(1).text mustBe formatDateGDS(registrationDate)
+      summaryListItems.get(1).text mustBe registrationDate.format(defaultDateFormatter)
     }
 
     "have a summary list links" in {
