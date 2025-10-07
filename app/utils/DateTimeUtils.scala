@@ -16,20 +16,16 @@
 
 package utils
 
-// FIXME: remove this library
-import com.ibm.icu.text.SimpleDateFormat
-import com.ibm.icu.util.{TimeZone, ULocale}
-import play.api.i18n.Messages
-
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
-import java.util.Date
+import java.time.{ZoneId, ZonedDateTime}
+import java.util.TimeZone
 
 object DateTimeUtils {
-  private lazy val defaultTimeZone:    TimeZone = TimeZone.getTimeZone("Europe/London")
-  private lazy val defaultDatePattern: String   = "d MMMM yyyy"
 
-  // FIXME
+  TimeZone.getTimeZone("Europe/London")
+
+  private lazy val defaultDatePattern: String = "d MMMM yyyy"
+
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
 

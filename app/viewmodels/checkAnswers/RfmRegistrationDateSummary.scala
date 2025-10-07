@@ -19,8 +19,6 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.RfmRegistrationDatePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
