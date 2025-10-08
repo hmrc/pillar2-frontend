@@ -30,9 +30,6 @@ object DateTimeUtils {
   private lazy val defaultDateTimePattern: String = "d MMMM yyyy, h:mma (zzz)"
   private lazy val defaultTimePattern:     String = "hh:mma (zzz)"
 
-  // TODO:
-  def formattedCurrentDate: String = LocalDate.now().format(defaultDateFormatter)
-
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
 
@@ -50,6 +47,12 @@ object DateTimeUtils {
 
   // 2011-12-03T10:15:30
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+  // 3 December 2011
+  def getCurrentDate: String =
+    LocalDate
+      .now()
+      .format(defaultDateFormatter)
 
   // 3 December 2011, 10:15am (GMT)
   def getCurrentDateTimeGMT: String =

@@ -34,7 +34,7 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.{formattedCurrentDate, getCurrentTimeGMT}
+import utils.DateTimeUtils.{getCurrentDate, getCurrentTimeGMT}
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
@@ -91,7 +91,7 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(UpeNameRegistrationPage, companyName)
                                  .setOrException(SubMneOrDomesticPage, mneOrDom)
                                  .setOrException(PlrReferencePage, plr)
-                                 .setOrException(PdfRegistrationDatePage, formattedCurrentDate)
+                                 .setOrException(PdfRegistrationDatePage, getCurrentDate)
                                  .setOrException(PdfRegistrationTimeStampPage, getCurrentTimeGMT)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
