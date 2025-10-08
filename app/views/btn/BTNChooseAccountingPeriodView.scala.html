@@ -32,7 +32,7 @@
 
 @(form: Form[Int], mode: Mode, isAgent: Boolean, organisationName: Option[String], accountingPeriodDetails: Seq[(AccountingPeriodDetails, Int)])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("btn.chooseAccountingPeriod.title"))) {
+@layout(pageTitle = title(form, messages("btn.chooseAccountingPeriod.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
     @formHelper(action = controllers.btn.routes.BTNChooseAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 

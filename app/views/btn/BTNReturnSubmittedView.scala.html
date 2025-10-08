@@ -39,7 +39,8 @@
         titleNoForm(messages("btn.returnSubmitted.agent.title", accountingPeriodStartDate, accountingPeriodEndDate))
     } else {
         titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodStartDate, accountingPeriodEndDate))
-    }
+    },
+    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent) {

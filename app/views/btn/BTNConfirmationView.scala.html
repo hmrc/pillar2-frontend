@@ -31,7 +31,7 @@
 
 @(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
     @govukPanel(Panel(
       title = Text(messages("btn.confirmation.heading")),

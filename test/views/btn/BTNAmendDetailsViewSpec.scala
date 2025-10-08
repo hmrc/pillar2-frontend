@@ -17,6 +17,7 @@
 package views.btn
 
 import base.ViewSpecBase
+import controllers.routes
 import models.MneOrDomestic
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -25,9 +26,10 @@ import views.html.btn.BTNAmendDetailsView
 
 class BTNAmendDetailsViewSpec extends ViewSpecBase {
 
-  lazy val page:           BTNAmendDetailsView = inject[BTNAmendDetailsView]
-  lazy val pageTitle:      String              = "Based on your answer, you need to amend your details"
-  lazy val pageTitleAgent: String              = "Group details amend needed"
+  lazy val page:            BTNAmendDetailsView = inject[BTNAmendDetailsView]
+  lazy val pageTitle:       String              = "Based on your answer, you need to amend your details"
+  lazy val pageTitleAgent:  String              = "Group details amend needed"
+  lazy val bannerClassName: String              = "govuk-header__link govuk-header__service-name"
 
   def viewUkOnly(isAgent: Boolean = false): Document =
     Jsoup.parse(page(MneOrDomestic.Uk, isAgent)(request, appConfig, messages).toString())
@@ -49,6 +51,11 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
         val ukAndOtherH1Elements: Elements = viewUkAndOther().getElementsByTag("h1")
         ukAndOtherH1Elements.size() mustBe 1
         ukAndOtherH1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with a link to the Homepage" in {
+        viewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        viewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have paragraph content and link" in {
@@ -85,6 +92,11 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       "have a unique H1 heading" in {
         viewUkOnly(isAgent = true).getElementsByTag("h1").text mustBe pageTitleAgent
         viewUkAndOther(isAgent = true).getElementsByTag("h1").text mustBe pageTitleAgent
+      }
+
+      "have a banner with a link to the Homepage" in {
+        viewUkOnly(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        viewUkAndOther(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have paragraph content and link" in {
