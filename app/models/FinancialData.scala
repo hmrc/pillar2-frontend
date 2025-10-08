@@ -19,7 +19,7 @@ package models
 import helpers.FinancialDataHelper._
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.PAID_PERIOD_IN_DAYS
+import utils.Constants.PaidPeriodInDays
 
 import java.time.LocalDate
 import java.time.temporal.ChronoUnit
@@ -58,7 +58,7 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
 
   /** Checks if there has been a recent payment (within the last 60 days)
     */
-  def hasRecentPayment(daysThreshold: Int = PAID_PERIOD_IN_DAYS, currentDate: LocalDate = LocalDate.now): Boolean =
+  def hasRecentPayment(daysThreshold: Int = PaidPeriodInDays, currentDate: LocalDate = LocalDate.now): Boolean =
     financialTransactions
       .filter(_.mainTransaction.contains(EtmpPaymentTransactionRef))
       .flatMap(_.items.flatMap(_.clearingDate))
