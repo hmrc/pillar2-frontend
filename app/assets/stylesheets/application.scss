@@ -8,6 +8,8 @@
   display: inline-block !important;
 }
 h1, .govuk-error-summary, .govuk-error-message {
+  overflow-wrap: break-word;
+  // IE support
   word-wrap: break-word;
 }
 
