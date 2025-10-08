@@ -23,7 +23,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.getCurrentTimestampGMT
+import utils.DateTimeUtils.getCurrentDateTimeGMT
 import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
@@ -48,7 +48,7 @@ class RfmConfirmationController @Inject() (
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, getCurrentTimestampGMT))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } yield Ok(view(pillar2Id, getCurrentDateTimeGMT))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }

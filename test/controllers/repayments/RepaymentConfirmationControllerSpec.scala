@@ -30,7 +30,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentTimestamp: String = getCurrentTimestampGMT
+      val currentTimestamp: String = getCurrentDateTimeGMT
       val testUserAnswers: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
         .setOrException(RepaymentConfirmationTimestampPage, currentTimestamp)

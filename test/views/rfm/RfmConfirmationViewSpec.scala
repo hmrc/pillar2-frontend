@@ -20,12 +20,12 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.getCurrentTimestampGMT
+import utils.DateTimeUtils.getCurrentDateTimeGMT
 import views.html.rfm.RfmConfirmationView
 
 class RfmConfirmationViewSpec extends ViewSpecBase {
   lazy val testPillar2ID:    String              = "PLR2ID123"
-  lazy val currentTimestamp: String              = getCurrentTimestampGMT
+  lazy val currentTimestamp: String              = getCurrentDateTimeGMT
   lazy val page:             RfmConfirmationView = inject[RfmConfirmationView]
   lazy val pageTitle:        String              = "Replace filing member successful"
   lazy val paragraphs:       Elements            = view.getElementsByClass("govuk-body")

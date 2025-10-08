@@ -29,7 +29,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
   lazy val page:             RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
   lazy val testPillar2Ref:   String                     = "XMPLR0012345674"
   lazy val pageTitle:        String                     = "Repayment request submitted"
-  lazy val currentTimestamp: String                     = getCurrentTimestampGMT
+  lazy val currentTimestamp: String                     = getCurrentDateTimeGMT
   lazy val view:             Document                   = Jsoup.parse(page(currentTimestamp)(request, appConfig, messages).toString())
   lazy val paragraphs:       Elements                   = view.getElementsByClass("govuk-body")
 

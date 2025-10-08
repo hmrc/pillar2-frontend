@@ -66,7 +66,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val result:           Future[Result]      = route(application, request).value
-        val currentTimestamp: String              = getCurrentTimestampGMT
+        val currentTimestamp: String              = getCurrentDateTimeGMT
         val view:             RfmConfirmationView = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK

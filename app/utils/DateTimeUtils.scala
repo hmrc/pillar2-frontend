@@ -52,7 +52,7 @@ object DateTimeUtils {
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
   // 3 December 2011, 10:15am (GMT)
-  def getCurrentTimestampGMT: String =
+  def getCurrentDateTimeGMT: String =
     ZonedDateTime
       .now(gmtZoneId)
       .format(dateTimeFormatter)
