@@ -163,11 +163,11 @@ class DashboardController @Inject() (
       if (period.obligations.isEmpty) {
         None
       } else {
-        val uktrObligation: Option[Obligation] = period.uktrObligation
-        val girObligation: Option[Obligation] = period.girObligation
-        val dueDatePassed: Boolean = period.dueDatePassed
-        val hasAnyOpenObligation: Boolean = period.hasAnyOpenObligation
-        val isInReceivedPeriod: Boolean = period.isInReceivedPeriod
+        val uktrObligation:       Option[Obligation] = period.uktrObligation
+        val girObligation:        Option[Obligation] = period.girObligation
+        val dueDatePassed:        Boolean            = period.dueDatePassed
+        val hasAnyOpenObligation: Boolean            = period.hasAnyOpenObligation
+        val isInReceivedPeriod:   Boolean            = period.isInReceivedPeriod
 
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>
@@ -179,7 +179,7 @@ class DashboardController @Inject() (
               case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
               case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
               case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
-              case _ if hasAnyOpenObligation && !dueDatePassed                        => Some(Due)
+              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
               case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
               case _                                                                 => None
             }
@@ -196,8 +196,8 @@ class DashboardController @Inject() (
               case _                              => None
             }
           case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
-          case _ if hasAnyOpenObligation && dueDatePassed => Some(Overdue)
-          case _                                          => None
+          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
+          case _                                           => None
         }
       }
 
