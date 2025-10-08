@@ -20,18 +20,11 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario._
-import models.DynamicNotificationAreaState
-import models.FinancialData
-import models.UnprocessableEntityError
-import models.UserAnswers
-import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
-import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{Outstanding, OutstandingPaymentBannerScenario, Paid}
+import models.{DueAndOverdueReturnBannerScenario, DynamicNotificationAreaState, FinancialData, Outstanding, OutstandingPaymentBannerScenario, Paid, UnprocessableEntityError, UserAnswers}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -40,12 +33,11 @@ import repositories.SessionRepository
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.{RECEIVED_PERIOD_IN_DAYS, SUBMISSION_ACCOUNTING_PERIODS}
+import utils.Constants.{PAID_PERIOD_IN_DAYS, SUBMISSION_ACCOUNTING_PERIODS}
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -156,7 +148,7 @@ class DashboardController @Inject() (
     } else {
       val totalOutstandingAmount = financialData.getTotalOutstandingAmount
       val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialData.hasRecentPayment(60, currentDate)
+      val hasRecentPayment       = financialData.hasRecentPayment(PAID_PERIOD_IN_DAYS, currentDate)
 
       (hasOutstandingPayment, hasRecentPayment) match {
         case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))
@@ -171,21 +163,11 @@ class DashboardController @Inject() (
       if (period.obligations.isEmpty) {
         None
       } else {
-        val uktrObligation       = period.obligations.find(_.obligationType == UKTR)
-        val girObligation        = period.obligations.find(_.obligationType == GIR)
-        val dueDatePassed        = period.dueDate.isBefore(LocalDate.now())
-        val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
-        val isInReceivedPeriod = period.obligations
-          .filter(_.status == ObligationStatus.Fulfilled)
-          .flatMap(_.submissions)
-          .filter(submission =>
-            submission.submissionType == UKTR_CREATE
-              || submission.submissionType == SubmissionType.GIR
-          )
-          .maxByOption(_.receivedDate)
-          .exists { submission =>
-            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= RECEIVED_PERIOD_IN_DAYS
-          }
+        val uktrObligation       = period.uktrObligation
+        val girObligation        = period.girObligation
+        val dueDatePassed        = period.dueDatePassed
+        val hasAnyOpenObligation = period.hasAnyOpenObligation
+        val isInReceivedPeriod   = period.isInReceivedPeriod
 
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>
@@ -197,7 +179,7 @@ class DashboardController @Inject() (
               case (ObligationStatus.Open, ObligationStatus.Fulfilled, true, _)      => Some(Incomplete)
               case (ObligationStatus.Fulfilled, ObligationStatus.Open, true, _)      => Some(Incomplete)
               case (ObligationStatus.Fulfilled, ObligationStatus.Fulfilled, _, true) => Some(Received)
-              case _ if hasAnyOpenObligation && !dueDatePassed                       => Some(Due)
+              case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Due)
               case _ if hasAnyOpenObligation && dueDatePassed                        => Some(Overdue)
               case _                                                                 => None
             }
@@ -213,9 +195,9 @@ class DashboardController @Inject() (
               case (ObligationStatus.Open, true)  => Some(Overdue)
               case _                              => None
             }
-          case _ if hasAnyOpenObligation && !dueDatePassed => Some(Due)
-          case _ if hasAnyOpenObligation && dueDatePassed  => Some(Overdue)
-          case _                                           => None
+          case _ if hasAnyOpenObligation && dueDatePassed => Some(Due)
+          case _ if hasAnyOpenObligation && dueDatePassed => Some(Overdue)
+          case _                                          => None
         }
       }
 
