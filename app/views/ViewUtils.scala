@@ -74,17 +74,6 @@ object ViewUtils {
     extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
   }
 
-  // TODO: move to DateTimeUtils
-  def formattedCurrentDate: String = LocalDate.now().format(defaultDateFormatter)
-
-  // TODO: move to DateTimeUtils
-  def currentTimeGMT: String = {
-    val zonedTime     = ZonedDateTime.now(ZoneId.of("GMT"))
-    val formatter     = DateTimeFormatter.ofPattern("hh:mma (zzz)")
-    val formattedTime = zonedTime.format(formatter)
-    formattedTime
-  }
-
   def formatAmount(amount: BigDecimal): String =
     amount match {
       case n if n.scale <= 0 => f"$n%,.0f"

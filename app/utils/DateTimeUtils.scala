@@ -17,22 +17,30 @@
 package utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{ZoneId, ZonedDateTime}
-import java.util.TimeZone
+import java.time.{LocalDate, ZoneId, ZonedDateTime}
 
 object DateTimeUtils {
 
-  TimeZone.getTimeZone("Europe/London")
+  private val ukZoneId:  ZoneId = ZoneId.of("Europe/London")
+  private val gmtZoneId: ZoneId = ZoneId.of("GMT")
+  private val utcZoneId: ZoneId = ZoneId.of("UTC")
 
   // Patterns
   private lazy val defaultDatePattern:     String = "d MMMM yyyy"
-  private lazy val defaultDateTimePattern: String = "d MMMM yyyy, h:mma"
+  private lazy val defaultDateTimePattern: String = "d MMMM yyyy, h:mma (zzz)"
+  private lazy val defaultTimePattern:     String = "hh:mma (zzz)"
+
+  // TODO:
+  def formattedCurrentDate: String = LocalDate.now().format(defaultDateFormatter)
 
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
 
   // 3 December 2011, 10:15am (GMT)
   lazy val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDateTimePattern)
+
+  // 10:15am (GMT)
+  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultTimePattern)
 
   // '2011-12-03T10:15:30', '2011-12-03T10:15:30+01:00' or '2011-12-03T10:15:30+01:00[Europe/London]'
   lazy val isoDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
@@ -46,8 +54,13 @@ object DateTimeUtils {
   // 3 December 2011, 10:15am (GMT)
   def getCurrentTimestampGMT: String =
     ZonedDateTime
-      .now(ZoneId.of("GMT"))
+      .now(gmtZoneId)
       .format(dateTimeFormatter)
-      .concat(" (GMT")
+
+  // 10:15am (GMT)
+  def getCurrentTimeGMT: String =
+    ZonedDateTime
+      .now(gmtZoneId)
+      .format(timeFormatter)
 
 }
