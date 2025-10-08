@@ -166,6 +166,14 @@
                        @messages("homepage.payments.tags.outstanding")
                      </span>
                  }
+                 case Paid => {
+                     <span
+                     class="govuk-tag govuk-tag--green"
+                     aria-label="Paid payments"
+                     title="Paid payments">
+                     @messages("homepage.payments.tags.paid")
+                     </span>
+                 }
              }
          </div>
          <div class="card-content">
