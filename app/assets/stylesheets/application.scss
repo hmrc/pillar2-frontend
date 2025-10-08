@@ -7,7 +7,7 @@
 .js-enabled .js-visible {
   display: inline-block !important;
 }
-h1, .govuk-error-summary, .govuk-error-message {
+h1, h2, .govuk-error-summary, .govuk-error-message, .govuk-hint, .govuk-body, .govuk-notification-banner__heading {
   overflow-wrap: break-word;
   // IE support
   word-wrap: break-word;
