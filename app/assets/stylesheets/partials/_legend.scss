@@ -1,0 +1,4 @@
+// govuk-frontend has legends with 'display: table', meaning they don't respect parent tag widths.
+legend {
+  display: block !important;
+}

@@ -1,5 +1,7 @@
-@import "autocomplete";
-@import "hods-loading-spinner";
+@use "autocomplete";
+@use "hods-loading-spinner";
+@use "partials/heading";
+@use "partials/legend";
 
 .js-visible {
   display: none !important;
