@@ -72,7 +72,7 @@ class CheckYourAnswersController @Inject() (
                     AccountingPeriod(
                       startDate = accountingPeriodDetails.startDate,
                       endDate = accountingPeriodDetails.endDate,
-                      duetDate = Some(accountingPeriodDetails.dueDate)
+                      dueDate = Some(accountingPeriodDetails.dueDate)
                     )
                   }
                   .getOrElse {
