@@ -33,7 +33,7 @@ import repositories.SessionRepository
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.{PAID_PERIOD_IN_DAYS, SUBMISSION_ACCOUNTING_PERIODS}
+import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -148,7 +148,7 @@ class DashboardController @Inject() (
     } else {
       val totalOutstandingAmount = financialData.getTotalOutstandingAmount
       val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialData.hasRecentPayment(PAID_PERIOD_IN_DAYS, currentDate)
+      val hasRecentPayment       = financialData.hasRecentPayment(currentDate = currentDate)
 
       (hasOutstandingPayment, hasRecentPayment) match {
         case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))
