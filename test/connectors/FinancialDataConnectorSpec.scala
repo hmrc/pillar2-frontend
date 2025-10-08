@@ -57,7 +57,7 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
         taxPeriodFrom = Some(LocalDate.now.minusMonths(6)),
         taxPeriodTo = Some(LocalDate.now),
         outstandingAmount = Some(BigDecimal(1000.00)),
-        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(1))))
+        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(1)), clearingDate = Some(LocalDate.now.plusMonths(1))))
       ),
       FinancialTransaction(
         mainTransaction = Some("4742"),
@@ -65,7 +65,7 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
         taxPeriodFrom = Some(LocalDate.now),
         taxPeriodTo = Some(LocalDate.now.plusMonths(6)),
         outstandingAmount = Some(BigDecimal(2000.00)),
-        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(2))))
+        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(2)), clearingDate = Some(LocalDate.now.plusMonths(2))))
       )
     )
   )

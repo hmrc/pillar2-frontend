@@ -19,17 +19,16 @@ package controllers.payments
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
 import controllers.payments.OutstandingPaymentsControllerSpec._
-import controllers.payments.OutstandingPaymentsControllerSpec.{enrolments, pillar2Id, samplePaymentsData}
 import helpers.FinancialDataHelper.Pillar2UktrName
+import models._
 import models.subscription.AccountingPeriod
-import models.{FinancialSummary, TransactionSummary}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
-import services.OutstandingPaymentsService
+import services.FinancialDataService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.outstandingpayments.OutstandingPaymentsView
@@ -45,13 +44,13 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 
       running(application) {
-        when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(samplePaymentsData))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(sampleChargeTransactionWithNoTag))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -60,7 +59,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(samplePaymentsData, pillar2Id, amountDue, hasOverdueReturnPayment = true)(
+          view(Seq.empty, pillar2Id, BigDecimal(0), hasOverdueReturnPayment = false)(
             request,
             applicationConfig,
             messages(application),
@@ -74,12 +73,12 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 
       running(application) {
-        when(mockOutstandingPaymentsService.retrieveData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Test error")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -98,7 +97,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .configure("features.phase2ScreensEnabled" -> false)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[OutstandingPaymentsService].toInstance(mockOutstandingPaymentsService)
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
         )
         .build()
 
@@ -134,7 +133,20 @@ object OutstandingPaymentsControllerSpec {
     )
   )
 
-  val samplePaymentsDataWithNoTag: Seq[FinancialSummary] = Seq(
+  val sampleChargeTransactionWithNoTag: FinancialData = FinancialData(
+    Seq(
+      FinancialTransaction(
+        mainTransaction = Some("6500"),
+        subTransaction = Some("1234"),
+        taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
+        taxPeriodTo = Some(LocalDate.now),
+        outstandingAmount = Some(BigDecimal(1000.00)),
+        items = Seq(FinancialItem(dueDate = None, clearingDate = None))
+      )
+    )
+  )
+
+  val sampleFinancialSummaryWithNoTag: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
       Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))
