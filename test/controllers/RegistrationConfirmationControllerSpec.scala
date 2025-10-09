@@ -27,9 +27,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import utils.DateTimeUtils.{getCurrentDate, getCurrentTimeGMT}
+import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 import views.html.registrationview.RegistrationConfirmationView
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
@@ -47,10 +48,10 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     )
 
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
-      val testPlr2Id      = "12345678"
-      val testCompanyName = "Test Limited"
-      val testDate:      String = getCurrentDate
-      val testTimeStamp: String = getCurrentTimeGMT
+      val testPlr2Id:      String = "12345678"
+      val testCompanyName: String = "Test Limited"
+      val currentDate:     String = LocalDate.now().toDefaultDateFormat
+      val currentTimeGMT:  String = ZonedDateTime.now().toTimeGmtFormat
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
@@ -64,8 +65,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
             Future.successful(
               Some(
                 emptyUserAnswers
-                  .setOrException(PdfRegistrationDatePage, testDate)
-                  .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
+                  .setOrException(PdfRegistrationDatePage, currentDate)
+                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
                   .setOrException(UpeNameRegistrationPage, testCompanyName)
                   .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
               )
@@ -76,7 +77,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(testPlr2Id, testCompanyName, testDate, testTimeStamp, MneOrDomestic.Uk)(
+        contentAsString(result) mustEqual view(testPlr2Id, testCompanyName, currentDate, currentTimeGMT, MneOrDomestic.Uk)(
           request,
           applicationConfig,
           messages(application)
@@ -90,10 +91,10 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
-      val testCompanyName = "Test Limited"
-      val testPlr2ID      = "12345678"
-      val testDate:      String = getCurrentDate
-      val testTimeStamp: String = getCurrentTimeGMT
+      val testCompanyName: String = "Test Limited"
+      val testPlr2ID:      String = "12345678"
+      val currentDate:     String = LocalDate.now().toDefaultDateFormat
+      val currentTimeGMT:  String = ZonedDateTime.now().toTimeGmtFormat
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
@@ -103,8 +104,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
             Future.successful(
               Some(
                 emptyUserAnswers
-                  .setOrException(PdfRegistrationDatePage, testDate)
-                  .setOrException(PdfRegistrationTimeStampPage, testTimeStamp)
+                  .setOrException(PdfRegistrationDatePage, currentDate)
+                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
                   .setOrException(UpeNameRegistrationPage, testCompanyName)
                   .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
               )
@@ -114,7 +115,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
         val view   = application.injector.instanceOf[RegistrationConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(testPlr2ID, testCompanyName, testDate, testTimeStamp, MneOrDomestic.UkAndOther)(
+        contentAsString(result) mustEqual view(testPlr2ID, testCompanyName, currentDate, currentTimeGMT, MneOrDomestic.UkAndOther)(
           request,
           applicationConfig,
           messages(application)

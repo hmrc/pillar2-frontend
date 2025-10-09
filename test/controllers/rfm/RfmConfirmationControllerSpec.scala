@@ -32,6 +32,7 @@ import uk.gov.hmrc.auth.core.retrieve.Credentials
 import utils.DateTimeUtils._
 import views.html.rfm.RfmConfirmationView
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.Future
 
@@ -64,12 +65,12 @@ class RfmConfirmationControllerSpec extends SpecBase {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val result:           Future[Result]      = route(application, request).value
-        val currentTimestamp: String              = getCurrentDateTimeGMT
-        val view:             RfmConfirmationView = application.injector.instanceOf[RfmConfirmationView]
+        val result:             Future[Result]      = route(application, request).value
+        val currentDateTimeGMT: String              = ZonedDateTime.now().toDateTimeGmtFormat
+        val view:               RfmConfirmationView = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678", currentTimestamp)(
+        contentAsString(result) mustEqual view("12345678", currentDateTimeGMT)(
           request,
           applicationConfig,
           messages(application)
@@ -109,7 +110,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "on behalf of your group."
         )
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include(currentTimestamp)
+        contentAsString(result) must include(currentDateTimeGMT)
       }
     }
 

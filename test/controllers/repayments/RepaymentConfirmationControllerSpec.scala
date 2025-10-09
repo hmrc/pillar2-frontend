@@ -25,15 +25,17 @@ import play.api.test.Helpers._
 import utils.DateTimeUtils._
 import views.html.repayments.RepaymentsConfirmationView
 
+import java.time.ZonedDateTime
+
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentTimestamp: String = getCurrentDateTimeGMT
+      val currentDateTimeGMT: String = ZonedDateTime.now().toDateTimeGmtFormat
       val testUserAnswers: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
-        .setOrException(RepaymentConfirmationTimestampPage, currentTimestamp)
+        .setOrException(RepaymentConfirmationTimestampPage, currentDateTimeGMT)
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {
@@ -42,7 +44,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
         val view    = application.injector.instanceOf[RepaymentsConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(currentTimestamp)(request, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(currentDateTimeGMT)(request, applicationConfig, messages(application)).toString
       }
     }
 

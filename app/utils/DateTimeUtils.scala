@@ -21,7 +21,6 @@ import java.time.format.DateTimeFormatter
 
 object DateTimeUtils {
 
-  ZoneId.of("Europe/London")
   private val gmtZoneId: ZoneId = ZoneId.of("GMT")
   val utcZoneId:         ZoneId = ZoneId.of("UTC")
 
@@ -52,6 +51,12 @@ object DateTimeUtils {
 
   implicit class LocalDateOps(localDate: LocalDate) {
     def toDefaultDateFormat: String = localDate.format(defaultDateFormatter)
+  }
+
+  implicit class ZonedDateTimeOps(zonedDateTime: ZonedDateTime) {
+    def toDefaultDateFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(defaultDateFormatter)
+    def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)
+    def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
   }
 
   // 3 December 2011

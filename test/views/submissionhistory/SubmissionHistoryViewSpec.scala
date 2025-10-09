@@ -21,7 +21,7 @@ import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.{LocalDateOps, dateTimeFormatter}
+import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps, dateTimeFormatter}
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -63,22 +63,8 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     "have a table" in {
       val fromDate:       String = LocalDate.now.minusYears(7).toDefaultDateFormat
       val toDate:         String = LocalDate.now.toDefaultDateFormat
-      val submissionDate: String = ZonedDateTime.now().format(dateTimeFormatter)
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println(submissionDate)
-      println(submissionDate)
-      println(submissionDate)
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
-      println("SUBMISSION DATE")
+      val submissionDate: String = ZonedDateTime.now().toDefaultDateFormat
+     
       val tableElements: Elements = organisationView.select("table.govuk-table")
       tableElements.size() mustBe 1
 

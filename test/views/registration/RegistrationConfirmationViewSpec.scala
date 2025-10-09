@@ -23,14 +23,16 @@ import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.{getCurrentDate, getCurrentTimeGMT}
+import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 import views.html.registrationview.RegistrationConfirmationView
+
+import java.time.{LocalDate, ZonedDateTime}
 
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
   lazy val testPillar2ID:   String                       = "PLR2ID123"
   lazy val testCompanyName: String                       = "TestCompany"
-  lazy val testDate:        String                       = getCurrentDate
-  lazy val testTimeGMT:     String                       = getCurrentTimeGMT
+  lazy val testDate:        String                       = LocalDate.now().toDefaultDateFormat
+  lazy val testTimeGMT:     String                       = ZonedDateTime.now().toTimeGmtFormat
   lazy val testDomestic:    MneOrDomestic                = Uk
   lazy val testMne:         MneOrDomestic                = UkAndOther
   lazy val page:            RegistrationConfirmationView = inject[RegistrationConfirmationView]
