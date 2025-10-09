@@ -57,7 +57,6 @@ class OutstandingPaymentsController @Inject() (
     with Logging {
 
   private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
-    // Use the shared filter from FinancialData to get outstanding charges
     val outstandingCharges = financialData.outstandingCharges
 
     outstandingCharges
