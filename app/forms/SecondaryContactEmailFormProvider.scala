@@ -29,8 +29,8 @@ class SecondaryContactEmailFormProvider @Inject() extends Mappings {
       "emailAddress" -> text("secondaryContactEmail.error.required", Seq(userName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_132, "secondaryContactEmail.error.length"),
-            regexp(Validation.EMAIL_REGEX, "secondaryContactEmail.error.format")
+            maxLength(Constants.MaxLength132, "secondaryContactEmail.error.length"),
+            regexp(Validation.EmailRegex, "secondaryContactEmail.error.format")
           )
         )
     )

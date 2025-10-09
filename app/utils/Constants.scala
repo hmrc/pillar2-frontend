@@ -18,7 +18,7 @@ package utils
 
 object Constants {
   final val SubmissionAccountingPeriods: Int    = 7
-  final val BtnPath:                     String = "/below-threshold-notification"
+  final val BTNPath:                     String = "/below-threshold-notification"
   final val SiteYes:                     String = "site.yes"
   final val SiteNo:                      String = "site.no"
   final val SiteChange:                  String = "site.change"

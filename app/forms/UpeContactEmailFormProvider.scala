@@ -28,8 +28,8 @@ class UpeContactEmailFormProvider @Inject() extends Mappings {
       "emailAddress" -> text("upe-input-business-contact.email.error.required", Seq(userName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_132, "upe-input-business-contact.email.error.length"),
-            regexp(Validation.EMAIL_REGEX, "upe-input-business-contact.email.error.invalid")
+            maxLength(Constants.MaxLength132, "upe-input-business-contact.email.error.length"),
+            regexp(Validation.EmailRegex, "upe-input-business-contact.email.error.invalid")
           )
         )
     )

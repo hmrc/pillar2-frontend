@@ -16,9 +16,9 @@
 
 package forms
 
-import forms.Validation.EMAIL_REGEX
+import forms.Validation.EmailRegex
 import forms.behaviours.StringFieldBehaviours
-import mapping.Constants.MAX_LENGTH_132
+import mapping.Constants.MaxLength132
 import play.api.data.FormError
 
 class RfmSecondaryContactEmailFormProviderSpec extends StringFieldBehaviours {
@@ -35,16 +35,16 @@ class RfmSecondaryContactEmailFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLength(
       formProvider("name"),
       fieldName,
-      maxLength = MAX_LENGTH_132,
-      lengthError = FormError(fieldName, lengthKey, Seq(MAX_LENGTH_132)),
-      generator = Some(longStringsConformingToRegex(EMAIL_REGEX, MAX_LENGTH_132))
+      maxLength = MaxLength132,
+      lengthError = FormError(fieldName, lengthKey, Seq(MaxLength132)),
+      generator = Some(longStringsConformingToRegex(EmailRegex, MaxLength132))
     )
 
     behave like fieldWithRegex(
       formProvider("name"),
       fieldName,
-      regex = EMAIL_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MAX_LENGTH_132),
+      regex = EmailRegex,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MaxLength132),
       regexError = FormError(fieldName, xssKey)
     )
 

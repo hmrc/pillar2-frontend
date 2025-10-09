@@ -15,7 +15,7 @@
  */
 
 package forms
-import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
+import forms.Validation.XSSRegexAllowAmpersand
 import forms.behaviours.StringFieldBehaviours
 import play.api.data.FormError
 class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
@@ -31,7 +31,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSSRegexAllowAmpersand, maxLength)
     )
 
     behave like fieldWithMaxLength(
@@ -39,13 +39,13 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      generator = Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+      generator = Some(longStringsConformingToRegex(XSSRegexAllowAmpersand, maxLength))
     )
 
     behave like fieldWithRegex(
       form,
       fieldName,
-      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regex = XSSRegexAllowAmpersand,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
       regexError = FormError(fieldName, "repayments.bankAccountDetails.bankName.error.xss")
     )
@@ -67,7 +67,7 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
     behave like fieldThatBindsValidData(
       form,
       fieldName,
-      nonEmptyRegexConformingStringWithMaxLength(XSS_REGEX_ALLOW_AMPERSAND, maxLength)
+      nonEmptyRegexConformingStringWithMaxLength(XSSRegexAllowAmpersand, maxLength)
     )
 
     behave like fieldWithMaxLength(
@@ -75,13 +75,13 @@ class BankAccountDetailsFormProviderSpec extends StringFieldBehaviours {
       fieldName,
       maxLength = maxLength,
       lengthError = FormError(fieldName, lengthKey, Seq(maxLength)),
-      Some(longStringsConformingToRegex(XSS_REGEX_ALLOW_AMPERSAND, maxLength))
+      Some(longStringsConformingToRegex(XSSRegexAllowAmpersand, maxLength))
     )
 
     behave like fieldWithRegex(
       form,
       fieldName,
-      regex = XSS_REGEX_ALLOW_AMPERSAND,
+      regex = XSSRegexAllowAmpersand,
       regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", maxLength),
       regexError = FormError(fieldName, "repayments.bankAccountDetails.accountName.error.xss")
     )

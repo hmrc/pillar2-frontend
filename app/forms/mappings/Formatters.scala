@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.Validation.MONETARY_REGEX
+import forms.Validation.MonetaryRegex
 import forms.mappings.AddressMappings.maxPostCodeLength
 import models.Enumerable
 import play.api.data.FormError
@@ -177,7 +177,7 @@ trait Formatters extends Transforms with Constraints {
           .flatMap {
             case s if onlyOnePound(s) =>
               Left(Seq(FormError(key, invalidCurrency, args)))
-            case s if !s.replace("£", "").matches(MONETARY_REGEX) =>
+            case s if !s.replace("£", "").matches(MonetaryRegex) =>
               Left(Seq(FormError(key, invalidCurrency, args)))
             case s =>
               nonFatalCatch

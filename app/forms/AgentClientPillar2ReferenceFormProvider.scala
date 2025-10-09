@@ -29,8 +29,8 @@ class AgentClientPillar2ReferenceFormProvider @Inject() extends Mappings {
       "value" -> pillar2Id("agent.pillar2Ref.error.required")
         .verifying(
           firstError(
-            equalLength(Constants.EQUAL_LENGTH_15, "agent.pillar2Ref.error.length"),
-            regexp(Validation.GROUPID_REGEX, "agent.pillar2Ref.error.format")
+            equalLength(Constants.EqualLength15, "agent.pillar2Ref.error.length"),
+            regexp(Validation.GroupIdRegex, "agent.pillar2Ref.error.format")
           )
         )
     )

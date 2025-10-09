@@ -16,10 +16,10 @@
 
 package forms
 
-import forms.Validation.EMAIL_REGEX
+import forms.Validation.EmailRegex
 import forms.behaviours.StringFieldBehaviours
 import mapping.Constants
-import mapping.Constants.MAX_LENGTH_132
+import mapping.Constants.MaxLength132
 import play.api.data.{Form, FormError}
 
 class UpeContactEmailFormProviderSpec extends StringFieldBehaviours {
@@ -28,7 +28,7 @@ class UpeContactEmailFormProviderSpec extends StringFieldBehaviours {
   lazy val lengthKey:         String       = "upe-input-business-contact.email.error.length"
   lazy val invalidKey:        String       = "upe-input-business-contact.email.error.invalid"
   lazy val contactName:       String       = "name"
-  lazy val maxLength:         Int          = Constants.MAX_LENGTH_132
+  lazy val maxLength:         Int          = Constants.MaxLength132
   lazy val validEmailAddress: String       = "testteam@email.com"
   lazy val form:              Form[String] = new UpeContactEmailFormProvider()(contactName)
   lazy val fieldName:         String       = "emailAddress"
@@ -38,16 +38,16 @@ class UpeContactEmailFormProviderSpec extends StringFieldBehaviours {
     behave like fieldWithMaxLength(
       form,
       fieldName,
-      maxLength = MAX_LENGTH_132,
-      lengthError = FormError(fieldName, lengthKey, Seq(MAX_LENGTH_132)),
-      generator = Some(longStringsConformingToRegex(EMAIL_REGEX, MAX_LENGTH_132))
+      maxLength = MaxLength132,
+      lengthError = FormError(fieldName, lengthKey, Seq(MaxLength132)),
+      generator = Some(longStringsConformingToRegex(EmailRegex, MaxLength132))
     )
 
     behave like fieldWithRegex(
       form,
       fieldName,
-      regex = EMAIL_REGEX,
-      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MAX_LENGTH_132),
+      regex = EmailRegex,
+      regexViolationGen = stringsWithAtLeastOneSpecialChar("<>\"", MaxLength132),
       regexError = FormError(fieldName, invalidKey)
     )
 

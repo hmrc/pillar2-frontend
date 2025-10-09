@@ -17,12 +17,12 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants.MAX_LENGTH_250
+import mapping.Constants.MaxLength250
 import play.api.data.Form
 
 import javax.inject.Inject
 
-import Validation.XSS_REGEX
+import Validation.XSSRegex
 
 class ReasonForRequestingRepaymentFormProvider @Inject() extends Mappings {
 
@@ -31,8 +31,8 @@ class ReasonForRequestingRepaymentFormProvider @Inject() extends Mappings {
       "value" -> text("reasonForRequestingRepayment.error.required")
         .verifying(
           firstError(
-            maxLength(MAX_LENGTH_250, "reasonForRequestingRepayment.error.length"),
-            regexp(XSS_REGEX, "reasonForRequestingRepayment.error.xss")
+            maxLength(MaxLength250, "reasonForRequestingRepayment.error.length"),
+            regexp(XSSRegex, "reasonForRequestingRepayment.error.xss")
           )
         )
     )

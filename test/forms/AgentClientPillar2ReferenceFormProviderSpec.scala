@@ -25,8 +25,8 @@ import play.api.data.FormError
 class AgentClientPillar2ReferenceFormProviderSpec extends BooleanFieldBehaviours {
 
   val requiredKey  = "agent.pillar2Ref.error.required"
-  val maxLength    = Constants.EQUAL_LENGTH_15
-  val regexPattern = Validation.GROUPID_REGEX
+  val maxLength    = Constants.EqualLength15
+  val regexPattern = Validation.GroupIdRegex
 
   val formProvider = new AgentClientPillar2ReferenceFormProvider
   val form: Form[String] = formProvider()
