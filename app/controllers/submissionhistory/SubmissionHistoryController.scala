@@ -27,7 +27,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.submissionhistory.{SubmissionHistoryNoSubmissionsView, SubmissionHistoryView}
 
 import java.time.LocalDate
@@ -57,7 +57,7 @@ class SubmissionHistoryController @Inject() (
                            .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
 
-      fromDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+      fromDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)
       toDate   = LocalDate.now()
       data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
     } yield

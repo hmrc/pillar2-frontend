@@ -19,7 +19,7 @@ package models.obligationsandsubmissions
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import play.api.libs.json.{Json, OFormat, Writes}
-import utils.Constants.RECEIVED_PERIOD_IN_DAYS
+import utils.Constants.ReceivedPeriodInDays
 
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
@@ -72,7 +72,7 @@ case class AccountingPeriodDetails(
       )
       .maxByOption(_.receivedDate)
       .exists { submission =>
-        ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= RECEIVED_PERIOD_IN_DAYS
+        ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= ReceivedPeriodInDays
       }
 }
 

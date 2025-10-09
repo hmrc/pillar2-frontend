@@ -33,7 +33,7 @@ import repositories.SessionRepository
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -100,10 +100,10 @@ class DashboardController @Inject() (
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
-          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
           rawFinancialData <-
             financialDataService
-              .retrieveFinancialData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+              .retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
               .map(Some(_))
               .recover { case _ =>
                 None

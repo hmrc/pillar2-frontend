@@ -32,7 +32,7 @@ import services.{FinancialDataService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.outstandingpayments.OutstandingPaymentsView
 
 import java.time.LocalDate.now
@@ -93,7 +93,7 @@ class OutstandingPaymentsController @Inject() (
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         rawFinancialData <-
           OptionT.liftF(
-            financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SUBMISSION_ACCOUNTING_PERIODS))
+            financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
           )
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(rawFinancialData)
       } yield {

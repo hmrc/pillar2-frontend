@@ -29,8 +29,8 @@ class RfmSecurityCheckFormProvider @Inject() extends Mappings {
       "value" -> pillar2Id("rfm.securityCheck.error.required")
         .verifying(
           firstError(
-            equalLength(Constants.EQUAL_LENGTH_15, "rfm.securityCheck.error.length"),
-            regexp(Validation.GROUPID_REGEX, "rfm.securityCheck.error.format")
+            equalLength(Constants.EqualLength15, "rfm.securityCheck.error.length"),
+            regexp(Validation.GroupIdRegex, "rfm.securityCheck.error.format")
           )
         )
     )

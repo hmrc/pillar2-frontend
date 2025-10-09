@@ -24,9 +24,9 @@ import play.api.data.FormError
 class RfmContactAddressFormProviderSpec extends StringFieldBehaviours {
 
   val form                               = new RfmContactAddressFormProvider()()
-  final val XSS_REGEX                    = Validation.XSS_REGEX
-  final val ADDRESS_REGEX_WITH_AMPERSAND = Validation.ADDRESS_REGEX_WITH_AMPERSAND
-  final val ADDRESS_REGEX                = Validation.ADDRESS_REGEX
+  final val XSS_REGEX                    = Validation.XSSRegex
+  final val ADDRESS_REGEX_WITH_AMPERSAND = Validation.AddressRegexWithAmpersand
+  final val ADDRESS_REGEX                = Validation.AddressRegex
 
   ".addressLine1" - {
     val FIELD_NAME   = "addressLine1"

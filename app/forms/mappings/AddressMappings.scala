@@ -16,7 +16,7 @@
 
 package forms.mappings
 
-import forms.Validation.XSS_REGEX
+import forms.Validation.XSSRegex
 import play.api.data.Forms.of
 import play.api.data.format.Formatter
 import play.api.data.{FieldMapping, FormError}
@@ -27,7 +27,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
     data.get(key).map(_.trim).filter(_.nonEmpty)
 
   private def validateXss(postcode: String, key: String): Option[FormError] =
-    if (!postcode.matches(XSS_REGEX)) Some(FormError(key, "address.postcode.error.xss")) else None
+    if (!postcode.matches(XSSRegex)) Some(FormError(key, "address.postcode.error.xss")) else None
 
   private def formatErrors(errors: Seq[FormError], key: String): Seq[FormError] =
     errors.map(error => FormError(key, error.message, error.args))

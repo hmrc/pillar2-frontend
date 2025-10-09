@@ -16,9 +16,9 @@
 
 package forms
 
-import forms.Validation.XSS_REGEX
+import forms.Validation.XSSRegex
 import forms.mappings.Mappings
-import mapping.Constants.MAX_LENGTH_200
+import mapping.Constants.MaxLength200
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -28,8 +28,8 @@ class UpeContactNameFormProvider @Inject() extends Mappings {
       "value" -> text("upe-input-business-name.error.required")
         .verifying(
           firstError(
-            maxLength(MAX_LENGTH_200, "upe-input-business-name.error.length"),
-            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
+            maxLength(MaxLength200, "upe-input-business-name.error.length"),
+            regexp(XSSRegex, "name.error.xss.forbidAmpersand")
           )
         )
     )
