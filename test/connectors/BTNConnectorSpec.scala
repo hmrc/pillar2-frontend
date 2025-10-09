@@ -24,6 +24,7 @@ import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.{JsObject, JsValue, Json}
 import uk.gov.hmrc.http.test.WireMockSupport
+import utils.DateTimeUtils.utcZoneId
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
@@ -39,7 +40,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
     accountingPeriodFrom = LocalDate.now.minusYears(1),
     accountingPeriodTo = LocalDate.now
   )
-  val stubProcessedZonedDateTime: ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  val stubProcessedZonedDateTime: ZonedDateTime = ZonedDateTime.now(utcZoneId).truncatedTo(ChronoUnit.SECONDS)
   val successfulBTNResponseBody: JsObject = Json.obj(
     "success" -> Json.obj("processingDate" -> stubProcessedZonedDateTime)
   )

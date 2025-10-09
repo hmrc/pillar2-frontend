@@ -30,16 +30,16 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
   lazy val testPillar2ID:   String                       = "PLR2ID123"
   lazy val testCompanyName: String                       = "TestCompany"
   lazy val testDate:        String                       = getCurrentDate
-  lazy val testTimeStamp:   String                       = getCurrentTimeGMT
+  lazy val testTimeGMT:     String                       = getCurrentTimeGMT
   lazy val testDomestic:    MneOrDomestic                = Uk
   lazy val testMne:         MneOrDomestic                = UkAndOther
   lazy val page:            RegistrationConfirmationView = inject[RegistrationConfirmationView]
   lazy val pageTitle:       String                       = "Registration complete"
 
   lazy val viewDomestic: Document =
-    Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testDomestic)(request, appConfig, messages).toString())
+    Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeGMT, testDomestic)(request, appConfig, messages).toString())
   lazy val viewMne: Document =
-    Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeStamp, testMne)(request, appConfig, messages).toString())
+    Jsoup.parse(page(testPillar2ID, testCompanyName, testDate, testTimeGMT, testMne)(request, appConfig, messages).toString())
 
   "Registration Confirmation View" should {
     "have a title" in {
@@ -68,11 +68,11 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
     "have the correct paragraphs for Multinationals and Domestic companies" in {
       viewDomestic.getElementsByClass("govuk-body").get(0).text mustBe
         "TestCompany has successfully registered to report for Domestic Top-up Tax, " +
-        "on 13 September 2024 at 11:00am (GMT)."
+        s"on $testDate at $testTimeGMT."
 
       viewMne.getElementsByClass("govuk-body").get(0).text mustBe
         "TestCompany has successfully registered to report for Domestic Top-up Tax and Multinational Top-up Tax, " +
-        "on 13 September 2024 at 11:00am (GMT)."
+        s"on $testDate at $testTimeGMT."
 
       viewDomestic.getElementsByClass("govuk-body").get(1).text mustBe
         "You will be able to find your Pillar 2 Top-up Taxes ID and " +

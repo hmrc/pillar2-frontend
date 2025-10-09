@@ -24,6 +24,7 @@ import org.apache.fop.apps.FopFactory
 import play.api.{Configuration, Environment}
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
+import utils.DateTimeUtils.utcZoneOffset
 
 import java.time.{Clock, ZoneOffset}
 import javax.inject.Singleton
@@ -46,7 +47,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("EnrolmentIdentifier")).to(classOf[EnrolmentIdentifierAction]).asEagerSingleton()
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("ASAEnrolmentIdentifier")).to(classOf[ASAEnrolmentIdentifierAction]).asEagerSingleton()
 
-    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(ZoneOffset.UTC))
+    bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(utcZoneOffset))
     bind(classOf[FopFactory]).toProvider(classOf[FopFactoryProvider])
 
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")

@@ -17,13 +17,15 @@
 package utils
 
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
+import java.time.{LocalDate, ZoneId, ZoneOffset, ZonedDateTime}
 
 object DateTimeUtils {
 
   private val ukZoneId:  ZoneId = ZoneId.of("Europe/London")
   private val gmtZoneId: ZoneId = ZoneId.of("GMT")
-  private val utcZoneId: ZoneId = ZoneId.of("UTC")
+  val utcZoneId:         ZoneId = ZoneId.of("UTC")
+
+  lazy val utcZoneOffset: ZoneOffset = ZoneOffset.UTC
 
   // Patterns
   private lazy val defaultDatePattern:     String = "d MMMM yyyy"
