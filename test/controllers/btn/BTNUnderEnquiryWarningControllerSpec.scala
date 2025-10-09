@@ -41,7 +41,7 @@ class BTNUnderEnquiryWarningControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to waiting room on POST" in {
+    "redirect to accounting period confirmation page on POST" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -51,7 +51,7 @@ class BTNUnderEnquiryWarningControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.BTNWaitingRoomController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(models.NormalMode).url
       }
     }
   }

@@ -113,7 +113,6 @@ class CheckYourAnswersController @Inject() (
         implicit val pillar2Id: String        = request.subscriptionLocalData.plrReference
         implicit val hc:        HeaderCarrier = uk.gov.hmrc.play.http.HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
-       
         checkUnderEnquiry(subAccountingPeriod).flatMap { isUnderEnquiry =>
           if (isUnderEnquiry) {
             logger.info(
@@ -143,7 +142,7 @@ class CheckYourAnswersController @Inject() (
       }
       .recover { case ex =>
         logger.warn(s"Failed to check underEnquiry status: ${ex.getMessage}")
-        false 
+        false
       }
 
   private def submitBTNRequest(
