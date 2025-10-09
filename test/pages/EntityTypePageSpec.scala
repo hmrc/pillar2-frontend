@@ -19,7 +19,7 @@ package pages
 import models.grs.EntityType
 import pages.behaviours.PageBehaviours
 
-class EntityTypeSpec extends PageBehaviours {
+class EntityTypePageSpec extends PageBehaviours {
 
   "EntityTypePage" - {
 

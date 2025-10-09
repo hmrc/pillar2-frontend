@@ -34,8 +34,12 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val nonUkAddressForm: Form[NonUKAddress]               = formProvider()
   lazy val page:             RfmRegisteredAddressView         = inject[RfmRegisteredAddressView]
   lazy val userName:         String                           = "Test Company"
-  lazy val pageTitle:        String                           = "What is the registered office address"
   lazy val countryOptions:   Seq[InputOption]                 = Seq.empty
+
+  def registeredOfficeAddressPageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" of $username" else username
+    s"What is the registered office address$usernamePart?"
+  }
 
   "RFM Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -43,13 +47,13 @@ class RfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have a title" in {
-      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe s"${registeredOfficeAddressPageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading with interpolated company name" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle of $userName?"
+      h1Elements.text() mustBe registeredOfficeAddressPageTitle(userName)
     }
 
     "have the correct caption" in {
