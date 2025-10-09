@@ -17,8 +17,8 @@
 package views.btn
 
 import base.ViewSpecBase
-import views.html.btn.BTNUnderEnquiryWarningView
 import org.jsoup.Jsoup
+import views.html.btn.BTNUnderEnquiryWarningView
 
 class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
 

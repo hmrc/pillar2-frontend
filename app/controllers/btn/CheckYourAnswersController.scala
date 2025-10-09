@@ -20,18 +20,18 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import models.MneOrDomestic.Uk
+import models.UserAnswers
 import models.audit.ApiResponseData
 import models.btn.{BTNRequest, BTNStatus}
-import models.UserAnswers
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Result}
+import play.api.mvc._
 import repositories.SessionRepository
-import services.{BTNService, ObligationsAndSubmissionsService}
 import services.audit.AuditService
+import services.{BTNService, ObligationsAndSubmissionsService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.checkAnswers._

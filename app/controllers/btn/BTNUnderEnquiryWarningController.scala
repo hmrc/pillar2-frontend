@@ -36,7 +36,7 @@ class BTNUnderEnquiryWarningController @Inject() (
     Ok(view())
   }
 
-  def onSubmit: Action[AnyContent] = Action { implicit request =>
+  def onSubmit: Action[AnyContent] = Action { _ =>
     Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(NormalMode))
   }
 
