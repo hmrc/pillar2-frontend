@@ -78,11 +78,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         rows = Seq(
           SummaryListRowViewModel(
             "btn.accountingPeriod.startAccountDate",
-            ValueViewModel(startDate.format(defaultDateFormatter))
+            ValueViewModel(startDate.toDefaultDateFormat)
           ),
           SummaryListRowViewModel(
             "btn.accountingPeriod.endAccountDate",
-            ValueViewModel(endDate.format(defaultDateFormatter))
+            ValueViewModel(endDate.toDefaultDateFormat)
           )
         )
       )

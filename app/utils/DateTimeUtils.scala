@@ -16,12 +16,12 @@
 
 package utils
 
+import java.time._
 import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZoneId, ZoneOffset, ZonedDateTime}
 
 object DateTimeUtils {
 
-  private val ukZoneId:  ZoneId = ZoneId.of("Europe/London")
+  ZoneId.of("Europe/London")
   private val gmtZoneId: ZoneId = ZoneId.of("GMT")
   val utcZoneId:         ZoneId = ZoneId.of("UTC")
 
@@ -49,6 +49,10 @@ object DateTimeUtils {
 
   // 2011-12-03T10:15:30
   lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+
+  implicit class LocalDateOps(localDate: LocalDate) {
+    def toDefaultDateFormat: String = localDate.format(defaultDateFormatter)
+  }
 
   // 3 December 2011
   def getCurrentDate: String =

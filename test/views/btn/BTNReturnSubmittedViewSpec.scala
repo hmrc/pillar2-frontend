@@ -24,7 +24,7 @@ import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Su
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.defaultDateFormatter
+import utils.DateTimeUtils.LocalDateOps
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -35,8 +35,8 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
   lazy val accountingPeriodStartDate: LocalDate              = LocalDate.now().minusYears(1)
   lazy val accountingPeriodEndDate:   LocalDate              = LocalDate.now()
   lazy val accountingPeriodDueDate:   LocalDate              = LocalDate.now().plusYears(1)
-  lazy val formattedStartDate:        String                 = accountingPeriodStartDate.format(defaultDateFormatter)
-  lazy val formattedEndDate:          String                 = accountingPeriodEndDate.format(defaultDateFormatter)
+  lazy val formattedStartDate:        String                 = accountingPeriodStartDate.toDefaultDateFormat
+  lazy val formattedEndDate:          String                 = accountingPeriodEndDate.toDefaultDateFormat
   lazy val pageTitle:      String = s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
   lazy val agentPageTitle: String = s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
 

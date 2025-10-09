@@ -24,7 +24,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
-import utils.DateTimeUtils.defaultDateFormatter
+import utils.DateTimeUtils.LocalDateOps
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -42,8 +42,8 @@ class BTNConfirmationControllerSpec extends SpecBase {
           .configure("features.phase2ScreensEnabled" -> true)
           .build()
 
-        val currentDate: String = LocalDate.now.format(defaultDateFormatter)
-        val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.format(defaultDateFormatter)
+        val currentDate: String = LocalDate.now.toDefaultDateFormat
+        val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.toDefaultDateFormat
 
         running(application) {
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)

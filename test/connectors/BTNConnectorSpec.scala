@@ -27,7 +27,7 @@ import uk.gov.hmrc.http.test.WireMockSupport
 import utils.DateTimeUtils.utcZoneId
 
 import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler {

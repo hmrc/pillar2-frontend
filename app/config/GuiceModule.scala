@@ -26,7 +26,7 @@ import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendC
 import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 import utils.DateTimeUtils.utcZoneOffset
 
-import java.time.{Clock, ZoneOffset}
+import java.time.Clock
 import javax.inject.Singleton
 
 class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {

@@ -32,7 +32,7 @@ import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccounting
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 
 trait ObligationsAndSubmissionsDataFixture {
 

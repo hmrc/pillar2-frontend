@@ -20,10 +20,9 @@ import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
-
-import java.time.temporal.ChronoUnit
 import utils.DateTimeUtils.defaultDateFormatter
 
+import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
 
 sealed trait ObligationsAndSubmissionsResponse

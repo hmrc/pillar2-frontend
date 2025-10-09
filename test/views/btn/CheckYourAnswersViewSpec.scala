@@ -24,7 +24,7 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import pages.{EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.DateTimeUtils.defaultDateFormatter
+import utils.DateTimeUtils.LocalDateOps
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 import views.html.btn.CheckYourAnswersView
@@ -97,7 +97,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
           summaryListItems.get(0).text() mustBe
-            s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
+            s"Start date: ${startDate.toDefaultDateFormat} End date: ${endDate.toDefaultDateFormat}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located only in the UK?"
           summaryListItems.get(1).text() mustBe "Yes"
@@ -140,7 +140,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
           summaryListItems.get(0).text() mustBe
-            s"Start date: ${startDate.format(defaultDateFormatter)} End date: ${endDate.format(defaultDateFormatter)}"
+            s"Start date: ${startDate.toDefaultDateFormat} End date: ${endDate.toDefaultDateFormat}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located in both the UK and outside the UK?"
           summaryListItems.get(1).text() mustBe "Yes"

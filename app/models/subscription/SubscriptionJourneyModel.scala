@@ -372,8 +372,8 @@ object groupJourney {
   def from(answers: UserAnswers)(implicit messages: Messages): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
-      answers.getEither(SubAccountingPeriodPage).map(accountingPeriod => accountingPeriod.startDate.format(defaultDateFormatter)),
-      answers.getEither(SubAccountingPeriodPage).map(accountingPeriod => accountingPeriod.endDate.format(defaultDateFormatter))
+      answers.getEither(SubAccountingPeriodPage).map(accountingPeriod => accountingPeriod.startDate.toDefaultDateFormat),
+      answers.getEither(SubAccountingPeriodPage).map(accountingPeriod => accountingPeriod.endDate.toDefaultDateFormat)
     ).parMapN {
       (
         mneOrDomestic,

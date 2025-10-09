@@ -73,10 +73,10 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe currentDate.format(defaultDateFormatter)
+        summaryListItems.get(2).text() mustBe currentDate.toDefaultDateFormat
 
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).format(defaultDateFormatter)
+        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDefaultDateFormat
       }
 
       "have a button" in {
@@ -126,9 +126,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe currentDate.format(defaultDateFormatter)
+        summaryListItems.get(2).text() mustBe currentDate.toDefaultDateFormat
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).format(defaultDateFormatter)
+        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDefaultDateFormat
       }
 
       "have a button" in {
