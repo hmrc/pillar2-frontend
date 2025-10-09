@@ -31,7 +31,7 @@ import java.time.{LocalDate, ZonedDateTime}
 class RegistrationConfirmationViewSpec extends ViewSpecBase {
   lazy val testPillar2ID:   String                       = "PLR2ID123"
   lazy val testCompanyName: String                       = "TestCompany"
-  lazy val testDate:        String                       = LocalDate.now().toDefaultDateFormat
+  lazy val testDate:        String                       = LocalDate.now().toDateFormat
   lazy val testTimeGMT:     String                       = ZonedDateTime.now().toTimeGmtFormat
   lazy val testDomestic:    MneOrDomestic                = Uk
   lazy val testMne:         MneOrDomestic                = UkAndOther

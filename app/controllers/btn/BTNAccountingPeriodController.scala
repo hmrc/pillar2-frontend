@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.LocalDateOps
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
@@ -61,11 +61,11 @@ class BTNAccountingPeriodController @Inject() (
       rows = Seq(
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(startDate.format(dateFormatter))
+          value = ValueViewModel(startDate.toDateFormat)
         ),
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(endDate.format(dateFormatter))
+          value = ValueViewModel(endDate.toDateFormat)
         )
       )
     )

@@ -20,7 +20,7 @@ import models.UserAnswers
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.LocalDateOps
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
@@ -28,7 +28,7 @@ object GroupAccountingPeriodEndDateSummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubAccountingPeriodPage).map { accountingPeriod =>
-      val startDate: String = accountingPeriod.endDate.format(dateFormatter)
+      val startDate: String = accountingPeriod.endDate.toDateFormat
 
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",

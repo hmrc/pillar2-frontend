@@ -30,29 +30,29 @@ object DateTimeUtils {
   private val timePattern:     String = "hh:mma (zzz)"
 
   // 3 December 2011
-  lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
+  private val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(datePattern)
 
   // 3 December 2011, 10:15am (GMT)
-  lazy val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern)
+  private val dateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(dateTimePattern)
 
   // 10:15am (GMT)
-  lazy val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(timePattern)
+  private val timeFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(timePattern)
 
   // '2011-12-03T10:15:30', '2011-12-03T10:15:30+01:00' or '2011-12-03T10:15:30+01:00[Europe/London]'
-  lazy val isoDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
+  val isoDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_DATE_TIME
 
   // 2011-12-03
-  lazy val isoLocalDateFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
+  val isoLocalDateFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE
 
   // 2011-12-03T10:15:30
-  lazy val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
+  val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
   implicit class LocalDateOps(localDate: LocalDate) {
-    def toDefaultDateFormat: String = localDate.format(dateFormatter)
+    def toDateFormat: String = localDate.format(dateFormatter)
   }
 
   implicit class ZonedDateTimeOps(zonedDateTime: ZonedDateTime) {
-    def toDefaultDateFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateFormatter)
+    def toDateFormat:        String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateFormatter)
     def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)
     def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
   }

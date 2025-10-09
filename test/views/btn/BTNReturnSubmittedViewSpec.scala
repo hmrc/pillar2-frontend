@@ -35,8 +35,8 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
   lazy val accountingPeriodStartDate: LocalDate              = LocalDate.now().minusYears(1)
   lazy val accountingPeriodEndDate:   LocalDate              = LocalDate.now()
   lazy val accountingPeriodDueDate:   LocalDate              = LocalDate.now().plusYears(1)
-  lazy val formattedStartDate:        String                 = accountingPeriodStartDate.toDefaultDateFormat
-  lazy val formattedEndDate:          String                 = accountingPeriodEndDate.toDefaultDateFormat
+  lazy val formattedStartDate:        String                 = accountingPeriodStartDate.toDateFormat
+  lazy val formattedEndDate:          String                 = accountingPeriodEndDate.toDateFormat
   lazy val pageTitle:      String = s"You’ve submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
   lazy val agentPageTitle: String = s"The group has submitted a UK Tax Return for the accounting period $formattedStartDate - $formattedEndDate"
 

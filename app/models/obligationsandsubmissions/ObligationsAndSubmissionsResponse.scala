@@ -20,7 +20,7 @@ import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
-import utils.DateTimeUtils.dateFormatter
+import utils.DateTimeUtils.LocalDateOps
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
@@ -59,7 +59,7 @@ case class AccountingPeriodDetails(
   val dueDatePassed:        Boolean            = dueDate.isBefore(LocalDate.now())
   val hasAnyOpenObligation: Boolean            = obligations.exists(_.status == ObligationStatus.Open)
 
-  def formattedDates: String = s"${startDate.format(dateFormatter)} to ${endDate.format(dateFormatter)}"
+  def formattedDates: String = s"${startDate.toDateFormat} to ${endDate.toDateFormat}"
 
   def isInReceivedPeriod: Boolean =
     obligations

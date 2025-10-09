@@ -28,7 +28,7 @@ object GroupAccountingPeriodEndDateSummary {
 
   def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubAccountingPeriodPage).map { accountingPeriod =>
-      val startDate: String = accountingPeriod.endDate.format(dateFormatter)
+      val startDate: String = accountingPeriod.endDate.toDateFormat
 
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",

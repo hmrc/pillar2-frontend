@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.utils.DateTimeUtils.dateFormatter
+@import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
 @import models.obligationsandsubmissions.AccountingPeriodDetails
 @import views.html.components.gds._
@@ -29,11 +29,10 @@
         paragraphMessageWithLink: ParagraphMessageWithLink,
         formHelper: FormWithCSRF
 )
-
 @(isAgent: Boolean, accountingPeriodDetails: AccountingPeriodDetails)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@accountingPeriodStartDate=@{accountingPeriodDetails.startDate.format(dateFormatter)}
-@accountingPeriodEndDate = @{accountingPeriodDetails.endDate.format(dateFormatter)}
+@accountingPeriodStartDate=@{accountingPeriodDetails.startDate.toDateFormat}
+@accountingPeriodEndDate = @{accountingPeriodDetails.endDate.toDateFormat}
 
 @layout(
     pageTitle = if(isAgent) {

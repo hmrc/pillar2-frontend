@@ -237,8 +237,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
       summaryListItems.get(6).text mustBe "No"
       summaryListItems.get(7).text mustBe "In the UK and outside the UK"
       summaryListItems.get(8).text mustBe ""
-      summaryListItems.get(9).text mustBe LocalDate.now.toDefaultDateFormat
-      summaryListItems.get(10).text mustBe LocalDate.now.plusYears(1).toDefaultDateFormat
+      summaryListItems.get(9).text mustBe LocalDate.now.toDateFormat
+      summaryListItems.get(10).text mustBe LocalDate.now.plusYears(1).toDateFormat
       summaryListItems.get(11).text mustBe "UPE Contact Name"
       summaryListItems.get(12).text mustBe "testcontactupe@email.com"
       summaryListItems.get(13).text mustBe "Yes"

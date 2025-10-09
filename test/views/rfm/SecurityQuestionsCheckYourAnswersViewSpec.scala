@@ -85,7 +85,7 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
 
       summaryListItems.get(0).text mustBe plrReference
-      summaryListItems.get(1).text mustBe registrationDate.toDefaultDateFormat
+      summaryListItems.get(1).text mustBe registrationDate.toDateFormat
     }
 
     "have a summary list links" in {

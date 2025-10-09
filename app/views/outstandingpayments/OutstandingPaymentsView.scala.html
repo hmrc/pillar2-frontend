@@ -14,12 +14,11 @@
  * limitations under the License.
  *@
 
-@import _root_.utils.DateTimeUtils.dateFormatter
+@import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
 @import views.ViewUtils._
 @import views.html.components.gds._
 @import views.html.templates.Layout
-
 
 @this(
         layout: Layout,
@@ -32,7 +31,6 @@
         paragraphBody: paragraphBody,
         paragraphMessageWithLink: ParagraphMessageWithLink
 )
-
 @(data: Seq[FinancialSummary], plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
 @layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false) {
@@ -98,10 +96,10 @@
                         Seq(
                             TableRow(content = Text(tx.name)),
                             TableRow(content = Text(formatCurrencyAmount(tx.outstandingAmount)), format = Some("numeric")),
-                            TableRow(content = Text(tx.dueDate.format(dateFormatter)))
+                            TableRow(content = Text(tx.dueDate.toDateFormat))
                         )
                     },
-                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.format(dateFormatter)} to ${summary.accountingPeriod.endDate.format(dateFormatter)}"),
+                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.toDateFormat} to ${summary.accountingPeriod.endDate.toDateFormat}"),
                     captionClasses = "govuk-table__caption--s",
                 ))
             }

@@ -50,7 +50,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
       val testPlr2Id:      String = "12345678"
       val testCompanyName: String = "Test Limited"
-      val currentDate:     String = LocalDate.now().toDefaultDateFormat
+      val currentDate:     String = LocalDate.now().toDateFormat
       val currentTimeGMT:  String = ZonedDateTime.now().toTimeGmtFormat
 
       val application =
@@ -93,7 +93,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
 
       val testCompanyName: String = "Test Limited"
       val testPlr2ID:      String = "12345678"
-      val currentDate:     String = LocalDate.now().toDefaultDateFormat
+      val currentDate:     String = LocalDate.now().toDateFormat
       val currentTimeGMT:  String = ZonedDateTime.now().toTimeGmtFormat
 
       running(application) {

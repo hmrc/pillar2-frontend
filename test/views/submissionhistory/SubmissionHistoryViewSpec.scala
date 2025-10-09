@@ -61,9 +61,9 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a table" in {
-      val fromDate:       String = LocalDate.now.minusYears(7).toDefaultDateFormat
-      val toDate:         String = LocalDate.now.toDefaultDateFormat
-      val submissionDate: String = ZonedDateTime.now().toDefaultDateFormat
+      val fromDate:       String = LocalDate.now.minusYears(7).toDateFormat
+      val toDate:         String = LocalDate.now.toDateFormat
+      val submissionDate: String = ZonedDateTime.now().toDateFormat
 
       val tableElements: Elements = organisationView.select("table.govuk-table")
       tableElements.size() mustBe 1

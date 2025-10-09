@@ -122,7 +122,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
       "display the accounting period heading correctly" in {
         val periodHeading: Element = view.getElementsByTag("h2").first()
-        periodHeading.text mustBe s"${fromDate.toDefaultDateFormat} to ${toDate.toDefaultDateFormat}"
+        periodHeading.text mustBe s"${fromDate.toDateFormat} to ${toDate.toDateFormat}"
       }
 
       "show a table with properly formatted due returns" in {
@@ -133,7 +133,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         val cells: Elements = tables.select("td")
         cells.get(0).text mustBe "UK Tax Return"
-        cells.get(1).text mustBe futureDueDate.toDefaultDateFormat
+        cells.get(1).text mustBe futureDueDate.toDateFormat
 
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.text mustBe "Due"
@@ -157,7 +157,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         val cells: Elements = tables.select("td")
         cells.get(0).text mustBe "UK Tax Return"
-        cells.get(1).text mustBe pastDueDate.toDefaultDateFormat
+        cells.get(1).text mustBe pastDueDate.toDateFormat
 
         val statusTag: Elements = tables.select("td p.govuk-tag")
         statusTag.size must be > 0
@@ -197,8 +197,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         periodHeadings.size mustBe 2
 
         val expectedFirstPeriod =
-          s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).toDefaultDateFormat} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).toDefaultDateFormat}"
-        val expectedSecondPeriod: String = s"${fromDate.toDefaultDateFormat} to ${toDate.toDefaultDateFormat}"
+          s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).toDateFormat} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).toDateFormat}"
+        val expectedSecondPeriod: String = s"${fromDate.toDateFormat} to ${toDate.toDateFormat}"
 
         periodHeadings.get(0).text mustBe expectedFirstPeriod
         periodHeadings.get(1).text mustBe expectedSecondPeriod
@@ -214,7 +214,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         // Check type of return and due date for first table (historic period)
         val firstTableCells: Elements = firstTableRows.first().select("td")
         firstTableCells.get(0).text mustBe "UK Tax Return"
-        firstTableCells.get(1).text mustBe pastDueDate.toDefaultDateFormat
+        firstTableCells.get(1).text mustBe pastDueDate.toDateFormat
 
         val firstTableStatusTag: Elements = firstTableRows.first().select("td p.govuk-tag")
         firstTableStatusTag.size must be > 0
@@ -226,12 +226,12 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         // Check type of return and due date for second table (current period) - first row
         val secondTableFirstRowCells: Elements = secondTableRows.get(0).select("td")
         secondTableFirstRowCells.get(0).text mustBe "UK Tax Return"
-        secondTableFirstRowCells.get(1).text mustBe futureDueDate.toDefaultDateFormat
+        secondTableFirstRowCells.get(1).text mustBe futureDueDate.toDateFormat
 
         // Check type of return and due date for second table (current period) - second row
         val secondTableSecondRowCells: Elements = secondTableRows.get(1).select("td")
         secondTableSecondRowCells.get(0).text mustBe "Information return"
-        secondTableSecondRowCells.get(1).text mustBe futureDueDate.toDefaultDateFormat
+        secondTableSecondRowCells.get(1).text mustBe futureDueDate.toDateFormat
 
         val secondTableStatusTags: Elements = secondTableRows.select("td p.govuk-tag")
         secondTableStatusTags.size mustBe 2

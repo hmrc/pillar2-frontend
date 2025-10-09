@@ -92,7 +92,7 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(UpeNameRegistrationPage, companyName)
                                  .setOrException(SubMneOrDomesticPage, mneOrDom)
                                  .setOrException(PlrReferencePage, plr)
-                                 .setOrException(PdfRegistrationDatePage, LocalDate.now().toDefaultDateFormat)
+                                 .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
                                  .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)

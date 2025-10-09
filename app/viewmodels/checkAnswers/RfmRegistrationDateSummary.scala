@@ -29,7 +29,7 @@ object RfmRegistrationDateSummary {
     answers.get(RfmRegistrationDatePage).map { registrationDate =>
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",
-        value = ValueViewModel(registrationDate.format(dateFormatter)),
+        value = ValueViewModel(registrationDate.toDateFormat),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfmRegistrationDate.change.hidden"))

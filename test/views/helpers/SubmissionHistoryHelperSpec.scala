@@ -24,7 +24,7 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import utils.DateTimeUtils.dateFormatter
+import utils.DateTimeUtils.ZonedDateTimeOps
 
 import java.time.{LocalDate, ZonedDateTime}
 
@@ -71,7 +71,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
     }
 
     "create table rows correctly" in {
-      val submissionDate: String = ZonedDateTime.now.format(dateFormatter)
+      val submissionDate: String = ZonedDateTime.now().toDateFormat
 
       val submission = Submission(SubmissionType.UKTR_CREATE, ZonedDateTime.now, None)
       val rows       = SubmissionHistoryHelper.createTableRows(submission)

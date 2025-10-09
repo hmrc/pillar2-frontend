@@ -97,7 +97,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
           summaryListItems.get(0).text() mustBe
-            s"Start date: ${startDate.toDefaultDateFormat} End date: ${endDate.toDefaultDateFormat}"
+            s"Start date: ${startDate.toDateFormat} End date: ${endDate.toDateFormat}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located only in the UK?"
           summaryListItems.get(1).text() mustBe "Yes"
@@ -140,7 +140,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
           summaryListKeys.get(0).text() mustBe "Group’s accounting period"
           summaryListItems.get(0).text() mustBe
-            s"Start date: ${startDate.toDefaultDateFormat} End date: ${endDate.toDefaultDateFormat}"
+            s"Start date: ${startDate.toDateFormat} End date: ${endDate.toDateFormat}"
 
           summaryListKeys.get(1).text() mustBe "Are the entities still located in both the UK and outside the UK?"
           summaryListItems.get(1).text() mustBe "Yes"

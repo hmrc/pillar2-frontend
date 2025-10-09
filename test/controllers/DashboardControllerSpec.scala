@@ -108,7 +108,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.toDefaultDateFormat,
+            subscriptionData.upeDetails.registrationDate.toDateFormat,
             btnActive = false,
             None,
             None,
@@ -148,7 +148,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.toDefaultDateFormat,
+            subscriptionData.upeDetails.registrationDate.toDateFormat,
             "12345678",
             inactiveStatus = false,
             agentView = false
