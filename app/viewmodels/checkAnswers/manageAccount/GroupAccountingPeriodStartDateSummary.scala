@@ -30,7 +30,7 @@ object GroupAccountingPeriodStartDateSummary {
     request.subscriptionLocalData.get(SubAccountingPeriodPage).map { accountingPeriod =>
       SummaryListRowViewModel(
         key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(accountingPeriod.startDate.format(defaultDateFormatter))
+        value = ValueViewModel(accountingPeriod.startDate.format(dateFormatter))
       ).withCssClass("no-border-bottom")
     }
 

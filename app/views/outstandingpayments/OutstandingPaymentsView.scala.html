@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.utils.DateTimeUtils.defaultDateFormatter
+@import _root_.utils.DateTimeUtils.dateFormatter
 @import config.FrontendAppConfig
 @import views.ViewUtils._
 @import views.html.components.gds._
@@ -98,10 +98,10 @@
                         Seq(
                             TableRow(content = Text(tx.name)),
                             TableRow(content = Text(formatCurrencyAmount(tx.outstandingAmount)), format = Some("numeric")),
-                            TableRow(content = Text(tx.dueDate.format(defaultDateFormatter)))
+                            TableRow(content = Text(tx.dueDate.format(dateFormatter)))
                         )
                     },
-                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.format(defaultDateFormatter)} to ${summary.accountingPeriod.endDate.format(defaultDateFormatter)}"),
+                    caption = Some(s"Accounting period: ${summary.accountingPeriod.startDate.format(dateFormatter)} to ${summary.accountingPeriod.endDate.format(dateFormatter)}"),
                     captionClasses = "govuk-table__caption--s",
                 ))
             }

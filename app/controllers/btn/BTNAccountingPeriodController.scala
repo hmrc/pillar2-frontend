@@ -61,11 +61,11 @@ class BTNAccountingPeriodController @Inject() (
       rows = Seq(
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.startAccountDate",
-          value = ValueViewModel(startDate.format(defaultDateFormatter))
+          value = ValueViewModel(startDate.format(dateFormatter))
         ),
         SummaryListRowViewModel(
           key = "btn.returnSubmitted.endAccountDate",
-          value = ValueViewModel(endDate.format(defaultDateFormatter))
+          value = ValueViewModel(endDate.format(dateFormatter))
         )
       )
     )

@@ -14,7 +14,7 @@
  * limitations under the License.
  *@
 
-@import _root_.utils.DateTimeUtils.defaultDateFormatter
+@import _root_.utils.DateTimeUtils.dateFormatter
 @import config.FrontendAppConfig
 @import models.obligationsandsubmissions._
 @import views.html.templates.Layout
@@ -73,8 +73,8 @@
                 @if(period.obligations.exists(_.status == ObligationStatus.Open)) {
                     <h2 class="govuk-heading-s">
                         @messages("dueAndOverdueReturns.accountingPeriod", 
-                            period.startDate.format(defaultDateFormatter),
-                            period.endDate.format(defaultDateFormatter))
+                            period.startDate.format(dateFormatter),
+                            period.endDate.format(dateFormatter))
                     </h2>
     
                     @ScrollWrapper {
@@ -87,7 +87,7 @@
                         rows = period.obligations.filter(_.status == ObligationStatus.Open).map { obligation =>
                             Seq(
                                 TableRow(content = Text(messages(s"dueAndOverdueReturns.obligationType.${obligation.obligationType}"))),
-                                TableRow(content = Text(period.dueDate.format(defaultDateFormatter))),
+                                TableRow(content = Text(period.dueDate.format(dateFormatter))),
                                 TableRow(content = 
                                     if(period.dueDate.isBefore(LocalDate.now())) {
                                         HtmlContent(

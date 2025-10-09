@@ -34,7 +34,7 @@ import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
-import utils.DateTimeUtils.defaultDateFormatter
+import utils.DateTimeUtils.dateFormatter
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
@@ -116,7 +116,7 @@ class DashboardController @Inject() (
           Ok(
             homepageView(
               subscriptionData.upeDetails.organisationName,
-              subscriptionData.upeDetails.registrationDate.format(defaultDateFormatter),
+              subscriptionData.upeDetails.registrationDate.format(dateFormatter),
               subscriptionData.accountStatus.exists(_.inactive),
               returnsStatus,
               paymentsStatus,
@@ -133,7 +133,7 @@ class DashboardController @Inject() (
         Ok(
           dashboardView(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(defaultDateFormatter),
+            subscriptionData.upeDetails.registrationDate.format(dateFormatter),
             plrReference,
             inactiveStatus = subscriptionData.accountStatus.exists(_.inactive),
             agentView = request.isAgent

@@ -32,7 +32,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.defaultDateFormatter
+import utils.DateTimeUtils.dateFormatter
 import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
@@ -194,7 +194,7 @@ object TransactionHistoryController {
 
     Seq(
       TableRow(
-        content = Text(history.date.format(defaultDateFormatter))
+        content = Text(history.date.format(dateFormatter))
       ),
       TableRow(
         content = Text(history.paymentType)
