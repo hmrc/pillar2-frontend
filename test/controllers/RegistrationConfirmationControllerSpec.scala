@@ -27,6 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
+import utils.DateTimeUtils.{getCurrentDate, getCurrentTimeGMT}
 import views.html.registrationview.RegistrationConfirmationView
 
 import scala.concurrent.Future
@@ -48,8 +49,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
       val testPlr2Id      = "12345678"
       val testCompanyName = "Test Limited"
-      val testTimeStamp   = "11:45am (GMT)"
-      val testDate        = "17 January 2025"
+      val testDate:      String = getCurrentDate
+      val testTimeStamp: String = getCurrentTimeGMT
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
@@ -91,8 +92,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
 
       val testCompanyName = "Test Limited"
       val testPlr2ID      = "12345678"
-      val testTimeStamp   = "11:45am (GMT)"
-      val testDate        = "17 January 2025"
+      val testDate:      String = getCurrentDate
+      val testTimeStamp: String = getCurrentTimeGMT
 
       running(application) {
         val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
