@@ -1,5 +1,5 @@
-@import "autocomplete";
-@import "hods-loading-spinner";
+@use "autocomplete";
+@use "hods-loading-spinner";
 
 .js-visible {
   display: none !important;
@@ -7,8 +7,16 @@
 .js-enabled .js-visible {
   display: inline-block !important;
 }
-.long-word, .govuk-error-summary, .govuk-error-message {
+body {
+  overflow-wrap: break-word;
+  // IE support
   word-wrap: break-word;
+}
+
+// govuk-frontend styles legends with 'display: table', meaning they don't respect parent tag widths.
+// This can prevent proper text wrapping on headers where the heading is a child of the legend.
+legend {
+  display: block !important;
 }
 
 .check-answer-all dl:nth-child(13n), .manage-contact-details > dl:nth-child(5n) {

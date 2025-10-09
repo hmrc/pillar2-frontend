@@ -46,7 +46,6 @@
             InputViewModel(
                 field = form("emailAddress"),
                 label = LabelViewModel(messages("rfm.secondaryContactEmail.heading", secondaryContactName)).asPageHeading(Large)
-                .withCssClass("long-word")
             )
             .withHint(Hint(content = Text(messages("rfm.secondaryContactEmail.hint"))))
             .withWidth(TwoThirds)
