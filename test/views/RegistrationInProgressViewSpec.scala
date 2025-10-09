@@ -26,9 +26,7 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
   lazy val page:   RegistrationInProgressView = inject[RegistrationInProgressView]
   lazy val plrRef: String                     = "XMPLR0012345678"
 
-  lazy val view: Document = Jsoup.parse(
-    page(plrRef)(request, messages, appConfig).toString()
-  )
+  lazy val view: Document = Jsoup.parse(page(plrRef)(request, messages, appConfig).toString())
 
   "RegistrationInProgressView" should {
     "have a title" in {
@@ -43,7 +41,7 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
 
     "display the PLR reference correctly" in {
       val plrRefElement: Element = view.getElementsByClass("govuk-body").get(1)
-      plrRefElement.text() must include(plrRef)
+      plrRefElement.text() mustBe plrRef
     }
 
     "have a notification banner with registration in progress message" in {

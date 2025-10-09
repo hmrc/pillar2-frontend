@@ -18,7 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.ZonedDateTimeOps
 import views.html.rfm.RfmConfirmationView
@@ -76,15 +76,15 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
 
     "have a paragraph with link" in {
       paragraphs.get(4).text mustBe "You can now report and manage your group's Pillar 2 Top-up Taxes on behalf of your group."
-      val link = paragraphs.get(4).getElementsByTag("a")
+
+      val link: Element = paragraphs.get(4).getElementsByTag("a").first()
       link.text mustBe "report and manage your group's Pillar 2 Top-up Taxes"
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "display print this page link" in {
-      val printLink = view.select("a:contains(Print this page)")
-      printLink.size()         must be >= 1
-      printLink.first().text() must include("Print this page")
+      val printPageElement: Element = view.getElementById("print-this-page")
+      printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
   }
 }
