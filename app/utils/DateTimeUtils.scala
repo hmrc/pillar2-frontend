@@ -24,12 +24,10 @@ object DateTimeUtils {
   private val gmtZoneId: ZoneId = ZoneId.of("GMT")
   val utcZoneId:         ZoneId = ZoneId.of("UTC")
 
-  lazy val utcZoneOffset: ZoneOffset = ZoneOffset.UTC
-
   // Patterns
-  private lazy val defaultDatePattern:     String = "d MMMM yyyy"
-  private lazy val defaultDateTimePattern: String = "d MMMM yyyy, h:mma (zzz)"
-  private lazy val defaultTimePattern:     String = "hh:mma (zzz)"
+  private val defaultDatePattern:     String = "d MMMM yyyy"
+  private val defaultDateTimePattern: String = "d MMMM yyyy, h:mma (zzz)"
+  private val defaultTimePattern:     String = "hh:mma (zzz)"
 
   // 3 December 2011
   lazy val defaultDateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern(defaultDatePattern)
@@ -58,23 +56,5 @@ object DateTimeUtils {
     def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)
     def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
   }
-
-  // 3 December 2011
-  def getCurrentDate: String =
-    LocalDate
-      .now()
-      .format(defaultDateFormatter)
-
-  // 3 December 2011, 10:15am (GMT)
-  def getCurrentDateTimeGMT: String =
-    ZonedDateTime
-      .now(gmtZoneId)
-      .format(dateTimeFormatter)
-
-  // 10:15am (GMT)
-  def getCurrentTimeGMT: String =
-    ZonedDateTime
-      .now(gmtZoneId)
-      .format(timeFormatter)
 
 }

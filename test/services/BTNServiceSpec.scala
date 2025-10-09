@@ -101,8 +101,8 @@ object BTNServiceSpec {
     accountingPeriodTo = LocalDate.now
   )
   val pillar2IdForValidResponse = "XEPLR0000000000"
-  val testZonedDateTime         = "2025-01-10T16:54:26Z"
-  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse("2025-01-10T16:54:26Z", isoDateTimeFormatter)
+  val testZonedDateTime: String        = "2025-01-10T16:54:26Z"
+  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime, isoDateTimeFormatter)
 
   val btnSuccessJsonString: String     = s"""{"processingDate":"$testZonedDateTime"}"""
   val btnSuccessJson:       JsValue    = Json.parse(btnSuccessJsonString)
