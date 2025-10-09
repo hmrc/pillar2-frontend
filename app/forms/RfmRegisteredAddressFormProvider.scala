@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
+import forms.Validation.{AddressRegex, AddressRegexWithAmpersand, XSSRegex}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
@@ -34,7 +34,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine1.length"),
-              regexp(ADDRESS_REGEX_WITH_AMPERSAND, "addressLine.error.xss.with.ampersand")
+              regexp(AddressRegexWithAmpersand, "addressLine.error.xss.with.ampersand")
             )
           ),
       "addressLine2" -> optional(
@@ -42,7 +42,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.error.addressLine2.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(AddressRegex, "addressLine.error.xss")
             )
           )
       ),
@@ -51,7 +51,7 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.town_city.error.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(AddressRegex, "addressLine.error.xss")
             )
           ),
       "addressLine4" ->
@@ -60,17 +60,17 @@ class RfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "rfm.registeredAddress.region.error.length"),
-                regexp(ADDRESS_REGEX, "addressLine.error.xss")
+                regexp(AddressRegex, "addressLine.error.xss")
               )
             )
         ),
-      "postalCode" -> optionalPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
+      "postalCode" -> optionalPostcode().verifying(regexp(XSSRegex, "address.postcode.error.xss")),
       "countryCode" ->
         text("rfm.registeredAddress.country.error.required")
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "rfm.registeredAddress.country.error.length"),
-              regexp(XSS_REGEX, "country.error.xss")
+              regexp(XSSRegex, "country.error.xss")
             )
           )
     )(NonUKAddress.apply)(NonUKAddress.unapply)

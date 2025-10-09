@@ -15,7 +15,7 @@
  */
 
 package forms
-import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
+import forms.Validation.XSSRegexAllowAmpersand
 import forms.mappings.Mappings
 import mapping.Constants
 import models.repayments.NonUKBank
@@ -30,27 +30,27 @@ class NonUKBankFormProvider @Inject() extends Mappings {
     mapping(
       "bankName" -> text("repayments.nonUKBank.error.bankName.required")
         .verifying(
-          maxLength(Constants.MAX_LENGTH_40, "repayments.nonUKBank.error.bankName.length"),
-          regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.nonUKBank.error.bankName.xss")
+          maxLength(Constants.MaxLength40, "repayments.nonUKBank.error.bankName.length"),
+          regexp(XSSRegexAllowAmpersand, "repayments.nonUKBank.error.bankName.xss")
         ),
       "nameOnBankAccount" -> text("repayments.nonUKBank.error.nameOnBankAccount.required")
         .verifying(
-          maxLength(Constants.MAX_LENGTH_60, "repayments.nonUKBank.error.nameOnBankAccount.length"),
-          regexp(XSS_REGEX_ALLOW_AMPERSAND, "repayments.nonUKBank.error.nameOnBankAccount.xss")
+          maxLength(Constants.MaxLength60, "repayments.nonUKBank.error.nameOnBankAccount.length"),
+          regexp(XSSRegexAllowAmpersand, "repayments.nonUKBank.error.nameOnBankAccount.xss")
         ),
       "bic" -> bic("repayments.nonUKBank.error.bic.required")
         .verifying(
           firstError(
-            minLength(Constants.MIN_LENGTH_8, "repayments.nonUKBank.error.bic.length"),
-            maxLength(Constants.MAX_LENGTH_11, "repayments.nonUKBank.error.bic.length"),
-            regexp(Validation.BIC_SWIFT_REGEX, "repayments.nonUKBank.error.bic.format")
+            minLength(Constants.MinLength8, "repayments.nonUKBank.error.bic.length"),
+            maxLength(Constants.MaxLength11, "repayments.nonUKBank.error.bic.length"),
+            regexp(Validation.BICSwiftRegex, "repayments.nonUKBank.error.bic.format")
           )
         ),
       "iban" -> iban("repayments.nonUKBank.error.iban.required")
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_34, "repayments.nonUKBank.error.iban.length"),
-            regexp(Validation.IBAN_REGEX, "repayments.nonUKBank.error.iban.format")
+            maxLength(Constants.MaxLength34, "repayments.nonUKBank.error.iban.length"),
+            regexp(Validation.IBANRegex, "repayments.nonUKBank.error.iban.format")
           )
         )
     )(NonUKBank.apply)(NonUKBank.unapply)

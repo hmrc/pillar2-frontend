@@ -28,8 +28,8 @@ class NfmEmailAddressFormProvider @Inject() extends Mappings {
       "emailAddress" -> text("nfmEmailAddress.error.required", Seq(userName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_132, "nfmEmailAddress.error.length"),
-            regexp(Validation.EMAIL_REGEX, "nfmEmailAddress.error.invalid")
+            maxLength(Constants.MaxLength132, "nfmEmailAddress.error.length"),
+            regexp(Validation.EmailRegex, "nfmEmailAddress.error.invalid")
           )
         )
     )

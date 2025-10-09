@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.XSS_REGEX_ALLOW_AMPERSAND
+import forms.Validation.XSSRegexAllowAmpersand
 import forms.mappings.Mappings
 import mapping.Constants
 import play.api.data.Form
@@ -30,8 +30,8 @@ class NfmNameRegistrationFormProvider @Inject() extends Mappings {
       "value" -> text("nfmNameRegistration.error.required")
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_105, "nfmNameRegistration.error.length"),
-            regexp(XSS_REGEX_ALLOW_AMPERSAND, "name.error.xss.allowAmpersand")
+            maxLength(Constants.MaxLength105, "nfmNameRegistration.error.length"),
+            regexp(XSSRegexAllowAmpersand, "name.error.xss.allowAmpersand")
           )
         )
     )

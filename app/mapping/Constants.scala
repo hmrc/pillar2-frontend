@@ -17,23 +17,23 @@
 package mapping
 
 object Constants {
-  final val ENGLISH                 = "en"
-  final val UK_COUNTRY_CODE         = "GB"
-  final val MIN_LENGTH_6            = 6
-  final val MIN_LENGTH_8            = 8
-  final val MAX_LENGTH_11           = 11
-  final val MAX_LENGTH_24           = 24
-  final val MAX_LENGTH_34           = 34
-  final val MAX_LENGTH_40           = 40
-  final val MAX_LENGTH_60           = 60
-  final val MAX_LENGTH_100          = 100
-  final val MAX_LENGTH_105          = 105
-  final val MAX_LENGTH_132          = 132
-  final val MAX_LENGTH_160          = 160
-  final val MIN_AMOUNT              = 0.0
-  final val MAX_AMOUNT              = 99999999999.99
-  final val MAX_LENGTH_200          = 200
-  final val MAX_LENGTH_250          = 250
-  final val EQUAL_LENGTH_15         = 15
-  final val PHONE_NUMBER_MAX_LENGTH = 24
+  final val English:              String = "en"
+  final val UKCountryCode:        String = "GB"
+  final val MinLength6:           Int    = 6
+  final val MinLength8:           Int    = 8
+  final val MaxLength11:          Int    = 11
+  final val MaxLength24:          Int    = 24
+  final val MaxLength34:          Int    = 34
+  final val MaxLength40:          Int    = 40
+  final val MaxLength60:          Int    = 60
+  final val MaxLength100:         Int    = 100
+  final val MaxLength105:         Int    = 105
+  final val MaxLength132:         Int    = 132
+  final val MaxLength160:         Int    = 160
+  final val MinAmount:            Double = 0.0
+  final val MaxAmount:            Double = 99999999999.99
+  final val MaxLength200:         Int    = 200
+  final val MaxLength250:         Int    = 250
+  final val EqualLength15:        Int    = 15
+  final val PhoneNumberMaxLength: Int    = 24
 }

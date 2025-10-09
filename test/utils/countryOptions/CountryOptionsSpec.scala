@@ -18,7 +18,7 @@ package utils.countryOptions
 
 import base.SpecBase
 import com.typesafe.config.ConfigException
-import mapping.Constants.ENGLISH
+import mapping.Constants.English
 import models.grs.EntityType
 import org.mockito.MockitoSugar
 import play.api.Application
@@ -26,9 +26,9 @@ import utils.InputOption
 
 class CountryOptionsSpec extends SpecBase with MockitoSugar {
 
-  def application(language: String = ENGLISH): Application = {
+  def application(language: String = English): Application = {
     val config = language match {
-      case ENGLISH => Map("location.canonical.list.all" -> "countries-canonical-list-test.json")
+      case English => Map("location.canonical.list.all" -> "countries-canonical-list-test.json")
       case _       => Map("location.canonical.list.all" -> "countries-canonical-test.json")
     }
 

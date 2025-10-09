@@ -30,7 +30,7 @@ import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
@@ -63,7 +63,7 @@ class DueAndOverdueReturnsController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        fromDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+        fromDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)
         toDate   = LocalDate.now()
         data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
       } yield Ok(view(data, fromDate, toDate, request.isAgent))).value
