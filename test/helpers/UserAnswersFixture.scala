@@ -49,7 +49,7 @@ trait UserAnswersFixture extends TryValues {
     countryCode = "US"
   )
 
-  val postcodedNonUkAddress: UKAddress = UKAddress(
+  val postcodeNonUkAddress: UKAddress = UKAddress(
     addressLine1 = "132 My Street",
     addressLine2 = None,
     addressLine3 = "Kingston",
