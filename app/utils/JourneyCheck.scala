@@ -18,5 +18,5 @@ package utils
 
 object JourneyCheck {
   def isBTNJourney(path: String): Boolean =
-    path.contains(Constants.BTN_PATH)
+    path.contains(Constants.BtnPath)
 }
