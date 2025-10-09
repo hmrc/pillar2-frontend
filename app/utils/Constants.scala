@@ -17,11 +17,11 @@
 package utils
 
 object Constants {
-  final val SubmissionAccountingPeriods = 7
-  final val BtnPath                      = "/below-threshold-notification"
-  final val SiteYes                      = "site.yes"
-  final val SiteNo                       = "site.no"
-  final val SiteChange                   = "site.change"
-  final val ReceivedPeriodInDays       = 60
-  final val PaidPeriodInDays: Int = 60
+  final val SubmissionAccountingPeriods: Int    = 7
+  final val BtnPath:                     String = "/below-threshold-notification"
+  final val SiteYes:                     String = "site.yes"
+  final val SiteNo:                      String = "site.no"
+  final val SiteChange:                  String = "site.change"
+  final val ReceivedPeriodInDays:        Int    = 60
+  final val PaidPeriodInDays:            Int    = 60
 }
