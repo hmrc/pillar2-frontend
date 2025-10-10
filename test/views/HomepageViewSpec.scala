@@ -660,6 +660,14 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
       returnsCard.getElementsByClass("govuk-body").first().text() mustBe "Your client has one or more returns under enquiry"
     }
+
+    "have a link to change entered pillar2 id" in {
+      val agentViewParagraph: Elements = agentView.getElementsByClass("govuk-link")
+
+      agentViewParagraph.get(2).getElementsByTag("a").text() mustBe "Change client"
+      agentViewParagraph.get(2).getElementsByTag("a").attr("href") mustBe
+        controllers.routes.AgentController.onPageLoadClientPillarId.url
+    }
   }
 
   "HomepageView layout" should {

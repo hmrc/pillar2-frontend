@@ -29,7 +29,8 @@
     link: link,
     card: HomepageCard,
     govukNotificationBanner: GovukNotificationBanner,
-    dynamicNotificationArea: DynamicNotificationAreaView
+    dynamicNotificationArea: DynamicNotificationAreaView,
+    paragraphMessageWithLink: ParagraphMessageWithLink,
 )
 
 @(
@@ -82,6 +83,11 @@
    <span><strong>@{messages("homepage.group")}:</strong> @organisationName</span>
    <span><strong>@{messages("homepage.id")}:</strong> @plrReference</span>
   </p>
+
+  @if(isAgent) {
+    @paragraphMessageWithLink(linkMessage = messages("dashboard.agent.changeClientLink"),
+        linkUrl = routes.AgentController.onPageLoadClientPillarId.url)
+  }
 
 @dynamicNotificationArea(dynamicNotificationAreaState, isAgent)
 
