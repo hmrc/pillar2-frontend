@@ -1823,8 +1823,8 @@ research.link = Register for Pillar 2 user research (opens in a new tab)
 # BTN Under Enquiry Warning
 # ---------------------------------------------
 btn.underEnquiryWarning.title = Accounting period under enquiry - Below Threshold Notification - GOV.UK
-btn.underEnquiryWarning.heading = This accounting period is under enquiry
-btn.underEnquiryWarning.p1 = You cannot submit a Below Threshold Notification for this accounting period because it is currently under enquiry by HMRC.
-btn.underEnquiryWarning.p2 = If you need to submit a notification for this period, you should contact HMRC directly.
+btn.underEnquiryWarning.heading = You have one or more returns under enquiry
+btn.underEnquiryWarning.p1 = You cannot add a Below-Threshold Notification to an accounting period that is currently under enquiry.
+btn.underEnquiryWarning.p2 = If you continue, the Below-Threshold Notification will still be processed but will not apply to any accounting periods under enquiry.
 btn.underEnquiryWarning.continue = Continue
 btn.underEnquiryWarning.returnToHomePageText.link = Return to home page
