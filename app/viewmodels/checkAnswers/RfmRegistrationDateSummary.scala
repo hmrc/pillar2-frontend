@@ -19,26 +19,21 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.RfmRegistrationDatePage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object RfmRegistrationDateSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(RfmRegistrationDatePage).map { answer =>
-      val startDate = HtmlFormat.escape(ViewHelpers.formatDateGDS(answer))
+    answers.get(RfmRegistrationDatePage).map { registrationDate =>
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate)),
+        value = ValueViewModel(registrationDate.toDateFormat),
         actions = Seq(
           ActionItemViewModel("site.change", controllers.rfm.routes.GroupRegistrationDateReportController.onPageLoad(CheckMode).url)
             .withVisuallyHiddenText(messages("rfmRegistrationDate.change.hidden"))
         )
       )
-
     }
-
 }

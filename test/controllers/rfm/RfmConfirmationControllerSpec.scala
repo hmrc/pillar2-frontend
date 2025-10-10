@@ -22,16 +22,17 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject
 import play.api.inject.bind
+import play.api.mvc.Result
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.rfm.RfmConfirmationView
 
+import java.time.ZonedDateTime
 import java.util.UUID
 import scala.concurrent.Future
 
@@ -61,14 +62,15 @@ class RfmConfirmationControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
-        when(mockSessionRepository.get(any()))
-          .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        val result      = route(application, request).value
-        val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
-        val view        = application.injector.instanceOf[RfmConfirmationView]
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val result:             Future[Result]      = route(application, request).value
+        val currentDateTimeGMT: String              = ZonedDateTime.now().toDateTimeGmtFormat
+        val view:               RfmConfirmationView = application.injector.instanceOf[RfmConfirmationView]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view("12345678", currentDate.toString())(
+        contentAsString(result) mustEqual view("12345678", currentDateTimeGMT)(
           request,
           applicationConfig,
           messages(application)
@@ -108,10 +110,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           "on behalf of your group."
         )
         contentAsString(result) must include("Print this page")
-        contentAsString(result) must include(
-          currentDate.toString()
-        )
-
+        contentAsString(result) must include(currentDateTimeGMT)
       }
     }
 

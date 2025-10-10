@@ -27,11 +27,12 @@ import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.Constants.SubmissionAccountingPeriods
+import utils.DateTimeUtils.utcZoneId
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 import java.time.temporal.ChronoUnit
-import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
+import java.time.{LocalDate, ZonedDateTime}
 
 trait ObligationsAndSubmissionsDataFixture {
 
@@ -43,7 +44,7 @@ trait ObligationsAndSubmissionsDataFixture {
   val pastDueDate:   LocalDate = LocalDate.now().minusDays(30) // Always overdue
   val futureDueDate: LocalDate = LocalDate.now().plusDays(30) // Always due
 
-  val testZonedDateTime:                            ZonedDateTime = ZonedDateTime.now(ZoneOffset.UTC).truncatedTo(ChronoUnit.SECONDS)
+  val testZonedDateTime:                            ZonedDateTime = ZonedDateTime.now(utcZoneId).truncatedTo(ChronoUnit.SECONDS)
   val obligationsAndSubmissionsSuccessResponseJson: JsValue       = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
   val validBTNCyaUa: UserAnswers = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)))

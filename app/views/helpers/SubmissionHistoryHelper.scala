@@ -20,9 +20,9 @@ import models.obligationsandsubmissions.{AccountingPeriodDetails, Submission}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
+import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 object SubmissionHistoryHelper {
 
@@ -37,8 +37,8 @@ object SubmissionHistoryHelper {
       }
 
   def createTable(startDate: LocalDate, endDate: LocalDate, rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table = {
-    val formattedStartDate = startDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
-    val formattedEndDate   = endDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy"))
+    val formattedStartDate: String = startDate.toDateFormat
+    val formattedEndDate:   String = endDate.toDateFormat
 
     Table(
       caption = Some(s"$formattedStartDate to $formattedEndDate"),
@@ -62,12 +62,8 @@ object SubmissionHistoryHelper {
 
   def createTableRows(submission: Submission): Seq[TableRow] =
     Seq(
-      TableRow(
-        content = Text(submission.submissionType.fullName)
-      ),
-      TableRow(
-        content = Text(submission.receivedDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
-      )
+      TableRow(content = Text(submission.submissionType.fullName)),
+      TableRow(content = Text(submission.receivedDate.toDateFormat))
     )
 
 }

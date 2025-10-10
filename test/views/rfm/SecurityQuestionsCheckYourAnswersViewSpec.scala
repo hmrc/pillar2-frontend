@@ -26,7 +26,7 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import viewmodels.checkAnswers.{RfmRegistrationDateSummary, RfmSecurityCheckSummary}
 import viewmodels.govuk.summarylist._
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
@@ -76,16 +76,16 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
+
       summaryListKeys.get(0).text mustBe "Pillar 2 Top-up Taxes ID"
       summaryListKeys.get(1).text mustBe "Registration date"
     }
 
     "have a summary list items" in {
-      view.getElementsByClass("govuk-summary-list__value").get(0).text must include(plrReference)
-      view.getElementsByClass("govuk-summary-list__value").get(1).text must include(ViewHelpers.formatDateGDS(registrationDate))
       val summaryListItems: Elements = view.getElementsByClass("govuk-summary-list__value")
+
       summaryListItems.get(0).text mustBe plrReference
-      summaryListItems.get(1).text mustBe ViewHelpers.formatDateGDS(registrationDate)
+      summaryListItems.get(1).text mustBe registrationDate.toDateFormat
     }
 
     "have a summary list links" in {

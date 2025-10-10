@@ -32,10 +32,10 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateTimeUtils.LocalDateOps
 import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
-import java.time.format.DateTimeFormatter
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -194,7 +194,7 @@ object TransactionHistoryController {
 
     Seq(
       TableRow(
-        content = Text(history.date.format(DateTimeFormatter.ofPattern("d MMMM yyyy")))
+        content = Text(history.date.toDateFormat)
       ),
       TableRow(
         content = Text(history.paymentType)

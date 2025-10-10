@@ -34,12 +34,13 @@ import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
+import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
-import views.ViewUtils.{currentTimeGMT, formattedCurrentDate}
 import views.html.CheckYourAnswersView
 
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.duration._
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -91,8 +92,8 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(UpeNameRegistrationPage, companyName)
                                  .setOrException(SubMneOrDomesticPage, mneOrDom)
                                  .setOrException(PlrReferencePage, plr)
-                                 .setOrException(PdfRegistrationDatePage, formattedCurrentDate)
-                                 .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
+                                 .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
+                                 .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield {

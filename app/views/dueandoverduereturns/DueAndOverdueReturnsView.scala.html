@@ -14,14 +14,14 @@
  * limitations under the License.
  *@
 
+@import _root_.utils.DateTimeUtils._
 @import config.FrontendAppConfig
 @import models.obligationsandsubmissions._
-@import java.time.LocalDate
-@import java.time.format.DateTimeFormatter
 @import views.html.templates.Layout
 @import views.ViewUtils._
 @import views.html.styles.tableScrollStyles
 @import views.html.components.gds.ScrollWrapper
+@import java.time.LocalDate
 
 @this(
     layout: Layout,
@@ -31,11 +31,7 @@
     govukInsetText: GovukInsetText,
     govukButton: GovukButton
 )
-
 @(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-
-
-@dateFormatter = @{DateTimeFormatter.ofPattern("d MMMM yyyy")}
 
 @hasOpenObligations = @{
   data.accountingPeriodDetails.exists(period => 
@@ -76,8 +72,8 @@
                 @if(period.obligations.exists(_.status == ObligationStatus.Open)) {
                     <h2 class="govuk-heading-s">
                         @messages("dueAndOverdueReturns.accountingPeriod", 
-                            period.startDate.format(dateFormatter), 
-                            period.endDate.format(dateFormatter))
+                            period.startDate.toDateFormat,
+                            period.endDate.toDateFormat)
                     </h2>
     
                     @ScrollWrapper {
@@ -90,7 +86,7 @@
                         rows = period.obligations.filter(_.status == ObligationStatus.Open).map { obligation =>
                             Seq(
                                 TableRow(content = Text(messages(s"dueAndOverdueReturns.obligationType.${obligation.obligationType}"))),
-                                TableRow(content = Text(period.dueDate.format(dateFormatter))),
+                                TableRow(content = Text(period.dueDate.toDateFormat)),
                                 TableRow(content = 
                                     if(period.dueDate.isBefore(LocalDate.now())) {
                                         HtmlContent(

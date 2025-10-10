@@ -21,12 +21,13 @@ import controllers.actions._
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
-import play.twirl.api.HtmlFormat
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.{Pillar2Reference, ViewHelpers}
+import utils.DateTimeUtils.ZonedDateTimeOps
+import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
+import java.time.ZonedDateTime
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -42,14 +43,14 @@ class RfmConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, currentDate.toString()))).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      } yield Ok(view(pillar2Id, ZonedDateTime.now().toDateTimeGmtFormat)))
+        .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
 }

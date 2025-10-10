@@ -39,10 +39,10 @@ import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.DateTimeUtils.LocalDateOps
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 import java.util.UUID
 import scala.concurrent.Future
 
@@ -108,7 +108,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            subscriptionData.upeDetails.registrationDate.toDateFormat,
             btnActive = false,
             None,
             None,
@@ -148,7 +148,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           status(result) mustEqual OK
           contentAsString(result) mustEqual view(
             subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.format(DateTimeFormatter.ofPattern("d MMMM yyyy")),
+            subscriptionData.upeDetails.registrationDate.toDateFormat,
             "12345678",
             inactiveStatus = false,
             agentView = false
@@ -238,7 +238,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when UKTR obligation is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller: DashboardController = application.injector.instanceOf[DashboardController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(

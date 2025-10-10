@@ -21,9 +21,10 @@ import models.{FinancialHistory, TransactionHistory}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen._
 import org.scalacheck.{Arbitrary, Gen, Shrink}
+import utils.DateTimeUtils.utcZoneId
 import wolfendale.scalacheck.regexp.RegexpGen
 
-import java.time.{Instant, LocalDate, ZoneOffset}
+import java.time.{Instant, LocalDate}
 import scala.math.BigDecimal.RoundingMode
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
@@ -207,10 +208,10 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
   def datesBetween(min: LocalDate, max: LocalDate): Gen[LocalDate] = {
 
     def toMillis(date: LocalDate): Long =
-      date.atStartOfDay.atZone(ZoneOffset.UTC).toInstant.toEpochMilli
+      date.atStartOfDay.atZone(utcZoneId).toInstant.toEpochMilli
 
     Gen.choose(toMillis(min), toMillis(max)).map { millis =>
-      Instant.ofEpochMilli(millis).atOffset(ZoneOffset.UTC).toLocalDate
+      Instant.ofEpochMilli(millis).atZone(utcZoneId).toLocalDate
     }
   }
 

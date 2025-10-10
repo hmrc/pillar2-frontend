@@ -21,7 +21,7 @@ import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -40,8 +40,8 @@ class BTNConfirmationController @Inject() (
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData) { implicit request =>
-    val submissionDate            = ViewHelpers.formatDateGDS(LocalDate.now())
-    val accountingPeriodStartDate = ViewHelpers.formatDateGDS(request.subscriptionLocalData.subAccountingPeriod.startDate)
+    val submissionDate:            String = LocalDate.now().toDateFormat
+    val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
 
     Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent))
   }
