@@ -1818,3 +1818,13 @@ payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalt
 research.heading = Take part in Pillar 2 research
 research.body = Help us improve this online service by taking part in user research.
 research.link = Register for Pillar 2 user research (opens in a new tab)
+
+# ---------------------------------------------
+# BTN Under Enquiry Warning
+# ---------------------------------------------
+btn.underEnquiryWarning.title = Accounting period under enquiry - Below Threshold Notification - GOV.UK
+btn.underEnquiryWarning.heading = This accounting period is under enquiry
+btn.underEnquiryWarning.p1 = You cannot submit a Below Threshold Notification for this accounting period because it is currently under enquiry by HMRC.
+btn.underEnquiryWarning.p2 = If you need to submit a notification for this period, you should contact HMRC directly.
+btn.underEnquiryWarning.continue = Continue
+btn.underEnquiryWarning.returnToHomePageText.link = Return to home page
