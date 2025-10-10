@@ -40,6 +40,11 @@ class KbMnIneligibleViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    "have a banner with a link to pillar 2 guidance" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+    }
+
     "have paragraph content" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       paragraphs.get(0).text mustBe

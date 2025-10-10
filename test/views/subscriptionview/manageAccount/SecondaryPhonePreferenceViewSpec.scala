@@ -14,55 +14,62 @@
  * limitations under the License.
  */
 
-package views.repayments
+package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
 import controllers.routes
-import forms.RepaymentsContactByPhoneFormProvider
+import forms.SecondaryPhonePreferenceFormProvider
 import generators.StringGenerators
 import models.{Mode, NormalMode}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import views.html.repayments.RepaymentsContactByPhoneView
+import views.html.subscriptionview.manageAccount.SecondaryPhonePreferenceView
 
-class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerators {
+class SecondaryPhonePreferenceViewSpec extends ViewSpecBase with StringGenerators {
 
-  lazy val formProvider: RepaymentsContactByPhoneFormProvider = new RepaymentsContactByPhoneFormProvider
+  lazy val formProvider: SecondaryPhonePreferenceFormProvider = new SecondaryPhonePreferenceFormProvider
   lazy val mode:         Mode                                 = NormalMode
-  lazy val page:         RepaymentsContactByPhoneView         = inject[RepaymentsContactByPhoneView]
+  lazy val page:         SecondaryPhonePreferenceView         = inject[SecondaryPhonePreferenceView]
   lazy val pageTitle:    String                               = "Can we contact by phone"
   lazy val contactName:  String                               = "John Doe"
 
-  "Repayments Contact By Phone View" when {
+  "SecondaryPhonePreferenceView" when {
 
     "page loaded" should {
 
-      val view: Document = Jsoup.parse(
-        page(formProvider(contactName), mode, contactName)(request, appConfig, messages).toString()
+      def view(isAgent: Boolean = false, orgName: Option[String] = None): Document = Jsoup.parse(
+        page(formProvider(contactName), contactName, isAgent, orgName)(request, appConfig, messages).toString()
       )
 
       "have a title" in {
-        view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+        view().title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
+
+      "have a caption" in {
+        view().getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+        view(isAgent = true, orgName = None).getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+        view(isAgent = true, orgName = Some("orgName")).getElementsByClass("govuk-caption-l").text mustBe "orgName"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = view.getElementsByTag("h1")
+        val h1Elements: Elements = view().getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe s"Can we contact $contactName by phone?"
       }
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        view().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a hint" in {
-        view.getElementsByClass("govuk-hint").text mustBe "We will only use this to contact you about this repayment request."
+        view().getElementsByClass("govuk-hint").text mustBe "We’ll only use this to contact you about Pillar 2 Top-up Taxes."
       }
 
       "have radio items" in {
-        val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
+        val radioButtons: Elements = view().getElementsByClass("govuk-label govuk-radios__label")
 
         radioButtons.size() mustBe 2
         radioButtons.get(0).text mustBe "Yes"
@@ -70,7 +77,7 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
       }
 
       "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+        view().getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
   }
@@ -81,8 +88,9 @@ class RepaymentsContactByPhoneViewSpec extends ViewSpecBase with StringGenerator
         formProvider(contactName).bind(
           Map("value" -> "")
         ),
-        mode,
-        contactName
+        contactName,
+        isAgent = false,
+        organisationName = None
       )(request, appConfig, messages).toString()
     )
 

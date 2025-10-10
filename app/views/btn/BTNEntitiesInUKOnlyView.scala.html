@@ -27,7 +27,7 @@
 
 @(form: Form[_], isAgent: Boolean, organisationName: Option[String], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("btn.entitiesInsideOutsideUK.title.uk"))) {
+@layout(pageTitle = title(form, messages("btn.entitiesInsideOutsideUK.title.uk")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
     @formHelper(action = controllers.btn.routes.BTNEntitiesInUKOnlyController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {

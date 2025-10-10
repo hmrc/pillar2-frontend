@@ -31,7 +31,8 @@ paragraphBodyLink: paragraphBodyLink,
 pageTitle = titleNoForm(messages("repayments.journeyRecovery.title")),
 showSignOut = true,
 authorised = true,
-showBackLink = false
+showBackLink = false,
+bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
 @heading(messages("repayments.journeyRecovery.heading"), "govuk-heading-l")
 @paragraphBody(messages("repayments.journeyRecovery.p1"))

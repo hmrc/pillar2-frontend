@@ -17,6 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import forms.BankAccountDetailsFormProvider
 import generators.StringGenerators
 import models.NormalMode
@@ -31,7 +32,7 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
   lazy val page:         BankAccountDetailsView         = inject[BankAccountDetailsView]
   lazy val pageTitle:    String                         = "Bank account details"
 
-  "Non UK Bank View" should {
+  "Bank Account Details View" should {
     val view: Document = Jsoup.parse(
       page(formProvider(), NormalMode)(
         request,
@@ -49,6 +50,11 @@ class BankAccountDetailsViewSpec extends ViewSpecBase with StringGenerators {
       h1Elements.size() mustBe 1
       h1Elements.get(0).ownText() mustBe pageTitle // H1 contains a hint
       h1Elements.text() mustBe s"$pageTitle The account must be a UK business account."
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have the correct labels" in {

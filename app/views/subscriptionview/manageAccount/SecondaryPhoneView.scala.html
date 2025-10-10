@@ -30,7 +30,7 @@
 
 @(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("capturePhoneDetails.title"))) {
+@layout(pageTitle = title(form, messages("capturePhoneDetails.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryPhoneController.onSubmit) {
 

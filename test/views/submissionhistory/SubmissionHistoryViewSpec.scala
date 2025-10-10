@@ -17,6 +17,7 @@
 package views.submissionhistory
 
 import base.ViewSpecBase
+import controllers.routes
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -33,7 +34,8 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
   lazy val agentView: Document =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "Submission history"
+  lazy val pageTitle:       String = "Submission history"
+  lazy val bannerClassName: String = "govuk-header__link govuk-header__service-name"
 
   "Submission History Organisation View" should {
     val organisationViewParagraphs: Elements = organisationView.getElementsByTag("p")
@@ -46,6 +48,10 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       val h1Elements: Elements = organisationView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
+    }
+
+    "have a banner with a link to the Homepage" in {
+      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have a paragraph detailing submission details" in {
@@ -100,6 +106,10 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
 
   "Submission History Agent View" should {
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
+
+    "have a banner with a link to the Homepage" in {
+      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+    }
 
     "have a paragraph detailing submission details" in {
       agentViewParagraphs.get(1).text() mustBe

@@ -22,7 +22,7 @@
 @this(layout: templates.Layout, govukButton: GovukButton, heading: heading, paragraphBodyLink: paragraphBodyLink)
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.cannotReturn.heading")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("btn.cannotReturn.heading")), showBackLink = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
     @heading(messages("btn.cannotReturn.p1"), classes = "govuk-heading-l")
     @paragraphBodyLink(

@@ -17,6 +17,7 @@
 package views.btn
 
 import base.ViewSpecBase
+import controllers.routes
 import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -30,11 +31,12 @@ import views.html.btn.BTNAccountingPeriodView
 
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 
-  lazy val page:      BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
-  lazy val startDate: String                  = "7 January 2024"
-  lazy val endDate:   String                  = "7 January 2025"
-  lazy val agentView: Document                = view(isAgent = true)
-  lazy val pageTitle: String                  = "Confirm account period for Below-Threshold Notification"
+  lazy val page:            BTNAccountingPeriodView = inject[BTNAccountingPeriodView]
+  lazy val startDate:       String                  = "7 January 2024"
+  lazy val endDate:         String                  = "7 January 2025"
+  lazy val agentView:       Document                = view(isAgent = true)
+  lazy val pageTitle:       String                  = "Confirm account period for Below-Threshold Notification"
+  lazy val bannerClassName: String                  = "govuk-header__link govuk-header__service-name"
 
   lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
@@ -62,6 +64,10 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         val h1Elements: Elements = view().getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with a link to the Homepage" in {
+        view().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a paragraph" in {
@@ -131,6 +137,10 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         val h1Elements: Elements = agentView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
+      }
+
+      "have a banner with a link to the Homepage" in {
+        agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a caption" in {

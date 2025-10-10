@@ -47,6 +47,11 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
       h1Elements.first().parent().hasClass("govuk-fieldset__legend") mustBe true
     }
 
+    "have a banner with a link to pillar 2 guidance" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+    }
+
     "have a hint" in {
       view.getElementsByClass("govuk-hint").get(0).text mustBe
         "An Ultimate Parent Entity is not a subsidiary and controls one or more other entities. In a multi-parent " +

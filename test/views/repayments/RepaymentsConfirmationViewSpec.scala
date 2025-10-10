@@ -57,6 +57,11 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       h1Elements.hasClass("govuk-panel__title") mustBe true
     }
 
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+    }
+
     "have a confirmation message" in {
       paragraphs.get(0).text mustBe
         s"You have successfully submitted your repayment request on ${currentDate.toString()}."
