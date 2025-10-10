@@ -99,7 +99,12 @@ class BTNChooseAccountingPeriodController @Inject() (
                       for {
                         updatedAnswers <- Future.fromTry(userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
                         _              <- sessionRepository.set(updatedAnswers)
-                      } yield Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                      } yield
+                        if (chosenPeriod.underEnquiry) {
+                          Redirect(routes.BTNUnderEnquiryWarningController.onPageLoad)
+                        } else {
+                          Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
+                        }
                     case None =>
                       Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
                   }
