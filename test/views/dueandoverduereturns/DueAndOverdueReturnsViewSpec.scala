@@ -17,6 +17,7 @@
 package views.dueandoverduereturns
 
 import base.ViewSpecBase
+import controllers.routes
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
@@ -41,6 +42,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     val h1Elements: Elements = view.getElementsByTag("h1")
     h1Elements.size() mustBe 1
     h1Elements.text() mustBe pageTitle
+
+    val className: String = "govuk-header__link govuk-header__service-name"
+    view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
 
     val headings: Elements = view.getElementsByTag("h2")
     val submissionHistoryHeading: Optional[Element] =

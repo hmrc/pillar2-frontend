@@ -27,11 +27,12 @@
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-  pageTitle = messages("btn.waitingRoom.title"), 
+  pageTitle = titleNoForm(messages("btn.waitingRoom.title")),
   headBlock = None,
-  showSignOut = false, 
+  showSignOut = false,
+  bannerUrl = None,
   serviceBannerClickable = false,
-  showBackLink = false, 
+  showBackLink = false,
   timeout = false
 ) {
   <div class="hods-loading-spinner">

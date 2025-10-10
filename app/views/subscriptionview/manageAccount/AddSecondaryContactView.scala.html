@@ -31,7 +31,7 @@
 
 @(form: Form[_], contactName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("addSecondaryContact.title"))) {
+@layout(pageTitle = title(form, messages("addSecondaryContact.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
     @formHelper(action = controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit, 'autoComplete -> "off") {
 

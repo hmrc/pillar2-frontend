@@ -27,7 +27,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.error.title")), showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("btn.error.title")), showBackLink = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
   @heading(messages("btn.error.heading"), classes = "govuk-heading-xl")
 

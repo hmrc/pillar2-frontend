@@ -33,7 +33,8 @@
       titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.agent.title"))
     } else {
       titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.title"))
-    }
+    },
+    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
 
     @if(isAgent) {

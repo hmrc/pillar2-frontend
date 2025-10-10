@@ -31,7 +31,7 @@
 
 @(form: Form[_], userName: String, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("contactByPhone.title"))) {
+@layout(pageTitle = title(form, messages("contactByPhone.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.ContactByPhoneController.onSubmit, 'autoComplete -> "off") {
