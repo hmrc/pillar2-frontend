@@ -17,25 +17,44 @@
 package views.btn
 
 import base.ViewSpecBase
+import controllers.routes
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
+import org.jsoup.select.Elements
 import views.html.btn.BTNUnderEnquiryWarningView
 
 class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
 
-  "BTNUnderEnquiryWarningView" must {
+  lazy val page:      BTNUnderEnquiryWarningView = inject[BTNUnderEnquiryWarningView]
+  lazy val view:      Document                   = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                     = messages("btn.underEnquiryWarning.title")
 
-    "render the correct content" in {
+  "BTNUnderEnquiryWarningView" should {
 
-      val view = app.injector.instanceOf[BTNUnderEnquiryWarningView]
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+    }
 
-      val result = view()(request, appConfig, messages)
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe messages("btn.underEnquiryWarning.heading")
+    }
 
-      val doc = Jsoup.parse(result.toString)
+    "have paragraph content" in {
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe messages("btn.underEnquiryWarning.p1")
+      paragraphs.get(1).text mustBe messages("btn.underEnquiryWarning.p2")
+    }
 
-      doc.text() must include(messages("btn.underEnquiryWarning.heading"))
-      doc.text() must include(messages("btn.underEnquiryWarning.p1"))
-      doc.text() must include(messages("btn.underEnquiryWarning.p2"))
-      doc.text() must include(messages("btn.underEnquiryWarning.continue"))
+    "have a continue button" in {
+      view.getElementsByClass("govuk-button").text mustBe messages("btn.underEnquiryWarning.continue")
+    }
+
+    "have a return to homepage link" in {
+      val link = view.select("a:contains(" + messages("btn.underEnquiryWarning.returnToHomePageText.link") + ")")
+      link.size() mustBe 1
+      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
   }
 }
