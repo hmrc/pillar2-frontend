@@ -26,7 +26,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("transactionHistory.error.title"))) {
+@layout(pageTitle = titleNoForm(messages("transactionHistory.error.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
   @heading(messages("transactionHistory.error.heading"))
   @p(messages("transactionHistory.error.p1"))

@@ -16,9 +16,9 @@
 
 package forms
 
-import forms.Validation.XSS_REGEX
+import forms.Validation.XSSRegex
 import forms.mappings.Mappings
-import mapping.Constants.MAX_LENGTH_105
+import mapping.Constants.MaxLength105
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -29,8 +29,8 @@ class NfmContactNameFormProvider @Inject() extends Mappings {
       "value" -> text("nfmContactName.error.required")
         .verifying(
           firstError(
-            maxLength(MAX_LENGTH_105, "nfmContactName.error.length"),
-            regexp(XSS_REGEX, "name.error.xss.forbidAmpersand")
+            maxLength(MaxLength105, "nfmContactName.error.length"),
+            regexp(XSSRegex, "name.error.xss.forbidAmpersand")
           )
         )
     )

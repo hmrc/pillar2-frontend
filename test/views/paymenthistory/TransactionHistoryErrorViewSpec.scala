@@ -41,6 +41,11 @@ class TransactionHistoryErrorViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+    }
+
     "have a paragraph body" in {
       view.getElementsByClass("govuk-body").first().text mustBe "We cannot retrieve your details at this time."
       view.getElementsByClass("govuk-body").get(1).text mustBe "Please try again later."

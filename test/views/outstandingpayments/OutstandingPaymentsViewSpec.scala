@@ -17,6 +17,7 @@
 package views.outstandingpayments
 
 import base.ViewSpecBase
+import controllers.routes
 import controllers.routes._
 import helpers.FinancialDataHelper.Pillar2UktrName
 import models.subscription.AccountingPeriod
@@ -61,6 +62,12 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "should display page title correctly" in {
       organisationView.getElementsByTag("h1").first().text() mustBe "Outstanding payments"
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "should display total amount due correctly" in {

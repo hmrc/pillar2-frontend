@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{ADDRESS_REGEX, ADDRESS_REGEX_WITH_AMPERSAND, XSS_REGEX}
+import forms.Validation.{AddressRegex, AddressRegexWithAmpersand, XSSRegex}
 import forms.mappings.AddressMappings.maxAddressLineLength
 import forms.mappings.{AddressMappings, Mappings}
 import models.UKAddress
@@ -32,7 +32,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine1.length"),
-              regexp(ADDRESS_REGEX_WITH_AMPERSAND, "addressLine.error.xss.with.ampersand")
+              regexp(AddressRegexWithAmpersand, "addressLine.error.xss.with.ampersand")
             )
           ),
       "addressLine2" -> optional(
@@ -40,7 +40,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.error.addressLine2.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(AddressRegex, "addressLine.error.xss")
             )
           )
       ),
@@ -49,7 +49,7 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.town_city.error.length"),
-              regexp(ADDRESS_REGEX, "addressLine.error.xss")
+              regexp(AddressRegex, "addressLine.error.xss")
             )
           ),
       "addressLine4" ->
@@ -58,17 +58,17 @@ class UpeRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
             .verifying(
               firstError(
                 maxLength(maxAddressLineLength, "upeRegisteredAddress.region.error.length"),
-                regexp(ADDRESS_REGEX, "addressLine.error.xss")
+                regexp(AddressRegex, "addressLine.error.xss")
               )
             )
         ),
-      "postalCode" -> mandatoryPostcode().verifying(regexp(XSS_REGEX, "address.postcode.error.xss")),
+      "postalCode" -> mandatoryPostcode().verifying(regexp(XSSRegex, "address.postcode.error.xss")),
       "countryCode" ->
         text("upeRegisteredAddress.country.error.required")
           .verifying(
             firstError(
               maxLength(maxAddressLineLength, "upeRegisteredAddress.country.error.length"),
-              regexp(XSS_REGEX, "country.error.xss")
+              regexp(XSSRegex, "country.error.xss")
             )
           )
     )(UKAddress.apply)(UKAddress.unapply)

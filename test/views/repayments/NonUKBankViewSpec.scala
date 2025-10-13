@@ -17,6 +17,7 @@
 package views.repayments
 
 import base.ViewSpecBase
+import controllers.routes
 import forms.NonUKBankFormProvider
 import generators.StringGenerators
 import models.NormalMode
@@ -46,6 +47,11 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
         h1Elements.size() mustBe 1
         h1Elements.get(0).ownText() mustBe pageTitle // H1 contains a hint
         h1Elements.text() mustBe s"$pageTitle This must be a business account."
+      }
+
+      "have a banner with a link to the Homepage" in {
+        val className: String = "govuk-header__link govuk-header__service-name"
+        view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have a paragraph" in {

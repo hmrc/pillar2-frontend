@@ -16,7 +16,7 @@
 
 package forms
 
-import forms.Validation.{PHONE_REGEX, REGISTRATION_PHONE_REGEX}
+import forms.Validation.{PhoneRegex, RegistrationPhoneRegex}
 import forms.mappings.Mappings
 import play.api.data.Form
 
@@ -30,7 +30,7 @@ class CapturePhoneDetailsFormProvider @Inject() extends Mappings {
         .verifying(maxLength(phoneNumberLength, "capturePhoneDetails.messages.error.length"))
         .verifying(
           "capturePhoneDetails.messages.error.format",
-          value => REGISTRATION_PHONE_REGEX.r.matches(value) && PHONE_REGEX.r.matches(value)
+          value => RegistrationPhoneRegex.r.matches(value) && PhoneRegex.r.matches(value)
         )
   )
 }

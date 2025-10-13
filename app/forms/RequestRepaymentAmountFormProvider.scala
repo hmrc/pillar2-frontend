@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import mapping.Constants.{MAX_AMOUNT, MIN_AMOUNT}
+import mapping.Constants.{MaxAmount, MinAmount}
 import play.api.data.Form
 
 import javax.inject.Inject
@@ -28,7 +28,7 @@ class RequestRepaymentAmountFormProvider @Inject() extends Mappings {
       "value" -> currency(
         requiredKey = "repayment.requestRepaymentAmount.error.required",
         invalidCurrency = "repayment.requestRepaymentAmount.error.format"
-      ).verifying(minimumValue[BigDecimal](MIN_AMOUNT, "repayment.requestRepaymentAmount.error.minValue"))
-        .verifying(maximumValue[BigDecimal](MAX_AMOUNT, "repayment.requestRepaymentAmount.error.maxValue"))
+      ).verifying(minimumValue[BigDecimal](MinAmount, "repayment.requestRepaymentAmount.error.minValue"))
+        .verifying(maximumValue[BigDecimal](MaxAmount, "repayment.requestRepaymentAmount.error.maxValue"))
     )
 }

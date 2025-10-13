@@ -33,7 +33,8 @@
 @(agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("repayment.requestRepaymentBeforeStart.title"))
+    pageTitle = titleNoForm(messages("repayment.requestRepaymentBeforeStart.title")),
+    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
 ) {
     @heading(messages("repayment.requestRepaymentBeforeStart.header"), classes = "govuk-heading-l")
     @if(agentView) {

@@ -17,19 +17,19 @@
 package forms
 
 object Validation {
-  final val EMAIL_REGEX =
+  final val EmailRegex: String =
     """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
-  final val GROUPID_REGEX            = "^X[A-Z]PLR[0-9]{10}$"
-  final val REGISTRATION_PHONE_REGEX = """^[A-Z0-9 )/(\-*#+]+$"""
-  final val PHONE_REGEX =
+  final val GroupIdRegex:           String = "^X[A-Z]PLR[0-9]{10}$"
+  final val RegistrationPhoneRegex: String = """^[A-Z0-9 )/(\-*#+]+$"""
+  final val PhoneRegex: String =
     "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[-. /]?)?((?:\\(?\\d{1,}\\)?[-. /]?){0,})(?:[-. /]?(?:#|ext\\.?|extension|x)[-. /]?(\\d+))?$"
-  final val BIC_SWIFT_REGEX              = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
-  final val IBAN_REGEX                   = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
-  final val MONETARY_REGEX               = """^-?(\d*(\.\d{1,2})?)$"""
-  final val SORT_CODE_REGEX              = """^[0-9]{6}$"""
-  final val ACCOUNT_NUMBER_REGEX         = """^[0-9]{8}$"""
-  final val XSS_REGEX                    = """^[^<>"&]*$"""
-  final val XSS_REGEX_ALLOW_AMPERSAND    = """^[^<>"]*$"""
-  final val ADDRESS_REGEX_WITH_AMPERSAND = """^[a-zA-Z0-9\/\-,\.\\& ]+$"""
-  final val ADDRESS_REGEX                = """^[a-zA-Z0-9\/\-,\.\\ ]+$"""
+  final val BICSwiftRegex:             String = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
+  final val IBANRegex:                 String = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"
+  final val MonetaryRegex:             String = """^-?(\d*(\.\d{1,2})?)$"""
+  final val SortCodeRegex:             String = """^[0-9]{6}$"""
+  final val AccountNumberRegex:        String = """^[0-9]{8}$"""
+  final val XSSRegex:                  String = """^[^<>"&]*$"""
+  final val XSSRegexAllowAmpersand:    String = """^[^<>"]*$"""
+  final val AddressRegexWithAmpersand: String = """^[a-zA-Z0-9\/\-,\.\\& ]+$"""
+  final val AddressRegex:              String = """^[a-zA-Z0-9\/\-,\.\\ ]+$"""
 }

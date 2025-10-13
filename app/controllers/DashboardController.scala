@@ -20,18 +20,11 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario._
-import models.DynamicNotificationAreaState
-import models.FinancialData
-import models.UnprocessableEntityError
-import models.UserAnswers
-import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
-import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
+import models._
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{Outstanding, OutstandingPaymentBannerScenario, Paid}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -40,12 +33,11 @@ import repositories.SessionRepository
 import services._
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.Constants.{RECEIVED_PERIOD_IN_DAYS, SUBMISSION_ACCOUNTING_PERIODS}
+import utils.Constants.SubmissionAccountingPeriods
 import views.html.{DashboardView, HomepageView}
 
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.time.temporal.ChronoUnit
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -108,10 +100,10 @@ class DashboardController @Inject() (
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
-          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
           rawFinancialData <-
             financialDataService
-              .retrieveFinancialData(plrReference, LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS), LocalDate.now())
+              .retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
               .map(Some(_))
               .recover { case _ =>
                 None
@@ -156,7 +148,7 @@ class DashboardController @Inject() (
     } else {
       val totalOutstandingAmount = financialData.getTotalOutstandingAmount
       val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialData.hasRecentPayment(60, currentDate)
+      val hasRecentPayment       = financialData.hasRecentPayment(currentDate = currentDate)
 
       (hasOutstandingPayment, hasRecentPayment) match {
         case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))
@@ -171,21 +163,11 @@ class DashboardController @Inject() (
       if (period.obligations.isEmpty) {
         None
       } else {
-        val uktrObligation       = period.obligations.find(_.obligationType == UKTR)
-        val girObligation        = period.obligations.find(_.obligationType == GIR)
-        val dueDatePassed        = period.dueDate.isBefore(LocalDate.now())
-        val hasAnyOpenObligation = period.obligations.exists(_.status == ObligationStatus.Open)
-        val isInReceivedPeriod = period.obligations
-          .filter(_.status == ObligationStatus.Fulfilled)
-          .flatMap(_.submissions)
-          .filter(submission =>
-            submission.submissionType == UKTR_CREATE
-              || submission.submissionType == SubmissionType.GIR
-          )
-          .maxByOption(_.receivedDate)
-          .exists { submission =>
-            ChronoUnit.DAYS.between(submission.receivedDate.toLocalDate, LocalDate.now()) <= RECEIVED_PERIOD_IN_DAYS
-          }
+        val uktrObligation:       Option[Obligation] = period.uktrObligation
+        val girObligation:        Option[Obligation] = period.girObligation
+        val dueDatePassed:        Boolean            = period.dueDatePassed
+        val hasAnyOpenObligation: Boolean            = period.hasAnyOpenObligation
+        val isInReceivedPeriod:   Boolean            = period.isInReceivedPeriod
 
         (uktrObligation, girObligation) match {
           case (Some(uktr), Some(gir)) =>

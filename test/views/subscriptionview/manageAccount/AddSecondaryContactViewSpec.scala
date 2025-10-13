@@ -17,6 +17,7 @@
 package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
+import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
@@ -46,6 +47,11 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have two description paragraphs" in {

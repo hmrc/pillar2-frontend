@@ -26,7 +26,7 @@ import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubAcc
 import play.api.i18n.Messages
 import play.api.libs.json.{JsValue, Json}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.Constants.SUBMISSION_ACCOUNTING_PERIODS
+import utils.Constants.SubmissionAccountingPeriods
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
@@ -36,7 +36,7 @@ import java.time.{LocalDate, ZoneOffset, ZonedDateTime}
 trait ObligationsAndSubmissionsDataFixture {
 
   // Use the current date as the base for our tests
-  val fromDate: LocalDate = LocalDate.now().minusYears(SUBMISSION_ACCOUNTING_PERIODS)
+  val fromDate: LocalDate = LocalDate.now().minusYears(SubmissionAccountingPeriods)
   val toDate:   LocalDate = LocalDate.now()
 
   // Calculate dates that will always be in the past or future

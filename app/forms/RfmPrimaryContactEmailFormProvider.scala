@@ -28,8 +28,8 @@ class RfmPrimaryContactEmailFormProvider @Inject() extends Mappings {
       "emailAddress" -> text("rfm-input-business-contact.email.error.required", Seq(userName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_132, "rfm-input-business-contact.email.error.length"),
-            regexp(Validation.EMAIL_REGEX, "rfm-input-business-contact.email.error.invalid")
+            maxLength(Constants.MaxLength132, "rfm-input-business-contact.email.error.length"),
+            regexp(Validation.EmailRegex, "rfm-input-business-contact.email.error.invalid")
           )
         )
     )

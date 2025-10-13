@@ -28,8 +28,8 @@ class RepaymentsContactEmailFormProvider @Inject() extends Mappings {
       "contactEmail" -> text("repayments.contactEmail.error.contactEmail.required", Seq(contactName))
         .verifying(
           firstError(
-            maxLength(Constants.MAX_LENGTH_100, "repayments.contactEmail.error.contactEmail.length"),
-            regexp(Validation.EMAIL_REGEX, "repayments.contactEmail.error.contactEmail.format")
+            maxLength(Constants.MaxLength100, "repayments.contactEmail.error.contactEmail.length"),
+            regexp(Validation.EmailRegex, "repayments.contactEmail.error.contactEmail.format")
           )
         )
     )

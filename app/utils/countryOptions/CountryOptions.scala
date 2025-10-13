@@ -18,7 +18,7 @@ package utils.countryOptions
 
 import com.typesafe.config.ConfigException
 import config.FrontendAppConfig
-import mapping.Constants.UK_COUNTRY_CODE
+import mapping.Constants.UKCountryCode
 import models.grs.EntityType
 import play.api.Environment
 import play.api.libs.json.Json
@@ -59,7 +59,7 @@ object CountryOptions {
             InputOption(country(1).replaceAll("country:", ""), country.head)
           }
 
-          val filteredCountries = if (includeUk) countries else countries.filterNot(_.value == UK_COUNTRY_CODE)
+          val filteredCountries = if (includeUk) countries else countries.filterNot(_.value == UKCountryCode)
           filteredCountries.sortBy(_.label.toLowerCase)
         }
       }

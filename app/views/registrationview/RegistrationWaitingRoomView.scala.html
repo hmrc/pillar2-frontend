@@ -25,7 +25,7 @@
 
 @(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, serviceBannerClickable = false, showBackLink = false) {
+@layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
 
   @if(subscriptionStatus.isEmpty) {
     <meta http-equiv="refresh" content="2" />
