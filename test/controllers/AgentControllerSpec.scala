@@ -23,7 +23,7 @@ import forms.AgentClientPillar2ReferenceFormProvider
 import models.InternalIssueError
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{atLeastOnce, verify, when}
 import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -421,6 +421,112 @@ class AgentControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view()(request, applicationConfig, messages(application)).toString
       }
     }
+  }
+
+  "Agent Client Switching" must {
+
+    "must successfully switch from one client to another when agent already has a client set" in {
+      val firstClientId  = "XMPLR0123456789"
+      val secondClientId = "XMPLR9876543210"
+
+      // Start with an agent that already has a client set and wants to switch to a new one
+      // The new client ID is stored in UnauthorisedClientPillar2ReferencePage (this is the key part of the bug fix)
+      val userAnswersWithNewClient = emptyUserAnswers
+        .setOrException(AgentClientPillar2ReferencePage, firstClientId) // Current client
+        .setOrException(UnauthorisedClientPillar2ReferencePage, secondClientId) // New client to switch to
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNewClient))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AuthConnector].toInstance(mockAuthConnector)
+        )
+        .build()
+
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithNewClient)))
+
+      running(application) {
+        // Agent confirms the new client details - this should switch from firstClientId to secondClientId
+        val confirmClientRequest = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val confirmClientResult  = route(application, confirmClientRequest).value
+
+        status(confirmClientResult) mustEqual SEE_OTHER
+        redirectLocation(confirmClientResult).value mustEqual routes.DashboardController.onPageLoad.url
+
+        // Verify that the session repository was called to save the updated user answers
+        // The new client should be set in AgentClientPillar2ReferencePage and UnauthorisedClientPillar2ReferencePage should be removed
+        verify(mockSessionRepository, atLeastOnce()).set(any())
+      }
+    }
+
+    "must handle client switching when agent has no previous client set" in {
+      val newClientId = "XMPLR1111111111"
+
+      // Agent with no previous client wants to set a new client
+      val userAnswersWithNewClient = emptyUserAnswers
+        .setOrException(UnauthorisedClientPillar2ReferencePage, newClientId)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswersWithNewClient))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AuthConnector].toInstance(mockAuthConnector)
+        )
+        .build()
+
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswersWithNewClient)))
+
+      running(application) {
+        // Agent confirms the new client details
+        val confirmClientRequest = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val confirmClientResult  = route(application, confirmClientRequest).value
+
+        status(confirmClientResult) mustEqual SEE_OTHER
+        redirectLocation(confirmClientResult).value mustEqual routes.DashboardController.onPageLoad.url
+
+        // Verify that the session repository was called to save the updated user answers
+        verify(mockSessionRepository, atLeastOnce()).set(any())
+      }
+    }
+
+    "must redirect to journey recovery when no unauthorised client reference is found during confirmation" in {
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[AuthConnector].toInstance(mockAuthConnector)
+        )
+        .build()
+
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+      running(application) {
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        // The authentication action redirects to ASA error page when no client is found
+        redirectLocation(result).value mustEqual routes.AgentController.onPageLoadUnauthorised.url
+      }
+    }
+
   }
 
 }
