@@ -87,10 +87,6 @@ GET         /grs-return/checkmode/upe                                           
 GET         /grs-return/checkmode/fm                                                                 controllers.registration.GrsReturnController.continueFm(journeyId)
 GET         /grs-return/checkmode/rfm                                                                controllers.registration.GrsReturnController.continueRfm(journeyId)
 
-
-GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
-GET         /under-construction-error                                                                controllers.UnderConstructionController.onPageLoadError
-
 GET         /eligibility/upe                                                                         controllers.eligibility.GroupTerritoriesController.onPageLoad
 POST        /eligibility/upe                                                                         controllers.eligibility.GroupTerritoriesController.onSubmit
 
@@ -105,6 +101,8 @@ GET         /eligibility/service-not-suitable/under-750-million                 
 
 GET         /under-construction                                                                      controllers.UnderConstructionController.onPageLoad
 GET         /under-construction-repayments                                                           controllers.UnderConstructionController.onPageLoadAgent
+GET         /under-construction-error                                                                controllers.UnderConstructionController.onPageLoadError
+
 GET         /account/sign-out-survey                                                                 controllers.auth.AuthController.signOut
 GET         /account/sign-out                                                                        controllers.auth.AuthController.signOutNoSurvey
 GET         /account/signed-out                                                                      controllers.auth.SignedOutController.onPageLoad
@@ -365,7 +363,6 @@ GET         /replace-filing-member/security/registration-date                   
 POST        /replace-filing-member/security/registration-date                                        controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = NormalMode)
 GET         /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 POST        /replace-filing-member/security/change-registration-date                                 controllers.rfm.GroupRegistrationDateReportController.onSubmit(mode: Mode = CheckMode)
-GET         /replace-filing-member/error/existing-member                                             controllers.rfm.GroupRegistrationDateReportController.onPageLoad(mode: Mode = CheckMode)
 
 GET         /replace-filing-member/contact-details/content                                           controllers.rfm.RfmContactDetailsRegistrationController.onPageLoad
 
