@@ -27,7 +27,7 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
 
   lazy val page:      BTNUnderEnquiryWarningView = inject[BTNUnderEnquiryWarningView]
   lazy val view:      Document                   = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                     = messages("btn.underEnquiryWarning.title")
+  lazy val pageTitle: String                     = "Accounting period under enquiry - Below Threshold Notification - GOV.UK"
 
   "BTNUnderEnquiryWarningView" should {
 
@@ -38,21 +38,23 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe messages("btn.underEnquiryWarning.heading")
+      h1Elements.text() mustBe "You have one or more returns under enquiry"
     }
 
     "have paragraph content" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
-      paragraphs.get(0).text mustBe messages("btn.underEnquiryWarning.p1")
-      paragraphs.get(1).text mustBe messages("btn.underEnquiryWarning.p2")
+      paragraphs.get(0).text mustBe "You cannot add a Below-Threshold Notification to an accounting period that is currently under enquiry."
+      paragraphs
+        .get(1)
+        .text mustBe "If you continue, the Below-Threshold Notification will still be processed but will not apply to any accounting periods under enquiry."
     }
 
     "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe messages("btn.underEnquiryWarning.continue")
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
 
     "have a return to homepage link" in {
-      val link = view.select("a:contains(" + messages("btn.underEnquiryWarning.returnToHomePageText.link") + ")")
+      val link = view.select("a:contains(Return to home page)")
       link.size() mustBe 1
       link.attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
