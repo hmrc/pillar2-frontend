@@ -27,7 +27,7 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
 
   lazy val page:      BTNUnderEnquiryWarningView = inject[BTNUnderEnquiryWarningView]
   lazy val view:      Document                   = Jsoup.parse(page()(request, appConfig, messages).toString())
-  lazy val pageTitle: String                     = "Accounting period under enquiry - Below Threshold Notification - GOV.UK"
+  lazy val pageTitle: String                     = "You have one or more returns under enquiry"
 
   "BTNUnderEnquiryWarningView" should {
 
@@ -38,7 +38,7 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "You have one or more returns under enquiry"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have paragraph content" in {
