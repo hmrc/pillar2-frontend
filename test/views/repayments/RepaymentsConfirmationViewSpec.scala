@@ -55,7 +55,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "have a confirmation message" in {
