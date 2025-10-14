@@ -19,12 +19,7 @@ package views
 import play.api.data.Form
 import play.api.i18n.Messages
 
-import java.time.format.DateTimeFormatter
-import java.time.{LocalDate, ZoneId, ZonedDateTime}
-
 object ViewUtils {
-
-  lazy val dateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("d MMMM yyyy")
 
   def title(form: Form[_], title: String, section: Option[String] = None)(implicit messages: Messages): String =
     titleNoForm(
@@ -73,15 +68,6 @@ object ViewUtils {
       }
 
     extractErrorKey(errorMessageKeys, emptyErrorFields, fieldKey)
-  }
-
-  def formattedCurrentDate: String = LocalDate.now().format(dateFormatter)
-
-  def currentTimeGMT: String = {
-    val zonedTime     = ZonedDateTime.now(ZoneId.of("GMT"))
-    val formatter     = DateTimeFormatter.ofPattern("hh:mma (zzz)")
-    val formattedTime = zonedTime.format(formatter)
-    formattedTime
   }
 
   def formatAmount(amount: BigDecimal): String =

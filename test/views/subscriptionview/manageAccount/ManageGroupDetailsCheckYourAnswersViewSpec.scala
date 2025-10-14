@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
-import utils.ViewHelpers
+import utils.DateTimeUtils._
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -79,10 +79,10 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe ViewHelpers.formatDateGDS(currentDate)
+        summaryListItems.get(2).text() mustBe currentDate.toDateFormat
 
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe ViewHelpers.formatDateGDS(currentDate.plusYears(1))
+        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDateFormat
       }
 
       "have a button" in {
@@ -132,9 +132,9 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         val startDate = "Start date"
         val endDate   = "End date"
         summaryListKeys.get(2).text() mustBe startDate
-        summaryListItems.get(2).text() mustBe ViewHelpers.formatDateGDS(currentDate)
+        summaryListItems.get(2).text() mustBe currentDate.toDateFormat
         summaryListKeys.get(3).text() mustBe endDate
-        summaryListItems.get(3).text() mustBe ViewHelpers.formatDateGDS(currentDate.plusYears(1))
+        summaryListItems.get(3).text() mustBe currentDate.plusYears(1).toDateFormat
       }
 
       "have a button" in {
