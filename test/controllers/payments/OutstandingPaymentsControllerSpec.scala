@@ -19,7 +19,7 @@ package controllers.payments
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
 import controllers.payments.OutstandingPaymentsControllerSpec._
-import helpers.FinancialDataHelper.Pillar2UktrName
+import models.FinancialTransaction.OutstandingCharge
 import models._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
@@ -35,6 +35,7 @@ import views.html.outstandingpayments.OutstandingPaymentsView
 
 import java.time.LocalDate
 import scala.concurrent.Future
+import scala.util.Random
 
 class OutstandingPaymentsControllerSpec extends SpecBase {
 
@@ -50,7 +51,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
       running(application) {
         when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
-          .thenReturn(Future.successful(sampleChargeTransactionWithNoTag))
+          .thenReturn(Future.successful(sampleChargeTransaction))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
@@ -59,7 +60,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
         status(result) mustEqual OK
         contentAsString(result) mustEqual
-          view(Seq.empty, pillar2Id, BigDecimal(0), hasOverdueReturnPayment = false)(
+          view(overdueFinancialSummary, pillar2Id, BigDecimal(1000.00), hasOverdueReturnPayment = true)(
             request,
             applicationConfig,
             messages(application),
@@ -125,31 +126,33 @@ object OutstandingPaymentsControllerSpec {
   val samplePaymentsData: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
     ),
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
     )
   )
 
-  val sampleChargeTransactionWithNoTag: FinancialData = FinancialData(
-    Seq(
-      FinancialTransaction(
-        mainTransaction = Some("6500"),
-        subTransaction = Some("1234"),
-        taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
-        taxPeriodTo = Some(LocalDate.now),
-        outstandingAmount = Some(BigDecimal(1000.00)),
-        items = Seq(FinancialItem(dueDate = None, clearingDate = None))
+  val sampleChargeTransaction: FinancialData =
+    FinancialData(
+      Seq(
+        FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
+          taxPeriod = TaxPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+          subTransactionRef = Random.shuffle(EtmpSubtransactionRef.values).head,
+          outstandingAmount = BigDecimal(1000.00),
+          chargeItems = OutstandingCharge.FinancialItems(
+            earliestDueDate = LocalDate.of(2024, 12, 31),
+            Seq(FinancialItem(dueDate = Some(LocalDate.of(2024, 12, 31)), clearingDate = None))
+          )
+        )
       )
     )
-  )
 
-  val sampleFinancialSummaryWithNoTag: Seq[FinancialSummary] = Seq(
+  val overdueFinancialSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(TransactionSummary(Pillar2UktrName, BigDecimal(0), LocalDate.now.plusDays(7)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(1000.00), LocalDate.of(2024, 12, 31)))
     )
   )
 

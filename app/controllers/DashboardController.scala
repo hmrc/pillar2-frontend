@@ -24,6 +24,7 @@ import models.DueAndOverdueReturnBannerScenario._
 import models._
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
+import models.subscription.AccountStatus.InactiveAccount
 import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
 import pages._
 import play.api.Logging
@@ -117,7 +118,7 @@ class DashboardController @Inject() (
             homepageView(
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.toDateFormat,
-              subscriptionData.accountStatus.exists(_.inactive),
+              subscriptionData.accountStatus.contains(InactiveAccount),
               returnsStatus,
               paymentsStatus,
               notificationArea,
@@ -135,7 +136,7 @@ class DashboardController @Inject() (
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.toDateFormat,
             plrReference,
-            inactiveStatus = subscriptionData.accountStatus.exists(_.inactive),
+            inactiveStatus = subscriptionData.accountStatus.contains(InactiveAccount),
             agentView = request.isAgent
           )
         )
@@ -146,9 +147,9 @@ class DashboardController @Inject() (
     if (financialData.financialTransactions.isEmpty) {
       None
     } else {
-      val totalOutstandingAmount = financialData.getTotalOutstandingAmount
+      val totalOutstandingAmount = financialData.totalOutstandingAmount
       val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialData.hasRecentPayment(currentDate = currentDate)
+      val hasRecentPayment       = financialDataService.hasRecentPayment(financialData)
 
       (hasOutstandingPayment, hasRecentPayment) match {
         case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))

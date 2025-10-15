@@ -19,9 +19,9 @@ package controllers
 import base.SpecBase
 import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
-import controllers.payments.OutstandingPaymentsControllerSpec.sampleChargeTransactionWithNoTag
 import generators.ModelGenerators
 import models.DueAndOverdueReturnBannerScenario._
+import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models._
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription._
@@ -100,7 +100,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
             .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
           when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(sampleChargeTransactionWithNoTag))
+            .thenReturn(Future.successful(FinancialData(Seq.empty)))
 
           val result = route(application, request).value
           val view   = application.injector.instanceOf[HomepageView]
@@ -1041,13 +1041,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         val controller        = application.injector.instanceOf[DashboardController]
 
         val pastDueDate = LocalDate.now.minusDays(7)
-        val financialTransaction = FinancialTransaction(
-          mainTransaction = Some("6500"),
-          subTransaction = Some("6233"),
-          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
-          taxPeriodTo = Some(LocalDate.now),
-          outstandingAmount = Some(BigDecimal(amountOutstanding)),
-          items = Seq(FinancialItem(dueDate = Some(pastDueDate), clearingDate = None))
+        val financialTransaction = OutstandingCharge.UktrMainOutstandingCharge(
+          TaxPeriod(LocalDate.now().minusMonths(12), LocalDate.now()),
+          EtmpSubtransactionRef.Dtt,
+          outstandingAmount = BigDecimal(amountOutstanding),
+          chargeItems = OutstandingCharge.FinancialItems(
+            earliestDueDate = pastDueDate,
+            Seq(FinancialItem(dueDate = Some(pastDueDate), clearingDate = None))
+          )
         )
         val financialData = FinancialData(Seq(financialTransaction))
 
@@ -1063,13 +1064,14 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         val controller = application.injector.instanceOf[DashboardController]
 
         val futureDueDate = LocalDate.now.plusDays(7)
-        val financialTransaction = FinancialTransaction(
-          mainTransaction = Some("6500"),
-          subTransaction = Some("6233"),
-          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
-          taxPeriodTo = Some(LocalDate.now),
-          outstandingAmount = Some(BigDecimal(1000.00)),
-          items = Seq(FinancialItem(dueDate = Some(futureDueDate), clearingDate = None))
+        val financialTransaction = OutstandingCharge.UktrMainOutstandingCharge(
+          TaxPeriod(LocalDate.now().minusMonths(12), LocalDate.now()),
+          EtmpSubtransactionRef.Dtt,
+          outstandingAmount = 1000.00,
+          chargeItems = OutstandingCharge.FinancialItems(
+            earliestDueDate = futureDueDate,
+            Seq(FinancialItem(dueDate = Some(futureDueDate), clearingDate = None))
+          )
         )
         val financialData = FinancialData(Seq(financialTransaction))
 
@@ -1084,33 +1086,17 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
       running(application) {
         val controller = application.injector.instanceOf[DashboardController]
 
-        val chargeFinancialTransaction = FinancialTransaction(
-          mainTransaction = Some("6500"),
-          subTransaction = Some("6233"),
-          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
-          taxPeriodTo = Some(LocalDate.now),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(
-            FinancialItem(
-              dueDate = Some(LocalDate.now.minusDays(26)),
-              clearingDate = Some(LocalDate.now.minusDays(25))
+        val paymentFinancialTransaction = Payment(
+          Payment.FinancialItems(
+            Seq(
+              FinancialItem(
+                dueDate = Some(LocalDate.now.minusDays(26)),
+                clearingDate = Some(LocalDate.now.minusDays(25))
+              )
             )
           )
         )
-        val paymentFinancialTransaction = FinancialTransaction(
-          mainTransaction = Some("0060"),
-          subTransaction = Some("6233"),
-          taxPeriodFrom = Some(LocalDate.now.minusMonths(12)),
-          taxPeriodTo = Some(LocalDate.now),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(
-            FinancialItem(
-              dueDate = Some(LocalDate.now.minusDays(26)),
-              clearingDate = Some(LocalDate.now.minusDays(25))
-            )
-          )
-        )
-        val financialData = FinancialData(Seq(chargeFinancialTransaction, paymentFinancialTransaction))
+        val financialData = FinancialData(Seq(paymentFinancialTransaction))
 
         val result = controller.getPaymentBannerScenario(financialData)
 

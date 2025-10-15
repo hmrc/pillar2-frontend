@@ -16,19 +16,142 @@
 
 package services
 
+import cats.data.{Validated, ValidatedNec}
+import cats.syntax.apply._
+import cats.syntax.functorFilter._
+import cats.syntax.option._
+import cats.syntax.validated._
+import config.FrontendAppConfig
 import connectors.FinancialDataConnector
-import models.FinancialData
+import connectors.FinancialDataConnector.FinancialDataResponse
+import models.FinancialTransaction.{OutstandingCharge, Payment}
+import models._
+import play.api.Logging
+import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
+import services.FinancialDataService.parseFinancialDataResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.time.{Clock, LocalDate}
 import javax.inject.Inject
-import scala.concurrent.Future
+import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector) {
+class FinancialDataService @Inject() (
+  financialDataConnector: FinancialDataConnector,
+  clock:                  Clock
+)(implicit
+  ec:        ExecutionContext,
+  appConfig: FrontendAppConfig
+) {
 
-  /** Retrieves raw financial data from the API
-    */
+  /** Parses financial data from the API into something a bit easier to take decisions against */
   def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
-    financialDataConnector.retrieveFinancialData(pillar2Id, fromDate, toDate)
+    financialDataConnector
+      .retrieveFinancialData(pillar2Id, fromDate, toDate)
+      .map(parseFinancialDataResponse)
 
+  /** Checks if there has been a recent payment */
+  def hasRecentPayment(financialData: FinancialData): Boolean =
+    financialData.payments
+      .flatMap(_.paymentItems.latestClearingDate)
+      .exists { latestClearing =>
+        val daysAgoLatestPaymentCleared = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
+        daysAgoLatestPaymentCleared <= appConfig.maxDaysAgoToConsiderPaymentAsRecent
+      }
+}
+
+object FinancialDataService extends Logging {
+  def parseFinancialDataResponse(response: FinancialDataResponse): FinancialData = FinancialData {
+    response.financialTransactions
+      .map(parseFinancialTransactionToDomain)
+      .mapFilter {
+        case Validated.Valid(responseTransaction) => Some(responseTransaction)
+        case Validated.Invalid(reasons) =>
+          logger.debug {
+            val concatReasons = reasons.map(_.errorMessage).toNonEmptyList.toList.mkString("", " ", ".")
+            s"Dropping financial transaction while mapping to domain: $concatReasons"
+          }
+          Option.empty[FinancialTransaction]
+      }
+  }
+
+  private val parseFinancialTransactionToDomain
+    : FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, FinancialTransaction] = response =>
+    parseMainTransactionRef(response).andThen {
+      case EtmpMainTransactionRef.PaymentTransaction =>
+        FinancialTransaction.Payment(Payment.FinancialItems(response.items.map(responseItemToDomain))).validNec
+      case mainRef: EtmpMainTransactionRef.ChargeRef =>
+        parseChargeTransaction(response, mainRef)
+    }
+
+  private def parseChargeTransaction(
+    responseTransaction: FinancialDataConnector.FinancialDataResponse.FinancialTransaction,
+    mainReference:       EtmpMainTransactionRef.ChargeRef
+  ): ValidatedNec[IgnoredEtmpTransaction, FinancialTransaction.OutstandingCharge] =
+    (
+      parseTaxPeriod(responseTransaction),
+      parseSubtransactionRef(responseTransaction),
+      parseOutstandingAmount(responseTransaction),
+      parseOutstandingChargeFinancialItems(responseTransaction.items)
+    ).mapN(OutstandingCharge(mainReference)(_, _, _, _))
+
+  private val parseMainTransactionRef: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, EtmpMainTransactionRef] =
+    response =>
+      Validated
+        .fromOption(response.mainTransaction, ifNone = RequiredValueMissing("Main transaction reference"))
+        .andThen { mainTxRef =>
+          Validated.fromOption(
+            EtmpMainTransactionRef.withValueOpt(mainTxRef),
+            ifNone = UnrelatedValue("Main transaction reference", mainTxRef)
+          )
+        }
+        .toValidatedNec
+
+  private val parseSubtransactionRef: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, EtmpSubtransactionRef] =
+    response =>
+      Validated
+        .fromOption(response.subTransaction, ifNone = RequiredValueMissing("Subtransaction reference"))
+        .andThen { subTxRef =>
+          Validated.fromOption(
+            EtmpSubtransactionRef.withValueOpt(subTxRef),
+            ifNone = UnrelatedValue("Sub transaction reference", subTxRef)
+          )
+        }
+        .toValidatedNec
+
+  private val parseTaxPeriod: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, TaxPeriod] = response =>
+    (
+      response.taxPeriodFrom.toValidNec(RequiredValueMissing("taxPeriodFrom")),
+      response.taxPeriodTo.toValidNec(RequiredValueMissing("taxPeriodFrom"))
+    ).mapN((from, to) => TaxPeriod(from, to))
+
+  private val parseOutstandingAmount: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, BigDecimal] =
+    _.outstandingAmount
+      .toValid(RequiredValueMissing("outstandingAmount"))
+      .andThen { outstanding =>
+        Validated
+          .cond(outstanding > 0, outstanding, DidNotPassFilter("outstandingAmount", outstanding, "Outstanding amount was not greater than zero."))
+      }
+      .toValidatedNec
+
+  private val parseOutstandingChargeFinancialItems
+    : Seq[FinancialDataResponse.FinancialItem] => ValidatedNec[IgnoredEtmpTransaction, OutstandingCharge.FinancialItems] =
+    responseItems =>
+      responseItems
+        .flatMap(_.dueDate)
+        .minOption
+        .toValidNec(IgnoredEtmpTransaction.RequiredValueMissing("dueDate"))
+        .map(earliestDueDate => OutstandingCharge.FinancialItems(earliestDueDate, responseItems.map(responseItemToDomain)))
+
+  private val responseItemToDomain: FinancialDataResponse.FinancialItem => FinancialItem = responseItem =>
+    FinancialItem(responseItem.dueDate, responseItem.clearingDate)
+
+  sealed abstract class IgnoredEtmpTransaction(val errorMessage: String) extends IllegalArgumentException(errorMessage)
+
+  object IgnoredEtmpTransaction {
+    case class RequiredValueMissing(field: String) extends IgnoredEtmpTransaction(s"$field was missing")
+    case class UnrelatedValue(field: String, value: String) extends IgnoredEtmpTransaction(s"$field has invalid value $value")
+    case class DidNotPassFilter[A](field: String, value: A, reason: String)
+        extends IgnoredEtmpTransaction(s"$field's value $value did not meet critera $reason")
+  }
 }

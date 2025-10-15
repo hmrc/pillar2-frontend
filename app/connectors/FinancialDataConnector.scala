@@ -17,10 +17,11 @@
 package connectors
 
 import config.FrontendAppConfig
+import connectors.FinancialDataConnector.FinancialDataResponse
 import models._
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.libs.json.Json
+import play.api.libs.json.{Json, OFormat}
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -49,12 +50,12 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
 
   def retrieveFinancialData(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                                   HeaderCarrier
-  ): Future[FinancialData] =
+  ): Future[FinancialDataResponse] =
     http
       .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/financial-data/$plrReference/${dateFrom.toString}/${dateTo.toString}")
       .execute[HttpResponse]
       .flatMap {
-        case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialData]
+        case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialDataResponse]
         case response if response.status == NOT_FOUND =>
           logger.warn(s"Financial data not found for $plrReference")
           Future failed NoResultFound
@@ -62,5 +63,36 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
           logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse
       }
+
+}
+
+object FinancialDataConnector {
+
+  final case class FinancialDataResponse(financialTransactions: Seq[FinancialDataResponse.FinancialTransaction])
+
+  object FinancialDataResponse {
+
+    implicit val format: OFormat[FinancialDataResponse] = Json.format
+
+    final case class FinancialTransaction(
+      mainTransaction:   Option[String],
+      subTransaction:    Option[String],
+      taxPeriodFrom:     Option[LocalDate],
+      taxPeriodTo:       Option[LocalDate],
+      outstandingAmount: Option[BigDecimal],
+      items:             Seq[FinancialItem]
+    )
+
+    final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
+
+    object FinancialTransaction {
+      implicit val format: OFormat[FinancialTransaction] = Json.format
+    }
+
+    object FinancialItem {
+      implicit val format: OFormat[FinancialItem] = Json.format
+    }
+
+  }
 
 }
