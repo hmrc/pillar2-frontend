@@ -23,5 +23,4 @@ object Constants {
   final val SiteNo:                      String = "site.no"
   final val SiteChange:                  String = "site.change"
   final val ReceivedPeriodInDays:        Int    = 60
-  final val PaidPeriodInDays:            Int    = 60
 }

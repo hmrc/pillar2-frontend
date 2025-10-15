@@ -19,7 +19,6 @@ package models
 import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
-import utils.Constants.PaidPeriodInDays
 
 import java.time.LocalDate
 
