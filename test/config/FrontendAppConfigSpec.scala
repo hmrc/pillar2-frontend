@@ -129,5 +129,11 @@ class FrontendAppConfigSpec extends SpecBase {
         config.handleObligationsAndSubmissions500Errors mustBe false
       }
     }
+
+    ".maxDaysAgoToConsiderPaymentAsRecent" must {
+      "read value from config" in {
+        config.maxDaysAgoToConsiderPaymentAsRecent mustBe 60
+      }
+    }
   }
 }

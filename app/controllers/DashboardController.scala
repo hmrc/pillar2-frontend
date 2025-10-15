@@ -147,9 +147,9 @@ class DashboardController @Inject() (
     if (financialData.financialTransactions.isEmpty) {
       None
     } else {
-      val totalOutstandingAmount = financialData.getTotalOutstandingAmount
+      val totalOutstandingAmount = financialData.totalOutstandingAmount
       val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialData.hasRecentPayment(currentDate = currentDate)
+      val hasRecentPayment       = financialDataService.hasRecentPayment(financialData)
 
       (hasOutstandingPayment, hasRecentPayment) match {
         case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))

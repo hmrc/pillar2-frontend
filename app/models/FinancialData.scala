@@ -16,13 +16,12 @@
 
 package models
 
-import helpers.FinancialDataHelper._
+import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
 import utils.Constants.PaidPeriodInDays
 
 import java.time.LocalDate
-import java.time.temporal.ChronoUnit
 
 final case class FinancialData(financialTransactions: Seq[FinancialTransaction]) {
 
@@ -33,55 +32,92 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
     *   - Have an outstanding amount greater than 0
     *   - Have a due date defined
     */
-  def outstandingCharges: Seq[FinancialTransaction] =
-    financialTransactions.filter { transaction =>
-      transaction.taxPeriodFrom.isDefined &&
-      transaction.taxPeriodTo.isDefined &&
-      transaction.mainTransaction.exists(PlrMainTransactionsRefs.contains) &&
-      transaction.subTransaction.exists(PlrSubTransactionsRefs.contains) &&
-      transaction.outstandingAmount.exists(_ > 0) &&
-      transaction.items.headOption.exists(_.dueDate.isDefined)
-    }
+  def outstandingCharges: Seq[FinancialTransaction.OutstandingCharge] =
+    financialTransactions.collect { case charge: OutstandingCharge => charge }
 
-  /** Calculates the total outstanding amount from financial data
-    */
-  def getTotalOutstandingAmount: BigDecimal =
-    outstandingCharges
-      .flatMap(_.outstandingAmount)
-      .sum
+  /** Calculates the total outstanding amount from financial data */
+  def totalOutstandingAmount: BigDecimal = outstandingCharges.map(_.outstandingAmount).sum
 
-  /** Checks if there are any outstanding payments that are overdue
-    */
+  /** Checks if there are any outstanding payments that are overdue */
   def hasOverdueOutstandingPayments(currentDate: LocalDate = LocalDate.now): Boolean =
-    outstandingCharges
-      .exists(_.items.flatMap(_.dueDate).minOption.exists(_.isBefore(currentDate)))
+    outstandingCharges.exists(_.chargeItems.earliestDueDate.isBefore(currentDate))
 
-  /** Checks if there has been a recent payment (within the last 60 days)
-    */
-  def hasRecentPayment(daysThreshold: Int = PaidPeriodInDays, currentDate: LocalDate = LocalDate.now): Boolean =
-    financialTransactions
-      .filter(_.mainTransaction.contains(EtmpPaymentTransactionRef))
-      .flatMap(_.items.flatMap(_.clearingDate))
-      .maxOption
-      .exists(ChronoUnit.DAYS.between(_, currentDate) <= daysThreshold)
+  /** Convenience method for operating on payment transactions */
+  def payments: Seq[FinancialTransaction.Payment] = financialTransactions.collect { case payment: Payment => payment }
 
 }
 
-object FinancialData {
-  implicit val format: OFormat[FinancialData] = Json.format[FinancialData]
-}
-
-case class FinancialTransaction(
-  mainTransaction:   Option[String],
-  subTransaction:    Option[String],
-  taxPeriodFrom:     Option[LocalDate],
-  taxPeriodTo:       Option[LocalDate],
-  outstandingAmount: Option[BigDecimal],
-  items:             Seq[FinancialItem]
-)
+sealed trait FinancialTransaction
 
 object FinancialTransaction {
-  implicit val format: OFormat[FinancialTransaction] = Json.format[FinancialTransaction]
+  sealed trait OutstandingCharge extends FinancialTransaction {
+    val taxPeriod:          TaxPeriod
+    val subTransactionRef:  EtmpSubtransactionRef
+    val outstandingAmount:  BigDecimal
+    val chargeItems:        OutstandingCharge.FinancialItems
+    val mainTransactionRef: EtmpMainTransactionRef.ChargeRef
+  }
+
+  sealed trait InterestOutstandingCharge extends OutstandingCharge
+
+  object OutstandingCharge {
+
+    def apply(mainTransactionRef: EtmpMainTransactionRef.ChargeRef)(
+      taxPeriod:                  TaxPeriod,
+      subTransactionRef:          EtmpSubtransactionRef,
+      outstandingAmount:          BigDecimal,
+      chargeItems:                FinancialItems
+    ): OutstandingCharge = {
+      val fields = (taxPeriod, subTransactionRef, outstandingAmount, chargeItems)
+      mainTransactionRef match {
+        case EtmpMainTransactionRef.UkTaxReturnMain     => (UktrMainOutstandingCharge.apply _).tupled(fields)
+        case EtmpMainTransactionRef.LatePaymentInterest => (LatePaymentInterestOutstandingCharge.apply _).tupled(fields)
+        case EtmpMainTransactionRef.RepaymentInterest   => (RepaymentInterestOutstandingCharge.apply _).tupled(fields)
+      }
+    }
+
+    final case class UktrMainOutstandingCharge(
+      taxPeriod:         TaxPeriod,
+      subTransactionRef: EtmpSubtransactionRef,
+      outstandingAmount: BigDecimal,
+      chargeItems:       FinancialItems
+    ) extends OutstandingCharge {
+      override final val mainTransactionRef = EtmpMainTransactionRef.UkTaxReturnMain
+    }
+
+    final case class LatePaymentInterestOutstandingCharge(
+      taxPeriod:         TaxPeriod,
+      subTransactionRef: EtmpSubtransactionRef,
+      outstandingAmount: BigDecimal,
+      chargeItems:       FinancialItems
+    ) extends InterestOutstandingCharge {
+      override final val mainTransactionRef = EtmpMainTransactionRef.LatePaymentInterest
+    }
+
+    final case class RepaymentInterestOutstandingCharge(
+      taxPeriod:         TaxPeriod,
+      subTransactionRef: EtmpSubtransactionRef,
+      outstandingAmount: BigDecimal,
+      chargeItems:       FinancialItems
+    ) extends InterestOutstandingCharge {
+      override final val mainTransactionRef = EtmpMainTransactionRef.RepaymentInterest
+    }
+
+    final case class FinancialItems(earliestDueDate: LocalDate, items: Seq[FinancialItem])
+  }
+  final case class Payment(paymentItems: Payment.FinancialItems) extends FinancialTransaction
+
+  object Payment {
+    final case class FinancialItems(items: Seq[FinancialItem]) {
+      def latestClearingDate: Option[LocalDate] = items.flatMap(_.clearingDate).maxOption
+    }
+  }
+}
+
+case class TaxPeriod(from: LocalDate, to: LocalDate)
+
+object TaxPeriod {
+  implicit val ordering: Ordering[TaxPeriod] = Ordering.by(_.from)
 }
 
 final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
@@ -92,10 +128,9 @@ object FinancialItem {
 
 case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
 
-  /** Checks if there are overdue return payments in this summary
-    */
+  /** Checks if there are overdue return payments in this summary */
   def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
-    transactions.exists(t => t.name == Pillar2UktrName && t.dueDate.isBefore(currentDate))
+    transactions.exists(t => t.name == EtmpMainTransactionRef.UkTaxReturnMain.displayName && t.dueDate.isBefore(currentDate))
 }
 
 object FinancialSummary {

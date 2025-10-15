@@ -17,219 +17,93 @@
 package models
 
 import base.SpecBase
-import helpers.FinancialDataHelper
+import cats.syntax.option._
+import models.EtmpMainTransactionRef._
+import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
+import org.scalacheck.{Arbitrary, Gen}
+import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
 import java.time.LocalDate
+import scala.reflect.ClassTag
 
 class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
 
-  "FinancialData" should {
+  private val anyDate: Gen[LocalDate] =
+    Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay) // scalastyle:ignore magic.number
+  private val anyTaxPeriod: Gen[TaxPeriod] = anyDate.map(date => TaxPeriod(date.minusYears(1), date))
+  private val anyMainTransactionChargeRef: Gen[EtmpMainTransactionRef.ChargeRef] = Gen.oneOf(EtmpMainTransactionRef.values.collect {
+    case chargeRef: EtmpMainTransactionRef.ChargeRef => chargeRef
+  })
+  private val anySubTransactionRef: Gen[EtmpSubtransactionRef] = Gen.oneOf(EtmpSubtransactionRef.values)
+  private val anyOutstandingFinancialItem: Gen[FinancialItem] = for {
+    dueDate      <- anyDate
+    clearingDate <- Gen.option(Gen.const(dueDate.plusDays(7))) // scalastyle:ignore magic.number
+  } yield FinancialItem(dueDate.some, clearingDate)
 
-    "outstandingCharges" should {
-      "filter transactions correctly" in {
-        val currentDate = LocalDate.now
-        val validTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
+  private val anyOutstandingChargeFields: Gen[(TaxPeriod, EtmpSubtransactionRef, BigDecimal, OutstandingCharge.FinancialItems)] = for {
+    taxPeriod         <- anyTaxPeriod
+    subTxRef          <- anySubTransactionRef
+    outstandingAmount <- Gen.choose(0.01, 100000000.00).map(BigDecimal.valueOf)
+    items             <- Gen.listOfN(3, anyOutstandingFinancialItem)
+  } yield (taxPeriod, subTxRef, outstandingAmount, OutstandingCharge.FinancialItems(taxPeriod.to, items))
 
-        val invalidTransaction = FinancialTransaction(
-          mainTransaction = Some("9999"), // Not in PlrMainTransactionsRefs
-          subTransaction = Some("9999"), // Not in PlrSubTransactionsRefs
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(50)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
+  private val anyPaymentTransaction: Gen[Payment] = Gen.listOfN(3, anyOutstandingFinancialItem).map { items =>
+    Payment(Payment.FinancialItems(items))
+  }
 
-        val financialData = FinancialData(Seq(validTransaction, invalidTransaction))
+  private val outstandingTransaction: Gen[OutstandingCharge] = for {
+    mainTxRef <- anyMainTransactionChargeRef
+    fields    <- anyOutstandingChargeFields
+  } yield (OutstandingCharge.apply _)(mainTxRef).tupled(fields)
 
-        financialData.outstandingCharges must contain only validTransaction
-      }
+  private implicit val anyTransactions: Arbitrary[Seq[FinancialTransaction]] = Arbitrary {
+    Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.oneOf(anyPaymentTransaction, outstandingTransaction))) // scalastyle:ignore magic.number
+  }
 
-      "exclude transactions with no outstanding amount" in {
-        val currentDate = LocalDate.now
-        val transactionWithNoOutstanding = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
+  "FinancialData" when {
 
-        val financialData = FinancialData(Seq(transactionWithNoOutstanding))
+    "fetching outstandingCharges" should {
+      "filter transactions correctly" in forAll { allKindsOfTransaction: Seq[FinancialTransaction] =>
+        val droppedTransactions = allKindsOfTransaction.collect { case nonCharge: FinancialTransaction.Payment =>
+          nonCharge
+        }
+        val expectedTransactionsLength = allKindsOfTransaction.length - droppedTransactions.length
 
-        financialData.outstandingCharges mustBe empty
-      }
-
-      "exclude transactions with missing required fields" in {
-        val currentDate = LocalDate.now
-        val incompleteTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = None, // Missing required field
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
-
-        val financialData = FinancialData(Seq(incompleteTransaction))
-
-        financialData.outstandingCharges mustBe empty
+        FinancialData(allKindsOfTransaction).outstandingCharges.length mustEqual expectedTransactionsLength
       }
     }
 
-    "getTotalOutstandingAmount" should {
-      "return the sum of all outstanding amounts from valid transactions" in {
-        val currentDate = LocalDate.now
-        val transaction1 = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
+    "totalOutstandingAmount" should {
+      "return the sum of all outstanding amounts from valid transactions" in forAll { anyTransactionKind: Seq[FinancialTransaction] =>
+        val expectedTotal = FinancialData(anyTransactionKind).outstandingCharges
+          .foldLeft[BigDecimal](0)((acc, charge) => acc + charge.outstandingAmount)
 
-        val transaction2 = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(2)),
-          taxPeriodTo = Some(currentDate.minusMonths(1)),
-          outstandingAmount = Some(BigDecimal(250)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
-
-        val financialData = FinancialData(Seq(transaction1, transaction2))
-
-        financialData.getTotalOutstandingAmount mustBe BigDecimal(350)
+        FinancialData(anyTransactionKind).totalOutstandingAmount mustBe expectedTotal
       }
 
       "return 0 when there are no outstanding charges" in {
         val financialData = FinancialData(Seq.empty)
-        financialData.getTotalOutstandingAmount mustBe BigDecimal(0)
+        financialData.totalOutstandingAmount mustBe BigDecimal(0)
       }
     }
 
     "hasOverdueOutstandingPayments" should {
-      "return true when there are overdue outstanding payments" in {
-        val currentDate = LocalDate.now
-        val overdueTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.minusDays(1)), clearingDate = None)) // Overdue
-        )
-
-        val financialData = FinancialData(Seq(overdueTransaction))
-
+      "return true when there are overdue outstanding payments" in forAll(
+        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isBefore(currentDate))
+      ) { pastDueCharge: OutstandingCharge =>
+        val financialData = FinancialData(Seq(pastDueCharge))
         financialData.hasOverdueOutstandingPayments(currentDate) mustBe true
       }
 
-      "return false when there are no overdue outstanding payments" in {
-        val currentDate = LocalDate.now
-        val futureDueTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None)) // Not overdue
-        )
-
-        val financialData = FinancialData(Seq(futureDueTransaction))
+      "return false when there are no overdue outstanding payments" in forAll(
+        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isAfter(currentDate))
+      ) { futureDueCharge: OutstandingCharge =>
+        val financialData = FinancialData(Seq(futureDueCharge))
 
         financialData.hasOverdueOutstandingPayments(currentDate) mustBe false
-      }
-    }
-
-    "hasRecentPayment" should {
-      "return true when there has been a recent payment" in {
-        val currentDate = LocalDate.now
-        val recentPaymentTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.EtmpPaymentTransactionRef),
-          subTransaction = Some("1234"),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(
-            FinancialItem(
-              dueDate = Some(currentDate.minusDays(30)),
-              clearingDate = Some(currentDate.minusDays(25)) // Recent payment
-            )
-          )
-        )
-
-        val financialData = FinancialData(Seq(recentPaymentTransaction))
-
-        financialData.hasRecentPayment(60, currentDate) mustBe true
-      }
-
-      "return true when there has been a payment cleared exactly 60 days before today" in {
-        val currentDate = LocalDate.now
-        val recentPaymentTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.EtmpPaymentTransactionRef),
-          subTransaction = Some("1234"),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(
-            FinancialItem(
-              dueDate = Some(currentDate.minusDays(61)),
-              clearingDate = Some(currentDate.minusDays(60)) // Recent payment
-            )
-          )
-        )
-
-        val financialData = FinancialData(Seq(recentPaymentTransaction))
-
-        financialData.hasRecentPayment(60, currentDate) mustBe true
-      }
-
-      "return false when there has been no recent payment" in {
-        val currentDate = LocalDate.now
-        val oldPaymentTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.EtmpPaymentTransactionRef),
-          subTransaction = Some("1234"),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(0)),
-          items = Seq(
-            FinancialItem(
-              dueDate = Some(currentDate.minusDays(100)),
-              clearingDate = Some(currentDate.minusDays(90)) // Old payment
-            )
-          )
-        )
-
-        val financialData = FinancialData(Seq(oldPaymentTransaction))
-
-        financialData.hasRecentPayment(60, currentDate) mustBe false
-      }
-
-      "return false when there are no payment transactions" in {
-        val currentDate = LocalDate.now
-        val nonPaymentTransaction = FinancialTransaction(
-          mainTransaction = Some(FinancialDataHelper.PlrMainTransactionsRefs.head),
-          subTransaction = Some(FinancialDataHelper.PlrSubTransactionsRefs.head),
-          taxPeriodFrom = Some(currentDate.minusMonths(1)),
-          taxPeriodTo = Some(currentDate),
-          outstandingAmount = Some(BigDecimal(100)),
-          items = Seq(FinancialItem(dueDate = Some(currentDate.plusDays(1)), clearingDate = None))
-        )
-
-        val financialData = FinancialData(Seq(nonPaymentTransaction))
-
-        financialData.hasRecentPayment(60, currentDate) mustBe false
       }
     }
   }
@@ -240,7 +114,7 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
       "return true when there is an overdue UK tax return payment" in {
         val currentDate = LocalDate.now
         val overdueTransaction = TransactionSummary(
-          FinancialDataHelper.Pillar2UktrName,
+          EtmpMainTransactionRef.UkTaxReturnMain.displayName,
           BigDecimal(100),
           currentDate.minusDays(1) // Overdue
         )
@@ -256,7 +130,7 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
       "return false when there are no overdue UK tax return payments" in {
         val currentDate = LocalDate.now
         val futureTransaction = TransactionSummary(
-          FinancialDataHelper.Pillar2UktrName,
+          EtmpMainTransactionRef.UkTaxReturnMain.displayName,
           BigDecimal(100),
           currentDate.plusDays(1) // Not overdue
         )
@@ -267,6 +141,57 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
         )
 
         summary.hasOverdueReturnPayment(currentDate) mustBe false
+      }
+    }
+  }
+
+  "Creating outstanding charges" should {
+
+    "result in a charge transaction based on the input main transaction reference" in {
+
+      behave like createsChargeOfType[UktrMainOutstandingCharge](mainTxRef = UkTaxReturnMain)
+      behave like createsChargeOfType[LatePaymentInterestOutstandingCharge](mainTxRef = LatePaymentInterest)
+      behave like createsChargeOfType[RepaymentInterestOutstandingCharge](mainTxRef = RepaymentInterest)
+
+      def createsChargeOfType[ExpectedType <: OutstandingCharge: ClassTag](mainTxRef: ChargeRef): Assertion = {
+        val createdCharge = OutstandingCharge.apply(mainTxRef)(
+          TaxPeriod(from = LocalDate.now().minusYears(1), LocalDate.now()),
+          EtmpSubtransactionRef.Dtt,
+          outstandingAmount = 10000.99,
+          OutstandingCharge.FinancialItems(earliestDueDate = LocalDate.now(), items = Seq.empty)
+        )
+        createdCharge.mainTransactionRef mustBe mainTxRef
+        createdCharge mustBe an[ExpectedType]
+      }
+    }
+  }
+
+  "Payment financial items" when {
+    "finding the latest clearing date" should {
+      "return the furthest-forward clearing date from the related items" in forAll(
+        anyOutstandingFinancialItem,
+        anyOutstandingFinancialItem,
+        anyOutstandingFinancialItem
+      ) { (item1, item2, item3) =>
+        val paymentItems = Payment.FinancialItems(
+          Seq(
+            FinancialItem(dueDate = None, clearingDate = LocalDate.MAX.some),
+            item1,
+            item2,
+            item3
+          )
+        )
+
+        paymentItems.latestClearingDate.value mustBe LocalDate.MAX
+      }
+
+      "return None when no clearing dates are defined" in forAll(anyOutstandingFinancialItem) { baseFinancialItem =>
+        val missingClearingDate = baseFinancialItem.copy(clearingDate = None)
+        Payment.FinancialItems(Seq(missingClearingDate)).latestClearingDate must not be defined
+      }
+
+      "return None when the  no items" in {
+        Payment.FinancialItems(Seq.empty).latestClearingDate must not be defined
       }
     }
   }
