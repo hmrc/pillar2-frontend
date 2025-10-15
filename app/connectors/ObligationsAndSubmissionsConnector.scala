@@ -21,8 +21,8 @@ import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json.Json
+import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
-import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
 
 import java.time.{LocalDate, ZonedDateTime}
 import javax.inject.Inject
@@ -55,6 +55,16 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
             logger.error(s"Unexpected response status ${response.status} from obligations and submissions endpoint for pillar2Id: $pillar2Id")
             Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
         }
+      }
+      .recover {
+        case UpstreamErrorResponse(_, INTERNAL_SERVER_ERROR, _, _) if config.handleObligationsAndSubmissions500Errors =>
+          logger.warn(
+            s"Received 500 error from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
+          )
+          ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
+        case UpstreamErrorResponse(_, status, _, _) =>
+          logger.error(s"Unexpected response status $status from obligations and submissions endpoint for pillar2Id: $pillar2Id")
+          throw new RuntimeException(s"Unexpected response status: $status")
       }
   }
 }

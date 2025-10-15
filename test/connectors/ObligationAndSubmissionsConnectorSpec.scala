@@ -18,10 +18,8 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import connectors.ObligationsAndSubmissionsConnector
-import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.test.Helpers._
 
 import java.time.ZonedDateTime
 
@@ -83,7 +81,8 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       stubGet(
         url,
         INTERNAL_SERVER_ERROR,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
+        """{"error": "Internal server error"}""",
+        Map("X-Pillar2-Id" -> PlrReference)
       )
 
       val result = connectorWithFeatureFlag.getData(pillar2Id, fromDate, toDate).futureValue
@@ -106,7 +105,8 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       stubGet(
         url,
         INTERNAL_SERVER_ERROR,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
+        """{"error": "Internal server error"}""",
+        Map("X-Pillar2-Id" -> PlrReference)
       )
 
       whenReady(connectorWithFeatureFlagDisabled.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
