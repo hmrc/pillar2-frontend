@@ -130,5 +130,6 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
 
       whenReady(connectorWithFeatureFlag.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
     }
+
   }
 }

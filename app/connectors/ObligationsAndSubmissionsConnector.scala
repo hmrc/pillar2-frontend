@@ -62,6 +62,11 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
             s"Received 500 error from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
           )
           ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
+        case _: GatewayTimeoutException if config.handleObligationsAndSubmissions500Errors =>
+          logger.warn(
+            s"Received timeout from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
+          )
+          ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
         case UpstreamErrorResponse(_, status, _, _) =>
           logger.error(s"Unexpected response status $status from obligations and submissions endpoint for pillar2Id: $pillar2Id")
           throw new RuntimeException(s"Unexpected response status: $status")
