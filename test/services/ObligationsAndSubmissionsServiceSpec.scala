@@ -27,6 +27,7 @@ import play.api.inject.bind
 import play.api.test.Helpers._
 import uk.gov.hmrc.http.HeaderCarrier
 
+import java.time.ZonedDateTime
 import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsServiceSpec extends SpecBase {
@@ -60,6 +61,23 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
         setupMockConnector(Future.failed(new RuntimeException))
 
         whenReady(service.handleData(pillar2Id, fromDate, toDate).failed)(exception => exception mustBe a[RuntimeException])
+      }
+    }
+
+    "return empty response when connector returns empty obligations and submissions" in {
+      val emptyResponse = ObligationsAndSubmissionsSuccess(
+        processingDate = ZonedDateTime.now(),
+        accountingPeriodDetails = Seq.empty
+      )
+
+      running(application) {
+        setupMockConnector(Future.successful(emptyResponse))
+
+        val result = service.handleData(pillar2Id, fromDate, toDate).futureValue
+
+        result mustBe emptyResponse
+        result.processingDate mustBe a[ZonedDateTime]
+        result.accountingPeriodDetails mustBe Seq.empty
       }
     }
   }
