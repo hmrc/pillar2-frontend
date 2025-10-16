@@ -129,5 +129,11 @@ class FrontendAppConfigSpec extends SpecBase {
         config.handleObligationsAndSubmissions500Errors mustBe false
       }
     }
+
+    ".obligationsAndSubmissionsTimeoutMilliseconds" must {
+      "return correct timeout value" in {
+        config.obligationsAndSubmissionsTimeoutMilliseconds mustBe 5000
+      }
+    }
   }
 }

@@ -38,7 +38,7 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
       s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions/$dateFrom/$dateTo"
     logger.info(s"Calling the backend ($url) with pillar2Id: $pillar2Id")
 
-    http
+    val httpRequest = http
       .get(url"$url")
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
@@ -46,11 +46,6 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
         response.status match {
           case OK =>
             Future.successful(Json.parse(response.body).as[ObligationsAndSubmissionsSuccess])
-          case INTERNAL_SERVER_ERROR if config.handleObligationsAndSubmissions500Errors =>
-            logger.warn(
-              s"Received 500 error from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
-            )
-            Future.successful(ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty))
           case _ =>
             logger.error(s"Unexpected response status ${response.status} from obligations and submissions endpoint for pillar2Id: $pillar2Id")
             Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
@@ -71,5 +66,16 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
           logger.error(s"Unexpected response status $status from obligations and submissions endpoint for pillar2Id: $pillar2Id")
           throw new RuntimeException(s"Unexpected response status: $status")
       }
+
+    val timeoutFuture = Future {
+      Thread.sleep(config.obligationsAndSubmissionsTimeoutMilliseconds)
+      logger.warn(
+        s"Request timeout after ${config.obligationsAndSubmissionsTimeoutMilliseconds} milliseconds for pillar2Id: $pillar2Id. Returning empty response."
+      )
+      ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
+    }
+
+    // Race between the HTTP request and the timeout
+    Future.firstCompletedOf(Seq(httpRequest, timeoutFuture))
   }
 }
