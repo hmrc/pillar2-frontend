@@ -19,13 +19,10 @@ package views.subscriptionview
 import base.ViewSpecBase
 import forms.GroupAccountingPeriodFormProvider
 import models.NormalMode
-import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.GroupAccountingPeriodView
-
-import java.time.LocalDate
 
 class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 

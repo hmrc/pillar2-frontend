@@ -19,12 +19,9 @@ package views.subscriptionview
 import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
-import models.MneOrDomestic
-import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import utils.DateTimeUtils._
 import viewmodels.checkAnswers._
 import viewmodels.govuk.all.SummaryListViewModel
