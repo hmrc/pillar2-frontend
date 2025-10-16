@@ -17,6 +17,7 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.ObligationsAndSubmissionsConnector
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
@@ -131,5 +132,32 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       whenReady(connectorWithFeatureFlag.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
     }
 
+    "return empty response when request times out after configured timeout period" in {
+      val appWithTimeout: Application = new GuiceApplicationBuilder()
+        .configure(
+          conf = "microservice.services.pillar2.port" -> server.port(),
+          "features.obligationsAndSubmissionsTimeoutMilliseconds" -> 500
+        )
+        .build()
+
+      val connectorWithTimeout: ObligationsAndSubmissionsConnector = appWithTimeout.injector.instanceOf[ObligationsAndSubmissionsConnector]
+
+      // Create a stub that delays response longer than the timeout
+      server.stubFor(
+        get(urlEqualTo(url))
+          .withHeader("X-Pillar2-Id", equalTo(PlrReference))
+          .willReturn(
+            aResponse()
+              .withStatus(200)
+              .withBody(obligationsAndSubmissionsSuccessResponseJson.toString())
+              .withFixedDelay(1000) // 1 second delay, longer than 500 millisecond timeout
+          )
+      )
+
+      val result = connectorWithTimeout.getData(pillar2Id, fromDate, toDate).futureValue
+
+      result.processingDate mustBe a[ZonedDateTime]
+      result.accountingPeriodDetails mustBe Seq.empty
+    }
   }
 }
