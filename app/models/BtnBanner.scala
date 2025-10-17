@@ -16,15 +16,9 @@
 
 package models
 
-sealed trait OutstandingPaymentBannerScenario
+sealed trait BtnBanner
 
-object OutstandingPaymentBannerScenario {
-  case object Outstanding extends OutstandingPaymentBannerScenario
-  case object Paid extends OutstandingPaymentBannerScenario
-
-  implicit val ordering: Ordering[OutstandingPaymentBannerScenario] =
-    Ordering.by {
-      case Outstanding => 2
-      case Paid        => 1
-    }
+object BtnBanner {
+  case object Show extends BtnBanner
+  case object Hide extends BtnBanner
 }

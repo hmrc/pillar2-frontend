@@ -21,7 +21,6 @@ import cats.syntax.apply._
 import cats.syntax.functorFilter._
 import cats.syntax.option._
 import cats.syntax.validated._
-import config.FrontendAppConfig
 import connectors.FinancialDataConnector
 import connectors.FinancialDataConnector.FinancialDataResponse
 import models.FinancialTransaction.{OutstandingCharge, Payment}
@@ -31,18 +30,11 @@ import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, R
 import services.FinancialDataService.parseFinancialDataResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.temporal.ChronoUnit
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataService @Inject() (
-  financialDataConnector: FinancialDataConnector,
-  clock:                  Clock
-)(implicit
-  ec:        ExecutionContext,
-  appConfig: FrontendAppConfig
-) {
+class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector)(implicit ec: ExecutionContext) {
 
   /** Parses financial data from the API into something a bit easier to take decisions against */
   def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
@@ -50,14 +42,6 @@ class FinancialDataService @Inject() (
       .retrieveFinancialData(pillar2Id, fromDate, toDate)
       .map(parseFinancialDataResponse)
 
-  /** Checks if there has been a recent payment */
-  def hasRecentPayment(financialData: FinancialData): Boolean =
-    financialData.payments
-      .flatMap(_.paymentItems.latestClearingDate)
-      .exists { latestClearing =>
-        val daysAgoLatestPaymentCleared = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
-        daysAgoLatestPaymentCleared <= appConfig.maxDaysAgoToConsiderPaymentAsRecent
-      }
 }
 
 object FinancialDataService extends Logging {

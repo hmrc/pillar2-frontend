@@ -23,13 +23,13 @@ import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstan
 import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import org.scalacheck.{Arbitrary, Gen}
-import org.scalatest.Assertion
+import org.scalatest.{Assertion, LoneElement}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
-import java.time.LocalDate
+import java.time._
 import scala.reflect.ClassTag
 
-class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
+class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with LoneElement {
 
   private val anyDate: Gen[LocalDate] =
     Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay) // scalastyle:ignore magic.number
@@ -63,6 +63,8 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.oneOf(anyPaymentTransaction, outstandingTransaction))) // scalastyle:ignore magic.number
   }
 
+  private implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+
   "FinancialData" when {
 
     "fetching outstandingCharges" should {
@@ -90,20 +92,58 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks {
       }
     }
 
-    "hasOverdueOutstandingPayments" should {
-      "return true when there are overdue outstanding payments" in forAll(
+    "overdueOutstandingCharges" should {
+      "return any overdue outstanding charges" in forAll(
         outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isBefore(currentDate))
       ) { pastDueCharge: OutstandingCharge =>
         val financialData = FinancialData(Seq(pastDueCharge))
-        financialData.hasOverdueOutstandingPayments(currentDate) mustBe true
+        financialData.overdueOutstandingCharges.loneElement mustBe pastDueCharge
       }
 
-      "return false when there are no overdue outstanding payments" in forAll(
+      "return an empty collection when there are no overdue outstanding charges" in forAll(
         outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isAfter(currentDate))
       ) { futureDueCharge: OutstandingCharge =>
         val financialData = FinancialData(Seq(futureDueCharge))
 
-        financialData.hasOverdueOutstandingPayments(currentDate) mustBe false
+        financialData.overdueOutstandingCharges mustBe empty
+      }
+    }
+
+    "hasRecentPayment" should {
+
+      def paymentWithClearingDate(date: Option[LocalDate]): Payment = Payment(
+        Payment.FinancialItems(
+          Seq(
+            FinancialItem(
+              dueDate = None,
+              clearingDate = date
+            )
+          )
+        )
+      )
+
+      "be true when the passed financial data contains a payment which cleared within the configured leeway" in forAll(
+        Gen.choose(0, applicationConfig.maxDaysAgoToConsiderPaymentAsRecent)
+      ) { paymentClearedDaysAgo =>
+        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
+        val financialData      = FinancialData(Seq(paymentTransaction))
+
+        financialData.hasRecentPayment mustBe true
+      }
+
+      "be false when the passed financial data contains a payment which cleared beyond the configured leeway" in forAll(
+        Gen.choose(applicationConfig.maxDaysAgoToConsiderPaymentAsRecent, Int.MaxValue)
+      ) { paymentClearedDaysAgo =>
+        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
+        val financialData      = FinancialData(Seq(paymentTransaction))
+
+        financialData.hasRecentPayment mustBe false
+      }
+
+      "be false when there are no financial items with a clearing date" in forAll(
+        Gen.oneOf(FinancialData(Seq(paymentWithClearingDate(None))), FinancialData(Seq.empty))
+      ) { financialDataWithNoClearingDate =>
+        financialDataWithNoClearingDate.hasRecentPayment mustBe false
       }
     }
   }

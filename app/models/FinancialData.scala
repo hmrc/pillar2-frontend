@@ -16,11 +16,13 @@
 
 package models
 
-import models.FinancialTransaction.{OutstandingCharge, Payment}
+import config.FrontendAppConfig
+import models.FinancialTransaction.{InterestOutstandingCharge, OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
 
-import java.time.LocalDate
+import java.time.temporal.ChronoUnit
+import java.time.{Clock, LocalDate}
 
 final case class FinancialData(financialTransactions: Seq[FinancialTransaction]) {
 
@@ -37,9 +39,22 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
   /** Calculates the total outstanding amount from financial data */
   def totalOutstandingAmount: BigDecimal = outstandingCharges.map(_.outstandingAmount).sum
 
-  /** Checks if there are any outstanding payments that are overdue */
-  def hasOverdueOutstandingPayments(currentDate: LocalDate = LocalDate.now): Boolean =
-    outstandingCharges.exists(_.chargeItems.earliestDueDate.isBefore(currentDate))
+  /** Finds any outstanding payments that are overdue */
+  def overdueOutstandingCharges(implicit clock: Clock): Seq[OutstandingCharge] =
+    outstandingCharges.filter(_.chargeItems.earliestDueDate.isBefore(LocalDate.now(clock)))
+
+  /** Find any overdue unpaid charges for interest */
+  def overdueAccruingInterestCharges(implicit clock: Clock): Seq[InterestOutstandingCharge] =
+    overdueOutstandingCharges.collect { case charge: InterestOutstandingCharge => charge }
+
+  /** Checks if there has been a recent payment */
+  def hasRecentPayment(implicit clock: Clock, appConfig: FrontendAppConfig): Boolean =
+    payments
+      .flatMap(_.paymentItems.latestClearingDate)
+      .exists { latestClearing =>
+        val daysAgoLatestPaymentCleared = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
+        daysAgoLatestPaymentCleared <= appConfig.maxDaysAgoToConsiderPaymentAsRecent
+      }
 
   /** Convenience method for operating on payment transactions */
   def payments: Seq[FinancialTransaction.Payment] = financialTransactions.collect { case payment: Payment => payment }
@@ -49,7 +64,7 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
 sealed trait FinancialTransaction
 
 object FinancialTransaction {
-  sealed trait OutstandingCharge extends FinancialTransaction {
+  sealed trait OutstandingCharge extends FinancialTransaction { self =>
     val taxPeriod:          TaxPeriod
     val subTransactionRef:  EtmpSubtransactionRef
     val outstandingAmount:  BigDecimal
