@@ -29,7 +29,6 @@ class ContactNfmByPhoneViewSpec extends ViewSpecBase {
   lazy val formProvider: ContactNfmByPhoneFormProvider = new ContactNfmByPhoneFormProvider
   lazy val page:         ContactNfmByPhoneView         = inject[ContactNfmByPhoneView]
   lazy val username:     String                        = "John Doe"
-  lazy val pageTitle:    String                        = "Can we contact by telephone" // FIXME: telephone?
   lazy val view: Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
 
   def pageTitle(username: String = ""): String = {

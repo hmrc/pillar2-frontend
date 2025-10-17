@@ -38,7 +38,7 @@ class FilingMemberCheckYourAnswersViewSpec extends ViewSpecBase with Subscriptio
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe "Check your answers for filing member details"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have a caption" in {
