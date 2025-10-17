@@ -35,17 +35,13 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
   "RegistrationInProgressView" should {
 
     "have a title" in {
-      // FIXME: inconsistent title and HEADING
-      //view.title() mustBe "Registration in progress - Report Pillar 2 Top-up Taxes - GOV.UK"
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      view.title() mustBe "Registration in progress - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByClass("govuk-heading-l")
       h1Elements.size() mustBe 1
-      // FIXME: inconsistent title and HEADING
-      //h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
-      h1Elements.text() mustBe pageTitle
+      h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
     }
 
     "have a 'Registration in Progress' notification banner" in {
