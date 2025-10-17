@@ -26,7 +26,7 @@ import views.html.registrationview.RegistrationFailedNfmView
 class RegistrationFailedNfmViewSpec extends ViewSpecBase {
 
   lazy val page:       RegistrationFailedNfmView = inject[RegistrationFailedNfmView]
-  lazy val pageTitle:  String                    = "Register your group"
+  lazy val pageTitle:  String                    = "The details you entered did not match our records"
   lazy val view:       Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
   lazy val paragraphs: Elements                  = view.getElementsByClass("govuk-body")
 
@@ -39,10 +39,7 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      // FIXME: inconsistency between title and H1
-      // Title: "Register your group"
-      // H1: "The details you entered did not match our records"
-      h1Elements.text() mustBe "The details you entered did not match our records"
+      h1Elements.text() mustBe pageTitle
     }
 
     "have an H2 heading" in {
