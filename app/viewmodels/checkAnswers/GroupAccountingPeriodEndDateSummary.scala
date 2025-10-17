@@ -19,23 +19,21 @@ package viewmodels.checkAnswers
 import models.UserAnswers
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
-import play.twirl.api.HtmlFormat
-import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.ViewHelpers
+import utils.DateTimeUtils.LocalDateOps
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
 
 object GroupAccountingPeriodEndDateSummary {
+
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
-    answers.get(SubAccountingPeriodPage).map { answer =>
-      val startDate = HtmlFormat.escape(ViewHelpers.formatDateGDS(answer.endDate))
+    answers.get(SubAccountingPeriodPage).map { accountingPeriod =>
+      val startDate: String = accountingPeriod.endDate.toDateFormat
+
       SummaryListRowViewModel(
         key = "groupAccountingEndDatePeriod.checkYourAnswersLabel",
-        value = ValueViewModel(HtmlContent(startDate))
-          .withCssClass("govuk-!-display-none-print")
+        value = ValueViewModel(startDate).withCssClass("govuk-!-display-none-print")
       )
-
     }
 
 }

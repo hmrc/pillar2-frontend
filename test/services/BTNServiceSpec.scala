@@ -28,8 +28,8 @@ import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import services.BTNServiceSpec._
 import uk.gov.hmrc.http.HeaderCarrier
+import utils.DateTimeUtils.isoDateTimeFormatter
 
-import java.time.format.DateTimeFormatter
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -101,9 +101,8 @@ object BTNServiceSpec {
     accountingPeriodTo = LocalDate.now
   )
   val pillar2IdForValidResponse = "XEPLR0000000000"
-  val testZonedDateTime         = "2025-01-10T16:54:26Z"
-  val datePattern               = DateTimeFormatter.ISO_DATE_TIME
-  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse("2025-01-10T16:54:26Z", datePattern)
+  val testZonedDateTime: String        = "2025-01-10T16:54:26Z"
+  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime, isoDateTimeFormatter)
 
   val btnSuccessJsonString: String     = s"""{"processingDate":"$testZonedDateTime"}"""
   val btnSuccessJson:       JsValue    = Json.parse(btnSuccessJsonString)

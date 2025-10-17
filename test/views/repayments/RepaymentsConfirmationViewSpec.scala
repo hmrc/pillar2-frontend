@@ -17,28 +17,24 @@
 package views.repayments
 
 import base.ViewSpecBase
-import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import play.twirl.api.{Html, HtmlFormat}
-import utils.ViewHelpers
+import utils.DateTimeUtils.ZonedDateTimeOps
 import views.html.repayments.RepaymentsConfirmationView
+
+import java.time.ZonedDateTime
 
 class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val page:           RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
-  lazy val testPillar2Ref: String                     = "XMPLR0012345674"
-  lazy val pageTitle:      String                     = "Repayment request submitted"
-  lazy val currentDate:    Html                       = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
-  lazy val view:           Document                   = Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
-  lazy val paragraphs:     Elements                   = view.getElementsByClass("govuk-body")
+  lazy val page:               RepaymentsConfirmationView = inject[RepaymentsConfirmationView]
+  lazy val testPillar2Ref:     String                     = "XMPLR0012345674"
+  lazy val pageTitle:          String                     = "Repayment request submitted"
+  lazy val currentDateTimeGMT: String                     = ZonedDateTime.now().toDateTimeGmtFormat
+  lazy val view:               Document                   = Jsoup.parse(page(currentDateTimeGMT)(request, appConfig, messages).toString())
+  lazy val paragraphs:         Elements                   = view.getElementsByClass("govuk-body")
 
   "Repayments confirmation view" should {
-    val currentDate = HtmlFormat.escape(ViewHelpers.getDateTimeGMT)
-    val view: Document =
-      Jsoup.parse(page(currentDate.toString())(request, appConfig, messages).toString())
-
     "have a page title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -47,7 +43,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
 
       headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerLink.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      headerLink.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "have a panel with a unique H1 heading" in {
@@ -59,12 +55,11 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "have a confirmation message" in {
-      paragraphs.get(0).text mustBe
-        s"You have successfully submitted your repayment request on ${currentDate.toString()}."
+      paragraphs.get(0).text mustBe s"You have successfully submitted your repayment request on $currentDateTimeGMT."
     }
 
     "have a 'What happens next' heading" in {
@@ -80,7 +75,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val link: Element = paragraphs.last().getElementsByTag("a").first()
 
       link.text mustBe "Back to group homepage"
-      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "must display Print this page link" in {

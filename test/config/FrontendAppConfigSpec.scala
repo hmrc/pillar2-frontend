@@ -123,5 +123,17 @@ class FrontendAppConfigSpec extends SpecBase {
         config.btaAccessEnabled mustBe true
       }
     }
+
+    ".handleObligationsAndSubmissions500Errors" must {
+      "return correct feature flag value" in {
+        config.handleObligationsAndSubmissions500Errors mustBe false
+      }
+    }
+
+    ".obligationsAndSubmissionsTimeoutMilliseconds" must {
+      "return correct timeout value" in {
+        config.obligationsAndSubmissionsTimeoutMilliseconds mustBe 5000
+      }
+    }
   }
 }
