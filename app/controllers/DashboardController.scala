@@ -20,12 +20,14 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
+import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario._
+import models.PaymentState._
 import models._
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
-import models.subscription.AccountStatus.InactiveAccount
-import models.subscription.{ReadSubscriptionRequestParameters, SubscriptionData}
+import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
+import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -38,7 +40,7 @@ import utils.Constants.SubmissionAccountingPeriods
 import utils.DateTimeUtils.LocalDateOps
 import views.html.{DashboardView, HomepageView}
 
-import java.time.LocalDate
+import java.time.{Clock, LocalDate}
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -54,8 +56,11 @@ class DashboardController @Inject() (
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
   financialDataService:                   FinancialDataService
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
-    extends FrontendBaseController
+)(implicit
+  ec:        ExecutionContext,
+  appConfig: FrontendAppConfig,
+  clock:     Clock
+) extends FrontendBaseController
     with I18nSupport
     with Logging {
 
@@ -102,23 +107,20 @@ class DashboardController @Inject() (
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
         for {
           obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-          rawFinancialData <-
-            financialDataService
-              .retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-              .map(Some(_))
-              .recover { case _ =>
-                None
-              }
+          financialData <-
+            financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
         } yield {
           val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
           val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
-          val paymentsStatus         = rawFinancialData.flatMap(getPaymentBannerScenario(_))
-          val notificationArea       = determineNotificationArea(returnsStatus, paymentsStatus)
+          val paymentsStatus         = getPaymentBannerScenario(financialData)
+          val accountStatus          = subscriptionData.accountStatus.getOrElse(ActiveAccount) // TODO should we fail if missing from response?
+          val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
+          val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
           Ok(
             homepageView(
               subscriptionData.upeDetails.organisationName,
               subscriptionData.upeDetails.registrationDate.toDateFormat,
-              subscriptionData.accountStatus.contains(InactiveAccount),
+              btnBanner,
               returnsStatus,
               paymentsStatus,
               notificationArea,
@@ -143,20 +145,11 @@ class DashboardController @Inject() (
       )
     }
 
-  def getPaymentBannerScenario(financialData: FinancialData, currentDate: LocalDate = LocalDate.now): Option[OutstandingPaymentBannerScenario] =
-    if (financialData.financialTransactions.isEmpty) {
-      None
-    } else {
-      val totalOutstandingAmount = financialData.totalOutstandingAmount
-      val hasOutstandingPayment  = financialData.hasOverdueOutstandingPayments(currentDate)
-      val hasRecentPayment       = financialDataService.hasRecentPayment(financialData)
-
-      (hasOutstandingPayment, hasRecentPayment) match {
-        case (true, _)                                    => Some(Outstanding(totalOutstandingAmount))
-        case (false, true) if totalOutstandingAmount == 0 => Some(Paid)
-        case _                                            => None
-      }
-    }
+  val getPaymentBannerScenario: FinancialData => Option[OutstandingPaymentBannerScenario] = {
+    case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
+    case PaymentState(Paid)                                                               => Some(OutstandingPaymentBannerScenario.Paid)
+    case PaymentState(NothingDueNothingRecentlyPaid)                                      => None
+  }
 
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
@@ -209,13 +202,39 @@ class DashboardController @Inject() (
   }
 
   def determineNotificationArea(
-    uktr:    Option[DueAndOverdueReturnBannerScenario],
-    payment: Option[OutstandingPaymentBannerScenario]
-  ): DynamicNotificationAreaState = (uktr, payment) match {
-    case (_, Some(Outstanding(amountOutstanding)))                    => DynamicNotificationAreaState.AccruingInterestNotification(amountOutstanding)
-    case (Some(DueAndOverdueReturnBannerScenario.Due), _)             => DynamicNotificationAreaState.ReturnExpectedNotification.Due
-    case (Some(DueAndOverdueReturnBannerScenario.Overdue), _)         => DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
-    case (Some(DueAndOverdueReturnBannerScenario.Incomplete), _)      => DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
-    case (Some(DueAndOverdueReturnBannerScenario.Received) | None, _) => DynamicNotificationAreaState.NoNotification
+    uktr:          Option[DueAndOverdueReturnBannerScenario],
+    financialData: FinancialData,
+    accountStatus: AccountStatus
+  ): DynamicNotificationAreaState = (financialData, uktr, accountStatus) match {
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, _) =>
+      DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.NotYetDue(totalAmountOutstanding)), _, _) =>
+      DynamicNotificationAreaState.OutstandingPayments(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Overdue), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Overdue
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Incomplete), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Due), _) =>
+      DynamicNotificationAreaState.ReturnExpectedNotification.Due
+
+    case (PaymentState(PaymentState.Paid | NothingDueNothingRecentlyPaid), Some(Received) | None, _) =>
+      DynamicNotificationAreaState.NoNotification
+
+  }
+
+  val determineBtnBanner: (AccountStatus, DynamicNotificationAreaState) => BtnBanner = {
+    case (InactiveAccount, DynamicNotificationAreaState.OutstandingPaymentsWithBtn(_)) => BtnBanner.Hide
+    case (InactiveAccount, _)                                                          => BtnBanner.Show
+    case (_, _)                                                                        => BtnBanner.Hide
   }
 }

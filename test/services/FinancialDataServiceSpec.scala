@@ -18,11 +18,10 @@ package services
 
 import base.SpecBase
 import cats.syntax.option._
-import config.FrontendAppConfig
 import connectors.FinancialDataConnector
 import connectors.FinancialDataConnector.FinancialDataResponse
+import models.FinancialTransaction.OutstandingCharge
 import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -112,45 +111,6 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
         whenReady(result.failed) { error =>
           error mustBe exception
         }
-      }
-    }
-
-    "checking for a recent payment" should {
-      val config = application.injector.instanceOf[FrontendAppConfig]
-
-      def paymentWithClearingDate(date: Option[LocalDate]): Payment = Payment(
-        Payment.FinancialItems(
-          Seq(
-            FinancialItem(
-              dueDate = None,
-              clearingDate = date
-            )
-          )
-        )
-      )
-
-      "be true when the passed financial data contains a payment which cleared within the configured leeway" in forAll(
-        Gen.choose(0, config.maxDaysAgoToConsiderPaymentAsRecent)
-      ) { paymentClearedDaysAgo =>
-        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
-        val financialData      = FinancialData(Seq(paymentTransaction))
-
-        service.hasRecentPayment(financialData) mustBe true
-      }
-
-      "be false when the passed financial data contains a payment which cleared beyond the configured leeway" in forAll(
-        Gen.choose(config.maxDaysAgoToConsiderPaymentAsRecent, Int.MaxValue)
-      ) { paymentClearedDaysAgo =>
-        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
-        val financialData      = FinancialData(Seq(paymentTransaction))
-
-        service.hasRecentPayment(financialData) mustBe false
-      }
-
-      "be false when there are no financial items with a clearing date" in forAll(
-        Gen.oneOf(FinancialData(Seq(paymentWithClearingDate(None))), FinancialData(Seq.empty))
-      ) { financialDataWithNoClearingDate =>
-        service.hasRecentPayment(financialDataWithNoClearingDate) mustBe false
       }
     }
 

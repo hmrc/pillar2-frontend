@@ -20,9 +20,10 @@ import base.ViewSpecBase
 import models.DynamicNotificationAreaState
 import models.DynamicNotificationAreaState._
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
+import org.scalactic.source.Position
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import views.html.DynamicNotificationAreaView
@@ -37,14 +38,19 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
     Jsoup.parse(component(notificationState, isAgent = true).toString())
   lazy val agentOrOrgNotificationArea: Gen[DynamicNotificationAreaState => Document] = Gen.oneOf(organisationNotificationArea, agentNotificationArea)
 
-  val firstSectionBreakId       = "notifications-break-begin"
-  val lastSectionBreakId        = "notifications-break-end"
-  val accruingInterestSubheadId = "accruing-interest-notification-subheading"
-  val uktrExpectedSubheadId     = "return-expected-notification-subheading"
-  val accruingInterestBodyId    = "accruing-interest-notification-body"
-  val uktrExpectedBodyId        = "return-expected-notification-body"
-  val submitUktrLinkId          = "return-expected-notification-submission-link"
-  val outstandingPaymentsLinkId = "accruing-interest-notification-outstanding-payments-link"
+  val firstSectionBreakId             = "notifications-break-begin"
+  val lastSectionBreakId              = "notifications-break-end"
+  val accruingInterestSubheadId       = "accruing-interest-notification-subheading"
+  val accruingInterestBodyId          = "accruing-interest-notification-body"
+  val accruingInterestLinkId          = "accruing-interest-notification-link"
+  val outstandingPaymentsBtnSubheadId = "outstanding-payments-btn-notification-subheading"
+  val outstandingPaymentsBtnBodyId    = "outstanding-payments-btn-notification-body"
+  val outstandingPaymentsBtnLinkId    = "outstanding-payments-btn-notification-link"
+  val outstandingPaymentsSubheadId    = "outstanding-payments-notification-subheading"
+  val outstandingPaymentsLinkId       = "outstanding-payments-notification-link"
+  val uktrExpectedSubheadId           = "return-expected-notification-subheading"
+  val uktrExpectedBodyId              = "return-expected-notification-body"
+  val submitUktrLinkId                = "return-expected-notification-submission-link"
 
   "Dynamic notification area" must {
     "not render anything" in forAll(agentOrOrgNotificationArea) { template =>
@@ -57,52 +63,136 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
         accruingInterestBodyId,
         uktrExpectedBodyId,
         submitUktrLinkId,
-        outstandingPaymentsLinkId
+        accruingInterestLinkId
       )
 
       allIds.flatMap(id => Option(page.getElementById(id))) mustBe empty
     }
 
     "render a notification" when {
-      "an outstanding payment is accruing interest" which {
+      "an outstanding charge is accruing interest but there's no BTN submitted" which {
         "includes the section breaks" in forAll(agentOrOrgNotificationArea, arbitrary[BigDecimal]) { (template, owed) =>
-          val page = template(AccruingInterestNotification(owed))
+          val page = template(AccruingInterest(owed))
           behave like includesSectionBreaks(page)
         }
 
         "has the proper link" when {
+          val expectedHref = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
           "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
-            val page = organisationNotificationArea(AccruingInterestNotification(owed))
-            val link = page.getElementById(outstandingPaymentsLinkId)
-            link.text() mustBe "View outstanding payments"
-            link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+            val page = organisationNotificationArea(AccruingInterest(owed))
+            val link = page.getElementById(accruingInterestLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
           }
 
           "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
-            val page = agentNotificationArea(AccruingInterestNotification(owed))
-            val link = page.getElementById(outstandingPaymentsLinkId)
-            link.text() mustBe "View outstanding payments"
-            link.attr("href") mustBe controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+            val page = agentNotificationArea(AccruingInterest(owed))
+            val link = page.getElementById(accruingInterestLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
           }
         }
 
         "has the correct subheading and message" when {
           "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
-            val page = organisationNotificationArea(AccruingInterestNotification(owed))
-            behave like hasAccruingInterestNotification(
-              page,
-              expectedHeading = s"You owe £${ViewUtils.formatAmount(owed)}",
-              expectedMessage = "Your overdue payment is now subject to daily interest."
-            )
+            val page    = organisationNotificationArea(AccruingInterest(owed))
+            val subhead = page.getElementById(accruingInterestSubheadId)
+            val message = page.getElementById(accruingInterestBodyId)
+
+            behave like subhead.isASubheadingWithText(s"You owe £${ViewUtils.formatAmount(owed)}")
+            behave like message.isABodyTextParagraph("Your overdue payment is now subject to daily interest.")
           }
 
           "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
-            val page = agentNotificationArea(AccruingInterestNotification(owed))
-            behave like hasAccruingInterestNotification(
-              page,
-              expectedHeading = s"Your client owes £${ViewUtils.formatAmount(owed)}",
-              expectedMessage = "This payment is overdue, and is now subject to daily interest."
-            )
+            val page    = agentNotificationArea(AccruingInterest(owed))
+            val subhead = page.getElementById(accruingInterestSubheadId)
+            val message = page.getElementById(accruingInterestBodyId)
+
+            behave like subhead.isASubheadingWithText(s"Your client owes £${ViewUtils.formatAmount(owed)}")
+            behave like message.isABodyTextParagraph("This payment is overdue, and is now subject to daily interest.")
+          }
+        }
+
+      }
+
+      "there is an outstanding charge and a BTN was submitted" which {
+        "includes the section breaks" in forAll(agentOrOrgNotificationArea, arbitrary[BigDecimal]) { (template, owed) =>
+          val page = template(OutstandingPaymentsWithBtn(owed))
+          behave like includesSectionBreaks(page)
+        }
+
+        "has the proper link" when {
+          val expectedHref = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+          "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page = organisationNotificationArea(OutstandingPaymentsWithBtn(owed))
+            val link = page.getElementById(outstandingPaymentsBtnLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
+          }
+
+          "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page = agentNotificationArea(OutstandingPaymentsWithBtn(owed))
+            val link = page.getElementById(outstandingPaymentsBtnLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
+          }
+        }
+
+        "has the correct subheading and message" when {
+          "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page    = organisationNotificationArea(OutstandingPaymentsWithBtn(owed))
+            val subhead = page.getElementById(outstandingPaymentsBtnSubheadId)
+            val message = page.getElementById(outstandingPaymentsBtnBodyId)
+
+            behave like subhead.isASubheadingWithText(s"You owe £${ViewUtils.formatAmount(owed)}")
+            behave like message.isABodyTextParagraph("You have submitted a Below-Threshold Notification but your group has outstanding payments.")
+          }
+
+          "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page    = agentNotificationArea(OutstandingPaymentsWithBtn(owed))
+            val subhead = page.getElementById(outstandingPaymentsBtnSubheadId)
+            val message = page.getElementById(outstandingPaymentsBtnBodyId)
+
+            behave like subhead.isASubheadingWithText(s"Your client owes £${ViewUtils.formatAmount(owed)}")
+            behave like message.isABodyTextParagraph("Your client has submitted a Below-Threshold Notification but has outstanding payments.")
+          }
+        }
+
+      }
+
+      "there is an outstanding charge and no BTN submitted" which {
+        "includes the section breaks" in forAll(agentOrOrgNotificationArea, arbitrary[BigDecimal]) { (template, owed) =>
+          val page = template(OutstandingPayments(owed))
+          behave like includesSectionBreaks(page)
+        }
+
+        "has the proper link" when {
+          val expectedHref = controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
+
+          "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page = organisationNotificationArea(OutstandingPayments(owed))
+            val link = page.getElementById(outstandingPaymentsLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
+          }
+
+          "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page = agentNotificationArea(OutstandingPayments(owed))
+            val link = page.getElementById(outstandingPaymentsLinkId)
+            behave like link.isALinkWithTextAndHref("View outstanding payments", expectedHref)
+          }
+        }
+
+        "has the correct subheading" when {
+          "user is an organisation" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page    = organisationNotificationArea(OutstandingPayments(owed))
+            val subhead = page.getElementById(outstandingPaymentsSubheadId)
+
+            behave like subhead.isASubheadingWithText(s"You owe £${ViewUtils.formatAmount(owed)}")
+          }
+
+          "user is an agent" in forAll(arbitrary[BigDecimal]) { owed =>
+            val page    = agentNotificationArea(OutstandingPayments(owed))
+            val subhead = page.getElementById(outstandingPaymentsSubheadId)
+
+            behave like subhead.isASubheadingWithText(s"Your client owes £${ViewUtils.formatAmount(owed)}")
           }
         }
 
@@ -118,10 +208,10 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
         }
 
         "has the proper link" in forAll(agentOrOrgNotificationArea, returnExpected) { (template, returnExpected) =>
-          val page = template(returnExpected)
-          val link = page.getElementById(submitUktrLinkId)
-          link.text() mustBe "View all due and overdue returns"
-          link.attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+          val page         = template(returnExpected)
+          val link         = page.getElementById(submitUktrLinkId)
+          val expectedHref = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+          link.isALinkWithTextAndHref("View all due and overdue returns", expectedHref)
         }
 
         "has the proper heading and message" when {
@@ -142,8 +232,12 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
           )
 
           "user is an organisation" in forAll(orgExpectations) { case (notification, expSubhead, expMessage) =>
-            val page = organisationNotificationArea(notification)
-            behave like hasUktrExpectedNotification(page, expSubhead, expMessage)
+            val page    = organisationNotificationArea(notification)
+            val subhead = page.getElementById(uktrExpectedSubheadId)
+            val message = page.getElementById(uktrExpectedBodyId)
+
+            behave like subhead.isASubheadingWithText(expSubhead)
+            behave like message.isABodyTextParagraph(expMessage)
           }
 
           val agentExpectations = Table(
@@ -154,8 +248,12 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
           )
 
           "user is an agent" in forAll(agentExpectations) { case (notification, expSubhead, expMessage) =>
-            val page = agentNotificationArea(notification)
-            behave like hasUktrExpectedNotification(page, expSubhead, expMessage)
+            val page    = agentNotificationArea(notification)
+            val subhead = page.getElementById(uktrExpectedSubheadId)
+            val message = page.getElementById(uktrExpectedBodyId)
+
+            behave like subhead.isASubheadingWithText(expSubhead)
+            behave like message.isABodyTextParagraph(expMessage)
           }
         }
       }
@@ -164,21 +262,25 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
     def includesSectionBreaks(page: Document) =
       Seq(firstSectionBreakId, lastSectionBreakId).flatMap(id => Option(page.getElementById(id))) must have(length(2))
 
-    def hasAccruingInterestNotification(page: Document, expectedHeading: String, expectedMessage: String): Assertion = {
-      val subhead = page.getElementById(accruingInterestSubheadId)
-      val message = page.getElementById(accruingInterestBodyId)
+    implicit class JsoupElementOps(element: Element)(implicit position: Position) {
+      def isASubheadingWithText(expectedHeadingText: String): Assertion = {
+        element.tagName() mustBe "h2"
+        element.classNames() must contain("govuk-heading-s")
+        element.text() mustBe expectedHeadingText
+      }
 
-      subhead.text() mustBe expectedHeading
-      message.text() mustBe expectedMessage
+      def isABodyTextParagraph(expectedBodyText: String): Assertion = {
+        element.tagName() mustBe "p"
+        element.classNames() must contain("govuk-body")
+        element.text() mustBe expectedBodyText
+      }
+
+      def isALinkWithTextAndHref(expectedText: String, href: String): Assertion = {
+        element.tagName() mustBe "a"
+        element.classNames() must contain("govuk-link")
+        element.text() mustBe expectedText
+        Option(element.attr("href")).value mustBe href
+      }
     }
-
-    def hasUktrExpectedNotification(page: Document, expectedHeading: String, expectedMessage: String): Assertion = {
-      val subhead = page.getElementById(uktrExpectedSubheadId)
-      val message = page.getElementById(uktrExpectedBodyId)
-
-      subhead.text() mustBe expectedHeading
-      message.text() mustBe expectedMessage
-    }
-
   }
 }
