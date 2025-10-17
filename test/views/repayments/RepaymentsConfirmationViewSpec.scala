@@ -73,5 +73,10 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
+    "must have a 'Print this page' link" in {
+      val printElement: Element = view.getElementById("print-this-page")
+      printElement.text() mustBe "Print this page"
+    }
+
   }
 }
