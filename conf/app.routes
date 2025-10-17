@@ -578,5 +578,7 @@ GET       /below-threshold-notification/cannot-return                           
 
 GET       /below-threshold-notification/confirmation                                                controllers.btn.BTNConfirmationController.onPageLoad
 GET       /below-threshold-notification/problem-with-service                                        controllers.btn.BTNProblemWithServiceController.onPageLoad
+GET       /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onPageLoad
+POST      /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onSubmit
 
 GET       /below-threshold-notification/processing-submission                                       controllers.btn.BTNWaitingRoomController.onPageLoad
