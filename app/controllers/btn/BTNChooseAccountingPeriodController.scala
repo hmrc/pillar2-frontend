@@ -95,16 +95,22 @@ class BTNChooseAccountingPeriodController @Inject() (
                   ),
                 value =>
                   accountingPeriods.find { case (_, index) => index == value } match {
-                    case Some((chosenPeriod, _)) =>
+                    case Some((chosenPeriod, chosenIndex)) =>
                       for {
                         updatedAnswers <- Future.fromTry(userAnswers.set(BTNChooseAccountingPeriodPage, chosenPeriod))
                         _              <- sessionRepository.set(updatedAnswers)
-                      } yield
-                        if (chosenPeriod.underEnquiry) {
+                      } yield {
+                        val shouldShowWarning = chosenPeriod.underEnquiry ||
+                          accountingPeriods
+                            .take(chosenIndex)
+                            .exists(_._1.underEnquiry)
+
+                        if (shouldShowWarning) {
                           Redirect(routes.BTNUnderEnquiryWarningController.onPageLoad)
                         } else {
                           Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))
                         }
+                      }
                     case None =>
                       Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
                   }
