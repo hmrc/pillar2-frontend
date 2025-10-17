@@ -179,6 +179,7 @@ grs.registration.failed.line2 = Your company details could not be confirmed.
 grs.registration.failed.line3-hyperlink = Go back to select the entity type
 grs.registration.failed.line3-cont = to try again.
 
+grs.registration.error.title = The details you entered did not match our records
 grs.registration.error.header = The details you entered did not match our records
 grs.registration.error.line1 = We could not match the details you entered with records held by HMRC.
 grs.registration.error.line2 = How to confirm your details

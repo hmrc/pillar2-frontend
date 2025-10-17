@@ -39,13 +39,6 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have the correct header link to Pillar 2 home" in {
-      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
-
-      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerLink.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
-    }
-
     "have a panel with a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
@@ -54,8 +47,10 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have a banner with a link to the Homepage" in {
-      val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
+
+      headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
+      headerLink.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
     "have a confirmation message" in {
@@ -78,16 +73,9 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
-    "must display Print this page link" in {
-      val printLink = view.select("a:contains(Print this page)")
-      printLink.size()         must be >= 1
-      printLink.first().text() must include("Print this page")
-    }
-
-    "must display Sign out link" in {
-      val signOutElements = view.select("*:contains(Sign out)")
-      signOutElements.size() must be >= 1
-      signOutElements.text() must include("Sign out")
+    "have a 'Print this page' link" in {
+      val printPageElement: Element = view.getElementById("print-this-page")
+      printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
 
   }

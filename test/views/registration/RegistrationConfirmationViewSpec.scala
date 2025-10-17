@@ -21,7 +21,7 @@ import controllers.routes
 import models.MneOrDomestic
 import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 import views.html.registrationview.RegistrationConfirmationView
@@ -68,26 +68,28 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have the correct paragraphs for Multinationals and Domestic companies" in {
-      viewDomestic.getElementsByClass("govuk-body").get(0).text mustBe
+      val viewDomesticParagraphs: Elements = viewDomestic.getElementsByClass("govuk-body")
+      val viewMneParagraphs:      Elements = viewMne.getElementsByClass("govuk-body")
+
+      viewDomesticParagraphs.get(0).text mustBe
         "TestCompany has successfully registered to report for Domestic Top-up Tax, " +
         s"on $testDate at $testTimeGMT."
 
-      viewMne.getElementsByClass("govuk-body").get(0).text mustBe
+      viewMneParagraphs.get(0).text mustBe
         "TestCompany has successfully registered to report for Domestic Top-up Tax and Multinational Top-up Tax, " +
         s"on $testDate at $testTimeGMT."
 
-      viewDomestic.getElementsByClass("govuk-body").get(1).text mustBe
+      viewDomesticParagraphs.get(1).text mustBe
         "You will be able to find your Pillar 2 Top-up Taxes ID and " +
         "registration date on your account homepage. Keep these details safe."
 
-      viewDomestic.getElementsByClass("govuk-body").get(2).text mustBe
+      viewDomesticParagraphs.get(2).text mustBe
         "You can now report and manage your Pillar 2 Top-up Taxes."
     }
 
-    "display print this page link" in {
-      val printLink = viewDomestic.select("a:contains(Print this page)")
-      printLink.size()         must be >= 1
-      printLink.first().text() must include("Print this page")
+    "have a 'Print this page' link" in {
+      val printPageElement: Element = viewDomestic.getElementById("print-this-page")
+      printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
 
     "have warning text" in {

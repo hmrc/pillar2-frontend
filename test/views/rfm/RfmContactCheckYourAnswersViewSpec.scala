@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import models.rfm.CorporatePosition.Upe
 import models.{CheckMode, NonUKAddress, UserAnswers}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages._
@@ -208,10 +208,9 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         view.getElementsByClass("govuk-body").get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
       }
 
-      "display print this page link" in {
-        val printLink = view.select("a:contains(Print this page)")
-        printLink.size()         must be >= 1
-        printLink.first().text() must include("Print this page")
+      "have a 'Print this page' link" in {
+        val printPageElement: Element = view.getElementById("print-this-page")
+        printPageElement.getElementsByTag("a").text() mustBe "Print this page"
       }
     }
 

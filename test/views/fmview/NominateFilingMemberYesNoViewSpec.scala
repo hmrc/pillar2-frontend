@@ -26,19 +26,14 @@ import views.html.fmview.NominateFilingMemberYesNoView
 
 class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
 
-  lazy val formProvider = new NominateFilingMemberYesNoFormProvider
-  lazy val page:      NominateFilingMemberYesNoView = inject[NominateFilingMemberYesNoView]
-  lazy val view:      Document                      = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
-  lazy val pageTitle: String                        = "Nominated filing member"
+  lazy val formProvider: NominateFilingMemberYesNoFormProvider = new NominateFilingMemberYesNoFormProvider
+  lazy val page:         NominateFilingMemberYesNoView         = inject[NominateFilingMemberYesNoView]
+  lazy val pageTitle:    String                                = "Nominated filing member"
+  lazy val view: Document = Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
 
   "Nominate Filing Member Yes No View" should {
-
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -47,12 +42,17 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+    }
+
     "have a paragraph body" in {
-      view.getElementsByClass("govuk-body").first().text mustBe
+      val paragraphs: Elements = view.getElementsByClass("govuk-body")
+      paragraphs.get(0).text mustBe
         "The default filing member for your group is the Ultimate Parent Entity (UPE). " +
         "However, the UPE can nominate another company in your group to act as the filing member."
 
-      view.getElementsByClass("govuk-body").get(1).text mustBe
+      paragraphs.get(1).text mustBe
         "If you have been nominated as the filing member, you must have written permission from the UPE (such as an email). " +
         "You do not need to submit this during registration, but we may ask for it during compliance checks."
     }
@@ -62,9 +62,12 @@ class NominateFilingMemberYesNoViewSpec extends ViewSpecBase {
         "Has the Ultimate Parent Entity nominated another company within your group to act as the filing member?"
     }
 
-    "have radio items" in {
-      view.getElementsByClass("govuk-label govuk-radios__label").get(0).text mustBe "Yes"
-      view.getElementsByClass("govuk-label govuk-radios__label").get(1).text mustBe "No"
+    "have Yes/No radio buttons" in {
+      val radioButtons: Elements = view.getElementsByClass("govuk-radios").first().children()
+
+      radioButtons.size() mustBe 2
+      radioButtons.get(0).text() mustBe "Yes"
+      radioButtons.get(1).text() mustBe "No"
     }
 
     "have a button" in {
