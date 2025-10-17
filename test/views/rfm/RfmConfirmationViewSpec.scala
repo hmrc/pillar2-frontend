@@ -82,7 +82,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
-    "display print this page link" in {
+    "have a 'Print this page' link" in {
       val printPageElement: Element = view.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }

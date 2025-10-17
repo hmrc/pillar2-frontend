@@ -278,8 +278,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
         "new filing member for your group and the information is correct and complete to the best of your knowledge."
     }
 
-    // FIXME:
-    "display print this page link" in {
+    "have a 'Print this page' link" in {
       val printPageElement: Element = view.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }

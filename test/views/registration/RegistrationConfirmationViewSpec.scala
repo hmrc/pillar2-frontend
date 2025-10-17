@@ -87,7 +87,7 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
         "You can now report and manage your Pillar 2 Top-up Taxes."
     }
 
-    "display print this page link" in {
+    "have a 'Print this page' link" in {
       val printPageElement: Element = viewDomestic.getElementById("print-this-page")
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }

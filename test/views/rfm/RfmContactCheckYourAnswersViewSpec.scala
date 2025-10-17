@@ -208,7 +208,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
         view.getElementsByClass("govuk-body").get(0).text mustBe "You can print or save a copy of your answers using the 'Print this page' link."
       }
 
-      "display print this page link" in {
+      "have a 'Print this page' link" in {
         val printPageElement: Element = view.getElementById("print-this-page")
         printPageElement.getElementsByTag("a").text() mustBe "Print this page"
       }
