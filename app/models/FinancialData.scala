@@ -64,7 +64,7 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
 sealed trait FinancialTransaction
 
 object FinancialTransaction {
-  sealed trait OutstandingCharge extends FinancialTransaction { self =>
+  sealed trait OutstandingCharge extends FinancialTransaction {
     val taxPeriod:          TaxPeriod
     val subTransactionRef:  EtmpSubtransactionRef
     val outstandingAmount:  BigDecimal
