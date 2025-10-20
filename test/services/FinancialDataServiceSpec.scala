@@ -51,13 +51,13 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
   val dueApiFinancialTransaction: FinancialDataResponse.FinancialItem =
     FinancialDataResponse.FinancialItem(dueDate = Some(today.plusDays(1)), clearingDate = None)
   val clearedApiFinancialTransaction: FinancialDataResponse.FinancialItem =
-    FinancialDataResponse.FinancialItem(dueDate = Some(today.minusDays(8)), clearingDate = Some(today.minusDays(1))) // scalastyle:ignore magic.number
+    FinancialDataResponse.FinancialItem(dueDate = Some(today.minusDays(8)), clearingDate = Some(today.minusDays(1)))
   val uktrMainApiTransaction: FinancialDataResponse.FinancialTransaction = FinancialDataResponse.FinancialTransaction(
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     taxPeriodFrom = Some(today.minusMonths(1)),
     taxPeriodTo = Some(today),
-    outstandingAmount = Some(BigDecimal(100)), // scalastyle:ignore magic.number
+    outstandingAmount = Some(BigDecimal(100)),
     items = Seq(dueApiFinancialTransaction, clearedApiFinancialTransaction)
   )
 
@@ -148,7 +148,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
       "parse payment transactions" which {
 
         val populatedFinancialItem = FinancialDataResponse.FinancialItem(
-          dueDate = Some(LocalDate.now().minusDays(7)), // scalastyle:ignore magic.number
+          dueDate = Some(LocalDate.now().minusDays(7)),
           clearingDate = Some(LocalDate.now().minusDays(1))
         )
         val minimumPaymentApiResponse = FinancialDataResponse.FinancialTransaction(

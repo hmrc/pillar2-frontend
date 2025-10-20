@@ -1163,9 +1163,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         returnStatus =>
           val financialData = FinancialData(
             Seq(
-              outstandingUktrCharge.copy(chargeItems =
-                outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().minusDays(7)) // scalastyle:ignore magic.number
-              )
+              outstandingUktrCharge.copy(chargeItems = outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().minusDays(7)))
             )
           )
           val result = controller.determineNotificationArea(returnStatus, financialData, ActiveAccount)
@@ -1176,9 +1174,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         (returnStatus, accountStatus) =>
           val financialData = FinancialData(
             Seq(
-              outstandingUktrCharge.copy(chargeItems =
-                outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().plusDays(7)) // scalastyle:ignore magic.number
-              )
+              outstandingUktrCharge.copy(chargeItems = outstandingUktrCharge.chargeItems.copy(earliestDueDate = LocalDate.now().plusDays(7)))
             )
           )
           val result = controller.determineNotificationArea(returnStatus, financialData, accountStatus)
@@ -1188,7 +1184,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
 
     val recentPayment = Payment(
       Payment.FinancialItems(
-        Seq(FinancialItem(dueDate = None, clearingDate = Some(LocalDate.now().minusDays(14)))) // scalastyle:ignore magic.number
+        Seq(FinancialItem(dueDate = None, clearingDate = Some(LocalDate.now().minusDays(14))))
       )
     )
 
@@ -1228,12 +1224,12 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     val application = applicationBuilder().build()
     val controller  = application.injector.instanceOf[DashboardController]
     val nonBtnDnaStates = Gen.oneOf(
-      Gen.const(DynamicNotificationAreaState.AccruingInterest(100)), // scalastyle:ignore magic.number
-      Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)), // scalastyle:ignore magic.number
+      Gen.const(DynamicNotificationAreaState.AccruingInterest(100)),
+      Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)),
       Gen.const(DynamicNotificationAreaState.NoNotification),
       Gen.oneOf(DynamicNotificationAreaState.ReturnExpectedNotification.values)
     )
-    val btnDnaState = DynamicNotificationAreaState.OutstandingPaymentsWithBtn(100) // scalastyle:ignore magic.number
+    val btnDnaState = DynamicNotificationAreaState.OutstandingPaymentsWithBtn(100)
 
     "hide the banner when the DNA already includes a message about your BTN" in {
       controller.determineBtnBanner(InactiveAccount, btnDnaState) mustBe BtnBanner.Hide

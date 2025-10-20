@@ -25,7 +25,7 @@ import java.time.LocalDate
 package object financialdata {
 
   private val anyDate: Gen[LocalDate] =
-    Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay) // scalastyle:ignore magic.number
+    Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay)
   private val anyTaxPeriod: Gen[TaxPeriod] = anyDate.map(date => TaxPeriod(date.minusYears(1), date))
   private val anyMainTransactionChargeRef: Gen[EtmpMainTransactionRef.ChargeRef] = Gen.oneOf(EtmpMainTransactionRef.values.collect {
     case chargeRef: EtmpMainTransactionRef.ChargeRef => chargeRef
@@ -33,7 +33,7 @@ package object financialdata {
   private val anySubTransactionRef: Gen[EtmpSubtransactionRef] = Gen.oneOf(EtmpSubtransactionRef.values)
   val anyOutstandingFinancialItem: Gen[FinancialItem] = for {
     dueDate      <- anyDate
-    clearingDate <- Gen.option(Gen.const(dueDate.plusDays(7))) // scalastyle:ignore magic.number
+    clearingDate <- Gen.option(Gen.const(dueDate.plusDays(7)))
   } yield FinancialItem(dueDate.some, clearingDate)
 
   private val anyOutstandingChargeFields: Gen[(TaxPeriod, EtmpSubtransactionRef, BigDecimal, OutstandingCharge.FinancialItems)] = for {
@@ -53,7 +53,7 @@ package object financialdata {
   } yield (OutstandingCharge.apply _)(mainTxRef).tupled(fields)
 
   implicit val anyTransactions: Arbitrary[Seq[FinancialTransaction]] = Arbitrary {
-    Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.oneOf(anyPaymentTransaction, outstandingTransaction))) // scalastyle:ignore magic.number
+    Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.oneOf(anyPaymentTransaction, outstandingTransaction)))
   }
 
 }
