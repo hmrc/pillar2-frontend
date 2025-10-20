@@ -90,7 +90,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         val orgViewNoOverduePayments: Document =
           Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
 
-        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustEqual 0
+        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustBe 0
       }
     }
 
@@ -193,7 +193,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           val agentViewNoOverduePayments: Document =
             Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
 
-          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustEqual 0
+          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustBe 0
         }
       }
     }

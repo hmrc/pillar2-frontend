@@ -67,7 +67,7 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
       radioItems.get(1).text mustBe "No"
     }
 
-    "have a button" in {
+    "have a 'Save and continue' button" in {
       view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
@@ -85,13 +85,13 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
 
       errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
 
-      errorsList.get(0).text() mustBe "Select yes if we can contact John Doe by phone"
+      errorsList.get(0).text() mustBe s"Select yes if we can contact $username by phone"
     }
 
     "show field-specific errors" in {
       val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
 
-      fieldErrors.get(0).text() mustBe "Error: Select yes if we can contact John Doe by phone"
+      fieldErrors.get(0).text() mustBe s"Error: Select yes if we can contact $username by phone"
     }
   }
 }

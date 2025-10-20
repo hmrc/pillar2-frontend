@@ -29,7 +29,7 @@ class RfmCapturePrimaryPhoneViewSpec extends ViewSpecBase {
   lazy val formProvider: CapturePhoneDetailsFormProvider = new CapturePhoneDetailsFormProvider
   lazy val page:         RfmCapturePrimaryPhoneView      = inject[RfmCapturePrimaryPhoneView]
   lazy val username:     String                          = "John Doe"
-  lazy val view:      Document = Jsoup.parse(page(formProvider("John Doe"), NormalMode, "John Doe")(request, appConfig, messages).toString())
+  lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
   lazy val pageTitle: String   = "What is the phone number"
 
   "Rfm Capture Primary Phone View" should {
@@ -39,7 +39,7 @@ class RfmCapturePrimaryPhoneViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -49,13 +49,13 @@ class RfmCapturePrimaryPhoneViewSpec extends ViewSpecBase {
     }
 
     "have a hint description" in {
-      view
-        .getElementsByClass("govuk-hint")
-        .text mustEqual "For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of the phone number, then the extension number. For example, 01632960001#123."
+      view.getElementsByClass("govuk-hint").text mustBe "For international numbers include the country code, " +
+        "for example +44 808 157 0192 or 0044 808 157 0192. To add an extension number, add hash (#) to the end of " +
+        "the phone number, then the extension number. For example, 01632960001#123."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Save and continue"
+    "have a 'Save and continue' button" in {
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

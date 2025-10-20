@@ -49,8 +49,8 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 ID and date time confirmation paragraphs" in {
-      paragraphs.get(0).text mustEqual s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
-      paragraphs.get(1).text mustEqual s"Your group’s filing member was replaced on $currentDateTimeGMT"
+      paragraphs.get(0).text mustBe s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
+      paragraphs.get(1).text mustBe s"Your group’s filing member was replaced on $currentDateTimeGMT"
     }
 
     "have an H2 heading for new filing member obligations" in {

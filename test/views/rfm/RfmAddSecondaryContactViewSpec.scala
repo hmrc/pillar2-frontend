@@ -50,21 +50,18 @@ class RfmAddSecondaryContactViewSpec extends ViewSpecBase {
     "have two description paragraphs" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
 
-      paragraphs.get(0).text must equal(
-        "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
-      )
-
-      paragraphs.get(1).text must equal(
-        "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
-      )
+      paragraphs.get(0).text mustBe "We use the secondary contact if we do not get a response from the primary " +
+        "contact. We encourage you to provide a secondary contact, if possible."
+      paragraphs.get(1).text mustBe "This can be a team mailbox or another contact who is able to deal with " +
+        "enquiries about the group’s management of Pillar 2 Top-up Taxes."
     }
 
     "have an H2 heading" in {
       view.getElementsByTag("h2").get(1).text mustBe "Do you have a second contact?"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+    "have a 'Save and continue' button" in {
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
