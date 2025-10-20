@@ -18,9 +18,6 @@ package models.financialdata
 
 import config.FrontendAppConfig
 import models.financialdata.FinancialTransaction.{InterestOutstandingCharge, OutstandingCharge, Payment}
-import models.subscription.AccountingPeriod
-import models.{EtmpMainTransactionRef, EtmpSubtransactionRef}
-import play.api.libs.json.{Json, OFormat}
 
 import java.time.temporal.ChronoUnit
 import java.time.{Clock, LocalDate}
@@ -60,100 +57,4 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
   /** Convenience method for operating on payment transactions */
   def payments: Seq[FinancialTransaction.Payment] = financialTransactions.collect { case payment: Payment => payment }
 
-}
-
-sealed trait FinancialTransaction
-
-object FinancialTransaction {
-  sealed trait OutstandingCharge extends FinancialTransaction {
-    val taxPeriod:          TaxPeriod
-    val subTransactionRef:  EtmpSubtransactionRef
-    val outstandingAmount:  BigDecimal
-    val chargeItems:        OutstandingCharge.FinancialItems
-    val mainTransactionRef: EtmpMainTransactionRef.ChargeRef
-  }
-
-  sealed trait InterestOutstandingCharge extends OutstandingCharge
-
-  object OutstandingCharge {
-
-    def apply(mainTransactionRef: EtmpMainTransactionRef.ChargeRef)(
-      taxPeriod:                  TaxPeriod,
-      subTransactionRef:          EtmpSubtransactionRef,
-      outstandingAmount:          BigDecimal,
-      chargeItems:                FinancialItems
-    ): OutstandingCharge = {
-      val fields = (taxPeriod, subTransactionRef, outstandingAmount, chargeItems)
-      mainTransactionRef match {
-        case EtmpMainTransactionRef.UkTaxReturnMain     => (UktrMainOutstandingCharge.apply _).tupled(fields)
-        case EtmpMainTransactionRef.LatePaymentInterest => (LatePaymentInterestOutstandingCharge.apply _).tupled(fields)
-        case EtmpMainTransactionRef.RepaymentInterest   => (RepaymentInterestOutstandingCharge.apply _).tupled(fields)
-      }
-    }
-
-    final case class UktrMainOutstandingCharge(
-      taxPeriod:         TaxPeriod,
-      subTransactionRef: EtmpSubtransactionRef,
-      outstandingAmount: BigDecimal,
-      chargeItems:       FinancialItems
-    ) extends OutstandingCharge {
-      override final val mainTransactionRef = EtmpMainTransactionRef.UkTaxReturnMain
-    }
-
-    final case class LatePaymentInterestOutstandingCharge(
-      taxPeriod:         TaxPeriod,
-      subTransactionRef: EtmpSubtransactionRef,
-      outstandingAmount: BigDecimal,
-      chargeItems:       FinancialItems
-    ) extends InterestOutstandingCharge {
-      override final val mainTransactionRef = EtmpMainTransactionRef.LatePaymentInterest
-    }
-
-    final case class RepaymentInterestOutstandingCharge(
-      taxPeriod:         TaxPeriod,
-      subTransactionRef: EtmpSubtransactionRef,
-      outstandingAmount: BigDecimal,
-      chargeItems:       FinancialItems
-    ) extends InterestOutstandingCharge {
-      override final val mainTransactionRef = EtmpMainTransactionRef.RepaymentInterest
-    }
-
-    final case class FinancialItems(earliestDueDate: LocalDate, items: Seq[FinancialItem])
-  }
-  final case class Payment(paymentItems: Payment.FinancialItems) extends FinancialTransaction
-
-  object Payment {
-    final case class FinancialItems(items: Seq[FinancialItem]) {
-      def latestClearingDate: Option[LocalDate] = items.flatMap(_.clearingDate).maxOption
-    }
-  }
-}
-
-case class TaxPeriod(from: LocalDate, to: LocalDate)
-
-object TaxPeriod {
-  implicit val ordering: Ordering[TaxPeriod] = Ordering.by(_.from)
-}
-
-final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
-
-object FinancialItem {
-  implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
-}
-
-case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
-
-  /** Checks if there are overdue return payments in this summary */
-  def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
-    transactions.exists(t => t.name == EtmpMainTransactionRef.UkTaxReturnMain.displayName && t.dueDate.isBefore(currentDate))
-}
-
-object FinancialSummary {
-  implicit val format: OFormat[FinancialSummary] = Json.format[FinancialSummary]
-}
-
-case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
-
-object TransactionSummary {
-  implicit val format: OFormat[TransactionSummary] = Json.format[TransactionSummary]
 }
