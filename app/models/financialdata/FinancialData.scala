@@ -50,7 +50,7 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
     payments
       .flatMap(_.paymentItems.latestClearingDate)
       .exists { latestClearing =>
-        val daysAgoLatestPaymentCleared = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
+        val daysAgoLatestPaymentCleared: Long = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
         daysAgoLatestPaymentCleared <= appConfig.maxDaysAgoToConsiderPaymentAsRecent
       }
 

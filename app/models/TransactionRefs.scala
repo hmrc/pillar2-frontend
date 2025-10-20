@@ -32,7 +32,7 @@ object EtmpMainTransactionRef extends StringEnum[EtmpMainTransactionRef] {
   }
   case object PaymentTransaction extends EtmpMainTransactionRef("0060")
 
-  val values = findValues
+  val values: IndexedSeq[EtmpMainTransactionRef] = findValues
 
   sealed abstract class ChargeRef(value: String) extends EtmpMainTransactionRef(value) {
     def displayName: String
@@ -67,5 +67,5 @@ object EtmpSubtransactionRef extends StringEnum[EtmpSubtransactionRef] {
       with UnderTaxedProfitsRule
       with LatePaymentInterest
 
-  val values = findValues
+  val values: IndexedSeq[EtmpSubtransactionRef] = findValues
 }
