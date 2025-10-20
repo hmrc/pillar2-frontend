@@ -18,7 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils.ZonedDateTimeOps
 import views.html.rfm.RfmConfirmationView
@@ -49,8 +49,8 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have pillar 2 ID and date time confirmation paragraphs" in {
-      paragraphs.get(0).text mustEqual s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
-      paragraphs.get(1).text mustEqual s"Your group’s filing member was replaced on $currentDateTimeGMT"
+      paragraphs.get(0).text mustBe s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
+      paragraphs.get(1).text mustBe s"Your group’s filing member was replaced on $currentDateTimeGMT"
     }
 
     "have an H2 heading for new filing member obligations" in {
@@ -76,15 +76,15 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
 
     "have a paragraph with link" in {
       paragraphs.get(4).text mustBe "You can now report and manage your group's Pillar 2 Top-up Taxes on behalf of your group."
-      val link = paragraphs.get(4).getElementsByTag("a")
+
+      val link: Element = paragraphs.get(4).getElementsByTag("a").first()
       link.text mustBe "report and manage your group's Pillar 2 Top-up Taxes"
       link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
-    "display print this page link" in {
-      val printLink = view.select("a:contains(Print this page)")
-      printLink.size()         must be >= 1
-      printLink.first().text() must include("Print this page")
+    "have a 'Print this page' link" in {
+      val printPageElement: Element = view.getElementById("print-this-page")
+      printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
   }
 }

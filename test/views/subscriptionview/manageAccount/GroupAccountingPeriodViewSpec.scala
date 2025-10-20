@@ -43,7 +43,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a caption" in {
-        organisationView.getElementsByClass("govuk-caption-l").text must equal("Group details")
+        organisationView.getElementsByClass("govuk-caption-l").text mustBe "Group details"
       }
 
       "have a unique H1 heading" in {
@@ -59,13 +59,12 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have the following paragraph content" in {
-        organisationView.getElementsByClass("govuk-body").get(0).text must equal(
+        organisationView.getElementsByClass("govuk-body").get(0).text mustBe
           "The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity."
-        )
 
-        organisationView.getElementsByClass("govuk-body").get(1).text must equal(
+        organisationView.getElementsByClass("govuk-body").get(1).text mustBe
           "Accounting periods are usually 12 months, but can be longer or shorter."
-        )
+
       }
 
       "have start and end date legends" in {
@@ -94,8 +93,8 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         Option(endDateFieldset.getElementById("endDate.year")) mustBe defined
       }
 
-      "have a button" in {
-        organisationView.getElementsByClass("govuk-button").text must equal("Continue")
+      "have a 'Continue' button" in {
+        organisationView.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
 
@@ -105,7 +104,7 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a caption" in {
-        agentView.getElementsByClass("govuk-caption-l").text must equal("orgName")
+        agentView.getElementsByClass("govuk-caption-l").text mustBe "orgName"
       }
 
       "have a unique H1 heading" in {
@@ -115,13 +114,11 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have the following paragraph content" in {
-        agentView.getElementsByClass("govuk-body").get(0).text must equal(
+        agentView.getElementsByClass("govuk-body").get(0).text mustBe
           "The accounting period is the period covered by the consolidated financial statements of the Ultimate Parent Entity."
-        )
 
-        agentView.getElementsByClass("govuk-body").get(1).text must equal(
+        agentView.getElementsByClass("govuk-body").get(1).text mustBe
           "Accounting periods are usually 12 months, but can be longer or shorter."
-        )
       }
 
       "have start and end date legends" in {
@@ -129,29 +126,29 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
         val startDateFieldset: Element  = datesFieldsets.get(0)
         val endDateFieldset:   Element  = datesFieldsets.get(1)
 
-        startDateFieldset.getElementsByClass("govuk-fieldset__legend").text must equal("Start date")
-        startDateFieldset.getElementById("startDate-hint").text             must equal("For example 27 3 2024")
+        startDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "Start date"
+        startDateFieldset.getElementById("startDate-hint").text mustBe "For example 27 3 2024"
 
-        startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text must equal("Day")
+        startDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(startDateFieldset.getElementById("startDate.day")) mustBe defined
-        startDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text must equal("Month")
+        startDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text mustBe "Month"
         Option(startDateFieldset.getElementById("startDate.month")) mustBe defined
-        startDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text must equal("Year")
+        startDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
         Option(startDateFieldset.getElementById("startDate.year")) mustBe defined
 
-        endDateFieldset.getElementsByClass("govuk-fieldset__legend").text must equal("End date")
-        endDateFieldset.getElementById("endDate-hint").text               must equal("For example 28 3 2025")
+        endDateFieldset.getElementsByClass("govuk-fieldset__legend").text mustBe "End date"
+        endDateFieldset.getElementById("endDate-hint").text mustBe "For example 28 3 2025"
 
-        endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text must equal("Day")
+        endDateFieldset.getElementsByClass("govuk-date-input__item").get(0).text mustBe "Day"
         Option(endDateFieldset.getElementById("endDate.day")) mustBe defined
-        endDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text must equal("Month")
+        endDateFieldset.getElementsByClass("govuk-date-input__item").get(1).text mustBe "Month"
         Option(endDateFieldset.getElementById("endDate.month")) mustBe defined
-        endDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text must equal("Year")
+        endDateFieldset.getElementsByClass("govuk-date-input__item").get(2).text mustBe "Year"
         Option(endDateFieldset.getElementById("endDate.year")) mustBe defined
       }
 
-      "have a button" in {
-        agentView.getElementsByClass("govuk-button").text must equal("Continue")
+      "have a 'Continue' button" in {
+        agentView.getElementsByClass("govuk-button").text mustBe "Continue"
       }
     }
   }

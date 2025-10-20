@@ -18,90 +18,125 @@ package views.subscriptionview
 
 import base.ViewSpecBase
 import forms.SecondaryContactEmailFormProvider
+import generators.StringGenerators
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.SecondaryContactEmailView
 
-class SecondaryContactEmailViewSpec extends ViewSpecBase {
+class SecondaryContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
   lazy val formProvider: SecondaryContactEmailFormProvider = new SecondaryContactEmailFormProvider
-  lazy val form:         Form[String]                      = formProvider("Test Contact")
   lazy val page:         SecondaryContactEmailView         = inject[SecondaryContactEmailView]
-  lazy val contactName:  String                            = "Test Contact"
+  lazy val contactName:  String                            = "John Doe"
   lazy val pageTitle:    String                            = "What is the email address?"
+  lazy val form:         Form[String]                      = formProvider(contactName)
+  lazy val view:         Document                          = Jsoup.parse(page(form, NormalMode, contactName)(request, appConfig, messages).toString())
 
-  "SecondaryContactEmailView" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode, contactName)(request, appConfig, messages).toString()
-    )
+  "SecondaryContactEmailView" when {
+    "page loaded" should {
+      "have a title" in {
+        view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      }
 
-    "have a title" in {
-      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      "have a unique H1 heading" in {
+        val h1Elements: Elements = view.getElementsByTag("h1")
+        h1Elements.size() mustBe 1
+        h1Elements.text() mustBe s"What is the email address for $contactName?"
+      }
+
+      "have a caption" in {
+        view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
+      }
+
+      "have a hint" in {
+        view.getElementsByClass("govuk-hint").text mustBe "We’ll only use this to contact you about Pillar 2 Top-up Taxes."
+      }
+
+      "have a button" in {
+        view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+      }
+
     }
 
-    "have a unique H1 heading" in {
-      val h1Elements: Elements = view.getElementsByTag("h1")
-      h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"What is the email address for $contactName?"
-    }
-
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
-    }
-
-    "have a hint description" in {
-      view.getElementsByClass("govuk-hint").text.contains("only use this to contact you about Pillar 2 Top-up Taxes") mustBe true
-    }
-
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
-    }
-
-    "show appropriate error when the email field is left empty" in {
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> "")), NormalMode, contactName)(request, appConfig, messages).toString()
+    "form is submitted with missing values" should {
+      val emptyEmailAddress: Map[String, String] = Map("emailAddress" -> "")
+      val errorView: Document = Jsoup.parse(
+        page(form.bind(emptyEmailAddress), NormalMode, contactName)(request, appConfig, messages).toString()
       )
-      val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
-      val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text mustBe s"Enter the email address for $contactName"
+      "show missing values error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text mustBe s"Error: Enter the email address for $contactName"
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+        errorsList.get(0).text() mustBe s"Enter the email address for $contactName"
+      }
+
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe s"Error: Enter the email address for $contactName"
+      }
     }
 
-    "show error when email format is invalid" in {
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> "invalid-email")), NormalMode, contactName)(request, appConfig, messages).toString()
+    "form is submitted with values exceeding maximum length" should {
+      val longEmailAddress: Map[String, String] = Map("emailAddress" -> randomAlphaNumericStringGenerator(135))
+
+      val errorView: Document = Jsoup.parse(
+        page(form.bind(longEmailAddress), NormalMode, contactName)(request, appConfig, messages).toString()
       )
-      val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
-      val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text mustBe "Enter an email address in the correct format, like name@example.com"
+      "show length validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text mustBe "Error: Enter an email address in the correct format, like name@example.com"
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+        errorsList.get(0).text() mustBe "Email address must be 132 characters or less"
+      }
+
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: Email address must be 132 characters or less"
+      }
     }
 
-    "show error when email is too long (over 132 characters)" in {
-      val longEmail = "a" * 130 + "@email.com"
-      val errorView = Jsoup.parse(
-        page(form.bind(Map("emailAddress" -> longEmail)), NormalMode, contactName)(request, appConfig, messages).toString()
+    "form is submitted with special characters" should {
+      val xssInput: Map[String, String] = Map("emailAddress" -> "emailaddress<script>alert('xss')</script>@example.com")
+
+      val errorView: Document = Jsoup.parse(
+        page(form.bind(xssInput), NormalMode, contactName)(request, appConfig, messages).toString()
       )
-      val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()
-      errorSummary.getElementsByClass("govuk-error-summary__title").first().text mustBe "There is a problem"
 
-      val errorList = errorSummary.getElementsByClass("govuk-list govuk-error-summary__list").first()
-      errorList.text mustBe "Email address must be 132 characters or less"
+      "show XSS validation error summary" in {
+        val errorSummaryElements: Elements = errorView.getElementsByClass("govuk-error-summary")
+        errorSummaryElements.size() mustBe 1
 
-      val fieldError = errorView.getElementsByClass("govuk-error-message")
-      fieldError.text mustBe "Error: Email address must be 132 characters or less"
+        val errorSummary: Element  = errorSummaryElements.first()
+        val errorsList:   Elements = errorSummary.getElementsByTag("li")
+
+        errorSummary.getElementsByClass("govuk-error-summary__title").text() mustBe "There is a problem"
+
+        errorsList.get(0).text() mustBe "Enter an email address in the correct format, like name@example.com"
+      }
+
+      "show field-specific errors" in {
+        val fieldErrors: Elements = errorView.getElementsByClass("govuk-error-message")
+
+        fieldErrors.get(0).text() mustBe "Error: Enter an email address in the correct format, like name@example.com"
+      }
     }
-
   }
+
 }

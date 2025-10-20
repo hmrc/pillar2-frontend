@@ -55,10 +55,8 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
       val elements = makePaymentDashboardView.getElementsByTag("a").listIterator().asScala.toList.filter(_.hasClass("govuk-button"))
       elements must have size 1
       val button = elements.head
-      button.attr("href") must equal(
-        "/report-pillar2-top-up-taxes/payment/redirect"
-      )
-      button.text() mustEqual "Pay Now"
+      button.attr("href") mustBe "/report-pillar2-top-up-taxes/payment/redirect"
+      button.text() mustBe "Pay Now"
     }
 
     "have the correct link to payment guidance" in {
@@ -70,9 +68,8 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
         .filter(_.text == "read more about other payment methods. (opens in a new tab)")
       elements must have size 1
       val guidancePageLink = elements.head
-      guidancePageLink.attr("href") must equal(
+      guidancePageLink.attr("href") mustBe
         "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
-      )
     }
   }
 }

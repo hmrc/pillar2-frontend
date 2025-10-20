@@ -45,7 +45,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
     "display link section correctly" in {
       val linkSection = view.getElementsByClass("govuk-body").last()
-      linkSection.text() mustEqual "You can now report and manage your Pillar 2 Top-up Taxes."
+      linkSection.text() mustBe "You can now report and manage your Pillar 2 Top-up Taxes."
 
       val link = linkSection.getElementsByClass("govuk-link").first()
       link.text() mustBe "report and manage your Pillar 2 Top-up Taxes."

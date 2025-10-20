@@ -89,7 +89,6 @@ class HomepageViewSpec extends ViewSpecBase {
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
       organisationView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "display organisation information correctly" in {
@@ -521,6 +520,11 @@ class HomepageViewSpec extends ViewSpecBase {
       val h1Elements: Elements = agentView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageHeading
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "display organisation information correctly" in {

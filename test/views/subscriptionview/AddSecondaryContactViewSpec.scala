@@ -38,7 +38,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must equal("Contact details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -50,20 +50,19 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
     "have two description paragraphs" in {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
 
-      paragraphs.get(0).text must equal(
-        "We use the secondary contact if we do not get a response from the primary contact. We encourage you to provide a secondary contact, if possible."
-      )
-      paragraphs.get(1).text must equal(
-        "This can be a team mailbox or another contact who is able to deal with enquiries about the group’s management of Pillar 2 Top-up Taxes."
-      )
+      paragraphs.get(0).text mustBe "We use the secondary contact if we do not get a response from the primary " +
+        "contact. We encourage you to provide a secondary contact, if possible."
+
+      paragraphs.get(1).text mustBe "This can be a team mailbox or another contact who is able to deal with " +
+        "enquiries about the group’s management of Pillar 2 Top-up Taxes."
     }
 
     "have a legend heading" in {
-      view.getElementsByClass("govuk-fieldset__heading").text must equal("Do you have a second contact?")
+      view.getElementsByClass("govuk-fieldset__heading").text mustBe "Do you have a second contact?"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+    "have a 'Save and continue' button" in {
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }
