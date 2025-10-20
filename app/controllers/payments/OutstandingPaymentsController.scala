@@ -56,14 +56,9 @@ class OutstandingPaymentsController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
-    val outstandingCharges = financialData.outstandingCharges
-
-    outstandingCharges
+  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] =
+    financialData.outstandingCharges
       .groupBy(_.taxPeriod)
-      .toSeq
-      .sortBy(_._1)
-      .reverse
       .map { case (taxPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =
           transactions
@@ -79,7 +74,9 @@ class OutstandingPaymentsController @Inject() (
 
         FinancialSummary(AccountingPeriod(taxPeriod.from, taxPeriod.to), transactionSummaries.sortBy(_.dueDate).reverse)
       }
-  }
+      .toSeq
+      .sortBy(_.accountingPeriod.dueDate)
+      .reverse
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
