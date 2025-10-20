@@ -22,8 +22,9 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario._
-import models.PaymentState._
 import models._
+import models.financialdata.PaymentState._
+import models.financialdata.{FinancialData, PaymentState}
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}

@@ -21,9 +21,10 @@ import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
 import models.DueAndOverdueReturnBannerScenario._
-import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models.OutstandingPaymentBannerScenario.{Outstanding, Paid}
 import models._
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.financialdata.{FinancialData, FinancialItem, TaxPeriod}
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription._

@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
 import models._
+import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging

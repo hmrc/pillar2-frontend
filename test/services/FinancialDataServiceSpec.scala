@@ -19,10 +19,10 @@ package services
 import base.SpecBase
 import cats.syntax.option._
 import connectors.FinancialDataConnector
-import connectors.FinancialDataConnector.FinancialDataResponse
-import models.FinancialTransaction.OutstandingCharge
-import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
 import models._
+import models.financialdata.FinancialTransaction.OutstandingCharge
+import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.financialdata._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Gen

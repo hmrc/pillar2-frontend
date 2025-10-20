@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package models
+package models.financialdata
 
 import base.SpecBase
 import cats.syntax.option._
 import models.EtmpMainTransactionRef._
-import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.FinancialTransaction.{OutstandingCharge, Payment}
+import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
+import models.{EtmpMainTransactionRef, EtmpSubtransactionRef}
 import org.scalacheck.{Arbitrary, Gen}
 import org.scalatest.{Assertion, LoneElement}
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
@@ -64,6 +65,7 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with Lone
   }
 
   private implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
+  private val today = LocalDate.now(fixedClock)
 
   "FinancialData" when {
 
@@ -94,14 +96,14 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with Lone
 
     "overdueOutstandingCharges" should {
       "return any overdue outstanding charges" in forAll(
-        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isBefore(currentDate))
+        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isBefore(today))
       ) { pastDueCharge: OutstandingCharge =>
         val financialData = FinancialData(Seq(pastDueCharge))
         financialData.overdueOutstandingCharges.loneElement mustBe pastDueCharge
       }
 
       "return an empty collection when there are no overdue outstanding charges" in forAll(
-        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isAfter(currentDate))
+        outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isAfter(today))
       ) { futureDueCharge: OutstandingCharge =>
         val financialData = FinancialData(Seq(futureDueCharge))
 
@@ -152,35 +154,33 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with Lone
 
     "hasOverdueReturnPayment" should {
       "return true when there is an overdue UK tax return payment" in {
-        val currentDate = LocalDate.now
         val overdueTransaction = TransactionSummary(
           EtmpMainTransactionRef.UkTaxReturnMain.displayName,
           BigDecimal(100),
-          currentDate.minusDays(1) // Overdue
+          today.minusDays(1) // Overdue
         )
 
         val summary = FinancialSummary(
-          AccountingPeriod(currentDate.minusMonths(1), currentDate),
+          AccountingPeriod(today.minusMonths(1), today),
           Seq(overdueTransaction)
         )
 
-        summary.hasOverdueReturnPayment(currentDate) mustBe true
+        summary.hasOverdueReturnPayment(today) mustBe true
       }
 
       "return false when there are no overdue UK tax return payments" in {
-        val currentDate = LocalDate.now
         val futureTransaction = TransactionSummary(
           EtmpMainTransactionRef.UkTaxReturnMain.displayName,
           BigDecimal(100),
-          currentDate.plusDays(1) // Not overdue
+          today.plusDays(1) // Not overdue
         )
 
         val summary = FinancialSummary(
-          AccountingPeriod(currentDate.minusMonths(1), currentDate),
+          AccountingPeriod(today.minusMonths(1), today),
           Seq(futureTransaction)
         )
 
-        summary.hasOverdueReturnPayment(currentDate) mustBe false
+        summary.hasOverdueReturnPayment(today) mustBe false
       }
     }
   }

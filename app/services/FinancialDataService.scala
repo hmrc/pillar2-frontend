@@ -22,9 +22,9 @@ import cats.syntax.functorFilter._
 import cats.syntax.option._
 import cats.syntax.validated._
 import connectors.FinancialDataConnector
-import connectors.FinancialDataConnector.FinancialDataResponse
-import models.FinancialTransaction.{OutstandingCharge, Payment}
 import models._
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.financialdata._
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
 import services.FinancialDataService.parseFinancialDataResponse
@@ -69,7 +69,7 @@ object FinancialDataService extends Logging {
     }
 
   private def parseChargeTransaction(
-    responseTransaction: FinancialDataConnector.FinancialDataResponse.FinancialTransaction,
+    responseTransaction: FinancialDataResponse.FinancialTransaction,
     mainReference:       EtmpMainTransactionRef.ChargeRef
   ): ValidatedNec[IgnoredEtmpTransaction, FinancialTransaction.OutstandingCharge] =
     (

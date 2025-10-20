@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package models
+package models.financialdata
 
 import config.FrontendAppConfig
-import models.FinancialTransaction.{InterestOutstandingCharge, OutstandingCharge, Payment}
+import models.financialdata.FinancialTransaction.{InterestOutstandingCharge, OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
+import models.{EtmpMainTransactionRef, EtmpSubtransactionRef}
 import play.api.libs.json.{Json, OFormat}
 
 import java.time.temporal.ChronoUnit

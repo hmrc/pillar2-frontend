@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.financialdata
 
 import config.FrontendAppConfig
 import enumeratum.{Enum, EnumEntry}

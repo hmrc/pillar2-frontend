@@ -19,8 +19,9 @@ package controllers.payments
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
 import controllers.payments.OutstandingPaymentsControllerSpec._
-import models.FinancialTransaction.OutstandingCharge
 import models._
+import models.financialdata.FinancialTransaction.OutstandingCharge
+import models.financialdata._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
