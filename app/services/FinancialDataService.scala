@@ -136,6 +136,6 @@ object FinancialDataService extends Logging {
     case class RequiredValueMissing(field: String) extends IgnoredEtmpTransaction(s"$field was missing")
     case class UnrelatedValue(field: String, value: String) extends IgnoredEtmpTransaction(s"$field has invalid value $value")
     case class DidNotPassFilter[A](field: String, value: A, reason: String)
-        extends IgnoredEtmpTransaction(s"$field's value $value did not meet critera $reason")
+        extends IgnoredEtmpTransaction(s"$field's value $value did not meet criteria $reason")
   }
 }
