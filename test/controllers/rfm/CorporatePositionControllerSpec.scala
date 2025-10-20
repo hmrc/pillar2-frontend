@@ -163,7 +163,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future(Some(ua)))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", ""))
