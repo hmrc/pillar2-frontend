@@ -176,9 +176,9 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
           val result        = service.retrieveFinancialData("fake-plr", LocalDate.now().minusYears(1), LocalDate.now()).futureValue
           val expectedItems = paymentResponse.items.map(respItem => FinancialItem(respItem.dueDate, respItem.clearingDate))
 
-          result.financialTransactions                        must have size 1
-          result.payments                                     must have size 1
-          result.payments.headOption.value.paymentItems.items must contain theSameElementsInOrderAs expectedItems
+          result.financialTransactions                            must have size 1
+          result.onlyPayments                                     must have size 1
+          result.onlyPayments.headOption.value.paymentItems.items must contain theSameElementsInOrderAs expectedItems
         }
       }
 

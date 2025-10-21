@@ -57,7 +57,7 @@ class OutstandingPaymentsController @Inject() (
     with Logging {
 
   private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] =
-    financialData.outstandingCharges
+    financialData.onlyOutstandingCharges
       .groupBy(_.taxPeriod)
       .map { case (taxPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =

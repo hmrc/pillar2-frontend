@@ -1142,7 +1142,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
       "there's a regular, non-interest outstanding change and a BTN has been submitted" in forAll(anyReturnStatus) { returnStatus =>
         val financialData = FinancialData(Seq(outstandingUktrCharge))
         val result        = controller.determineNotificationArea(returnStatus, financialData, InactiveAccount)
-        result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.totalOutstandingAmount)
+        result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
       }
     }
 
@@ -1154,7 +1154,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
       ) { (interestCharge, returnStatus, accountStatus) =>
         val financialData = FinancialData(Seq(interestCharge, outstandingUktrCharge))
         val result        = controller.determineNotificationArea(returnStatus, financialData, accountStatus)
-        result mustBe DynamicNotificationAreaState.AccruingInterest(financialData.totalOutstandingAmount)
+        result mustBe DynamicNotificationAreaState.AccruingInterest(financialData.calculateOutstandingAmount)
       }
     }
 
@@ -1167,7 +1167,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
             )
           )
           val result = controller.determineNotificationArea(returnStatus, financialData, ActiveAccount)
-          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.totalOutstandingAmount)
+          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.calculateOutstandingAmount)
       }
 
       "outstanding charges have not yet reached their due date, and there is no interest charge" in forAll(anyReturnStatus, anyAccountStatus) {
@@ -1178,7 +1178,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
             )
           )
           val result = controller.determineNotificationArea(returnStatus, financialData, accountStatus)
-          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.totalOutstandingAmount)
+          result mustBe DynamicNotificationAreaState.OutstandingPayments(financialData.calculateOutstandingAmount)
       }
     }
 

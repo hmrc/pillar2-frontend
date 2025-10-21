@@ -34,14 +34,16 @@ object PaymentState extends Enum[PaymentState] {
 
   def unapply(financialData: FinancialData)(implicit clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
     val anyChargesAccruingInterest = financialData.overdueAccruingInterestCharges.nonEmpty
-    val anyChargesOverdue          = financialData.overdueOutstandingCharges.nonEmpty
-    val anyOutstandingCharges      = financialData.outstandingCharges.nonEmpty
+    val anyChargesOverdue          = financialData.onlyOverdueOutstandingCharges.nonEmpty
+    val anyOutstandingCharges      = financialData.onlyOutstandingCharges.nonEmpty
 
     Some {
       Option
-        .when(anyChargesAccruingInterest)(PastDueWithInterestCharge(financialData.totalOutstandingAmount))
-        .orElse(Option.when(anyChargesOverdue && !anyChargesAccruingInterest)(PaymentState.PastDueNoInterest(financialData.totalOutstandingAmount)))
-        .orElse(Option.when(anyOutstandingCharges && !anyChargesOverdue)(PaymentState.NotYetDue(financialData.totalOutstandingAmount)))
+        .when(anyChargesAccruingInterest)(PastDueWithInterestCharge(financialData.calculateOutstandingAmount))
+        .orElse(
+          Option.when(anyChargesOverdue && !anyChargesAccruingInterest)(PaymentState.PastDueNoInterest(financialData.calculateOutstandingAmount))
+        )
+        .orElse(Option.when(anyOutstandingCharges && !anyChargesOverdue)(PaymentState.NotYetDue(financialData.calculateOutstandingAmount)))
         .orElse(Option.when(financialData.hasRecentPayment && !anyOutstandingCharges)(PaymentState.Paid))
         .getOrElse(PaymentState.NothingDueNothingRecentlyPaid)
     }
