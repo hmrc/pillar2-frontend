@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package models
+package models.financialdata
 
 import enumeratum.values.{StringEnum, StringEnumEntry}
 
@@ -37,35 +37,4 @@ object EtmpMainTransactionRef extends StringEnum[EtmpMainTransactionRef] {
   sealed abstract class ChargeRef(value: String) extends EtmpMainTransactionRef(value) {
     def displayName: String
   }
-}
-
-sealed abstract class EtmpSubtransactionRef(val value: String) extends StringEnumEntry
-
-sealed trait DomesticTopupTax
-sealed trait MultinationalTopupTax
-sealed trait IncomeInclusionRule
-sealed trait UnderTaxedProfitsRule
-sealed trait RepaymentInterest
-sealed trait LatePaymentInterest
-sealed trait UkTaxReturn
-
-object EtmpSubtransactionRef extends StringEnum[EtmpSubtransactionRef] {
-  case object Dtt extends EtmpSubtransactionRef("6233") with DomesticTopupTax
-  case object Mtt extends EtmpSubtransactionRef("6234") with MultinationalTopupTax
-  case object UktrIirIrrMttUtprDiscDet
-      extends EtmpSubtransactionRef("6235")
-      with UkTaxReturn
-      with IncomeInclusionRule
-      with MultinationalTopupTax
-      with UnderTaxedProfitsRule
-  case object UktrRepaymentInterest extends EtmpSubtransactionRef("6237") with UkTaxReturn with RepaymentInterest
-  case object DttLatePaymentInterest extends EtmpSubtransactionRef("6236") with DomesticTopupTax with LatePaymentInterest
-  case object MttIirLatePaymentInterest extends EtmpSubtransactionRef("6238") with MultinationalTopupTax with LatePaymentInterest
-  case object MttUtprLatePaymentInterest
-      extends EtmpSubtransactionRef("6239")
-      with MultinationalTopupTax
-      with UnderTaxedProfitsRule
-      with LatePaymentInterest
-
-  val values: IndexedSeq[EtmpSubtransactionRef] = findValues
 }

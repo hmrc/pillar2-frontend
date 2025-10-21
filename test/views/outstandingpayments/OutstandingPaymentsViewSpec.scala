@@ -19,8 +19,7 @@ package views.outstandingpayments
 import base.ViewSpecBase
 import controllers.routes
 import controllers.routes._
-import models.EtmpMainTransactionRef
-import models.financialdata.{FinancialSummary, TransactionSummary}
+import models.financialdata.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}

@@ -16,8 +16,6 @@
 
 package models.financialdata
 
-import models.{EtmpMainTransactionRef, EtmpSubtransactionRef}
-
 import java.time.LocalDate
 
 sealed trait FinancialTransaction

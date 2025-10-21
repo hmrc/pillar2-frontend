@@ -16,7 +16,6 @@
 
 package models.financialdata
 
-import models.EtmpMainTransactionRef
 import models.subscription.AccountingPeriod
 import play.api.libs.json.{Json, OFormat}
 

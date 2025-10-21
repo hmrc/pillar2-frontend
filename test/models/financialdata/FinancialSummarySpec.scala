@@ -17,7 +17,6 @@
 package models.financialdata
 
 import base.SpecBase
-import models.EtmpMainTransactionRef
 import models.subscription.AccountingPeriod
 
 import java.time.LocalDate

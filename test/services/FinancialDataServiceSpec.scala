@@ -19,7 +19,6 @@ package services
 import base.SpecBase
 import cats.syntax.option._
 import connectors.FinancialDataConnector
-import models._
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
 import models.financialdata._
