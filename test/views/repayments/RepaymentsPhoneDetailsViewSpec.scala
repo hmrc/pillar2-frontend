@@ -45,7 +45,7 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a caption" in {
-        view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
+        view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
       }
 
       "have a unique H1 heading" in {

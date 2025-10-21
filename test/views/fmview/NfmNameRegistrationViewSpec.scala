@@ -31,9 +31,9 @@ class NfmNameRegistrationViewSpec extends ViewSpecBase {
   lazy val form:         Form[String]                    = formProvider()
   lazy val page:         NfmNameRegistrationView         = inject[NfmNameRegistrationView]
   lazy val pageTitle:    String                          = "What is the name of the nominated filing member?"
+  lazy val view:         Document                        = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
   "NFM Name Registration View" should {
-    val view: Document = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"

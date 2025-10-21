@@ -26,11 +26,14 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
   lazy val page:   RegistrationInProgressView = inject[RegistrationInProgressView]
   lazy val plrRef: String                     = "XMPLR0012345678"
 
-  lazy val view: Document = Jsoup.parse(
-    page(plrRef)(request, messages, appConfig).toString()
-  )
+  lazy val view: Document = Jsoup.parse(page(plrRef)(request, messages, appConfig).toString())
+
+  lazy val pageTitle:  String   = "Your registration is in progress"
+  lazy val banners:    Elements = view.getElementsByClass("govuk-notification-banner")
+  lazy val paragraphs: Elements = view.getElementsByTag("p")
 
   "RegistrationInProgressView" should {
+
     "have a title" in {
       view.title() mustBe "Registration in progress - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
@@ -41,16 +44,14 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe "Your Pillar 2 Top-up Taxes account"
     }
 
-    "display the PLR reference correctly" in {
-      val plrRefElement: Element = view.getElementsByClass("govuk-body").get(1)
-      plrRefElement.text() must include(plrRef)
-    }
-
-    "have a notification banner with registration in progress message" in {
-      val banners: Elements = view.getElementsByClass("govuk-notification-banner")
+    "have a 'Registration in Progress' notification banner" in {
       banners.size() mustBe 1
 
-      val banner:        Element = banners.first()
+      val banner: Element = banners.first()
+
+      val importantLabel: Element = view.getElementsByClass("govuk-notification-banner__title").first()
+      importantLabel.text() mustBe "Important"
+
       val bannerHeading: Element = banner.getElementsByClass("govuk-notification-banner__heading").first()
       bannerHeading.text() mustBe "Your registration is in progress"
 
@@ -58,23 +59,20 @@ class RegistrationInProgressViewSpec extends ViewSpecBase {
       bannerMessage.text() mustBe "We are processing your registration. You can check this page in one hour to see your full group account homepage."
     }
 
-    "have a banner with important label" in {
-      val importantLabel: Element = view.getElementsByClass("govuk-notification-banner__title").first()
-      importantLabel.text() mustBe "Important"
+    "have the correct paragraphs" in {
+      paragraphs.get(2).text() mustBe "Group’s Pillar 2 Top-up Taxes ID: XMPLR0012345678"
+      paragraphs.get(3).text() mustBe "Your group must submit your Pillar 2 Top-up Taxes returns no later than:"
+
+      val listItems: Elements = view.getElementsByClass("govuk-list").get(0).getElementsByTag("li")
+      listItems.get(0).text() mustBe "18 months after the last day of the group's accounting period, if the first accounting " +
+        "period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024"
+      listItems.get(1).text() mustBe "30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes " +
+        "ended on or before 31 December 2024"
     }
 
-    "use full-width layout without back link" in {
+    "not have a back link" in {
       view.getElementsByClass("govuk-back-link").size() mustBe 0
     }
 
-    "have correct notification banner structure" in {
-      val banners: Elements = view.getElementsByClass("govuk-notification-banner")
-      banners.size() mustBe 1
-
-      val banner = banners.first()
-      banner.getElementsByClass("govuk-notification-banner__title").size() mustBe 1
-      banner.getElementsByClass("govuk-notification-banner__heading").size() mustBe 1
-      banner.getElementsByClass("govuk-body").size() mustBe 1
-    }
   }
 }
