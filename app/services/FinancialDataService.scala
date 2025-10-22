@@ -22,7 +22,6 @@ import cats.syntax.functorFilter._
 import cats.syntax.option._
 import cats.syntax.validated._
 import connectors.FinancialDataConnector
-import models._
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.financialdata._
 import play.api.Logging
