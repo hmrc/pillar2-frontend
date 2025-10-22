@@ -92,7 +92,7 @@ class OutstandingPaymentsController @Inject() (
           OptionT
             .liftF(
               financialDataService
-                .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods)).recover { case NoResultFound => FinancialData(Seq.empty) }
+                .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
                 .recover { case NoResultFound => FinancialData(Seq.empty) }
             )
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
