@@ -111,7 +111,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
         "a non-UK address" in {
 
-          val ua = defaultUa.set(UpeRegisteredAddressPage, postcodedNonUkAddress).success.value
+          val ua = defaultUa.set(UpeRegisteredAddressPage, postcodeNonUkAddress).success.value
           val application: Application = applicationBuilder(Some(ua)).build()
 
           running(application) {

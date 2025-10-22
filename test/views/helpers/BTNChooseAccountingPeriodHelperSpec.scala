@@ -28,10 +28,10 @@ import java.time.LocalDate
 
 class BTNChooseAccountingPeriodHelperSpec extends AnyFreeSpec with Matchers {
 
-  val formProvider = new BTNChooseAccountingPeriodFormProvider()
-  val form: Form[Int] = formProvider()
+  lazy val formProvider = new BTNChooseAccountingPeriodFormProvider()
+  lazy val form: Form[Int] = formProvider()
 
-  val data: Seq[(AccountingPeriodDetails, Int)] = Seq(
+  lazy val data: Seq[(AccountingPeriodDetails, Int)] = Seq(
     (AccountingPeriodDetails(LocalDate.now.minusYears(1), LocalDate.now(), LocalDate.now.plusYears(1), underEnquiry = false, Seq.empty), 0),
     (AccountingPeriodDetails(LocalDate.now.minusYears(2), LocalDate.now.minusYears(1), LocalDate.now(), underEnquiry = false, Seq.empty), 1)
   )

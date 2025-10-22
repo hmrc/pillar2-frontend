@@ -82,7 +82,7 @@
 
     @{
         if(amountDue <= 0) {
-            paragraphBody(messages("payments.outstanding.details.nothingDue"))
+            paragraphBody(messages("payments.outstanding.details.nothingDue"), classes = "govuk-body govuk-!-margin-bottom-8 govuk-!-margin-top-7")
         } else {
             data.map { summary =>
                 govukTable(Table(

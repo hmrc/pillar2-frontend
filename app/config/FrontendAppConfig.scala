@@ -117,5 +117,6 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val btnWaitingRoomPollIntervalSeconds: Int = configuration.get[Int]("btn.waitingRoom.pollIntervalSeconds")
 
-  val handleObligationsAndSubmissions500Errors: Boolean = configuration.get[Boolean]("features.handleObligationsAndSubmissions500Errors")
+  val handleObligationsAndSubmissions500Errors:     Boolean = configuration.get[Boolean]("features.handleObligationsAndSubmissions500Errors")
+  val obligationsAndSubmissionsTimeoutMilliseconds: Int     = configuration.get[Int]("features.obligationsAndSubmissionsTimeoutMilliseconds")
 }

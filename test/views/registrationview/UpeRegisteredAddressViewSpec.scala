@@ -33,7 +33,11 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val form:         Form[UKAddress]                  = formProvider()
   lazy val page:         UpeRegisteredAddressView         = inject[UpeRegisteredAddressView]
   lazy val userName:     String                           = "Test Company"
-  lazy val pageTitle:    String                           = "What is the registered office address"
+
+  def registeredOfficeAddressPageTitle(username: String = ""): String = {
+    val usernamePart: String = if (username.nonEmpty) s" of $username" else username
+    s"What is the registered office address$usernamePart?"
+  }
 
   "UPE Registered Address View" should {
     val view: Document = Jsoup.parse(
@@ -41,17 +45,17 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     )
 
     "have a title" in {
-      view.title() mustBe s"$pageTitle? - Report Pillar 2 Top-up Taxes - GOV.UK"
-    }
-
-    "have the correct caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
+      view.title() mustBe s"${registeredOfficeAddressPageTitle()} - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
-      h1Elements.text() mustBe s"$pageTitle of $userName?"
+      h1Elements.text() mustBe registeredOfficeAddressPageTitle(userName)
+    }
+
+    "have the correct caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "display the warning text" in {

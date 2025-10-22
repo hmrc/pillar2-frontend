@@ -89,9 +89,12 @@ class OutstandingPaymentsController @Inject() (
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         financialData <-
-          OptionT.liftF(
-            financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
-          )
+          OptionT
+            .liftF(
+              financialDataService
+                .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
+                .recover { case NoResultFound => FinancialData(Seq.empty) }
+            )
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
       } yield {
         val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)

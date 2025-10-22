@@ -179,6 +179,7 @@ grs.registration.failed.line2 = Your company details could not be confirmed.
 grs.registration.failed.line3-hyperlink = Go back to select the entity type
 grs.registration.failed.line3-cont = to try again.
 
+grs.registration.error.title = The details you entered did not match our records
 grs.registration.error.header = The details you entered did not match our records
 grs.registration.error.line1 = We could not match the details you entered with records held by HMRC.
 grs.registration.error.line2 = How to confirm your details
@@ -1828,3 +1829,13 @@ payments.outstanding.penaltiesAndCharges.linkText = Pillar 2 Top-up Taxes penalt
 research.heading = Take part in Pillar 2 research
 research.body = Help us improve this online service by taking part in user research.
 research.link = Register for Pillar 2 user research (opens in a new tab)
+
+# ---------------------------------------------
+# BTN Under Enquiry Warning
+# ---------------------------------------------
+btn.underEnquiryWarning.title = You have one or more returns under enquiry
+btn.underEnquiryWarning.heading = You have one or more returns under enquiry
+btn.underEnquiryWarning.p1 = You cannot add a Below-Threshold Notification to an accounting period that is currently under enquiry.
+btn.underEnquiryWarning.p2 = If you continue, the Below-Threshold Notification will still be processed but will not apply to any accounting periods under enquiry.
+btn.underEnquiryWarning.continue = Continue
+btn.underEnquiryWarning.returnToHomePageText.link = Return to home page

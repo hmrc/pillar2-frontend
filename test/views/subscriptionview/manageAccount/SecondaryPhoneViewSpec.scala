@@ -40,7 +40,7 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustEqual "Contact details"
+      view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
     "have a unique H1 heading" in {
@@ -55,13 +55,13 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
     }
 
     "have a hint description" in {
-      view
-        .getElementsByClass("govuk-hint")
-        .text mustEqual "Enter the phone number for John Doe, for example 01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or 0044 808 157 0192."
+      view.getElementsByClass("govuk-hint").text mustBe s"Enter the phone number for $username, for example " +
+        s"01632 960 001. For international numbers include the country code, for example +44 808 157 0192 or " +
+        s"0044 808 157 0192."
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text mustEqual "Continue"
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 }
