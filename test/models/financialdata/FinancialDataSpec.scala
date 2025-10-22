@@ -22,13 +22,11 @@ import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import org.scalacheck.Gen
 import org.scalatest.LoneElement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import utils.DateTimeUtils.{fixedClock, today}
 
 import java.time._
 
 class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with LoneElement {
-
-  private implicit val fixedClock: Clock = Clock.fixed(Instant.now(), ZoneId.systemDefault())
-  private val today = LocalDate.now(fixedClock)
 
   "FinancialData" when {
 
