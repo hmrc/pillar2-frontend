@@ -89,6 +89,35 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
+    "return OK with empty financial data when NoResultFound exception is thrown" in {
+      val application = applicationBuilder(enrolments = enrolments)
+        .configure("features.phase2ScreensEnabled" -> true)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[FinancialDataService].toInstance(mockFinancialDataService)
+        )
+        .build()
+
+      running(application) {
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.failed(NoResultFound))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+
+        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[OutstandingPaymentsView]
+
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual
+          view(Seq.empty, pillar2Id, BigDecimal(0), hasOverdueReturnPayment = false)(
+            request,
+            applicationConfig,
+            messages(application),
+            isAgent = false
+          ).toString
+      }
+    }
   }
 
   "phase2ScreensEnabled is false" should {

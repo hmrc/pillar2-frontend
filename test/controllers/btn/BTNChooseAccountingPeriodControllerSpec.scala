@@ -126,6 +126,31 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
+    "must redirect to the UnderEnquiryWarning page when a valid answer is submitted and period is under enquiry" in {
+      running(application) {
+        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+
+        val underEnquiryResponse = obligationsAndSubmissionsSuccessResponseMultipleAccounts().copy(
+          accountingPeriodDetails = obligationsAndSubmissionsSuccessResponseMultipleAccounts().accountingPeriodDetails.map { period =>
+            period.copy(underEnquiry = true)
+          }
+        )
+
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+          .thenReturn(Future.successful(underEnquiryResponse))
+
+        val request =
+          FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
+            .withFormUrlEncodedBody(("value", "1"))
+
+        val result = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual controllers.btn.routes.BTNUnderEnquiryWarningController.onPageLoad.url
+      }
+    }
+
     "must return a Bad Request and errors when invalid data is submitted" in {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
