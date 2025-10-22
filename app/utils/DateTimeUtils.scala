@@ -57,4 +57,8 @@ object DateTimeUtils {
     def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
   }
 
+  private val fixedNow:    Instant   = Instant.now()
+  implicit val fixedClock: Clock     = Clock.fixed(fixedNow, utcZoneId)
+  val today:               LocalDate = LocalDate.now(fixedClock)
+
 }

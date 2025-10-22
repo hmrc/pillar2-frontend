@@ -39,7 +39,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
     }
 
     "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text must equal("Group details")
+      view.getElementsByClass("govuk-caption-l").text mustBe "Group details"
     }
 
     "have a unique H1 heading" in {
@@ -52,48 +52,34 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       val listItems:  Elements = view.getElementsByTag("li")
 
-      paragraphs.get(0).text must equal(
-        "You must consider the locations of all the entities within your group."
-      )
-
-      paragraphs.get(1).text must equal(
-        "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
-      )
-
-      paragraphs.get(2).text must equal(
-        "There are two Pillar 2 Top-up Taxes in the UK:"
-      )
+      paragraphs.get(0).text mustBe "You must consider the locations of all the entities within your group."
+      paragraphs.get(1).text mustBe "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
+      paragraphs.get(2).text mustBe "There are two Pillar 2 Top-up Taxes in the UK:"
 
       listItems.get(0).text mustBe "Domestic Top-up Tax"
       listItems.get(1).text mustBe "Multinational Top-up Tax"
 
-      paragraphs.get(3).text must equal(
-        "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
-      )
-
-      paragraphs.get(4).text must equal(
-        "Groups with entities that are located in the UK and outside the UK will register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
-      )
-
-      paragraphs.get(5).text must equal(
-        "If any future changes occur that affect the location of the entities within your group, you must amend these details within your account."
-      )
+      paragraphs.get(3).text mustBe "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
+      paragraphs.get(4).text mustBe "Groups with entities that are located in the UK and outside the UK will " +
+        "register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
+      paragraphs.get(5).text mustBe "If any future changes occur that affect the location of the entities within " +
+        "your group, you must amend these details within your account."
     }
 
     "have a legend heading" in {
-      view.getElementsByClass("govuk-fieldset__heading").text must equal("Where are the entities in your group located?")
+      view.getElementsByClass("govuk-fieldset__heading").text mustBe "Where are the entities in your group located?"
     }
 
     "have a radio options" in {
       val radioButtons: Elements = view.getElementsByClass("govuk-label govuk-radios__label")
 
       radioButtons.size() mustBe 2
-      radioButtons.get(0).text must equal("Only in the UK")
-      radioButtons.get(1).text must equal("In the UK and outside the UK")
+      radioButtons.get(0).text mustBe "Only in the UK"
+      radioButtons.get(1).text mustBe "In the UK and outside the UK"
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text must equal("Save and continue")
+      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
     }
   }
 }

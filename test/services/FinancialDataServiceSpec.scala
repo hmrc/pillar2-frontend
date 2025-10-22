@@ -18,12 +18,10 @@ package services
 
 import base.SpecBase
 import cats.syntax.option._
-import config.FrontendAppConfig
 import connectors.FinancialDataConnector
-import connectors.FinancialDataConnector.FinancialDataResponse
-import models.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.FinancialTransaction.{OutstandingCharge, Payment}
-import models._
+import models.financialdata.FinancialTransaction.OutstandingCharge
+import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
+import models.financialdata._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
@@ -52,13 +50,13 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
   val dueApiFinancialTransaction: FinancialDataResponse.FinancialItem =
     FinancialDataResponse.FinancialItem(dueDate = Some(today.plusDays(1)), clearingDate = None)
   val clearedApiFinancialTransaction: FinancialDataResponse.FinancialItem =
-    FinancialDataResponse.FinancialItem(dueDate = Some(today.minusDays(8)), clearingDate = Some(today.minusDays(1))) // scalastyle:ignore magic.number
+    FinancialDataResponse.FinancialItem(dueDate = Some(today.minusDays(8)), clearingDate = Some(today.minusDays(1)))
   val uktrMainApiTransaction: FinancialDataResponse.FinancialTransaction = FinancialDataResponse.FinancialTransaction(
     mainTransaction = Some("6500"),
     subTransaction = Some("6233"),
     taxPeriodFrom = Some(today.minusMonths(1)),
     taxPeriodTo = Some(today),
-    outstandingAmount = Some(BigDecimal(100)), // scalastyle:ignore magic.number
+    outstandingAmount = Some(BigDecimal(100)),
     items = Seq(dueApiFinancialTransaction, clearedApiFinancialTransaction)
   )
 
@@ -115,45 +113,6 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
       }
     }
 
-    "checking for a recent payment" should {
-      val config = application.injector.instanceOf[FrontendAppConfig]
-
-      def paymentWithClearingDate(date: Option[LocalDate]): Payment = Payment(
-        Payment.FinancialItems(
-          Seq(
-            FinancialItem(
-              dueDate = None,
-              clearingDate = date
-            )
-          )
-        )
-      )
-
-      "be true when the passed financial data contains a payment which cleared within the configured leeway" in forAll(
-        Gen.choose(0, config.maxDaysAgoToConsiderPaymentAsRecent)
-      ) { paymentClearedDaysAgo =>
-        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
-        val financialData      = FinancialData(Seq(paymentTransaction))
-
-        service.hasRecentPayment(financialData) mustBe true
-      }
-
-      "be false when the passed financial data contains a payment which cleared beyond the configured leeway" in forAll(
-        Gen.choose(config.maxDaysAgoToConsiderPaymentAsRecent, Int.MaxValue)
-      ) { paymentClearedDaysAgo =>
-        val paymentTransaction = paymentWithClearingDate(LocalDate.now().minusDays(paymentClearedDaysAgo).some)
-        val financialData      = FinancialData(Seq(paymentTransaction))
-
-        service.hasRecentPayment(financialData) mustBe false
-      }
-
-      "be false when there are no financial items with a clearing date" in forAll(
-        Gen.oneOf(FinancialData(Seq(paymentWithClearingDate(None))), FinancialData(Seq.empty))
-      ) { financialDataWithNoClearingDate =>
-        service.hasRecentPayment(financialDataWithNoClearingDate) mustBe false
-      }
-    }
-
     "parsing the domain model from the connector response" should {
 
       "parse transactions for all modelled outstanding charges" when {
@@ -188,7 +147,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
       "parse payment transactions" which {
 
         val populatedFinancialItem = FinancialDataResponse.FinancialItem(
-          dueDate = Some(LocalDate.now().minusDays(7)), // scalastyle:ignore magic.number
+          dueDate = Some(LocalDate.now().minusDays(7)),
           clearingDate = Some(LocalDate.now().minusDays(1))
         )
         val minimumPaymentApiResponse = FinancialDataResponse.FinancialTransaction(
@@ -216,9 +175,9 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
           val result        = service.retrieveFinancialData("fake-plr", LocalDate.now().minusYears(1), LocalDate.now()).futureValue
           val expectedItems = paymentResponse.items.map(respItem => FinancialItem(respItem.dueDate, respItem.clearingDate))
 
-          result.financialTransactions                        must have size 1
-          result.payments                                     must have size 1
-          result.payments.headOption.value.paymentItems.items must contain theSameElementsInOrderAs expectedItems
+          result.financialTransactions                            must have size 1
+          result.onlyPayments                                     must have size 1
+          result.onlyPayments.headOption.value.paymentItems.items must contain theSameElementsInOrderAs expectedItems
         }
       }
 

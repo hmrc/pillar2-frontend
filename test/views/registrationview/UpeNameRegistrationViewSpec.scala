@@ -31,11 +31,9 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
   lazy val form:         Form[String]                    = formProvider()
   lazy val page:         UpeNameRegistrationView         = inject[UpeNameRegistrationView]
   lazy val pageTitle:    String                          = "What is the name of the Ultimate Parent Entity?"
+  lazy val view:         Document                        = Jsoup.parse(page(form, NormalMode)(request, appConfig, messages).toString())
 
   "UPE Name Registration View" should {
-    val view: Document = Jsoup.parse(
-      page(form, NormalMode)(request, appConfig, messages).toString()
-    )
 
     "have a title" in {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"

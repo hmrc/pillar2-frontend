@@ -21,6 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
 import models._
+import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
@@ -55,14 +56,9 @@ class OutstandingPaymentsController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
-    val outstandingCharges = financialData.outstandingCharges
-
-    outstandingCharges
+  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] =
+    financialData.onlyOutstandingCharges
       .groupBy(_.taxPeriod)
-      .toSeq
-      .sortBy(_._1)
-      .reverse
       .map { case (taxPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =
           transactions
@@ -78,7 +74,9 @@ class OutstandingPaymentsController @Inject() (
 
         FinancialSummary(AccountingPeriod(taxPeriod.from, taxPeriod.to), transactionSummaries.sortBy(_.dueDate).reverse)
       }
-  }
+      .toSeq
+      .sortBy(_.accountingPeriod.dueDate)
+      .reverse
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
@@ -91,9 +89,12 @@ class OutstandingPaymentsController @Inject() (
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
         financialData <-
-          OptionT.liftF(
-            financialDataService.retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
-          )
+          OptionT
+            .liftF(
+              financialDataService
+                .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
+                .recover { case NoResultFound => FinancialData(Seq.empty) }
+            )
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
       } yield {
         val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)

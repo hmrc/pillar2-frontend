@@ -19,8 +19,8 @@ package views.outstandingpayments
 import base.ViewSpecBase
 import controllers.routes
 import controllers.routes._
+import models.financialdata.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
-import models.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -45,7 +45,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
   lazy val links:      Elements = organisationView.getElementsByClass("govuk-link")
 
   "OutstandingPaymentsView" should {
-    "should use correct width layout" in {
+    "have correct width layout" in {
       organisationView.getElementsByClass("govuk-grid-column-two-thirds").size() mustBe 2
     }
 
@@ -59,21 +59,17 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
-    "should display page title correctly" in {
-      organisationView.getElementsByTag("h1").first().text() mustBe "Outstanding payments"
-    }
-
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
       organisationView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
-    "should display total amount due correctly" in {
+    "display total amount due correctly" in {
       organisationView.getElementsByClass("govuk-heading-m").first().text() mustBe "Amount due: £1,000.00"
     }
 
-    "should display the leading paragraphs correctly" in {
+    "display the leading paragraphs correctly" in {
       paragraphs.get(0).text() mustBe "The amount includes all liabilities due. This may include more than one " +
         "accounting period. It also includes any penalties."
       paragraphs.get(1).text() mustBe "Any payments made to your account before submitting your tax return have " +
@@ -93,18 +89,18 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         val orgViewNoOverduePayments: Document =
           Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false).toString())
 
-        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustEqual 0
+        orgViewNoOverduePayments.getElementsByClass("govuk-inset-text").size() mustBe 0
       }
     }
 
-    "should display payment button with correct link" in {
+    "display payment button with correct link" in {
       val button = organisationView.getElementsByClass("govuk-button").first()
 
       button.text() mustBe "Pay online"
       button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url
     }
 
-    "should display other ways to pay section" in {
+    "display other ways to pay section" in {
       h2Elements.get(1).text() mustBe "Other ways to pay"
       paragraphs.get(2).text() mustBe "Your Pillar 2 reference: XMPLR0012345678"
       paragraphs.get(3).text() mustBe "You’ll need to use this reference if you want to make a manual payment."
@@ -139,7 +135,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
         rows.get(2).text() mustBe "31 March 2024"
       }
 
-      "a 'No payments due' message if no payments are outstanding" in {
+      "display 'No payments due' message if no payments are outstanding" in {
         val noPaymentsView: Document = Jsoup.parse(
           page(noPaymentsData, plrRef, amountDue(noPaymentsData), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = false)
             .toString()
@@ -150,7 +146,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       }
     }
 
-    "should display transaction history section" in {
+    "display transaction history section" in {
       h2Elements.get(3).text() mustBe "Transaction history"
       paragraphs.get(7).text() mustBe "Payments will appear in the transaction history page within 3-5 working days."
 
@@ -160,7 +156,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       viewTransactionHistoryLink.attr("href") mustBe TransactionHistoryController.onPageLoadTransactionHistory(None).url
     }
 
-    "should display penalties and charges section" in {
+    "display penalties and charges section" in {
       h2Elements.get(4).text() mustBe "Penalties and interest charges"
       paragraphs.get(9).text() mustBe "Find out how HMRC may charge your group penalties and interest."
 
@@ -196,7 +192,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
           val agentViewNoOverduePayments: Document =
             Jsoup.parse(page(data, plrRef, amountDue(data), hasOverdueReturnPayment = false)(request, appConfig, messages, isAgent = true).toString())
 
-          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustEqual 0
+          agentViewNoOverduePayments.getElementsByClass("govuk-inset-text").size mustBe 0
         }
       }
     }

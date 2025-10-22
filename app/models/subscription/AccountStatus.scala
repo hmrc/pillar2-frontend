@@ -25,7 +25,7 @@ object AccountStatus extends Enum[AccountStatus] {
   case object ActiveAccount extends AccountStatus
   case object InactiveAccount extends AccountStatus
 
-  val values = findValues
+  val values: IndexedSeq[AccountStatus] = findValues
 
   implicit val format: OFormat[AccountStatus] = (JsPath \ "inactive")
     .format[Boolean]

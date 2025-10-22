@@ -21,28 +21,19 @@ import cats.syntax.apply._
 import cats.syntax.functorFilter._
 import cats.syntax.option._
 import cats.syntax.validated._
-import config.FrontendAppConfig
 import connectors.FinancialDataConnector
-import connectors.FinancialDataConnector.FinancialDataResponse
-import models.FinancialTransaction.{OutstandingCharge, Payment}
-import models._
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.financialdata._
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
 import services.FinancialDataService.parseFinancialDataResponse
 import uk.gov.hmrc.http.HeaderCarrier
 
-import java.time.temporal.ChronoUnit
-import java.time.{Clock, LocalDate}
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataService @Inject() (
-  financialDataConnector: FinancialDataConnector,
-  clock:                  Clock
-)(implicit
-  ec:        ExecutionContext,
-  appConfig: FrontendAppConfig
-) {
+class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector)(implicit ec: ExecutionContext) {
 
   /** Parses financial data from the API into something a bit easier to take decisions against */
   def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
@@ -50,14 +41,6 @@ class FinancialDataService @Inject() (
       .retrieveFinancialData(pillar2Id, fromDate, toDate)
       .map(parseFinancialDataResponse)
 
-  /** Checks if there has been a recent payment */
-  def hasRecentPayment(financialData: FinancialData): Boolean =
-    financialData.payments
-      .flatMap(_.paymentItems.latestClearingDate)
-      .exists { latestClearing =>
-        val daysAgoLatestPaymentCleared = ChronoUnit.DAYS.between(latestClearing, LocalDate.now(clock))
-        daysAgoLatestPaymentCleared <= appConfig.maxDaysAgoToConsiderPaymentAsRecent
-      }
 }
 
 object FinancialDataService extends Logging {
@@ -85,7 +68,7 @@ object FinancialDataService extends Logging {
     }
 
   private def parseChargeTransaction(
-    responseTransaction: FinancialDataConnector.FinancialDataResponse.FinancialTransaction,
+    responseTransaction: FinancialDataResponse.FinancialTransaction,
     mainReference:       EtmpMainTransactionRef.ChargeRef
   ): ValidatedNec[IgnoredEtmpTransaction, FinancialTransaction.OutstandingCharge] =
     (
@@ -152,6 +135,6 @@ object FinancialDataService extends Logging {
     case class RequiredValueMissing(field: String) extends IgnoredEtmpTransaction(s"$field was missing")
     case class UnrelatedValue(field: String, value: String) extends IgnoredEtmpTransaction(s"$field has invalid value $value")
     case class DidNotPassFilter[A](field: String, value: A, reason: String)
-        extends IgnoredEtmpTransaction(s"$field's value $value did not meet critera $reason")
+        extends IgnoredEtmpTransaction(s"$field's value $value did not meet criteria $reason")
   }
 }

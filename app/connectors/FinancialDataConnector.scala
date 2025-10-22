@@ -17,11 +17,11 @@
 package connectors
 
 import config.FrontendAppConfig
-import connectors.FinancialDataConnector.FinancialDataResponse
 import models._
+import models.financialdata.FinancialDataResponse
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.json.Json
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -63,36 +63,5 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
           logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse
       }
-
-}
-
-object FinancialDataConnector {
-
-  final case class FinancialDataResponse(financialTransactions: Seq[FinancialDataResponse.FinancialTransaction])
-
-  object FinancialDataResponse {
-
-    implicit val format: OFormat[FinancialDataResponse] = Json.format
-
-    final case class FinancialTransaction(
-      mainTransaction:   Option[String],
-      subTransaction:    Option[String],
-      taxPeriodFrom:     Option[LocalDate],
-      taxPeriodTo:       Option[LocalDate],
-      outstandingAmount: Option[BigDecimal],
-      items:             Seq[FinancialItem]
-    )
-
-    final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
-
-    object FinancialTransaction {
-      implicit val format: OFormat[FinancialTransaction] = Json.format
-    }
-
-    object FinancialItem {
-      implicit val format: OFormat[FinancialItem] = Json.format
-    }
-
-  }
 
 }

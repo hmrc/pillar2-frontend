@@ -19,7 +19,8 @@ package views
 import base.ViewSpecBase
 import controllers.routes
 import models.DueAndOverdueReturnBannerScenario._
-import models.{DynamicNotificationAreaState, Outstanding, Paid}
+import models.OutstandingPaymentBannerScenario.{Outstanding, Paid}
+import models.{BtnBanner, DynamicNotificationAreaState}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -40,7 +41,7 @@ class HomepageViewSpec extends ViewSpecBase {
       page(
         organisationName,
         date,
-        btnActive = false,
+        BtnBanner.Hide,
         None,
         None,
         DynamicNotificationAreaState.NoNotification,
@@ -60,7 +61,7 @@ class HomepageViewSpec extends ViewSpecBase {
       page(
         organisationName,
         date,
-        btnActive = false,
+        BtnBanner.Hide,
         None,
         None,
         DynamicNotificationAreaState.NoNotification,
@@ -89,7 +90,6 @@ class HomepageViewSpec extends ViewSpecBase {
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
       organisationView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "display organisation information correctly" in {
@@ -176,7 +176,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = true,
+            BtnBanner.Show,
             None,
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -195,7 +195,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       bannerContent.getElementsByClass("govuk-notification-banner__heading").text() mustBe "Your account has a Below-Threshold Notification."
       bannerContent.text() mustBe s"Important Your account has a Below-Threshold Notification. You have told us you do not need " +
-        s"to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria the future. " +
+        s"to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria in the future. " +
         s"Find out more about Below-Threshold Notification"
       bannerContent.getElementsByClass("govuk-notification-banner__link").text() mustBe "Find out more about Below-Threshold Notification"
       bannerContent.getElementsByTag("a").attr("href") mustBe controllers.btn.routes.BTNBeforeStartController.onPageLoad().url
@@ -207,7 +207,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             Some(Due),
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -244,7 +244,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             Some(Overdue),
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -286,7 +286,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             Some(Incomplete),
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -328,7 +328,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             Some(Received),
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -361,7 +361,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             None,
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -387,7 +387,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             Some(Overdue),
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -414,7 +414,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             None,
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -450,15 +450,14 @@ class HomepageViewSpec extends ViewSpecBase {
     }
 
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
-      val amountOutstanding = 100000.00
       val organisationViewWithOutstandingScenario: Document =
         Jsoup.parse(
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             None,
-            Some(Outstanding(amountOutstanding)),
+            Some(Outstanding),
             DynamicNotificationAreaState.NoNotification,
             plrRef,
             isAgent = false,
@@ -486,7 +485,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             None,
             Some(Paid),
             DynamicNotificationAreaState.NoNotification,
@@ -521,6 +520,11 @@ class HomepageViewSpec extends ViewSpecBase {
       val h1Elements: Elements = agentView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageHeading
+    }
+
+    "have a banner with a link to the Homepage" in {
+      val className: String = "govuk-header__link govuk-header__service-name"
+      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "display organisation information correctly" in {
@@ -610,7 +614,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = true,
+            BtnBanner.Show,
             None,
             None,
             DynamicNotificationAreaState.NoNotification,
@@ -641,7 +645,7 @@ class HomepageViewSpec extends ViewSpecBase {
           page(
             organisationName,
             date,
-            btnActive = false,
+            BtnBanner.Hide,
             None,
             None,
             DynamicNotificationAreaState.NoNotification,

@@ -14,37 +14,9 @@
  * limitations under the License.
  */
 
-package models
-
-import models.FinancialTransaction.{OutstandingCharge, Payment}
-import models.subscription.AccountingPeriod
-import play.api.libs.json.{Json, OFormat}
+package models.financialdata
 
 import java.time.LocalDate
-
-final case class FinancialData(financialTransactions: Seq[FinancialTransaction]) {
-
-  /** Filters transactions to only include outstanding charges that are due for payment This includes transactions that:
-    *   - Have valid tax periods (from and to dates)
-    *   - Are main pillar 2 transactions (UKTR, Late Payment Interest, Repayment Interest)
-    *   - Have valid sub-transactions for pillar 2
-    *   - Have an outstanding amount greater than 0
-    *   - Have a due date defined
-    */
-  def outstandingCharges: Seq[FinancialTransaction.OutstandingCharge] =
-    financialTransactions.collect { case charge: OutstandingCharge => charge }
-
-  /** Calculates the total outstanding amount from financial data */
-  def totalOutstandingAmount: BigDecimal = outstandingCharges.map(_.outstandingAmount).sum
-
-  /** Checks if there are any outstanding payments that are overdue */
-  def hasOverdueOutstandingPayments(currentDate: LocalDate = LocalDate.now): Boolean =
-    outstandingCharges.exists(_.chargeItems.earliestDueDate.isBefore(currentDate))
-
-  /** Convenience method for operating on payment transactions */
-  def payments: Seq[FinancialTransaction.Payment] = financialTransactions.collect { case payment: Payment => payment }
-
-}
 
 sealed trait FinancialTransaction
 
@@ -104,6 +76,7 @@ object FinancialTransaction {
 
     final case class FinancialItems(earliestDueDate: LocalDate, items: Seq[FinancialItem])
   }
+
   final case class Payment(paymentItems: Payment.FinancialItems) extends FinancialTransaction
 
   object Payment {
@@ -111,33 +84,4 @@ object FinancialTransaction {
       def latestClearingDate: Option[LocalDate] = items.flatMap(_.clearingDate).maxOption
     }
   }
-}
-
-case class TaxPeriod(from: LocalDate, to: LocalDate)
-
-object TaxPeriod {
-  implicit val ordering: Ordering[TaxPeriod] = Ordering.by(_.from)
-}
-
-final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
-
-object FinancialItem {
-  implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
-}
-
-case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
-
-  /** Checks if there are overdue return payments in this summary */
-  def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
-    transactions.exists(t => t.name == EtmpMainTransactionRef.UkTaxReturnMain.displayName && t.dueDate.isBefore(currentDate))
-}
-
-object FinancialSummary {
-  implicit val format: OFormat[FinancialSummary] = Json.format[FinancialSummary]
-}
-
-case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
-
-object TransactionSummary {
-  implicit val format: OFormat[TransactionSummary] = Json.format[TransactionSummary]
 }
