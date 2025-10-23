@@ -16,12 +16,27 @@
 
 package models.subscription
 
-import play.api.libs.json.{Json, OFormat}
+import enumeratum.{Enum, EnumEntry}
+import play.api.libs.json.{JsPath, OFormat}
 
-final case class AccountStatus(
-  inactive: Boolean
-)
+sealed trait AccountStatus extends EnumEntry
 
-object AccountStatus {
-  implicit val format: OFormat[AccountStatus] = Json.format[AccountStatus]
+object AccountStatus extends Enum[AccountStatus] {
+  case object ActiveAccount extends AccountStatus
+  case object InactiveAccount extends AccountStatus
+
+  val values: IndexedSeq[AccountStatus] = findValues
+
+  implicit val format: OFormat[AccountStatus] = (JsPath \ "inactive")
+    .format[Boolean]
+    .bimap(
+      {
+        case true  => InactiveAccount
+        case false => ActiveAccount
+      },
+      {
+        case InactiveAccount => true
+        case ActiveAccount   => false
+      }
+    )
 }

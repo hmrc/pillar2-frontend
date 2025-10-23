@@ -135,5 +135,11 @@ class FrontendAppConfigSpec extends SpecBase {
         config.obligationsAndSubmissionsTimeoutMilliseconds mustBe 5000
       }
     }
+
+    ".maxDaysAgoToConsiderPaymentAsRecent" must {
+      "read value from config" in {
+        config.maxDaysAgoToConsiderPaymentAsRecent mustBe 60
+      }
+    }
   }
 }

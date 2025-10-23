@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import models.DueAndOverdueReturnBannerScenario._
+@import models.OutstandingPaymentBannerScenario._
 @import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @import views.html.components.gds._
@@ -36,7 +37,7 @@
 @(
     organisationName: String,
     registrationDate: String,
-    btnActive: Boolean,
+    btnBanner: BtnBanner,
     maybeUktrBannerScenario: Option[DueAndOverdueReturnBannerScenario],
     maybePaymentBannerScenario: Option[OutstandingPaymentBannerScenario],
     dynamicNotificationAreaState: DynamicNotificationAreaState,
@@ -73,8 +74,9 @@
 
 @layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
-  @if(btnActive) {
-    @govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))
+  @btnBanner match {
+    case BtnBanner.Show => {@govukNotificationBanner(NotificationBanner(content = HtmlContent(bannerHtml)))}
+    case BtnBanner.Hide => {}
   }
 
   <h1 class="govuk-heading-l">@messages("homepage.title")</h1>
@@ -164,7 +166,7 @@
          <div class="govuk-summary-card__title-wrapper card-with-tag">
              <h2 class="govuk-heading-m govuk-!-margin-0">@messages("homepage.payments.title")</h2>
              @maybePaymentBannerScenario.map {
-                 case Outstanding(_) => {
+                 case Outstanding => {
                      <span
                         class="govuk-tag govuk-tag--red"
                         aria-label="Outstanding payments"
