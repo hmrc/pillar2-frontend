@@ -81,7 +81,7 @@ class ContactByPhoneController @Inject() (
                 case nominatePrimaryContactNumber @ false =>
                   for {
                     updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubPrimaryPhonePreferencePage, nominatePrimaryContactNumber))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubPrimaryCapturePhonePage))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.removeIfExists(SubPrimaryCapturePhonePage))
                     _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers1))
                   } yield Redirect(navigator.nextPage(SubPrimaryPhonePreferencePage, updatedAnswers))
               }
