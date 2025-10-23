@@ -86,7 +86,7 @@ class AgentController @Inject() (
         .bindFromRequest()
         .fold(
           formWithErrors => {
-            logger.error(s"Agent has submitted client's Pillar 2 ID form has errors: ${formWithErrors.errors}")
+            logger.info(s"Agent has submitted client's Pillar 2 ID form with errors: ${formWithErrors.errors}")
             Future.successful(BadRequest(clientPillarIdView(formWithErrors)))
           },
           pillarIdValue => {
@@ -103,7 +103,7 @@ class AgentController @Inject() (
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)
 
             result.recover { case _: ApiError =>
-              logger.warn(s"Could not find Agent's client with Pillar ID: $pillarIdValue")
+              logger.info(s"Could not find Agent's client with Pillar ID: $pillarIdValue")
               Redirect(routes.AgentController.onPageLoadNoClientMatch)
             }
           }
@@ -131,15 +131,15 @@ class AgentController @Inject() (
 
       (submitted, unauthorised) match {
         case (Some(true), _) =>
-          logger.warn("Agent has already submitted client's Pillar ID - idempotent redirect")
+          logger.info("Agent has already submitted client's Pillar ID")
           Future.successful(Redirect(routes.DashboardController.onPageLoad))
 
         case (_, Some(newClientPillarId)) =>
           for {
             answersWithConfirmedClient <- Future.fromTry(userAnswers.set(AgentClientPillar2ReferencePage, newClientPillarId))
-            withoutUnauthorised        <- Future.fromTry(answersWithConfirmedClient.remove(UnauthorisedClientPillar2ReferencePage))
-            withSubmissionFlag         <- Future.fromTry(withoutUnauthorised.set(AgentClientConfirmationSubmittedPage, true))
-            _                          <- sessionRepository.set(withSubmissionFlag)
+            answersWithoutUnauthorised <- Future.fromTry(answersWithConfirmedClient.remove(UnauthorisedClientPillar2ReferencePage))
+            answersWithSubmissionFlag  <- Future.fromTry(answersWithoutUnauthorised.set(AgentClientConfirmationSubmittedPage, true))
+            _                          <- sessionRepository.set(answersWithSubmissionFlag)
           } yield {
             logger.info("Agent has confirmed client's Pillar 2 ID successfully")
             Redirect(routes.DashboardController.onPageLoad)

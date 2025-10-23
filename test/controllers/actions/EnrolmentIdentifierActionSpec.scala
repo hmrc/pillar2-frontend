@@ -18,7 +18,7 @@ package controllers.actions
 
 import base.SpecBase
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.HMRC_PILLAR2_ORG_KEY
+import controllers.actions.EnrolmentIdentifierAction.HmrcPillar2OrgKey
 import controllers.actions.TestAuthRetrievals.Ops
 import controllers.routes
 import org.mockito.ArgumentMatchers.any
@@ -122,7 +122,7 @@ class EnrolmentIdentifierActionSpec extends SpecBase {
               Future.successful(
                 Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
               ),
-              Future.failed(InsufficientEnrolments(msg = HMRC_PILLAR2_ORG_KEY))
+              Future.failed(InsufficientEnrolments(msg = HmrcPillar2OrgKey))
             )
 
           running(application) {
