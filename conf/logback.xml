@@ -23,8 +23,6 @@
 
     <logger name="application" level="INFO"/>
 
-    <logger name="class org.jose4j" level="INFO"/>
-
     <logger name="com.google.inject" level="INFO"/>
 
     <logger name="io.netty" level="INFO"/>
@@ -37,7 +35,6 @@
     <logger name="org.asynchttpclient.netty" level="INFO"/>
     <logger name="org.eclipse.jetty" level="INFO"/>
     <logger name="org.jboss" level="INFO"/>
-    <logger name="org.jose4j" level="INFO"/>
     <logger name="org.mongodb.driver" level="INFO"/>
 
     <logger name="play" level="INFO"/>
