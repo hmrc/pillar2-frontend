@@ -85,10 +85,10 @@ class AddSecondaryContactController @Inject() (
                 case wantsToNominateSecondaryContact @ false =>
                   for {
                     updatedAnswers  <- Future.fromTry(request.subscriptionLocalData.set(SubAddSecondaryContactPage, wantsToNominateSecondaryContact))
-                    updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(SubSecondaryContactNamePage))
-                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.remove(SubSecondaryEmailPage))
-                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.remove(SubSecondaryPhonePreferencePage))
-                    updatedAnswers4 <- Future.fromTry(updatedAnswers3.remove(SubSecondaryCapturePhonePage))
+                    updatedAnswers1 <- Future.fromTry(updatedAnswers.removeIfExists(SubSecondaryContactNamePage))
+                    updatedAnswers2 <- Future.fromTry(updatedAnswers1.removeIfExists(SubSecondaryEmailPage))
+                    updatedAnswers3 <- Future.fromTry(updatedAnswers2.removeIfExists(SubSecondaryPhonePreferencePage))
+                    updatedAnswers4 <- Future.fromTry(updatedAnswers3.removeIfExists(SubSecondaryCapturePhonePage))
                     _               <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers4))
                   } yield Redirect(navigator.nextPage(SubAddSecondaryContactPage, updatedAnswers4))
               }
