@@ -17,7 +17,7 @@
 package controllers.actions
 
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.{HMRC_AS_AGENT_KEY, defaultPredicate}
+import controllers.actions.EnrolmentIdentifierAction.{HmrcAsAgentKey, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
@@ -52,7 +52,7 @@ class ASAEnrolmentIdentifierAction @Inject() (
         Retrievals.internalId and Retrievals.allEnrolments
           and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
       ) {
-        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HmrcAsAgentKey).isDefined =>
           logger.info(
             s"EnrolmentWithoutAuthIdentifierAction - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
           )

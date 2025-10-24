@@ -17,7 +17,7 @@
 package controllers.payments
 
 import base.SpecBase
-import controllers.actions.EnrolmentIdentifierAction.DELEGATED_AUTH_RULE
+import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
 import controllers.payments.OutstandingPaymentsControllerSpec._
 import helpers.FinancialDataHelper.Pillar2UktrName
 import models._
@@ -148,7 +148,7 @@ object OutstandingPaymentsControllerSpec {
   val pillar2Id: String = "XMPLR0123456789"
 
   val enrolments: Set[Enrolment] = Set(
-    Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", pillar2Id)), "Activated", Some(DELEGATED_AUTH_RULE))
+    Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", pillar2Id)), "Activated", Some(DelegatedAuthRule))
   )
 
   val samplePaymentsData: Seq[FinancialSummary] = Seq(
