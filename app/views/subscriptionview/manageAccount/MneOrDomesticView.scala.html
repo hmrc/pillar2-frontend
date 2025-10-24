@@ -27,7 +27,8 @@
         bulletList: bulletList,
         govukErrorSummary: GovukErrorSummary,
         govukRadios: GovukRadios,
-        govukButton: GovukButton
+        govukButton: GovukButton,
+        govukWarningText: GovukWarningText
 )
 
 @(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -47,21 +48,24 @@
             }
 
             @heading(messages("mneOrDomestic.heading"), "govuk-heading-l")
-            @paragraphBody(messages("mneOrDomestic.p1"))
 
             @if(isAgent) {
-                @paragraphBody(messages("mneOrDomestic.agent.p2"))
+                @paragraphBody(messages("mneOrDomestic.agent.p1"))
             } else {
-                @paragraphBody(messages("mneOrDomestic.p2"))
+                @paragraphBody(messages("mneOrDomestic.p1"))
             }
 
-            @paragraphBody(messages("mneOrDomestic.p3"))
+            @paragraphBody(messages("mneOrDomestic.p2"))
+
             @bulletList(items = List(
                 Html(messages("mneOrDomestic.l1")),
                 Html(messages("mneOrDomestic.l2"))
             ), additionalListClasses = Some("govuk-list govuk-list--bullet"))
-            @paragraphBody(messages("mneOrDomestic.p4"))
-            @paragraphBody(messages("mneOrDomestic.p5"))
+
+            @govukWarningText(WarningText(
+                iconFallbackText = Some(messages("site.warning")),
+                content = HtmlContent(messages("mneOrDomestic.warning"))
+            ))
 
             @if(isAgent) {
                 @govukRadios(

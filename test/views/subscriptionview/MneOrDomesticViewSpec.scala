@@ -52,18 +52,16 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       val listItems:  Elements = view.getElementsByTag("li")
 
-      paragraphs.get(0).text mustBe "You must consider the locations of all the entities within your group."
-      paragraphs.get(1).text mustBe "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
-      paragraphs.get(2).text mustBe "There are two Pillar 2 Top-up Taxes in the UK:"
+      paragraphs.get(0).text mustBe "You must inform HMRC of the entity locations in the group. " +
+        "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
+      paragraphs.get(1).text mustBe "There are two Pillar 2 Top-up Taxes in the UK:"
 
-      listItems.get(0).text mustBe "Domestic Top-up Tax"
-      listItems.get(1).text mustBe "Multinational Top-up Tax"
+      listItems.get(0).text mustBe "Domestic Top-up Tax (UK-only entity locations)"
+      listItems.get(1).text mustBe "Multinational Top-up Tax (Entity locations in and outside of the UK)"
+    }
 
-      paragraphs.get(3).text mustBe "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
-      paragraphs.get(4).text mustBe "Groups with entities that are located in the UK and outside the UK will " +
-        "register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
-      paragraphs.get(5).text mustBe "If any future changes occur that affect the location of the entities within " +
-        "your group, you must amend these details within your account."
+    "have warning text" in {
+      view.getElementsByClass("govuk-warning-text__text").text mustBe "Warning You cannot change from Multinational to Domestic Top-up Taxes."
     }
 
     "have a legend heading" in {
