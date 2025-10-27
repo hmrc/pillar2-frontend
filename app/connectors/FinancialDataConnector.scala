@@ -58,7 +58,7 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
         case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialDataResponse]
         case response if response.status == NOT_FOUND =>
           logger.warn(s"Financial data not found for $plrReference")
-          Future failed NoResultFound
+          Future.successful(FinancialDataResponse(Seq.empty))
         case e @ _ =>
           logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse

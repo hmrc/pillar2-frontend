@@ -108,12 +108,12 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
       value.futureValue mustBe financialDataResponse
     }
 
-    "return a no result error when there is no results found for plr reference" in {
+    "return an empty list of financial transactions when no results are found for plr reference" in {
       stubGet(financialDataUrl, expectedStatus = 404, "")
 
       val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
 
-      value.failed.futureValue mustBe NoResultFound
+      value.futureValue mustBe FinancialDataResponse(Seq.empty)
     }
 
     "return a unexpected response when an error is returned" in {
