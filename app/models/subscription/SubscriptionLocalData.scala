@@ -70,6 +70,13 @@ case class SubscriptionLocalData(
     updatedData.map(_.as[SubscriptionLocalData])
   }
 
+  def removeIfExists[A](page: Settable[A])(implicit rds: Reads[A]): Try[SubscriptionLocalData] =
+    if (get(page.asInstanceOf[Gettable[A]]).isDefined) {
+      remove(page)
+    } else {
+      Success(this)
+    }
+
 }
 
 object SubscriptionLocalData {
