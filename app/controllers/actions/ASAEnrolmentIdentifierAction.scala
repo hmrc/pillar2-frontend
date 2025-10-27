@@ -49,8 +49,11 @@ class ASAEnrolmentIdentifierAction @Inject() (
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     authorised(defaultPredicate)
       .retrieve(
-        Retrievals.internalId and Retrievals.allEnrolments
-          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
+        Retrievals.internalId and
+          Retrievals.allEnrolments and
+          Retrievals.affinityGroup and
+          Retrievals.credentialRole and
+          Retrievals.credentials
       ) {
         case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) if enrolments.getEnrolment(HmrcAsAgentKey).isDefined =>
           logger.info(
