@@ -103,7 +103,7 @@ class DashboardController @Inject() (
     request:                                    OptionalDataRequest[_],
     hc:                                         HeaderCarrier
   ): Future[Result] = {
-    val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount) // TODO should we fail if missing from response?
+    val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount)
     if (appConfig.newHomepageEnabled) {
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
