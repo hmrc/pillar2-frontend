@@ -102,7 +102,8 @@ class DashboardController @Inject() (
   private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
     request:                                    OptionalDataRequest[_],
     hc:                                         HeaderCarrier
-  ): Future[Result] =
+  ): Future[Result] = {
+    val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount) // TODO should we fail if missing from response?
     if (appConfig.newHomepageEnabled) {
       sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
         maybeUserAnswers.getOrElse(UserAnswers(request.userId))
@@ -114,7 +115,6 @@ class DashboardController @Inject() (
           val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
           val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
           val paymentsStatus         = getPaymentBannerScenario(financialData)
-          val accountStatus          = subscriptionData.accountStatus.getOrElse(ActiveAccount) // TODO should we fail if missing from response?
           val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
           val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
           Ok(
@@ -139,12 +139,13 @@ class DashboardController @Inject() (
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.toDateFormat,
             plrReference,
-            inactiveStatus = subscriptionData.accountStatus.contains(InactiveAccount),
+            inactiveStatus = accountStatus == InactiveAccount,
             agentView = request.isAgent
           )
         )
       )
     }
+  }
 
   val getPaymentBannerScenario: FinancialData => Option[OutstandingPaymentBannerScenario] = {
     case PaymentState(PastDueWithInterestCharge(_) | PastDueNoInterest(_) | NotYetDue(_)) => Some(OutstandingPaymentBannerScenario.Outstanding)
