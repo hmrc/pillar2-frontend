@@ -1144,16 +1144,24 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         val result        = controller.determineNotificationArea(returnStatus, financialData, InactiveAccount)
         result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
       }
+
+      "there's a interest charge and a BTN has been submitted" in forAll(
+        Gen.oneOf(uktrLatePaymentInterestCharge, uktrRepaymentInterestCharge),
+        anyReturnStatus
+      ) { (interestCharge, returnStatus) =>
+        val financialData = FinancialData(Seq(outstandingUktrCharge))
+        val result        = controller.determineNotificationArea(returnStatus, financialData, InactiveAccount)
+        result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
+      }
     }
 
     "choose to show an 'accruing interest' notification" when {
-      "there's a payment for interest outstanding" in forAll(
+      "there's a payment for interest outstanding and there is no submitted BTN" in forAll(
         Gen.oneOf(uktrLatePaymentInterestCharge, uktrRepaymentInterestCharge),
-        anyReturnStatus,
-        anyAccountStatus
-      ) { (interestCharge, returnStatus, accountStatus) =>
+        anyReturnStatus
+      ) { (interestCharge, returnStatus) =>
         val financialData = FinancialData(Seq(interestCharge, outstandingUktrCharge))
-        val result        = controller.determineNotificationArea(returnStatus, financialData, accountStatus)
+        val result        = controller.determineNotificationArea(returnStatus, financialData, ActiveAccount)
         result mustBe DynamicNotificationAreaState.AccruingInterest(financialData.calculateOutstandingAmount)
       }
     }

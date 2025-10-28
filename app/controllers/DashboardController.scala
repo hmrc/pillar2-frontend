@@ -208,8 +208,11 @@ class DashboardController @Inject() (
     financialData: FinancialData,
     accountStatus: AccountStatus
   ): DynamicNotificationAreaState = (financialData, uktr, accountStatus) match {
-    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, _) =>
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.ActiveAccount) =>
       DynamicNotificationAreaState.AccruingInterest(totalAmountOutstanding)
+
+    case (PaymentState(PaymentState.PastDueWithInterestCharge(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
+      DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
 
     case (PaymentState(PaymentState.PastDueNoInterest(totalAmountOutstanding)), _, AccountStatus.InactiveAccount) =>
       DynamicNotificationAreaState.OutstandingPaymentsWithBtn(totalAmountOutstanding)
