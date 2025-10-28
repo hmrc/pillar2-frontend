@@ -20,11 +20,11 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import controllers.actions.TestAuthRetrievals.Ops
 import forms.AgentClientPillar2ReferenceFormProvider
-import models.InternalIssueError
+import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
-import pages.{AgentClientOrganisationNamePage, AgentClientPillar2ReferencePage, UnauthorisedClientPillar2ReferencePage}
+import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.Mockito.{never, verify, when}
+import pages._
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -250,7 +250,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "return to error page if the if client pillar 2 id and organisation name is not present in user answers" in {
+    "return to error page if the client pillar 2 id and organisation name is not present in user answers" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -270,9 +270,66 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "return to agent dashboard view if agent organisation enrolment is present" in {
+    "prevent multiple-click submission by redirecting to dashboard when confirmation already submitted (idempotency)" in {
       val userAnswer = emptyUserAnswers
         .setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
+        .setOrException(AgentClientConfirmationSubmittedPage, true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      running(application) {
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        verify(mockSessionRepository, never()).set(any())
+      }
+    }
+
+    "redirect to dashboard when confirmation already submitted and agent has delegated auth enrolments" in {
+      val userAnswer = emptyUserAnswers
+        .setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
+        .setOrException(AgentClientConfirmationSubmittedPage, true)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ agentWithDelegatedEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      running(application) {
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val result  = route(application, request).value
+
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        verify(mockSessionRepository, never()).set(any())
+      }
+    }
+
+    "successfully confirm client when not already submitted" in {
+      val userAnswer = emptyUserAnswers.setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
 
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -293,13 +350,78 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
-      }
 
+        verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
+          ua.get(AgentClientPillar2ReferencePage).contains(PlrReference) &&
+          ua.get(AgentClientConfirmationSubmittedPage).contains(true) &&
+          ua.get(UnauthorisedClientPillar2ReferencePage).isEmpty
+        })
+      }
+    }
+
+    "successfully switch client when agent already has a confirmed client" in {
+      val newPlrReference = "XMPLR0012345677"
+      val userAnswer = emptyUserAnswers
+        .setOrException(AgentClientPillar2ReferencePage, PlrReference)
+        .setOrException(UnauthorisedClientPillar2ReferencePage, newPlrReference)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      running(application) {
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+
+        verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
+          ua.get(AgentClientPillar2ReferencePage).contains(newPlrReference) &&
+          ua.get(AgentClientConfirmationSubmittedPage).contains(true) &&
+          ua.get(UnauthorisedClientPillar2ReferencePage).isEmpty
+        })
+      }
+    }
+
+    "redirect to journey recovery when no unauthorised client reference found" in {
+      val userAnswer = emptyUserAnswers.setOrException(AgentClientPillar2ReferencePage, PlrReference)
+
+      val application = applicationBuilder(userAnswers = Some(userAnswer))
+        .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+        .thenReturn(
+          Future.successful(
+            Some(id) ~ agentWithDelegatedEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
+          )
+        )
+
+      running(application) {
+        val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
+        val result  = route(application, request).value
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
+        verify(mockSessionRepository, never()).set(any())
+      }
     }
 
     "return error page if enrolments are found for agent but there is no organisation enrolment for that pillar 2 id" in {
-      val userAnswer = emptyUserAnswers
-        .setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
+      val userAnswer = emptyUserAnswers.setOrException(UnauthorisedClientPillar2ReferencePage, PlrReference)
+
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -354,8 +476,7 @@ class AgentControllerSpec extends SpecBase {
   "Agent Error" must {
 
     "must return the correct view if the user is agent" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .build()
+      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
         val request = FakeRequest(GET, routes.AgentController.onPageLoadError.url)
