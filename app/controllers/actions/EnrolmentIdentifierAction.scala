@@ -50,14 +50,21 @@ class EnrolmentIdentifierAction @Inject() (
     with AuthorisedFunctions
     with Logging {
 
+  override def parser:                     BodyParser[AnyContent] = bodyParser
+  override protected def executionContext: ExecutionContext       = ec
+
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+
+    val retrievals = Retrievals.internalId and
+      Retrievals.allEnrolments and
+      Retrievals.affinityGroup and
+      Retrievals.credentialRole and
+      Retrievals.credentials
+
     authorised(defaultPredicate)
-      .retrieve(
-        Retrievals.internalId and Retrievals.allEnrolments
-          and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
-      ) {
-        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HMRC_AS_AGENT_KEY).isDefined =>
+      .retrieve(retrievals) {
+        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HmrcAsAgentKey).isDefined =>
           authAsAgent(request, internalId)
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
           authAsOrg(request, internalId, enrolments, credentials)
@@ -74,16 +81,16 @@ class EnrolmentIdentifierAction @Inject() (
           logger.warn("EnrolmentAuthIdentifierAction - Unable to retrieve internal id or affinity group")
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
-      case _: NoActiveSession =>
+      case e: NoActiveSession =>
+        logger.info(s"EnrolmentAuthIdentifierAction - No active session, redirecting to login: ${e.getMessage}")
         Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
-      case _: AuthorisationException =>
+      case e: AuthorisationException =>
+        logger.warn(s"EnrolmentAuthIdentifierAction - Authorisation failed: ${e.getMessage}")
         Left(Redirect(routes.UnauthorisedController.onPageLoad))
     }
   }
-  override def parser:                     BodyParser[AnyContent] = bodyParser
-  override protected def executionContext: ExecutionContext       = ec
 
-  def authAsOrg[A](
+  private def authAsOrg[A](
     request:     Request[A],
     internalId:  String,
     enrolments:  Enrolments,
@@ -92,7 +99,7 @@ class EnrolmentIdentifierAction @Inject() (
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
         .flatMap(_.get(PlrReferencePage))
-        .orElse(enrolments.getEnrolment(HMRC_PILLAR2_ORG_KEY)) match {
+        .orElse(enrolments.getEnrolment(HmrcPillar2OrgKey)) match {
         case Some(_) =>
           Future.successful(
             Right(
@@ -110,10 +117,7 @@ class EnrolmentIdentifierAction @Inject() (
       }
     }
 
-  def authAsAgent[A](
-    request:    Request[A],
-    internalId: String
-  ): Future[Either[Result, IdentifierRequest[A]]] = {
+  private def authAsAgent[A](request: Request[A], internalId: String): Future[Either[Result, IdentifierRequest[A]]] = {
     implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
@@ -127,7 +131,7 @@ class EnrolmentIdentifierAction @Inject() (
             ) {
               case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ Some(credentials) =>
                 logger.info(
-                  s"EnrolmentAuthIdentifierAction -authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
+                  s"EnrolmentAuthIdentifierAction - authAsAgent - Successfully retrieved Agent enrolment with enrolments=$enrolments -- credentials=$credentials"
                 )
                 Future.successful(
                   Right(
@@ -149,7 +153,7 @@ class EnrolmentIdentifierAction @Inject() (
             } recover {
             case _: NoActiveSession =>
               Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
-            case e: InsufficientEnrolments if e.reason == HMRC_PILLAR2_ORG_KEY =>
+            case e: InsufficientEnrolments if e.reason == HmrcPillar2OrgKey =>
               logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
               Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
             case _: InternalError =>
@@ -175,15 +179,15 @@ class EnrolmentIdentifierAction @Inject() (
 }
 
 object EnrolmentIdentifierAction {
-  private[controllers] val HMRC_AS_AGENT_KEY    = "HMRC-AS-AGENT"
-  private[controllers] val HMRC_PILLAR2_ORG_KEY = "HMRC-PILLAR2-ORG"
-  private[controllers] val ENROLMENT_IDENTIFIER = "PLRID"
-  private[controllers] val DELEGATED_AUTH_RULE  = "pillar2-auth"
+  private[controllers] val HmrcAsAgentKey      = "HMRC-AS-AGENT"
+  private[controllers] val HmrcPillar2OrgKey   = "HMRC-PILLAR2-ORG"
+  private[controllers] val EnrolmentIdentifier = "PLRID"
+  private[controllers] val DelegatedAuthRule   = "pillar2-auth"
 
   private[actions] val defaultPredicate: Predicate = AuthProviders(GovernmentGateway)
 
-  val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
-    AuthProviders(GovernmentGateway) and Enrolment(HMRC_PILLAR2_ORG_KEY)
-      .withIdentifier(ENROLMENT_IDENTIFIER, clientPillar2Id)
-      .withDelegatedAuthRule(DELEGATED_AUTH_RULE)
+  private val VerifyAgentClientPredicate: String => Predicate = (clientPillar2Id: String) =>
+    AuthProviders(GovernmentGateway) and Enrolment(HmrcPillar2OrgKey)
+      .withIdentifier(EnrolmentIdentifier, clientPillar2Id)
+      .withDelegatedAuthRule(DelegatedAuthRule)
 }
