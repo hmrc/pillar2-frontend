@@ -80,17 +80,43 @@ trait SpecBase
   val PlrReference = "XMPLR0123456789"
 
   type AgentRetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
+
   val pillar2AgentEnrolment: Enrolments =
-    Enrolments(Set(Enrolment("HMRC-AS-AGENT", List(EnrolmentIdentifier("AgentReference", "1234")), "Activated", None)))
+    Enrolments(
+      Set(
+        Enrolment(
+          key = "HMRC-AS-AGENT",
+          identifiers = List(EnrolmentIdentifier("AgentReference", "1234")),
+          state = "Activated",
+          delegatedAuthRule = None
+        )
+      )
+    )
 
   val pillar2AgentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
     Set(
-      Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", Some("pillar2-auth"))
+      Enrolment(
+        key = "HMRC-PILLAR2-ORG",
+        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        state = "Activated",
+        delegatedAuthRule = Some("pillar2-auth")
+      )
     )
   )
 
   val pillar2OrganisationEnrolment: Enrolments = Enrolments(
-    Set(Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", PlrReference)), "Activated", None))
+    Set(
+      Enrolment(
+        key = "HMRC-PILLAR2-ORG",
+        identifiers = List(EnrolmentIdentifier("PLRID", PlrReference)),
+        state = "Activated",
+        delegatedAuthRule = None
+      )
+    )
+  )
+
+  val agentWithDelegatedEnrolments: Enrolments = Enrolments(
+    pillar2AgentEnrolment.enrolments ++ pillar2AgentEnrolmentWithDelegatedAuth.enrolments
   )
 
   def obligationsAndSubmissionsSuccessResponse(status: ObligationStatus): ObligationsAndSubmissionsSuccess = ObligationsAndSubmissionsSuccess(
