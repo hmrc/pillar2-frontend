@@ -22,21 +22,30 @@
     formHelper: FormWithCSRF,
     heading: heading,
     paragraphBody: paragraphBody,
+    paragraphMessageWithLink: ParagraphMessageWithLink,
     paragraphBodyLink: paragraphBodyLink,
     govukButton: GovukButton
 )
 
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
     pageTitle    = titleNoForm(messages("mttToDtt.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
         @heading(messages("mttToDtt.heading"), "govuk-heading-l")
 
-        @paragraphBody(messages("mttToDtt.p1"))
-        @paragraphBody(messages("mttToDtt.p2"))
-        @paragraphBody(messages("mttToDtt.p3"))
+        @if(isAgent) {
+            @paragraphBody(messages("mttToDtt.agent.p1"))
+        } else {
+            @paragraphBody(messages("mttToDtt.p1"))
+        }
 
-        @paragraphBodyLink(messages("mttToDtt.guidanceLink"), linkUrl = "#")
+        @paragraphMessageWithLink(
+            message1 = Some(messages("mttToDtt.p2")),
+            linkMessage = messages("mttToDtt.email"),
+            linkUrl = s"mailto:${messages("mttToDtt.email")}",
+            linkFullStop = true
+        )
+
         @paragraphBodyLink(messages("mttToDtt.homepageLink"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
 }

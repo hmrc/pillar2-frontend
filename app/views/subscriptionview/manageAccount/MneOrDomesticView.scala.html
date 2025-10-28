@@ -33,6 +33,14 @@
 
 @(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
+@emailAddress = @{
+    messages("mneOrDomestic.warning.email")
+}
+
+@linkHtml = @{
+    HtmlFormat.raw(s"""<a href="mailto:$emailAddress" class="govuk-link">$emailAddress</a>""")
+}
+
     @layout(pageTitle = title(form, messages("mneOrDomestic.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
         @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit, 'autoComplete -> "off") {
@@ -55,8 +63,6 @@
                 @paragraphBody(messages("mneOrDomestic.p1"))
             }
 
-            @paragraphBody(messages("mneOrDomestic.p2"))
-
             @bulletList(items = List(
                 Html(messages("mneOrDomestic.l1")),
                 Html(messages("mneOrDomestic.l2"))
@@ -64,7 +70,7 @@
 
             @govukWarningText(WarningText(
                 iconFallbackText = Some(messages("site.warning")),
-                content = HtmlContent(messages("mneOrDomestic.warning"))
+                content = HtmlContent(Html(messages("mneOrDomestic.warning", linkHtml)))
             ))
 
             @if(isAgent) {

@@ -40,7 +40,7 @@ class MttToDttControllerSpec extends SpecBase {
 
         val view = application.injector.instanceOf[MttToDttView]
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view()(
+        contentAsString(result) mustEqual view(isAgent = false)(
           request,
           applicationConfig,
           messages(application)

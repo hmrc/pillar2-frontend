@@ -35,6 +35,6 @@ class MttToDttController @Inject() (
 
   def onPageLoad(): Action[AnyContent] =
     identify { implicit request =>
-      Ok(view())
+      Ok(view(request.isAgent))
     }
 }
