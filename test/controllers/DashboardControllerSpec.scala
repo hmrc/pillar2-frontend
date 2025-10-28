@@ -1149,7 +1149,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         Gen.oneOf(uktrLatePaymentInterestCharge, uktrRepaymentInterestCharge),
         anyReturnStatus
       ) { (interestCharge, returnStatus) =>
-        val financialData = FinancialData(Seq(outstandingUktrCharge))
+        val financialData = FinancialData(Seq(outstandingUktrCharge, interestCharge))
         val result        = controller.determineNotificationArea(returnStatus, financialData, InactiveAccount)
         result mustBe DynamicNotificationAreaState.OutstandingPaymentsWithBtn(financialData.calculateOutstandingAmount)
       }
