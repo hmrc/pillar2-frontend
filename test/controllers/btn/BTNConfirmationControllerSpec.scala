@@ -54,7 +54,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
 
-          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false)(
+          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false, showUnderEnquiryWarning = false)(
             request,
             applicationConfig,
             messages(application)

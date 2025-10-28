@@ -32,9 +32,21 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
   lazy val pageTitle:                 String              = "Below-Threshold Notification successful"
 
   def groupView: Document =
-    Jsoup.parse(page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false, showUnderEnquiryWarning = false)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
   def agentView: Document =
-    Jsoup.parse(page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true)(request, appConfig, messages).toString())
+    Jsoup.parse(
+      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true, showUnderEnquiryWarning = false)(
+        request,
+        appConfig,
+        messages
+      ).toString()
+    )
 
   "BTNConfirmationView" should {
 
