@@ -56,7 +56,7 @@ class MttToDttViewSpec extends ViewSpecBase {
       "have the following paragraph content and link" in {
         paragraphs
           .get(0)
-          .text mustBe "You have requested to change your group entity locations from 'in the UK and outside the UK' (multinational) to 'UK only' (domestic)."
+          .text mustBe "You have requested to change your group entity locations from 'in the UK and outside the UK' (multinational) to 'only in the UK' (domestic)."
         paragraphs
           .get(1)
           .text mustBe "You cannot make this change in this service. You can request this change in writing by emailing pillar2mailbox@hmrc.gov.uk."
@@ -94,7 +94,7 @@ class MttToDttViewSpec extends ViewSpecBase {
     "have the following paragraph content and link" in {
       agentParagraphs
         .get(0)
-        .text mustBe "You have requested to change the group entity locations from 'in the UK and outside the UK' (multinational) to 'UK only' (domestic)."
+        .text mustBe "You have requested to change the group entity locations from 'in the UK and outside the UK' (multinational) to 'only in the UK' (domestic)."
       agentParagraphs
         .get(1)
         .text mustBe "You cannot make this change in this service. You can request this change in writing by emailing pillar2mailbox@hmrc.gov.uk."
