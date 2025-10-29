@@ -33,10 +33,6 @@
 
 @(form: Form[_], mode: Mode)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@emailAddress = @{
-    messages("mneOrDomestic.warning.email")
-}
-
 @linkHtml = @{
     HtmlFormat.raw(s"""<a href="mailto:${appConfig.pillar2mailbox}" class="govuk-link">${appConfig.pillar2mailbox}</a>""")
 }
