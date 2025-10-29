@@ -18,6 +18,7 @@ package controllers.btn
 
 import config.FrontendAppConfig
 import controllers.actions._
+import controllers.filteredAccountingPeriodDetails
 import pages.BTNChooseAccountingPeriodPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -37,26 +38,42 @@ class BTNConfirmationController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   BTNConfirmationView,
   checkPhase2Screens:                     Phase2ScreensAction,
-  sessionRepository:                      SessionRepository
+  sessionRepository:                      SessionRepository,
+  requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
-    sessionRepository.get(request.userId).map {
-      case Some(userAnswers) =>
-        val submissionDate:            String = LocalDate.now().toDateFormat
-        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData andThen requireObligationData).async {
+    implicit request =>
+      sessionRepository.get(request.userId).map {
+        case Some(userAnswers) =>
+          val submissionDate:            String = LocalDate.now().toDateFormat
+          val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
 
-        val showUnderEnquiryWarning = userAnswers
-          .get(BTNChooseAccountingPeriodPage)
-          .exists(_.underEnquiry)
+          val showUnderEnquiryWarning = userAnswers
+            .get(BTNChooseAccountingPeriodPage)
+            .map { chosenPeriod =>
+              val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
+              accountingPeriods.find(_._1 == chosenPeriod) match {
+                case Some((_, chosenIndex)) =>
+                  chosenPeriod.underEnquiry ||
+                    accountingPeriods
+                      .take(chosenIndex)
+                      .exists(_._1.underEnquiry)
+                case None =>
+                  chosenPeriod.underEnquiry
+              }
+            }
+            .getOrElse(false)
 
-        Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, showUnderEnquiryWarning))
-      case None =>
-        val submissionDate:            String = LocalDate.now().toDateFormat
-        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
-        Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, false))
-    }
+          Ok(
+            view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, showUnderEnquiryWarning)
+          )
+        case None =>
+          val submissionDate:            String = LocalDate.now().toDateFormat
+          val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+          Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, false))
+      }
   }
 }

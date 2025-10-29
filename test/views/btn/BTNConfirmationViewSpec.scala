@@ -31,17 +31,17 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
   lazy val page:                      BTNConfirmationView = inject[BTNConfirmationView]
   lazy val pageTitle:                 String              = "Below-Threshold Notification successful"
 
-  def groupView: Document =
+  def groupView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false, showUnderEnquiryWarning = false)(
+      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = false, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages
       ).toString()
     )
-  def agentView: Document =
+  def agentView(showUnderEnquiryWarning: Boolean = false): Document =
     Jsoup.parse(
-      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true, showUnderEnquiryWarning = false)(
+      page(Some(companyName), submissionDate, accountingPeriodStartDate, isAgent = true, showUnderEnquiryWarning)(
         request,
         appConfig,
         messages
@@ -51,33 +51,33 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
   "BTNConfirmationView" should {
 
     "have a title" in {
-      groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      groupView().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = groupView.getElementsByTag("h1")
+      val h1Elements: Elements = groupView().getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      groupView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      groupView().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have an H2 heading" in {
-      val h2Elements: Elements = groupView.getElementsByTag("h2")
+      val h2Elements: Elements = groupView().getElementsByTag("h2")
       h2Elements.get(0).text() mustBe "What happens next"
       h2Elements.get(0).hasClass("govuk-heading-m") mustBe true
     }
 
     "have no back link" in {
-      groupView.getElementsByClass("govuk-back-link").size mustBe 0
+      groupView().getElementsByClass("govuk-back-link").size mustBe 0
     }
 
     "have paragraph content and a link when in a group flow" in {
-      val paragraphs: Elements = groupView.getElementsByClass("govuk-body")
+      val paragraphs: Elements = groupView().getElementsByClass("govuk-body")
 
       paragraphs.get(0).text() mustBe s"You have submitted a Below-Threshold Notification on $submissionDate."
       paragraphs.get(1).text() mustBe
@@ -93,20 +93,34 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
     }
 
     "have paragraph content (containing company name) and a link when in an agent flow" in {
-      val paragraphs: Elements = agentView.getElementsByClass("govuk-body")
+      val paragraphs: Elements = agentView().getElementsByClass("govuk-body")
 
       paragraphs.get(0).text() mustBe
         s"You have submitted a Below-Threshold Notification for $companyName on $submissionDate."
       paragraphs.get(1).text() mustBe
         s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
-      paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
-        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
-        "information return while the group remains below-threshold."
-      paragraphs.get(3).text() mustBe
-        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
+      paragraphs.get(2).text() mustBe messages("btn.confirmation.group.p3")
+      paragraphs.get(3).text() mustBe messages("btn.confirmation.group.p4")
 
-      paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
+      paragraphs.get(4).getElementsByTag("a").text() mustBe messages("btn.confirmation.p5.group.link")
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+    }
+
+    "show inset text warning when showUnderEnquiryWarning is true for group view" in {
+      val insetText: Elements = groupView(showUnderEnquiryWarning = true).getElementsByClass("govuk-inset-text")
+      insetText.size() mustBe 1
+      insetText.text() mustBe "This submission will not apply to any accounting period under enquiry."
+    }
+
+    "show inset text warning when showUnderEnquiryWarning is true for agent view" in {
+      val insetText: Elements = agentView(showUnderEnquiryWarning = true).getElementsByClass("govuk-inset-text")
+      insetText.size() mustBe 1
+      insetText.text() mustBe "This submission will not apply to any accounting period under enquiry."
+    }
+
+    "not show inset text warning when showUnderEnquiryWarning is false" in {
+      groupView(showUnderEnquiryWarning = false).getElementsByClass("govuk-inset-text").size() mustBe 0
+      agentView(showUnderEnquiryWarning = false).getElementsByClass("govuk-inset-text").size() mustBe 0
     }
   }
 }
