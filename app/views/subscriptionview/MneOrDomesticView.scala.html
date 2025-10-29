@@ -38,7 +38,7 @@
 }
 
 @linkHtml = @{
-    HtmlFormat.raw(s"""<a href="mailto:$emailAddress" class="govuk-link">$emailAddress</a>""")
+    HtmlFormat.raw(s"""<a href="mailto:${appConfig.pillar2mailbox}" class="govuk-link">${appConfig.pillar2mailbox}</a>""")
 }
 
 @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {

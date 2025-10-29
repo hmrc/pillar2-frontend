@@ -42,8 +42,8 @@
 
         @paragraphMessageWithLink(
             message1 = Some(messages("mttToDtt.p2")),
-            linkMessage = messages("mttToDtt.email"),
-            linkUrl = s"mailto:${messages("mttToDtt.email")}",
+            linkMessage = appConfig.pillar2mailbox,
+            linkUrl = s"mailto:${appConfig.pillar2mailbox}",
             linkFullStop = true
         )
 

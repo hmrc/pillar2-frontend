@@ -656,7 +656,6 @@ mneOrDomestic.agent.p1 = You must tell HMRC the entity locations in the group. T
 mneOrDomestic.l1 = Domestic Top-up Tax (UK-only entity locations)
 mneOrDomestic.l2 = Multinational Top-up Tax (entity locations outside of the UK)
 mneOrDomestic.warning = You cannot change from multinational to domestic only using this service. You can request this change in writing by emailing {0}.
-mneOrDomestic.warning.email = pillar2mailbox@hmrc.gov.uk
 groupAccountingStartDatePeriod.checkYourAnswersLabel = Start date
 groupAccountingEndDatePeriod.checkYourAnswersLabel = End date
 
@@ -665,7 +664,6 @@ mttToDtt.heading = You cannot make this change online
 mttToDtt.p1 = You have requested to change your group entity locations from ''in the UK and outside the UK'' (multinational) to ''only in the UK'' (domestic).
 mttToDtt.agent.p1 = You have requested to change the group entity locations from ''in the UK and outside the UK'' (multinational) to ''only in the UK'' (domestic).
 mttToDtt.p2 = You cannot make this change in this service. You can request this change in writing by emailing
-mttToDtt.email = pillar2mailbox@hmrc.gov.uk
 mttToDtt.homepageLink = Back to homepage
 
 content.heading.caption = Contact details

@@ -28,29 +28,32 @@ class MttToDttViewSpec extends ViewSpecBase {
   lazy val page:      MttToDttView = inject[MttToDttView]
   lazy val pageTitle: String       = "You cannot make this change online"
 
-  def view(isAgent: Boolean = false): Document =
-    Jsoup.parse(page(isAgent)(request, appConfig, messages).toString())
+  def groupView: Document =
+    Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
 
-  lazy val paragraphs:      Elements = view().getElementsByClass("govuk-body")
-  lazy val agentParagraphs: Elements = view(isAgent = true).getElementsByClass("govuk-body")
+  def agentView: Document =
+    Jsoup.parse(page(isAgent = true)(request, appConfig, messages).toString())
+
+  lazy val paragraphs:      Elements = groupView.getElementsByClass("govuk-body")
+  lazy val agentParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
   "MttToDttView" when {
 
     "it's an organisation" must {
 
       "have a title" in {
-        view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+        groupView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
       }
 
       "have a unique H1 heading" in {
-        val h1Elements: Elements = view().getElementsByTag("h1")
+        val h1Elements: Elements = groupView.getElementsByTag("h1")
         h1Elements.size() mustBe 1
         h1Elements.text() mustBe pageTitle
       }
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        groupView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
       "have the following paragraph content and link" in {
@@ -77,18 +80,18 @@ class MttToDttViewSpec extends ViewSpecBase {
   "it's an agent" must {
 
     "have a title" in {
-      view(isAgent = true).title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
+      agentView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
     "have a unique H1 heading" in {
-      val h1Elements: Elements = view(isAgent = true).getElementsByTag("h1")
+      val h1Elements: Elements = agentView.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
     }
 
     "have the following paragraph content and link" in {
