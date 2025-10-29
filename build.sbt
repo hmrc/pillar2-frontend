@@ -106,7 +106,9 @@ lazy val twirlImports: Seq[String] = Seq(
 
 lazy val compilerSettings = Seq(
   "-feature",
-  "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s"
+  "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s",
+  "-Ypatmat-exhaust-depth",
+  "off"
 )
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")

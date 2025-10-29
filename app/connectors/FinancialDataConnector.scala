@@ -18,6 +18,7 @@ package connectors
 
 import config.FrontendAppConfig
 import models._
+import models.financialdata.FinancialDataResponse
 import play.api.Logging
 import play.api.http.Status.{NOT_FOUND, OK}
 import play.api.libs.json.Json
@@ -49,15 +50,15 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
 
   def retrieveFinancialData(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
     hc:                                   HeaderCarrier
-  ): Future[FinancialData] =
+  ): Future[FinancialDataResponse] =
     http
       .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/financial-data/$plrReference/${dateFrom.toString}/${dateTo.toString}")
       .execute[HttpResponse]
       .flatMap {
-        case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialData]
+        case response if response.status == OK => Future successful Json.parse(response.body).as[FinancialDataResponse]
         case response if response.status == NOT_FOUND =>
           logger.warn(s"Financial data not found for $plrReference")
-          Future failed NoResultFound
+          Future.successful(FinancialDataResponse(Seq.empty))
         case e @ _ =>
           logger.error(s"Financial data error for $plrReference - status=${e.status} - error=${e.body}")
           Future failed UnexpectedResponse

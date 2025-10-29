@@ -878,7 +878,7 @@ homepage.manageAccount.btn.body = If your group does not expect to meet the annu
 homepage.manageAccount.agent.btn.body = Submit a Below-Threshold Notification if your client does not expect to meet the annual revenue threshold.
 
 homepage.btnActiveBanner.title = {0} has a Below-Threshold Notification.
-homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria the future.
+homepage.btnActiveBanner.body = You have told us you do not need to submit a UK Tax Return. You must submit a UK Tax Return if you meet the Pillar 2 Top-up Taxes criteria in the future.
 homepage.btnActiveBanner.agent.body = You or your client have told us the group does not need to submit a UK Tax Return. You or your client must submit a UK Tax Return if they meet the Pillar 2 Top-up Taxes criteria in the future.
 homepage.btnActiveBanner.linkText = Find out more about Below-Threshold Notification
 
@@ -886,22 +886,32 @@ homepage.dna.accruingInterest.title = You owe £{0}
 homepage.dna.accruingInterest.agent.title = Your client owes £{0}
 homepage.dna.accruingInterest.body = Your overdue payment is now subject to daily interest.
 homepage.dna.accruingInterest.agent.body = This payment is overdue, and is now subject to daily interest.
-homepage.dna.accruingInterest.outstandingPayments.linkText = View outstanding payments
+homepage.dna.accruingInterest.linkText = View outstanding payments
 
-homepage.dna.returnExpected.Due.title = You have one or more returns due
-homepage.dna.returnExpected.Due.body = Submit your returns before the due date to avoid penalties.
-homepage.dna.returnExpected.agent.Due.title = One or more returns are now due
-homepage.dna.returnExpected.agent.Due.body = Submit returns before the due date to avoid penalties.
+homepage.dna.outstandingPaymentsWithBtn.title = You owe £{0}
+homepage.dna.outstandingPaymentsWithBtn.agent.title = Your client owes £{0}
+homepage.dna.outstandingPaymentsWithBtn.body = You have submitted a Below-Threshold Notification but your group has outstanding payments.
+homepage.dna.outstandingPaymentsWithBtn.agent.body = Your client has submitted a Below-Threshold Notification but has outstanding payments.
+homepage.dna.outstandingPaymentsWithBtn.linkText = View outstanding payments
 
-homepage.dna.returnExpected.Overdue.title = You have overdue or incomplete returns
-homepage.dna.returnExpected.Overdue.body = You must submit or complete these returns as soon as possible.
-homepage.dna.returnExpected.agent.Overdue.title = Overdue or incomplete returns
-homepage.dna.returnExpected.agent.Overdue.body = Submit or complete these returns as soon as possible.
+homepage.dna.outstandingPayments.title = You owe £{0}
+homepage.dna.outstandingPayments.agent.title = Your client owes £{0}
+homepage.dna.outstandingPayments.linkText = View outstanding payments
 
-homepage.dna.returnExpected.Incomplete.title = You have overdue or incomplete returns
-homepage.dna.returnExpected.Incomplete.body = You must submit or complete these returns as soon as possible.
-homepage.dna.returnExpected.agent.Incomplete.title = Overdue or incomplete returns
-homepage.dna.returnExpected.agent.Incomplete.body = Submit or complete these returns as soon as possible.
+homepage.dna.returnExpected.due.title = You have one or more returns due
+homepage.dna.returnExpected.due.body = Submit your returns before the due date to avoid penalties.
+homepage.dna.returnExpected.agent.due.title = One or more returns are now due
+homepage.dna.returnExpected.agent.due.body = Submit returns before the due date to avoid penalties.
+
+homepage.dna.returnExpected.overdue.title = You have overdue or incomplete returns
+homepage.dna.returnExpected.overdue.body = You must submit or complete these returns as soon as possible.
+homepage.dna.returnExpected.agent.overdue.title = Overdue or incomplete returns
+homepage.dna.returnExpected.agent.overdue.body = Submit or complete these returns as soon as possible.
+
+homepage.dna.returnExpected.incomplete.title = You have overdue or incomplete returns
+homepage.dna.returnExpected.incomplete.body = You must submit or complete these returns as soon as possible.
+homepage.dna.returnExpected.agent.incomplete.title = Overdue or incomplete returns
+homepage.dna.returnExpected.agent.incomplete.body = Submit or complete these returns as soon as possible.
 
 homepage.dna.returnExpected.linkText = View all due and overdue returns
 

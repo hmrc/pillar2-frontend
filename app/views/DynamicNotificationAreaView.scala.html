@@ -40,18 +40,22 @@
     controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url
 }
 
-@insideSectionBreaks(content: Html) = {
+@notificationWrapper(content: Html) = {
     @sectionBreak(id=Some("notifications-break-begin"))
-    @content
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            @content
+        </div>
+    </div>
     @sectionBreak(id=Some("notifications-break-end"))
 }
 
 @notificationState match {
-  case DynamicNotificationAreaState.AccruingInterestNotification(amountOwed) => {
-      @insideSectionBreaks {
+  case DynamicNotificationAreaState.AccruingInterest(amountOwed) => {
+      @notificationWrapper {
           @h2(
               message = messages(s"homepage.dna.accruingInterest$maybeAgentKey.title", formatAmount(amountOwed)),
-              size = "m",
+              size = "s",
               id = Some("accruing-interest-notification-subheading")
           )
           @paragraphBody(
@@ -59,23 +63,55 @@
               id = Some("accruing-interest-notification-body")
           )
           @paragraphBodyLink(
-              message = messages("homepage.dna.accruingInterest.outstandingPayments.linkText"),
+              message = messages("homepage.dna.accruingInterest.linkText"),
               linkUrl = viewOutstandingPaymentsUrl,
-              linkId = Some("accruing-interest-notification-outstanding-payments-link")
+              linkId = Some("accruing-interest-notification-link")
+          )
+      }
+  }
+  case DynamicNotificationAreaState.OutstandingPaymentsWithBtn(amountOwed) => {
+      @notificationWrapper {
+          @h2(
+              message = messages(s"homepage.dna.outstandingPaymentsWithBtn$maybeAgentKey.title", formatAmount(amountOwed)),
+              size = "s",
+              id = Some("outstanding-payments-btn-notification-subheading")
+          )
+          @paragraphBody(
+              message = messages(s"homepage.dna.outstandingPaymentsWithBtn$maybeAgentKey.body"),
+              id = Some("outstanding-payments-btn-notification-body")
+          )
+          @paragraphBodyLink(
+              message = messages("homepage.dna.outstandingPaymentsWithBtn.linkText"),
+              linkUrl = viewOutstandingPaymentsUrl,
+              linkId = Some("outstanding-payments-btn-notification-link")
+          )
+      }
+  }
+  case DynamicNotificationAreaState.OutstandingPayments(amountOwed) => {
+      @notificationWrapper {
+          @h2(
+              message = messages(s"homepage.dna.outstandingPayments$maybeAgentKey.title", formatAmount(amountOwed)),
+              size = "s",
+              id = Some("outstanding-payments-notification-subheading")
+          )
+          @paragraphBodyLink(
+              message = messages("homepage.dna.outstandingPayments.linkText"),
+              linkUrl = viewOutstandingPaymentsUrl,
+              linkId = Some("outstanding-payments-notification-link")
           )
       }
   }
   case returnExpected: DynamicNotificationAreaState.ReturnExpectedNotification => {
       @defining(
           returnExpected match {
-              case DynamicNotificationAreaState.ReturnExpectedNotification.Due => "Due"
-              case DynamicNotificationAreaState.ReturnExpectedNotification.Overdue => "Overdue"
-              case DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete => "Incomplete"
+              case DynamicNotificationAreaState.ReturnExpectedNotification.Due => "due"
+              case DynamicNotificationAreaState.ReturnExpectedNotification.Overdue => "overdue"
+              case DynamicNotificationAreaState.ReturnExpectedNotification.Incomplete => "incomplete"
           }
-      ){ scenarioKey => @insideSectionBreaks {
+      ){ scenarioKey => @notificationWrapper {
           @h2(
               message = messages(s"homepage.dna.returnExpected$maybeAgentKey.$scenarioKey.title"),
-              size = "m",
+              size = "s",
               id = Some("return-expected-notification-subheading")
           )
           @paragraphBody(

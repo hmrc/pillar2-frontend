@@ -20,8 +20,8 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.routes.JourneyRecoveryController
-import helpers.FinancialDataHelper.toPillar2Transaction
 import models._
+import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
@@ -56,30 +56,27 @@ class OutstandingPaymentsController @Inject() (
     with I18nSupport
     with Logging {
 
-  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] = {
-    val outstandingCharges = financialData.outstandingCharges
-
-    outstandingCharges
-      .groupBy(transaction => (transaction.taxPeriodFrom.get, transaction.taxPeriodTo.get))
-      .toSeq
-      .sortBy(_._1)
-      .reverse
-      .map { case ((periodFrom, periodTo), transactions) =>
+  private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] =
+    financialData.onlyOutstandingCharges
+      .groupBy(_.taxPeriod)
+      .map { case (taxPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =
           transactions
-            .groupBy(transaction => toPillar2Transaction(transaction.mainTransaction.get))
-            .map { case (parentTransaction, groupedTransactions) =>
+            .groupBy(_.mainTransactionRef)
+            .map { case (transactionRef, groupedTransactions) =>
               TransactionSummary(
-                parentTransaction,
-                groupedTransactions.flatMap(_.outstandingAmount).sum,
-                groupedTransactions.head.items.head.dueDate.get
+                transactionRef.displayName,
+                groupedTransactions.map(_.outstandingAmount).sum,
+                groupedTransactions.map(_.chargeItems.earliestDueDate).min
               )
             }
             .toSeq
 
-        FinancialSummary(AccountingPeriod(periodFrom, periodTo), transactionSummaries.sortBy(_.dueDate).reverse)
+        FinancialSummary(AccountingPeriod(taxPeriod.from, taxPeriod.to), transactionSummaries.sortBy(_.dueDate).reverse)
       }
-  }
+      .toSeq
+      .sortBy(_.accountingPeriod.dueDate)
+      .reverse
 
   def onPageLoad: Action[AnyContent] =
     (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
@@ -91,14 +88,14 @@ class OutstandingPaymentsController @Inject() (
         plrRef <- OptionT
                     .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                     .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        rawFinancialData <-
+        financialData <-
           OptionT
             .liftF(
               financialDataService
                 .retrieveFinancialData(plrRef, now(), now().minusYears(SubmissionAccountingPeriods))
                 .recover { case NoResultFound => FinancialData(Seq.empty) }
             )
-        outstandingPaymentSummaries = toOutstandingPaymentsSummaries(rawFinancialData)
+        outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
       } yield {
         val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
         val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.hasOverdueReturnPayment(now()))

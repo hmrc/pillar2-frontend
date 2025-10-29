@@ -22,9 +22,11 @@ sealed trait DynamicNotificationAreaState
 
 object DynamicNotificationAreaState {
 
-  case object NoNotification extends DynamicNotificationAreaState
-  case class AccruingInterestNotification(amountOwed: BigDecimal) extends DynamicNotificationAreaState
+  case class AccruingInterest(amountOwed: BigDecimal) extends DynamicNotificationAreaState
+  case class OutstandingPaymentsWithBtn(amountOwed: BigDecimal) extends DynamicNotificationAreaState
+  case class OutstandingPayments(amountOwed: BigDecimal) extends DynamicNotificationAreaState
   sealed trait ReturnExpectedNotification extends DynamicNotificationAreaState with EnumEntry
+  case object NoNotification extends DynamicNotificationAreaState
 
   object ReturnExpectedNotification extends Enum[ReturnExpectedNotification] {
     case object Due extends ReturnExpectedNotification
