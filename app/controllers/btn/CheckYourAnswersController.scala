@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import models.MneOrDomestic.Uk
-import models.audit.ApiResponseData
+import models.audit.{ApiResponseFailure, ApiResponseSuccess}
 import models.btn.{BTNRequest, BTNStatus}
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
@@ -32,11 +32,11 @@ import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.isoLocalDateTimeFormatter
 import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
+import java.time.Instant
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -127,10 +127,9 @@ class CheckYourAnswersController @Inject() (
                            pillarReference = pillar2Id,
                            accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                           apiResponseData = ApiResponseData(
+                           response = ApiResponseSuccess(
                              statusCode = CREATED,
-                             processingDate = resp.processingDate.format(isoLocalDateTimeFormatter),
-                             errorCode = None,
+                             processedAt = resp.processingDate.toInstant,
                              responseMessage = "Success"
                            )
                          )
@@ -149,10 +148,10 @@ class CheckYourAnswersController @Inject() (
                            pillarReference = pillar2Id,
                            accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                           apiResponseData = ApiResponseData(
+                           response = ApiResponseFailure(
                              statusCode = INTERNAL_SERVER_ERROR,
-                             processingDate = java.time.LocalDateTime.now().format(isoLocalDateTimeFormatter),
-                             errorCode = Some("InternalIssueError"),
+                             processedAt = Instant.now(),
+                             errorCode = "InternalIssueError",
                              responseMessage = err.getMessage
                            )
                          )

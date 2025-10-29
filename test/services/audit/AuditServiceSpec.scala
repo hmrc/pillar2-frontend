@@ -32,7 +32,7 @@ import play.api.test.Helpers.running
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import java.time.LocalDate
+import java.time.{LocalDate, LocalDateTime, ZoneOffset}
 import scala.concurrent.Future
 
 class AuditServiceSpec extends SpecBase {
@@ -123,15 +123,16 @@ class AuditServiceSpec extends SpecBase {
         )
         .build()
 
-      val pillarReference             = "PLR1234567890"
-      val apStartDate                 = "2024-03-20"
-      val apEndDate                   = "2025-03-20"
-      val responseOk                  = 200
-      val responseInternalServerError = 500
-      val responseProcessedAt         = "2024-03-20T07:32:03Z"
-      val responseSuccessMessage      = "Success"
-      val responseErrorCode           = "InternalIssueError"
-      val responseErrorMessage        = "Failure"
+      val pillarReference               = "PLR1234567890"
+      val apStartDate                   = "2024-03-20"
+      val apEndDate                     = "2025-03-20"
+      val responseOk                    = 200
+      val responseInternalServerError   = 500
+      val responseProcessedAt           = LocalDateTime.of(2024, 3, 20, 13, 30, 0).toInstant(ZoneOffset.UTC)
+      val responseProcessedAtSerialised = "2024-03-20T13:30:00Z"
+      val responseSuccessMessage        = "Success"
+      val responseErrorCode             = "InternalIssueError"
+      val responseErrorMessage          = "Failure"
 
       "return Success when audit call is successful" when {
 
@@ -149,10 +150,9 @@ class AuditServiceSpec extends SpecBase {
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = true,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processingDate = responseProcessedAt,
-                errorCode = None,
+                processedAt = responseProcessedAt,
                 responseMessage = responseSuccessMessage
               )
             )(hc)
@@ -171,10 +171,14 @@ class AuditServiceSpec extends SpecBase {
             "accountingPeriodEnd"        -> apEndDate,
             "entitiesInsideAndOutsideUK" -> true,
             "apiResponseData" -> Json.obj(
-              "statusCode"     -> responseOk,
-              "processingDate" -> responseProcessedAt,
-              // no errorCode
-              "responseMessage" -> "Success"
+              "statusCode" -> responseOk,
+              "messageResponseData" -> Json.obj(
+                "success" -> Json.obj(
+                  "processingDate" -> responseProcessedAtSerialised,
+                  // no errorCode
+                  "responseMessage" -> "Success"
+                )
+              )
             )
           )
         }
@@ -193,10 +197,10 @@ class AuditServiceSpec extends SpecBase {
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = false,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseFailure(
                 statusCode = responseInternalServerError,
-                processingDate = responseProcessedAt,
-                errorCode = Some(responseErrorCode),
+                processedAt = responseProcessedAt,
+                errorCode = responseErrorCode,
                 responseMessage = responseErrorMessage
               )
             )(hc)
@@ -215,10 +219,14 @@ class AuditServiceSpec extends SpecBase {
             "accountingPeriodEnd"        -> apEndDate,
             "entitiesInsideAndOutsideUK" -> false,
             "apiResponseData" -> Json.obj(
-              "statusCode"      -> responseInternalServerError,
-              "processingDate"  -> responseProcessedAt,
-              "errorCode"       -> responseErrorCode,
-              "responseMessage" -> responseErrorMessage
+              "statusCode" -> responseInternalServerError,
+              "messageResponseData" -> Json.obj(
+                "failure" -> Json.obj(
+                  "processingDate"  -> responseProcessedAtSerialised,
+                  "errorCode"       -> responseErrorCode,
+                  "responseMessage" -> responseErrorMessage
+                )
+              )
             )
           )
         }
@@ -238,10 +246,9 @@ class AuditServiceSpec extends SpecBase {
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = true,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processingDate = responseProcessedAt,
-                errorCode = None,
+                processedAt = responseProcessedAt,
                 responseMessage = responseSuccessMessage
               )
             )(hc)
@@ -265,10 +272,9 @@ class AuditServiceSpec extends SpecBase {
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = true,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processingDate = responseProcessedAt,
-                errorCode = None,
+                processedAt = responseProcessedAt,
                 responseMessage = responseSuccessMessage
               )
             )(hc)
@@ -291,10 +297,9 @@ class AuditServiceSpec extends SpecBase {
               endDate = LocalDate.parse(apEndDate)
             ),
             entitiesInsideAndOutsideUK = true,
-            apiResponseData = models.audit.ApiResponseData(
+            response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processingDate = responseProcessedAt,
-              errorCode = None,
+              processedAt = responseProcessedAt,
               responseMessage = responseSuccessMessage
             )
           )(hc)

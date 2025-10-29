@@ -16,9 +16,10 @@
 
 package models.audit
 
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-import java.time.LocalDate
+import java.time.{Instant, LocalDate}
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -32,18 +33,48 @@ case class CreateBtnAuditEvent(
 }
 
 object CreateBtnAuditEvent {
-  implicit val format: OFormat[CreateBtnAuditEvent] = Json.format[CreateBtnAuditEvent]
   implicit val writes: OWrites[CreateBtnAuditEvent] = Json.writes[CreateBtnAuditEvent]
 }
 
-case class ApiResponseData(
+sealed trait ApiResponseData {
+  def statusCode:      Int
+  def processedAt:     Instant
+  def responseMessage: String
+}
+
+final case class ApiResponseSuccess(
   statusCode:      Int,
-  processingDate:  String,
-  errorCode:       Option[String],
+  processedAt:     Instant,
   responseMessage: String
-)
+) extends ApiResponseData
+
+final case class ApiResponseFailure(
+  statusCode:      Int,
+  processedAt:     Instant,
+  errorCode:       String,
+  responseMessage: String
+) extends ApiResponseData
 
 object ApiResponseData {
-  implicit val format: OFormat[ApiResponseData] = Json.format[ApiResponseData]
-  implicit val writes: OWrites[ApiResponseData] = Json.writes[ApiResponseData]
+  implicit val writes: Writes[ApiResponseData] = {
+    case success @ ApiResponseSuccess(_, _, _)    => Json.toJson(success)
+    case failure @ ApiResponseFailure(_, _, _, _) => Json.toJson(failure)
+  }
+}
+
+object ApiResponseSuccess {
+  implicit val writes: Writes[ApiResponseSuccess] = (
+    (__ \ "statusCode").write[Int] and
+      (__ \ "messageResponseData" \ "success" \ "processingDate").write[Instant] and
+      (__ \ "messageResponseData" \ "success" \ "responseMessage").write[String]
+  )(resp => (resp.statusCode, resp.processedAt, resp.responseMessage))
+}
+
+object ApiResponseFailure {
+  implicit val writes: Writes[ApiResponseFailure] = (
+    (__ \ "statusCode").write[Int] and
+      (__ \ "messageResponseData" \ "failure" \ "processingDate").write[Instant] and
+      (__ \ "messageResponseData" \ "failure" \ "responseMessage").write[String] and
+      (__ \ "messageResponseData" \ "failure" \ "errorCode").write[String]
+  )(resp => (resp.statusCode, resp.processedAt, resp.responseMessage, resp.errorCode))
 }
