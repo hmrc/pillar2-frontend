@@ -54,16 +54,11 @@ class BTNConfirmationController @Inject() (
           val showUnderEnquiryWarning = userAnswers
             .get(BTNChooseAccountingPeriodPage)
             .map { chosenPeriod =>
-              val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
-              accountingPeriods.find(_._1 == chosenPeriod) match {
-                case Some((_, chosenIndex)) =>
-                  chosenPeriod.underEnquiry ||
-                    accountingPeriods
-                      .take(chosenIndex)
-                      .exists(_._1.underEnquiry)
-                case None =>
-                  chosenPeriod.underEnquiry
-              }
+              val accountingPeriods = filteredAccountingPeriodDetails
+              chosenPeriod.underEnquiry ||
+              accountingPeriods
+                .filter(_.startDate.isAfter(chosenPeriod.startDate))
+                .exists(_.underEnquiry)
             }
             .getOrElse(false)
 
