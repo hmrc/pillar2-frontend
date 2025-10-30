@@ -33,11 +33,12 @@ class SubscriptionNavigatorSpec extends SpecBase {
   private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+
   "Navigator" when {
 
-    "in Normal mode" must {
+    "in Normal mode" should {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "go from a page that doesn't exist in the route map to Index" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
       }
@@ -135,9 +136,9 @@ class SubscriptionNavigatorSpec extends SpecBase {
       }
     }
 
-    "in Check mode" must {
+    "in Check mode" should {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe contactCYA
       }

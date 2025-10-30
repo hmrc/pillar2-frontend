@@ -37,7 +37,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
   val form = new RfmContactByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")
 
-  "Rfm Can we contact by Phone Controller" when {
+  "RfmContactByPhoneController" should {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
@@ -122,7 +122,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "sad")
         .success
@@ -145,7 +145,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to next page when valid data is submitted with value NO" in {
+    "redirect to next page when valid data is submitted with value NO" in {
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "sad")
         .success

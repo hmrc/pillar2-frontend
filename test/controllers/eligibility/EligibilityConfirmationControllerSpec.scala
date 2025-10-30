@@ -23,8 +23,8 @@ import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationControllerSpec extends SpecBase {
 
-  "Eligibility Confirmation Controller" when {
-    "must return OK and the correct view for a GET" in {
+  "EligibilityConfirmationController" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -40,7 +40,8 @@ class EligibilityConfirmationControllerSpec extends SpecBase {
 
       }
     }
-    "must redirect to the taskList" in {
+
+    "redirect to the taskList" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {

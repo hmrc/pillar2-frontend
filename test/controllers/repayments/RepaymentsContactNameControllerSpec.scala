@@ -34,9 +34,8 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactNameFormProvider()
 
-  "Repayments Contact Name Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Repayments Contact Name Controller" should {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -48,7 +47,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -75,7 +74,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Contact Email Controller when valid data is submitted" in {
+    "redirect to Repayments Contact Email Controller when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -94,7 +93,7 @@ class RepaymentsContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =

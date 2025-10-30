@@ -29,9 +29,8 @@ import java.time.ZonedDateTime
 
 class RepaymentConfirmationControllerSpec extends SpecBase {
 
-  "Repayment confirmation controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Repayment confirmation controller" should {
+    "return OK and the correct view for a GET" in {
       val currentDateTimeGMT: String = ZonedDateTime.now().toDateTimeGmtFormat
       val testUserAnswers: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)

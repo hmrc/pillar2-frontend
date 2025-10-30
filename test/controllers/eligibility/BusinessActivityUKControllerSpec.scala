@@ -33,9 +33,8 @@ import scala.concurrent.Future
 class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
   val formProvider = new BusinessActivityUKFormProvider()
 
-  "Trading Business Confirmation Controller" when {
-
-    "must return OK and the correct view for a GET when page previously not answered" in {
+  "Trading Business Confirmation Controller" should {
+    "return OK and the correct view for a GET when page previously not answered" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -66,7 +65,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
-    "must return OK and the correct view for a GET when page previously answered" in {
+    "return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -86,7 +85,7 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -99,7 +98,8 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "must redirect to the next page when valid data is submitted with no selected" in {
+
+    "redirect to the next page when valid data is submitted with no selected" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -112,7 +112,8 @@ class BusinessActivityUKControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "return  BAD_REQUEST if invalid data is submitted " in {
+
+    "return BAD_REQUEST if invalid data is submitted " in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =

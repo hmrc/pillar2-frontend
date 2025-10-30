@@ -34,9 +34,8 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
 
   val formProvider = new RequestRepaymentAmountFormProvider()
 
-  "RequestRefundAmount Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "RequestRefundAmount Controller" should {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentAmountController.onPageLoad(NormalMode).url)
@@ -51,7 +50,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val amount = BigDecimal(9.99)
       val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -72,7 +71,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to reason for requesting when valid data is submitted" in {
+    "redirect to reason for requesting when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -88,7 +87,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -105,7 +104,8 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted less than 0.0" in {
+
+    "return a Bad Request and errors when invalid data is submitted less than 0.0" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -123,7 +123,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted greater than 99,999,999,999.99" in {
+    "return a Bad Request and errors when invalid data is submitted greater than 99,999,999,999.99" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -141,7 +141,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must display pre-populated refund amount field when previously answered" in {
+    "display pre-populated refund amount field when previously answered" in {
       val amount = BigDecimal(9999.99)
       val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -157,7 +157,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must display Refund Amount field pre-populated with exactly 9999.99 from acceptance test scenario" in {
+    "display Refund Amount field pre-populated with exactly 9999.99 from acceptance test scenario" in {
       val exactAmount = BigDecimal("9999.99")
       val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, exactAmount)
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -176,7 +176,7 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
       }
     }
 
-    "must display Refund Amount field pre-populated with exactly 100.00 from acceptance test scenario" in {
+    "display Refund Amount field pre-populated with exactly 100.00 from acceptance test scenario" in {
       val exactAmount = BigDecimal("100.00")
       val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, exactAmount)
       val application = applicationBuilder(userAnswers = Some(ua))

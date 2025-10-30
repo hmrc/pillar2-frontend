@@ -35,9 +35,8 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
 
   val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "Rfm Capture Phone Details Controller" when {
-
-    "must return OK and the correct view for a GET if page previously not answered" in {
+  "RfmCapturePrimaryPhoneController" should {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmContactByPhonePage, true)
@@ -58,7 +57,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPrimaryContactNamePage, "sad")
         .setOrException(RfmContactByPhonePage, true)
@@ -80,7 +79,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -102,7 +101,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
 
     }
 
-    "must return a Bad Request errors when invalid data format is submitted" in {
+    "return a Bad Request errors when invalid data format is submitted" in {
 
       val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
@@ -123,7 +122,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
@@ -146,7 +145,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when empty page is submitted" in {
+    "return a Bad Request and errors when empty page is submitted" in {
 
       val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()

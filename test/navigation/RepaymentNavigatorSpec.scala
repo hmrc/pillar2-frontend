@@ -31,9 +31,9 @@ class RepaymentNavigatorSpec extends SpecBase {
 
   "Navigator" when {
 
-    "in Normal mode" must {
+    "in Normal mode" should {
 
-      "must go from a page that doesn't exist in the route map to Repayments Start Page" in {
+      "go from a page that doesn't exist in the route map to Repayments Start Page" in {
         case object UnknownPage extends Page
         navigator.nextPage(
           UnknownPage,
@@ -98,7 +98,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode = NormalMode)
       }
 
-      "must go to Repayments contact email page from Repayments contact name page" in {
+      "go to Repayments contact email page from Repayments contact name page" in {
         navigator.nextPage(
           RepaymentsContactNamePage,
           NormalMode,
@@ -107,7 +107,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactEmailController.onPageLoad(NormalMode)
       }
 
-      "must go to Repayments Contact By Phone page from Repayments contact email page" in {
+      "go to Repayments Contact By Phone page from Repayments contact email page" in {
         navigator.nextPage(
           RepaymentsContactEmailPage,
           NormalMode,
@@ -116,7 +116,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsContactByPhoneController.onPageLoad(NormalMode)
       }
 
-      "must go to Repayments Phone Details page from Repayments Contact By Phone page when True" in {
+      "go to Repayments Phone Details page from Repayments Contact By Phone page when True" in {
         navigator.nextPage(
           RepaymentsContactByPhonePage,
           NormalMode,
@@ -125,7 +125,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           controllers.repayments.routes.RepaymentsPhoneDetailsController.onPageLoad(NormalMode)
       }
 
-      "must go to UnderConstruction page from Repayments Contact By Phone page when False" in {
+      "go to UnderConstruction page from Repayments Contact By Phone page when False" in {
         navigator.nextPage(
           RepaymentsContactByPhonePage,
           NormalMode,
@@ -134,7 +134,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           repaymentsQuestionsCYA
       }
 
-      "must go to recovery  page from if incomplete info provided for phone preference in normal mode" in {
+      "go to recovery  page from if incomplete info provided for phone preference in normal mode" in {
         navigator.nextPage(
           RepaymentsContactByPhonePage,
           NormalMode,
@@ -143,7 +143,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           journeyRecovery
       }
 
-      "must go to Repayments CYA page from Repayments Phone Details page" in {
+      "go to Repayments CYA page from Repayments Phone Details page" in {
         navigator.nextPage(
           RepaymentsPhoneDetailsPage,
           NormalMode,
@@ -179,7 +179,7 @@ class RepaymentNavigatorSpec extends SpecBase {
 
     "in Check mode" must {
       val amount = BigDecimal(9.99)
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
         case object UnknownPage extends Page
         navigator.nextPage(
           UnknownPage,

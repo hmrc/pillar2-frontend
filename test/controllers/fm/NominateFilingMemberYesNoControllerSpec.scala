@@ -44,9 +44,9 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
     .setOrException(UpeContactEmailPage, "email")
     .setOrException(UpePhonePreferencePage, false)
 
-  "Nominate filing member Controller" must {
+  "Nominate filing member Controller" should {
 
-    "must return OK and the correct view for a GET if page previously not answered" in {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val application = applicationBuilder(userAnswers = Some(completeUpeJourney)).build()
 
       running(application) {
@@ -59,7 +59,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val application = applicationBuilder(userAnswers = Some(completeUpeJourney.setOrException(NominateFilingMemberPage, true))).build()
 
       running(application) {
@@ -84,7 +84,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
-    "Bad request if no option  is selected" in {
+    "Bad request if no option is selected" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =
@@ -100,7 +100,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

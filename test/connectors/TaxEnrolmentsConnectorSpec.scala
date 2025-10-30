@@ -36,6 +36,7 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
 
   private val errorCodes: Gen[Int] =
     Gen.oneOf(Seq(BAD_REQUEST, FORBIDDEN, NOT_FOUND, INTERNAL_SERVER_ERROR, BAD_GATEWAY, GATEWAY_TIMEOUT, SERVICE_UNAVAILABLE))
+
   "TaxEnrolmentsConnector" when {
     val enrolmentInfo = EnrolmentInfo(crn = Some("crn"), ctUtr = Some("utr"), plrId = "plrId")
 
@@ -47,14 +48,14 @@ class TaxEnrolmentsConnectorSpec extends SpecBase with WireMockServerHandler {
         result.futureValue mustBe Done
       }
 
-      "must return status as 400 and BadRequest error" in {
+      "return status as 400 and BadRequest error" in {
 
         stubResponseForPutRequest("/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", BAD_REQUEST)
         val result = connector.enrolAndActivate(enrolmentInfo).failed.futureValue
         result mustBe models.InternalIssueError
       }
 
-      "must return status ServiceUnavailable Error" in {
+      "return status ServiceUnavailable Error" in {
 
         stubResponseForPutRequest(s"/tax-enrolments/service/HMRC-PILLAR2-ORG/enrolment", INTERNAL_SERVER_ERROR)
         val result = connector.enrolAndActivate(enrolmentInfo).failed.futureValue

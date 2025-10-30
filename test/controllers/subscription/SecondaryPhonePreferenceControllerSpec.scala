@@ -36,9 +36,9 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
 
   val form = new SecondaryPhonePreferenceFormProvider()
   val formProvider: Form[Boolean] = form("name")
-  "SecondaryPhonePreference Controller" when {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryPhonePreference Controller" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryEmailPage, "he@a.com")
@@ -56,7 +56,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "name")
@@ -81,7 +81,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
@@ -114,7 +114,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(SubSecondaryContactNamePage, "TestName")
         .success
@@ -138,7 +138,7 @@ class SecondaryPhonePreferenceControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.SecondaryPhoneController.onPageLoad(NormalMode).url
       }
     }
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryPhonePreferenceController.onSubmit(NormalMode).url)

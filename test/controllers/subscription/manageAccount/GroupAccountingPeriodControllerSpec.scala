@@ -51,9 +51,8 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   val providerId:   String    = UUID.randomUUID().toString
   val providerType: String    = UUID.randomUUID().toString
 
-  "GroupAccountingPeriod Controller for Organisation View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous filled data is found" in {
+  "GroupAccountingPeriodController for Organisation" should {
+    "return OK and the correct view for a GET if no previous filled data is found" in {
       val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(ua)).build()
@@ -73,7 +72,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if previous data is found" in {
+    "return OK and the correct view for a GET if previous data is found" in {
       val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
@@ -97,7 +96,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
 
       val date = AccountingPeriod(startDate, endDate)
       val ua   = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -118,7 +117,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
@@ -142,7 +141,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -183,9 +182,8 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
 
   }
 
-  "GroupAccountingPeriod Controller for Agent View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "GroupAccountingPeriodController for Agent" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -217,7 +215,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
 
       val date = AccountingPeriod(startDate, endDate)
       val ua   = emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -247,7 +245,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -278,7 +276,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]

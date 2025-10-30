@@ -23,9 +23,9 @@ import views.html.bta.NoPlrIdGuidanceView
 
 class NoPlrIdGuidanceControllerSpec extends SpecBase {
 
-  "NoPlrIdGuidance Controller" must {
+  "NoPlrIdGuidanceController" should {
 
-    "must return OK and the correct view for a GET - bta feature true" in {
+    "return OK and the correct view for a GET - bta feature true" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(
@@ -47,7 +47,7 @@ class NoPlrIdGuidanceControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET - bta feature false" in {
+    "return OK and the correct view for a GET - bta feature false" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(

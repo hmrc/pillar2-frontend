@@ -23,9 +23,9 @@ import views.html.UnauthorisedIndividualView
 
 class UnauthorisedIndividualAffinityControllerSpec extends SpecBase {
 
-  "UnauthorisedIndividualAffinity  Controller" when {
+  "UnauthorisedIndividualAffinityController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

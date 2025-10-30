@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import helpers.ViewInstances
 import models.NormalMode
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -32,9 +32,9 @@ class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
       viewStartPageRegistration
     )
 
-  "StartPageRegistrationController" when {
+  "StartPageRegistrationController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val request =
         FakeRequest(GET, controllers.registration.routes.StartPageRegistrationController.onPageLoad(NormalMode).url)

@@ -25,9 +25,8 @@ import views.html.subscriptionview.manageAccount.MttToDttView
 
 class MttToDttControllerSpec extends SpecBase {
 
-  "MttToDtt Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "MttToDtt Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

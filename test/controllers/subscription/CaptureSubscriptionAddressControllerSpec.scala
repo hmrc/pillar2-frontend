@@ -71,7 +71,8 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
     }
-    "must return OK and the correct view for a GET if page not previously answered" in {
+
+    "return OK and the correct view for a GET if page not previously answered" in {
       val result = route(application, getRequest).value
 
       status(result) mustEqual OK

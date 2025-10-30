@@ -42,9 +42,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "ContactNameCompliance Controller for Organisation View Contact details" when {
+  "ContactNameCompliance Controller for Organisation View Contact details" should {
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder().build()
 
@@ -64,7 +64,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when previous data is found" in {
+    "return OK and the correct view for a GET when previous data is found" in {
 
       val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
@@ -85,7 +85,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
@@ -130,9 +130,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
   }
 
-  "ContactNameCompliance Controller for Agent View Contact details" when {
+  "ContactNameCompliance Controller for Agent View Contact details" should {
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -158,7 +158,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when previous data is found" in {
+    "return OK and the correct view for a GET when previous data is found" in {
 
       val ua = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
@@ -185,7 +185,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))

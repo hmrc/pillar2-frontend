@@ -35,9 +35,9 @@ class NonUKBankControllerSpec extends SpecBase {
 
   val formProvider = new NonUKBankFormProvider()
 
-  "NonUKBank Controller" when {
+  "NonUKBank Controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.NonUKBankController.onPageLoad(NormalMode).url)
@@ -48,7 +48,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers.setOrException(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -68,7 +68,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Contact Name page when valid data is submitted" in {
+    "redirect to Repayments Contact Name page when valid data is submitted" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -88,7 +88,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -102,7 +102,7 @@ class NonUKBankControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message for invalid BIC/SWIFT code" in {
+    "return Bad Request and show specific error message for invalid BIC/SWIFT code" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =

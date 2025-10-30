@@ -35,9 +35,9 @@ class CapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "Capture Phone Details Controller" when {
+  "CapturePhoneDetailsController" should {
 
-    "must return OK and the correct view for a GET if page previously not answered" in {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val ua = emptyUserAnswers
         .setOrException(UpeContactNamePage, "sad")
         .setOrException(UpePhonePreferencePage, true)
@@ -58,7 +58,7 @@ class CapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(UpeContactNamePage, "sad")
         .setOrException(UpePhonePreferencePage, true)
@@ -102,7 +102,7 @@ class CapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(UpeNameRegistrationPage, "TestName")
         .success

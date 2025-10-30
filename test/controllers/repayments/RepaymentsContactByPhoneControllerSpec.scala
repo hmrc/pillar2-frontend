@@ -36,9 +36,9 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
   val formProvider = new RepaymentsContactByPhoneFormProvider()
   val form: Form[Boolean] = formProvider("ABC Limited")
 
-  "Repayments Contact By Phone Controller" when {
+  "RepaymentsContactByPhoneController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
@@ -61,7 +61,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .set(RepaymentsContactNamePage, "ABC Limited")
         .success
@@ -93,7 +93,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Phone Details page when valid data with values Yes is submitted" in {
+    "redirect to Repayments Phone Details page when valid data with values Yes is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -111,7 +111,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction page when valid data with values No is submitted" in {
+    "redirect to Under Construction page when valid data with values No is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -129,7 +129,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -151,7 +151,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Recovery page if the previous page is not answered" in {
+    "redirect to Recovery page if the previous page is not answered" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -165,7 +165,7 @@ class RepaymentsContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Recovery page if the previous page is not answered on Submit" in {
+    "redirect to Recovery page if the previous page is not answered on Submit" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

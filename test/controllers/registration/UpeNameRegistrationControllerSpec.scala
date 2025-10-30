@@ -35,9 +35,8 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new UpeNameRegistrationFormProvider()
 
-  "UpeNameRegistration Controller" must {
-
-    "must return OK and the correct view for a GET" in {
+  "UpeNameRegistration Controller" should {
+    "return OK and the correct view for a GET" in {
       val ua          = emptyUserAnswers.setOrException(UpeRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -57,7 +56,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
 
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
 
       val userAnswer  = emptyUserAnswers.setOrException(UpeNameRegistrationPage, "asd").setOrException(UpeRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
@@ -90,7 +89,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(UpeNameRegistrationPage, "TestName")
         .success
@@ -114,7 +113,8 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode).url
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 

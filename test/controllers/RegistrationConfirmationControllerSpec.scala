@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class RegistrationConfirmationControllerSpec extends SpecBase {
 
-  "RegistrationConfirmation Controller" when {
+  "RegistrationConfirmationController" should {
     val enrolments: Set[Enrolment] = Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
@@ -47,7 +47,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       )
     )
 
-    "must return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
+    "return OK and the correct view with content equal to 'Domestic Top-up Tax' for a GET" in {
       val testPlr2Id:      String = "12345678"
       val testCompanyName: String = "Test Limited"
       val currentDate:     String = LocalDate.now().toDateFormat
@@ -85,7 +85,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
+    "return OK and the correct view with content equal to 'Domestic Top-up Tax and Multinational Top-up Tax' for a GET" in {
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))

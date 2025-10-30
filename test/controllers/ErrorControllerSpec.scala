@@ -22,8 +22,8 @@ import play.api.test.Helpers._
 
 class ErrorControllerSpec extends SpecBase {
 
-  "Error Controller" when {
-    "must return not found error view for a GET " in {
+  "Error Controller" should {
+    "return not found error view for a GET " in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(GET, controllers.routes.ErrorController.onPageLoad.url)

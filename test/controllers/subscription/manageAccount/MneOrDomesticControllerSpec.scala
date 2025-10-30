@@ -49,7 +49,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
   "MneOrDomesticController for Organisations" should {
 
-    "must return OK and the correct view for a GET when previous data is found" in {
+    "return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = emptySubscriptionLocalData
         .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
@@ -73,7 +73,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder().build()
       running(application) {
@@ -90,7 +90,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
@@ -104,7 +104,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -140,7 +140,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
   "MneOrDomesticController for Agents" should {
 
-    "must return OK and the correct view for a GET when previous data is found" in {
+    "return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = emptySubscriptionLocalData
         .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
@@ -169,7 +169,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -195,7 +195,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -219,7 +219,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")

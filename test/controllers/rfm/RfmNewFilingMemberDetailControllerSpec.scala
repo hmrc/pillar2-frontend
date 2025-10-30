@@ -35,9 +35,9 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider()
 
-  "RFM UPE Name Registration controller" when {
+  "RFM UPE Name Registration controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -54,7 +54,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and populate the view correctly when the question has been previously answered" in {
+    "return OK and populate the view correctly when the question has been previously answered" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "name")
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -74,7 +74,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the under construction page when valid data is submitted" in {
+    "redirect to the under construction page when valid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -95,7 +95,7 @@ class RfmNewFilingMemberDetailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()

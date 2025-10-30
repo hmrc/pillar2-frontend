@@ -37,9 +37,9 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   val formProvider = new GroupAccountingPeriodFormProvider()
   val startDate: LocalDate = LocalDate.of(2023, 12, 31)
   val endDate:   LocalDate = LocalDate.of(2025, 12, 31)
-  "GroupAccountingPeriod Controller" when {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "GroupAccountingPeriodController" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
 
       val application = applicationBuilder(Some(ua)).build()
@@ -55,7 +55,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
 
       val date        = AccountingPeriod(startDate, endDate)
       val ua          = emptyUserAnswers.setOrException(SubAccountingPeriodPage, date).setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -72,7 +72,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page accounting period when valid data is submitted" in {
+    "redirect to next page accounting period when valid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "TestName")
 
@@ -98,7 +98,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page accounting period when valid data with string month is submitted" in {
+    "redirect to next page accounting period when valid data with string month is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "TestName")
 
@@ -136,7 +136,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -156,7 +156,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid string month is submitted" in {
+    "return a Bad Request and errors when invalid string month is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
@@ -194,7 +194,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when both start and end date are missing" in {
+    "return Bad Request and show specific error message when both start and end date are missing" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -217,7 +217,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date is before minimum" in {
+    "return Bad Request and show specific error message when start date is before minimum" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -239,7 +239,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date is before start date" in {
+    "return Bad Request and show specific error message when end date is before start date" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -261,7 +261,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when dates are invalid" in {
+    "return Bad Request and show specific error message when dates are invalid" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -284,7 +284,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show mixed error messages for invalid start date and empty end date" in {
+    "return Bad Request and show mixed error messages for invalid start date and empty end date" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -308,7 +308,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show mixed error messages for invalid start day and invalid end date" in {
+    "return Bad Request and show mixed error messages for invalid start day and invalid end date" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -332,7 +332,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing month and year" in {
+    "return Bad Request and show specific error message when start date missing month and year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -355,7 +355,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing day and year" in {
+    "return Bad Request and show specific error message when start date missing day and year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -378,7 +378,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing day and month" in {
+    "return Bad Request and show specific error message when start date missing day and month" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -401,7 +401,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing only day" in {
+    "return Bad Request and show specific error message when start date missing only day" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -424,7 +424,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing only month" in {
+    "return Bad Request and show specific error message when start date missing only month" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -447,7 +447,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when start date missing only year" in {
+    "return Bad Request and show specific error message when start date missing only year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -470,7 +470,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing month and year" in {
+    "return Bad Request and show specific error message when end date missing month and year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -493,7 +493,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing day and year" in {
+    "return Bad Request and show specific error message when end date missing day and year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -516,7 +516,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing day and month" in {
+    "return Bad Request and show specific error message when end date missing day and month" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -539,7 +539,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing only day" in {
+    "return Bad Request and show specific error message when end date missing only day" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -562,7 +562,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing only month" in {
+    "return Bad Request and show specific error message when end date missing only month" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -585,7 +585,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when end date missing only year" in {
+    "return Bad Request and show specific error message when end date missing only year" in {
       val ua          = emptyUserAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 

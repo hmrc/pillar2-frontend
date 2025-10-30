@@ -63,7 +63,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-  "RfmContactAddress Controller" when {
+  "RfmContactAddress Controller" should {
 
     "return OK and the correct view for a GET with no previous answer" in {
 
@@ -80,7 +80,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and populate the view correctly when the question has been previously answered" in {
+    "return OK and populate the view correctly when the question has been previously answered" in {
       val uaWithAddress = defaultUa.set(RfmContactAddressPage, nonUkAddress).success.value
       val application   = applicationBuilder(userAnswers = Some(uaWithAddress)).build()
 

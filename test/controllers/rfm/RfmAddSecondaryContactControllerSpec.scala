@@ -35,9 +35,8 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
 
   val formProvider = new RfmAddSecondaryContactFormProvider()
 
-  "RfmAddSecondaryContact Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "RfmAddSecondaryContactController" should {
+    "return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
         .setOrException(RfmPrimaryContactEmailPage, "john.doe@example.com")
@@ -60,7 +59,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
@@ -85,7 +84,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to RFM Secondary Contact Name page when user selects Yes" in {
+    "redirect to RFM Secondary Contact Name page when user selects Yes" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(RfmPrimaryContactNamePage, "name")
@@ -110,7 +109,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(RfmPrimaryContactNamePage, "name")
         .success
@@ -133,7 +132,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to book mark page for a GET if no previous existing data is found" in {
+    "redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(NormalMode).url)
@@ -147,7 +146,7 @@ class RfmAddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(NormalMode).url)

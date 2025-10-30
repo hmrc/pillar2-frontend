@@ -23,9 +23,9 @@ import views.html.registrationview.{RegistrationFailedNfmView, RegistrationFaile
 
 class GrsRegistrationFailedControllerSpec extends SpecBase {
 
-  "GrsRegistrationFailed  Controller" when {
+  "GrsRegistrationFailedController" should {
 
-    "must return OK and the correct view for a GET for UPE" in {
+    "return OK and the correct view for a GET for UPE" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -41,7 +41,7 @@ class GrsRegistrationFailedControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET for NFM" in {
+    "return OK and the correct view for a GET for NFM" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -57,7 +57,7 @@ class GrsRegistrationFailedControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET for RFM" in {
+    "return OK and the correct view for a GET for RFM" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

@@ -47,7 +47,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
 
   "ManageContactDetailsWaitingRoomController" when {
 
-    "onPageLoad" must {
+    "onPageLoad" should {
 
       "redirect to dashboard when status is SuccessfullyCompleted" in {
         val userAnswers = UserAnswers("id")

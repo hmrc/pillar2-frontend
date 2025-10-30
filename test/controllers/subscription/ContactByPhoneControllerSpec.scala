@@ -37,7 +37,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
   val form = new ContactByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("name")
 
-  "Can we contact  by Phone Controller" should {
+  "ContactByPhoneController" should {
 
     "return OK and the correct view for a GET" in {
       val ua =
@@ -89,7 +89,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return bad request when invalid data is submitted" in {
+    "return bad request when invalid data is submitted" in {
       val userAnswer  = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(userAnswer)).build()
       running(application) {
@@ -114,7 +114,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(SubPrimaryContactNamePage, "TestName")
         .success
@@ -138,7 +138,8 @@ class ContactByPhoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.routes.ContactByPhoneController.onPageLoad(NormalMode).url)

@@ -113,7 +113,8 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
       }
     }
-    "must return bad request when invalid data is submitted" in {
+
+    "return bad request when invalid data is submitted" in {
       val userAnswer  = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
       running(application) {
@@ -210,7 +211,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return bad request when invalid data is submitted" in {
+    "return bad request when invalid data is submitted" in {
       val userAnswer = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -232,7 +233,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
 
   }
 
-  " redirect to journey recovery if no primary contact name is found for POST" in {
+  "redirect to journey recovery if no primary contact name is found for POST" in {
     val application = applicationBuilder(subscriptionLocalData = None).build()
     running(application) {
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactByPhoneController.onSubmit.url)
@@ -243,7 +244,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
     }
   }
 
-  " remove primary phone and redirect to the next page when the user answers no" in {
+  "remove primary phone and redirect to the next page when the user answers no" in {
     import play.api.inject.bind
     val expectedNextPage = Call(GET, "/")
     val mockNavigator    = mock[AmendSubscriptionNavigator]

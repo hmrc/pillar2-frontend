@@ -21,7 +21,7 @@ import forms.TurnOverEligibilityFormProvider
 import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import pages.RevenueEqPage
 import play.api.inject
 import play.api.test.FakeRequest
@@ -35,9 +35,9 @@ class TurnOverEligibilityControllerSpec extends SpecBase with ViewInstances {
 
   val formProvider = new TurnOverEligibilityFormProvider()
 
-  "Turn Over Eligibility Controller" when {
+  "Turn Over Eligibility Controller" should {
 
-    "must return OK and the correct view for a GET when page previously not answered" in {
+    "return OK and the correct view for a GET when page previously not answered" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =
@@ -86,7 +86,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to the next page when chosen Yes and submitted" in {
+    "redirect to the next page when chosen Yes and submitted" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =
@@ -98,7 +98,7 @@ class TurnOverEligibilityControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to the next page when chosen No and submitted" in {
+    "redirect to the next page when chosen No and submitted" in {
       val application = applicationBuilder().build()
       running(application) {
         val request =

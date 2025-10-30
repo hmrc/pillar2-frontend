@@ -37,9 +37,8 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
 
   val formProvider = new UkOrAbroadBankAccountFormProvider()
 
-  "UkOrAbroadBankAccount Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "UkOrAbroadBankAccount Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -56,7 +55,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId).set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.values.head).success.value
 
@@ -79,7 +78,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -99,7 +98,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
-    "must update the user answers and redirect to the next page when the user answers has provided a valid answer" in {
+    "update the user answers and redirect to the next page when the user answers has provided a valid answer" in {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[RepaymentNavigator]
@@ -130,7 +129,7 @@ class UkOrAbroadBankAccountControllerSpec extends SpecBase {
       }
     }
 
-    "must display pre-populated repayment method selection when previously answered" in {
+    "display pre-populated repayment method selection when previously answered" in {
       val userAnswers = UserAnswers(userAnswersId).set(UkOrAbroadBankAccountPage, UkOrAbroadBankAccount.UkBankAccount).success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 

@@ -35,7 +35,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
 
   val formProvider = new NfmEmailAddressFormProvider()
 
-  "NfmContactEmail Controller" when {
+  "NfmContactEmail Controller" should {
 
     "return OK and the correct view for a GET if page not previously answered" in {
       val ua = emptyUserAnswers.setOrException(FmContactNamePage, "Ashley Smith")
@@ -58,7 +58,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .setOrException(FmContactNamePage, "Ashley Smith")
         .setOrException(FmContactEmailPage, "hello@goodbye.com")
@@ -81,7 +81,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request when invalid data is submitted" in {
+    "return a Bad Request when invalid data is submitted" in {
       val userAnswer  = emptyUserAnswers.set(FmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
@@ -95,7 +95,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show error message when email address is missing" in {
+    "return Bad Request and show error message when email address is missing" in {
       val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -110,7 +110,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show error message when email format is incorrect" in {
+    "return Bad Request and show error message when email format is incorrect" in {
       val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -125,7 +125,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show error message when email is too long" in {
+    "return Bad Request and show error message when email is too long" in {
       val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -153,6 +153,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
     "redirect to journey recovery if no contact name is found for POST" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -164,7 +165,8 @@ class NfmEmailAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    "must redirect to next page when valid data is submitted" in {
+
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

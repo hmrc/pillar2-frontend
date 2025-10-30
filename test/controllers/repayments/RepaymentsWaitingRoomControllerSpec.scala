@@ -26,7 +26,7 @@ import views.html.repayments.RepaymentsWaitingRoomView
 
 class RepaymentsWaitingRoomControllerSpec extends SpecBase {
 
-  "RepaymentsWaitingRoom Controller" when {
+  "RepaymentsWaitingRoom Controller" should {
 
     "return OK and the correct view for a GET if RepaymentsStatusPage is empty" in {
 
@@ -42,7 +42,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to registration confirmation page if database state is updated successfully after page refresh" in {
+    "redirect to registration confirmation page if database state is updated successfully after page refresh" in {
       val ua: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
         .setOrException(RepaymentsWaitingRoomVisited, true)
@@ -57,7 +57,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to repayment error page in case of a unexpected error response after page refresh" in {
+    "redirect to repayment error page in case of a unexpected error response after page refresh" in {
       val ua: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentsStatusPage, UnexpectedResponseError)
         .setOrException(RepaymentsWaitingRoomVisited, true)
@@ -72,7 +72,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to repayments incomplete data page in case of incomplete data error responses after page refresh" in {
+    "redirect to repayments incomplete data page in case of incomplete data error responses after page refresh" in {
       val ua: UserAnswers = emptyUserAnswers
         .setOrException(RepaymentsStatusPage, IncompleteDataError)
         .setOrException(RepaymentsWaitingRoomVisited, true)

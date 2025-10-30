@@ -52,9 +52,9 @@ class UpeContactEmailControllerSpec extends SpecBase {
   def getUpeContactEmailFormProvider: UpeContactEmailFormProvider = new UpeContactEmailFormProvider()
   val formProvider = new UpeContactEmailFormProvider()
 
-  "UpeContactEmail Controller" when {
+  "UpeContactEmailController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua          = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -73,7 +73,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .set(UpeContactNamePage, "name")
         .success
@@ -98,7 +98,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "Bad request when invalid data submitted in POST" in {
+    "return Bad Request when invalid data submitted in POST" in {
       val ua          = emptyUserAnswers.set(UpeContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -111,7 +111,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(UpeNameRegistrationPage, "TestName")
         .success
@@ -147,7 +147,8 @@ class UpeContactEmailControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
-    "Journey Recovery when no data found for contact name in POST" in {
+
+    "redirect to Journey Recovery when no data found for contact name in POST" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(

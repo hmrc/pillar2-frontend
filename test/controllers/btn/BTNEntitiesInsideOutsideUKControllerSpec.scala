@@ -53,9 +53,9 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
     )
     .build()
 
-  "EntitiesBothInUKAndOutsideController" when {
+  "EntitiesBothInUKAndOutsideController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -74,7 +74,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId).set(EntitiesInsideOutsideUKPage, true).success.value
 
@@ -96,7 +96,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
+    "redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -112,7 +112,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to a knockback page when a BTN is submitted" in {
+    "redirect to a knockback page when a BTN is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> true)
@@ -133,7 +133,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
@@ -157,7 +157,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to BTN specific error page when subscription data is not returned" in {
+    "redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
@@ -174,7 +174,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must return OK and the correct view for amend group details page" in {
+    "return OK and the correct view for amend group details page" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .configure("features.phase2ScreensEnabled" -> true)
@@ -208,7 +208,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
+    "redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
       def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> false)
         .overrides(
@@ -229,7 +229,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+    "redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
       def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> false)
         .overrides(
@@ -253,7 +253,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to dashboard for onPageLoadAmendGroupDetails when phase2ScreensEnabled is false" in {
+    "redirect to dashboard for onPageLoadAmendGroupDetails when phase2ScreensEnabled is false" in {
 
       val application = applicationBuilder(subscriptionLocalData = None)
         .configure("features.phase2ScreensEnabled" -> false)

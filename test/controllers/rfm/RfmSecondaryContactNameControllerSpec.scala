@@ -35,9 +35,9 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RfmSecondaryContactNameFormProvider()
 
-  "SecondaryContactName Controller" when {
+  "RfmSecondaryContactNameController" should {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua          = emptyUserAnswers.setOrException(RfmAddSecondaryContactPage, true).setOrException(RfmPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
@@ -53,7 +53,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .setOrException(RfmSecondaryContactNamePage, "name")
         .setOrException(RfmAddSecondaryContactPage, true)
@@ -76,7 +76,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to RFM Secondary Email page with updated valid data" in {
+    "redirect to RFM Secondary Email page with updated valid data" in {
       val ua = emptyUserAnswers
         .setOrException(RfmSecondaryContactNamePage, "name")
         .setOrException(RfmAddSecondaryContactPage, true)
@@ -101,7 +101,7 @@ class RfmSecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 

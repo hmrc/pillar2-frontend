@@ -39,11 +39,12 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
   private lazy val securityQuestionsCYA = controllers.rfm.routes.SecurityQuestionsCheckYourAnswersController.onPageLoad(CheckMode)
   private lazy val rfmQuestionsCYA      = controllers.rfm.routes.RfmCheckYourAnswersController.onPageLoad(NormalMode)
   private lazy val submitAndReview      = controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
+
   "Replace Filing Member Navigator" when {
 
-    "in Normal mode" must {
+    "in Normal mode" should {
 
-      "must go from a page that doesn't exist in the route map to rfm start page" in {
+      "go from a page that doesn't exist in the route map to rfm start page" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
       }
@@ -233,9 +234,9 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
     }
 
-    "in Check mode" must {
+    "in Check mode" should {
 
-      "must go from a page that doesn't exist in the route map to rfm start page" in {
+      "go from a page that doesn't exist in the route map to rfm start page" in {
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
       }

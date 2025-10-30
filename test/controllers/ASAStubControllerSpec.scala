@@ -40,9 +40,8 @@ class ASAStubControllerSpec extends SpecBase {
   val providerType: String = UUID.randomUUID().toString
   type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
-  "Stub ASA Controller" must {
-
-    "must return the correct view if the feature flag is true and user is agent" in {
+  "Stub ASA Controller" should {
+    "return the correct view if the feature flag is true and user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

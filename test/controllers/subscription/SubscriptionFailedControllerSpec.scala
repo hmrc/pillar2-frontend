@@ -23,9 +23,8 @@ import views.html.errors.RegistrationOrSubscriptionFailedView
 
 class SubscriptionFailedControllerSpec extends SpecBase {
 
-  "Subscription Failed Controller" when {
-
-    "must return OK and the continue view" in {
+  "Subscription Failed Controller" should {
+    "return OK and the continue view" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

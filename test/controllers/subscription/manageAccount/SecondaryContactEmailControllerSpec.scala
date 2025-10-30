@@ -48,9 +48,9 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
   val providerId:   String       = UUID.randomUUID().toString
   val providerType: String       = UUID.randomUUID().toString
 
-  "SecondaryContactEmail Controller for Organisation View Contact details" should {
+  "SecondaryContactEmailController for Organisation" should {
 
-    "must return OK and the correct view for a GET when no data is found" in {
+    "return OK and the correct view for a GET when no data is found" in {
       val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
@@ -70,7 +70,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptySubscriptionLocalData
         .set(SubSecondaryContactNamePage, "name")
@@ -97,7 +97,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -122,7 +122,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request =
@@ -151,7 +151,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -187,9 +187,9 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
   }
 
-  "SecondaryContactEmail Controller for Agent View Contact details" should {
+  "SecondaryContactEmailController for Agent" should {
 
-    "must return OK and the correct view for a GET when no data is found" in {
+    "return OK and the correct view for a GET when no data is found" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -218,7 +218,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptySubscriptionLocalData
         .set(SubSecondaryContactNamePage, "name")
@@ -254,7 +254,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -287,7 +287,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -336,7 +336,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]

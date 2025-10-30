@@ -23,9 +23,8 @@ import views.html.repayments.JourneyRecoveryView
 
 class RepaymentsJourneyRecoveryControllerSpec extends SpecBase {
 
-  "Rfm Journey Recovery Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Rfm Journey Recovery Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()

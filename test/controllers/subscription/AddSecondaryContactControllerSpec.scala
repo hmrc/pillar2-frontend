@@ -37,9 +37,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
   val formProvider = new AddSecondaryContactFormProvider()
 
-  "AddSecondaryContact Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "AddSecondaryContact Controller" should {
+    "return OK and the correct view for a GET" in {
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(SubPrimaryContactNamePage, "name")
         .setOrException(SubPrimaryEmailPage, "asda")
@@ -62,7 +61,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(SubPrimaryContactNamePage, "name")
@@ -87,7 +86,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = UserAnswers(userAnswersId)
         .set(SubPrimaryContactNamePage, "name")
         .success
@@ -110,7 +109,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to book mark page for a GET if no previous existing data is found" in {
+    "redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     = FakeRequest(GET, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
@@ -124,7 +123,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.routes.AddSecondaryContactController.onSubmit(NormalMode).url)
@@ -140,7 +139,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    "must delete all secondary contact details and redirect to the next page when the user answers no" in {
+    "delete all secondary contact details and redirect to the next page when the user answers no" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")

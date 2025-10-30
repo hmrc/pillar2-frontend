@@ -23,7 +23,7 @@ import views.html.rfm.RfmContactDetailsRegistrationView
 
 class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
 
-  "Rfm Contact Details Registration Controller" when {
+  "Rfm Contact Details Registration Controller" should {
 
     "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers

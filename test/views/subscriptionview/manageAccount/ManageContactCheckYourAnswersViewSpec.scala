@@ -83,7 +83,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
 
   "Manage Contact Check Your Answers View" when {
 
-    "it's an organisation view" must {
+    "it's an organisation view" should {
       val summaryListKeys:    Elements = view.getElementsByClass("govuk-summary-list__key")
       val summaryListItems:   Elements = view.getElementsByClass("govuk-summary-list__value")
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
@@ -176,7 +176,7 @@ class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with Subscripti
       }
     }
 
-    "when it's an agent view" must {
+    "it's an agent view" should {
       val summaryListKeys:    Elements = agentView.getElementsByClass("govuk-summary-list__key")
       val summaryListItems:   Elements = agentView.getElementsByClass("govuk-summary-list__value")
       val summaryListActions: Elements = agentView.getElementsByClass("govuk-summary-list__actions")

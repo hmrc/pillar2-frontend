@@ -27,7 +27,7 @@ import java.time.LocalDate
 
 class RfmSaveProgressInformControllerSpec extends SpecBase {
 
-  "Rfm Save Progress inform Controller" when {
+  "Rfm Save Progress inform Controller" should {
 
     "return OK and the correct view for a GET" in {
       val plrReference = "XE1111123456789"

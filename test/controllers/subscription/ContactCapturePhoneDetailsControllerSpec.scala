@@ -35,9 +35,9 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "ContactCapturePhoneDetails Controller" when {
+  "ContactCapturePhoneDetailsController" should {
 
-    "must return OK and the correct view for a GET if page previously not answered" in {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers: UserAnswers =
         emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
@@ -58,7 +58,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val userAnswers: UserAnswers =
         emptyUserAnswers
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -100,7 +100,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(SubPrimaryContactNamePage, "TestName")
         .success
@@ -124,6 +124,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.AddSecondaryContactController.onPageLoad(NormalMode).url
       }
     }
+
     "redirect to bookmark page if previous page not answered" in {
 
       val application = applicationBuilder().build()
@@ -136,7 +137,8 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
 
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.routes.ContactCapturePhoneDetailsController.onPageLoad(NormalMode).url)

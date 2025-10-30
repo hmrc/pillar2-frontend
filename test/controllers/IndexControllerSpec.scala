@@ -37,9 +37,8 @@ class IndexControllerSpec extends SpecBase {
   type RetrievalsType = Option[String] ~ Option[AffinityGroup] ~ Enrolments
   val id: String = UUID.randomUUID().toString
 
-  "Index Controller" must {
-
-    "must redirect to the tasklist if no pillar 2 reference is found" in {
+  "Index Controller" should {
+    "redirect to the tasklist if no pillar 2 reference is found" in {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {

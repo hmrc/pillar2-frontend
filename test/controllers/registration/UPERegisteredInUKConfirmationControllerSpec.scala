@@ -38,9 +38,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
 
   val formProvider = new UPERegisteredInUKConfirmationFormProvider()
 
-  "Is UPE Registered in UK Confirmation Controller" must {
-
-    "must return OK and the correct view for a GET" in {
+  "Is UPE Registered in UK Confirmation Controller" should {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -52,7 +51,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustBe OK
       }
     }
-    "must return ok with a correct view if page previously answered" in {
+
+    "return ok with a correct view if page previously answered" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true))).build()
 
       running(application) {
@@ -65,7 +65,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
 
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -84,7 +85,8 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
-    "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
+
+    "update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -120,7 +122,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       }
     }
 
-    "must update the user answers and redirect to the next page when the user answers No  and they have GRS progress" in {
+    "update the user answers and redirect to the next page when the user answers No and they have GRS progress" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")

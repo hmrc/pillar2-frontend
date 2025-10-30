@@ -36,9 +36,9 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new NfmEntityTypeFormProvider()
 
-  "NfmEntityType Controller" must {
+  "NfmEntityType Controller" should {
 
-    " return OK and populate view with an empty form if page previously not answered" in {
+    "return OK and populate view with an empty form if page previously not answered" in {
       val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -54,7 +54,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    " populate the view correctly on a GET when page has been previously answered" in {
+    "populate the view correctly on a GET when page has been previously answered" in {
       val ua =
         emptyUserAnswers
           .setOrException(FmEntityTypePage, EntityType.UkLimitedCompany)
@@ -149,7 +149,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    " return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -168,7 +168,8 @@ class NfmEntityTypeControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
-    " redirect to GRS for UK Limited company" in {
+
+    "redirect to GRS for UK Limited company" in {
 
       val ua =
         emptyUserAnswers
@@ -206,7 +207,7 @@ class NfmEntityTypeControllerSpec extends SpecBase {
 
     }
 
-    " redirect to GRS for Limited Liability Partnership" in {
+    "redirect to GRS for Limited Liability Partnership" in {
 
       val ua =
         emptyUserAnswers

@@ -50,9 +50,9 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactEmailFormProvider()
 
-  "Rfm Primary ContactEmail Controller" when {
+  "RfmPrimaryContactEmailController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -73,7 +73,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val ua = emptyUserAnswers
         .set(RfmPrimaryContactNamePage, "name")
         .success
@@ -99,7 +99,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
 
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -118,7 +118,8 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url
       }
     }
-    "Bad request when invalid data submitted in POST" in {
+
+    "return Bad request when invalid data submitted in POST" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -133,7 +134,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "Bad request when no data added and click on submit" in {
+    "return Bad request when no data added and click on submit" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -148,7 +149,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
+    "return Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
       val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -176,7 +177,8 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
       }
     }
-    "Journey Recovery when no data found for contact name in POST" in {
+
+    "return to Journey Recovery when no data found for contact name in POST" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()

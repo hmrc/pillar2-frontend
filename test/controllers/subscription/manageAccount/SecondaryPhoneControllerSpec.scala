@@ -48,9 +48,8 @@ class SecondaryPhoneControllerSpec extends SpecBase {
   val providerId:   String       = UUID.randomUUID().toString
   val providerType: String       = UUID.randomUUID().toString
 
-  "SecondaryPhone Controller for Organisation View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryPhone Controller for Organisation View Contact details" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
 
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
@@ -72,7 +71,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
@@ -97,7 +96,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
@@ -135,7 +134,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryPhoneController.onSubmit.url)
@@ -149,7 +148,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -187,9 +186,8 @@ class SecondaryPhoneControllerSpec extends SpecBase {
 
   }
 
-  "SecondaryPhone Controller for Agent View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryPhone Controller for Agent View Contact details" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
@@ -219,7 +217,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
@@ -250,7 +248,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -302,7 +300,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -325,7 +323,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]

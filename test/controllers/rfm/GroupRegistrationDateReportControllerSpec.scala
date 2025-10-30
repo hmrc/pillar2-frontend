@@ -36,9 +36,9 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
   val formProvider = new GroupRegistrationDateReportFormProvider()
   val startDate: LocalDate = LocalDate.of(2023, 12, 31)
-  "GroupRegistrationDateReport Controller" when {
 
-    "must return OK and the correct view for Group Registration Date " in {
+  "GroupRegistrationDateReportController" should {
+    "return OK and the correct view for Group Registration Date " in {
       val application = applicationBuilder(userAnswers = None)
         .build()
 
@@ -53,7 +53,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
 
       val ua = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
       val application = applicationBuilder(Some(ua))
@@ -74,7 +74,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the group check your answers page when valid data is submitted" in {
+    "redirect to the group check your answers page when valid data is submitted" in {
 
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -98,7 +98,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to the group check your answers page when valid data with Month in string short format is submitted" in {
+    "redirect to the group check your answers page when valid data with Month in string short format is submitted" in {
 
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -122,7 +122,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to the group check your answers page when valid data with Month in string format is submitted" in {
+    "redirect to the group check your answers page when valid data with Month in string format is submitted" in {
 
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -146,7 +146,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
@@ -167,7 +167,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid string month is submitted" in {
+    "return a Bad Request and errors when invalid string month is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()

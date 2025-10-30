@@ -164,7 +164,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "must display row 4 value Natwest from acceptance test scenario" in {
+      "display row 4 value Natwest from acceptance test scenario" in {
         val userAnswer = UserAnswers("id")
         val completeData = emptyUserAnswers
           .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
@@ -191,7 +191,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "must display row 7 value 86473611 from acceptance test scenario" in {
+      "display row 7 value 86473611 from acceptance test scenario" in {
         val userAnswer = UserAnswers("id")
         val completeData = emptyUserAnswers
           .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
@@ -218,7 +218,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "must display row 4 value HSBC from acceptance test scenario" in {
+      "display row 4 value HSBC from acceptance test scenario" in {
         val userAnswer = UserAnswers("id")
         val completeData = emptyUserAnswers
           .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
@@ -245,7 +245,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         }
       }
 
-      "must display row 7 value GB29NWBK60161331926820 from acceptance test scenario" in {
+      "display row 7 value GB29NWBK60161331926820 from acceptance test scenario" in {
         val userAnswer = UserAnswers("id")
         val completeData = emptyUserAnswers
           .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
@@ -273,7 +273,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must display row 5 value O'Connor Construction from acceptance test scenario" in {
+    "display row 5 value O'Connor Construction from acceptance test scenario" in {
       val userAnswer = emptyUserAnswers
         .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
         .setOrException(ReasonForRequestingRefundPage, "Test Reason")
@@ -298,7 +298,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must display row 6 value 609593 from acceptance test scenario" in {
+    "display row 6 value 609593 from acceptance test scenario" in {
       val userAnswer = emptyUserAnswers
         .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
         .setOrException(ReasonForRequestingRefundPage, "Test Reason")
@@ -323,7 +323,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       }
     }
 
-    "must display row 7 value 96863604 from acceptance test scenario" in {
+    "display row 7 value 96863604 from acceptance test scenario" in {
       val userAnswer = emptyUserAnswers
         .setOrException(RepaymentsRefundAmountPage, BigDecimal(1000))
         .setOrException(ReasonForRequestingRefundPage, "Test Reason")

@@ -36,7 +36,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
     "onPageLoad" should {
 
-      "must return OK and the correct view for a GET" in {
+      "return OK and the correct view for a GET" in {
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> true)
@@ -62,7 +62,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
         }
       }
 
-      "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
+      "redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(

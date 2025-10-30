@@ -33,9 +33,9 @@ import scala.concurrent.Future
 
 class NfmContactNameControllerSpec extends SpecBase {
   val formProvider = new NfmContactNameFormProvider()
-  "NFMContactName Controller" when {
+  "NFMContactName Controller" should {
 
-    "must return OK and the correct view for a GET if page previously not answered" in {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers = emptyUserAnswers.setOrException(FmRegisteredAddressPage, nonUkAddress)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -56,7 +56,8 @@ class NfmContactNameControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must return OK and the correct view for a GET if page previously answered" in {
+
+    "return OK and the correct view for a GET if page previously answered" in {
       val userAnswers = emptyUserAnswers
         .setOrException(FmRegisteredAddressPage, nonUkAddress)
         .setOrException(FmContactNamePage, "name")
@@ -79,6 +80,7 @@ class NfmContactNameControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -91,7 +93,7 @@ class NfmContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request when invalid data is submitted" in {
+    "return a Bad Request when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val stringInput = randomStringGenerator(106)
@@ -104,7 +106,8 @@ class NfmContactNameControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(boundForm, NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
-    "must redirect to next page when valid data is submitted" in {
+
+    "redirect to next page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

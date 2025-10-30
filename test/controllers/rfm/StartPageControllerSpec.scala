@@ -23,9 +23,8 @@ import views.html.rfm.StartPageView
 
 class StartPageControllerSpec extends SpecBase {
 
-  "StartPage Controller" when {
-
-    "must return OK and the correct view" in {
+  "StartPage Controller" should {
+    "return OK and the correct view" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()

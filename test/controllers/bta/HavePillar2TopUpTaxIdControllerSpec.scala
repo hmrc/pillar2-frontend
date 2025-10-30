@@ -37,7 +37,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
   val form = new HavePillar2TopUpTaxIdFormProvider()
   val formProvider: Form[Boolean] = form()
 
-  "Have Pillar two TopUp Tax Id  Controller" when {
+  "HavePillar2TopUpTaxIdController" should {
 
     "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
@@ -64,7 +64,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET - bta feature false" in {
+    "return OK and the correct view for a GET - bta feature false" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(
@@ -113,7 +113,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to en-eligible page when NO is selected " in {
+    "redirect to en-eligible page when NO is selected " in {
       val ua = emptyUserAnswers.set(BtaPillar2ReferencePage, false).success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -134,7 +134,8 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.bta.routes.NoPlrIdGuidanceController.onPageLoad.url
       }
     }
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers = UserAnswers(userAnswersId)
         .setOrException(BtaPillar2ReferencePage, true)
@@ -154,7 +155,8 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
 
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
@@ -175,7 +177,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no option is selected" in {
+    "return Bad Request and show specific error message when no option is selected" in {
       val application = applicationBuilder()
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
