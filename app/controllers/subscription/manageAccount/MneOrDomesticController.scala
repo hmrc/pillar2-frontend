@@ -15,13 +15,16 @@
  */
 
 package controllers.subscription.manageAccount
+
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
 import controllers.actions._
 import forms.MneOrDomesticFormProvider
+import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
 import models.MneOrDomestic
 import navigation.AmendSubscriptionNavigator
 import pages.SubMneOrDomesticPage
+import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -34,42 +37,49 @@ import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
 class MneOrDomesticController @Inject() (
-  val subscriptionConnector:              SubscriptionConnector,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction,
-  getData:                                SubscriptionDataRetrievalAction,
-  requireData:                            SubscriptionDataRequiredAction,
-  navigator:                              AmendSubscriptionNavigator,
-  formProvider:                           MneOrDomesticFormProvider,
-  val controllerComponents:               MessagesControllerComponents,
-  view:                                   MneOrDomesticView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  val subscriptionConnector:                      SubscriptionConnector,
+  @Named("EnrolmentIdentifier") identifierAction: IdentifierAction,
+  subscriptionDataRetrievalAction:                SubscriptionDataRetrievalAction,
+  subscriptionDataRequiredAction:                 SubscriptionDataRequiredAction,
+  navigator:                                      AmendSubscriptionNavigator,
+  mneOrDomesticFormProvider:                      MneOrDomesticFormProvider,
+  val controllerComponents:                       MessagesControllerComponents,
+  mneOrDomesticView:                              MneOrDomesticView
+)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
-    with I18nSupport {
+    with I18nSupport
+    with Logging {
 
-  val form: Form[MneOrDomestic] = formProvider()
+  private val mneOrDomesticForm: Form[MneOrDomestic] = mneOrDomesticFormProvider()
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData) { implicit request =>
+    (identifierAction andThen subscriptionDataRetrievalAction) { implicit request =>
       val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubMneOrDomesticPage)) match {
-        case Some(value) => form.fill(value)
-        case None        => form
+        case Some(mneOrDomestic) => mneOrDomesticForm.fill(mneOrDomestic)
+        case None                => mneOrDomesticForm
       }
-      Ok(view(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
+      Ok(mneOrDomesticView(preparedForm, request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
-      form
+    (identifierAction andThen subscriptionDataRetrievalAction andThen subscriptionDataRequiredAction).async { implicit request =>
+      mneOrDomesticForm
         .bindFromRequest()
         .fold(
-          formWithErrors => Future.successful(BadRequest(view(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
-          value =>
-            for {
-              updatedAnswers <-
-                Future
-                  .fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, value))
-              _ <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
-            } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
+          formWithErrors =>
+            Future.successful(BadRequest(mneOrDomesticView(formWithErrors, request.isAgent, request.subscriptionLocalData.organisationName))),
+          newMneOrDomesticValue =>
+            MneOrDomestic.handleEntityLocationChange(from = request.subscriptionLocalData.subMneOrDomestic, to = newMneOrDomesticValue) match {
+              case EntityLocationChangeAllowed =>
+                logger.info(s"Allowed entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
+                for {
+                  updatedAnswers <- Future.fromTry(request.subscriptionLocalData.set(SubMneOrDomesticPage, newMneOrDomesticValue))
+                  _              <- subscriptionConnector.save(request.userId, Json.toJson(updatedAnswers))
+                } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
+              case EntityLocationChangeBlocked =>
+                logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
+                Future.successful(Redirect(controllers.subscription.manageAccount.routes.MttToDttController.onPageLoad))
+            }
         )
     }
 
