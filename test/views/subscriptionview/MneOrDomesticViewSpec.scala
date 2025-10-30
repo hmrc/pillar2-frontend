@@ -52,18 +52,24 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       val paragraphs: Elements = view.getElementsByClass("govuk-body")
       val listItems:  Elements = view.getElementsByTag("li")
 
-      paragraphs.get(0).text mustBe "You must consider the locations of all the entities within your group."
-      paragraphs.get(1).text mustBe "The entity locations determine which Pillar 2 Top-up Taxes your group needs to report for."
-      paragraphs.get(2).text mustBe "There are two Pillar 2 Top-up Taxes in the UK:"
+      paragraphs
+        .get(0)
+        .text mustBe "You must tell HMRC the entity locations in your group. " +
+        "The entity locations determine which Pillar 2 Top-up Taxes the group needs to report for:"
 
-      listItems.get(0).text mustBe "Domestic Top-up Tax"
-      listItems.get(1).text mustBe "Multinational Top-up Tax"
+      listItems.get(0).text mustBe "Domestic Top-up Tax (UK-only entity locations)"
+      listItems.get(1).text mustBe "Multinational Top-up Tax (entity locations outside of the UK)"
+    }
 
-      paragraphs.get(3).text mustBe "Groups with entities that are located only in the UK will register to report for Domestic Top-up Tax."
-      paragraphs.get(4).text mustBe "Groups with entities that are located in the UK and outside the UK will " +
-        "register to report for both Domestic Top-up Tax and Multinational Top-up Tax."
-      paragraphs.get(5).text mustBe "If any future changes occur that affect the location of the entities within " +
-        "your group, you must amend these details within your account."
+    "have warning text" in {
+      val warning = view
+        .getElementsByClass("govuk-warning-text__text")
+      val warningLink = warning.get(0).getElementsByClass("govuk-link")
+
+      warning.text mustBe "Warning You cannot change from multinational to domestic only using this service. " +
+        "You can request this change in writing by emailing pillar2mailbox@hmrc.gov.uk."
+      warningLink.text mustBe "pillar2mailbox@hmrc.gov.uk"
+      warningLink.attr("href") mustBe "mailto:pillar2mailbox@hmrc.gov.uk"
     }
 
     "have a legend heading" in {

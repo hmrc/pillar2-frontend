@@ -36,6 +36,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "pillar2-frontend"
 
+  val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
+
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 

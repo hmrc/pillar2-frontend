@@ -184,7 +184,7 @@ GET         /manage-account/account-details/change-accounting-period            
 POST        /manage-account/account-details/change-accounting-period                                 controllers.subscription.manageAccount.GroupAccountingPeriodController.onSubmit
 GET         /manage-account/account-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onPageLoad
 POST        /manage-account/account-details/change-group-status                                      controllers.subscription.manageAccount.MneOrDomesticController.onSubmit
-
+GET         /manage-account/account-details/mtt-to-dtt                                               controllers.subscription.manageAccount.MttToDttController.onPageLoad
 
 GET         /contact-details                                                                         controllers.subscription.ContentController.onPageLoad(mode: Mode = NormalMode)
 POST        /contact-details                                                                         controllers.subscription.ContentController.onSubmit(mode: Mode = NormalMode)
