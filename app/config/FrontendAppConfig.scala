@@ -51,6 +51,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val signOutUrl:                  String = configuration.get[String]("urls.signOut")
   val plr2RegistrationGuidanceUrl: String = configuration.get[String]("urls.plr2RegistrationGuidance")
   val penaltiesInformationUrl:     String = configuration.get[String]("urls.penaltiesInformation")
+  val pillar2TopupGuidance:        String = configuration.get[String]("urls.pillar2TopupGuidance")
 
   val enrolmentKey:        String = configuration.get[String](s"enrolment.key")
   val enrolmentIdentifier: String = configuration.get[String](s"enrolment.identifier")

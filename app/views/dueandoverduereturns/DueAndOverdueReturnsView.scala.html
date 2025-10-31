@@ -20,7 +20,7 @@
 @import views.html.templates.Layout
 @import views.ViewUtils._
 @import views.html.styles.tableScrollStyles
-@import views.html.components.gds.ScrollWrapper
+@import views.html.components.gds._
 @import java.time.LocalDate
 
 @this(
@@ -29,7 +29,10 @@
     govukTable: GovukTable,
     govukWarningText: GovukWarningText,
     govukInsetText: GovukInsetText,
-    govukButton: GovukButton
+    govukButton: GovukButton,
+    heading: heading,
+    paragraphBody: paragraphBody,
+    paragraphBodyLink: paragraphBodyLink
 )
 @(data: ObligationsAndSubmissionsSuccess, fromDate: LocalDate, toDate: LocalDate, agentView: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
@@ -112,6 +115,17 @@
                 }
             }
         }
+
+        @heading(messages("dueAndOverdueReturns.howToSubmitAReturn"), classes = "govuk-heading-m", tier = "h2")
+
+        @if(agentView) {
+            @paragraphBody(messages("dueAndOverdueReturns.agent.howToSubmitAReturn.description"))
+        } else {
+            @paragraphBody(messages("dueAndOverdueReturns.howToSubmitAReturn.description"))
+        }
+
+        @paragraphBodyLink(messages("dueAndOverdueReturns.howToSubmitAReturn.link"), linkUrl = appConfig.pillar2TopupGuidance)
+
         <h2 class="govuk-heading-m">@messages("dueAndOverdueReturns.submissionHistory")</h2>
         <p class="govuk-body">
             @if(agentView) {
