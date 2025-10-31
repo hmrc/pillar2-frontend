@@ -67,8 +67,10 @@ class RfmSecondaryContactNameViewSpec extends ViewSpecBase with StringGenerators
       view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
     }
 
-    "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 

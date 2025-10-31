@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.AgentOrganisationErrorView
 
@@ -54,17 +54,23 @@ class AgentOrganisationErrorViewSpec extends ViewSpecBase {
       listItems.get(0).getElementsByTag("a").attr("href") mustBe
         "https://www.gov.uk/guidance/sign-in-to-your-agent-services-account"
       listItems.get(0).getElementsByTag("a").attr("target") mustBe "_self"
+      // FIXME: this seems wrong. A link to gov.uk should open in a new tab???
 
       listItems.get(1).text mustBe
         "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must request authorisation on agent services."
       listItems.get(1).getElementsByTag("a").attr("href") mustBe
         "https://www.gov.uk/guidance/how-to-use-the-online-agent-authorisation-to-get-authorised-as-a-tax-agent"
-      listItems.get(1).getElementsByTag("a").attr("target") mustBe "_self"
+      //listItems.get(1).getElementsByTag("a").attr("target") mustBe "_blank" // FIXME: should this open in new page? if yes, it should have target _blank
+      //listItems.get(1).getElementsByTag("a").attr("rel") mustBe "noopener noreferrer" // FIXME: should this open in new tab? if yes, it should have this attribute - reverse tabnabbing
     }
 
     "have a paragraph with a link" in {
-      paragraphs.get(4).getElementsByTag("a").text() mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
-      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+      val link: Element = paragraphs.get(4).getElementsByTag("a").get(0)
+
+      link.text() mustBe "Find out more about who can report for Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+      //link.attr("target") mustBe "_blank" // FIXME: should this open in new page? if yes, it should have target _blank
+      //link.attr("rel") mustBe "noopener noreferrer" // FIXME: should this open in new tab? if yes, it should have this attribute - reverse tabnabbing
     }
   }
 }

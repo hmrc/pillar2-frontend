@@ -30,11 +30,10 @@
     govukButton: GovukButton,
     govukSelect: GovukSelect,
     sectionHeader: sectionHeader,
-        heading: heading,
+    heading: heading
 )
 
-
-@(form: Form[_], mode: Mode,  countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(form: Form[_], mode: Mode, countryOptions: Seq[InputOption])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = title(form, messages("rfmContactAddress.title"))) {
 

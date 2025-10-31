@@ -19,7 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import models.{NormalMode, UserAnswers}
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
@@ -66,6 +66,7 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe pageTitle
     }
 
+    // FIXME: change this to "have a summary list"
     "have a summary list keys" in {
       val summaryListKeys: Elements = view.getElementsByClass("govuk-summary-list__key")
       summaryListKeys.get(0).text mustBe "Name"
@@ -82,11 +83,14 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
     "have a summary list links" in {
       val summaryListActions: Elements = view.getElementsByClass("govuk-summary-list__actions")
       summaryListActions.get(0).text mustBe "Change the name of the new nominated filing member"
+      // FIXME: add the URLs
       summaryListActions.get(1).text mustBe "Change the address of the new nominated filing member"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
+    "have a 'Confirm and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Confirm and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

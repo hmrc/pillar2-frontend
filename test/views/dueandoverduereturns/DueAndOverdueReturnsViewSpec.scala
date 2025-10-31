@@ -83,6 +83,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       }
 
       "not display any tables" in {
+        // FIXME: change selector
         view.select("table.govuk-table").size mustBe 0
       }
     }
@@ -102,9 +103,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       }
 
       "not display any tables or accounting period headings" in {
-        view.select("table.govuk-table").size mustBe 0
+        view.select("table.govuk-table").size mustBe 0 // FIXME: what does this test
 
-        view.select("h2.govuk-heading-s").size mustBe 0
+        view.select("h2.govuk-heading-s").size mustBe 0 // FIXME: what does this test
 
       }
     }
@@ -181,6 +182,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         val tables: Elements = view.select("table.govuk-table")
         tables.size mustBe 1
 
+        // FIXME: change selectors
         val rows: Elements = tables.select("tbody tr")
         rows.size mustBe 1
 

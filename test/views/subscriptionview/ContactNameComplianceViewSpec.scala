@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.ContactNameComplianceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.subscriptionview.ContactNameComplianceView
@@ -49,8 +49,10 @@ class ContactNameComplianceViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-hint").text mustBe "You can enter a person or team name."
     }
 
-    "display the submit button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
 
     "display an error summary when form has errors" in {

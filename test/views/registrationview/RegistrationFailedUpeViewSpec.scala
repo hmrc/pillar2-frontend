@@ -57,10 +57,12 @@ class RegistrationFailedUpeViewSpec extends ViewSpecBase {
       links.get(0).text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
       links.get(0).attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
       links.get(0).attr("target") mustBe "_blank"
+      //links.get(0).attr("rel") mustBe "noopener noreferrer" // FIXME: external URLs should have this attribute - reverse tabnabbing
 
       links.get(1).text mustBe "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
       links.get(1).attr("href") mustBe "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
       links.get(1).attr("target") mustBe "_blank"
+      //links.get(1).attr("rel") mustBe "noopener noreferrer" // FIXME: external URLs should have this attribute - reverse tabnabbing
 
       paragraphs.get(4).text mustBe
         "You can go back to select the entity type and try again using different details if you think you made an error when entering them."

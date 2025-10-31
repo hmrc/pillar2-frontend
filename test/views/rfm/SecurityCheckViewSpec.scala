@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RfmSecurityCheckFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
@@ -64,8 +64,10 @@ class SecurityCheckViewSpec extends ViewSpecBase {
         "XMPLR0123456789. The current filing member can find it within their Pillar 2 Top-up Taxes account."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

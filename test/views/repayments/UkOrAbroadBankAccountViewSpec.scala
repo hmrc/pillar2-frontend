@@ -61,8 +61,10 @@ class UkOrAbroadBankAccountViewSpec extends ViewSpecBase {
         radioButtons.get(1).text mustBe "Non-UK bank account"
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 

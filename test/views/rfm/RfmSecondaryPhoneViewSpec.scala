@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.CapturePhoneDetailsFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.RfmSecondaryPhoneView
 
@@ -54,8 +54,10 @@ class RfmSecondaryPhoneViewSpec extends ViewSpecBase {
         "the phone number, then the extension number. For example, 01632960001#123."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

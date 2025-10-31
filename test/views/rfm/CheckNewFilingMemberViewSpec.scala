@@ -19,7 +19,7 @@ package views.rfm
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.CheckNewFilingMemberView
 
@@ -56,8 +56,12 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
         "we will ask you for identifying information so we can create a new HMRC record."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' link-button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
+      continueButton.text mustBe "Continue"
+      continueButton.attr("href") mustBe controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url
+      continueButton.attr("role") mustBe "button"
     }
   }
 }

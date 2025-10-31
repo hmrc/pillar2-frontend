@@ -66,8 +66,10 @@ class RepaymentsPhoneDetailsViewSpec extends ViewSpecBase {
           "example, 01632960001#123."
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
   }

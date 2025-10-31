@@ -77,8 +77,10 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
         hints.get(2).text mustBe "You can ask your bank or check your bank statement."
       }
 
-      "have a continue button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
   }

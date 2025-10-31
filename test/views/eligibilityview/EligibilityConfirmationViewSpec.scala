@@ -18,7 +18,7 @@ package views.eligibilityview
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.eligibilityview.EligibilityConfirmationView
 
@@ -55,10 +55,11 @@ class EligibilityConfirmationViewSpec extends ViewSpecBase {
         "You cannot use an individual or agent Government Gateway user ID to register."
     }
 
-    "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
-
   }
 
 }

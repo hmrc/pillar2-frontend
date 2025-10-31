@@ -64,7 +64,6 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
 
         organisationView.getElementsByClass("govuk-body").get(1).text mustBe
           "Accounting periods are usually 12 months, but can be longer or shorter."
-
       }
 
       "have start and end date legends" in {
@@ -94,7 +93,9 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        organisationView.getElementsByClass("govuk-button").text mustBe "Continue"
+        val continueButton: Element = organisationView.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 
@@ -148,7 +149,9 @@ class GroupAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        agentView.getElementsByClass("govuk-button").text mustBe "Continue"
+        val continueButton: Element = agentView.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
   }

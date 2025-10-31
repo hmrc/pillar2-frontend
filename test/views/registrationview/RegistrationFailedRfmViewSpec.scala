@@ -58,12 +58,14 @@ class RegistrationFailedRfmViewSpec extends ViewSpecBase {
       listItems.get(0).getElementsByTag("a").attr("href") mustBe
         "https://find-and-update.company-information.service.gov.uk/"
       listItems.get(0).getElementsByTag("a").attr("target") mustBe "_blank"
+      listItems.get(0).getElementsByTag("a").attr("rel") mustBe "noopener noreferrer"
 
       listItems.get(1).text mustBe
         "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
       listItems.get(1).getElementsByTag("a").attr("href") mustBe
         "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
       listItems.get(1).getElementsByTag("a").attr("target") mustBe "_blank"
+      listItems.get(1).getElementsByTag("a").attr("rel") mustBe "noopener noreferrer"
     }
 
     "have a paragraph with a link" in {

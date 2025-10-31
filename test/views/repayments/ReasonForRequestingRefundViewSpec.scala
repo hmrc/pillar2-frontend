@@ -61,8 +61,10 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
         view.getElementsByClass("govuk-character-count__message").text mustBe "You can enter up to 250 characters"
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 

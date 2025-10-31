@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.MneOrDomesticFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
@@ -91,7 +91,9 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        view().getElementsByClass("govuk-button").text mustBe "Continue"
+        val continueButton: Element = view().getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 
@@ -145,8 +147,11 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
       }
 
       "have a 'Continue' button" in {
-        view(isAgent = true).getElementsByClass("govuk-button").text mustBe "Continue"
+        val continueButton: Element = view(isAgent = true).getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
+
     }
   }
 }

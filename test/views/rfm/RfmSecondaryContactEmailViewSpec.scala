@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RfmSecondaryContactEmailFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.RfmSecondaryContactEmailView
 
@@ -52,8 +52,10 @@ class RfmSecondaryContactEmailViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-hint").text mustBe "We will only use this to contact you about Pillar 2 Top-up Taxes."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

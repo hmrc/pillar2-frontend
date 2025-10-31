@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.GroupRegistrationDateReportFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.GroupRegistrationDateReportView
 
@@ -56,8 +56,10 @@ class GroupRegistrationDateReportViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-hint").get(1).text mustBe "For example, 27 3 2026"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

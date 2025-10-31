@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.AddSecondaryContactFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
@@ -68,8 +68,10 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-fieldset__heading").text mustBe "Do you have a second contact?"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

@@ -59,6 +59,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
       }
 
       "have a meta refresh tag" in {
+        // FIXME: the meta refresh should not be in the body!!!
         val metaRefresh = Option(inProgressView.select("meta[http-equiv=refresh]").first())
         metaRefresh must not be None
       }

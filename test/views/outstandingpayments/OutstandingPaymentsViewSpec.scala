@@ -109,6 +109,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
       howToPayLink.text() mustBe "Find out more about ways to pay"
       howToPayLink.attr("href") mustBe "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      //howToPayLink.attr("target") mustBe "_blank" // FIXME: should this open in new page? if yes, it should have target _blank
+      //howToPayLink.attr("rel") mustBe "noopener noreferrer" // FIXME: should this open in new tab? if yes, it should have this attribute - reverse tabnabbing
     }
 
     "display a payment section that contains" should {

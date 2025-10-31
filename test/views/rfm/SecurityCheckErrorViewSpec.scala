@@ -18,7 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.SecurityCheckErrorView
 
@@ -46,13 +46,14 @@ class SecurityCheckErrorViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      val paragraphMessageWithLink = view.getElementsByClass("govuk-body").last()
-      val link                     = paragraphMessageWithLink.getElementsByTag("a")
+      val paragraphMessageWithLink: Element  = view.getElementsByClass("govuk-body").last()
+      val links:                    Elements = paragraphMessageWithLink.getElementsByTag("a")
 
       paragraphMessageWithLink.text() mustBe
         "If you need to manage who can access your Pillar 2 Top-up Taxes returns, go to your business tax account."
-      link.text mustBe "go to your business tax account"
-      link.attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account"
+      links.get(0).text mustBe "go to your business tax account"
+      links.get(0).attr("href") mustBe "https://www.gov.uk/guidance/sign-in-to-your-hmrc-business-tax-account"
+      // FIXME: should this open in a new tab?
     }
 
   }

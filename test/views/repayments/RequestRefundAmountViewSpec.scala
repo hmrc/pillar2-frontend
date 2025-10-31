@@ -33,7 +33,7 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
   lazy val pageTitle:    String                             = "Enter your requested repayment amount in pounds"
   lazy val view:         Document                           = Jsoup.parse(page(formProvider(), mode)(request, appConfig, messages).toString())
 
-  "Request Repayment Amount View" should {
+  "Request Repayment Amount View" when {
 
     "page loaded" should {
 
@@ -52,12 +52,14 @@ class RequestRefundAmountViewSpec extends ViewSpecBase {
         view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
       }
 
-      "have a button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Continue"
+      "have a 'Continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 
-    "when form is submitted with missing values" should {
+    "form is submitted with missing values" should {
       val errorView: Document = Jsoup.parse(
         page(
           formProvider().bind(

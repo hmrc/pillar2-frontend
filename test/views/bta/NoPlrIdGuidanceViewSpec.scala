@@ -18,7 +18,7 @@ package views.bta
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.bta.NoPlrIdGuidanceView
 
@@ -50,10 +50,15 @@ class NoPlrIdGuidanceViewSpec extends ViewSpecBase {
       link.text mustBe "Find out how to register to report Pillar 2 Top-up Taxes (opens in new tab)"
       link.attr("href") mustBe "https://www.gov.uk/guidance/check-if-you-need-to-report-pillar-2-top-up-taxes"
       link.attr("target") mustBe "_blank"
+      //link.attr("rel") mustBe "noreferrer noopener" // FIXME: external URLs should have this attribute - reverse tabnabbing
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Return to your Business Tax Account"
+    "have a 'Return to your Business Tax Account' link-button" in {
+      val returnButton: Element = view.getElementsByClass("govuk-button").first()
+
+      returnButton.text mustBe "Return to your Business Tax Account"
+      returnButton.attr("href") mustBe appConfig.btaHomePageUrl
+      returnButton.attr("role") mustBe "button"
     }
 
   }

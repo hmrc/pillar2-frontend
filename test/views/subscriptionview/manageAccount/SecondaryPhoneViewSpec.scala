@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import controllers.routes
 import forms.CapturePhoneDetailsFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.subscriptionview.manageAccount.SecondaryPhoneView
 
@@ -60,8 +60,10 @@ class SecondaryPhoneViewSpec extends ViewSpecBase {
         s"0044 808 157 0192."
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

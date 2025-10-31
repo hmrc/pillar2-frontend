@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.UnauthorisedAgentView
 
@@ -51,17 +51,21 @@ class UnauthorisedAgentViewSpec extends ViewSpecBase {
     }
 
     "have list items with links" in {
-      val listItem1 = view.getElementsByTag("li").get(0)
+      val listItems: Elements = view.getElementsByTag("li")
+      val link1:     Element  = listItems.get(0).getElementsByTag("a").get(0)
+      val link2:     Element  = listItems.get(1).getElementsByTag("a").get(0)
 
-      listItem1.select("a").text mustBe "if you are an agent that has been given authorisation to report Pillar 2 " +
-        "Top-up Taxes on behalf of a group, you must sign in via agent services"
-      listItem1.select("a").attr("href") mustBe signInToAgentUrl
+      link1.text mustBe "if you are an agent that has been given authorisation to report Pillar 2 Top-up Taxes " +
+        "on behalf of a group, you must sign in via agent services"
+      link1.attr("href") mustBe signInToAgentUrl
+      //link1.attr("target") mustBe "_blank" // FIXME: should this open in new page? if yes, it should have target _blank
+      //link1.attr("rel") mustBe "noopener noreferrer" // FIXME: should this open in new tab? if yes, it should have this attribute - reverse tabnabbing
 
-      val listItem2 = view.getElementsByTag("li").get(1)
-
-      listItem2.select("a").text mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you " +
-        "must request authorisation via agent services"
-      listItem2.select("a").attr("href") mustBe signInToAgentUrl
+      link2.text mustBe "if you need to request authorisation to report Pillar 2 Top-up Taxes, you must request " +
+        "authorisation via agent services"
+      link2.attr("href") mustBe signInToAgentUrl
+      //link2.attr("target") mustBe "_blank" // FIXME: should this open in new page? if yes, it should have target _blank
+      //link2.attr("rel") mustBe "noopener noreferrer" // FIXME: should this open in new tab? if yes, it should have this attribute - reverse tabnabbing
     }
 
     "have a link" in {
