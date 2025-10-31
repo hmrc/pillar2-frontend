@@ -22,8 +22,6 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.MakeAPaymentDashboardView
 
-import scala.jdk.CollectionConverters._
-
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   lazy val page:                     MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]
   lazy val testPlr2Id:               String                    = "12345678"
