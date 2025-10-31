@@ -34,9 +34,9 @@ class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
 
   val formProvider = new GroupTerritoriesFormProvider()
 
-  "Group Territories Controller" when {
+  "GroupTerritoriesController" should {
 
-    "must return OK and the correct view for a GET when page previously not answered" in {
+    "return OK and the correct view for a GET when page previously not answered" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -67,7 +67,7 @@ class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
       redirectLocation(result).value mustBe controllers.routes.JourneyRecoveryController.onPageLoad().url
     }
 
-    "must return OK and the correct view for a GET when page previously answered" in {
+    "return OK and the correct view for a GET when page previously answered" in {
       val application = applicationBuilder(None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -88,7 +88,7 @@ class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -101,7 +101,7 @@ class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "must redirect to the next page when valid data is submitted with no selected" in {
+    "redirect to the next page when valid data is submitted with no selected" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =
@@ -114,7 +114,8 @@ class GroupTerritoriesControllerSpec extends SpecBase with ViewInstances {
 
       }
     }
-    "return  BAD_REQUEST if invalid data is submitted " in {
+
+    "return BAD_REQUEST if invalid data is submitted " in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request =

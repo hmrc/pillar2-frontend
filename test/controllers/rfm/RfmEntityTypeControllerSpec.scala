@@ -36,9 +36,8 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new RfmEntityTypeFormProvider()
 
-  "RfmEntityTypeController Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "RfmEntityTypeController Controller" should {
+    "return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -54,7 +53,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return Journey Recovery if previous page not answered" in {
+    "return Journey Recovery if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
@@ -65,7 +64,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url)
       }
     }
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua          = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val userAnswers = ua.set(RfmEntityTypePage, EntityType.values.head).success.value
 
@@ -87,7 +86,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered And Entity type is other" in {
+    "populate the view correctly on a GET when the question has previously been answered And Entity type is other" in {
       val ua          = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val userAnswers = ua.set(RfmEntityTypePage, EntityType.Other).success.value
 
@@ -109,7 +108,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -129,7 +128,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no entity type is selected" in {
+    "return Bad Request and show specific error message when no entity type is selected" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -144,7 +143,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to GRS for UK Limited company" in {
+    "redirect to GRS for UK Limited company" in {
 
       val ua =
         emptyUserAnswers
@@ -182,7 +181,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to GRS for Limited Liability Partnership" in {
+    "redirect to GRS for Limited Liability Partnership" in {
 
       val ua =
         emptyUserAnswers

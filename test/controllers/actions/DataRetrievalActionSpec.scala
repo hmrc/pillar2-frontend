@@ -35,9 +35,9 @@ class DataRetrievalActionSpec extends SpecBase {
 
   "Data Retrieval Action" when {
 
-    "when there is no data in the cache" must {
+    "there is no data in the cache" must {
 
-      "must set userAnswers to 'None' in the request" in {
+      "set userAnswers to 'None' in the request" in {
 
         when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future.successful(None)
         val action = new Harness(mockUserAnswersConnectors)
@@ -48,9 +48,9 @@ class DataRetrievalActionSpec extends SpecBase {
       }
     }
 
-    "when there is data in the cache" must {
+    "there is data in the cache" must {
 
-      "must build a userAnswers object and add it to the request" in {
+      "build a userAnswers object and add it to the request" in {
 
         when(mockUserAnswersConnectors.get(any())(any())) thenReturn Future.successful(Some(Json.obj("abc" -> "def")))
         val action = new Harness(mockUserAnswersConnectors)

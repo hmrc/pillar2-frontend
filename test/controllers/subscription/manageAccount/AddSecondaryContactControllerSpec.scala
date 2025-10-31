@@ -46,9 +46,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "AddSecondaryContactController for Organisation View Contact details" when {
-
-    "must populate the view correctly on a GET" in {
+  "AddSecondaryContactController for Organisation View Contact details" should {
+    "populate the view correctly on a GET" in {
 
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubPrimaryContactNamePage, "name")
@@ -73,7 +72,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = emptySubscriptionLocalData
         .set(SubPrimaryContactNamePage, "name")
         .success
@@ -99,7 +98,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must redirect to book mark page for a GET if no previous existing data is found" in {
+    "redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
       val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
@@ -113,7 +112,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
       val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
@@ -130,7 +129,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page when the user answers no" in {
+    "update subscription data and redirect to the next page when the user answers no" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -180,7 +179,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page when the user answers yes" in {
+    "update subscription data and redirect to the next page when the user answers yes" in {
 
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubAddSecondaryContactPage, true)
@@ -203,9 +202,8 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
   }
 
-  "AddSecondaryContactController for Agent View Contact details" when {
-
-    "must populate the view correctly on a GET" in {
+  "AddSecondaryContactController for Agent View Contact details" should {
+    "populate the view correctly on a GET" in {
 
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubPrimaryContactNamePage, "name")
@@ -236,7 +234,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers = emptySubscriptionLocalData
         .set(SubPrimaryContactNamePage, "name")
         .success
@@ -268,7 +266,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must redirect to book mark page for a GET if no previous existing data is found" in {
+    "redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -289,7 +287,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
+    "redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -313,7 +311,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page when the user answers no" in {
+    "update subscription data and redirect to the next page when the user answers no" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")

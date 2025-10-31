@@ -49,9 +49,8 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
     .success
     .value
 
-  "Navigator for Organisations" must {
-
-    "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+  "Navigator for Organisations" should {
+    "go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
       case object UnknownPage extends Page
       navigator.nextPage(UnknownPage, emptySubscriptionLocalData) mustBe controllers.routes.IndexController.onPageLoad
@@ -164,9 +163,8 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
     }
   }
 
-  "Navigator for Agents" must {
-
-    "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+  "Navigator for Agents" should {
+    "go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
       case object UnknownPage extends Page
       navigator.nextPage(UnknownPage, emptySubscriptionLocalData) mustBe controllers.routes.IndexController.onPageLoad

@@ -41,9 +41,9 @@ class CorporatePositionControllerSpec extends SpecBase {
 
   val formProvider = new RfmCorporatePositionFormProvider()
 
-  "RFM Corporate Position controller" when {
+  "RFM CorporatePositionController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
@@ -60,7 +60,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and populate the view correctly when the question has been previously answered" in {
+    "return OK and populate the view correctly when the question has been previously answered" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmCorporatePositionPage, CorporatePosition.NewNfm)
 
       val application = applicationBuilder(userAnswers = Some(userAnswers))
@@ -80,7 +80,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the UPE registration start page when valid data is submitted with UPE" in {
+    "redirect to the UPE registration start page when valid data is submitted with UPE" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -105,7 +105,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
+    "redirect to content page to begin their filing member journey when valid data is submitted with New NFM" in {
 
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
@@ -130,7 +130,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -152,7 +152,7 @@ class CorporatePositionControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no option is selected" in {
+    "return Bad Request and show specific error message when no option is selected" in {
       val ua = emptyUserAnswers
         .setOrException(RfmPillar2ReferencePage, "somePillar2Id")
         .setOrException(RfmRegistrationDatePage, LocalDate.now())
@@ -174,6 +174,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         contentAsString(result) must include("Select if you are the Ultimate Parent Entity or a new nominated filing member")
       }
     }
+
     "redirect to journey recovery if no data is found in sessionRepository or the BE database" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -193,7 +194,8 @@ class CorporatePositionControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad.url
       }
     }
-    "must get the pillar2 ID from the backend database if it exists there and no data is found in the frontend repository and save the relevant data" in {
+
+    "get the pillar2 ID from the backend database if it exists there and no data is found in the frontend repository and save the relevant data" in {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[ReplaceFilingMemberNavigator]
 

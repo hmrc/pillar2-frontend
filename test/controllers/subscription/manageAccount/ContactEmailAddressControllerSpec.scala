@@ -42,9 +42,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "ContactEmail Address Controller for Organisations View Contact details" when {
-
-    "must return OK and the correct view for a GET if page previously not answered" in {
+  "ContactEmailAddressController for Organisations" should {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
 
@@ -67,7 +66,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously has been answered" in {
+    "return OK and the correct view for a GET if page previously has been answered" in {
 
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
@@ -90,7 +89,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must return a Bad Request when invalid data is submitted" in {
+
+    "return a Bad Request when invalid data is submitted" in {
       val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
@@ -132,7 +132,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
@@ -144,9 +144,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     }
   }
 
-  "ContactEmail Address Controller for Agents View Contact details" when {
-
-    "must return OK and the correct view for a GET if page previously not answered" in {
+  "ContactEmailAddressController for Agents" should {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubContactEmail))
@@ -176,7 +175,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously has been answered" in {
+    "return OK and the correct view for a GET if page previously has been answered" in {
       val userAnswersSubContactEmail =
         emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswersSubContactEmail))
@@ -206,7 +205,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request when invalid data is submitted" in {
+    "return a Bad Request when invalid data is submitted" in {
       val ua = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -252,7 +251,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
 
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

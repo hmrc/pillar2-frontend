@@ -33,9 +33,9 @@ import scala.concurrent.Future
 class NfmUKAddressControllerSpec extends SpecBase {
   val formProvider = new NfmRegisteredAddressFormProvider()
 
-  "Nfm Registered Address Controller" must {
+  "Nfm Registered Address Controller" should {
 
-    "must return OK and the correct view for a GET if no previous data is found" in {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val data =
         emptyUserAnswers.set(FmNameRegistrationPage, "adios").success.value
       val application = applicationBuilder(userAnswers = Some(data))
@@ -121,7 +121,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(FmNameRegistrationPage, "Name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

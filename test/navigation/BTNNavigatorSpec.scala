@@ -28,9 +28,9 @@ class BTNNavigatorSpec extends SpecBase {
 
   "BTN Navigator" when {
 
-    "in Normal mode" when {
+    "in Normal mode" should {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
+      "go from a page that doesn't exist in the route map to Index" in {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
@@ -48,9 +48,9 @@ class BTNNavigatorSpec extends SpecBase {
 
     }
 
-    "in Check mode" when {
+    "in Check mode" should {
 
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
+      "go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
 
         case object UnknownPage extends Page
         navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad

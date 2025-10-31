@@ -35,9 +35,9 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
   val formProvider = new NfmNameRegistrationFormProvider()
 
-  "NfmNameRegistrationController Controller" when {
+  "NfmNameRegistrationController Controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -52,7 +52,8 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val pageAnswer = emptyUserAnswers.setOrException(FmRegisteredInUKPage, false).setOrException(FmNameRegistrationPage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
@@ -85,8 +86,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
-
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -106,7 +106,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

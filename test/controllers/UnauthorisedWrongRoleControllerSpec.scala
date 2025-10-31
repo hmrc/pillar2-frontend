@@ -23,9 +23,9 @@ import views.html.UnauthorisedOrgStandardView
 
 class UnauthorisedWrongRoleControllerSpec extends SpecBase {
 
-  "UnauthorisedWrongRole  Controller" when {
+  "UnauthorisedWrongRoleController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

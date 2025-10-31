@@ -38,9 +38,9 @@ class BankAccountDetailsControllerSpec extends SpecBase {
 
   val formProvider = new BankAccountDetailsFormProvider()
 
-  "BankAccountDetails Controller" when {
+  "BankAccountDetailsController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(None).build()
       running(application) {
         val request = FakeRequest(GET, controllers.repayments.routes.BankAccountDetailsController.onPageLoad(NormalMode).url)
@@ -51,7 +51,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val testBankAccountDetails = BankAccountDetails("TestBankName", "TestAccountName", "112233", "12345611")
       val ua                     = emptyUserAnswers.setOrException(BankAccountDetailsPage, testBankAccountDetails)
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -73,7 +73,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Repayments Contact Name page when valid data is submitted" in {
+    "redirect to Repayments Contact Name page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers =
         Some(
           emptyUserAnswers
@@ -106,7 +106,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -120,7 +120,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message for missing bank name" in {
+    "return Bad Request and show specific error message for missing bank name" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val request =
@@ -138,7 +138,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must display pre-populated UK Bank Name field when previously answered" in {
+    "display pre-populated UK Bank Name field when previously answered" in {
       val testBankAccountDetails = BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611")
       val ua                     = emptyUserAnswers.setOrException(BankAccountDetailsPage, testBankAccountDetails)
       val application = applicationBuilder(userAnswers = Some(ua))

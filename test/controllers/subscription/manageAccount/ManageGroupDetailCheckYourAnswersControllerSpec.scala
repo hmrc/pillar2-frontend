@@ -50,9 +50,9 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
   "ManageGroupDetailsCheckYourAnswersController" when {
 
-    "onPageLoad" when {
+    "onPageLoad" should {
 
-      "must return OK and the correct view if all answers are complete" in {
+      "return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
@@ -73,7 +73,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to journey recovery if no user answers are available" in {
+      "redirect to journey recovery if no user answers are available" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
@@ -93,7 +93,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to waiting room when status is InProgress" in {
+      "redirect to waiting room when status is InProgress" in {
         val userAnswers = emptyUserAnswers
           .setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
 
@@ -120,7 +120,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must display the check your answers page for any non-InProgress status" in {
+      "display the check your answers page for any non-InProgress status" in {
         val userAnswers = emptyUserAnswers
 
         when(mockSessionRepository.get(any()))
@@ -144,7 +144,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         }
       }
 
-      "must redirect to Journey Recovery when no session data exists" in {
+      "redirect to Journey Recovery when no session data exists" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
 
@@ -164,7 +164,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
       }
     }
 
-    "onSubmit" must {
+    "onSubmit" should {
 
       "redirect to waiting room immediately on submission" in {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))

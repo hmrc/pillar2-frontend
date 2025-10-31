@@ -28,9 +28,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentAccountNameConfirmationForm
 
-  "Not Confirmed Bank Details" must {
-
-    "must return the correct view" in {
+  "Not Confirmed Bank Details" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -46,7 +45,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must return the correct error view for a submission error" in {
+    "return the correct error view for a submission error" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -63,9 +62,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
     }
   }
 
-  "Repayment Error" must {
-
-    "must return the correct view" in {
+  "Repayment Error" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -82,9 +80,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
     }
   }
 
-  "Bank Details Error" must {
-
-    "must return the correct view" in {
+  "Bank Details Error" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -101,9 +98,8 @@ class RepaymentErrorControllerSpec extends SpecBase {
     }
   }
 
-  "Partial Account Name Match" must {
-
-    "must return the correct view" in {
+  "Partial Account Name Match" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "James")))
         .build()
 
@@ -123,7 +119,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to error page if partial account name is not present" in {
+    "redirect to error page if partial account name is not present" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -137,7 +133,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(BarsAccountNamePartialPage, "James")))
         .build()
@@ -158,7 +154,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to input name page if valid selection is submitted" in {
+    "redirect to input name page if valid selection is submitted" in {
       val application = applicationBuilder(userAnswers =
         Some(
           emptyUserAnswers
@@ -178,7 +174,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to back to enter bank details page if valid selection is submitted" in {
+    "redirect to back to enter bank details page if valid selection is submitted" in {
       val application = applicationBuilder(userAnswers =
         Some(
           emptyUserAnswers
@@ -199,7 +195,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to error page if partial account name is not present for submit" in {
+    "redirect to error page if partial account name is not present for submit" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 

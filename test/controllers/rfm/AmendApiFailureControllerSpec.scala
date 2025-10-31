@@ -23,9 +23,8 @@ import views.html.rfm.AmendApiFailureView
 
 class AmendApiFailureControllerSpec extends SpecBase {
 
-  "AmendApiFailure Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "AmendApiFailure Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()

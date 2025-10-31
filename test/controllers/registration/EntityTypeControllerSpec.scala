@@ -36,9 +36,9 @@ class EntityTypeControllerSpec extends SpecBase {
 
   val formProvider = new EntityTypeFormProvider()
 
-  "EntityType Controller" when {
+  "EntityTypeController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val ua          = emptyUserAnswers.setOrException(UpeRegisteredInUKPage, true)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -58,7 +58,7 @@ class EntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
         .setOrException(UpeRegisteredInUKPage, true)
@@ -147,7 +147,7 @@ class EntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -167,7 +167,7 @@ class EntityTypeControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to GRS for UK Limited company" in {
+    "redirect to GRS for UK Limited company" in {
       val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -199,7 +199,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to GRS for Limited Liability Partnership" in {
+    "redirect to GRS for Limited Liability Partnership" in {
       val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

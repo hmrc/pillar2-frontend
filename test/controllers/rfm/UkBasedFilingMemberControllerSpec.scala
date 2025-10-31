@@ -34,9 +34,8 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
 
   val formProvider = new NFMRegisteredInUKConfirmationFormProvider()
 
-  "RFM UK Based Filing Member controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "RFM UK Based Filing Member controller" should {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -49,7 +48,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly when the question has been previously answered" in {
+    "populate the view correctly when the question has been previously answered" in {
       val userAnswers = emptyUserAnswers.setOrException(RfmUkBasedPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -63,7 +62,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -78,7 +77,7 @@ class UkBasedFilingMemberControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no option is selected" in {
+    "return Bad Request and show specific error message when no option is selected" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {

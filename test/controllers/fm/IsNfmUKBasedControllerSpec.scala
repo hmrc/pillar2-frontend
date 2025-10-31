@@ -39,9 +39,9 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
 
   val formProvider = new IsNFMUKBasedFormProvider()
 
-  "IsNFMUKBased Controller" when {
+  "IsNFMUKBased Controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -56,6 +56,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(formProvider(), NormalMode)(request, applicationConfig, messages(application)).toString
       }
     }
+
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
@@ -68,7 +69,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val userAnswers =
         UserAnswers(userAnswersId)
@@ -93,7 +94,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -113,7 +114,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no option is selected" in {
+    "return Bad Request and show specific error message when no option is selected" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -126,7 +127,8 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
         contentAsString(result) must include("Select yes if the nominated filing member is registered in the UK")
       }
     }
-    "must update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
+
+    "update the user answers and redirect to the next page when the user answers yes and they have GRS progress" in {
 
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[NominatedFilingMemberNavigator]
@@ -161,7 +163,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must update the user answers and redirect to the next page when the user answers yes, unable to fetch GRS status, set GRS status in-progress" in {
+    "update the user answers and redirect to the next page when the user answers yes, unable to fetch GRS status, set GRS status in-progress" in {
       val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -176,7 +178,7 @@ class IsNfmUKBasedControllerSpec extends SpecBase {
       }
     }
 
-    "must update the user answers and redirect to the next page when the user answers no" in {
+    "update the user answers and redirect to the next page when the user answers no" in {
       val userAnswers = emptyUserAnswers.setOrException(NominateFilingMemberPage, true)
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

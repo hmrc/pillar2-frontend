@@ -42,7 +42,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "RfmConfirmation Controller" when {
+  "RfmConfirmationController" should {
     val enrolments: Set[Enrolment] = Set(
       Enrolment(
         key = "HMRC-PILLAR2-ORG",
@@ -53,7 +53,8 @@ class RfmConfirmationControllerSpec extends SpecBase {
         state = "activated"
       )
     )
-    "must return OK and the correct view with content" in {
+
+    "return OK and the correct view with content" in {
 
       val application =
         applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)

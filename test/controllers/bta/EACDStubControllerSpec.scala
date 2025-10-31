@@ -23,9 +23,9 @@ import views.html.bta.EACDStubView
 
 class EACDStubControllerSpec extends SpecBase {
 
-  "EACD Stub Controller" must {
+  "EACDStubController" should {
 
-    "must return OK and the correct view for a GET - bta feature true" in {
+    "return OK and the correct view for a GET - bta feature true" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(
@@ -47,7 +47,7 @@ class EACDStubControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET - bta feature false" in {
+    "return OK and the correct view for a GET - bta feature false" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure(

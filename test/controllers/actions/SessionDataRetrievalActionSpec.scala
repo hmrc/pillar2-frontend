@@ -33,7 +33,7 @@ class SessionDataRetrievalActionSpec extends SpecBase {
 
   "Session Data Retrieval Action" when {
 
-    "there is no data in the cache" must {
+    "there is no data in the cache" should {
 
       "set userAnswers to 'None' in the request" in {
 
@@ -47,7 +47,7 @@ class SessionDataRetrievalActionSpec extends SpecBase {
       }
     }
 
-    "when there is data in the cache" must {
+    "there is data in the cache" should {
 
       "build a userAnswers object and add it to the request" in {
 

@@ -26,7 +26,7 @@ import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomControllerSpec extends SpecBase {
 
-  "RegistrationWaitingRoom Controller" when {
+  "RegistrationWaitingRoom Controller" should {
 
     "return OK and the correct view for a GET if SubscriptionStatusPage is empty" in {
 
@@ -43,7 +43,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         contentAsString(result) mustEqual view(None)(request, applicationConfig, messages(application)).toString
       }
     }
-    " redirect to registration confirmation page if database state is updated successfully" in {
+    "redirect to registration confirmation page if database state is updated successfully" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -55,7 +55,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
       }
     }
-    " redirect to error page in case of a duplicated submission response" in {
+    "redirect to error page in case of a duplicated submission response" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSubmission)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -68,7 +68,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to error page in case of a unprocessable entity response" in {
+    "redirect to error page in case of a unprocessable entity response" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithUnprocessableEntity)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -81,7 +81,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to registration failed error page in case of any failed api responses" in {
+    "redirect to registration failed error page in case of any failed api responses" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -93,7 +93,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.SubscriptionFailedController.onPageLoad.url
       }
     }
-    " redirect to journey recovery page if fetching data from mongo fails" in {
+    "redirect to journey recovery page if fetching data from mongo fails" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithNoMneOrDomesticValueFoundError)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -105,7 +105,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
       }
     }
-    " redirect to duplicate safe id page in case of failed with duplicate safe id responses" in {
+    "redirect to duplicate safe id page in case of failed with duplicate safe id responses" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(SubscriptionStatusPage, FailedWithDuplicatedSafeIdError)
       val application = applicationBuilder(Some(ua)).build()
 

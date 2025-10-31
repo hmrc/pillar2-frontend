@@ -42,9 +42,8 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "ContactCapturePhoneDetails Controller for Organisation View Contact details" when {
-
-    "must return OK and the correct view for a GET if page previously not answered" in {
+  "ContactCapturePhoneDetailsController for Organisation" should {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers =
         emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
@@ -65,7 +64,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val userAnswers =
         emptySubscriptionLocalData
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -88,6 +87,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         ).toString
       }
     }
+
     "return a Bad Request and errors when invalid data is submitted of more than 24 characters" in {
       val userAnswersSubCapturePhone =
         emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
@@ -136,7 +136,8 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
       }
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url)
@@ -149,9 +150,8 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
 
   }
 
-  "ContactCapturePhoneDetails Controller for Agent View Contact details" when {
-
-    "must return OK and the correct view for a GET if page previously not answered" in {
+  "ContactCapturePhoneDetailsController for Agent" should {
+    "return OK and the correct view for a GET if page previously not answered" in {
       val userAnswers =
         emptySubscriptionLocalData.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryPhonePreferencePage, true)
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
@@ -180,7 +180,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously answered" in {
+    "return OK and the correct view for a GET if page previously answered" in {
       val userAnswers =
         emptySubscriptionLocalData
           .setOrException(SubPrimaryContactNamePage, "name")
@@ -259,7 +259,8 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       }
 
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

@@ -26,7 +26,7 @@ import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import pages._
 import play.api
 import play.api.inject
@@ -64,9 +64,9 @@ class TaskListControllerSpec extends SpecBase {
     )
   )
 
-  "Task List Controller" must {
+  "TaskListController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(

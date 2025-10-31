@@ -51,7 +51,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
     )
     .build()
 
-  "BTNBeforeStartController" must {
+  "BTNBeforeStartController" should {
 
     "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
       running(application) {
@@ -135,7 +135,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to dashboard when phase2ScreensEnabled is false" in {
+    "redirect to dashboard when phase2ScreensEnabled is false" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .configure("features.phase2ScreensEnabled" -> false)
         .build()

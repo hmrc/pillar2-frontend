@@ -23,9 +23,9 @@ import views.html.{UnderConstruction, UnderConstructionAgent, UnderConstructionE
 
 class UnderConstructionControllerSpec extends SpecBase {
 
-  "Under construction  Controller" when {
+  "Under construction  Controller" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -41,7 +41,7 @@ class UnderConstructionControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view PageLoad Error for a GET" in {
+    "return OK and the correct view PageLoad Error for a GET" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -57,7 +57,7 @@ class UnderConstructionControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET for agent in repayments" in {
+    "return OK and the correct view for a GET for agent in repayments" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

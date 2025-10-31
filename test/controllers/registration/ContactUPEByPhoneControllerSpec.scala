@@ -37,7 +37,7 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
   val form = new ContactUPEByPhoneFormProvider()
   val formProvider: Form[Boolean] = form("sad")
 
-  "Can we contact UPE by Phone Controller" when {
+  "ContactUPEByPhoneController" should {
 
     "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptyUserAnswers
@@ -94,7 +94,7 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(UpeContactNamePage, "sad")
         .setOrException(UpeNameRegistrationPage, "test")
@@ -115,7 +115,8 @@ class ContactUPEByPhoneControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode).url
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(UpeContactNamePage, "sad")
         .setOrException(UpeNameRegistrationPage, "test")

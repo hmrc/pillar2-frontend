@@ -54,7 +54,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
   lazy val view: DueAndOverdueReturnsView = application.injector.instanceOf[DueAndOverdueReturnsView]
 
   "DueAndOverdueReturnsController" when {
-    "onPageLoad" must {
+    "onPageLoad" should {
       "return OK and display the correct view for a GET with no returns" in {
         when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
@@ -141,7 +141,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
         dueContent   must include("You must submit each return before its due date using your client’s commercial software supplier")
       }
 
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
+      "redirect to dashboard when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(

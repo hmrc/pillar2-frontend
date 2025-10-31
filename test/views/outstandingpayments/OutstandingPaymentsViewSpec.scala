@@ -168,7 +168,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
     }
 
     "display agent-specific content" should {
-      "should display agent-specific paragraphs" in {
+      "display agent-specific paragraphs" in {
         val agentViewParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
         agentViewParagraphs.get(1).text() mustBe "Any payments made to the group’s account before submitting the tax " +

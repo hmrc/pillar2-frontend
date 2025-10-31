@@ -35,9 +35,9 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
   val formProvider = new CapturePhoneDetailsFormProvider()
 
-  "NfmCapturePhoneDetails Controller" when {
+  "NfmCapturePhoneDetailsController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val ua = emptyUserAnswers
         .setOrException(FmContactNamePage, "name")
@@ -61,7 +61,7 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
         .setOrException(FmCapturePhonePage, "12312323")
         .setOrException(FmContactNamePage, "name")
@@ -84,7 +84,7 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val userAnswers: UserAnswers = emptyUserAnswers.set(FmContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers)).build()
 
@@ -124,7 +124,7 @@ class NfmCapturePhoneDetailsControllerSpec extends SpecBase {
 
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

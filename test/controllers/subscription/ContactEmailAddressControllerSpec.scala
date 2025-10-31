@@ -35,9 +35,9 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
   val formProvider = new ContactEmailAddressFormProvider()
 
-  "ContactEmail Address Controller" when {
+  "ContactEmailAddressController" should {
 
-    "must return OK and the correct view for a GET if page previously  not answered" in {
+    "return OK and the correct view for a GET if page previously  not answered" in {
 
       val userAnswersSubContactEmail =
         emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
@@ -61,7 +61,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously has been answered" in {
+    "return OK and the correct view for a GET if page previously has been answered" in {
 
       val userAnswersSubContactEmail =
         emptyUserAnswers.setOrException(SubPrimaryContactNamePage, "name").setOrException(SubPrimaryEmailPage, "hello@goodbye.com")
@@ -85,7 +85,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request when invalid data is submitted" in {
+    "return a Bad Request when invalid data is submitted" in {
       val ua          = emptyUserAnswers.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -96,7 +96,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         status(result) mustEqual BAD_REQUEST
       }
     }
-    "must redirect to next page when valid data is submitted" in {
+
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "TestName")
 
@@ -128,7 +129,8 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       }
 
     }
-    "must redirect to journey recovery if no primary contact name is found for POST" in {
+
+    "redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(POST, controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url)

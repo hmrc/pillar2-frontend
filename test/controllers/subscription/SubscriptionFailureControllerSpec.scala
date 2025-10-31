@@ -22,9 +22,8 @@ import play.api.test.Helpers._
 
 class SubscriptionFailureControllerSpec extends SpecBase {
 
-  "SubscriptionFailure Controller" when {
-
-    "must return OK and the continue view" in {
+  "SubscriptionFailure Controller" should {
+    "return OK and the continue view" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

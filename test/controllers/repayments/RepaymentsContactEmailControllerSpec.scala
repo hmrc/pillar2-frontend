@@ -42,9 +42,8 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     )
   )
 
-  "Repayments Contact Email Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Repayments Contact Email Controller" should {
+    "return OK and the correct view for a GET" in {
       val userAnswers = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
       val application = applicationBuilder(userAnswers = Some(userAnswers))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -66,7 +65,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .set(RepaymentsContactNamePage, "ABC Limited")
         .success
@@ -99,7 +98,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next Page when valid data is submitted" in {
+    "redirect to next Page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -117,7 +116,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
@@ -139,7 +138,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Recovery page if the previous page is not answered" in {
+    "redirect to Recovery page if the previous page is not answered" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

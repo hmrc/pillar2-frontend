@@ -35,9 +35,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
   val formProvider = new SecondaryContactNameFormProvider()
 
-  "SecondaryContactName Controller" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryContactName Controller" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua          = emptyUserAnswers.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(Some(ua)).build()
 
@@ -53,7 +52,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubAddSecondaryContactPage, true)
@@ -75,7 +74,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         ).toString
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -95,7 +94,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(SubSecondaryContactNamePage, "TestName")
         .success

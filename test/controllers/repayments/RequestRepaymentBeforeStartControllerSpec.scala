@@ -40,7 +40,7 @@ class RequestRepaymentBeforeStartControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "Rfm Save Progress inform Controller" when {
+  "Rfm Save Progress inform Controller" should {
 
     "return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = None, pillar2AgentEnrolmentWithDelegatedAuth.enrolments)

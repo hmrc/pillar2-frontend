@@ -37,9 +37,9 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
   val formProvider = new ContactNameComplianceFormProvider()
 
-  "Contact Name Compliance controller" when {
+  "Contact Name Compliance controller" should {
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.now(), LocalDate.now()))
@@ -57,8 +57,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when previous data is found" in {
-
+    "return OK and the correct view for a GET when previous data is found" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "name")
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -92,7 +91,8 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         redirectLocation(result) mustBe Some(controllers.routes.JourneyRecoveryController.onPageLoad().url)
       }
     }
-    "must redirect to next page when valid data is submitted" in {
+
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(SubPrimaryContactNamePage, "TestName")
         .success
@@ -113,7 +113,8 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.subscription.routes.ContactEmailAddressController.onPageLoad(NormalMode).url
       }
     }
-    "must return a Bad Request and errors when invalid data is submitted" in {
+
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

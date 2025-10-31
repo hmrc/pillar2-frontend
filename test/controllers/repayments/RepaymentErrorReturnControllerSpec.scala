@@ -23,9 +23,8 @@ import views.html.repayments.RepaymentsErrorReturnView
 
 class RepaymentErrorReturnControllerSpec extends SpecBase {
 
-  "Repayment error return controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Repayment error return controller" should {
+    "return OK and the correct view for a GET" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {

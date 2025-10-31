@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class RfmWaitingRoomControllerSpec extends SpecBase {
 
-  "RfmWaitingRoom Controller" when {
+  "RfmWaitingRoom Controller" should {
 
     "return OK and the correct view for a GET if RfmStatusPage is empty" in {
       val application = applicationBuilder().build()
@@ -49,7 +49,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to registration confirmation page if database state is updated successfully" in {
+    "redirect to registration confirmation page if database state is updated successfully" in {
       val contactAddress = NonUKAddress("Address line first drive", Some("Address line 2"), "Home Town", Some("region"), Some("ne5 2dh"), "AT")
       val ua: UserAnswers = emptyUserAnswers
         .setOrException(RfmStatusPage, SuccessfullyCompleted)
@@ -76,7 +76,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to error page in case of any failed api responses" in {
+    "redirect to error page in case of any failed api responses" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(RfmStatusPage, FailedInternalIssueError)
       val application = applicationBuilder(Some(ua)).build()
 
@@ -88,7 +88,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
       }
     }
 
-    " redirect to journey recovery page if fetching data from mongo fails" in {
+    "redirect to journey recovery page if fetching data from mongo fails" in {
       val ua: UserAnswers = emptyUserAnswers.setOrException(RfmStatusPage, FailException)
       val application = applicationBuilder(Some(ua)).build()
 

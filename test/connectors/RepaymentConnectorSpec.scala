@@ -50,15 +50,16 @@ class RepaymentConnectorSpec extends SpecBase with WireMockServerHandler {
         RESET_CONTENT
       )
     )
-  "RepaymentConnector" when {
 
-    "Create repayment must return Done for successful submission to ETMP" in {
+  "RepaymentConnector" should {
+
+    "return Done for successful submission to ETMP" in {
       stubResponse("/report-pillar2-top-up-taxes/repayment", CREATED, "")
       val result = connector.repayment(validRepaymentPayloadUkBank)
       result.futureValue mustBe Done
     }
 
-    "must return a failed result for any non 201 response received from ETMP" in {
+    "return a failed result for any non 201 response received from ETMP" in {
       stubResponse("/report-pillar2-top-up-taxes/repayment", errorCodes.sample.value, "")
       val result = connector.repayment(validRepaymentPayloadUkBank)
       result.failed.futureValue mustBe UnexpectedResponse

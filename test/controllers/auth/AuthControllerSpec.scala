@@ -30,9 +30,8 @@ import scala.concurrent.Future
 
 class AuthControllerSpec extends SpecBase {
 
-  "signOut" must {
-
-    "must clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
+  "signOut" should {
+    "clear user answers and redirect to sign out, specifying the exit survey as the continue URL" in {
 
       val mockSessionRepository = mock[SessionRepository]
 
@@ -116,9 +115,8 @@ class AuthControllerSpec extends SpecBase {
 
   }
 
-  "signOutNoSurvey" must {
-
-    "must clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
+  "signOutNoSurvey" should {
+    "clear users answers and redirect to sign out, specifying SignedOut as the continue URL" in {
 
       val mockSessionRepository = mock[SessionRepository]
 

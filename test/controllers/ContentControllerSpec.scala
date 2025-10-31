@@ -24,9 +24,9 @@ import views.html.subscriptionview.ContentView
 
 class ContentControllerSpec extends SpecBase {
 
-  "StartPageRegistrationController" when {
+  "StartPageRegistrationController" should {
 
-    "must return OK and the correct view for a GET " in {
+    "return OK and the correct view for a GET " in {
       val application = applicationBuilder().build()
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.ContentController.onPageLoad(NormalMode).url)
@@ -42,7 +42,7 @@ class ContentControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page accounting period when valid data is submitted" in {
+    "redirect to next page accounting period when valid data is submitted" in {
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()

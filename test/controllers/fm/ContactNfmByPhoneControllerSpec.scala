@@ -35,9 +35,9 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
 
   val formProvider = new ContactNfmByPhoneFormProvider()
 
-  "ContactNfmByPhone Controller" when {
+  "ContactNfmByPhoneController" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val ua = emptyUserAnswers
         .setOrException(FmContactNamePage, "TestName")
@@ -60,7 +60,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers: UserAnswers = emptyUserAnswers
         .setOrException(FmPhonePreferencePage, true)
         .setOrException(FmContactNamePage, "TestName")
@@ -85,7 +85,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua          = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -98,7 +98,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must return Bad Request and show specific error message when no option is selected" in {
+    "return Bad Request and show specific error message when no option is selected" in {
       val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "NFM Contact")
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 
@@ -127,6 +127,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       }
 
     }
+
     "redirect to Journey Recovery if no contact name is found in POST" in {
       val application = applicationBuilder(userAnswers = None)
         .build()
@@ -141,7 +142,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

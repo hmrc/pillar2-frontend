@@ -21,9 +21,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import views.html.errors.ViewAmendSubscriptionFailedView
 class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
-  "ViewAmendSubscriptionFailed Controller" when {
-
-    "must return OK and the start again view" in {
+  "ViewAmendSubscriptionFailed Controller" should {
+    "return OK and the start again view" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 
@@ -38,7 +37,7 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the start again view for Agent" in {
+    "return OK and the start again view for Agent" in {
 
       val application = applicationBuilder(userAnswers = None).build()
 

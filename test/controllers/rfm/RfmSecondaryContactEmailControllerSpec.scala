@@ -38,9 +38,8 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
   val form = new RfmSecondaryContactEmailFormProvider()
   val formProvider: Form[String] = form("name")
 
-  "RfmSecondaryContactEmail Controller" when {
-
-    "must return OK and the correct view for a GET when no data is found" in {
+  "RfmSecondaryContactEmail Controller" should {
+    "return OK and the correct view for a GET when no data is found" in {
       val ua          = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -55,7 +54,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
         .set(RfmSecondaryContactNamePage, "name")
@@ -81,7 +80,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -106,7 +105,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to RFM Phone Preference page with valid data" in {
+    "redirect to RFM Phone Preference page with valid data" in {
 
       val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -128,7 +127,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)

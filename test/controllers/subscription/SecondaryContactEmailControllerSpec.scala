@@ -37,9 +37,8 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
   val form = new SecondaryContactEmailFormProvider()
   val formProvider: Form[String] = form("name")
 
-  "SecondaryContactEmail Controller" when {
-
-    "must return OK and the correct view for a GET when no data is found" in {
+  "SecondaryContactEmail Controller" should {
+    "return OK and the correct view for a GET when no data is found" in {
       val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(Some(ua)).build()
       running(application) {
@@ -54,7 +53,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
 
       val ua = emptyUserAnswers
         .set(SubSecondaryContactNamePage, "name")
@@ -80,7 +79,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -105,7 +104,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
+    "redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
@@ -119,7 +118,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubSecondaryContactNamePage, "TestName")
 

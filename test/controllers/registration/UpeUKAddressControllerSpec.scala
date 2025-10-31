@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class UpeUKAddressControllerSpec extends SpecBase {
   val formProvider = new UpeRegisteredAddressFormProvider()
 
-  "UpeRegisteredAddress Controller" when {
+  "UpeRegisteredAddressController" should {
 
     "redirect to bookmark page if previous page not answered" in {
       val application = applicationBuilder(userAnswers = None).build()
@@ -44,6 +44,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
     }
+
     "return OK and the correct view for a GET with no previous answer" in {
       val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -57,7 +58,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page previously been answered" in {
+    "return OK and the correct view for a GET if page previously been answered" in {
       val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
@@ -134,7 +135,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
       }
     }
 
-    "redirected to journey recovery if no data found with POST" in {
+    "redirect to journey recovery if no data found with POST" in {
       val application = applicationBuilder(userAnswers = None).build()
       running(application) {
         val request = FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)

@@ -18,7 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import helpers.ViewInstances
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 
@@ -30,8 +30,8 @@ class KbUKIneligibleControllerSpec extends SpecBase with ViewInstances {
       viewKbUKIneligible
     )
 
-  "Trading Business Confirmation Controller" when {
-    "must return OK and the correct view for a GET" in {
+  "Trading Business Confirmation Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val request =
         FakeRequest(GET, controllers.eligibility.routes.KbUKIneligibleController.onPageLoad.url)

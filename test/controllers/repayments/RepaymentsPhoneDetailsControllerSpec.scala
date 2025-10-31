@@ -36,9 +36,8 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
   val formProvider = new CapturePhoneDetailsFormProvider()
   val form: Form[String] = formProvider("ABC Limited")
 
-  "Repayments Phone Details Controller" when {
-
-    "must return OK and the correct view for a GET" in {
+  "Repayments Phone Details Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val userAnswers = emptyUserAnswers
         .set(RepaymentsContactNamePage, "ABC Limited")
@@ -67,7 +66,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptyUserAnswers
         .set(RepaymentsContactNamePage, "ABC Limited")
         .success
@@ -102,7 +101,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Under Construction Page when valid data is submitted" in {
+    "redirect to Under Construction Page when valid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -120,7 +119,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
       val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
 
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -142,7 +141,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to Recovery page if the previous page is not answered" in {
+    "redirect to Recovery page if the previous page is not answered" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

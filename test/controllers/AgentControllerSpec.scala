@@ -57,9 +57,9 @@ class AgentControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "Default Agent View" must {
+  "Default Agent View" should {
 
-    "must return OK and the correct view for a GET" in {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -73,9 +73,9 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Enter And Submit Client Pillar 2 Id" must {
+  "Enter And Submit Client Pillar 2 Id" should {
 
-    "must return the correct view if the user is agent" in {
+    "return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -99,7 +99,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must return the correct view if user answer is present" in {
+    "return the correct view if user answer is present" in {
       val userAnswer = emptyUserAnswers
         .set(UnauthorisedClientPillar2ReferencePage, "XMPLR0123456789")
         .success
@@ -129,7 +129,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page if the valid ID is inputted and valid read subscription response is returned" in {
+    "redirect to next page if the valid ID is inputted and valid read subscription response is returned" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -158,7 +158,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to no match if the read subscription returns a failed response" in {
+    "redirect to no match if the read subscription returns a failed response" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -187,7 +187,7 @@ class AgentControllerSpec extends SpecBase {
       }
     }
 
-    "must return correct view and form with errors if invalid ID is entered" in {
+    "return correct view and form with errors if invalid ID is entered" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(
@@ -219,7 +219,7 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Confirm Client Details" must {
+  "Confirm Client Details" should {
 
     "return the correct view if client pillar 2 id and organisation name is in user answers" in {
       val userAnswer = emptyUserAnswers
@@ -449,9 +449,9 @@ class AgentControllerSpec extends SpecBase {
 
   }
 
-  "Agent No Client Match" must {
+  "Agent No Client Match" should {
 
-    "must return the correct view if the user is agent" in {
+    "return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -473,9 +473,8 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Agent Error" must {
-
-    "must return the correct view if the user is agent" in {
+  "Agent Error" should {
+    "return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
@@ -488,9 +487,8 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Agent Client Unauthorised" must {
-
-    "must return the correct view" in {
+  "Agent Client Unauthorised" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -512,9 +510,8 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Agent Individual Error" must {
-
-    "must return the correct view if the user is agent" in {
+  "Agent Individual Error" should {
+    "return the correct view if the user is agent" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 
@@ -528,9 +525,8 @@ class AgentControllerSpec extends SpecBase {
     }
   }
 
-  "Agent Organisation Error" must {
-
-    "must return the correct view" in {
+  "Agent Organisation Error" should {
+    "return the correct view" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()
 

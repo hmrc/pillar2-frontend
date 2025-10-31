@@ -35,9 +35,9 @@ class UpeContactNameControllerSpec extends SpecBase {
   def getUpeContactNameFormProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   val formProvider = new UpeContactNameFormProvider()
   val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
-  "UpeContactName Controller" when {
 
-    "must return OK and the correct view for a GET" in {
+  "UpeContactNameController" should {
+    "return OK and the correct view for a GET" in {
       val ua          = emptyUserAnswers.setOrException(UpeRegisteredAddressPage, UkAddress)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -56,7 +56,7 @@ class UpeContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET if page has previously been answered" in {
+    "return OK and the correct view for a GET if page has previously been answered" in {
       val ua          = emptyUserAnswers.setOrException(UpeContactNamePage, "name").setOrException(UpeRegisteredAddressPage, UkAddress)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
       running(application) {
@@ -75,7 +75,7 @@ class UpeContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page when valid data is submitted" in {
+    "redirect to next page when valid data is submitted" in {
       val ua = emptyUserAnswers
         .set(UpeNameRegistrationPage, "TestName")
         .success

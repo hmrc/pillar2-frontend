@@ -70,7 +70,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     ".onPageLoad" should {
 
-      "must return OK and the correct view for a GET" in {
+      "return OK and the correct view for a GET" in {
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(validBTNCyaUa)))
 
@@ -93,7 +93,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must return OK with the correct view showing the user-selected Accounting Period" in {
+      "return OK with the correct view showing the user-selected Accounting Period" in {
         lazy val testLocalDateFrom: LocalDate   = LocalDate.of(2024, 11, 30)
         lazy val testLocalDateTo:   LocalDate   = testLocalDateFrom.plusYears(1)
         lazy val testUserAnswers:   UserAnswers = buildBtnUserAnswers(testLocalDateFrom, testLocalDateTo, testLocalDateTo.plusMonths(3))
@@ -124,7 +124,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to IndexController on disqualifying answers" in {
+      "redirect to IndexController on disqualifying answers" in {
         val emptyUa = validBTNCyaUa.setOrException(EntitiesInsideOutsideUKPage, false)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUa)))
@@ -143,7 +143,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to a knockback page when a BTN is submitted" in {
+      "redirect to a knockback page when a BTN is submitted" in {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(submittedBTNRecord)))
 
         val application = applicationBuilder(userAnswers = Some(submittedBTNRecord), subscriptionLocalData = Some(someSubscriptionLocalData))
@@ -160,7 +160,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to waiting room when a submission is processing" in {
+      "redirect to waiting room when a submission is processing" in {
         val processingUa = validBTNCyaUa.set(BTNStatus, BTNStatus.processing).get
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(processingUa)))
@@ -179,7 +179,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to JourneyRecoveryController on retrieval of answers failure" in {
+      "redirect to JourneyRecoveryController on retrieval of answers failure" in {
         val application = applicationBuilder(userAnswers = None, subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -196,7 +196,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
+      "redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(
@@ -218,7 +218,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
     ".onSubmit" should {
 
-      "must immediately redirect to the waiting room when submission starts" in {
+      "immediately redirect to the waiting room when submission starts" in {
 
         val slowPromise = Promise[BTNSuccess]()
         val slowFuture  = slowPromise.future
@@ -244,7 +244,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must update the status after a successful API call completes" in {
+      "update the status after a successful API call completes" in {
 
         val successPromise = Promise[BTNSuccess]()
         val successFuture  = successPromise.future
@@ -274,7 +274,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must update the status after a failed API call" in {
+      "update the status after a failed API call" in {
 
         val failPromise = Promise[BTNSuccess]()
         val failFuture  = failPromise.future
@@ -304,7 +304,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to waiting room when BTN submission throws an exception" in {
+      "redirect to waiting room when BTN submission throws an exception" in {
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -324,7 +324,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to waiting room when BTN submission returns Future.failed(ApiError)" in {
+      "redirect to waiting room when BTN submission returns Future.failed(ApiError)" in {
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -344,7 +344,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to waiting room for any other error" in {
+      "redirect to waiting room for any other error" in {
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(Future.failed(new RuntimeException("Some other error")))
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -364,7 +364,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+      "redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
           .configure("features.phase2ScreensEnabled" -> false)
           .overrides(
@@ -398,7 +398,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         }
       }
 
-      "must redirect to dashboard for cannotReturnKnockback when phase2ScreensEnabled is false" in {
+      "redirect to dashboard for cannotReturnKnockback when phase2ScreensEnabled is false" in {
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> false)
           .build()

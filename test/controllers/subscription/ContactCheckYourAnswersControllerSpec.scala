@@ -51,9 +51,8 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     .setOrException(SubSecondaryPhonePreferencePage, true)
     .setOrException(SubSecondaryCapturePhonePage, "123213")
 
-  "Contact Check Your Answers Controller" must {
-
-    "must return OK and the correct view if an answer is provided to every question " in {
+  "Contact Check Your Answers Controller" should {
+    "return OK and the correct view if an answer is provided to every question " in {
       val application = applicationBuilder(userAnswers = Some(subDataWithAddress)).build()
 
       running(application) {

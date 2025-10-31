@@ -24,7 +24,7 @@ import models.registration.{IncorporatedEntityCreateRegistrationRequest, Partner
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.{any, eq => Meq}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers._
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.StringContextOps
 
@@ -37,9 +37,8 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUt
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
   val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 Top-up Taxes"))
 
-  "PartnershipEntityIdentificationFrontendConnector" when {
-
-    "must return OK status for createPartnershipJourney" in {
+  "PartnershipEntityIdentificationFrontendConnector" should {
+    "return OK status for createPartnershipJourney" in {
       val expectedUrl = s"$apiUrl/limited-liability-partnership-journey"
       val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest =
         IncorporatedEntityCreateRegistrationRequest(
@@ -61,7 +60,7 @@ class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUt
       verify(mockHttpClient).post(Meq(url"$expectedUrl"))(any())
     }
 
-    "must return OK status for createPartnershipJourney for RFM" in {
+    "return OK status for createPartnershipJourney for RFM" in {
       val expectedUrl = s"$apiUrl/limited-liability-partnership-journey"
       val expectedIncorporatedEntityCreateRegistrationRequest: IncorporatedEntityCreateRegistrationRequest =
         IncorporatedEntityCreateRegistrationRequest(

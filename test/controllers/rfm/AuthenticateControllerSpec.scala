@@ -23,9 +23,8 @@ import play.api.test.Helpers._
 
 class AuthenticateControllerSpec extends SpecBase {
 
-  "Authenticate Controller" when {
-
-    "must redirect to security question page" in {
+  "Authenticate Controller" should {
+    "redirect to security question page" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()

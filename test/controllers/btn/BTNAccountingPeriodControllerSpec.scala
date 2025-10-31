@@ -72,8 +72,8 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     )
     .build()
 
-  "BTNAccountingPeriodController" when {
-    "must return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
+  "BTNAccountingPeriodController" should {
+    "return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
       def list(startDate: LocalDate, endDate: LocalDate): SummaryList = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
@@ -143,7 +143,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to a knockback page when a BTN is submitted" in {
+    "redirect to a knockback page when a BTN is submitted" in {
       when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
 
       running(application) {
@@ -155,7 +155,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to BTN specific error page when subscription data is not returned" in {
+    "redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder()
         .configure("features.phase2ScreensEnabled" -> true)
         .overrides(bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService))
@@ -170,7 +170,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -179,7 +179,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted with UkOther" in {
+    "redirect to the next page when valid data is submitted with UkOther" in {
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -188,7 +188,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for return submitted page" in {
+    "return OK and the correct view for return submitted page" in {
       val osResponse = obligationsAndSubmissionsSuccessResponse()
 
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
@@ -209,7 +209,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for BTN submitted page" in {
+    "return OK and the correct view for BTN submitted page" in {
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(submissionType = BTN).success))
 
@@ -228,7 +228,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to BTN error page if the obligations and submissions service call results in an exception" in {
+    "redirect to BTN error page if the obligations and submissions service call results in an exception" in {
       when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("Service failed")))
 
@@ -243,7 +243,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
+    "redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
       val application = applicationBuilder()
         .configure("features.phase2ScreensEnabled" -> false)
         .build()
@@ -257,7 +257,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
+    "redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
       val application = applicationBuilder()
         .configure("features.phase2ScreensEnabled" -> false)
         .build()

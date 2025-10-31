@@ -56,7 +56,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
   def getSummaryListActions(doc: Document): Elements = doc.getElementsByClass("govuk-summary-list__actions")
 
-  "CheckYourAnswersView" must {
+  "CheckYourAnswersView" should {
 
     "have a title" in {
       view().title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
@@ -135,7 +135,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
         }
       }
 
-      "when inside and outside UK entities" should {
+      "inside and outside UK entities" should {
 
         "have a summary list" in {
           val ukAndOtherEntities:  Document = view(summaryList = summaryListCYA(ukOnlyEntities = false))

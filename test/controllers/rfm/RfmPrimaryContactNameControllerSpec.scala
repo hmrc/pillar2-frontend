@@ -35,9 +35,9 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
   val formProvider = new RfmPrimaryContactNameFormProvider()
 
-  "RfmPrimaryContactNameController Controller" when {
+  "RfmPrimaryContactNameController" should {
 
-    "must return OK and the correct view for a GET when RFM access is enabled" in {
+    "return OK and the correct view for a GET when RFM access is enabled" in {
 
       val ua = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
@@ -55,7 +55,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val pageAnswer = emptyUserAnswers.setOrException(RfmPrimaryContactNamePage, "alex")
 
       val application = applicationBuilder(userAnswers = Some(pageAnswer)).build()
@@ -76,7 +76,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to primary email address page with valid data" in {
+    "redirect to primary email address page with valid data" in {
 
       val application = applicationBuilder(userAnswers = None)
         .overrides(
@@ -97,7 +97,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()

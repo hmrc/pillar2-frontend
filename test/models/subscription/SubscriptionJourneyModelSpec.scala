@@ -83,9 +83,9 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
 
   "upeJourney" when {
 
-    "from" must {
+    "from" should {
 
-      "must return a completed journey model when the user has selected a uk based limited company" in {
+      "return a completed journey model when the user has selected a uk based limited company" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(UpeEntityTypePage, EntityType.UkLimitedCompany)
@@ -109,7 +109,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected a uk based limited liability partnership" in {
+      "return a completed journey model when the user has selected a uk based limited liability partnership" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, true)
           .setOrException(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership)
@@ -133,7 +133,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with contact phone" in {
+      "return a completed journey model when the user has selected none uk based with contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(UpeNameRegistrationPage, "upe name")
@@ -161,7 +161,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with no contact phone" in {
+      "return a completed journey model when the user has selected none uk based with no contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(UpeRegisteredInUKPage, false)
           .setOrException(UpeNameRegistrationPage, "upe name")
@@ -188,7 +188,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         upeJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return all the pages which failed" in {
+      "return all the pages which failed" in {
         val errors = upeJourney.from(UserAnswers("id")).left.value.toChain.toList
         errors must contain only
           UpeRegisteredInUKPage
@@ -201,7 +201,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
 
     "from" must {
 
-      "must return a completed journey model when the user has selected a uk based limited company" in {
+      "return a completed journey model when the user has selected a uk based limited company" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, true)
@@ -227,7 +227,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected a uk based limited liability partnership" in {
+      "return a completed journey model when the user has selected a uk based limited liability partnership" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, true)
@@ -253,7 +253,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with contact phone" in {
+      "return a completed journey model when the user has selected none uk based with contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, false)
@@ -283,7 +283,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return a completed journey model when the user has selected none uk based with no contact phone" in {
+      "return a completed journey model when the user has selected none uk based with no contact phone" in {
         val answers: UserAnswers = UserAnswers("id")
           .setOrException(NominateFilingMemberPage, true)
           .setOrException(FmRegisteredInUKPage, false)
@@ -312,7 +312,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
         fmJourney.from(answers).toOption.value mustEqual expected
       }
 
-      "must return all the pages which failed" in {
+      "return all the pages which failed" in {
         val errors = fmJourney.from(UserAnswers("id")).left.value.toChain.toList
         errors must contain only
           NominateFilingMemberPage
@@ -321,9 +321,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
     }
   }
 
-  "groupJourney" when {
-
-    "must return a completed journey model when the user has all answers" in {
+  "groupJourney" should {
+    "return a completed journey model when the user has all answers" in {
       val answers: UserAnswers = UserAnswers("id")
         .set(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .success
@@ -339,7 +338,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
       groupJourney.from(answers).toOption.value mustEqual expected
     }
 
-    "must return all the pages which failed" in {
+    "return all the pages which failed" in {
       val errors = groupJourney.from(UserAnswers("id")).left.value.toChain.toList
       errors must contain only (
         SubMneOrDomesticPage,
@@ -349,9 +348,8 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
 
   }
 
-  "contactJourney" when {
-
-    "must return a completed journey model when the user has all answers" in {
+  "contactJourney" should {
+    "return a completed journey model when the user has all answers" in {
       val answers: UserAnswers = UserAnswers("id")
         .set(SubPrimaryContactNamePage, "primary name")
         .success
@@ -398,7 +396,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
       contactJourney.from(answers).toOption.value mustEqual expected
     }
 
-    "must return a completed journey model when the user has minimum answers" in {
+    "return a completed journey model when the user has minimum answers" in {
       val answers: UserAnswers = UserAnswers("id")
         .set(SubPrimaryContactNamePage, "primary name")
         .success
@@ -430,7 +428,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
       contactJourney.from(answers).toOption.value mustEqual expected
     }
 
-    "must return all the pages which failed" in {
+    "return all the pages which failed" in {
       val errors = contactJourney.from(UserAnswers("id")).left.value.toChain.toList
       errors must contain only (
         SubPrimaryContactNamePage,

@@ -35,9 +35,9 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
   val formProvider = new MneOrDomesticFormProvider()
 
-  "MneOrDomestic Controller" when {
+  "MneOrDomesticController" should {
 
-    "must return OK and the correct view for a GET when previous data is found" in {
+    "return OK and the correct view for a GET when previous data is found" in {
       val userAnswer = emptyUserAnswers
         .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
         .setOrException(NominateFilingMemberPage, false)
@@ -60,7 +60,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for a GET when no previous data is found" in {
+    "return OK and the correct view for a GET when no previous data is found" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers.setOrException(NominateFilingMemberPage, false))).build()
       running(application) {
@@ -85,7 +85,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to next page accounting period when valid data is submitted" in {
+    "redirect to next page accounting period when valid data is submitted" in {
       val ua = emptyUserAnswers
         .setOrException(SubPrimaryContactNamePage, "TestName")
 
@@ -105,7 +105,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
@@ -119,7 +119,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and show specific error message when no option is selected" in {
+    "return a Bad Request and show specific error message when no option is selected" in {
       val ua          = emptyUserAnswers.setOrException(NominateFilingMemberPage, false)
       val application = applicationBuilder(userAnswers = Some(ua)).build()
 

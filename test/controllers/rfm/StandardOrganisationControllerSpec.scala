@@ -23,9 +23,8 @@ import views.html.rfm.StandardOrganisationView
 
 class StandardOrganisationControllerSpec extends SpecBase {
 
-  "StandardOrganisation Controller" must {
-
-    "must return OK and the correct view for a GET" in {
+  "StandardOrganisation Controller" should {
+    "return OK and the correct view for a GET" in {
 
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .build()

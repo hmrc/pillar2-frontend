@@ -46,9 +46,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   val providerId:   String = UUID.randomUUID().toString
   val providerType: String = UUID.randomUUID().toString
 
-  "SecondaryContactName Controller for Organisation View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryContactNameController for Organisation" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua          = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
@@ -68,7 +67,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubAddSecondaryContactPage, true)
@@ -91,7 +90,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
@@ -116,7 +115,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       import play.api.inject.bind
 
       val expectedNextPage = Call(GET, "/")
@@ -151,9 +150,8 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
   }
 
-  "SecondaryContactName Controller for Agent View Contact details" when {
-
-    "must return OK and the correct view for a GET if no previous data is found" in {
+  "SecondaryContactNameController for Agent" should {
+    "return OK and the correct view for a GET if no previous data is found" in {
       val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -181,7 +179,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must populate the view correctly on a GET when the question has previously been answered" in {
+    "populate the view correctly on a GET when the question has previously been answered" in {
       val ua = emptySubscriptionLocalData
         .setOrException(SubSecondaryContactNamePage, "name")
         .setOrException(SubAddSecondaryContactPage, true)
@@ -212,7 +210,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "return a Bad Request and errors when invalid data is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -244,7 +242,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       }
     }
 
-    "must update subscription data and redirect to the next page" in {
+    "update subscription data and redirect to the next page" in {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
