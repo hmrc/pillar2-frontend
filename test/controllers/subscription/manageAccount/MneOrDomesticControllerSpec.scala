@@ -217,7 +217,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MttToDttController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url
         verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
@@ -404,7 +404,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MttToDttController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url
         verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
