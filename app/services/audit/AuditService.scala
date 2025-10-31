@@ -19,7 +19,7 @@ package services.audit
 import models.audit._
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.subscription.NewFilingMemberDetail
+import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
@@ -207,14 +207,15 @@ class AuditService @Inject() (
 
   def auditBTN(
     pillarReference:            String,
-    accountingPeriod:           String,
+    accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,
     apiResponseData:            ApiResponseData
   )(implicit hc:                HeaderCarrier): Future[AuditResult] =
     sendEventBTN(
       CreateBtnAuditEvent(
         pillarReference = pillarReference,
-        accountingPeriod = accountingPeriod,
+        accountingPeriodStart = accountingPeriod.startDate,
+        accountingPeriodEnd = accountingPeriod.endDate,
         entitiesInsideAndOutsideUK = entitiesInsideAndOutsideUK,
         apiResponseData = apiResponseData
       )

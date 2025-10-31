@@ -19,17 +19,20 @@ import base.SpecBase
 import models.audit.RepaymentsAuditEvent
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
-import models.subscription.NewFilingMemberDetail
+import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
 import models.{NormalMode, UserType}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
+import org.mockito.captor.ArgCaptor
 import play.api.Application
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
 import play.api.test.Helpers.running
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
+import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
+import java.time.LocalDate
 import scala.concurrent.Future
 
 class AuditServiceSpec extends SpecBase {
@@ -112,7 +115,7 @@ class AuditServiceSpec extends SpecBase {
       result mustBe AuditResult.Success
     }
 
-    "for BTN" when {
+    "auditing a BTN submission" should {
 
       val application: Application = applicationBuilder()
         .overrides(
@@ -120,27 +123,104 @@ class AuditServiceSpec extends SpecBase {
         )
         .build()
 
-      "return Success when audit call is successful" in {
-        running(application) {
+      val pillarReference             = "PLR1234567890"
+      val apStartDate                 = "2024-03-20"
+      val apEndDate                   = "2025-03-20"
+      val responseOk                  = 200
+      val responseInternalServerError = 500
+      val responseProcessedAt         = "2024-03-20T07:32:03Z"
+      val responseSuccessMessage      = "Success"
+      val responseErrorCode           = "InternalIssueError"
+      val responseErrorMessage        = "Failure"
+
+      "return Success when audit call is successful" when {
+
+        "BTN was successful" in running(application) {
           when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
             .thenReturn(Future.successful(AuditResult.Success))
 
           val service = application.injector.instanceOf[AuditService]
+
           val result = service
             .auditBTN(
-              pillarReference = "PLR1234567890",
-              accountingPeriod = "2024-03-20",
+              pillarReference = pillarReference,
+              accountingPeriod = AccountingPeriod(
+                startDate = LocalDate.parse(apStartDate),
+                endDate = LocalDate.parse(apEndDate)
+              ),
               entitiesInsideAndOutsideUK = true,
               apiResponseData = models.audit.ApiResponseData(
-                statusCode = 200,
-                processingDate = "2024-03-20T07:32:03Z",
+                statusCode = responseOk,
+                processingDate = responseProcessedAt,
                 errorCode = None,
-                responseMessage = "Success"
+                responseMessage = responseSuccessMessage
               )
             )(hc)
             .futureValue
 
           result mustBe AuditResult.Success
+
+          val captor = ArgCaptor[ExtendedDataEvent]
+          verify(mockAuditConnector).sendExtendedEvent(captor)(any, any)
+
+          captor.value.auditSource mustBe "pillar2-frontend"
+          captor.value.auditType mustBe "belowThresholdNotification"
+          captor.value.detail mustBe Json.obj(
+            "pillarReference"            -> pillarReference,
+            "accountingPeriodStart"      -> apStartDate,
+            "accountingPeriodEnd"        -> apEndDate,
+            "entitiesInsideAndOutsideUK" -> true,
+            "apiResponseData" -> Json.obj(
+              "statusCode"     -> responseOk,
+              "processingDate" -> responseProcessedAt,
+              // no errorCode
+              "responseMessage" -> "Success"
+            )
+          )
+        }
+
+        "BTN failed" in running(application) {
+          when(mockAuditConnector.sendExtendedEvent(any())(any(), any()))
+            .thenReturn(Future.successful(AuditResult.Success))
+
+          val service = application.injector.instanceOf[AuditService]
+
+          val result = service
+            .auditBTN(
+              pillarReference = pillarReference,
+              accountingPeriod = AccountingPeriod(
+                startDate = LocalDate.parse(apStartDate),
+                endDate = LocalDate.parse(apEndDate)
+              ),
+              entitiesInsideAndOutsideUK = false,
+              apiResponseData = models.audit.ApiResponseData(
+                statusCode = responseInternalServerError,
+                processingDate = responseProcessedAt,
+                errorCode = Some(responseErrorCode),
+                responseMessage = responseErrorMessage
+              )
+            )(hc)
+            .futureValue
+
+          result mustBe AuditResult.Success
+
+          val captor = ArgCaptor[ExtendedDataEvent]
+          verify(mockAuditConnector).sendExtendedEvent(captor)(any, any)
+
+          captor.value.auditSource mustBe "pillar2-frontend"
+          captor.value.auditType mustBe "belowThresholdNotification"
+          captor.value.detail mustBe Json.obj(
+            "pillarReference"            -> pillarReference,
+            "accountingPeriodStart"      -> apStartDate,
+            "accountingPeriodEnd"        -> apEndDate,
+            "entitiesInsideAndOutsideUK" -> false,
+            "apiResponseData" -> Json.obj(
+              "statusCode"      -> responseInternalServerError,
+              "processingDate"  -> responseProcessedAt,
+              "errorCode"       -> responseErrorCode,
+              "responseMessage" -> responseErrorMessage
+            )
+          )
         }
       }
 
@@ -152,14 +232,17 @@ class AuditServiceSpec extends SpecBase {
           val service = application.injector.instanceOf[AuditService]
           val result = service
             .auditBTN(
-              pillarReference = "PLR1234567890",
-              accountingPeriod = "2024-03-20",
+              pillarReference = pillarReference,
+              accountingPeriod = AccountingPeriod(
+                startDate = LocalDate.parse(apStartDate),
+                endDate = LocalDate.parse(apEndDate)
+              ),
               entitiesInsideAndOutsideUK = true,
               apiResponseData = models.audit.ApiResponseData(
-                statusCode = 200,
-                processingDate = "2024-03-20T07:32:03Z",
+                statusCode = responseOk,
+                processingDate = responseProcessedAt,
                 errorCode = None,
-                responseMessage = "Success"
+                responseMessage = responseSuccessMessage
               )
             )(hc)
             .futureValue
@@ -176,14 +259,17 @@ class AuditServiceSpec extends SpecBase {
           val service = application.injector.instanceOf[AuditService]
           val result = service
             .auditBTN(
-              pillarReference = "PLR1234567890",
-              accountingPeriod = "2024-03-20",
+              pillarReference = pillarReference,
+              accountingPeriod = AccountingPeriod(
+                startDate = LocalDate.parse(apStartDate),
+                endDate = LocalDate.parse(apEndDate)
+              ),
               entitiesInsideAndOutsideUK = true,
               apiResponseData = models.audit.ApiResponseData(
-                statusCode = 200,
-                processingDate = "2024-03-20T07:32:03Z",
+                statusCode = responseOk,
+                processingDate = responseProcessedAt,
                 errorCode = None,
-                responseMessage = "Success"
+                responseMessage = responseSuccessMessage
               )
             )(hc)
             .futureValue
@@ -199,14 +285,17 @@ class AuditServiceSpec extends SpecBase {
 
           val service = application.injector.instanceOf[AuditService]
           val resultFuture = service.auditBTN(
-            pillarReference = "PLR1234567890",
-            accountingPeriod = "2024-03-20",
+            pillarReference = pillarReference,
+            accountingPeriod = AccountingPeriod(
+              startDate = LocalDate.parse(apStartDate),
+              endDate = LocalDate.parse(apEndDate)
+            ),
             entitiesInsideAndOutsideUK = true,
             apiResponseData = models.audit.ApiResponseData(
-              statusCode = 200,
-              processingDate = "2024-03-20T07:32:03Z",
+              statusCode = responseOk,
+              processingDate = responseProcessedAt,
               errorCode = None,
-              responseMessage = "Success"
+              responseMessage = responseSuccessMessage
             )
           )(hc)
 

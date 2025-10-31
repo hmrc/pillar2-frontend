@@ -125,7 +125,7 @@ class CheckYourAnswersController @Inject() (
                     _                <- sessionRepository.set(submittedAnswers)
                     _ <- auditService.auditBTN(
                            pillarReference = pillar2Id,
-                           accountingPeriod = subAccountingPeriod.toString,
+                           accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
                            apiResponseData = ApiResponseData(
                              statusCode = CREATED,
@@ -147,7 +147,7 @@ class CheckYourAnswersController @Inject() (
                     _            <- sessionRepository.set(errorAnswers)
                     _ <- auditService.auditBTN(
                            pillarReference = pillar2Id,
-                           accountingPeriod = subAccountingPeriod.toString,
+                           accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
                            apiResponseData = ApiResponseData(
                              statusCode = INTERNAL_SERVER_ERROR,
