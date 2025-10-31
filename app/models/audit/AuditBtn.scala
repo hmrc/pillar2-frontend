@@ -18,9 +18,12 @@ package models.audit
 
 import play.api.libs.json._
 
+import java.time.LocalDate
+
 case class CreateBtnAuditEvent(
   pillarReference:            String,
-  accountingPeriod:           String,
+  accountingPeriodStart:      LocalDate,
+  accountingPeriodEnd:        LocalDate,
   entitiesInsideAndOutsideUK: Boolean,
   apiResponseData:            ApiResponseData
 ) extends AuditEvent {
