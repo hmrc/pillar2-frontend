@@ -17,8 +17,10 @@
 package controllers.btn
 
 import base.SpecBase
+import models.obligationsandsubmissions._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
+import pages.BTNChooseAccountingPeriodPage
 import play.api.inject._
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
@@ -27,7 +29,7 @@ import services.ObligationsAndSubmissionsService
 import utils.DateTimeUtils.LocalDateOps
 import views.html.btn.BTNConfirmationView
 
-import java.time.LocalDate
+import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.Future
 
 class BTNConfirmationControllerSpec extends SpecBase {
@@ -37,15 +39,27 @@ class BTNConfirmationControllerSpec extends SpecBase {
     "onPageLoad" should {
 
       "must return OK and the correct view for a GET" in {
+        val obligationsData = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq.empty
+        )
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
           .build()
 
         val currentDate: String = LocalDate.now.toDateFormat
         val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
 
         running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+            .thenReturn(Future.successful(obligationsData))
+
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
 
           val result = route(application, request).value
@@ -54,7 +68,161 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
           status(result) mustEqual OK
 
-          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false)(
+          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false, showUnderEnquiryWarning = false)(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
+
+      "must show underEnquiry warning when chosen accounting period has underEnquiry flag set to true" in {
+        val chosenPeriod = AccountingPeriodDetails(
+          startDate = LocalDate.now().minusYears(1),
+          endDate = LocalDate.now(),
+          dueDate = LocalDate.now().plusMonths(6),
+          underEnquiry = true,
+          obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
+        )
+
+        val userAnswers = emptyUserAnswers.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod)
+
+        val obligationsData = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(chosenPeriod)
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+            .thenReturn(Future.successful(obligationsData))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          val view = application.injector.instanceOf[BTNConfirmationView]
+          val currentDate: String = LocalDate.now.toDateFormat
+          val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false, showUnderEnquiryWarning = true)(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
+
+      "must show underEnquiry warning when a subsequent accounting period has underEnquiry flag set to true" in {
+        val subsequentPeriod = AccountingPeriodDetails(
+          startDate = LocalDate.now().minusMonths(6),
+          endDate = LocalDate.now().plusMonths(6),
+          dueDate = LocalDate.now().plusMonths(12),
+          underEnquiry = true,
+          obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
+        )
+
+        val chosenPeriod = AccountingPeriodDetails(
+          startDate = LocalDate.now().minusYears(1),
+          endDate = LocalDate.now().minusMonths(6),
+          dueDate = LocalDate.now(),
+          underEnquiry = false,
+          obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
+        )
+
+        val userAnswers = emptyUserAnswers.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod)
+
+        val obligationsData = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(subsequentPeriod, chosenPeriod)
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+            .thenReturn(Future.successful(obligationsData))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          val view = application.injector.instanceOf[BTNConfirmationView]
+          val currentDate: String = LocalDate.now.toDateFormat
+          val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false, showUnderEnquiryWarning = true)(
+            request,
+            applicationConfig,
+            messages(application)
+          ).toString
+        }
+      }
+
+      "must not show underEnquiry warning when neither chosen nor subsequent periods have underEnquiry flag set" in {
+        val chosenPeriod = AccountingPeriodDetails(
+          startDate = LocalDate.now().minusYears(1),
+          endDate = LocalDate.now(),
+          dueDate = LocalDate.now().plusMonths(6),
+          underEnquiry = false,
+          obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
+        )
+
+        val subsequentPeriod = AccountingPeriodDetails(
+          startDate = LocalDate.now().minusYears(2),
+          endDate = LocalDate.now().minusYears(1),
+          dueDate = LocalDate.now().minusMonths(6),
+          underEnquiry = false,
+          obligations = Seq(Obligation(ObligationType.UKTR, ObligationStatus.Open, canAmend = true, Seq.empty))
+        )
+
+        val userAnswers = emptyUserAnswers.setOrException(BTNChooseAccountingPeriodPage, chosenPeriod)
+
+        val obligationsData = ObligationsAndSubmissionsSuccess(
+          processingDate = ZonedDateTime.now(),
+          accountingPeriodDetails = Seq(chosenPeriod, subsequentPeriod)
+        )
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
+          .configure("features.phase2ScreensEnabled" -> true)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+          )
+          .build()
+
+        running(application) {
+          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+            .thenReturn(Future.successful(obligationsData))
+
+          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
+          val result  = route(application, request).value
+
+          val view = application.injector.instanceOf[BTNConfirmationView]
+          val currentDate: String = LocalDate.now.toDateFormat
+          val date:        String = someSubscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+
+          status(result) mustEqual OK
+
+          contentAsString(result) mustEqual view(Some("OrgName"), currentDate, date, isAgent = false, showUnderEnquiryWarning = false)(
             request,
             applicationConfig,
             messages(application)
