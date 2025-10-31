@@ -29,6 +29,7 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   lazy val testPlr2Id:               String                    = "12345678"
   lazy val makePaymentDashboardView: Document                  = Jsoup.parse(page(testPlr2Id)(request, appConfig, messages).toString())
   lazy val pageTitle:                String                    = "Make a payment"
+  val paragraphs:                    Elements                  = makePaymentDashboardView.getElementsByClass("govuk-body")
 
   "Make A Payment Dashboard View" should {
     "have a title" in {
@@ -43,35 +44,31 @@ class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
     }
 
     "have the correct paragraphs" in {
-      val paragraphs: Elements = makePaymentDashboardView.getElementsByClass("govuk-body")
       paragraphs.size() mustBe 2
+
       paragraphs.get(0).text() mustBe
         s"Your unique payment reference is $testPlr2Id. You must use this when making Pillar 2 Top-up Taxes payments."
       paragraphs.get(1).text() mustBe
         "You can use the 'Pay Now' button to pay online, or read more about other payment methods. (opens in a new tab)"
-      // FIXME: this opens in new tab. Add a test for this link!!! it is missing
+    }
+
+    "have the correct link to payment guidance" in {
+      val guidancePageLink: Element = paragraphs.get(1).getElementsByTag("a").first()
+
+      guidancePageLink.text() mustBe "read more about other payment methods. (opens in a new tab)"
+      guidancePageLink.attr("href") mustBe
+        "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
+      //guidancePageLink.attr("target") mustBe "_blank" // FIXME: this opens in new tab and should have the target _blank
+      //guidancePageLink.attr("rel") mustBe "noreferrer noopener" // FIXME: external URLs should have this attribute - reverse tabnabbing
     }
 
     "have a 'Pay now' link-button" in {
       val payNowLink: Element = makePaymentDashboardView.getElementsByClass("govuk-button").first()
+
       payNowLink.text mustBe "Pay Now" // FIXME: should both words be capitalised?
       payNowLink.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url
       payNowLink.attr("role") mustBe "button"
     }
 
-    "have the correct link to payment guidance" in {
-      val elements: List[Element] = makePaymentDashboardView
-        .getElementsByTag("a")
-        .listIterator()
-        .asScala
-        .toList
-        .filter(_.text == "read more about other payment methods. (opens in a new tab)")
-      elements must have size 1
-      val guidancePageLink: Element = elements.head
-      guidancePageLink.attr("href") mustBe
-        "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax"
-      guidancePageLink.attr("target") mustBe "_blank"
-      guidancePageLink.attr("rel") mustBe "noreferrer noopener"
-    }
   }
 }

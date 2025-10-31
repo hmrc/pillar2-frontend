@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.UnauthorisedView
 
@@ -46,9 +46,13 @@ class UnauthorisedViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      val links: Elements = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
-      links.get(0).text mustBe "register to report Pillar 2 Top-up Taxes"
-      links.get(0).attr("href") mustBe "https://www.gov.uk/guidance/report-pillar-2-top-up-taxes"
+      val link: Element = view.getElementsByClass("govuk-body").last().getElementsByTag("a").get(0)
+
+      println(link)
+      link.text mustBe "register to report Pillar 2 Top-up Taxes"
+      link.attr("href") mustBe "https://www.gov.uk/guidance/check-if-you-need-to-report-pillar-2-top-up-taxes"
+      //link.attr("target") mustBe "_blank" // FIXME: this opens in new tab and should have the target _blank
+      //link.attr("rel") mustBe "noopener noreferrer" // FIXME: external URLs should have this attribute - reverse tabnabbing
     }
 
   }

@@ -55,15 +55,15 @@ class AgentClientConfirmDetailsViewSpec extends ViewSpecBase {
     }
 
     "have a link" in {
-      // FIXME: do we need both getElementsByClass and getElementsByTag
-      // FIXME: can we not use 'govuk-link'?
       val links: Elements = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
+
       links.first().attr("href") mustBe routes.AgentController.onSubmitClientPillarId.url
       links.first().text mustBe "Enter a different client’s Pillar 2 Top-up Taxes ID"
     }
 
     "have a 'Confirm and continue' button" in {
       val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
       continueButton.text mustBe "Confirm and continue"
       continueButton.attr("type") mustBe "submit"
     }

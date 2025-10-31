@@ -24,8 +24,8 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import utils.DateTimeUtils.ZonedDateTimeOps
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
+import utils.DateTimeUtils.ZonedDateTimeOps
 
 import java.time.{LocalDate, ZonedDateTime}
 

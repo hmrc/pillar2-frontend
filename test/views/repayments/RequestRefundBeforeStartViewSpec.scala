@@ -18,6 +18,7 @@ package views.repayments
 
 import base.ViewSpecBase
 import controllers.routes
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -72,10 +73,12 @@ class RequestRefundBeforeStartViewSpec extends ViewSpecBase {
       listItems.get(3).text mustBe "contact details for someone we can contact about this request"
     }
 
-    "have a 'Request a repayment' button" in {
+    "have a 'Request a repayment' link-button" in {
       val requestRepaymentButton: Element = view.getElementsByClass("govuk-button").first()
+
       requestRepaymentButton.text mustBe "Request a repayment"
-      requestRepaymentButton.attr("type") mustBe "submit"
+      requestRepaymentButton.attr("href") mustBe controllers.repayments.routes.RequestRepaymentAmountController.onSubmit(NormalMode).url
+      requestRepaymentButton.attr("role") mustBe "button"
     }
 
   }

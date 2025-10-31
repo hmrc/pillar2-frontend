@@ -96,10 +96,12 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
     }
 
-    "have a 'Confirm and continue' button" in {
+    "have a 'Confirm and continue' link-button" in {
       val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
       continueButton.text mustBe "Confirm and continue"
-      continueButton.attr("type") mustBe "submit"
+      continueButton.attr("href") mustBe controllers.routes.TaskListController.onPageLoad.url
+      continueButton.attr("role") mustBe "button"
     }
   }
 

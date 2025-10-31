@@ -56,10 +56,12 @@ class CheckNewFilingMemberViewSpec extends ViewSpecBase {
         "we will ask you for identifying information so we can create a new HMRC record."
     }
 
-    "have a 'Continue' button" in {
+    "have a 'Continue' link-button" in {
       val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
       continueButton.text mustBe "Continue"
-      continueButton.attr("type") mustBe "submit"
+      continueButton.attr("href") mustBe controllers.rfm.routes.UkBasedFilingMemberController.onPageLoad(NormalMode).url
+      continueButton.attr("role") mustBe "button"
     }
   }
 }

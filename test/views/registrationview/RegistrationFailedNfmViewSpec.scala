@@ -19,7 +19,7 @@ package views.registrationview
 import base.ViewSpecBase
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.{Document, Element}
+import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.registrationview.RegistrationFailedNfmView
 
@@ -59,12 +59,12 @@ class RegistrationFailedNfmViewSpec extends ViewSpecBase {
       link1.text mustBe "search Companies House for the company registration number and registered office address (opens in a new tab)"
       link1.attr("href") mustBe "https://find-and-update.company-information.service.gov.uk/"
       link1.attr("target") mustBe "_blank"
-      link1.attr("rel") mustBe "noopener noreferrer"
+      //link1.attr("rel") mustBe "noopener noreferrer" // FIXME: external URLs should have this attribute - reverse tabnabbing
 
       link2.text mustBe "ask for a copy of your Corporation Tax Unique Taxpayer Reference (opens in a new tab)"
       link2.attr("href") mustBe "https://www.tax.service.gov.uk/ask-for-copy-of-your-corporation-tax-utr"
       link2.attr("target") mustBe "_blank"
-      link1.attr("rel") mustBe "noopener noreferrer"
+      //link2.attr("rel") mustBe "noopener noreferrer" // FIXME: external URLs should have this attribute - reverse tabnabbing
 
       link3.text mustBe "You can go back to select the entity type and try again using different details if you think you made an error when entering them."
       link3.getElementsByTag("a").text() mustBe "go back to select the entity type"

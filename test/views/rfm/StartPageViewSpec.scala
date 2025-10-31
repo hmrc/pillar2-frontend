@@ -102,10 +102,12 @@ class StartPageViewSpec extends ViewSpecBase {
       listItems.get(6).text mustBe "a contact postal address for the group"
     }
 
-    "have a 'Confirm and continue' button" in {
+    "have a 'Confirm and continue' link-button" in {
       val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
       continueButton.text mustBe "Confirm and continue"
-      continueButton.attr("type") mustBe "submit"
+      continueButton.attr("href") mustBe controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url
+      continueButton.attr("role") mustBe "button"
     }
   }
 }

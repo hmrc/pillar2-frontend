@@ -17,6 +17,7 @@
 package views.rfm
 
 import base.ViewSpecBase
+import models.NormalMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
@@ -47,10 +48,12 @@ class RfmSaveProgressViewSpec extends ViewSpecBase {
         "information again."
     }
 
-    "have a 'Continue' button" in {
+    "have a 'Continue' link-button" in {
       val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
       continueButton.text mustBe "Continue"
-      continueButton.attr("type") mustBe "submit"
+      continueButton.attr("href") mustBe controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url
+      continueButton.attr("role") mustBe "button"
     }
 
   }
