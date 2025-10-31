@@ -21,14 +21,14 @@ import controllers.actions._
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.MttToDttView
+import views.html.subscriptionview.manageAccount.MneToDomesticView
 
 import javax.inject.{Inject, Named}
 
-class MttToDttController @Inject() (
+class MneToDomesticController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   MttToDttView
+  view:                                   MneToDomesticView
 )(implicit appConfig:                     FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {

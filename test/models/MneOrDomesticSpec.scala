@@ -16,43 +16,61 @@
 
 package models
 
+import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.OptionValues
-import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
+import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.libs.json.{JsError, JsString, Json}
 
-class MneOrDomesticSpec extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
+class MneOrDomesticSpec extends AnyWordSpec with Matchers with ScalaCheckPropertyChecks with OptionValues {
 
-  "MneOrDomestic" - {
+  "MneOrDomestic" must {
 
-    "must deserialise valid values" in {
-
-      val gen = Gen.oneOf(MneOrDomestic.values.toSeq)
+    "deserialise valid values" in {
+      val gen: Gen[MneOrDomestic] = Gen.oneOf(MneOrDomestic.values.toSeq)
 
       forAll(gen) { mneOrDomestic =>
         JsString(mneOrDomestic.toString).validate[MneOrDomestic].asOpt.value mustEqual mneOrDomestic
       }
     }
 
-    "must fail to deserialise invalid values" in {
-
-      val gen = arbitrary[String] suchThat (!MneOrDomestic.values.map(_.toString).contains(_))
+    "fail to deserialise invalid values" in {
+      val gen: Gen[String] = arbitrary[String] suchThat (!MneOrDomestic.values.map(_.toString).contains(_))
 
       forAll(gen) { invalidValue =>
         JsString(invalidValue).validate[MneOrDomestic] mustEqual JsError("error.invalid")
       }
     }
 
-    "must serialise" in {
-
-      val gen = Gen.oneOf(MneOrDomestic.values.toSeq)
+    "serialise" in {
+      val gen: Gen[MneOrDomestic] = Gen.oneOf(MneOrDomestic.values.toSeq)
 
       forAll(gen) { mneOrDomestic =>
         Json.toJson(mneOrDomestic) mustEqual JsString(mneOrDomestic.toString)
       }
     }
+
+    "return EntityLocationChangeBlocked when changing from UkAndOther to Uk (MultiNational Entity to Domestic)" in {
+      val result: EntityLocationChangeResult =
+        MneOrDomestic.handleEntityLocationChange(from = MneOrDomestic.UkAndOther, to = MneOrDomestic.Uk)
+
+      result mustEqual EntityLocationChangeBlocked
+    }
+
+    "return EntityLocationChangeAllowed for any other transition" in {
+      val allowedLocationChanges: Seq[(MneOrDomestic, MneOrDomestic)] = Seq(
+        (MneOrDomestic.Uk, MneOrDomestic.UkAndOther),
+        (MneOrDomestic.Uk, MneOrDomestic.Uk),
+        (MneOrDomestic.UkAndOther, MneOrDomestic.UkAndOther)
+      )
+
+      forAll(Gen.oneOf(allowedLocationChanges)) { case (from, to) =>
+        MneOrDomestic.handleEntityLocationChange(from, to) mustEqual EntityLocationChangeAllowed
+      }
+    }
+
   }
 }
