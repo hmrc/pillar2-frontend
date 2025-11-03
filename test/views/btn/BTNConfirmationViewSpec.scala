@@ -99,10 +99,13 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         s"You have submitted a Below-Threshold Notification for $companyName on $submissionDate."
       paragraphs.get(1).text() mustBe
         s"This is effective from the start of the accounting period you selected, $accountingPeriodStartDate."
-      paragraphs.get(2).text() mustBe messages("btn.confirmation.group.p3")
-      paragraphs.get(3).text() mustBe messages("btn.confirmation.group.p4")
+      paragraphs.get(2).text() mustBe "The Below-Threshold Notification satisfies the group’s obligation to submit " +
+        "a UK Tax Return for the current and future accounting periods. HMRC will not expect to receive an " +
+        "information return while the group remains below-threshold."
+      paragraphs.get(3).text() mustBe
+        "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
 
-      paragraphs.get(4).getElementsByTag("a").text() mustBe messages("btn.confirmation.p5.group.link")
+      paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
       paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
     }
 
