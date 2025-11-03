@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RfmSecondaryPhonePreferenceFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.RfmSecondaryPhonePreferenceView
 
@@ -48,8 +48,10 @@ class RfmSecondaryPhonePreferenceViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-caption-l").text mustBe "Contact details"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

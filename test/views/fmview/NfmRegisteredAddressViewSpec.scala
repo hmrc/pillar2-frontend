@@ -63,8 +63,10 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
           "address for HMRC to keep on record. If you’re uncertain, verify the registered address before proceeding."
       }
 
-      "have a save and continue button" in {
-        view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+      "have a 'Save and continue' button" in {
+        val continueButton: Element = view.getElementsByClass("govuk-button").first()
+        continueButton.text mustBe "Save and continue"
+        continueButton.attr("type") mustBe "submit"
       }
     }
 

@@ -18,7 +18,7 @@ package views.rfm
 
 import base.ViewSpecBase
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.rfm.StartPageView
 
@@ -34,23 +34,23 @@ class StartPageViewSpec extends ViewSpecBase {
       view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "have a caption" in {
-      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
-    }
-
     "have a unique H1 heading" in {
       val h1Elements: Elements = view.getElementsByTag("h1")
       h1Elements.size() mustBe 1
       h1Elements.text() mustBe pageTitle
     }
 
-    "have sub headings" in {
-      val mSubheadings: Elements = view.getElementsByClass("govuk-heading-m")
+    "have a caption" in {
+      view.getElementsByClass("govuk-caption-l").text mustBe "Replace filing member"
+    }
 
-      mSubheadings.get(0).text mustBe "Tell HMRC when you have replaced your filing member"
-      mSubheadings.get(1).text mustBe "Who can replace a filing member"
-      mSubheadings.get(2).text mustBe "Obligations as the filing member"
-      mSubheadings.get(3).text mustBe "What you will need"
+    "have sub headings" in {
+      val subheadings: Elements = view.getElementsByClass("govuk-heading-m")
+
+      subheadings.get(0).text mustBe "Tell HMRC when you have replaced your filing member"
+      subheadings.get(1).text mustBe "Who can replace a filing member"
+      subheadings.get(2).text mustBe "Obligations as the filing member"
+      subheadings.get(3).text mustBe "What you will need"
       view.getElementsByClass("govuk-heading-s").get(0).text mustBe
         "By continuing you confirm you are able to act as a new filing member for your group"
     }
@@ -93,31 +93,21 @@ class StartPageViewSpec extends ViewSpecBase {
     "have bullet lists" in {
       val listItems: Elements = view.getElementsByTag("li")
 
-      listItems.get(0).text mustBe
-        "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
-
-      listItems.get(1).text mustBe
-        "submit your group’s Pillar 2 Top-up Taxes returns"
-
-      listItems.get(2).text mustBe
-        "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records"
-
-      listItems.get(3).text mustBe
-        "the group’s Pillar 2 Top-up Taxes ID"
-
-      listItems.get(4).text mustBe
-        "the date the group first registered to report their Pillar 2 Top-up Taxes in the UK"
-
-      listItems.get(5).text mustBe
-        "contact details and preferences, for one or 2 individuals or teams in the group"
-
-      listItems.get(6).text mustBe
-        "a contact postal address for the group"
-
+      listItems.get(0).text mustBe "act as HMRC’s primary contact in relation to the group’s Pillar 2 Top-up Taxes compliance"
+      listItems.get(1).text mustBe "submit your group’s Pillar 2 Top-up Taxes returns"
+      listItems.get(2).text mustBe "ensure your group’s Pillar 2 Top-up Taxes account accurately reflects their records"
+      listItems.get(3).text mustBe "the group’s Pillar 2 Top-up Taxes ID"
+      listItems.get(4).text mustBe "the date the group first registered to report their Pillar 2 Top-up Taxes in the UK"
+      listItems.get(5).text mustBe "contact details and preferences, for one or 2 individuals or teams in the group"
+      listItems.get(6).text mustBe "a contact postal address for the group"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
+    "have a 'Confirm and continue' link-button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
+      continueButton.text mustBe "Confirm and continue"
+      continueButton.attr("href") mustBe controllers.rfm.routes.AuthenticateController.rfmAuthenticate.url
+      continueButton.attr("role") mustBe "button"
     }
   }
 }

@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RfmPrimaryContactNameFormProvider
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.api.data.Form
 import views.html.rfm.RfmPrimaryContactNameView
@@ -55,8 +55,10 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
       view.getElementsByClass("govuk-hint").text mustBe "For example, ‘Tax team’ or ‘Ashley Smith’."
     }
 
-    "have a save and continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+    "have a 'Save and continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
 
     "show required field error when form is submitted empty" in {

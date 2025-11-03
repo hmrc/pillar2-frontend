@@ -68,7 +68,9 @@ class RfmContactByPhoneViewSpec extends ViewSpecBase {
     }
 
     "have a 'Save and continue' button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Save and continue"
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Save and continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 

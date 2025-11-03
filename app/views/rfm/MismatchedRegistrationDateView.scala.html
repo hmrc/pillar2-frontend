@@ -18,27 +18,27 @@
 @import views.html.components.gds._
 
 @this(
-layout: templates.Layout,
-heading: heading,
-paragraphBody: paragraphBody,
-paragraphWithLink: ParagraphMessageWithLink,
-sectionHeader: sectionHeader,
+        layout: templates.Layout,
+        heading: heading,
+        paragraphBody: paragraphBody,
+        paragraphWithLink: ParagraphMessageWithLink,
+        sectionHeader: sectionHeader
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-pageTitle    = titleNoForm(messages("rfm.security.errorPage.title")),
-showBackLink = true,
-authorised = false
+  pageTitle = titleNoForm(messages("rfm.security.errorPage.title")),
+  showBackLink = true,
+  authorised = false
 ) {
-@sectionHeader(messages("rfm.heading.caption"))
-@heading(messages("rfm.security.errorPage.heading"), "govuk-heading-l")
-@paragraphBody(messages("rfm.security.errorPage.p1"))
-@paragraphWithLink(
-message1 = Some(messages("rfm.security.errorPage.p2")),
-linkMessage=  messages("rfm.security.errorPage.p2.link"),
-message2= None,
-linkUrl =  controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url,
-linkClass = "govuk-link govuk-link--no-visited-state")
+  @sectionHeader(messages("rfm.heading.caption"))
+  @heading(messages("rfm.security.errorPage.heading"), "govuk-heading-l")
+  @paragraphBody(messages("rfm.security.errorPage.p1"))
+  @paragraphWithLink(
+    message1 = Some(messages("rfm.security.errorPage.p2")),
+    linkMessage = messages("rfm.security.errorPage.p2.link"),
+    message2 = None,
+    linkUrl = controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url,
+    linkClass = "govuk-link govuk-link--no-visited-state")
 }

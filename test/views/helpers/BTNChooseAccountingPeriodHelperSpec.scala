@@ -19,6 +19,7 @@ package views.helpers
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import org.scalatest.freespec.AnyFreeSpec
+import org.scalatest.matchers.must.Matchers.convertToAnyMustWrapper
 import org.scalatest.matchers.should.Matchers
 import play.api.data.Form
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
@@ -41,16 +42,16 @@ class BTNChooseAccountingPeriodHelperSpec extends AnyFreeSpec with Matchers {
       val result: List[RadioItem] = BTNChooseAccountingPeriodHelper.radioButtons(form, data)
 
       result.size         shouldBe 2
-      result.map(_.value)   should contain inOrder (Some("0"), Some("1"))
-      result.map(_.content) should contain inOrder (Text(s"${data.head._1.formattedDates}"), Text(s"${data.last._1.formattedDates}"))
+      result.map(_.value)   should contain inOrder (Some("0"), Some("1")) // FIXME: mustBe
+      result.map(_.content) should contain inOrder (Text(s"${data.head._1.formattedDates}"), Text(s"${data.last._1.formattedDates}")) // FIXME: mustBe
     }
 
     "must select the correct item as checked when form is bound" in {
-      val boundForm = form.bind(Map("value" -> "1"))
-      val result    = BTNChooseAccountingPeriodHelper.radioButtons(boundForm, data)
+      val boundForm: Form[Int]      = form.bind(Map("value" -> "1"))
+      val result:    Seq[RadioItem] = BTNChooseAccountingPeriodHelper.radioButtons(boundForm, data)
 
-      result.find(_.value.contains("0")).get.checked shouldBe false
-      result.find(_.value.contains("1")).get.checked shouldBe true
+      result.find(_.value.contains("0")).get.checked mustBe false
+      result.find(_.value.contains("1")).get.checked mustBe true
     }
   }
 }

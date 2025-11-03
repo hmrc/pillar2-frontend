@@ -23,7 +23,7 @@
     govukErrorSummary: GovukErrorSummary,
     govukRadios: GovukRadios,
     govukButton: GovukButton,
-    sectionHeader: sectionHeader,
+    sectionHeader: sectionHeader
 )
 
 
@@ -34,7 +34,7 @@
     @formHelper(action = controllers.rfm.routes.RfmContactByPhoneController.onSubmit(mode), 'autoComplete -> "off") {
 
         @if(form.errors.nonEmpty) {
-            @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))
+            @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))
         }
         @sectionHeader(messages("rfmContactByPhone.heading.caption"))
         @govukRadios(

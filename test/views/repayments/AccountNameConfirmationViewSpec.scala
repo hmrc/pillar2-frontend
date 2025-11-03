@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import forms.RepaymentAccountNameConfirmationForm
 import models.NormalMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.repayments.AccountNameConfirmationView
 
@@ -43,7 +43,7 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       h1Elements.text() mustBe "This account belongs to James"
     }
 
-    "have an h2 subheading" in {
+    "have an H2 heading" in {
       val subheading = "Do you want to continue with these bank details?" // Adjusted to match the correct subheading in the view
       view.getElementsByTag("h2").first().text() mustBe subheading
     }
@@ -63,8 +63,10 @@ class AccountNameConfirmationViewSpec extends ViewSpecBase {
       radioButtons.get(1).text mustBe "No"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import helpers.SubscriptionLocalDataFixture
 import models.CheckMode
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import utils.DateTimeUtils._
 import viewmodels.checkAnswers._
@@ -96,8 +96,12 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
         controllers.subscription.routes.GroupAccountingPeriodController.onPageLoad(CheckMode).url
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
+    "have a 'Confirm and continue' link-button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+
+      continueButton.text mustBe "Confirm and continue"
+      continueButton.attr("href") mustBe controllers.routes.TaskListController.onPageLoad.url
+      continueButton.attr("role") mustBe "button"
     }
   }
 

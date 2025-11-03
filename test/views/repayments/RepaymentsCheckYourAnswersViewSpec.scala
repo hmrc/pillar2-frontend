@@ -149,8 +149,10 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
       printPageElement.getElementsByTag("a").text() mustBe "Print this page"
     }
 
-    "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and submit"
+    "have a 'Confirm and submit' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Confirm and submit"
+      continueButton.attr("type") mustBe "submit"
     }
   }
 }

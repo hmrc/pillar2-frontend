@@ -175,8 +175,9 @@ class DashboardViewSpec extends ViewSpecBase {
     "have a Pillar 2 link to the research page" in {
       val researchLink: Elements = organisationDashboardView.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
-      researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
+      researchLink.attr("target") mustBe "_blank"
+      researchLink.attr("rel") mustBe "noopener noreferrer"
     }
   }
 
@@ -299,8 +300,9 @@ class DashboardViewSpec extends ViewSpecBase {
     "have a Pillar 2 link to the research page" in {
       val researchLink: Elements = agentDashboardView.getElementsByClass("research-link")
       researchLink.text mustBe "Register for Pillar 2 user research (opens in a new tab)"
-      researchLink.attr("target") mustBe "_blank"
       researchLink.attr("href") mustBe appConfig.researchUrl
+      researchLink.attr("target") mustBe "_blank"
+      researchLink.attr("rel") mustBe "noopener noreferrer"
     }
   }
 }

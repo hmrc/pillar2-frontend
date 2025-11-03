@@ -19,7 +19,7 @@ package views
 import base.ViewSpecBase
 import forms.GroupTerritoriesFormProvider
 import org.jsoup.Jsoup
-import org.jsoup.nodes.Document
+import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.GroupTerritoriesView
 
@@ -66,8 +66,10 @@ class GroupTerritoriesViewSpec extends ViewSpecBase {
       radioButtons.get(1).text mustBe "No"
     }
 
-    "have a continue button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Continue"
+    "have a 'Continue' button" in {
+      val continueButton: Element = view.getElementsByClass("govuk-button").first()
+      continueButton.text mustBe "Continue"
+      continueButton.attr("type") mustBe "submit"
     }
 
   }
