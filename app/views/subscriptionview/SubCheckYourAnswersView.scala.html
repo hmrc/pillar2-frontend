@@ -37,7 +37,7 @@
     @govukSummaryList(list)
 
     @govukButton(
-        ButtonViewModel(messages("site.confirm-and-continue"))
+        ButtonViewModel(messages("site.continue"))
         .withAttribute("id", "continue")
         .withCssClass("govuk-!-margin-top-4")
         .asLink(controllers.routes.TaskListController.onPageLoad.url)
