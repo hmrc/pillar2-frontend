@@ -57,8 +57,8 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val tables = SubmissionHistoryHelper.generateSubmissionHistoryTable(accountingPeriods)
 
       tables                   should have length 2
-      tables.head.caption    shouldBe Some("1 January 2024 to 31 December 2024")
-      tables.last.caption    shouldBe Some("1 January 2023 to 31 December 2023")
+      tables.head.caption    shouldBe Some("Accounting period: 1 January 2024 to 31 December 2024")
+      tables.last.caption    shouldBe Some("Accounting period: 1 January 2023 to 31 December 2023")
       tables.head.rows.flatten should have length 4
       tables.last.rows.flatten should have length 2
     }
@@ -67,7 +67,7 @@ class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with Mockito
       val startDate = LocalDate.of(2024, 1, 1)
       val endDate   = LocalDate.of(2024, 12, 31)
       val table     = SubmissionHistoryHelper.createTable(startDate, endDate, Seq.empty)
-      table.caption shouldBe Some("1 January 2024 to 31 December 2024")
+      table.caption shouldBe Some("Accounting period: 1 January 2024 to 31 December 2024")
     }
 
     "create table rows correctly" in {

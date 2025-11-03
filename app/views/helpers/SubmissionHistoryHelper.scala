@@ -41,7 +41,7 @@ object SubmissionHistoryHelper {
     val formattedEndDate:   String = endDate.toDateFormat
 
     Table(
-      caption = Some(s"$formattedStartDate to $formattedEndDate"),
+      caption = Some(s"Accounting period: $formattedStartDate to $formattedEndDate"),
       rows = rows,
       head = Some(
         Seq(
