@@ -21,11 +21,11 @@ import connectors.UserAnswersConnectors
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
-import views.html.subscriptionview.manageAccount.MttToDttView
+import views.html.subscriptionview.manageAccount.MneToDomesticView
 
-class MttToDttControllerSpec extends SpecBase {
+class MneToDomesticControllerSpec extends SpecBase {
 
-  "MttToDtt Controller" when {
+  "MneToDomesticController" when {
 
     "must return OK and the correct view for a GET" in {
 
@@ -34,11 +34,11 @@ class MttToDttControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MttToDttController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url)
 
         val result = route(application, request).value
 
-        val view = application.injector.instanceOf[MttToDttView]
+        val view = application.injector.instanceOf[MneToDomesticView]
         status(result) mustEqual OK
         contentAsString(result) mustEqual view(isAgent = false)(
           request,

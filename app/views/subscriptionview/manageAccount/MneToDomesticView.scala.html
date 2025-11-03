@@ -31,21 +31,21 @@
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("mttToDtt.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
-        @heading(messages("mttToDtt.heading"), "govuk-heading-l")
+    pageTitle    = titleNoForm(messages("mneToDomestic.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+        @heading(messages("mneToDomestic.heading"), "govuk-heading-l")
 
         @if(isAgent) {
-            @paragraphBody(messages("mttToDtt.agent.p1"))
+            @paragraphBody(messages("mneToDomestic.agent.p1"))
         } else {
-            @paragraphBody(messages("mttToDtt.p1"))
+            @paragraphBody(messages("mneToDomestic.p1"))
         }
 
         @paragraphMessageWithLink(
-            message1 = Some(messages("mttToDtt.p2")),
+            message1 = Some(messages("mneToDomestic.p2")),
             linkMessage = appConfig.pillar2mailbox,
             linkUrl = s"mailto:${appConfig.pillar2mailbox}",
             linkFullStop = true
         )
 
-        @paragraphBodyLink(messages("mttToDtt.homepageLink"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+        @paragraphBodyLink(messages("mneToDomestic.homepageLink"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
 }
