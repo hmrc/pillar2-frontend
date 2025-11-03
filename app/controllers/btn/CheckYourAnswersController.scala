@@ -20,7 +20,7 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions._
 import models.MneOrDomestic.Uk
-import models.audit.{ApiResponseFailure, ApiResponseSuccess}
+import models.audit.{ApiResponseData, ApiResponseFailure}
 import models.btn.{BTNRequest, BTNStatus}
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
@@ -36,7 +36,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
-import java.time.Instant
+import java.time.ZonedDateTime
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -120,25 +120,35 @@ class CheckYourAnswersController @Inject() (
             .flatMap { resp =>
               sessionRepository.get(request.userId).flatMap {
                 case Some(latest) =>
-                  for {
-                    submittedAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.submitted))
-                    _                <- sessionRepository.set(submittedAnswers)
-                    _ <- auditService.auditBTN(
-                           pillarReference = pillar2Id,
-                           accountingPeriod = subAccountingPeriod,
-                           entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
-                           response = ApiResponseSuccess(
-                             statusCode = CREATED,
-                             processedAt = resp.processingDate.toInstant,
-                             responseMessage = "Success"
-                           )
-                         )
-                  } yield ()
+                  resp.result match {
+                    case Right(_) =>
+                      for {
+                        submittedAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.submitted))
+                        _                <- sessionRepository.set(submittedAnswers)
+                        _ <- auditService.auditBTN(
+                               pillarReference = pillar2Id,
+                               accountingPeriod = subAccountingPeriod,
+                               entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+                               response = ApiResponseData.fromBtnResponse(resp)
+                             )
+                      } yield ()
+                    case Left(_) =>
+                      for {
+                        errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
+                        _            <- sessionRepository.set(errorAnswers)
+                        _ <- auditService.auditBTN(
+                               pillarReference = pillar2Id,
+                               accountingPeriod = subAccountingPeriod,
+                               entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
+                               response = ApiResponseData.fromBtnResponse(resp)
+                             )
+                      } yield ()
+                  }
                 case None =>
                   Future.successful(())
               }
             }
-            .recover { case err =>
+            .recover { err: Throwable =>
               sessionRepository.get(request.userId).flatMap {
                 case Some(latest) =>
                   for {
@@ -150,7 +160,7 @@ class CheckYourAnswersController @Inject() (
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
                            response = ApiResponseFailure(
                              statusCode = INTERNAL_SERVER_ERROR,
-                             processedAt = Instant.now(),
+                             processedAt = ZonedDateTime.now(),
                              errorCode = "InternalIssueError",
                              responseMessage = err.getMessage
                            )

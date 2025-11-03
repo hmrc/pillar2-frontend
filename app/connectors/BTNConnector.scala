@@ -16,9 +16,10 @@
 
 package connectors
 
+import cats.syntax.either._
 import config.FrontendAppConfig
 import models.InternalIssueError
-import models.btn.BTNRequest
+import models.btn._
 import play.api.Logging
 import play.api.http.Status._
 import play.api.libs.json._
@@ -29,9 +30,12 @@ import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Try
 
 class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: HttpClientV2) extends Logging {
-  def submitBTN(btnRequest: BTNRequest)(implicit hc: HeaderCarrier, pillar2Id: String, ec: ExecutionContext): Future[JsValue] = {
+  def submitBTN(
+    btnRequest:  BTNRequest
+  )(implicit hc: HeaderCarrier, pillar2Id: String, ec: ExecutionContext): Future[BtnResponse] = {
     val urlBTN = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
     logger.info(s"Calling pillar-2 backend url = $urlBTN with pillar2Id: $pillar2Id.")
@@ -43,11 +47,16 @@ class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: H
       .flatMap { response: HttpResponse =>
         response.status match {
           case CREATED =>
-            logger.info(s"submitBTN request successful with status = ${response.status}. HttpResponse = $response. ")
-            Future.successful(response.json)
-          case _ =>
+            logger.info(s"submitBTN request successful with status = ${response.status}. HttpResponse = ${response.body}. ")
+            Future.fromTry(Try(BtnResponse(response.json.as[BtnSuccess].asRight, httpStatusCode = response.status)))
+          case BAD_REQUEST | UNPROCESSABLE_ENTITY | INTERNAL_SERVER_ERROR =>
             logger.warn(
-              s"submitBTN failed with status = ${response.status} for pillar2Id $pillar2Id and (accountingPeriodFrom, To) = $btnRequest."
+              s"submitBTN failed with handled status = ${response.status} for pillar2Id $pillar2Id and (accountingPeriodFrom, To) = $btnRequest."
+            )
+            Future.fromTry(Try(BtnResponse(response.json.as[BtnError].asLeft, httpStatusCode = response.status)))
+          case _ =>
+            logger.error(
+              s"submitBTN failed with unexpected status = ${response.status} for pillar2Id $pillar2Id and (accountingPeriodFrom, To) = $btnRequest."
             )
             Future.failed(InternalIssueError)
         }

@@ -18,7 +18,7 @@ package services
 
 import connectors._
 import models.InternalIssueError
-import models.btn.{BTNRequest, BTNSuccess}
+import models.btn.{BTNRequest, BtnResponse}
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -31,15 +31,21 @@ class BTNService @Inject() (
 )(implicit ec:  ExecutionContext)
     extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[BTNSuccess] =
+  def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[BtnResponse] =
     btnConnector
       .submitBTN(btnRequest)
-      .flatMap { btnSuccessJson =>
-        logger.info(
-          s"BTN Request Submission was successful: $btnSuccessJson"
-        )
-        val btnSuccess: BTNSuccess = btnSuccessJson.as[BTNSuccess]
-        Future.successful(btnSuccess)
+      .map { btnResponse =>
+        btnResponse.result match {
+          case Left(failure) =>
+            logger.info(
+              s"BTN Request Submission failed with ${failure.errorCode}: ${failure.message}"
+            )
+          case Right(success) =>
+            logger.info(
+              s"BTN Request Submission was successful. Processed ${success.processingDate}"
+            )
+        }
+        btnResponse
       }
       .recoverWith { case ex: Throwable =>
         logger.warn(s"BTNService Request failed with an exception: " + ex)

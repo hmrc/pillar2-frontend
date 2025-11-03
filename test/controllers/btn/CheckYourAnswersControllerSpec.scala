@@ -17,9 +17,10 @@
 package controllers.btn
 
 import base.SpecBase
+import cats.syntax.either._
 import controllers.btn.routes._
 import controllers.routes.IndexController
-import models.btn.{BTNStatus, BTNSuccess}
+import models.btn.{BTNStatus, BtnResponse, BtnSuccess}
 import models.subscription.AccountingPeriod
 import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -220,7 +221,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must immediately redirect to the waiting room when submission starts" in {
 
-        val slowPromise = Promise[BTNSuccess]()
+        val slowPromise = Promise[BtnResponse]()
         val slowFuture  = slowPromise.future
 
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(slowFuture)
@@ -246,7 +247,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
       "must update the status after a successful API call completes" in {
 
-        val successPromise = Promise[BTNSuccess]()
+        val successPromise = Promise[BtnResponse]()
         val successFuture  = successPromise.future
 
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(successFuture)
@@ -270,13 +271,13 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
 
           verify(mockSessionRepository).set(any())
 
-          successPromise.success(BTNSuccess(ZonedDateTime.now()))
+          successPromise.success(BtnResponse(BtnSuccess(ZonedDateTime.now()).asRight, CREATED))
         }
       }
 
       "must update the status after a failed API call" in {
 
-        val failPromise = Promise[BTNSuccess]()
+        val failPromise = Promise[BtnResponse]()
         val failFuture  = failPromise.future
 
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(failFuture)

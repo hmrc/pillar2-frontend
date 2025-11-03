@@ -16,10 +16,11 @@
 
 package models.audit
 
+import models.btn.BtnResponse
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-import java.time.{Instant, LocalDate}
+import java.time.{Instant, LocalDate, ZonedDateTime}
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -38,26 +39,42 @@ object CreateBtnAuditEvent {
 
 sealed trait ApiResponseData {
   def statusCode:      Int
-  def processedAt:     Instant
+  def processedAt:     ZonedDateTime
   def responseMessage: String
 }
 
 final case class ApiResponseSuccess(
-  statusCode:      Int,
-  processedAt:     Instant,
-  responseMessage: String
-) extends ApiResponseData
+  statusCode:  Int,
+  processedAt: ZonedDateTime
+) extends ApiResponseData {
+  val responseMessage = "Success"
+}
 
 final case class ApiResponseFailure(
   statusCode:      Int,
-  processedAt:     Instant,
+  processedAt:     ZonedDateTime,
   errorCode:       String,
   responseMessage: String
 ) extends ApiResponseData
 
 object ApiResponseData {
+  def fromBtnResponse(btnResponse: BtnResponse): ApiResponseData = btnResponse.result match {
+    case Right(success) =>
+      ApiResponseSuccess(
+        btnResponse.httpStatusCode,
+        success.processingDate
+      )
+    case Left(failure) =>
+      ApiResponseFailure(
+        btnResponse.httpStatusCode,
+        failure.processingDate.getOrElse(ZonedDateTime.now()),
+        failure.errorCode,
+        failure.message
+      )
+  }
+
   implicit val writes: Writes[ApiResponseData] = {
-    case success @ ApiResponseSuccess(_, _, _)    => Json.toJson(success)
+    case success @ ApiResponseSuccess(_, _)       => Json.toJson(success)
     case failure @ ApiResponseFailure(_, _, _, _) => Json.toJson(failure)
   }
 }
@@ -67,7 +84,7 @@ object ApiResponseSuccess {
     (__ \ "statusCode").write[Int] and
       (__ \ "messageResponseData" \ "success" \ "processingDate").write[Instant] and
       (__ \ "messageResponseData" \ "success" \ "responseMessage").write[String]
-  )(resp => (resp.statusCode, resp.processedAt, resp.responseMessage))
+  )(resp => (resp.statusCode, resp.processedAt.toInstant, resp.responseMessage))
 }
 
 object ApiResponseFailure {
@@ -76,5 +93,5 @@ object ApiResponseFailure {
       (__ \ "messageResponseData" \ "failure" \ "processingDate").write[Instant] and
       (__ \ "messageResponseData" \ "failure" \ "responseMessage").write[String] and
       (__ \ "messageResponseData" \ "failure" \ "errorCode").write[String]
-  )(resp => (resp.statusCode, resp.processedAt, resp.responseMessage, resp.errorCode))
+  )(resp => (resp.statusCode, resp.processedAt.toInstant, resp.responseMessage, resp.errorCode))
 }

@@ -32,7 +32,7 @@ import play.api.test.Helpers.running
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import java.time.{LocalDate, LocalDateTime, ZoneOffset}
+import java.time._
 import scala.concurrent.Future
 
 class AuditServiceSpec extends SpecBase {
@@ -128,7 +128,7 @@ class AuditServiceSpec extends SpecBase {
       val apEndDate                     = "2025-03-20"
       val responseOk                    = 200
       val responseInternalServerError   = 500
-      val responseProcessedAt           = LocalDateTime.of(2024, 3, 20, 13, 30, 0).toInstant(ZoneOffset.UTC)
+      val responseProcessedAt           = ZonedDateTime.of(LocalDateTime.of(2024, 3, 20, 13, 30, 0), ZoneOffset.UTC)
       val responseProcessedAtSerialised = "2024-03-20T13:30:00Z"
       val responseSuccessMessage        = "Success"
       val responseErrorCode             = "InternalIssueError"
@@ -152,8 +152,7 @@ class AuditServiceSpec extends SpecBase {
               entitiesInsideAndOutsideUK = true,
               response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processedAt = responseProcessedAt,
-                responseMessage = responseSuccessMessage
+                processedAt = responseProcessedAt
               )
             )(hc)
             .futureValue
@@ -176,7 +175,7 @@ class AuditServiceSpec extends SpecBase {
                 "success" -> Json.obj(
                   "processingDate" -> responseProcessedAtSerialised,
                   // no errorCode
-                  "responseMessage" -> "Success"
+                  "responseMessage" -> responseSuccessMessage
                 )
               )
             )
@@ -248,8 +247,7 @@ class AuditServiceSpec extends SpecBase {
               entitiesInsideAndOutsideUK = true,
               response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processedAt = responseProcessedAt,
-                responseMessage = responseSuccessMessage
+                processedAt = responseProcessedAt
               )
             )(hc)
             .futureValue
@@ -274,8 +272,7 @@ class AuditServiceSpec extends SpecBase {
               entitiesInsideAndOutsideUK = true,
               response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processedAt = responseProcessedAt,
-                responseMessage = responseSuccessMessage
+                processedAt = responseProcessedAt
               )
             )(hc)
             .futureValue
@@ -299,8 +296,7 @@ class AuditServiceSpec extends SpecBase {
             entitiesInsideAndOutsideUK = true,
             response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processedAt = responseProcessedAt,
-              responseMessage = responseSuccessMessage
+              processedAt = responseProcessedAt
             )
           )(hc)
 

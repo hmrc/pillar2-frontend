@@ -17,20 +17,21 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
+import cats.syntax.either._
 import models.InternalIssueError
-import models.btn.BTNRequest
-import org.scalatest.exceptions.TestFailedException
+import models.btn._
+import org.scalacheck.Arbitrary.arbitrary
+import org.scalacheck.Gen
+import org.scalatest.EitherValues
+import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.json._
 import uk.gov.hmrc.http.test.WireMockSupport
-import utils.DateTimeUtils.utcZoneId
 
-import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
-import scala.concurrent.Future
 
-class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler {
+class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServerHandler with EitherValues with ScalaCheckDrivenPropertyChecks {
   override lazy val app: Application = new GuiceApplicationBuilder()
     .configure(conf = "microservice.services.pillar2.port" -> server.port())
     .build()
@@ -40,54 +41,68 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
     accountingPeriodFrom = LocalDate.now.minusYears(1),
     accountingPeriodTo = LocalDate.now
   )
-  val stubProcessedZonedDateTime: ZonedDateTime = ZonedDateTime.now(utcZoneId).truncatedTo(ChronoUnit.SECONDS)
-  val successfulBTNResponseBody: JsObject = Json.obj(
-    "success" -> Json.obj("processingDate" -> stubProcessedZonedDateTime)
-  )
-  val accountingPeriodFromDateMinus1Year: LocalDate  = LocalDate.now.minusYears(1)
-  val accountingPeriodToDateNow:          LocalDate  = LocalDate.now
-  val btnRequestDatesMinus1YearAndNow:    BTNRequest = BTNRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
+  val rawProcessedDateTime:               String        = "2022-01-31T09:26:17Z"
+  val stubProcessedDateTime:              ZonedDateTime = ZonedDateTime.parse(rawProcessedDateTime)
+  val successfulBTNResponseBody:          JsObject      = Json.obj("processingDate" -> rawProcessedDateTime)
+  val successfulBtnResponse:              BtnResponse   = BtnResponse(BtnSuccess(stubProcessedDateTime).asRight, CREATED)
+  val accountingPeriodFromDateMinus1Year: LocalDate     = LocalDate.now.minusYears(1)
+  val accountingPeriodToDateNow:          LocalDate     = LocalDate.now
+  val btnRequestDatesMinus1YearAndNow:    BTNRequest    = BTNRequest(accountingPeriodFromDateMinus1Year, accountingPeriodToDateNow)
 
-  "submit BTN connector " should {
-    "return 201 CREATED when the pillar-2 backend has returned status=201." in {
+  "submit BTN connector" should {
+    "return a BtnSuccess when the pillar-2 backend has returned status 201." in {
       implicit val pillar2Id: String = "XEPLR0000000000"
       stubResponse(submitBTNPath, CREATED, successfulBTNResponseBody.toString())
-      val result: JsValue = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest).futureValue
-      result mustBe successfulBTNResponseBody
-      if ((result \ "success" \ "processingDate").isDefined) {} else {
-        throw new AssertionError(s"submitBTN request failed for plrReference= $pillar2Id")
-      }
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
+      result mustBe successfulBtnResponse
     }
+
+    "surface the failure details when dealing with a modelled 400 or 500 error" in forAll(
+      Gen.oneOf(BAD_REQUEST, INTERNAL_SERVER_ERROR),
+      arbitrary[String],
+      arbitrary[String]
+    ) { (httpStatusCode, errorCode, errorMessage) =>
+      val jsonResponse = Json.obj(
+        "code"    -> errorCode,
+        "message" -> errorMessage
+      )
+      implicit val pillar2Id: String = "XEPLR0000000000"
+      stubResponse(submitBTNPath, httpStatusCode, jsonResponse.toString())
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
+      result mustBe BtnResponse(
+        BtnError(errorCode, errorMessage, processingDate = None).asLeft,
+        httpStatusCode
+      )
+    }
+
+    "surface the failure details when dealing with a modelled 422 error" in forAll { (errorCode: String, errorMessage: String) =>
+      val jsonResponse = Json.obj(
+        "processingDate" -> rawProcessedDateTime,
+        "code"           -> errorCode,
+        "message"        -> errorMessage
+      )
+      implicit val pillar2Id: String = "XEPLR0000000000"
+      stubResponse(submitBTNPath, UNPROCESSABLE_ENTITY, jsonResponse.toString())
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
+      result mustBe BtnResponse(
+        BtnError(errorCode, errorMessage, processingDate = Some(stubProcessedDateTime)).asLeft,
+        UNPROCESSABLE_ENTITY
+      )
+    }
+
     "raise an Exception when the expected response field-value-checking fails." in {
       implicit val pillar2Id: String = "XEPLR9999999999"
-      stubResponse(submitBTNPath, CREATED, successfulBTNResponseBody.toString())
-      val result: JsValue = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest).futureValue
-      result mustBe successfulBTNResponseBody
-      assertThrows[TestFailedException] {
-        if ((result \ "processingDate").isDefined) {} else {
-          throw new TestFailedException(s"submitBTN response field-value-checking failed for plrReference= $pillar2Id", 0)
-        }
-      }
+      stubResponse(submitBTNPath, CREATED, Json.obj().toString())
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).failed.futureValue
+      result mustBe JsResultException(Seq(((__ \ "processingDate"), Seq(JsonValidationError(Seq("error.path.missing"))))))
     }
 
-    "return InternalIssueError when the pillar-2 backend has returned status=400." in {
+    "return InternalIssueError when the pillar-2 backend returns any unsupported status." in forAll(
+      Gen.posNum[Int].retryUntil(code => !Seq(CREATED, BAD_REQUEST, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR).contains(code))
+    ) { httpStatus: Int =>
       implicit val pillar2Id: String = "XEPLR4000000000"
-      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, successfulBTNResponseBody.toString())
-      val result: Future[JsValue] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
-      result.failed.futureValue mustBe InternalIssueError
-    }
-
-    "return InternalIssueError when the pillar-2 backend has returned status=422." in {
-      implicit val pillar2Id: String = "XEPLR4220000000"
-      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, successfulBTNResponseBody.toString())
-      val result: Future[JsValue] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
-      result.failed.futureValue mustBe InternalIssueError
-    }
-
-    "return InternalIssueError when the pillar-2 backend has returned status=500." in {
-      implicit val pillar2Id: String = "XEPLR5000000000"
-      stubResponse(submitBTNPath, INTERNAL_SERVER_ERROR, successfulBTNResponseBody.toString())
-      val result: Future[JsValue] = connector.submitBTN(btnRequestDatesMinus1YearAndNow: BTNRequest)
+      stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)
       result.failed.futureValue mustBe InternalIssueError
     }
   }
