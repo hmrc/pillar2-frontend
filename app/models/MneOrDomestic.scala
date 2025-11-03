@@ -32,6 +32,7 @@
 
 package models
 
+import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.radios.RadioItem
@@ -55,6 +56,12 @@ object MneOrDomestic extends Enumerable.Implicits {
       id = Some(s"value_$index")
     )
   }
+
+  def handleEntityLocationChange(from: MneOrDomestic, to: MneOrDomestic): EntityLocationChangeResult =
+    (from, to) match {
+      case (UkAndOther, Uk) => EntityLocationChangeBlocked
+      case _                => EntityLocationChangeAllowed
+    }
 
   implicit val enumerable: Enumerable[MneOrDomestic] =
     Enumerable(values.map(v => v.toString -> v): _*)

@@ -21,12 +21,12 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import views.html.subscriptionview.manageAccount.MttToDttView
+import views.html.subscriptionview.manageAccount.MneToDomesticView
 
-class MttToDttViewSpec extends ViewSpecBase {
+class MneToDomesticViewSpec extends ViewSpecBase {
 
-  lazy val page:      MttToDttView = inject[MttToDttView]
-  lazy val pageTitle: String       = "You cannot make this change online"
+  lazy val page:      MneToDomesticView = inject[MneToDomesticView]
+  lazy val pageTitle: String            = "You cannot make this change online"
 
   def groupView: Document =
     Jsoup.parse(page(isAgent = false)(request, appConfig, messages).toString())
@@ -37,7 +37,7 @@ class MttToDttViewSpec extends ViewSpecBase {
   lazy val paragraphs:      Elements = groupView.getElementsByClass("govuk-body")
   lazy val agentParagraphs: Elements = agentView.getElementsByClass("govuk-body")
 
-  "MttToDttView" when {
+  "MneToDomesticView" when {
 
     "it's an organisation" must {
 
