@@ -16,6 +16,7 @@
 
 @import config.FrontendAppConfig
 @import views.html.components.gds._
+@import uk.gov.hmrc.govukfrontend.views.html.components._
 
 @this(
         layout: templates.Layout,
@@ -26,10 +27,11 @@
         printLink: printLink,
         govukButton: GovukButton,
         govukPanel: GovukPanel,
+        govukInsetText: GovukInsetText,
         formHelper: FormWithCSRF
 )
 
-@(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
 
@@ -46,6 +48,10 @@
     }
 
     @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
+
+    @if(showUnderEnquiryWarning) {
+        @govukInsetText(InsetText(content = Text(messages("btn.confirmation.underEnquiry.insetText"))))
+    }
 
     @printLink(messages("site.print"))
 
