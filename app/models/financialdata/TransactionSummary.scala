@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,14 @@
  * limitations under the License.
  */
 
-package utils
+package models.financialdata
 
-object Constants {
-  final val SubmissionAccountingPeriods: Int    = 7
-  final val BTNPath:                     String = "/below-threshold-notification"
-  final val SiteYes:                     String = "site.yes"
-  final val SiteNo:                      String = "site.no"
-  final val SiteChange:                  String = "site.change"
-  final val ReceivedPeriodInDays:        Int    = 60
+import play.api.libs.json.{Json, OFormat}
+
+import java.time.LocalDate
+
+case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
+
+object TransactionSummary {
+  implicit val format: OFormat[TransactionSummary] = Json.format[TransactionSummary]
 }

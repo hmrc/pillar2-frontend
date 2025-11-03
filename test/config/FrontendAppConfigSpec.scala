@@ -135,5 +135,17 @@ class FrontendAppConfigSpec extends SpecBase {
         config.obligationsAndSubmissionsTimeoutMilliseconds mustBe 5000
       }
     }
+
+    ".maxDaysAgoToConsiderPaymentAsRecent" must {
+      "read value from config" in {
+        config.maxDaysAgoToConsiderPaymentAsRecent mustBe 60
+      }
+    }
+
+    ".pillar2mailbox" must {
+      "read value from config" in {
+        config.pillar2mailbox mustBe "pillar2mailbox@hmrc.gov.uk"
+      }
+    }
   }
 }

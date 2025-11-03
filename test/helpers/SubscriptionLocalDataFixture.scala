@@ -19,6 +19,7 @@ package helpers
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
+import models.subscription.AccountStatus.ActiveAccount
 import models.subscription._
 import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
@@ -58,7 +59,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = None,
     subSecondaryPhonePreference = Some(false),
     subRegisteredAddress = NonUKAddress("", None, "", None, None, ""),
-    accountStatus = Some(AccountStatus(false)),
+    accountStatus = Some(AccountStatus.ActiveAccount),
     organisationName = None
   )
 
@@ -76,7 +77,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
     subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
-    accountStatus = Some(AccountStatus(false)),
+    accountStatus = Some(ActiveAccount),
     organisationName = Some("ABC Intl")
   )
 
@@ -88,7 +89,7 @@ trait SubscriptionLocalDataFixture {
     secondaryContactDetails = None,
     filingMemberDetails = None,
     accountingPeriod = AccountingPeriod(currentDate, currentDate.plusYears(1)),
-    accountStatus = Some(AccountStatus(false))
+    accountStatus = Some(ActiveAccount)
   )
 
   val allocateEnrolmentParameters: AllocateEnrolmentParameters = AllocateEnrolmentParameters(
@@ -171,7 +172,7 @@ trait SubscriptionLocalDataFixture {
     subSecondaryCapturePhone = Some("123"),
     subSecondaryPhonePreference = Some(true),
     subRegisteredAddress = NonUKAddress("line1", None, "line", None, None, "GB"),
-    accountStatus = Some(AccountStatus(false)),
+    accountStatus = Some(ActiveAccount),
     organisationName = Some("orgName")
   )
 }

@@ -18,13 +18,7 @@ package models
 
 sealed trait OutstandingPaymentBannerScenario
 
-case class Outstanding(amountOutstanding: BigDecimal) extends OutstandingPaymentBannerScenario
-case object Paid extends OutstandingPaymentBannerScenario
-
 object OutstandingPaymentBannerScenario {
-  implicit val ordering: Ordering[OutstandingPaymentBannerScenario] =
-    Ordering.by {
-      case Outstanding(_) => 2
-      case Paid           => 1
-    }
+  case object Outstanding extends OutstandingPaymentBannerScenario
+  case object Paid extends OutstandingPaymentBannerScenario
 }

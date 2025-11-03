@@ -18,6 +18,7 @@ package connectors
 
 import base.{SpecBase, WireMockServerHandler}
 import models._
+import models.financialdata.FinancialDataResponse
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.libs.json.Json
@@ -49,23 +50,25 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
       )
     )
 
-  val financialDataResponse: FinancialData = FinancialData(
+  val financialDataResponse: FinancialDataResponse = FinancialDataResponse(
     financialTransactions = Seq(
-      FinancialTransaction(
+      FinancialDataResponse.FinancialTransaction(
         mainTransaction = Some("4741"),
         subTransaction = Some("1234"),
         taxPeriodFrom = Some(LocalDate.now.minusMonths(6)),
         taxPeriodTo = Some(LocalDate.now),
         outstandingAmount = Some(BigDecimal(1000.00)),
-        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(1)), clearingDate = Some(LocalDate.now.plusMonths(1))))
+        items =
+          Seq(FinancialDataResponse.FinancialItem(dueDate = Some(LocalDate.now.plusMonths(1)), clearingDate = Some(LocalDate.now.plusMonths(1))))
       ),
-      FinancialTransaction(
+      FinancialDataResponse.FinancialTransaction(
         mainTransaction = Some("4742"),
         subTransaction = Some("5678"),
         taxPeriodFrom = Some(LocalDate.now),
         taxPeriodTo = Some(LocalDate.now.plusMonths(6)),
         outstandingAmount = Some(BigDecimal(2000.00)),
-        items = Seq(FinancialItem(dueDate = Some(LocalDate.now.plusMonths(2)), clearingDate = Some(LocalDate.now.plusMonths(2))))
+        items =
+          Seq(FinancialDataResponse.FinancialItem(dueDate = Some(LocalDate.now.plusMonths(2)), clearingDate = Some(LocalDate.now.plusMonths(2))))
       )
     )
   )
@@ -105,12 +108,12 @@ class FinancialDataConnectorSpec extends SpecBase with WireMockServerHandler {
       value.futureValue mustBe financialDataResponse
     }
 
-    "return a no result error when there is no results found for plr reference" in {
+    "return an empty list of financial transactions when no results are found for plr reference" in {
       stubGet(financialDataUrl, expectedStatus = 404, "")
 
       val value = connector.retrieveFinancialData(PlrReference, dateFrom, dateTo)
 
-      value.failed.futureValue mustBe NoResultFound
+      value.futureValue mustBe FinancialDataResponse(Seq.empty)
     }
 
     "return a unexpected response when an error is returned" in {

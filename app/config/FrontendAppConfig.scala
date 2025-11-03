@@ -36,6 +36,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   private val contactHost                  = configuration.get[String]("contact-frontend.host")
   private val contactFormServiceIdentifier = "pillar2-frontend"
 
+  val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
+
   def feedbackUrl(implicit request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
@@ -109,6 +111,8 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
     if (date == "now") LocalDate.now() else LocalDate.parse(date)
   }
+
+  val maxDaysAgoToConsiderPaymentAsRecent: Int = configuration.get[Int]("payments.maxDaysAgoToConsiderPaymentAsRecent")
 
   val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
   val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
