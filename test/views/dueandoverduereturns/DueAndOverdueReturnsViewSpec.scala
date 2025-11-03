@@ -46,6 +46,19 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
 
     val headings: Elements = view.getElementsByTag("h2")
+
+    val howToSubmitAReturnHeading: Optional[Element] =
+      headings.stream.filter(h => h.text.contains("How to submit a return")).findFirst()
+    howToSubmitAReturnHeading.isPresent mustBe true
+
+    val howToSubmitAReturnParagraph: Optional[Element] =
+      view.select("p.govuk-body").stream.filter(p => p.text.contains("Find out more about how to report your Pillar 2 Top-up Taxes.")).findFirst()
+    howToSubmitAReturnParagraph.isPresent mustBe true
+
+    val howToSubmitAReturnLink: Element = view.getElementsByClass("govuk-link").get(2)
+    howToSubmitAReturnLink.text mustBe "Pillar 2 Top-up Taxes Guidance"
+    howToSubmitAReturnLink.attr("href") mustBe "https://www.gov.uk/guidance/how-to-report-pillar-2-top-up-taxes"
+
     val submissionHistoryHeading: Optional[Element] =
       headings.stream.filter(h => h.text.contains("Submission history")).findFirst()
     submissionHistoryHeading.isPresent mustBe true
@@ -120,8 +133,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
       "show the multiple returns information" in {
         val infoMessages: Elements = view.select("p.govuk-body")
-        infoMessages.get(0).text mustBe "If you have multiple returns due, they are separated by accounting periods."
-        infoMessages.get(1).text mustBe "You must submit each return before its due date using your commercial software supplier."
+        infoMessages.get(0).text mustBe "If you have multiple returns due, they will be separated by accounting periods."
+        infoMessages.get(1).text mustBe "You must submit each return before its due date using your group’s commercial software supplier."
       }
 
       "display the accounting period heading correctly" in {
@@ -264,6 +277,16 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
           val infoMessages: Elements = view.select("p.govuk-body")
           infoMessages.get(0).text mustBe "If your client has multiple returns due, they will be separated by accounting periods."
           infoMessages.get(1).text mustBe "You must submit each return before its due date using your client’s commercial software supplier."
+        }
+      }
+
+      "displaying how to submit a return section" must {
+        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
+
+        "show the agent-specific how to submit a return description" in {
+          val howToSubmitAReturnParagraph: Element =
+            view.select("p.govuk-body").stream.filter(p => p.text.contains("Find out more")).findFirst().get()
+          howToSubmitAReturnParagraph.text mustBe "Find out more about how to report your client’s Pillar 2 Top-up Taxes."
         }
       }
 
