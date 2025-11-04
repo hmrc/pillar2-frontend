@@ -58,7 +58,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       organisationViewParagraphs.get(1).text() mustBe
         "Submission and amendment dates for your group's returns over the last 7 years from today's date."
       organisationViewParagraphs.get(2).text mustBe
-        "Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions."
+        "Where you’ve made changes to a tax return or GloBE Information Return (GIR), we’ll list these as individual submissions."
     }
 
     "have a inset text" in {
@@ -114,7 +114,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       agentViewParagraphs.get(1).text() mustBe
         "Submission and amendment dates for your client's returns over the last 7 years from today's date."
       agentViewParagraphs.get(2).text mustBe
-        "Where your client makes changes to a tax return or information return, we’ll list these as individual submissions."
+        "Where your client makes changes to a tax return or GloBE Information Return (GIR), we’ll list these as individual submissions."
     }
 
     "have a paragraph with link" in {
