@@ -32,7 +32,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("rfm.startPage.title")), showSignOut = false, timeout = true, authorised = false) {
+@layout(pageTitle = titleNoForm(messages("rfm.startPage.title")), showSignOut = false, authorised = false) {
 
     @span(messages("rfm.heading.caption"))
     @heading(messages("rfm.startPage.heading"), "govuk-heading-l")
