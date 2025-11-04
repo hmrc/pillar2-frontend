@@ -40,7 +40,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       "redirect to confirmation page when status is submitted and no submission is initiated" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -58,7 +57,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       "redirect to confirmation page when status is submitted and minimum wait time has passed" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.submitted).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -81,7 +79,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       "show waiting room when status is processing" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -105,7 +102,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       "redirect to error page when status is error and no submission is initiated" in {
         val userAnswers = emptyUserAnswers.set(BTNStatus, BTNStatus.error).get
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -123,7 +119,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
       "show waiting room page when status is not submitted/error (including null)" in {
         val userAnswers = emptyUserAnswers // No BTNStatus set
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -149,7 +144,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           subscriptionLocalData = Some(someSubscriptionLocalData),
           additionalData = Map("btn.waitingRoom.pollIntervalSeconds" -> customPollInterval)
         )
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
           .build()
 
@@ -161,23 +155,6 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
 
           status(result) mustEqual OK
           header("Refresh", result) mustEqual Some(customPollInterval.toString)
-        }
-      }
-
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
         }
       }
     }

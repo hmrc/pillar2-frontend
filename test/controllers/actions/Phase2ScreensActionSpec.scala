@@ -44,7 +44,6 @@ class Phase2ScreensActionSpec extends SpecBase {
     "phase2ScreensEnabled is true" should {
       "allow the request to continue" in {
         val application = applicationBuilder()
-          .configure("features.phase2ScreensEnabled" -> true)
           .build()
 
         running(application) {
@@ -61,30 +60,6 @@ class Phase2ScreensActionSpec extends SpecBase {
 
           status(result) mustEqual OK
           contentAsString(result) mustEqual "Success"
-        }
-      }
-    }
-
-    "phase2ScreensEnabled is false" should {
-      "redirect to dashboard" in {
-        val application = applicationBuilder()
-          .configure("features.phase2ScreensEnabled" -> false)
-          .build()
-
-        running(application) {
-          val identify             = application.injector.instanceOf[IdentifierAction]
-          val getData              = application.injector.instanceOf[DataRetrievalAction]
-          val requireData          = application.injector.instanceOf[DataRequiredAction]
-          val checkPhase2Screens   = application.injector.instanceOf[Phase2ScreensAction]
-          val controllerComponents = application.injector.instanceOf[MessagesControllerComponents]
-
-          val controller = new TestController(identify, getData, requireData, checkPhase2Screens, controllerComponents)
-
-          val request = FakeRequest("GET", "/test")
-          val result  = controller.testAction()(request)
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustEqual Some(controllers.routes.HomepageController.onPageLoad.url)
         }
       }
     }

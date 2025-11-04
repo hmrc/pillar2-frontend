@@ -54,7 +54,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
   val chosenAccountingPeriod: (AccountingPeriodDetails, Int) = zippedAccountingPeriodDetails.headOption.value
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
-    .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
       bind[SessionRepository].toInstance(mockSessionRepository),
       bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -175,7 +174,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
     "redirect to BTN error page when no subscription data is found" in {
       def application: Application = applicationBuilder()
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -202,55 +200,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-      }
-    }
-
-    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
-      def application: Application =
-        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
-
-        val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
-      }
-    }
-
-    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
-      def application: Application =
-        applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
-          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
-
-        val request =
-          FakeRequest(POST, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
-            .withFormUrlEncodedBody(("value", "1"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }

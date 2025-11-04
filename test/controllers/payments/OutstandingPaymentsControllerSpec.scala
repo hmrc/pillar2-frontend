@@ -40,10 +40,9 @@ import scala.util.Random
 
 class OutstandingPaymentsControllerSpec extends SpecBase {
 
-  "phase2ScreensEnabled is true" should {
+  "OutstandingPaymentsController" should {
     "return OK and display the correct view for a GET with outstanding payments" in {
       val application = applicationBuilder(enrolments = enrolments)
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[FinancialDataService].toInstance(mockFinancialDataService)
@@ -72,7 +71,6 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
     "redirect to Journey Recovery when service call fails" in {
       val application = applicationBuilder()
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[FinancialDataService].toInstance(mockFinancialDataService)
@@ -94,7 +92,6 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
 
     "return OK with empty financial data when NoResultFound exception is thrown" in {
       val application = applicationBuilder(enrolments = enrolments)
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[FinancialDataService].toInstance(mockFinancialDataService)
@@ -118,28 +115,6 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
             messages(application),
             isAgent = false
           ).toString
-      }
-    }
-  }
-
-  "phase2ScreensEnabled is false" should {
-    "redirect to dashboard" in {
-      val application = applicationBuilder()
-        .configure("features.phase2ScreensEnabled" -> false)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[FinancialDataService].toInstance(mockFinancialDataService)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.payments.routes.OutstandingPaymentsController.onPageLoad.url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }

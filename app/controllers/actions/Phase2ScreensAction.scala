@@ -18,7 +18,7 @@ package controllers.actions
 
 import config.FrontendAppConfig
 import models.requests.IdentifierRequest
-import play.api.mvc.{ActionRefiner, Result, Results}
+import play.api.mvc.{ActionRefiner, Result}
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
@@ -29,11 +29,7 @@ class Phase2ScreensActionImpl @Inject() (
     extends Phase2ScreensAction {
 
   override protected def refine[A](request: IdentifierRequest[A]): Future[Either[Result, IdentifierRequest[A]]] =
-    if (config.phase2ScreensEnabled) {
-      Future.successful(Right(request))
-    } else {
-      Future.successful(Left(Results.Redirect(controllers.routes.HomepageController.onPageLoad)))
-    }
+    Future.successful(Right(request))
 }
 
 trait Phase2ScreensAction extends ActionRefiner[IdentifierRequest, IdentifierRequest]

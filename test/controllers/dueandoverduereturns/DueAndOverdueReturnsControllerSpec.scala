@@ -43,7 +43,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
 
   lazy val application: Application =
     applicationBuilder(userAnswers = None, enrolments)
-      .configure("features.phase2ScreensEnabled" -> true)
       .overrides(
         bind[SessionRepository].toInstance(mockSessionRepository),
         bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
@@ -139,26 +138,6 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
         emptyContent must include("Your client is up to date with their returns for this accounting period")
         dueContent   must include("If your client has multiple returns due, they will be separated by accounting periods")
         dueContent   must include("You must submit each return before its due date using your client’s commercial software supplier")
-      }
-
-      "must redirect to dashboard when phase2ScreensEnabled is false" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), enrolments)
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-          val result = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
-        }
       }
     }
   }

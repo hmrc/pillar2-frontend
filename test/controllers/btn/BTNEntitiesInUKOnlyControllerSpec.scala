@@ -46,7 +46,6 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
   lazy val entitiesInUKOnlyRoute: String = BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-    .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
       bind[SessionRepository].toInstance(mockSessionRepository),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -80,7 +79,6 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
       val userAnswers = UserAnswers(userAnswersId).set(EntitiesInsideOutsideUKPage, true).success.value
 
       val application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(userAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -125,7 +123,6 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
     "must redirect to a knockback page when a BTN is submitted" in {
 
       val application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SessionRepository].toInstance(mockSessionRepository),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
@@ -170,7 +167,6 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 
     "must redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
@@ -182,53 +178,6 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-      }
-    }
-
-    "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
-
-      def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> false)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-
-        val request = FakeRequest(GET, entitiesInUKOnlyRoute)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
-      }
-    }
-
-    "must redirect to dashboard for onSubmit when phase2ScreensEnabled is false" in {
-
-      def application: Application = applicationBuilder(subscriptionLocalData = Some(someSubscriptionLocalData), userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> false)
-        .overrides(
-          bind[SessionRepository].toInstance(mockSessionRepository),
-          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
-        )
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-
-        val request =
-          FakeRequest(POST, entitiesInUKOnlyRoute)
-            .withFormUrlEncodedBody(("value", "true"))
-
-        val result = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }
