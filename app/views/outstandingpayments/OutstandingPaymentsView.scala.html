@@ -34,7 +34,7 @@
 )
 @(data: Seq[FinancialSummary], plrReference: String, amountDue: BigDecimal, hasOverdueReturnPayment: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages, isAgent: Boolean)
 
-@layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("payments.outstanding.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
     <div class="govuk-grid-row">
         <div class="govuk-grid-column-two-thirds">

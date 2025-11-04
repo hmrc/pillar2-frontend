@@ -84,7 +84,7 @@ class Phase2ScreensActionSpec extends SpecBase {
           val result  = controller.testAction()(request)
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result) mustEqual Some(controllers.routes.DashboardController.onPageLoad.url)
+          redirectLocation(result) mustEqual Some(controllers.routes.HomepageController.onPageLoad.url)
         }
       }
     }

@@ -33,7 +33,7 @@
 
 @(list: SummaryList, mode: Mode, isAgent: Boolean, organisationName: Option[String], hasMultipleAccountingPeriods: Boolean, currentAP: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.accountingPeriod.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("btn.accountingPeriod.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(isAgent && organisationName.isDefined) {

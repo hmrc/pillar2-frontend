@@ -32,7 +32,7 @@ class Phase2ScreensActionImpl @Inject() (
     if (config.phase2ScreensEnabled) {
       Future.successful(Right(request))
     } else {
-      Future.successful(Left(Results.Redirect(controllers.routes.DashboardController.onPageLoad)))
+      Future.successful(Left(Results.Redirect(controllers.routes.HomepageController.onPageLoad)))
     }
 }
 

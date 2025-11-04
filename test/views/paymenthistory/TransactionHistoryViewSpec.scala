@@ -100,8 +100,8 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      groupView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have correct paragraphs for a group" in {

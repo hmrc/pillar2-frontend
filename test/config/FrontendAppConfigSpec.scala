@@ -74,12 +74,6 @@ class FrontendAppConfigSpec extends SpecBase {
       }
     }
 
-    ".newHomepageEnabled" must {
-      "return correct feature flag value" in {
-        config.newHomepageEnabled mustBe false
-      }
-    }
-
     ".enablePayByBankAccount" must {
       "return correct feature flag value" in {
         config.enablePayByBankAccount mustBe true

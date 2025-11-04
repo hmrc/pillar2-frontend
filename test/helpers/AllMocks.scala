@@ -35,7 +35,7 @@ import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.play.audit.http.connector.AuditConnector
 import utils.countryOptions.CountryOptions
-import views.html.{CheckYourAnswersView, DashboardView}
+import views.html.CheckYourAnswersView
 
 //TODO: Add all mocking instants in here.
 trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
@@ -55,7 +55,6 @@ trait AllMocks extends MockitoSugar { me: BeforeAndAfterEach =>
   val mockObligationsAndSubmissionsService:        ObligationsAndSubmissionsService        = mock[ObligationsAndSubmissionsService]
   val mockControllerComponents:                    MessagesControllerComponents            = mock[MessagesControllerComponents]
   val mockCheckYourAnswersView:                    CheckYourAnswersView                    = mock[CheckYourAnswersView]
-  val mockDashboardView:                           DashboardView                           = mock[DashboardView]
   val mockTradingBusinessConfirmationFormProvider: TradingBusinessConfirmationFormProvider = mock[TradingBusinessConfirmationFormProvider]
   val mockIncorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector =
     mock[IncorporatedEntityIdentificationFrontendConnector]

@@ -53,7 +53,7 @@ class MneToDomesticViewSpec extends ViewSpecBase {
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        groupView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have the following paragraph content and link" in {
@@ -72,7 +72,7 @@ class MneToDomesticViewSpec extends ViewSpecBase {
       "have a back to homepage link" in {
         val homepageLink = paragraphs.get(2).getElementsByClass("govuk-link")
         homepageLink.get(0).text mustBe "Back to homepage"
-        homepageLink.get(0).attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+        homepageLink.get(0).attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }
@@ -91,7 +91,7 @@ class MneToDomesticViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      agentView.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have the following paragraph content and link" in {
@@ -110,7 +110,7 @@ class MneToDomesticViewSpec extends ViewSpecBase {
     "have a back to homepage link" in {
       val homepageLink = agentParagraphs.get(2).getElementsByClass("govuk-link")
       homepageLink.get(0).text mustBe "Back to homepage"
-      homepageLink.get(0).attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      homepageLink.get(0).attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
   }
 }

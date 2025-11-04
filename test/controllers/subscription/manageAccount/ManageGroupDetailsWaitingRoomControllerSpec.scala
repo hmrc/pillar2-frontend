@@ -85,7 +85,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.HomepageController.onPageLoad.url
       }
     }
 

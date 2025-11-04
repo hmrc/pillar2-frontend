@@ -51,7 +51,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a banner with a link to the Homepage" in {
-      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have a paragraph detailing submission details" in {
@@ -107,7 +107,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a banner with a link to the Homepage" in {
-      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have a paragraph detailing submission details" in {

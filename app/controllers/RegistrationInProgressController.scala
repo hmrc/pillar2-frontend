@@ -44,17 +44,13 @@ class RegistrationInProgressController @Inject() (
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
     val view: String => Html =
-      if (appConfig.newHomepageEnabled) { (ref: String) =>
-        viewNewHomepage(ref)
-      } else { (ref: String) =>
-        viewOldHomepage(ref)
-      }
+      (ref: String) => viewNewHomepage(ref)
 
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
         case Some(_) =>
-          Redirect(controllers.routes.DashboardController.onPageLoad)
+          Redirect(controllers.routes.HomepageController.onPageLoad)
         case None =>
           Ok(view(plrReference))
       }

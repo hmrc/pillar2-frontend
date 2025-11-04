@@ -225,7 +225,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
 
@@ -249,7 +249,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
 
@@ -265,7 +265,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }

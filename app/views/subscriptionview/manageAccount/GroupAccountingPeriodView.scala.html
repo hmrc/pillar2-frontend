@@ -32,7 +32,7 @@
 
 @(form: Form[_], isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
 
     @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit, 'autoComplete -> "off") {

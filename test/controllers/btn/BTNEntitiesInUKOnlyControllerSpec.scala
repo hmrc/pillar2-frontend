@@ -203,7 +203,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
 
@@ -228,7 +228,7 @@ class BTNEntitiesInUKOnlyControllerSpec extends SpecBase with MockitoSugar {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
       }
     }
   }

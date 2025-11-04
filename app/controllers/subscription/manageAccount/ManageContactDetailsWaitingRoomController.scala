@@ -53,7 +53,7 @@ class ManageContactDetailsWaitingRoomController @Inject() (
         status match {
           case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
             logger.info(s"[ManageContactDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
-            Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad))
 
           case Some(ManageContactDetailsStatus.InProgress) =>
             logger.info(s"[ManageContactDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")

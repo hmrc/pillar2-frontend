@@ -58,7 +58,7 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
         status match {
           case Some(SuccessfullyCompleted) =>
             logger.info(s"[ManageGroupDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
-            Future.successful(Redirect(controllers.routes.DashboardController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad))
 
           case Some(InProgress) =>
             logger.info(s"[ManageGroupDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
