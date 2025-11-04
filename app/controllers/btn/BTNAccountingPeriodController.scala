@@ -49,7 +49,6 @@ class BTNAccountingPeriodController @Inject() (
   viewReturnSubmitted:                    BTNReturnSubmittedView,
   btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   sessionRepository:                      SessionRepository,
-  checkPhase2Screens:                     Phase2ScreensAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -71,7 +70,7 @@ class BTNAccountingPeriodController @Inject() (
     )
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
@@ -119,7 +118,7 @@ class BTNAccountingPeriodController @Inject() (
         }
       }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen checkPhase2Screens andThen getSubscriptionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { implicit request =>
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>

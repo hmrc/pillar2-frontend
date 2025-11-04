@@ -37,38 +37,36 @@ class BTNConfirmationController @Inject() (
   requireData:                            SubscriptionDataRequiredAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   BTNConfirmationView,
-  checkPhase2Screens:                     Phase2ScreensAction,
   sessionRepository:                      SessionRepository,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData andThen requireObligationData).async {
-    implicit request =>
-      sessionRepository.get(request.userId).map {
-        case Some(userAnswers) =>
-          val submissionDate:            String = LocalDate.now().toDateFormat
-          val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { implicit request =>
+    sessionRepository.get(request.userId).map {
+      case Some(userAnswers) =>
+        val submissionDate:            String = LocalDate.now().toDateFormat
+        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
 
-          val showUnderEnquiryWarning = userAnswers
-            .get(BTNChooseAccountingPeriodPage)
-            .map { chosenPeriod =>
-              val accountingPeriods = filteredAccountingPeriodDetails
-              chosenPeriod.underEnquiry ||
-              accountingPeriods
-                .filter(_.startDate.isAfter(chosenPeriod.startDate))
-                .exists(_.underEnquiry)
-            }
-            .getOrElse(false)
+        val showUnderEnquiryWarning = userAnswers
+          .get(BTNChooseAccountingPeriodPage)
+          .map { chosenPeriod =>
+            val accountingPeriods = filteredAccountingPeriodDetails
+            chosenPeriod.underEnquiry ||
+            accountingPeriods
+              .filter(_.startDate.isAfter(chosenPeriod.startDate))
+              .exists(_.underEnquiry)
+          }
+          .getOrElse(false)
 
-          Ok(
-            view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, showUnderEnquiryWarning)
-          )
-        case None =>
-          val submissionDate:            String = LocalDate.now().toDateFormat
-          val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
-          Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, false))
-      }
+        Ok(
+          view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, showUnderEnquiryWarning)
+        )
+      case None =>
+        val submissionDate:            String = LocalDate.now().toDateFormat
+        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+        Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, false))
+    }
   }
 }

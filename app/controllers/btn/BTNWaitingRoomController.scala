@@ -36,44 +36,42 @@ class BTNWaitingRoomController @Inject() (
   dataRetrievalAction:                    SubscriptionDataRetrievalAction,
   dataRequiredAction:                     SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
-  btnWaitingRoomView:                     BTNWaitingRoomView,
-  checkPhase2Screens:                     Phase2ScreensAction
+  btnWaitingRoomView:                     BTNWaitingRoomView
 )(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen dataRetrievalAction andThen dataRequiredAction).async {
-    implicit request =>
-      sessionRepository.get(request.userId).flatMap {
-        case Some(userAnswers) =>
-          val status = userAnswers.get(BTNStatus)
+  def onPageLoad: Action[AnyContent] = (identify andThen dataRetrievalAction andThen dataRequiredAction).async { implicit request =>
+    sessionRepository.get(request.userId).flatMap {
+      case Some(userAnswers) =>
+        val status = userAnswers.get(BTNStatus)
 
-          logger.info(s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status")
+        logger.info(s"BTNWaitingRoomController.onPageLoad: Current BTN status = $status")
 
-          status match {
-            case Some(BTNStatus.submitted) =>
-              logger.info(s"BTNWaitingRoomController: Status is submitted, redirecting to confirmation page")
-              Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
+        status match {
+          case Some(BTNStatus.submitted) =>
+            logger.info(s"BTNWaitingRoomController: Status is submitted, redirecting to confirmation page")
+            Future.successful(Redirect(routes.BTNConfirmationController.onPageLoad))
 
-            case Some(BTNStatus.error) =>
-              logger.info(s"BTNWaitingRoomController: Status is error, redirecting to problem page")
-              Future.successful(Redirect(routes.BTNProblemWithServiceController.onPageLoad))
+          case Some(BTNStatus.error) =>
+            logger.info(s"BTNWaitingRoomController: Status is error, redirecting to problem page")
+            Future.successful(Redirect(routes.BTNProblemWithServiceController.onPageLoad))
 
-            case _ =>
-              logger.info("BTNWaitingRoomController: Status is processing, showing waiting room with refresh header")
-              Future.successful(
-                Ok(btnWaitingRoomView()).withHeaders(
-                  "Refresh"       -> s"${appConfig.btnWaitingRoomPollIntervalSeconds}",
-                  "Cache-Control" -> "no-store, no-cache, must-revalidate",
-                  "Pragma"        -> "no-cache",
-                  "Expires"       -> "0"
-                )
+          case _ =>
+            logger.info("BTNWaitingRoomController: Status is processing, showing waiting room with refresh header")
+            Future.successful(
+              Ok(btnWaitingRoomView()).withHeaders(
+                "Refresh"       -> s"${appConfig.btnWaitingRoomPollIntervalSeconds}",
+                "Cache-Control" -> "no-store, no-cache, must-revalidate",
+                "Pragma"        -> "no-cache",
+                "Expires"       -> "0"
               )
-          }
-        case None =>
-          logger.error("user answers not found")
-          Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
-      }
+            )
+        }
+      case None =>
+        logger.error("user answers not found")
+        Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+    }
   }
 }
