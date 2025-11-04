@@ -247,7 +247,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         // Check type of return and due date for second table (current period) - second row
         val secondTableSecondRowCells: Elements = secondTableRows.get(1).select("td")
-        secondTableSecondRowCells.get(0).text mustBe "Information return"
+        secondTableSecondRowCells.get(0).text mustBe "GloBE Information Return (GIR)"
         secondTableSecondRowCells.get(1).text mustBe futureDueDate.toDateFormat
 
         val secondTableStatusTags: Elements = secondTableRows.select("td p.govuk-tag")
