@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage}
+import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage, SubSecondaryPhonePreferencePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -72,6 +72,12 @@ class ManageContactCheckYourAnswersController @Inject() (
               ).flatten
             )
 
+            val noSecondaryContact = SummaryListViewModel(
+              rows = Seq(
+                AddSecondaryContactSummary.row()
+              ).flatten
+            )
+
             val secondaryContactList = SummaryListViewModel(
               rows = Seq(
                 AddSecondaryContactSummary.row(),
@@ -82,12 +88,17 @@ class ManageContactCheckYourAnswersController @Inject() (
               ).flatten
             )
 
+            val secondaryContactRows = request.subscriptionLocalData.get(SubAddSecondaryContactPage) match {
+              case Some(true) => secondaryContactList
+              case _          => noSecondaryContact
+            }
+
             val address = SummaryListViewModel(
               rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
             )
 
             Future.successful(
-              Ok(view(primaryContactList, secondaryContactList, address, request.isAgent, request.subscriptionLocalData.organisationName))
+              Ok(view(primaryContactList, secondaryContactRows, address, request.isAgent, request.subscriptionLocalData.organisationName))
             )
         }
     }
