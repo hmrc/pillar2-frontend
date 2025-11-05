@@ -16,6 +16,8 @@
 
 package models.audit
 
+import models.subscription.AccountingPeriod
+import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
 import java.time.LocalDate
@@ -46,4 +48,29 @@ case class ApiResponseData(
 object ApiResponseData {
   implicit val format: OFormat[ApiResponseData] = Json.format[ApiResponseData]
   implicit val writes: OWrites[ApiResponseData] = Json.writes[ApiResponseData]
+}
+
+case class BtnAlreadySubmittedAuditEvent(
+  pillarReference:         String,
+  accountingPeriod:        AccountingPeriod,
+  entitiesInsideOutsideUk: Boolean
+) extends AuditEvent {
+  override val auditType:  String  = "AlreadySubmittedBelowThresholdNotification"
+  override val detailJson: JsValue = Json.toJson(this)
+}
+
+object BtnAlreadySubmittedAuditEvent {
+  implicit val writes: Writes[BtnAlreadySubmittedAuditEvent] = (
+    (__ \ "pillarReference").write[String] and
+      (__ \ "accountingPeriodStart").write[LocalDate] and
+      (__ \ "accountingPeriodEnd").write[LocalDate] and
+      (__ \ "entitiesInsideAndOutsideUK").write[Boolean]
+  ) { event =>
+    (
+      event.pillarReference,
+      event.accountingPeriod.startDate,
+      event.accountingPeriod.endDate,
+      event.entitiesInsideOutsideUk
+    )
+  }
 }

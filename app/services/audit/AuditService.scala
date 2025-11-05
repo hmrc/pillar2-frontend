@@ -221,4 +221,12 @@ class AuditService @Inject() (
       )
     )
 
+  def auditBtnAlreadySubmitted(
+    pillarReference:         String,
+    accountingPeriod:        AccountingPeriod,
+    entitiesInsideOutsideUk: Boolean
+  )(implicit hc:             HeaderCarrier): Future[AuditResult] = sendEventBTN(
+    BtnAlreadySubmittedAuditEvent(pillarReference, accountingPeriod, entitiesInsideOutsideUk)
+  )
+
 }
