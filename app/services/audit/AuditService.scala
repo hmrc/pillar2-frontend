@@ -205,7 +205,7 @@ class AuditService @Inject() (
     auditConnector.sendExtendedEvent(auditEvent.extendedDataEvent)
   }
 
-  def auditBTN(
+  def auditBTNSubmission(
     pillarReference:            String,
     accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,

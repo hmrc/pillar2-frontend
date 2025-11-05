@@ -252,7 +252,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(successFuture)
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
+        when(mockAuditService.auditBTNSubmission(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> true)
@@ -282,7 +282,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
         when(mockBTNService.submitBTN(any())(any(), any())).thenReturn(failFuture)
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockAuditService.auditBTN(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
+        when(mockAuditService.auditBTNSubmission(any(), any(), any(), any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
           .configure("features.phase2ScreensEnabled" -> true)

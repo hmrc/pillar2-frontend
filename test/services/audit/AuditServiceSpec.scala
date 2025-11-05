@@ -142,7 +142,7 @@ class AuditServiceSpec extends SpecBase {
           val service = application.injector.instanceOf[AuditService]
 
           val result = service
-            .auditBTN(
+            .auditBTNSubmission(
               pillarReference = pillarReference,
               accountingPeriod = AccountingPeriod(
                 startDate = LocalDate.parse(apStartDate),
@@ -186,7 +186,7 @@ class AuditServiceSpec extends SpecBase {
           val service = application.injector.instanceOf[AuditService]
 
           val result = service
-            .auditBTN(
+            .auditBTNSubmission(
               pillarReference = pillarReference,
               accountingPeriod = AccountingPeriod(
                 startDate = LocalDate.parse(apStartDate),
@@ -231,7 +231,7 @@ class AuditServiceSpec extends SpecBase {
 
           val service = application.injector.instanceOf[AuditService]
           val result = service
-            .auditBTN(
+            .auditBTNSubmission(
               pillarReference = pillarReference,
               accountingPeriod = AccountingPeriod(
                 startDate = LocalDate.parse(apStartDate),
@@ -258,7 +258,7 @@ class AuditServiceSpec extends SpecBase {
 
           val service = application.injector.instanceOf[AuditService]
           val result = service
-            .auditBTN(
+            .auditBTNSubmission(
               pillarReference = pillarReference,
               accountingPeriod = AccountingPeriod(
                 startDate = LocalDate.parse(apStartDate),
@@ -284,7 +284,7 @@ class AuditServiceSpec extends SpecBase {
             .thenReturn(Future.failed(new RuntimeException("Test exception")))
 
           val service = application.injector.instanceOf[AuditService]
-          val resultFuture = service.auditBTN(
+          val resultFuture = service.auditBTNSubmission(
             pillarReference = pillarReference,
             accountingPeriod = AccountingPeriod(
               startDate = LocalDate.parse(apStartDate),
