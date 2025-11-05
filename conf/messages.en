@@ -1654,7 +1654,7 @@ submissionHistoryNoSubmissions.link = due and overdue returns
 ###############################################
 dueAndOverdueReturns.title = Due and overdue returns
 dueAndOverdueReturns.heading = Due and overdue returns
-dueAndOverdueReturns.accountingPeriod = {0} to {1}
+dueAndOverdueReturns.accountingPeriod = Accounting period: {0} to {1}
 dueAndOverdueReturns.noReturns = Your group is up to date with their returns for this accounting period.
 dueAndOverdueReturns.overdue = Your return is overdue. You must submit it as soon as possible.
 dueAndOverdueReturns.multipleReturns = If you have multiple returns due, they will be separated by accounting periods.

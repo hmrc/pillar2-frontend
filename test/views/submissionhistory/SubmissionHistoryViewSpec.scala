@@ -77,7 +77,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       val table: Element = tableElements.first()
 
       val captions: Elements = table.getElementsByClass("govuk-table__caption")
-      captions.first().text mustBe s"$fromDate to $toDate"
+      captions.first().text mustBe s"Accounting period: $fromDate to $toDate"
 
       val tableHeaders: Elements = table.getElementsByClass("govuk-table__header")
       tableHeaders.get(0).text mustBe "Type of return"
