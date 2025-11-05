@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import models._
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription.ManageContactDetailsStatus
 import models.subscription._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
