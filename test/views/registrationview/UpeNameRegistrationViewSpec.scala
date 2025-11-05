@@ -60,7 +60,7 @@ class UpeNameRegistrationViewSpec extends ViewSpecBase {
 
       errorView.getElementsByClass("govuk-error-summary__title").text mustBe "There is a problem"
       errorView.getElementsByClass("govuk-list govuk-error-summary__list").text mustBe
-        "You need to enter the name of the Ultimate Parent Entity"
+        "Enter the name of the Ultimate Parent Entity"
     }
 
     "show character limit error when input is too long" in {
