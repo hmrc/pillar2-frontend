@@ -255,7 +255,7 @@ startPageRegistration.heading.caption = Group details
 upeNameRegistration.heading.caption = Group details
 upeNameRegistration.title = What is the name of the Ultimate Parent Entity?
 upeNameRegistration.heading = What is the name of the Ultimate Parent Entity?
-upeNameRegistration.error.required = You need to enter the name of the Ultimate Parent Entity
+upeNameRegistration.error.required = Enter the name of the Ultimate Parent Entity
 upeNameRegistration.error.length = Name of the Ultimate Parent Entity must be 105 characters or less
 upeNameRegistration.error.invalid = The name of the Ultimate Parent Entity must only include letters a to z, numbers 0 to 9, ampersands (&), apostrophes, commas, forward slashes, full stops, hyphens, round brackets and spaces
 
@@ -1654,7 +1654,7 @@ submissionHistoryNoSubmissions.link = due and overdue returns
 ###############################################
 dueAndOverdueReturns.title = Due and overdue returns
 dueAndOverdueReturns.heading = Due and overdue returns
-dueAndOverdueReturns.accountingPeriod = {0} to {1}
+dueAndOverdueReturns.accountingPeriod = Accounting period: {0} to {1}
 dueAndOverdueReturns.noReturns = Your group is up to date with their returns for this accounting period.
 dueAndOverdueReturns.overdue = Your return is overdue. You must submit it as soon as possible.
 dueAndOverdueReturns.multipleReturns = If you have multiple returns due, they will be separated by accounting periods.
