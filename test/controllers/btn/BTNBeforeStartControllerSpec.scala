@@ -78,25 +78,27 @@ class BTNBeforeStartControllerSpec extends SpecBase {
     }
 
     "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
-      when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-      when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
-        .thenReturn(Future.successful(Some(subscriptionData)))
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-        .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
+      running(application) {
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
+        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+          .thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
-      val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-      val result  = route(application, request).value
+        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
+        val result  = route(application, request).value
 
-      val view = application.injector.instanceOf[BTNBeforeStartView]
+        val view = application.injector.instanceOf[BTNBeforeStartView]
 
-      status(result) mustBe OK
+        status(result) mustBe OK
 
-      contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
-        request,
-        applicationConfig,
-        messages(application)
-      ).toString
+        contentAsString(result) mustEqual view(isAgent = false, hasMultipleAccountingPeriods = true, NormalMode)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
+      }
     }
 
     "redirect to BTN error page when no subscription data is found" in {
@@ -121,14 +123,22 @@ class BTNBeforeStartControllerSpec extends SpecBase {
     }
 
     "redirect to BTN error page when no obligation data is found" in {
-      running(application) {
+      val testApplication: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
+        .configure("features.phase2ScreensEnabled" -> true)
+        .overrides(
+          bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
+
+      running(testApplication) {
         when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-        val result  = route(application, request).value
+        val result  = route(testApplication, request).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url

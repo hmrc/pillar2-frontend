@@ -97,7 +97,7 @@ class SubCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDat
     }
 
     "have a button" in {
-      view.getElementsByClass("govuk-button").text mustBe "Confirm and continue"
+      view.getElementsByClass("govuk-button").text mustBe "Continue"
     }
   }
 
