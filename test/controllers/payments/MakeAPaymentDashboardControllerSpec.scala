@@ -38,7 +38,7 @@ import views.html.{LegacyMakeAPaymentDashboardView, MakeAPaymentDashboardView}
 import java.util.UUID
 import scala.concurrent.Future
 
-class MakeAPaymentHomepageControllerSpec extends SpecBase {
+class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
   val id:           String = UUID.randomUUID().toString
   val groupId:      String = UUID.randomUUID().toString

@@ -32,11 +32,10 @@ import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
 class RegistrationInProgressController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  identify:                 IdentifierAction,
-  viewOldHomepage:          RegistrationInProgressView,
-  viewNewHomepage:          RegistrationInProgressNewView,
-  subscriptionService:      SubscriptionService
+                                                   val controllerComponents: MessagesControllerComponents,
+                                                   identify:                 IdentifierAction,
+                                                   viewHomepage:          RegistrationInProgressNewView,
+                                                   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
@@ -44,7 +43,7 @@ class RegistrationInProgressController @Inject() (
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
     val view: String => Html =
-      (ref: String) => viewNewHomepage(ref)
+      (ref: String) => viewHomepage(ref)
 
     subscriptionService
       .maybeReadSubscription(plrReference)
