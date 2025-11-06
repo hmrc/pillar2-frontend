@@ -916,6 +916,9 @@ homepage.dna.returnExpected.agent.incomplete.body = Submit or complete these ret
 
 homepage.dna.returnExpected.linkText = View all due and overdue returns
 
+homepage.registrationInProgress.title = Your Pillar 2 Top-up Taxes account
+homepage.registrationInProgress.topTaxes = Group’s Pillar 2 Top-up Taxes ID: {0}
+
 tasklist.incomplete.header = You have one or more incomplete registration tasks
 tasklist.incomplete.message = You must
 tasklist.incomplete.link = go back to register your group and complete any in progress tasks.
