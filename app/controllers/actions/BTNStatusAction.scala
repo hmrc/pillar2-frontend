@@ -18,41 +18,57 @@ package controllers.actions
 
 import controllers.btn.routes._
 import models.btn.BTNStatus
-import models.requests.{DataRequest, SubscriptionDataRequest}
+import models.requests.SubscriptionDataRequest
+import models.subscription.SubscriptionLocalData
+import pages.EntitiesInsideOutsideUKPage
 import play.api.Logging
 import play.api.mvc.Results.Redirect
-import play.api.mvc.{ActionRefiner, Result}
+import play.api.mvc.{ActionRefiner, RequestHeader, Result}
 import repositories.SessionRepository
+import services.audit.AuditService
+import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class BTNStatusAction @Inject() (val sessionRepository: SessionRepository)(implicit val ec: ExecutionContext) extends Logging {
+class BTNStatusAction @Inject() (
+  val sessionRepository: SessionRepository,
+  auditService:          AuditService
+)(implicit val ec:       ExecutionContext)
+    extends Logging
+    with FrontendHeaderCarrierProvider {
 
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
       override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-        btnAlreadySubmitted(request.userId)(request)
+        btnAlreadySubmitted(request.userId, request.subscriptionLocalData)(request)
 
       override protected def executionContext: ExecutionContext = ec
     }
 
-  def dataRequest: ActionRefiner[DataRequest, DataRequest] =
-    new ActionRefiner[DataRequest, DataRequest] {
-      override protected def refine[A](request: DataRequest[A]): Future[Either[Result, DataRequest[A]]] =
-        btnAlreadySubmitted(request.userId)(request)
-
-      override protected def executionContext: ExecutionContext = ec
-    }
-
-  private def btnAlreadySubmitted[T](userId: String)(request: T) = sessionRepository.get(userId).map { maybeUserAnswers =>
-    maybeUserAnswers.flatMap(_.get(BTNStatus)) match {
-      case Some(BTNStatus.submitted) =>
-        Left(Redirect(CheckYourAnswersController.cannotReturnKnockback))
-      case Some(BTNStatus.processing) =>
-        Left(Redirect(BTNWaitingRoomController.onPageLoad))
-      case _ =>
-        Right(request)
-    }
-  }
+  private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(implicit
+    request:                                                  T
+  ): Future[Either[Result, T]] =
+    sessionRepository
+      .get(userId)
+      .map { maybeAnswers =>
+        (
+          maybeAnswers.flatMap(_.get(BTNStatus)),
+          maybeAnswers.flatMap(_.get(EntitiesInsideOutsideUKPage))
+        )
+      }
+      .flatMap { case (btnStatus, entitiesInsideOutsideUk) =>
+        btnStatus match {
+          case Some(BTNStatus.submitted) =>
+            auditService
+              .auditBtnAlreadySubmitted(
+                subscriptionData.plrReference,
+                subscriptionData.subAccountingPeriod,
+                entitiesInsideOutsideUk.getOrElse(false)
+              )
+              .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
+          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(BTNWaitingRoomController.onPageLoad)))
+          case _                          => Future.successful(Right(request))
+        }
+      }
 }
