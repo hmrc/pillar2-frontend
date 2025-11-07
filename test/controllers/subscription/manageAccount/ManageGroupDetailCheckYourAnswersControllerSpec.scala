@@ -21,9 +21,8 @@ import controllers.routes
 import controllers.subscription.manageAccount.{routes => manageRoutes}
 import forms.mappings.Mappings
 import helpers.AllMocks
-import models.UserAnswers
 import models.subscription.ManageGroupDetailsStatus
-import org.mockito.ArgumentMatchers.{any, argThat}
+import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import pages.ManageGroupDetailsStatusPage

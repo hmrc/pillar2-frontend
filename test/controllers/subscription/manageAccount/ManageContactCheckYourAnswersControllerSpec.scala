@@ -24,7 +24,7 @@ import models.subscription.ManageContactDetailsStatus
 import models.subscription._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -204,8 +204,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     "onSubmit" should {
 
       "set status to InProgress and redirect to waiting room immediately" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
@@ -271,8 +271,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "handle subscription service failure with InternalIssueError" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
@@ -306,8 +306,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "handle subscription service failure with UnexpectedResponse" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
@@ -461,7 +461,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       "prevent multiple-click submission by redirecting to waiting room when already submitted (idempotency)" in {
         val mockSessionRepository = mock[SessionRepository]
-        val userAnswers = UserAnswers("id")
+        val userAnswers           = UserAnswers("id")
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(false))

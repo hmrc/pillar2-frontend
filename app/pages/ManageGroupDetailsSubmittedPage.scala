@@ -25,4 +25,3 @@ case object ManageGroupDetailsSubmittedPage extends QuestionPage[Boolean] {
   override def toString: String = "manageGroupDetailsSubmitted"
 
 }
-
