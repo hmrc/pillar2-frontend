@@ -89,4 +89,29 @@ class SessionRepository @Inject() (
       .deleteOne(byId(id))
       .toFuture
       .map(_ => true)
+
+  def setSubmittedFlagIfNotSet(
+    userId:            String,
+    submittedPagePath: String,
+    statusPagePath:    String,
+    statusValue:       String
+  ): Future[Boolean] =
+    collection
+      .findOneAndUpdate(
+        filter = Filters.and(
+          Filters.equal("_id", userId),
+          Filters.or(
+            Filters.exists(submittedPagePath, false), // Field doesn't exist
+            Filters.equal(submittedPagePath, false) // Field exists and is false
+          )
+        ),
+        update = Updates.combine(
+          Updates.set(submittedPagePath, true),
+          Updates.set(statusPagePath, statusValue),
+          Updates.set("lastUpdated", Instant.now(clock))
+        ),
+        options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+      )
+      .headOption
+      .map(_.isDefined)
 }
