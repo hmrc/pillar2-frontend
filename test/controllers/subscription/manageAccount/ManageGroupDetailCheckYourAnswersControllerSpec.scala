@@ -23,7 +23,7 @@ import forms.mappings.Mappings
 import helpers.AllMocks
 import models.subscription.ManageGroupDetailsStatus
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{never, reset, verify, when}
+import org.mockito.Mockito._
 import org.scalatest.concurrent.ScalaFutures
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
