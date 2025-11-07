@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage}
+import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, ManageContactDetailsSubmittedPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -63,57 +63,58 @@ class ManageContactCheckYourAnswersController @Inject() (
               Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
             )
           case _ =>
-            val primaryContactList = SummaryListViewModel(
-              rows = Seq(
-                ContactNameComplianceSummary.row(),
-                ContactEmailAddressSummary.row(),
-                ContactByPhoneSummary.row(),
-                ContactCapturePhoneDetailsSummary.row()
-              ).flatten
-            )
+            val answersWithoutSubmittedFlag = answers.remove(ManageContactDetailsSubmittedPage).getOrElse(answers)
+            for {
+              _ <- sessionRepository.set(answersWithoutSubmittedFlag)
+            } yield {
+              val primaryContactList = SummaryListViewModel(
+                rows = Seq(
+                  ContactNameComplianceSummary.row(),
+                  ContactEmailAddressSummary.row(),
+                  ContactByPhoneSummary.row(),
+                  ContactCapturePhoneDetailsSummary.row()
+                ).flatten
+              )
 
-            val secondaryContactList = SummaryListViewModel(
-              rows = Seq(
-                AddSecondaryContactSummary.row(),
-                SecondaryContactNameSummary.row(),
-                SecondaryContactEmailSummary.row(),
-                SecondaryPhonePreferenceSummary.row(),
-                SecondaryPhoneSummary.row()
-              ).flatten
-            )
+              val secondaryContactList = SummaryListViewModel(
+                rows = Seq(
+                  AddSecondaryContactSummary.row(),
+                  SecondaryContactNameSummary.row(),
+                  SecondaryContactEmailSummary.row(),
+                  SecondaryPhonePreferenceSummary.row(),
+                  SecondaryPhoneSummary.row()
+                ).flatten
+              )
 
-            val address = SummaryListViewModel(
-              rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
-            )
+              val address = SummaryListViewModel(
+                rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
+              )
 
-            Future.successful(
               Ok(view(primaryContactList, secondaryContactList, address, request.isAgent, request.subscriptionLocalData.organisationName))
-            )
+            }
         }
     }
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     logger.info(s"[ManageContactCheckYourAnswers] Submission started for user ${request.userId}")
-    sessionRepository.get(request.userId).flatMap { userAnswers =>
-      userAnswers.flatMap(_.get(ManageContactDetailsStatusPage)) match {
-        case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
+
+    val submittedPagePath = s"data.${ManageContactDetailsSubmittedPage.toString}"
+    val statusPagePath    = s"data.${ManageContactDetailsStatusPage.toString}"
+    val statusValue       = ManageContactDetailsStatus.InProgress.entryName
+
+    sessionRepository
+      .setSubmittedFlagIfNotSet(request.userId, submittedPagePath, statusPagePath, statusValue)
+      .flatMap { wasSet =>
+        if (wasSet) {
+          logger.info(s"[ManageContactCheckYourAnswers] Contact details submission started for user ${request.userId}")
+          updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
           Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
-        case _ =>
-          for {
-            userAnswers <- sessionRepository.get(request.userId)
-            updatedAnswers = userAnswers match {
-                               case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-                               case None =>
-                                 UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-                             }
-            _ <- sessionRepository.set(updatedAnswers)
-          } yield {
-            updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-            Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
-          }
+        } else {
+          logger.info(s"[ManageContactCheckYourAnswers] Contact details already submitted for user ${request.userId}")
+          Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
+        }
       }
-    }
   }
 
   private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit

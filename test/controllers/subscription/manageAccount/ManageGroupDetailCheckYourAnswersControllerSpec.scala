@@ -26,7 +26,7 @@ import models.subscription.ManageGroupDetailsStatus
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
-import pages.ManageGroupDetailsStatusPage
+import pages.{ManageGroupDetailsStatusPage, ManageGroupDetailsSubmittedPage}
 import play.api.inject.bind
 import play.api.test.CSRFTokenHelper._
 import play.api.test.FakeRequest
@@ -55,6 +55,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
       "must return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
@@ -125,6 +126,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
@@ -166,7 +168,8 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
     "onSubmit" must {
 
-      "redirect to waiting room immediately on submission" in {
+      "set submitted flag and status to InProgress and redirect to waiting room immediately" in {
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -184,13 +187,37 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
 
-          // Verify that InProgress status was set
-          val expectedAnswers = emptyUserAnswers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-          verify(mockSessionRepository).set(expectedAnswers)
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
+        }
+      }
+
+      "prevent multiple-click submission by redirecting to waiting room when already submitted (idempotency)" in {
+        val userAnswers = emptyUserAnswers
+          .setOrException(ManageGroupDetailsSubmittedPage, true)
+
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
+          verify(mockSubscriptionService, org.mockito.Mockito.never()).amendContactOrGroupDetails(any(), any(), any())(any())
         }
       }
 
       "redirect to waiting room when no user answers exist" in {
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -207,10 +234,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(argThat[UserAnswers] { userAnswers =>
-            userAnswers.id == emptyUserAnswers.id &&
-            userAnswers.get(ManageGroupDetailsStatusPage).contains(ManageGroupDetailsStatus.InProgress)
-          })
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
         }
       }
     }

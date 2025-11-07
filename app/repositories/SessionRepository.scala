@@ -89,4 +89,43 @@ class SessionRepository @Inject() (
       .deleteOne(byId(id))
       .toFuture
       .map(_ => true)
+
+  /** Atomically checks if a submitted flag is false or doesn't exist, and if so, sets it to true along with a status field. This prevents race
+    * conditions in double-click scenarios.
+    *
+    * @param userId
+    *   The user ID
+    * @param submittedPagePath
+    *   The path to the submitted flag field (e.g., "data.manageContactDetailsSubmitted")
+    * @param statusPagePath
+    *   The path to the status field (e.g., "data.manageContactDetailsStatus")
+    * @param statusValue
+    *   The status value to set (e.g., "inProgress")
+    * @return
+    *   Future[Boolean] - true if the flag was successfully set (wasn't already submitted), false if already submitted
+    */
+  def setSubmittedFlagIfNotSet(
+    userId:            String,
+    submittedPagePath: String,
+    statusPagePath:    String,
+    statusValue:       String
+  ): Future[Boolean] =
+    collection
+      .findOneAndUpdate(
+        filter = Filters.and(
+          Filters.equal("_id", userId),
+          Filters.or(
+            Filters.exists(submittedPagePath, false),
+            Filters.equal(submittedPagePath, false)
+          )
+        ),
+        update = Updates.combine(
+          Updates.set(submittedPagePath, true),
+          Updates.set(statusPagePath, statusValue),
+          Updates.set("lastUpdated", Instant.now(clock))
+        ),
+        options = FindOneAndUpdateOptions().returnDocument(ReturnDocument.AFTER)
+      )
+      .headOption
+      .map(_.isDefined)
 }
