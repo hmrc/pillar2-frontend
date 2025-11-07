@@ -74,6 +74,7 @@ lazy val scoverageSettings = Seq(
   coverageMinimumBranchTotal := 86.55,
   coverageFailOnMinimum := true,
   coverageHighlighting := true,
+  Test / fork := false,
   coverageExcludedFiles :=
     """|.*handlers.*;
        |.*queries.*;

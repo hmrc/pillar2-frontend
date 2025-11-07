@@ -22,7 +22,7 @@ import models.NormalMode
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{reset, when}
 import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
@@ -42,6 +42,11 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
   val ua: SubscriptionLocalData =
     emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
+
+  override def beforeEach(): Unit = {
+    super.beforeEach()
+    reset(mockSubscriptionConnector, mockObligationsAndSubmissionsService)
+  }
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
     .configure("features.phase2ScreensEnabled" -> true)
