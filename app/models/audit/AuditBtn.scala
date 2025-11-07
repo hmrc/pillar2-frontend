@@ -29,7 +29,7 @@ case class CreateBtnAuditEvent(
   entitiesInsideAndOutsideUK: Boolean,
   apiResponseData:            ApiResponseData
 ) extends AuditEvent {
-  override val auditType:  String  = "belowThresholdNotification"
+  override val auditType:  String  = BtnAuditCommonValues.auditType
   override val detailJson: JsValue = Json.toJson(this)
 }
 
@@ -55,7 +55,7 @@ case class BtnAlreadySubmittedAuditEvent(
   accountingPeriod:        AccountingPeriod,
   entitiesInsideOutsideUk: Boolean
 ) extends AuditEvent {
-  override val auditType:  String  = "AlreadySubmittedBelowThresholdNotification"
+  override val auditType:  String  = BtnAuditCommonValues.auditType
   override val detailJson: JsValue = Json.toJson(this)
 }
 
@@ -73,4 +73,8 @@ object BtnAlreadySubmittedAuditEvent {
       event.entitiesInsideOutsideUk
     )
   }
+}
+
+private object BtnAuditCommonValues {
+  val auditType = "belowThresholdNotification"
 }

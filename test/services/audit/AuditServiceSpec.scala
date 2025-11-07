@@ -298,7 +298,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
           verify(auditConnector).sendExtendedEvent(captor)(any, any)
 
           captor.value.auditSource mustBe "pillar2-frontend"
-          captor.value.auditType mustBe "AlreadySubmittedBelowThresholdNotification"
+          captor.value.auditType mustBe "belowThresholdNotification"
           captor.value.detail mustBe Json.obj(
             "pillarReference"            -> pillarReference,
             "accountingPeriodStart"      -> apStartDate,
