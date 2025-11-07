@@ -26,7 +26,7 @@ import controllers.routes
 import models.subscription.ManageGroupDetailsStatus._
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
+import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage, ManageGroupDetailsSubmittedPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -66,15 +66,20 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             case Some(InProgress) =>
               Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
             case _ =>
-              val list = SummaryListViewModel(
-                rows = Seq(
-                  MneOrDomesticSummary.row,
-                  GroupAccountingPeriodSummary.row,
-                  GroupAccountingPeriodStartDateSummary.row,
-                  GroupAccountingPeriodEndDateSummary.row
-                ).flatten
-              )
-              Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
+              val answersWithoutSubmittedFlag = answers.remove(ManageGroupDetailsSubmittedPage).getOrElse(answers)
+              for {
+                _ <- sessionRepository.set(answersWithoutSubmittedFlag)
+              } yield {
+                val list = SummaryListViewModel(
+                  rows = Seq(
+                    MneOrDomesticSummary.row,
+                    GroupAccountingPeriodSummary.row,
+                    GroupAccountingPeriodStartDateSummary.row,
+                    GroupAccountingPeriodEndDateSummary.row
+                  ).flatten
+                )
+                Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName))
+              }
           }
       }
     }
@@ -87,19 +92,22 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
           case Some(ManageGroupDetailsStatus.SuccessfullyCompleted) =>
             Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
           case _ =>
-            for {
-              userAnswers <- sessionRepository.get(request.userId)
-              updatedAnswers = userAnswers match {
-                                 case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                                 case None =>
-                                   UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                               }
-              _ <- sessionRepository.set(updatedAnswers)
-            } yield {
-              updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-              logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
-              Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
-            }
+            val submittedPagePath = s"data.${ManageGroupDetailsSubmittedPage.toString}"
+            val statusPagePath    = s"data.${ManageGroupDetailsStatusPage.toString}"
+            val statusValue       = ManageGroupDetailsStatus.InProgress.entryName
+
+            sessionRepository
+              .setSubmittedFlagIfNotSet(request.userId, submittedPagePath, statusPagePath, statusValue)
+              .flatMap { wasSet =>
+                if (wasSet) {
+                  logger.info(s"[ManageGroupDetailsCheckYourAnswers] Group details submission started for user ${request.userId}")
+                  updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
+                  Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+                } else {
+                  logger.info(s"[ManageGroupDetailsCheckYourAnswers] Group details already submitted for user ${request.userId}")
+                  Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+                }
+              }
         }
       }
     }

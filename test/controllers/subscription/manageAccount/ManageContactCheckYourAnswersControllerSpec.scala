@@ -24,7 +24,7 @@ import models.subscription.ManageContactDetailsStatus
 import models.subscription._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.{verify, when}
+import org.mockito.Mockito.{never, verify, when}
 import pages._
 import play.api.inject.bind
 import play.api.libs.json.Json
@@ -117,6 +117,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers           = UserAnswers("id")
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -137,6 +138,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers           = UserAnswers("id")
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithAddress))
         .overrides(
@@ -202,11 +204,13 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     "onSubmit" should {
 
       "set status to InProgress and redirect to waiting room immediately" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
-        val expectedUpdatedAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(
@@ -228,7 +232,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           redirectLocation(
             result
           ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedUpdatedAnswers))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
         }
       }
 
@@ -269,11 +273,13 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "handle subscription service failure with InternalIssueError" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
-        val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(InternalIssueError))
@@ -299,16 +305,18 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           // Verify initial status update
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
         }
       }
 
       "handle subscription service failure with UnexpectedResponse" in {
-        val mockSessionRepository  = mock[SessionRepository]
-        val userAnswers            = UserAnswers("id")
-        val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
 
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.failed(UnexpectedResponse))
@@ -334,7 +342,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
           // Verify initial status update
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
         }
       }
 
@@ -347,8 +355,9 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.get(userAnswers.id))
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
-        when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
@@ -372,7 +381,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
       }
@@ -388,8 +397,9 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.get(userAnswers.id))
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
-        when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
@@ -413,7 +423,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
         }
       }
@@ -427,8 +437,9 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.get(userAnswers.id))
           .thenReturn(Future.successful(Some(userAnswers)))
           .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
 
-        when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
@@ -452,8 +463,39 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
+        }
+      }
+
+      "prevent multiple-click submission by redirecting to waiting room when already submitted (idempotency)" in {
+        val mockSessionRepository = mock[SessionRepository]
+        val userAnswers           = UserAnswers("id")
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(
+            result
+          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
+          verify(mockSubscriptionService, never()).amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any())
         }
       }
     }
@@ -483,6 +525,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val userAnswers           = UserAnswers("id")
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         val partialData = emptySubscriptionLocalData
           .setOrException(SubPrimaryContactNamePage, "name")

@@ -21,10 +21,9 @@ import controllers.routes
 import controllers.subscription.manageAccount.{routes => manageRoutes}
 import forms.mappings.Mappings
 import helpers.AllMocks
-import models.UserAnswers
 import models.subscription.ManageGroupDetailsStatus
-import org.mockito.ArgumentMatchers.{any, argThat}
-import org.mockito.Mockito.{reset, verify, when}
+import org.mockito.ArgumentMatchers.any
+import org.mockito.Mockito.{never, reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
@@ -55,6 +54,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
       "must return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
@@ -125,6 +125,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
@@ -168,7 +169,8 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
       "redirect to waiting room immediately on submission" in {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -184,15 +186,14 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
 
-          // Verify that InProgress status was set
-          val expectedAnswers = emptyUserAnswers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-          verify(mockSessionRepository).set(expectedAnswers)
+          // Verify that atomic flag was set
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
         }
       }
 
       "redirect to waiting room when no user answers exist" in {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(true))
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -207,10 +208,29 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
 
-          verify(mockSessionRepository).set(argThat[UserAnswers] { userAnswers =>
-            userAnswers.id == emptyUserAnswers.id &&
-            userAnswers.get(ManageGroupDetailsStatusPage).contains(ManageGroupDetailsStatus.InProgress)
-          })
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
+        }
+      }
+
+      "prevent multiple-click submission by redirecting to waiting room when already submitted (idempotency)" in {
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.setSubmittedFlagIfNotSet(any(), any(), any(), any())).thenReturn(Future.successful(false))
+
+        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url).withCSRFToken
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          verify(mockSessionRepository).setSubmittedFlagIfNotSet(any(), any(), any(), any())
+          verify(mockSubscriptionService, never()).amendContactOrGroupDetails(any(), any(), any())(any())
         }
       }
     }
