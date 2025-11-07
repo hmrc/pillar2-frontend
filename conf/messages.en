@@ -848,6 +848,8 @@ homepage.title = Pillar 2 Top-up Taxes
 homepage.group = Group
 homepage.id = ID
 
+homepage.agent.changeClientLink = Change client
+
 homepage.returns.title = Returns
 homepage.returns.dueOverdueReturns.linkText = View all due and overdue returns
 homepage.returns.submissionHistory.linkText = View submission history
@@ -914,50 +916,8 @@ homepage.dna.returnExpected.agent.incomplete.body = Submit or complete these ret
 
 homepage.dna.returnExpected.linkText = View all due and overdue returns
 
-###############################################
-#
-# Dashboard
-#
-###############################################
-dashboard.title = Your Pillar 2 Top-up Taxes account
-dashboard.heading = Your Pillar 2 Top-up Taxes account
-dashboard.topTaxes = Group’s Pillar 2 Top-up Taxes ID: {0}
-dashboard.registrationDate = Registration date: {0}
-dashboard.upe = Ultimate Parent Entity: {0}
-dashboard.payments = Payments
-dashboard.noPayment = You have no payments due.
-dashboard.voluntaryPayment = Make a payment
-dashboard.paymentHistory = View your transaction history
-dashboard.requestRepayment = Request a repayment
-dashboard.manageAccount = Manage your account
-dashboard.contactDetails = View and amend contact details
-dashboard.groupDetails = View and amend group details
-dashboard.whenToSubmitReturn = When to submit your returns
-dashboard.whenToSubmitReturn.p1 = 18 months after the last day of the group’s accounting period, if the first accounting period you reported for Pillar 2 Top-up Taxes ended after 31 December 2024
-dashboard.whenToSubmitReturn.p2 = 30 June 2026, if the first accounting period you reported for Pillar 2 Top-up Taxes ended on or before 31 December 2024
-
-dashboard.whenToSubmitReturn.agent.h2 = When to submit your client’s first returns
-dashboard.agent.p1 = Your will have until 30 June 2026 to submit your client’s first Pillar 2 Top-up Taxes returns.
-dashboard.agent.p2 = HMRC will release the tools that you need to submit your client’s returns before the due date for reporting.
-
-dashboard.p3 = Your group must submit your Pillar 2 Top-up Taxes returns no later than:
-dashboard.p1 = HMRC are currently delivering this service on a phased approach. We’ll release the tools that you need to submit your returns before the due date for reporting.
-dashboard.p2 = for more details.
-
-dashboard.link = Refer to the Pillar 2 Top-up Taxes manual (opens in new tab)
-dashboard.inactive.message = HMRC has received a Below-Threshold Notification for this account. Please contact the
-dashboard.inactive.link = pillar2mailbox@hmrc.gov.uk
-dashboard.inactive.message2 = if your circumstances change.
-
-### Agent Dashboard
-dashboard.agent.accountLink = Agent Services Account
-dashboard.agent.title = Your Pillar 2 Top-up Taxes account
-dashboard.agent.heading = Your Pillar 2 Top-up Taxes account
-dashboard.agent.changeClientLink = Change client
-dashboard.agent.noPayment = Your client has no payments due.
-dashboard.agent.paymentHistory = View your client’s transaction history
-dashboard.agent.manageAccount = Manage your client’s account
-###############################################
+homepage.registrationInProgress.title = Your Pillar 2 Top-up Taxes account
+homepage.registrationInProgress.topTaxes = Group’s Pillar 2 Top-up Taxes ID: {0}
 
 tasklist.incomplete.header = You have one or more incomplete registration tasks
 tasklist.incomplete.message = You must

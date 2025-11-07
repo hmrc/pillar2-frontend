@@ -110,6 +110,9 @@ trait ViewInstances extends StubMessageControllerComponents {
   val sectionBreak             = new SectionBreak
   val inactiveStatusBanner     = new InactiveStatusBanner
   val bulletList               = new bulletList
+  val card                     = new HomepageCard
+  val link                     = new link
+  val dynamicNotificationArea  = new DynamicNotificationAreaView(h2, link, paragraphBody, paragraphBodyLink, sectionBreak)
 
   val hmrcPageHeading = new HmrcPageHeading
   val govUkInsetText  = new GovukInsetText
@@ -231,18 +234,16 @@ trait ViewInstances extends StubMessageControllerComponents {
   val viewCheckYourAnswersSub: SubCheckYourAnswersView =
     new SubCheckYourAnswersView(pillar2layout, sectionHeader, heading, govukSummaryList, govukButton)
 
-  val viewDashboardView: DashboardView =
-    new DashboardView(
+  val viewHomepageView: HomepageView =
+    new HomepageView(
       pillar2layout,
-      govukButton,
       heading,
-      h2,
       paragraphBody,
-      bulletList,
-      paragraphMessageWithLink,
-      paragraphBodyLink,
-      sectionBreak,
-      inactiveStatusBanner
+      link,
+      card,
+      govukNotificationBanner,
+      dynamicNotificationArea,
+      paragraphMessageWithLink
     )
 
   val viewRequestRefundAmount: RequestRefundAmountView =

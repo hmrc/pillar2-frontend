@@ -54,8 +54,8 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        viewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
-        viewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        viewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        viewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have paragraph content and link" in {
@@ -95,8 +95,8 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        viewUkOnly(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
-        viewUkAndOther(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        viewUkOnly(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        viewUkAndOther(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have paragraph content and link" in {

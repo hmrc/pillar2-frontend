@@ -56,7 +56,7 @@ class BTNUnderEnquiryWarningViewSpec extends ViewSpecBase {
     "have a return to homepage link" in {
       val link = view.select("a:contains(Return to home page)")
       link.size() mustBe 1
-      link.attr("href") mustBe routes.DashboardController.onPageLoad.url
+      link.attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
   }
 }

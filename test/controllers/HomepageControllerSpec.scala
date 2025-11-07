@@ -42,13 +42,13 @@ import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DateTimeUtils.LocalDateOps
-import views.html.{DashboardView, HomepageView}
+import views.html.HomepageView
 
 import java.time.LocalDate
 import java.util.UUID
 import scala.concurrent.Future
 
-class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
+class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaCheckPropertyChecks {
 
   private type RetrievalsType = Option[String] ~ Enrolments ~ Option[AffinityGroup] ~ Option[CredentialRole] ~ Option[Credentials]
 
@@ -77,89 +77,50 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
 
   "Dashboard Controller" should {
 
-    "return OK and the correct view for a GET" when {
-      "newHomepageEnabled is true" in {
-        val application =
-          applicationBuilder(userAnswers = None, enrolments)
-            .configure("features.newHomepageEnabled" -> true)
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SubscriptionService].toInstance(mockSubscriptionService),
-              bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
-              bind[FinancialDataService].toInstance(mockFinancialDataService),
-              bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
-            )
-            .build()
+    "return OK and the correct view for a GET" in {
+      val application =
+        applicationBuilder(userAnswers = None, enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
 
-        running(application) {
-          val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          when(mockSessionRepository.get(any()))
-            .thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockSessionRepository.set(any()))
-            .thenReturn(Future.successful(true))
-          when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
-          when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-          when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(FinancialData(Seq.empty)))
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(emptyUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
 
-          val result = route(application, request).value
-          val view   = application.injector.instanceOf[HomepageView]
+        val result = route(application, request).value
+        val view   = application.injector.instanceOf[HomepageView]
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(
-            subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.toDateFormat,
-            BtnBanner.Hide,
-            None,
-            None,
-            DynamicNotificationAreaState.NoNotification,
-            "12345678",
-            isAgent = false,
-            hasReturnsUnderEnquiry = false
-          )(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
-        }
-      }
-
-      "newHomepageEnabled is false" in {
-        val application =
-          applicationBuilder(userAnswers = None, enrolments)
-            .configure("features.newHomepageEnabled" -> false)
-            .overrides(
-              bind[SessionRepository].toInstance(mockSessionRepository),
-              bind[SubscriptionService].toInstance(mockSubscriptionService)
-            )
-            .build()
-
-        running(application) {
-          val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
-          when(mockSessionRepository.get(any()))
-            .thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockSessionRepository.set(any()))
-            .thenReturn(Future.successful(true))
-          when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
-          when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-          val result = route(application, request).value
-          val view   = application.injector.instanceOf[DashboardView]
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(
-            subscriptionData.upeDetails.organisationName,
-            subscriptionData.upeDetails.registrationDate.toDateFormat,
-            "12345678",
-            inactiveStatus = false,
-            agentView = false
-          )(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(
+          subscriptionData.upeDetails.organisationName,
+          subscriptionData.upeDetails.registrationDate.toDateFormat,
+          BtnBanner.Hide,
+          None,
+          None,
+          DynamicNotificationAreaState.NoNotification,
+          "12345678",
+          isAgent = false,
+          hasReturnsUnderEnquiry = false
+        )(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
@@ -172,7 +133,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
           )
           .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
         when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
@@ -197,7 +158,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
         .thenReturn(Future.successful(None))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -226,7 +187,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.DashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("XMPLR0123456789").url
@@ -240,7 +201,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when UKTR obligation is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller: DashboardController = application.injector.instanceOf[DashboardController]
+        val controller: HomepageController = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -272,7 +233,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Overdue when UKTR obligation is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -304,7 +265,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when both UKTR and GIR obligations are fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -342,7 +303,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when both UKTR and GIR obligations are open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -380,7 +341,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when UKTR is open, GIR is fulfilled and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -418,7 +379,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when UKTR is fulfilled, GIR is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -456,7 +417,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Overdue when both UKTR and GIR obligations are open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -494,7 +455,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Incomplete when UKTR is open, GIR is fulfilled and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -532,7 +493,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Incomplete when UKTR is fulfilled, GIR is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -570,7 +531,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when UKTR is fulfilled and GIR is open but due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -608,7 +569,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when only UKTR obligation is fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -640,7 +601,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Due when only GIR obligation is open and due date has not passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val obligations = Seq(
@@ -672,7 +633,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Overdue when only GIR obligation is open and due date has passed" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -704,7 +665,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when only GIR obligation is fulfilled" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate = LocalDate.now().minusDays(7)
         val obligations = Seq(
@@ -736,7 +697,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when no accounting periods exist" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val obligationsAndSubmissions = models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess(
           processingDate = java.time.ZonedDateTime.now(),
@@ -752,7 +713,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return the earliest period status when multiple accounting periods exist" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
         val pastDueDate   = LocalDate.now().minusDays(7)
@@ -805,7 +766,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Received when UKTR and GIR obligations are both fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate          = LocalDate.now().minusDays(7)
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
@@ -856,7 +817,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when UKTR and GIR obligations are both fulfilled and outside 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(70)
         val obligations = Seq(
@@ -906,7 +867,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when only UKTR is fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
         val obligations = Seq(
@@ -944,7 +905,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when only GIR is fulfilled and within 60 day period" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
         val obligations = Seq(
@@ -982,7 +943,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Received when multiple submissions exist and most recent for both obligations is within 60 days" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val pastDueDate          = LocalDate.now().minusDays(7)
         val oldSubmissionDate    = java.time.ZonedDateTime.now().minusDays(70)
@@ -1051,7 +1012,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller  = application.injector.instanceOf[DashboardController]
+        val controller  = application.injector.instanceOf[HomepageController]
         val pastDueDate = LocalDate.now.minusDays(7)
         val pastDueTransaction =
           notYetDueFinancialTransaction.copy(chargeItems = notYetDueFinancialTransaction.chargeItems.copy(earliestDueDate = pastDueDate))
@@ -1067,7 +1028,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Outstanding when there is an outstanding payment that has not yet reached its due date" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller    = application.injector.instanceOf[DashboardController]
+        val controller    = application.injector.instanceOf[HomepageController]
         val financialData = FinancialData(Seq(notYetDueFinancialTransaction))
 
         val result = controller.getPaymentBannerScenario(financialData)
@@ -1079,7 +1040,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return None when there are no outstanding charges or recent payments" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val oldPayment = Payment(
           Payment.FinancialItems(Seq(FinancialItem(dueDate = None, clearingDate = Some(LocalDate.now().minusDays(100)))))
@@ -1095,7 +1056,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
     "return Paid when there is a payment made in the last 60 days and no outstanding payment on any transaction" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller = application.injector.instanceOf[DashboardController]
+        val controller = application.injector.instanceOf[HomepageController]
 
         val paymentFinancialTransaction = Payment(
           Payment.FinancialItems(
@@ -1119,7 +1080,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
   "determineNotificationArea" should {
 
     val application = applicationBuilder().build()
-    val controller  = application.injector.instanceOf[DashboardController]
+    val controller  = application.injector.instanceOf[HomepageController]
 
     val anyReturnStatus  = Gen.option(Gen.oneOf(DueAndOverdueReturnBannerScenario.values))
     val anyAccountStatus = Gen.oneOf(AccountStatus.values)
@@ -1230,7 +1191,7 @@ class DashboardControllerSpec extends SpecBase with ModelGenerators with ScalaCh
 
   "determineBtnBanner" should {
     val application = applicationBuilder().build()
-    val controller  = application.injector.instanceOf[DashboardController]
+    val controller  = application.injector.instanceOf[HomepageController]
     val nonBtnDnaStates = Gen.oneOf(
       Gen.const(DynamicNotificationAreaState.AccruingInterest(100)),
       Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)),

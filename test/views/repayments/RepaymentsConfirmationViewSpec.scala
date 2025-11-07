@@ -50,7 +50,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val headerLink: Element = view.getElementsByClass("govuk-header__content").first().getElementsByTag("a").first()
 
       headerLink.text mustBe "Report Pillar 2 Top-up Taxes"
-      headerLink.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      headerLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
 
     "have a confirmation message" in {
@@ -70,7 +70,7 @@ class RepaymentsConfirmationViewSpec extends ViewSpecBase {
       val link: Element = paragraphs.last().getElementsByTag("a").first()
 
       link.text mustBe "Back to group homepage"
-      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
 
     "have a 'Print this page' link" in {

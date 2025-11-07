@@ -37,83 +37,58 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
     Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
   )
 
-  "SubmissionHistoryController" when {
-    "phase2ScreensEnabled is true" should {
-      "return OK and display the correct view for a GET with no submissions" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.phase2ScreensEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
+  "SubmissionHistoryController" should {
+    "return OK and display the correct view for a GET with no submissions" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
 
-        running(application) {
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(emptyResponse))
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      running(application) {
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(emptyResponse))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-          val request           = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
-          val result            = route(application, request).value
-          val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
+        val request           = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+        val result            = route(application, request).value
+        val viewNoSubmissions = application.injector.instanceOf[SubmissionHistoryNoSubmissionsView]
 
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual viewNoSubmissions(false)(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
-        }
-      }
-
-      "return OK and display the correct view for a GET with submissions" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.phase2ScreensEnabled" -> true)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
-            .thenReturn(Future.successful(allFulfilledResponse))
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-          val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
-          val result  = route(application, request).value
-          val view    = application.injector.instanceOf[SubmissionHistoryView]
-
-          status(result) mustEqual OK
-          contentAsString(result) mustEqual view(allFulfilledResponse.accountingPeriodDetails, false)(
-            request,
-            applicationConfig,
-            messages(application)
-          ).toString
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual viewNoSubmissions(false)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
 
-    "phase2ScreensEnabled is false" should {
-      "redirect to dashboard" in {
-        val application = applicationBuilder(userAnswers = None, enrolments)
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
+    "return OK and display the correct view for a GET with submissions" in {
+      val application = applicationBuilder(userAnswers = None, enrolments)
+        .overrides(
+          bind[SessionRepository].toInstance(mockSessionRepository),
+          bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+        )
+        .build()
 
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      running(application) {
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(allFulfilledResponse))
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-          val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
-          val result  = route(application, request).value
+        val request = FakeRequest(GET, controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url)
+        val result  = route(application, request).value
+        val view    = application.injector.instanceOf[SubmissionHistoryView]
 
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
-        }
+        status(result) mustEqual OK
+        contentAsString(result) mustEqual view(allFulfilledResponse.accountingPeriodDetails, false)(
+          request,
+          applicationConfig,
+          messages(application)
+        ).toString
       }
     }
   }
+
 }

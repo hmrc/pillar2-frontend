@@ -294,7 +294,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
         verify(mockSessionRepository, never()).set(any())
       }
     }
@@ -323,7 +323,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
         verify(mockSessionRepository, never()).set(any())
       }
     }
@@ -349,7 +349,7 @@ class AgentControllerSpec extends SpecBase {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
 
         verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
           ua.get(AgentClientPillar2ReferencePage).contains(PlrReference) &&
@@ -383,7 +383,7 @@ class AgentControllerSpec extends SpecBase {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
 
         verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
           ua.get(AgentClientPillar2ReferencePage).contains(newPlrReference) &&

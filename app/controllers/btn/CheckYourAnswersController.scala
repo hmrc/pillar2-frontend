@@ -50,7 +50,6 @@ class CheckYourAnswersController @Inject() (
   btnService:                             BTNService,
   val controllerComponents:               MessagesControllerComponents,
   auditService:                           AuditService,
-  checkPhase2Screens:                     Phase2ScreensAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -58,7 +57,7 @@ class CheckYourAnswersController @Inject() (
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
           userAnswers.get(EntitiesInsideOutsideUKPage) match {
@@ -97,7 +96,7 @@ class CheckYourAnswersController @Inject() (
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userId).flatMap {
       case Some(userAnswers) =>
         val subAccountingPeriod: AccountingPeriod =
@@ -170,7 +169,7 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def cannotReturnKnockback: Action[AnyContent] = (identify andThen checkPhase2Screens) { implicit request =>
+  def cannotReturnKnockback: Action[AnyContent] = identify { implicit request =>
     BadRequest(cannotReturnView())
   }
 }

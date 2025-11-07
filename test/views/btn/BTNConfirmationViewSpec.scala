@@ -62,8 +62,8 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      groupView().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      agentView().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      groupView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      agentView().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have an H2 heading" in {
@@ -89,7 +89,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
-      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
 
     "have paragraph content (containing company name) and a link when in an agent flow" in {
@@ -106,7 +106,7 @@ class BTNConfirmationViewSpec extends ViewSpecBase {
         "The group must submit a UK Tax Return if your group meets the threshold conditions in the future."
 
       paragraphs.get(4).getElementsByTag("a").text() mustBe "Back to group’s homepage"
-      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      paragraphs.get(4).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
 
     "show inset text warning when showUnderEnquiryWarning is true for group view" in {
