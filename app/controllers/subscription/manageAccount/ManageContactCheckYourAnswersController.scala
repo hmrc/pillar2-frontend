@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, ManageContactDetailsSubmittedPage, SubAddSecondaryContactPage}
+import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}

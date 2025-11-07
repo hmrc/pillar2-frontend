@@ -46,6 +46,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
     .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubAddSecondaryContactPage, true)
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
     .setOrException(SubSecondaryPhonePreferencePage, true)
@@ -146,6 +147,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers           = UserAnswers("id")
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithoutSecondaryContact))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
@@ -168,6 +170,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       val mockSessionRepository = mock[SessionRepository]
       val userAnswers           = UserAnswers("id")
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
       val application = applicationBuilder(subscriptionLocalData = Some(subDataWithSecondaryContact))
         .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
