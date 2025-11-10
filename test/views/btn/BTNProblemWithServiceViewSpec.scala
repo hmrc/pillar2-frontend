@@ -42,7 +42,7 @@ class BTNProblemWithServiceViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "display a try again later message" in {
@@ -53,7 +53,7 @@ class BTNProblemWithServiceViewSpec extends ViewSpecBase {
       val link: Element = view.getElementsByClass("govuk-link").get(2)
 
       link.text() mustBe "Return to your account homepage to submit a Below-Threshold Notification again"
-      link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
       link.attr("target") mustBe "_self"
       link.attr("rel") mustNot be("noopener noreferrer")
     }

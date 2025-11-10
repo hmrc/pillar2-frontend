@@ -44,7 +44,6 @@ class BTNBeforeStartControllerSpec extends SpecBase {
     emptySubscriptionLocalData.setOrException(SubAccountingPeriodPage, dates).setOrException(PlrReferencePage, plrReference)
 
   def application: Application = applicationBuilder(subscriptionLocalData = Some(ua), userAnswers = Some(emptyUserAnswers))
-    .configure("features.phase2ScreensEnabled" -> true)
     .overrides(
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
       bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -103,7 +102,6 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "redirect to BTN error page when no subscription data is found" in {
       def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> true)
         .overrides(
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
           bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -142,22 +140,6 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
-      }
-    }
-
-    "must redirect to dashboard when phase2ScreensEnabled is false" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.phase2ScreensEnabled" -> false)
-        .build()
-
-      running(application) {
-        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-        val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
-        val result  = route(application, request).value
-
-        status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
       }
     }
   }

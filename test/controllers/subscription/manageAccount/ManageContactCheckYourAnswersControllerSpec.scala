@@ -20,7 +20,6 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
 import models._
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription.ManageContactDetailsStatus
 import models.subscription._
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
@@ -53,11 +52,20 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     .setOrException(SubSecondaryCapturePhonePage, "123213")
     .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
 
-  val subDataWithoutAddress: SubscriptionLocalData = emptySubscriptionLocalData
+  val subDataWithoutSecondaryContact: SubscriptionLocalData = emptySubscriptionLocalData
     .setOrException(SubPrimaryContactNamePage, "name")
     .setOrException(SubPrimaryEmailPage, "email@hello.com")
     .setOrException(SubPrimaryPhonePreferencePage, true)
     .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubAddSecondaryContactPage, false)
+    .setOrException(SubRegisteredAddressPage, NonUKAddress("this", None, "over", None, None, countryCode = "AR"))
+
+  val subDataWithSecondaryContact: SubscriptionLocalData = emptySubscriptionLocalData
+    .setOrException(SubPrimaryContactNamePage, "name")
+    .setOrException(SubPrimaryEmailPage, "email@hello.com")
+    .setOrException(SubPrimaryPhonePreferencePage, true)
+    .setOrException(SubPrimaryCapturePhonePage, "123213")
+    .setOrException(SubAddSecondaryContactPage, true)
     .setOrException(SubSecondaryContactNamePage, "name")
     .setOrException(SubSecondaryEmailPage, "email@hello.com")
     .setOrException(SubSecondaryPhonePreferencePage, true)
@@ -128,8 +136,52 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
-        contentAsString(result) must include("Second contact")
+        contentAsString(result) must include("Secondary contact")
         contentAsString(result) must include("Filing member contact address")
+      }
+    }
+
+    "return OK and the correct view when there is no secondary contact" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val userAnswers           = UserAnswers("id")
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(subDataWithoutSecondaryContact))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("Do you have a second contact?")
+        contentAsString(result) must not include "Second contact name"
+        contentAsString(result) must not include "Second contact email address"
+        contentAsString(result) must not include "Can we contact the secondary contact by phone?"
+        contentAsString(result) must not include "Second contact phone number"
+      }
+    }
+
+    "return OK and the correct view when there is a secondary contact" in {
+      val mockSessionRepository = mock[SessionRepository]
+      val userAnswers           = UserAnswers("id")
+      when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+
+      val application = applicationBuilder(subscriptionLocalData = Some(subDataWithSecondaryContact))
+        .overrides(bind[SessionRepository].toInstance(mockSessionRepository))
+        .build()
+
+      running(application) {
+        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val result  = route(application, request).value
+        status(result) mustEqual OK
+        contentAsString(result) must include("Do you have a second contact?")
+        contentAsString(result) must include("Second contact name")
+        contentAsString(result) must include("Second contact email address")
+        contentAsString(result) must include("Can we contact the secondary contact by phone?")
+        contentAsString(result) must include("Second contact phone number")
       }
     }
 
@@ -157,7 +209,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
-        contentAsString(result) must include("Second contact")
+        contentAsString(result) must include("Secondary contact")
         contentAsString(result) must include("Filing member contact address")
       }
     }

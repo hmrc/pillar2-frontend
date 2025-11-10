@@ -41,7 +41,6 @@ class SubmissionHistoryController @Inject() (
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
-  checkPhase2Screens:                     Phase2ScreensAction,
   view:                                   SubmissionHistoryView,
   viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
   sessionRepository:                      SessionRepository
@@ -49,7 +48,7 @@ class SubmissionHistoryController @Inject() (
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     (for {
       maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))

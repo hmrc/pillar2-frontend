@@ -59,8 +59,8 @@ class RegistrationConfirmationViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Dashboard" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      viewDomestic.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-      viewMne.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      viewDomestic.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      viewMne.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have an H2 heading" in {

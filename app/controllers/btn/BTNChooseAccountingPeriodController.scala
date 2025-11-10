@@ -42,15 +42,14 @@ class BTNChooseAccountingPeriodController @Inject() (
   btnStatus:                              BTNStatusAction,
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   BTNChooseAccountingPeriodView,
-  checkPhase2Screens:                     Phase2ScreensAction
+  view:                                   BTNChooseAccountingPeriodView
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
@@ -72,7 +71,7 @@ class BTNChooseAccountingPeriodController @Inject() (
       }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
       .async { implicit request =>
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>

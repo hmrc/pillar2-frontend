@@ -33,7 +33,7 @@
 
 @(transactionHistoryTable: Table, pagination: Option[Pagination], isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("transactionHistory.title")), twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
   @tableScrollStyles()
 

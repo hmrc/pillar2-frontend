@@ -20,15 +20,14 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.DueAndOverdueReturnBannerScenario
 import models.DueAndOverdueReturnBannerScenario._
-import models._
 import models.financialdata.PaymentState._
 import models.financialdata.{FinancialData, PaymentState}
 import models.obligationsandsubmissions._
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
+import models.{DueAndOverdueReturnBannerScenario, _}
 import pages._
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -39,19 +38,18 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
 import utils.DateTimeUtils.LocalDateOps
-import views.html.{DashboardView, HomepageView}
+import views.html.HomepageView
 
 import java.time.{Clock, LocalDate}
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class DashboardController @Inject() (
+class HomepageController @Inject() (
   val userAnswersConnectors:              UserAnswersConnectors,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                DataRetrievalAction,
   val subscriptionService:                SubscriptionService,
   val controllerComponents:               MessagesControllerComponents,
-  dashboardView:                          DashboardView,
   homepageView:                           HomepageView,
   referenceNumberService:                 ReferenceNumberService,
   sessionRepository:                      SessionRepository,
@@ -104,46 +102,32 @@ class DashboardController @Inject() (
     hc:                                         HeaderCarrier
   ): Future[Result] = {
     val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount)
-    if (appConfig.newHomepageEnabled) {
-      sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
-        maybeUserAnswers.getOrElse(UserAnswers(request.userId))
-        for {
-          obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-          financialData <-
-            financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-        } yield {
-          val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
-          val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
-          val paymentsStatus         = getPaymentBannerScenario(financialData)
-          val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
-          val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
-          Ok(
-            homepageView(
-              subscriptionData.upeDetails.organisationName,
-              subscriptionData.upeDetails.registrationDate.toDateFormat,
-              btnBanner,
-              returnsStatus,
-              paymentsStatus,
-              notificationArea,
-              plrReference,
-              request.isAgent,
-              hasReturnsUnderEnquiry
-            )
-          )
-        }
-      }
-    } else {
-      Future.successful(
+    sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
+      maybeUserAnswers.getOrElse(UserAnswers(request.userId))
+      for {
+        obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+        financialData <-
+          financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
+      } yield {
+        val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
+        val returnsStatus          = getDueOrOverdueReturnsStatus(obligationsResponse)
+        val paymentsStatus         = getPaymentBannerScenario(financialData)
+        val notificationArea       = determineNotificationArea(returnsStatus, financialData, accountStatus)
+        val btnBanner              = determineBtnBanner(accountStatus, notificationArea)
         Ok(
-          dashboardView(
+          homepageView(
             subscriptionData.upeDetails.organisationName,
             subscriptionData.upeDetails.registrationDate.toDateFormat,
+            btnBanner,
+            returnsStatus,
+            paymentsStatus,
+            notificationArea,
             plrReference,
-            inactiveStatus = accountStatus == InactiveAccount,
-            agentView = request.isAgent
+            request.isAgent,
+            hasReturnsUnderEnquiry
           )
         )
-      )
+      }
     }
   }
 
