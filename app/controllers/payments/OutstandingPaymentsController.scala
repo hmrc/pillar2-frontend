@@ -45,7 +45,6 @@ class OutstandingPaymentsController @Inject() (
   referenceNumberService:                 ReferenceNumberService,
   getData:                                DataRetrievalAction,
   requireData:                            DataRequiredAction,
-  checkPhase2Screens:                     Phase2ScreensAction,
   financialDataService:                   FinancialDataService,
   view:                                   OutstandingPaymentsView,
   sessionRepository:                      SessionRepository
@@ -79,7 +78,7 @@ class OutstandingPaymentsController @Inject() (
       .reverse
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { implicit request =>
       implicit val hc:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       implicit val isAgent: Boolean       = request.isAgent
       (for {

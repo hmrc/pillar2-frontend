@@ -31,7 +31,7 @@
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-    pageTitle    = titleNoForm(messages("mneToDomestic.title")), bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+    pageTitle    = titleNoForm(messages("mneToDomestic.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
         @heading(messages("mneToDomestic.heading"), "govuk-heading-l")
 
         @if(isAgent) {
@@ -47,5 +47,5 @@
             linkFullStop = true
         )
 
-        @paragraphBodyLink(messages("mneToDomestic.homepageLink"), linkUrl = controllers.routes.DashboardController.onPageLoad.url)
+        @paragraphBodyLink(messages("mneToDomestic.homepageLink"), linkUrl = controllers.routes.HomepageController.onPageLoad.url)
 }

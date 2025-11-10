@@ -67,7 +67,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        view().getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        view().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have a paragraph" in {
@@ -140,7 +140,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have a caption" in {

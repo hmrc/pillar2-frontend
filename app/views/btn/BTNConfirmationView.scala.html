@@ -33,7 +33,7 @@
 
 @(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.DashboardController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
     @govukPanel(Panel(
       title = Text(messages("btn.confirmation.heading")),
@@ -61,7 +61,7 @@
 
     @paragraphMessageWithLink(
       linkMessage = messages("btn.confirmation.p5.group.link"),
-      linkUrl = controllers.routes.DashboardController.onPageLoad.url,
+      linkUrl = controllers.routes.HomepageController.onPageLoad.url,
       classes = "govuk-body govuk-!-display-none-print"
     )
 }

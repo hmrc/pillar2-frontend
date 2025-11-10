@@ -51,14 +51,14 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a banner with a link to the Homepage" in {
-      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have a paragraph detailing submission details" in {
       organisationViewParagraphs.get(1).text() mustBe
         "Submission and amendment dates for your group's returns over the last 7 years from today's date."
       organisationViewParagraphs.get(2).text mustBe
-        "Where you’ve made changes to a tax return or information return, we’ll list these as individual submissions."
+        "Where you’ve made changes to a tax return or GloBE Information Return (GIR), we’ll list these as individual submissions."
     }
 
     "have a inset text" in {
@@ -77,7 +77,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       val table: Element = tableElements.first()
 
       val captions: Elements = table.getElementsByClass("govuk-table__caption")
-      captions.first().text mustBe s"$fromDate to $toDate"
+      captions.first().text mustBe s"Accounting period: $fromDate to $toDate"
 
       val tableHeaders: Elements = table.getElementsByClass("govuk-table__header")
       tableHeaders.get(0).text mustBe "Type of return"
@@ -107,14 +107,14 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a banner with a link to the Homepage" in {
-      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have a paragraph detailing submission details" in {
       agentViewParagraphs.get(1).text() mustBe
         "Submission and amendment dates for your client's returns over the last 7 years from today's date."
       agentViewParagraphs.get(2).text mustBe
-        "Where your client makes changes to a tax return or information return, we’ll list these as individual submissions."
+        "Where your client makes changes to a tax return or GloBE Information Return (GIR), we’ll list these as individual submissions."
     }
 
     "have a paragraph with link" in {

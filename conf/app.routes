@@ -306,7 +306,7 @@ GET         /manage-account/contact-details/address/change-input                
 POST        /manage-account/contact-details/address/change-input                                     controllers.subscription.manageAccount.CaptureSubscriptionAddressController.onSubmit
 
 
-GET         /pillar2-top-up-tax-home                                                                 controllers.DashboardController.onPageLoad
+GET         /pillar2-top-up-tax-home                                                                 controllers.HomepageController.onPageLoad
 
 GET         /business-matching/ultimate-parent/uk-based/error/unable-to-confirm-details              controllers.GrsRegistrationNotCalledController.onPageLoadUpe
 GET         /business-matching/filing-member/uk-based/error/unable-to-confirm-details                controllers.GrsRegistrationNotCalledController.onPageLoadNfm

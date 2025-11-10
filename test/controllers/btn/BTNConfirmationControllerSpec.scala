@@ -45,7 +45,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -93,7 +92,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -147,7 +145,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -201,7 +198,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
         )
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(someSubscriptionLocalData))
-          .configure("features.phase2ScreensEnabled" -> true)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
@@ -227,26 +223,6 @@ class BTNConfirmationControllerSpec extends SpecBase {
             applicationConfig,
             messages(application)
           ).toString
-        }
-      }
-
-      "must redirect to dashboard for onPageLoad when phase2ScreensEnabled is false" in {
-        val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-          .configure("features.phase2ScreensEnabled" -> false)
-          .overrides(
-            bind[SessionRepository].toInstance(mockSessionRepository),
-            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
-          )
-          .build()
-
-        running(application) {
-          when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-
-          val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
-          val result  = route(application, request).value
-
-          status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.DashboardController.onPageLoad.url
         }
       }
     }

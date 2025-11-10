@@ -26,7 +26,6 @@ import play.twirl.api.Html
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.RegistrationInProgressNewView
-import views.html.RegistrationInProgressView
 
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
@@ -34,8 +33,7 @@ import scala.concurrent.ExecutionContext
 class RegistrationInProgressController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   identify:                 IdentifierAction,
-  viewOldHomepage:          RegistrationInProgressView,
-  viewNewHomepage:          RegistrationInProgressNewView,
+  viewHomepage:             RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
 )(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
@@ -44,17 +42,13 @@ class RegistrationInProgressController @Inject() (
 
   def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
     val view: String => Html =
-      if (appConfig.newHomepageEnabled) { (ref: String) =>
-        viewNewHomepage(ref)
-      } else { (ref: String) =>
-        viewOldHomepage(ref)
-      }
+      (ref: String) => viewHomepage(ref)
 
     subscriptionService
       .maybeReadSubscription(plrReference)
       .map {
         case Some(_) =>
-          Redirect(controllers.routes.DashboardController.onPageLoad)
+          Redirect(controllers.routes.HomepageController.onPageLoad)
         case None =>
           Ok(view(plrReference))
       }

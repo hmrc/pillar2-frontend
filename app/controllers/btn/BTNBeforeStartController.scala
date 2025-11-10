@@ -44,36 +44,34 @@ class BTNBeforeStartController @Inject() (
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction,
   subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
-  checkPhase2Screens:                     Phase2ScreensAction,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
 )(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen checkPhase2Screens andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData).async {
-      implicit request =>
-        implicit val hc: HeaderCarrier =
-          HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-        (
-          for {
-            maybeSubscriptionData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
-            maybeUserAnswer       <- OptionT.liftF(sessionRepository.get(request.userId))
-            userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
-            updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
-            _ = OptionT.liftF(
-                  updatedAnswers
-                    .removeMultiple(BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, BTNStatus)
-                    .map(updatedAnswers => sessionRepository.set(updatedAnswers))
-                )
-          } yield maybeSubscriptionData
-        ).value
-          .flatMap {
-            case Some(_) => Future.successful(Ok(view(request.isAgent, filteredAccountingPeriodDetails.size > 1, mode)))
-            case None    => Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
-          }
-          .recover { case _ =>
-            Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
-          }
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData).async { implicit request =>
+      implicit val hc: HeaderCarrier =
+        HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      (
+        for {
+          maybeSubscriptionData <- OptionT.liftF(subscriptionService.getSubscriptionCache(request.userId))
+          maybeUserAnswer       <- OptionT.liftF(sessionRepository.get(request.userId))
+          userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))
+          updatedAnswers <- OptionT.liftF(Future.fromTry(userAnswers.set(PlrReferencePage, maybeSubscriptionData.plrReference)))
+          _ = OptionT.liftF(
+                updatedAnswers
+                  .removeMultiple(BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, BTNStatus)
+                  .map(updatedAnswers => sessionRepository.set(updatedAnswers))
+              )
+        } yield maybeSubscriptionData
+      ).value
+        .flatMap {
+          case Some(_) => Future.successful(Ok(view(request.isAgent, filteredAccountingPeriodDetails.size > 1, mode)))
+          case None    => Future.successful(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
+        }
+        .recover { case _ =>
+          Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad)
+        }
     }
 }

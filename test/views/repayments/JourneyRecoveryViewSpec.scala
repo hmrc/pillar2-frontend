@@ -44,7 +44,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
     }
 
     "have the first paragraph with the correct text" in {
@@ -58,7 +58,7 @@ class JourneyRecoveryViewSpec extends ViewSpecBase {
     "have a paragraph with a link" in {
       paragraphs.get(2).getElementsByTag("a").text() mustBe "Return to account homepage"
       paragraphs.get(2).getElementsByTag("a").attr("href") mustBe
-        controllers.routes.DashboardController.onPageLoad.url
+        controllers.routes.HomepageController.onPageLoad.url
     }
   }
 }

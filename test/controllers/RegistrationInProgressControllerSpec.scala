@@ -31,30 +31,8 @@ class RegistrationInProgressControllerSpec extends SpecBase {
 
   "RegistrationInProgressController" must {
 
-    "return OK and the old homepage view when no subscription data is found and newHomepageEnabled is false" in {
+    "return OK and the new homepage view when no subscription data is found" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.newHomepageEnabled" -> false)
-        .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
-        .build()
-
-      running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
-          .thenReturn(Future.successful(None))
-
-        val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val content = contentAsString(result)
-        content must include("PLRREF123")
-        content must include("Registration in progress")
-      }
-    }
-
-    "return OK and the new homepage view when no subscription data is found and newHomepageEnabled is true" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.newHomepageEnabled" -> true)
         .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
 
@@ -90,34 +68,12 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.DashboardController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
       }
     }
 
-    "return OK and the old homepage view when UnprocessableEntityError occurs and newHomepageEnabled is false" in {
+    "return OK and the new homepage view when UnprocessableEntityError occurs" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.newHomepageEnabled" -> false)
-        .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
-        .build()
-
-      running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
-          .thenReturn(Future.failed(UnprocessableEntityError))
-
-        val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
-
-        val result = route(application, request).value
-
-        status(result) mustEqual OK
-        val content = contentAsString(result)
-        content must include("PLRREF123")
-        content must include("Registration in progress")
-      }
-    }
-
-    "return OK and the new homepage view when UnprocessableEntityError occurs and newHomepageEnabled is true" in {
-      val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
-        .configure("features.newHomepageEnabled" -> true)
         .overrides(bind[SubscriptionService].toInstance(mockSubscriptionService))
         .build()
 

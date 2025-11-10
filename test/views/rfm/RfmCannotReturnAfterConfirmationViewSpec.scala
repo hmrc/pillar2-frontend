@@ -49,7 +49,7 @@ class RfmCannotReturnAfterConfirmationViewSpec extends ViewSpecBase {
     "have a paragraph with a link" in {
       paragraphs.get(1).text() mustBe "You can now report and manage your Pillar 2 Top-up Taxes."
       paragraphs.get(1).getElementsByTag("a").text() mustBe "report and manage your Pillar 2 Top-up Taxes"
-      paragraphs.get(1).getElementsByTag("a").attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+      paragraphs.get(1).getElementsByTag("a").attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
     }
 
   }

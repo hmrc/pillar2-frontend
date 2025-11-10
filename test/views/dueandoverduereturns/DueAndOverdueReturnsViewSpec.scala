@@ -43,7 +43,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     h1Elements.text() mustBe pageTitle
 
     val className: String = "govuk-header__link govuk-header__service-name"
-    view.getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+    view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
 
     val headings: Elements = view.getElementsByTag("h2")
 
@@ -139,7 +139,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
       "display the accounting period heading correctly" in {
         val periodHeading: Element = view.getElementsByTag("h2").first()
-        periodHeading.text mustBe s"${fromDate.toDateFormat} to ${toDate.toDateFormat}"
+        periodHeading.text mustBe s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat}"
       }
 
       "show a table with properly formatted due returns" in {
@@ -214,8 +214,9 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         periodHeadings.size mustBe 2
 
         val expectedFirstPeriod =
-          s"${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).toDateFormat} to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).toDateFormat}"
-        val expectedSecondPeriod: String = s"${fromDate.toDateFormat} to ${toDate.toDateFormat}"
+          s"Accounting period: ${currentDate.minusYears(1).withMonth(1).withDayOfMonth(1).toDateFormat} " +
+            s"to ${currentDate.minusYears(1).withMonth(12).withDayOfMonth(31).toDateFormat}"
+        val expectedSecondPeriod: String = s"Accounting period: ${fromDate.toDateFormat} to ${toDate.toDateFormat}"
 
         periodHeadings.get(0).text mustBe expectedFirstPeriod
         periodHeadings.get(1).text mustBe expectedSecondPeriod
@@ -247,7 +248,7 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         // Check type of return and due date for second table (current period) - second row
         val secondTableSecondRowCells: Elements = secondTableRows.get(1).select("td")
-        secondTableSecondRowCells.get(0).text mustBe "Information return"
+        secondTableSecondRowCells.get(0).text mustBe "GloBE Information Return (GIR)"
         secondTableSecondRowCells.get(1).text mustBe futureDueDate.toDateFormat
 
         val secondTableStatusTags: Elements = secondTableRows.select("td p.govuk-tag")

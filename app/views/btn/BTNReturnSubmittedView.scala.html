@@ -40,7 +40,7 @@
     } else {
         titleNoForm(messages("btn.returnSubmitted.title", accountingPeriodStartDate, accountingPeriodEndDate))
     },
-    bannerUrl = Some(routes.DashboardController.onPageLoad.url)
+    bannerUrl = Some(routes.HomepageController.onPageLoad.url)
 ) {
     @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
         @if(isAgent) {
@@ -59,7 +59,7 @@
 
         @paragraphMessageWithLink(
             linkMessage = messages("btn.returnSubmitted.link"),
-            linkUrl = controllers.routes.DashboardController.onPageLoad.url
+            linkUrl = controllers.routes.HomepageController.onPageLoad.url
         )
     }
 }

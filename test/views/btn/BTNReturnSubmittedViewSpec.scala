@@ -65,8 +65,8 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view().getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
-        view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.DashboardController.onPageLoad.url
+        view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
       }
 
       "have a paragraph" in {
@@ -88,7 +88,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
       "have a Return to Homepage link" in {
         val link: Element = view().getElementsByClass("govuk-body").last().getElementsByTag("a").first()
         link.text mustBe "Return to homepage"
-        link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+        link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
         link.attr("target") mustBe "_self"
         link.attr("rel") mustNot be("noopener noreferrer")
       }
@@ -126,7 +126,7 @@ class BTNReturnSubmittedViewSpec extends ViewSpecBase {
         val link: Element = view(true).getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
         link.text mustBe "Return to homepage"
-        link.attr("href") mustBe controllers.routes.DashboardController.onPageLoad.url
+        link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
         link.attr("target") mustBe "_self"
         link.attr("rel") mustNot be("noopener noreferrer")
       }
