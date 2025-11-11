@@ -349,7 +349,7 @@ class CheckYourAnswersControllerSpec
           when(mockBTNService.submitBTN(any)(any, any)).thenReturn(Future.successful(BtnResponse(BtnSuccess(processedAt).asRight, CREATED)))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
-          when(mockAuditService.auditBTN(any, any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
+          when(mockAuditService.auditBTNSubmission(any, any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
 
           val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -362,7 +362,7 @@ class CheckYourAnswersControllerSpec
 
             route(application, request).value.futureValue
 
-            verify(mockAuditService).auditBTN(
+            verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),
               eqTo(someSubscriptionLocalData.subAccountingPeriod),
               entitiesInsideAndOutsideUK = eqTo(false),
@@ -381,7 +381,7 @@ class CheckYourAnswersControllerSpec
             .thenReturn(Future.successful(BtnResponse(BtnError(errorCode, errorMessage).asLeft, statusCode)))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
-          when(mockAuditService.auditBTN(any, any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
+          when(mockAuditService.auditBTNSubmission(any, any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
 
           val application = applicationBuilder(userAnswers = Some(validBTNCyaUa), subscriptionLocalData = Some(someSubscriptionLocalData))
             .overrides(bind[BTNService].toInstance(mockBTNService))
@@ -395,7 +395,7 @@ class CheckYourAnswersControllerSpec
 
             route(application, request).value.futureValue
 
-            verify(mockAuditService).auditBTN(
+            verify(mockAuditService).auditBTNSubmission(
               eqTo(someSubscriptionLocalData.plrReference),
               eqTo(someSubscriptionLocalData.subAccountingPeriod),
               entitiesInsideAndOutsideUK = eqTo(false),

@@ -125,7 +125,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               entitiesInsideAndOutsideUK = true,
               response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processedAt = responseProcessedAt
+                processedAt = ZonedDateTime.parse(responseProcessedAt)
               )
             )
             .futureValue
@@ -146,7 +146,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               "statusCode" -> responseOk,
               "messageResponseData" -> Json.obj(
                 "success" -> Json.obj(
-                  "processingDate" -> responseProcessedAtSerialised,
+                  "processingDate" -> ZonedDateTime.parse(responseProcessedAt),
                   // no errorCode
                   "responseMessage" -> responseSuccessMessage
                 )
@@ -169,7 +169,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               entitiesInsideAndOutsideUK = false,
               response = models.audit.ApiResponseFailure(
                 statusCode = responseInternalServerError,
-                processedAt = responseProcessedAt,
+                processedAt = ZonedDateTime.parse(responseProcessedAt),
                 errorCode = responseErrorCode,
                 responseMessage = responseErrorMessage
               )
@@ -192,7 +192,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               "statusCode" -> responseInternalServerError,
               "messageResponseData" -> Json.obj(
                 "failure" -> Json.obj(
-                  "processingDate"  -> responseProcessedAtSerialised,
+                  "processingDate"  -> responseProcessedAt,
                   "errorCode"       -> responseErrorCode,
                   "responseMessage" -> responseErrorMessage
                 )
@@ -216,7 +216,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
             entitiesInsideAndOutsideUK = true,
             response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processedAt = responseProcessedAt,
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
           .futureValue
@@ -238,7 +238,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
             entitiesInsideAndOutsideUK = true,
             response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processedAt = responseProcessedAt
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
           .futureValue
@@ -260,7 +260,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
             entitiesInsideAndOutsideUK = true,
             response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processedAt = responseProcessedAt
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
           .failed
