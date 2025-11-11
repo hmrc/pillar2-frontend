@@ -25,7 +25,7 @@ case class BtnResponse(result: Either[BtnError, BtnSuccess], httpStatusCode: Int
 
 case class BtnSuccess(processingDate: ZonedDateTime)
 
-case class BtnError(errorCode: String, message: String, processingDate: Option[ZonedDateTime])
+case class BtnError(errorCode: String, message: String)
 
 object BtnSuccess {
   implicit val reads: Reads[BtnSuccess] =
@@ -35,7 +35,6 @@ object BtnSuccess {
 object BtnError {
   implicit val reads: Reads[BtnError] = (
     (__ \ "code").read[String] and
-      (__ \ "message").read[String] and
-      (__ \ "processingDate").readNullable[ZonedDateTime]
-  )((code, message, processingDate) => BtnError(errorCode = code, message = message, processingDate = processingDate))
+      (__ \ "message").read[String]
+  )((code, message) => BtnError(errorCode = code, message = message))
 }

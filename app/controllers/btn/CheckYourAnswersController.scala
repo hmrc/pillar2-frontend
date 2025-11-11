@@ -36,7 +36,7 @@ import viewmodels.checkAnswers._
 import viewmodels.govuk.summarylist._
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
-import java.time.ZonedDateTime
+import java.time.{Clock, ZonedDateTime}
 import javax.inject.Named
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -51,7 +51,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   auditService:                           AuditService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

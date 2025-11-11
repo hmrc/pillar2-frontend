@@ -70,7 +70,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
       stubResponse(submitBTNPath, httpStatusCode, jsonResponse.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result mustBe BtnResponse(
-        BtnError(errorCode, errorMessage, processingDate = None).asLeft,
+        BtnError(errorCode, errorMessage).asLeft,
         httpStatusCode
       )
     }
@@ -85,7 +85,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
       stubResponse(submitBTNPath, UNPROCESSABLE_ENTITY, jsonResponse.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result mustBe BtnResponse(
-        BtnError(errorCode, errorMessage, processingDate = Some(stubProcessedDateTime)).asLeft,
+        BtnError(errorCode, errorMessage).asLeft,
         UNPROCESSABLE_ENTITY
       )
     }

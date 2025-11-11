@@ -113,7 +113,7 @@ object BTNServiceSpec {
   val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime)
 
   val btnSuccess: BtnSuccess = BtnSuccess(zonedTestDateTime)
-  val btnError:   BtnError   = BtnError("400", "Invalid Message", processingDate = None)
+  val btnError:   BtnError   = BtnError("400", "Invalid Message")
 
   val successResponse: BtnResponse = BtnResponse(btnSuccess.asRight, CREATED)
   val errorResponse:   BtnResponse = BtnResponse(btnError.asLeft, BAD_REQUEST)

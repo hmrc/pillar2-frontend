@@ -20,7 +20,7 @@ import models.btn.BtnResponse
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-import java.time.{Instant, LocalDate, ZonedDateTime}
+import java.time._
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -58,7 +58,7 @@ final case class ApiResponseFailure(
 ) extends ApiResponseData
 
 object ApiResponseData {
-  def fromBtnResponse(btnResponse: BtnResponse): ApiResponseData = btnResponse.result match {
+  def fromBtnResponse(btnResponse: BtnResponse)(implicit clock: Clock): ApiResponseData = btnResponse.result match {
     case Right(success) =>
       ApiResponseSuccess(
         btnResponse.httpStatusCode,
@@ -67,7 +67,7 @@ object ApiResponseData {
     case Left(failure) =>
       ApiResponseFailure(
         btnResponse.httpStatusCode,
-        failure.processingDate.getOrElse(ZonedDateTime.now()),
+        ZonedDateTime.now(clock),
         failure.errorCode,
         failure.message
       )
