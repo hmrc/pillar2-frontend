@@ -153,7 +153,7 @@ class CheckYourAnswersController @Inject() (
                   for {
                     errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
                     _            <- sessionRepository.set(errorAnswers)
-                    _ <- auditService.auditBTN(
+                    _ <- auditService.auditBTNSubmission(
                            pillarReference = pillar2Id,
                            accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),

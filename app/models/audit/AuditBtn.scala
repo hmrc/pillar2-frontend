@@ -17,6 +17,7 @@
 package models.audit
 
 import models.btn.BtnResponse
+import models.subscription.AccountingPeriod
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
@@ -29,7 +30,7 @@ case class CreateBtnAuditEvent(
   entitiesInsideAndOutsideUK: Boolean,
   apiResponseData:            ApiResponseData
 ) extends AuditEvent {
-  override val auditType:  String  = "belowThresholdNotification"
+  override val auditType:  String  = BtnAuditCommonValues.auditType
   override val detailJson: JsValue = Json.toJson(this)
 }
 
@@ -94,4 +95,33 @@ object ApiResponseFailure {
       (__ \ "messageResponseData" \ "failure" \ "responseMessage").write[String] and
       (__ \ "messageResponseData" \ "failure" \ "errorCode").write[String]
   )(resp => (resp.statusCode, resp.processedAt.toInstant, resp.responseMessage, resp.errorCode))
+}
+
+case class BtnAlreadySubmittedAuditEvent(
+  pillarReference:         String,
+  accountingPeriod:        AccountingPeriod,
+  entitiesInsideOutsideUk: Boolean
+) extends AuditEvent {
+  override val auditType:  String  = BtnAuditCommonValues.auditType
+  override val detailJson: JsValue = Json.toJson(this)
+}
+
+object BtnAlreadySubmittedAuditEvent {
+  implicit val writes: Writes[BtnAlreadySubmittedAuditEvent] = (
+    (__ \ "pillarReference").write[String] and
+      (__ \ "accountingPeriodStart").write[LocalDate] and
+      (__ \ "accountingPeriodEnd").write[LocalDate] and
+      (__ \ "entitiesInsideAndOutsideUK").write[Boolean]
+  ) { event =>
+    (
+      event.pillarReference,
+      event.accountingPeriod.startDate,
+      event.accountingPeriod.endDate,
+      event.entitiesInsideOutsideUk
+    )
+  }
+}
+
+private object BtnAuditCommonValues {
+  val auditType = "belowThresholdNotification"
 }
