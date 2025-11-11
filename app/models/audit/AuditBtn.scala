@@ -16,11 +16,12 @@
 
 package models.audit
 
+import models.btn.BtnResponse
 import models.subscription.AccountingPeriod
 import play.api.libs.functional.syntax._
 import play.api.libs.json._
 
-import java.time.LocalDate
+import java.time._
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,
@@ -34,20 +35,66 @@ case class CreateBtnAuditEvent(
 }
 
 object CreateBtnAuditEvent {
-  implicit val format: OFormat[CreateBtnAuditEvent] = Json.format[CreateBtnAuditEvent]
   implicit val writes: OWrites[CreateBtnAuditEvent] = Json.writes[CreateBtnAuditEvent]
 }
 
-case class ApiResponseData(
+sealed trait ApiResponseData {
+  def statusCode:      Int
+  def processedAt:     ZonedDateTime
+  def responseMessage: String
+}
+
+final case class ApiResponseSuccess(
+  statusCode:  Int,
+  processedAt: ZonedDateTime
+) extends ApiResponseData {
+  val responseMessage = "Success"
+}
+
+final case class ApiResponseFailure(
   statusCode:      Int,
-  processingDate:  String,
-  errorCode:       Option[String],
+  processedAt:     ZonedDateTime,
+  errorCode:       String,
   responseMessage: String
-)
+) extends ApiResponseData
 
 object ApiResponseData {
-  implicit val format: OFormat[ApiResponseData] = Json.format[ApiResponseData]
-  implicit val writes: OWrites[ApiResponseData] = Json.writes[ApiResponseData]
+  def fromBtnResponse(btnResponse: BtnResponse)(implicit clock: Clock): ApiResponseData = btnResponse.result match {
+    case Right(success) =>
+      ApiResponseSuccess(
+        btnResponse.httpStatusCode,
+        success.processingDate
+      )
+    case Left(failure) =>
+      ApiResponseFailure(
+        btnResponse.httpStatusCode,
+        ZonedDateTime.now(clock),
+        failure.errorCode,
+        failure.message
+      )
+  }
+
+  implicit val writes: Writes[ApiResponseData] = {
+    case success @ ApiResponseSuccess(_, _)       => Json.toJson(success)
+    case failure @ ApiResponseFailure(_, _, _, _) => Json.toJson(failure)
+  }
+}
+
+object ApiResponseSuccess {
+  implicit val writes: Writes[ApiResponseSuccess] = (
+    (__ \ "statusCode").write[Int] and
+      (__ \ "messageResponseData" \ "success" \ "processingDate").write[Instant] and
+      (__ \ "messageResponseData" \ "success" \ "responseMessage").write[String]
+  )(resp => (resp.statusCode, resp.processedAt.toInstant, resp.responseMessage))
+}
+
+object ApiResponseFailure {
+  implicit val writes: Writes[ApiResponseFailure] = (
+    (__ \ "statusCode").write[Int] and
+      (__ \ "messageResponseData" \ "failure" \ "processingDate").write[Instant] and
+      (__ \ "messageResponseData" \ "failure" \ "responseMessage").write[String] and
+      (__ \ "messageResponseData" \ "failure" \ "errorCode").write[String]
+  )(resp => (resp.statusCode, resp.processedAt.toInstant, resp.responseMessage, resp.errorCode))
 }
 
 case class BtnAlreadySubmittedAuditEvent(

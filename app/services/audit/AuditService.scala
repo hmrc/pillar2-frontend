@@ -209,7 +209,7 @@ class AuditService @Inject() (
     pillarReference:            String,
     accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,
-    apiResponseData:            ApiResponseData
+    response:                   ApiResponseData
   )(implicit hc:                HeaderCarrier): Future[AuditResult] =
     sendEventBTN(
       CreateBtnAuditEvent(
@@ -217,7 +217,7 @@ class AuditService @Inject() (
         accountingPeriodStart = accountingPeriod.startDate,
         accountingPeriodEnd = accountingPeriod.endDate,
         entitiesInsideAndOutsideUK = entitiesInsideAndOutsideUK,
-        apiResponseData = apiResponseData
+        apiResponseData = response
       )
     )
 

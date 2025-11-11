@@ -31,7 +31,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.play.audit.http.connector.{AuditConnector, AuditResult}
 import uk.gov.hmrc.play.audit.model.ExtendedDataEvent
 
-import java.time.LocalDate
+import java.time._
 import scala.concurrent.Future
 
 class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenPropertyChecks {
@@ -123,11 +123,9 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = true,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseSuccess(
                 statusCode = responseOk,
-                processingDate = responseProcessedAt,
-                errorCode = None,
-                responseMessage = responseSuccessMessage
+                processedAt = ZonedDateTime.parse(responseProcessedAt)
               )
             )
             .futureValue
@@ -145,10 +143,14 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
             "accountingPeriodEnd"        -> apEndDate,
             "entitiesInsideAndOutsideUK" -> true,
             "apiResponseData" -> Json.obj(
-              "statusCode"     -> responseOk,
-              "processingDate" -> responseProcessedAt,
-              // no errorCode
-              "responseMessage" -> "Success"
+              "statusCode" -> responseOk,
+              "messageResponseData" -> Json.obj(
+                "success" -> Json.obj(
+                  "processingDate" -> ZonedDateTime.parse(responseProcessedAt),
+                  // no errorCode
+                  "responseMessage" -> responseSuccessMessage
+                )
+              )
             )
           )
         }
@@ -165,10 +167,10 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
                 endDate = LocalDate.parse(apEndDate)
               ),
               entitiesInsideAndOutsideUK = false,
-              apiResponseData = models.audit.ApiResponseData(
+              response = models.audit.ApiResponseFailure(
                 statusCode = responseInternalServerError,
-                processingDate = responseProcessedAt,
-                errorCode = Some(responseErrorCode),
+                processedAt = ZonedDateTime.parse(responseProcessedAt),
+                errorCode = responseErrorCode,
                 responseMessage = responseErrorMessage
               )
             )
@@ -187,10 +189,14 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
             "accountingPeriodEnd"        -> apEndDate,
             "entitiesInsideAndOutsideUK" -> false,
             "apiResponseData" -> Json.obj(
-              "statusCode"      -> responseInternalServerError,
-              "processingDate"  -> responseProcessedAt,
-              "errorCode"       -> responseErrorCode,
-              "responseMessage" -> responseErrorMessage
+              "statusCode" -> responseInternalServerError,
+              "messageResponseData" -> Json.obj(
+                "failure" -> Json.obj(
+                  "processingDate"  -> responseProcessedAt,
+                  "errorCode"       -> responseErrorCode,
+                  "responseMessage" -> responseErrorMessage
+                )
+              )
             )
           )
         }
@@ -200,7 +206,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
         when(auditConnector.sendExtendedEvent(any())(any(), any()))
           .thenReturn(Future.successful(AuditResult.Disabled))
 
-        auditService
+        val result = auditService
           .auditBTNSubmission(
             pillarReference = pillarReference,
             accountingPeriod = AccountingPeriod(
@@ -208,21 +214,21 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               endDate = LocalDate.parse(apEndDate)
             ),
             entitiesInsideAndOutsideUK = true,
-            apiResponseData = models.audit.ApiResponseData(
+            response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processingDate = responseProcessedAt,
-              errorCode = None,
-              responseMessage = responseSuccessMessage
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
-          .futureValue mustBe AuditResult.Disabled
+          .futureValue
+
+        result mustBe AuditResult.Disabled
       }
 
       "return Failure when audit connector returns failure" in withMockedAuditConnector { (auditService, auditConnector) =>
         when(auditConnector.sendExtendedEvent(any())(any(), any()))
           .thenReturn(Future.successful(AuditResult.Failure("Audit failure")))
 
-        auditService
+        val result = auditService
           .auditBTNSubmission(
             pillarReference = pillarReference,
             accountingPeriod = AccountingPeriod(
@@ -230,14 +236,14 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               endDate = LocalDate.parse(apEndDate)
             ),
             entitiesInsideAndOutsideUK = true,
-            apiResponseData = models.audit.ApiResponseData(
+            response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processingDate = responseProcessedAt,
-              errorCode = None,
-              responseMessage = responseSuccessMessage
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
-          .futureValue mustBe AuditResult.Failure("Audit failure")
+          .futureValue
+
+        result mustBe AuditResult.Failure("Audit failure")
       }
 
       "propagate exceptions from audit connector" in withMockedAuditConnector { (auditService, auditConnector) =>
@@ -252,11 +258,9 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
               endDate = LocalDate.parse(apEndDate)
             ),
             entitiesInsideAndOutsideUK = true,
-            apiResponseData = models.audit.ApiResponseData(
+            response = models.audit.ApiResponseSuccess(
               statusCode = responseOk,
-              processingDate = responseProcessedAt,
-              errorCode = None,
-              responseMessage = responseSuccessMessage
+              processedAt = ZonedDateTime.parse(responseProcessedAt)
             )
           )
           .failed

@@ -16,12 +16,25 @@
 
 package models.btn
 
-import play.api.libs.json.{Json, OFormat}
+import play.api.libs.functional.syntax._
+import play.api.libs.json._
 
 import java.time.ZonedDateTime
 
-case class BTNSuccess(processingDate: ZonedDateTime)
+case class BtnResponse(result: Either[BtnError, BtnSuccess], httpStatusCode: Int)
 
-object BTNSuccess {
-  implicit val format: OFormat[BTNSuccess] = Json.format[BTNSuccess]
+case class BtnSuccess(processingDate: ZonedDateTime)
+
+case class BtnError(errorCode: String, message: String)
+
+object BtnSuccess {
+  implicit val reads: Reads[BtnSuccess] =
+    (__ \ "processingDate").read[ZonedDateTime].map(BtnSuccess.apply)
+}
+
+object BtnError {
+  implicit val reads: Reads[BtnError] = (
+    (__ \ "code").read[String] and
+      (__ \ "message").read[String]
+  )((code, message) => BtnError(errorCode = code, message = message))
 }

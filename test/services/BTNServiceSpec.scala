@@ -17,25 +17,23 @@
 package services
 
 import base.SpecBase
+import cats.syntax.either._
 import connectors.BTNConnector
 import models.InternalIssueError
-import models.btn.{BTNRequest, BTNSuccess}
+import models.btn._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
-import play.api.libs.json.{JsValue, Json}
 import play.api.test.Helpers._
 import services.BTNServiceSpec._
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.DateTimeUtils.isoDateTimeFormatter
 
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.{ExecutionContext, Future}
 
 class BTNServiceSpec extends SpecBase {
-  implicit val pillar2Id:          String          = pillar2IdForValidResponse
-  val btnSuccessfulResponseFuture: Future[JsValue] = Future.successful(jsonBTNSuccess)
+  implicit val pillar2Id: String = pillar2IdForValidResponse
 
   val application: Application = applicationBuilder()
     .overrides(
@@ -44,13 +42,23 @@ class BTNServiceSpec extends SpecBase {
     .build()
 
   "BTNService" must {
-    "return status=201/CREATED when BTN connector returns valid data" in {
+    "return a BtnSuccess when connector returns a success" in {
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
-          .thenReturn(Future.successful(jsonBTNSuccess))
+          .thenReturn(Future.successful(successResponse))
         val service: BTNService = application.injector.instanceOf[BTNService]
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
-        result mustBe BTNSuccess(zonedTestDateTime)
+        result mustBe successResponse
+      }
+    }
+
+    "return a BtnError when connector returns a modelled failure" in {
+      running(application) {
+        when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
+          .thenReturn(Future.successful(errorResponse))
+        val service: BTNService = application.injector.instanceOf[BTNService]
+        val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
+        result mustBe errorResponse
       }
     }
 
@@ -102,11 +110,11 @@ object BTNServiceSpec {
   )
   val pillar2IdForValidResponse = "XEPLR0000000000"
   val testZonedDateTime: String        = "2025-01-10T16:54:26Z"
-  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime, isoDateTimeFormatter)
+  val zonedTestDateTime: ZonedDateTime = ZonedDateTime.parse(testZonedDateTime)
 
-  val btnSuccessJsonString: String     = s"""{"processingDate":"$testZonedDateTime"}"""
-  val btnSuccessJson:       JsValue    = Json.parse(btnSuccessJsonString)
-  val btnSuccess:           BTNSuccess = btnSuccessJson.as[BTNSuccess]
+  val btnSuccess: BtnSuccess = BtnSuccess(zonedTestDateTime)
+  val btnError:   BtnError   = BtnError("400", "Invalid Message")
 
-  val jsonBTNSuccess: JsValue = Json.parse(btnSuccessJsonString)
+  val successResponse: BtnResponse = BtnResponse(btnSuccess.asRight, CREATED)
+  val errorResponse:   BtnResponse = BtnResponse(btnError.asLeft, BAD_REQUEST)
 }
