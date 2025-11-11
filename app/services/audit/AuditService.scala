@@ -205,7 +205,7 @@ class AuditService @Inject() (
     auditConnector.sendExtendedEvent(auditEvent.extendedDataEvent)
   }
 
-  def auditBTN(
+  def auditBTNSubmission(
     pillarReference:            String,
     accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,
@@ -220,5 +220,13 @@ class AuditService @Inject() (
         apiResponseData = apiResponseData
       )
     )
+
+  def auditBtnAlreadySubmitted(
+    pillarReference:         String,
+    accountingPeriod:        AccountingPeriod,
+    entitiesInsideOutsideUk: Boolean
+  )(implicit hc:             HeaderCarrier): Future[AuditResult] = sendEventBTN(
+    BtnAlreadySubmittedAuditEvent(pillarReference, accountingPeriod, entitiesInsideOutsideUk)
+  )
 
 }
