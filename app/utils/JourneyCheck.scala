@@ -19,4 +19,7 @@ package utils
 object JourneyCheck {
   def isBTNJourney(path: String): Boolean =
     path.contains(Constants.BTNPath)
+
+  def isManageAccountJourney(path: String): Boolean =
+    path.contains(Constants.ManageAccountPath)
 }

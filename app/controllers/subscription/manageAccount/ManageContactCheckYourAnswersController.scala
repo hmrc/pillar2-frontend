@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
+import models.subscription.{ManageContactDetailsStatus, ReadSubscriptionRequestParameters, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage}
 import play.api.Logging
@@ -137,6 +137,18 @@ class ManageContactCheckYourAnswersController @Inject() (
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
       _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(userId, referenceNumber, subscriptionData))
+      _ <-
+        OptionT.liftF(
+          subscriptionService
+            .cacheSubscription(ReadSubscriptionRequestParameters(userId, referenceNumber))
+            .map(_ => ())
+            .recover { case ex: Throwable =>
+              logger.warn(
+                s"[ManageContactCheckYourAnswers] Failed to re-populate subscription cache for user $userId with PLR $referenceNumber: ${ex.getMessage}"
+              )
+              ()
+            }
+        )
       updatedAnswersOnSuccess = userAnswers match {
                                   case Some(answers) =>
                                     answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)

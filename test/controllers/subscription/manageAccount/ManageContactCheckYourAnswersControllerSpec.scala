@@ -284,7 +284,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         }
       }
 
-      "update status to SuccessfullyCompleted when background subscription update succeeds" ignore {
+      "update status to SuccessfullyCompleted when background subscription update succeeds" in {
         val mockSessionRepository  = mock[SessionRepository]
         val userAnswers            = UserAnswers("id")
         val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
@@ -294,6 +294,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
           .thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.cacheSubscription(any[ReadSubscriptionRequestParameters])(any()))
+          .thenReturn(Future.successful(subscriptionData))
 
         val application = applicationBuilder(
           userAnswers = Some(userAnswers),
@@ -317,6 +319,48 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
+          verify(mockSubscriptionService).amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any())
+          verify(mockSubscriptionService).cacheSubscription(any[ReadSubscriptionRequestParameters])(any())
+        }
+      }
+
+      "update status to SuccessfullyCompleted even when cache re-population fails" in {
+        val mockSessionRepository  = mock[SessionRepository]
+        val userAnswers            = UserAnswers("id")
+        val expectedInitialAnswers = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val expectedFinalAnswers   = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.SuccessfullyCompleted)
+
+        when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
+        when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.cacheSubscription(any[ReadSubscriptionRequestParameters])(any()))
+          .thenReturn(Future.failed(InternalIssueError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(
+            result
+          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
+          verify(mockSubscriptionService).amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any())
+          verify(mockSubscriptionService).cacheSubscription(any[ReadSubscriptionRequestParameters])(any())
         }
       }
 
