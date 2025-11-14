@@ -17,17 +17,11 @@
 package models.financialdata
 
 import models.subscription.AccountingPeriod
-import play.api.libs.json.{Json, OFormat}
 
 import java.time.LocalDate
 
 case class FinancialSummary(accountingPeriod: AccountingPeriod, transactions: Seq[TransactionSummary]) {
 
-  /** Checks if there are overdue return payments in this summary */
-  def hasOverdueReturnPayment(currentDate: LocalDate = LocalDate.now): Boolean =
-    transactions.exists(t => t.name == EtmpMainTransactionRef.UkTaxReturnMain.displayName && t.dueDate.isBefore(currentDate))
-}
-
-object FinancialSummary {
-  implicit val format: OFormat[FinancialSummary] = Json.format[FinancialSummary]
+  def overdueReturnPayments(currentDate: LocalDate = LocalDate.now): Seq[TransactionSummary] =
+    transactions.collect { case s @ TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, _, dueDate) if dueDate.isBefore(currentDate) => s }
 }

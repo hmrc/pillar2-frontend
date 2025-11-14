@@ -16,12 +16,8 @@
 
 package models.financialdata
 
-import play.api.libs.json.{Json, OFormat}
+import models.financialdata.EtmpMainTransactionRef.ChargeRef
 
 import java.time.LocalDate
 
-case class TransactionSummary(name: String, outstandingAmount: BigDecimal, dueDate: LocalDate)
-
-object TransactionSummary {
-  implicit val format: OFormat[TransactionSummary] = Json.format[TransactionSummary]
-}
+case class TransactionSummary(transactionRef: ChargeRef, outstandingAmount: BigDecimal, dueDate: LocalDate)

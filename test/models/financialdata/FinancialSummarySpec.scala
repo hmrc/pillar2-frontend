@@ -18,21 +18,22 @@ package models.financialdata
 
 import base.SpecBase
 import models.subscription.AccountingPeriod
+import org.scalatest.LoneElement
 
 import java.time.LocalDate
 
-class FinancialSummarySpec extends SpecBase {
+class FinancialSummarySpec extends SpecBase with LoneElement {
 
   private val today = LocalDate.now()
 
   "FinancialSummary" when {
 
     "checking for overdue return payments" should {
-      "return true when there is an overdue UK tax return payment" in {
+      "return the payment when there's an overdue UK tax return payment" in {
         val overdueTransaction = TransactionSummary(
-          EtmpMainTransactionRef.UkTaxReturnMain.displayName,
+          EtmpMainTransactionRef.UkTaxReturnMain,
           BigDecimal(100),
-          today.minusDays(1) // Overdue
+          dueDate = today.minusDays(1) // Overdue
         )
 
         val summary = FinancialSummary(
@@ -40,14 +41,14 @@ class FinancialSummarySpec extends SpecBase {
           Seq(overdueTransaction)
         )
 
-        summary.hasOverdueReturnPayment(today) mustBe true
+        summary.overdueReturnPayments(today).loneElement mustBe overdueTransaction
       }
 
-      "return false when there are no overdue UK tax return payments" in {
+      "return nothing when there are no overdue UK tax return payments" in {
         val futureTransaction = TransactionSummary(
-          EtmpMainTransactionRef.UkTaxReturnMain.displayName,
+          EtmpMainTransactionRef.UkTaxReturnMain,
           BigDecimal(100),
-          today.plusDays(1) // Not overdue
+          dueDate = today.plusDays(1) // Not overdue
         )
 
         val summary = FinancialSummary(
@@ -55,7 +56,22 @@ class FinancialSummarySpec extends SpecBase {
           Seq(futureTransaction)
         )
 
-        summary.hasOverdueReturnPayment(today) mustBe false
+        summary.overdueReturnPayments(today) mustBe empty
+      }
+
+      "return nothing when there are no overdue main UK tax return payments" in {
+        val overdueTransaction = TransactionSummary(
+          EtmpMainTransactionRef.LatePaymentInterest, // Not UKTR main
+          BigDecimal(100),
+          dueDate = today.minusDays(1) // Overdue
+        )
+
+        val summary = FinancialSummary(
+          AccountingPeriod(today.minusMonths(1), today),
+          Seq(overdueTransaction)
+        )
+
+        summary.overdueReturnPayments(today) mustBe empty
       }
     }
   }

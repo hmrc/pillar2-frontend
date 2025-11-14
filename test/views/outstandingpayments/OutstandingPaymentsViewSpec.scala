@@ -202,7 +202,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 object OutstandingPaymentsViewSpec {
   val plrRef: String = "XMPLR0012345678"
 
-  val transaction: TransactionSummary = TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, 1000.00, LocalDate.of(2024, 3, 31))
+  val transaction: TransactionSummary = TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, 1000.00, LocalDate.of(2024, 3, 31))
 
   val accountingPeriod: AccountingPeriod = AccountingPeriod(startDate = LocalDate.of(2023, 4, 1), endDate = LocalDate.of(2024, 3, 31))
 

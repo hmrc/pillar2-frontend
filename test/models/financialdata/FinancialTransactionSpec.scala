@@ -21,6 +21,7 @@ import cats.syntax.option._
 import models.financialdata.EtmpMainTransactionRef._
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.subscription.AccountingPeriod
 import org.scalatest.Assertion
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 
@@ -38,7 +39,7 @@ class FinancialTransactionSpec extends SpecBase with ScalaCheckDrivenPropertyChe
 
       def createsChargeOfType[ExpectedType <: OutstandingCharge: ClassTag](mainTxRef: ChargeRef): Assertion = {
         val createdCharge = OutstandingCharge.apply(mainTxRef)(
-          TaxPeriod(from = LocalDate.now().minusYears(1), LocalDate.now()),
+          AccountingPeriod(startDate = LocalDate.now().minusYears(1), endDate = LocalDate.now()),
           EtmpSubtransactionRef.Dtt,
           outstandingAmount = 10000.99,
           OutstandingCharge.FinancialItems(earliestDueDate = LocalDate.now(), items = Seq.empty)

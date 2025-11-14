@@ -131,11 +131,11 @@ object OutstandingPaymentsControllerSpec {
   val samplePaymentsData: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, BigDecimal(1000.00), LocalDate.of(2025, 6, 15)))
     ),
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2023, 1, 1), LocalDate.of(2023, 12, 31)),
-      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, BigDecimal(2000.00), LocalDate.of(2024, 6, 15)))
     )
   )
 
@@ -143,7 +143,7 @@ object OutstandingPaymentsControllerSpec {
     FinancialData(
       Seq(
         FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
-          taxPeriod = TaxPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+          accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
           subTransactionRef = Random.shuffle(EtmpSubtransactionRef.values).head,
           outstandingAmount = BigDecimal(1000.00),
           chargeItems = OutstandingCharge.FinancialItems(
@@ -157,7 +157,7 @@ object OutstandingPaymentsControllerSpec {
   val overdueFinancialSummary: Seq[FinancialSummary] = Seq(
     FinancialSummary(
       AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
-      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain.displayName, BigDecimal(1000.00), LocalDate.of(2024, 12, 31)))
+      Seq(TransactionSummary(EtmpMainTransactionRef.UkTaxReturnMain, BigDecimal(1000.00), LocalDate.of(2024, 12, 31)))
     )
   )
 

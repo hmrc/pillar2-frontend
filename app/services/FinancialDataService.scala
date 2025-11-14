@@ -24,6 +24,7 @@ import cats.syntax.validated._
 import connectors.FinancialDataConnector
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.financialdata._
+import models.subscription.AccountingPeriod
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
 import services.FinancialDataService.parseFinancialDataResponse
@@ -72,7 +73,7 @@ object FinancialDataService extends Logging {
     mainReference:       EtmpMainTransactionRef.ChargeRef
   ): ValidatedNec[IgnoredEtmpTransaction, FinancialTransaction.OutstandingCharge] =
     (
-      parseTaxPeriod(responseTransaction),
+      parseAccountingPeriod(responseTransaction),
       parseSubtransactionRef(responseTransaction),
       parseOutstandingAmount(responseTransaction),
       parseOutstandingChargeFinancialItems(responseTransaction.items)
@@ -102,11 +103,12 @@ object FinancialDataService extends Logging {
         }
         .toValidatedNec
 
-  private val parseTaxPeriod: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, TaxPeriod] = response =>
-    (
-      response.taxPeriodFrom.toValidNec(RequiredValueMissing("taxPeriodFrom")),
-      response.taxPeriodTo.toValidNec(RequiredValueMissing("taxPeriodFrom"))
-    ).mapN((from, to) => TaxPeriod(from, to))
+  private val parseAccountingPeriod: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, AccountingPeriod] =
+    response =>
+      (
+        response.taxPeriodFrom.toValidNec(RequiredValueMissing("taxPeriodFrom")),
+        response.taxPeriodTo.toValidNec(RequiredValueMissing("taxPeriodFrom"))
+      ).mapN((from, to) => AccountingPeriod(from, to, dueDate = None))
 
   private val parseOutstandingAmount: FinancialDataResponse.FinancialTransaction => ValidatedNec[IgnoredEtmpTransaction, BigDecimal] =
     _.outstandingAmount

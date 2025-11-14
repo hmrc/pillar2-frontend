@@ -1000,7 +1000,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     val amountOutstanding = 100
 
     val notYetDueFinancialTransaction = OutstandingCharge.UktrMainOutstandingCharge(
-      TaxPeriod(LocalDate.now().minusMonths(12), LocalDate.now()),
+      AccountingPeriod(LocalDate.now().minusMonths(12), LocalDate.now()),
       EtmpSubtransactionRef.Dtt,
       outstandingAmount = BigDecimal(amountOutstanding),
       chargeItems = OutstandingCharge.FinancialItems(
@@ -1086,7 +1086,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     val anyAccountStatus = Gen.oneOf(AccountStatus.values)
 
     val commonChargeFields = (
-      TaxPeriod(from = LocalDate.now().minusYears(1), to = LocalDate.now()),
+      AccountingPeriod(startDate = LocalDate.now().minusYears(1), endDate = LocalDate.now()),
       EtmpSubtransactionRef.Dtt,
       BigDecimal(12345.67),
       OutstandingCharge.FinancialItems(
