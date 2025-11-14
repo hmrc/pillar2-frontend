@@ -16,6 +16,7 @@
 
 package controllers.btn
 
+import cats.syntax.functor._
 import config.FrontendAppConfig
 import controllers.actions._
 import controllers.filteredAccountingPeriodDetails
@@ -23,11 +24,12 @@ import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
 import models.obligationsandsubmissions.{AccountingPeriodDetails, SubmissionType}
 import models.{MneOrDomestic, Mode}
-import pages.{BTNChooseAccountingPeriodPage, SubMneOrDomesticPage}
+import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils.LocalDateOps
@@ -49,7 +51,8 @@ class BTNAccountingPeriodController @Inject() (
   viewReturnSubmitted:                    BTNReturnSubmittedView,
   btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   sessionRepository:                      SessionRepository,
-  @Named("EnrolmentIdentifier") identify: IdentifierAction
+  @Named("EnrolmentIdentifier") identify: IdentifierAction,
+  auditService:                           AuditService
 )(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -87,24 +90,33 @@ class BTNAccountingPeriodController @Inject() (
             }
 
             accountingPeriodDetails
-              .map { period =>
-                if (lastSubmissionType(period, Set(BTN))) Ok(btnAlreadyInPlaceView())
-                else if (lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND))) {
-                  Ok(viewReturnSubmitted(request.isAgent, period))
+              .flatMap { period =>
+                if (lastSubmissionType(period, Set(BTN))) {
+                  auditService
+                    .auditBtnAlreadySubmitted(
+                      request.subscriptionLocalData.plrReference,
+                      request.subscriptionLocalData.subAccountingPeriod,
+                      entitiesInsideOutsideUk = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false)
+                    )
+                    .as(Ok(btnAlreadyInPlaceView()))
+                } else if (lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND))) {
+                  Future.successful(Ok(viewReturnSubmitted(request.isAgent, period)))
                 } else {
                   val currentYear = filteredAccountingPeriodDetails match {
                     case head :: _ if head == period => true
                     case _                           => false
                   }
 
-                  Ok(
-                    accountingPeriodView(
-                      getSummaryList(period.startDate, period.endDate),
-                      mode,
-                      request.isAgent,
-                      request.subscriptionLocalData.organisationName,
-                      filteredAccountingPeriodDetails.size > 1,
-                      currentYear
+                  Future.successful(
+                    Ok(
+                      accountingPeriodView(
+                        getSummaryList(period.startDate, period.endDate),
+                        mode,
+                        request.isAgent,
+                        request.subscriptionLocalData.organisationName,
+                        filteredAccountingPeriodDetails.size > 1,
+                        currentYear
+                      )
                     )
                   )
                 }

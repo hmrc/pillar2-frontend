@@ -25,8 +25,8 @@ import models.obligationsandsubmissions.SubmissionType.BTN
 import models.obligationsandsubmissions._
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.ArgumentMatchersSugar
+import org.mockito.Mockito.{verify, when}
 import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
@@ -34,8 +34,10 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
+import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
+import uk.gov.hmrc.play.audit.http.connector.AuditResult
 import utils.DateTimeUtils._
 import viewmodels.govuk.summarylist._
 import viewmodels.implicits._
@@ -44,7 +46,7 @@ import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturn
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
 
-class BTNAccountingPeriodControllerSpec extends SpecBase {
+class BTNAccountingPeriodControllerSpec extends SpecBase with ArgumentMatchersSugar {
 
   lazy val btnAccountingPeriodRoute: String = BTNAccountingPeriodController.onPageLoad(NormalMode).url
 
@@ -67,12 +69,13 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
     .overrides(
       bind[SessionRepository].toInstance(mockSessionRepository),
       bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
-      bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService)
+      bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+      bind[AuditService].toInstance(mockAuditService)
     )
     .build()
 
-  "BTNAccountingPeriodController" when {
-    "must return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
+  "BTNAccountingPeriodController" should {
+    "return OK and the correct view if PlrReference in session, obligation is not fulfilled, account is not inactive" when {
       def list(startDate: LocalDate, endDate: LocalDate): SummaryList = SummaryListViewModel(
         rows = Seq(
           SummaryListRowViewModel(
@@ -86,13 +89,13 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
         )
       )
       "one single accounting period present" in {
-        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.getSubscriptionCache(any)(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
 
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any, any, any)(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
 
         running(application) {
           val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -117,9 +120,9 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       "one accounting period has been chosen from multiple" in {
         val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountPeriod).success.value
 
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any, any, any)(any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
-        when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
+        when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(userAnswers))
 
         running(application) {
           val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -142,8 +145,9 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to a knockback page when a BTN is submitted" in {
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(submittedBTNRecord))
+    "redirect to a knockback page when a BTN is submitted" in {
+      when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(submittedBTNRecord))
+      when(mockAuditService.auditBtnAlreadySubmitted(any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -154,7 +158,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to BTN specific error page when subscription data is not returned" in {
+    "redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder()
         .overrides(bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService))
         .build()
@@ -168,7 +172,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "redirect to the next page when valid data is submitted" in {
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -177,7 +181,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted with UkOther" in {
+    "redirect to the next page when valid data is submitted with UkOther" in {
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
@@ -186,13 +190,13 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for return submitted page" in {
+    "return OK and the correct view for return submitted page" in {
       val osResponse = obligationsAndSubmissionsSuccessResponse()
 
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+      when(mockObligationsAndSubmissionsService.handleData(any, any, any)(any[HeaderCarrier]))
         .thenReturn(Future.successful(osResponse.success))
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-      when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
+      when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockSessionRepository.set(any)) thenReturn Future.successful(true)
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -207,11 +211,11 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must return OK and the correct view for BTN submitted page" in {
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+    "send an audit event and return OK with the correct view for BTN submitted page" in {
+      when(mockObligationsAndSubmissionsService.handleData(any, any, any)(any[HeaderCarrier]))
         .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(submissionType = BTN).success))
-
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockAuditService.auditBtnAlreadySubmitted(any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
@@ -224,13 +228,19 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
+
+      verify(mockAuditService).auditBtnAlreadySubmitted(
+        eqTo(plrReference),
+        eqTo(dates),
+        entitiesInsideOutsideUk = eqTo(false)
+      )(any[HeaderCarrier])
     }
 
-    "must redirect to BTN error page if the obligations and submissions service call results in an exception" in {
-      when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+    "redirect to BTN error page if the obligations and submissions service call results in an exception" in {
+      when(mockObligationsAndSubmissionsService.handleData(any, any, any)(any[HeaderCarrier]))
         .thenReturn(Future.failed(new Exception("Service failed")))
 
-      when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
+      when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
 
       running(application) {
         val request = FakeRequest(GET, btnAccountingPeriodRoute)
