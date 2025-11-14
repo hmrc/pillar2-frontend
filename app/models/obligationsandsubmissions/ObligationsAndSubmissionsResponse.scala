@@ -18,7 +18,7 @@ package models.obligationsandsubmissions
 
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import play.api.libs.json.{Json, OFormat, Reads, Writes}
+import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
 import utils.DateTimeUtils.LocalDateOps
 
