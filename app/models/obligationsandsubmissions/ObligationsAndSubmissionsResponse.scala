@@ -18,7 +18,7 @@ package models.obligationsandsubmissions
 
 import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import play.api.libs.json.{Json, OFormat, Writes}
+import play.api.libs.json.{Json, OFormat, Reads, Writes}
 import utils.Constants.ReceivedPeriodInDays
 import utils.DateTimeUtils.LocalDateOps
 
@@ -27,18 +27,10 @@ import java.time.{LocalDate, ZonedDateTime}
 
 sealed trait ObligationsAndSubmissionsResponse
 
-object ObligationsAndSubmissionsResponse {
-  implicit val writes: Writes[ObligationsAndSubmissionsResponse] = Writes {
-    case s: ObligationsAndSubmissionsSuccessResponse       => Json.obj("success" -> s.success)
-    case e: ObligationsAndSubmissionsSimpleErrorResponse   => Json.obj("errors" -> e.error)
-    case d: ObligationsAndSubmissionsDetailedErrorResponse => Json.obj("errors" -> d.errors)
-  }
-}
-
 case class ObligationsAndSubmissionsSuccessResponse(success: ObligationsAndSubmissionsSuccess) extends ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsSuccessResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsSuccessResponse] = Json.format[ObligationsAndSubmissionsSuccessResponse]
+  implicit val writes: Writes[ObligationsAndSubmissionsSuccessResponse] = Json.writes[ObligationsAndSubmissionsSuccessResponse]
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
@@ -77,28 +69,4 @@ case class AccountingPeriodDetails(
 
 object AccountingPeriodDetails {
   implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
-}
-
-case class ObligationsAndSubmissionsSimpleErrorResponse(error: ObligationsAndSubmissionsSimpleError) extends ObligationsAndSubmissionsResponse
-
-object ObligationsAndSubmissionsSimpleErrorResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsSimpleErrorResponse] = Json.format[ObligationsAndSubmissionsSimpleErrorResponse]
-}
-
-case class ObligationsAndSubmissionsSimpleError(code: String, message: String, logID: String)
-
-object ObligationsAndSubmissionsSimpleError {
-  implicit val format: OFormat[ObligationsAndSubmissionsSimpleError] = Json.format[ObligationsAndSubmissionsSimpleError]
-}
-
-case class ObligationsAndSubmissionsDetailedErrorResponse(errors: ObligationsAndSubmissionsDetailedError) extends ObligationsAndSubmissionsResponse
-
-object ObligationsAndSubmissionsDetailedErrorResponse {
-  implicit val format: OFormat[ObligationsAndSubmissionsDetailedErrorResponse] = Json.format[ObligationsAndSubmissionsDetailedErrorResponse]
-}
-
-case class ObligationsAndSubmissionsDetailedError(processingDate: ZonedDateTime, code: String, text: String)
-
-object ObligationsAndSubmissionsDetailedError {
-  implicit val format: OFormat[ObligationsAndSubmissionsDetailedError] = Json.format[ObligationsAndSubmissionsDetailedError]
 }
