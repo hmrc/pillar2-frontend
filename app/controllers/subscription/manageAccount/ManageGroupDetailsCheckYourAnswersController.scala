@@ -24,7 +24,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.subscription.ManageGroupDetailsStatus._
-import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
+import models.subscription.{ManageGroupDetailsStatus, ReadSubscriptionRequestParameters, SubscriptionLocalData}
 import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
@@ -114,6 +114,18 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))
       _ <- OptionT.liftF(subscriptionService.amendContactOrGroupDetails(userId, referenceNumber, subscriptionData))
+      _ <-
+        OptionT.liftF(
+          subscriptionService
+            .cacheSubscription(ReadSubscriptionRequestParameters(userId, referenceNumber))
+            .map(_ => ())
+            .recover { case ex: Throwable =>
+              logger.warn(
+                s"[ManageGroupDetailsCheckYourAnswers] Failed to re-populate subscription cache for user $userId with PLR $referenceNumber: ${ex.getMessage}"
+              )
+              ()
+            }
+        )
       updatedAnswersOnSuccess = userAnswers match {
                                   case Some(answers) =>
                                     answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.SuccessfullyCompleted)
