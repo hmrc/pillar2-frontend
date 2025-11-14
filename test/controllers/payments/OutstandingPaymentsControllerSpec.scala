@@ -143,7 +143,7 @@ object OutstandingPaymentsControllerSpec {
     FinancialData(
       Seq(
         FinancialTransaction.OutstandingCharge.UktrMainOutstandingCharge(
-          taxPeriod = TaxPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
+          accountingPeriod = AccountingPeriod(LocalDate.of(2024, 1, 1), LocalDate.of(2024, 12, 31)),
           subTransactionRef = Random.shuffle(EtmpSubtransactionRef.values).head,
           outstandingAmount = BigDecimal(1000.00),
           chargeItems = OutstandingCharge.FinancialItems(
