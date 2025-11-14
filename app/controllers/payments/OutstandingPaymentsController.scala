@@ -63,7 +63,7 @@ class OutstandingPaymentsController @Inject() (
             .groupBy(_.mainTransactionRef)
             .map { case (transactionRef, groupedTransactions) =>
               TransactionSummary(
-                transactionRef.displayName,
+                transactionRef,
                 groupedTransactions.map(_.outstandingAmount).sum,
                 groupedTransactions.map(_.chargeItems.earliestDueDate).min
               )
@@ -96,7 +96,7 @@ class OutstandingPaymentsController @Inject() (
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
       } yield {
         val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.hasOverdueReturnPayment(now()))
+        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
 
         Ok(view(outstandingPaymentSummaries, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
