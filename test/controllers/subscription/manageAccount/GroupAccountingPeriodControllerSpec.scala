@@ -31,7 +31,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -186,7 +186,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   "GroupAccountingPeriod Controller for Agent View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val ua          = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -287,7 +287,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val someDate            = LocalDate.of(2024, 1, 1)
       val userAnswers         = emptySubscriptionLocalData
       val expectedUserAnswers = userAnswers.setOrException(SubAccountingPeriodPage, AccountingPeriod(someDate, someDate.plusMonths(5), None))
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+      val application         = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),

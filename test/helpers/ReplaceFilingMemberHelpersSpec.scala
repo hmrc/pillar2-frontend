@@ -21,7 +21,7 @@ import models.NonUKAddress
 import models.grs.GrsRegistrationData
 import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
-import pages._
+import pages.*
 import utils.RowStatus
 
 import java.time.LocalDate

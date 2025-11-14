@@ -18,21 +18,21 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import controllers.actions.TestAuthRetrievals.Ops
-import models._
+import models.*
 import models.fm.{FilingMember, FilingMemberNonUKData}
-import models.subscription._
+import models.subscription.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import viewmodels.govuk.SummaryListFluency
 
@@ -95,8 +95,8 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       state = "activated"
     )
   )
-  val startDate: LocalDate = LocalDate.of(2023, 12, 31)
-  val endDate:   LocalDate = LocalDate.of(2025, 12, 31)
+  val startDate:         LocalDate             = LocalDate.of(2023, 12, 31)
+  val endDate:           LocalDate             = LocalDate.of(2025, 12, 31)
   val amendSubscription: SubscriptionLocalData = emptySubscriptionLocalData
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(UpeNameRegistrationPage, "International Organisation Inc.")
@@ -228,7 +228,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
     "redirect to waiting room when status is InProgress" in {
       val mockSessionRepository = mock[SessionRepository]
-      val userAnswers = UserAnswers("id")
+      val userAnswers           = UserAnswers("id")
         .setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
 
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))

@@ -23,8 +23,8 @@ import javax.inject.Inject
 class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
 
   import models.subscription.AccountingPeriod
-  import play.api.data.Forms._
-  import play.api.data._
+  import play.api.data.Forms.*
+  import play.api.data.*
 
   import java.time.LocalDate
 
@@ -33,7 +33,7 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       "startDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.startDate.format",
         allRequiredKey =
-          if (amend) "groupAccountingPeriod.amend.error.startDate.required.all" else "groupAccountingPeriod.error.startDate.required.all",
+          if amend then "groupAccountingPeriod.amend.error.startDate.required.all" else "groupAccountingPeriod.error.startDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.startDate.required.two",
         requiredKey = "groupAccountingPeriod.error.startDate.required",
         invalidDay = "groupAccountingPeriod.error.startDate.day.nan",
@@ -47,7 +47,8 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       ).verifying(minDate(LocalDate.of(2023, 12, 31), "groupAccountingPeriod.error.startDate.dayMonthYear.minimum")),
       "endDate" -> localDate(
         invalidKey = "groupAccountingPeriod.error.endDate.format",
-        allRequiredKey = if (amend) "groupAccountingPeriod.amend.error.endDate.required.all" else "groupAccountingPeriod.error.endDate.required.all",
+        allRequiredKey =
+          if amend then "groupAccountingPeriod.amend.error.endDate.required.all" else "groupAccountingPeriod.error.endDate.required.all",
         twoRequiredKey = "groupAccountingPeriod.error.endDate.required.two",
         requiredKey = "groupAccountingPeriod.error.endDate.required",
         invalidDay = "groupAccountingPeriod.error.endDate.day.nan",
@@ -61,6 +62,6 @@ class GroupAccountingPeriodFormProvider @Inject() extends Mappings {
       )
     )((startDate, endDate) => AccountingPeriod(startDate, endDate, None))(accountingPeriod =>
       Some((accountingPeriod.startDate, accountingPeriod.endDate))
-    ).verifying("groupAccountingPeriod.error.endDate.before.startDate", a => a.endDate isAfter a.startDate)
+    ).verifying("groupAccountingPeriod.error.endDate.before.startDate", a => a.endDate.isAfter(a.startDate))
   )
 }

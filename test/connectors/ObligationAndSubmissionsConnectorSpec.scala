@@ -17,7 +17,7 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.ObligationsAndSubmissionsConnector
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

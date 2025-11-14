@@ -20,9 +20,9 @@ import models.{CheckMode, UserAnswers}
 import pages.RfmRegistrationDatePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeUtils._
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import utils.DateTimeUtils.*
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object RfmRegistrationDateSummary {
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =

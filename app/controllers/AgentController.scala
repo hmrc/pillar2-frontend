@@ -16,13 +16,13 @@
 
 package controllers
 
-import cats.implicits._
+import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.{ApiError, UserAnswers}
-import pages._
+import pages.*
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
@@ -30,7 +30,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html._
+import views.html.*
 import views.html.rfm.AgentView
 
 import javax.inject.Inject
@@ -54,7 +54,7 @@ class AgentController @Inject() (
   sessionDataRetrievalAction:        SessionDataRetrievalAction,
   sessionDataRequiredAction:         SessionDataRequiredAction,
   agentClientPillar2RefFormProvider: AgentClientPillar2ReferenceFormProvider
-)(implicit appConfig:                FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -97,7 +97,7 @@ class AgentController @Inject() (
               answersWithPillarId          <- Future.fromTry(answersWithoutSubmissionFlag.set(UnauthorisedClientPillar2ReferencePage, pillarIdValue))
               _                            <- sessionRepository.set(answersWithPillarId)
               subscriptionData             <- subscriptionService.readSubscription(pillarIdValue)
-              answersWithOrgName <-
+              answersWithOrgName           <-
                 Future.fromTry(answersWithPillarId.set(AgentClientOrganisationNamePage, subscriptionData.upeDetails.organisationName))
               _ <- sessionRepository.set(answersWithOrgName)
             } yield Redirect(routes.AgentController.onPageLoadConfirmClientDetails)

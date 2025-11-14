@@ -92,7 +92,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "form is submitted with value exceeding maximum length" should {
-      val longInput: String = randomAlphaNumericStringGenerator(199)
+      val longInput: String   = randomAlphaNumericStringGenerator(199)
       val errorView: Document = Jsoup.parse(
         page(
           formProvider().bind(

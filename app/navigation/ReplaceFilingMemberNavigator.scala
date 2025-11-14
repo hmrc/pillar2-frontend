@@ -17,9 +17,9 @@
 package navigation
 
 import controllers.routes
-import models._
+import models.*
 import models.rfm.CorporatePosition
-import pages._
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -174,7 +174,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers
       .get(RfmUkBasedPage)
       .map { rfmUkBased =>
-        if (rfmUkBased) {
+        if rfmUkBased then {
           controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
@@ -186,7 +186,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers
       .get(RfmUkBasedPage)
       .map { rfmUkBased =>
-        if (rfmUkBased) {
+        if rfmUkBased then {
           controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.rfm.routes.RfmNameRegistrationController.onPageLoad(NormalMode)
@@ -198,7 +198,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers
       .get(RfmCorporatePositionPage)
       .map { corporatePosition =>
-        if (corporatePosition == CorporatePosition.Upe) {
+        if corporatePosition == CorporatePosition.Upe then {
           controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
         } else {
           controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
@@ -210,7 +210,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     userAnswers
       .get(RfmCorporatePositionPage)
       .map { corporatePosition =>
-        if (!userAnswers.isRfmJourneyCompleted && corporatePosition == CorporatePosition.NewNfm) {
+        if !userAnswers.isRfmJourneyCompleted && corporatePosition == CorporatePosition.NewNfm then {
           controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         } else { reviewAndSubmitCheckYourAnswers }
       }

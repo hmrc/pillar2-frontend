@@ -17,11 +17,12 @@
 package connectors
 
 import config.FrontendAppConfig
-import controllers.payments.{routes => paymentRoutes}
+import controllers.payments.routes as paymentRoutes
 import controllers.routes
 import models.{OPSRedirectRequest, OPSRedirectResponse}
 import play.api.Logging
-import play.api.libs.json._
+import play.api.libs.json.*
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.http.client.HttpClientV2
 

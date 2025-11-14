@@ -3,7 +3,7 @@
 ->          /hmrc-frontend                                                                           hmrcfrontend.Routes
 
 GET         /                                                                                        controllers.IndexController.onPageLoad
-GET         /banner                                                                                  controllers.IndexController.onPageLoadBanner
+GET         /banner                                                                                  controllers.IndexController.onPageLoadBanner()
 GET         /check-progress/register-your-group                                                      controllers.TaskListController.onPageLoad
 
 
@@ -13,8 +13,8 @@ GET         /refresh-session                                                    
 
 GET         /error/restart-error                                                                     controllers.JourneyRecoveryController.onPageLoad(continueUrl: Option[RedirectUrl] ?= None)
 
-GET         /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onPageLoad
-POST        /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onSubmit
+GET         /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onPageLoad()
+POST        /review-submit/check-answers                                                             controllers.CheckYourAnswersController.onSubmit()
 GET         /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = NormalMode)
 POST        /business-matching/match-hmrc-records                                                    controllers.registration.StartPageRegistrationController.onSubmit(mode: Mode = NormalMode)
 GET         /business-matching/change-match-hmrc-records                                             controllers.registration.StartPageRegistrationController.onPageLoad(mode: Mode = CheckMode)

@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import pages.PlrReferencePage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,7 +38,7 @@ class RfmConfirmationController @Inject() (
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmConfirmationView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -46,7 +46,7 @@ class RfmConfirmationController @Inject() (
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
-        pillar2Id <- Pillar2Reference
+        pillar2Id  <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
       } yield Ok(view(pillar2Id, ZonedDateTime.now().toDateTimeGmtFormat)))

@@ -17,14 +17,14 @@
 package controllers.rfm
 import config.FrontendAppConfig
 import connectors.EnrolmentStoreProxyConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmSecurityCheckFormProvider
 import models.{Mode, NormalMode, UserAnswers}
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmPillar2ReferencePage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,7 +44,7 @@ class SecurityCheckController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             SecurityCheckView,
   errorView:                        SecurityCheckErrorView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -82,7 +82,7 @@ class SecurityCheckController @Inject() (
     * https://confluence.tools.tax.service.gov.uk/display/GGWRLS/EACD+Concepts%3A+Government+Gateway+Accounts+and+Groups
     */
   private def redirectSecurityCheck(pillar2Id: String, mode: Mode, updatedAnswers: UserAnswers)(userGroupIdOpt: Option[String])(implicit
-    hc:                                        HeaderCarrier
+    hc: HeaderCarrier
   ): Future[Result] =
     enrolmentStoreProxyConnector
       .getGroupIds(pillar2Id)

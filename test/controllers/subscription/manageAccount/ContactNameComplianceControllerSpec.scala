@@ -26,7 +26,7 @@ import pages.SubPrimaryContactNamePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -91,7 +91,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", stringInput))
 
@@ -160,7 +160,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when previous data is found" in {
 
-      val ua = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -199,7 +199,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
             .withFormUrlEncodedBody(("value", stringInput))
         val boundForm = formProvider().bind(Map("value" -> stringInput))

@@ -36,7 +36,7 @@ class ManageContactDetailsWaitingRoomController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageContactDetailsWaitingRoomView,
   sessionRepository:                      SessionRepository
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

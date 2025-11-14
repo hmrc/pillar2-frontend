@@ -17,19 +17,19 @@
 package services
 
 import base.SpecBase
-import connectors._
+import connectors.*
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
-import models._
+import models.*
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import models.rfm.CorporatePosition
-import models.subscription._
+import models.subscription.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{never, verify, when}
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.Helpers.running
@@ -663,7 +663,7 @@ class SubscriptionServiceSpec extends SpecBase {
         when(mockRegistrationConnector.registerNewFilingMember(any())(any())).thenReturn(Future.successful("someSafeId"))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = false))
-        val result = service.createAmendObjectForReplacingFilingMember(
+        val result         = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,
           replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
           userAnswers
@@ -807,7 +807,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     "getCompanyNameFromGRS" when {
       "return the company name if it is stored in the session" in {
-        val date = LocalDate.now()
+        val date        = LocalDate.now()
         val grsResponse = GrsResponse(
           Some(
             IncorporatedEntityRegistrationData(

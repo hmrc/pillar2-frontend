@@ -31,7 +31,7 @@ class ManageGroupDetailsCannotReturnAfterConfirmationController @Inject() (
   requireData:              SubscriptionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     ManageGroupDetailsCannotReturnAfterConfirmationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

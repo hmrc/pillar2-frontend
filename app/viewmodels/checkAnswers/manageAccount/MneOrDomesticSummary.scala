@@ -22,14 +22,14 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object MneOrDomesticSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubMneOrDomesticPage).map { answer =>
-      val key = if (request.isAgent) "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
+      val key = if request.isAgent then "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
 
       val value = ValueViewModel(
         HtmlContent(

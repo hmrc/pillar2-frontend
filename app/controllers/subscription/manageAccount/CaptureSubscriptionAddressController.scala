@@ -42,7 +42,7 @@ class CaptureSubscriptionAddressController @Inject() (
   val countryOptions:                     CountryOptions,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   CaptureSubscriptionAddressView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

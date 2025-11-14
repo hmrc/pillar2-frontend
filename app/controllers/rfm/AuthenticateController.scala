@@ -27,7 +27,7 @@ import javax.inject.{Inject, Named}
 class AuthenticateController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   @Named("RfmIdentifier") identify: IdentifierAction
-)(implicit val appConfig:           FrontendAppConfig)
+)(implicit val appConfig: FrontendAppConfig)
     extends FrontendBaseController {
 
   def rfmAuthenticate: Action[AnyContent] = identify { _ =>

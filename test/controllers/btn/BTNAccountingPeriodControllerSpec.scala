@@ -18,11 +18,11 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.BTN
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.*
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -31,14 +31,14 @@ import pages.{BTNChooseAccountingPeriodPage, PlrReferencePage, SubAccountingPeri
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.DateTimeUtils._
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import utils.DateTimeUtils.*
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
 import java.time.LocalDate
@@ -51,7 +51,7 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
   val plrReference = "testPlrRef"
   val dates: AccountingPeriod = AccountingPeriod(LocalDate.now, LocalDate.now.plusYears(1))
 
-  val obligationData: Seq[Obligation] = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
+  val obligationData:      Seq[Obligation]         = Seq(Obligation(UKTR, Open, canAmend = false, Seq.empty))
   val chosenAccountPeriod: AccountingPeriodDetails = AccountingPeriodDetails(
     LocalDate.now.minusYears(2),
     LocalDate.now.minusYears(1),
@@ -168,23 +168,21 @@ class BTNAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the next page when valid data is submitted" in {
+    "must redirect to the next page when valid data is submitted" in
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
       }
-    }
 
-    "must redirect to the next page when valid data is submitted with UkOther" in {
+    "must redirect to the next page when valid data is submitted with UkOther" in
       running(application) {
         val request = FakeRequest(POST, BTNAccountingPeriodController.onSubmit(NormalMode).url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual BTNEntitiesInUKOnlyController.onPageLoad(NormalMode).url
       }
-    }
 
     "must return OK and the correct view for return submitted page" in {
       val osResponse = obligationsAndSubmissionsSuccessResponse()

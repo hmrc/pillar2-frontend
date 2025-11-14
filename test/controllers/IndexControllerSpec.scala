@@ -23,10 +23,10 @@ import org.mockito.Mockito.when
 import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.~
 
 import java.util.UUID
@@ -128,7 +128,7 @@ class IndexControllerSpec extends SpecBase {
   }
 
   "redirect Agent to ASA Homepage if have an enrolment with no pillar2 client is confirmed" in {
-    val userAnswer = emptyUserAnswers.setOrException(RedirectToASAHome, true)
+    val userAnswer  = emptyUserAnswers.setOrException(RedirectToASAHome, true)
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolment.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()

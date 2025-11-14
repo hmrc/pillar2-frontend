@@ -16,7 +16,7 @@
 
 package models.tasklist
 import controllers.fm.routes
-import models.tasklist.SectionStatus._
+import models.tasklist.SectionStatus.*
 import models.{NormalMode, UserAnswers}
 import play.api.mvc.Call
 import utils.RowStatus

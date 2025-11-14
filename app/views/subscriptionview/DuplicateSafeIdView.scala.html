@@ -34,7 +34,7 @@
 @layout(pageTitle = title(form, messages("duplicateSafeId.title"))) {
 
 
-    @formHelper(action = controllers.subscription.routes.DuplicateSafeIdController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.routes.DuplicateSafeIdController.onSubmit, Symbol("autoComplete") -> "off") {
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("nominateFilingMember" -> "nominateFilingMember_0")))
         }

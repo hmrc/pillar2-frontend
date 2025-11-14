@@ -22,11 +22,11 @@ import forms.DuplicateSafeIdFormProvider
 import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.DuplicateSafeIdView
 
 import scala.concurrent.Future
@@ -35,7 +35,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
 
   val formProvider = new DuplicateSafeIdFormProvider()
 
-  val UkAddress: UKAddress = UKAddress("line1", None, "line3", None, "M123BS", countryCode = "US")
+  val UkAddress:          UKAddress   = UKAddress("line1", None, "line3", None, "M123BS", countryCode = "US")
   val completeUpeJourney: UserAnswers = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, false)
     .setOrException(UpeNameRegistrationPage, "name")

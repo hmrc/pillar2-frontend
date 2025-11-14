@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
@@ -31,8 +31,8 @@ import repositories.SessionRepository
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils.LocalDateOps
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
 import java.time.LocalDate
@@ -50,7 +50,7 @@ class BTNAccountingPeriodController @Inject() (
   btnAlreadyInPlaceView:                  BTNAlreadyInPlaceView,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -88,8 +88,8 @@ class BTNAccountingPeriodController @Inject() (
 
             accountingPeriodDetails
               .map { period =>
-                if (lastSubmissionType(period, Set(BTN))) Ok(btnAlreadyInPlaceView())
-                else if (lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND))) {
+                if lastSubmissionType(period, Set(BTN)) then Ok(btnAlreadyInPlaceView())
+                else if lastSubmissionType(period, Set(UKTR_CREATE, UKTR_AMEND)) then {
                   Ok(viewReturnSubmitted(request.isAgent, period))
                 } else {
                   val currentYear = filteredAccountingPeriodDetails match {
@@ -122,7 +122,7 @@ class BTNAccountingPeriodController @Inject() (
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>
-        if (answer == MneOrDomestic.UkAndOther) {
+        if answer == MneOrDomestic.UkAndOther then {
           Future.successful(Redirect(controllers.btn.routes.BTNEntitiesInsideOutsideUKController.onPageLoad(mode)))
         } else {
           Future.successful(Redirect(controllers.btn.routes.BTNEntitiesInUKOnlyController.onPageLoad(mode)))

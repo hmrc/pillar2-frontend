@@ -28,7 +28,7 @@ case object RfmSecondaryPhonePreferencePage extends QuestionPage[Boolean] {
   override def toString: String = "RfmSecondaryPhonePreference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
+    if value.contains(false) then {
       userAnswers
         .remove(RfmSecondaryCapturePhonePage)
     } else {

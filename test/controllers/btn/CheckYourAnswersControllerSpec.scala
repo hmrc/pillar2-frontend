@@ -17,11 +17,11 @@
 package controllers.btn
 
 import base.SpecBase
-import cats.syntax.either._
-import controllers.btn.routes._
+import cats.syntax.either.*
+import controllers.btn.routes.*
 import controllers.routes.IndexController
 import models.audit.{ApiResponseFailure, ApiResponseSuccess}
-import models.btn._
+import models.btn.*
 import models.subscription.AccountingPeriod
 import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchersSugar
@@ -29,12 +29,12 @@ import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
-import pages._
+import pages.*
 import play.api.Application
 import play.api.inject.bind
 import play.api.libs.json.JsObject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService

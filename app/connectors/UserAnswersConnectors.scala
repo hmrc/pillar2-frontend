@@ -19,10 +19,11 @@ package connectors
 import models.{InternalIssueError, UserAnswers}
 import org.apache.pekko.Done
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsObject, JsValue, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.FutureConverter.FutureOps
 
@@ -33,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserAnswersConnectors @Inject() (
   @Named("pillar2Url") pillar2BaseUrl: String,
   httpClient:                          HttpClientV2
-)(implicit ec:                         ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends Logging {
   private val url = s"$pillar2BaseUrl/report-pillar2-top-up-taxes"
 
@@ -52,7 +53,7 @@ class UserAnswersConnectors @Inject() (
   def get(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
-      .execute[HttpResponse](readRaw, ec)
+      .execute[HttpResponse](using readRaw, ec)
       .map { response =>
         response.status match {
           case OK        => Some(response.json)
@@ -64,7 +65,7 @@ class UserAnswersConnectors @Inject() (
   def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
-      .execute[HttpResponse](readRaw, ec)
+      .execute[HttpResponse](using readRaw, ec)
       .flatMap { response =>
         response.status match {
           case OK        => Future.successful(Some(UserAnswers(id = id, data = response.json.as[JsObject])))
@@ -77,6 +78,6 @@ class UserAnswersConnectors @Inject() (
     httpClient
       .delete(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse]
-      .flatMap(response => if (response.status == OK) Done.toFuture else Future.failed(InternalIssueError))
+      .flatMap(response => if response.status == OK then Done.toFuture else Future.failed(InternalIssueError))
 
 }

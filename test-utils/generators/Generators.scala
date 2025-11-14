@@ -19,7 +19,7 @@ package generators
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.{FinancialHistory, TransactionHistory}
 import org.scalacheck.Arbitrary.arbitrary
-import org.scalacheck.Gen._
+import org.scalacheck.Gen.*
 import org.scalacheck.{Arbitrary, Gen, Shrink}
 import utils.DateTimeUtils.utcZoneId
 import wolfendale.scalacheck.regexp.RegexpGen
@@ -198,7 +198,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
     nonEmptyString suchThat (!excluded.contains(_))
 
   def oneOf[T](xs: Seq[Gen[T]]): Gen[T] =
-    if (xs.isEmpty) {
+    if xs.isEmpty then {
       throw new IllegalArgumentException("oneOf called on empty collection")
     } else {
       val vector = xs.toVector

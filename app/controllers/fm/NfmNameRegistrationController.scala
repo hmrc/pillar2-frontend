@@ -18,7 +18,7 @@ package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.NfmNameRegistrationFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
@@ -43,7 +43,7 @@ class NfmNameRegistrationController @Inject() (
   formProvider:              NfmNameRegistrationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmNameRegistrationView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class NfmNameRegistrationController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(FmNameRegistrationPage).map(nominated => form.fill(nominated)).getOrElse(form)
-    if (request.userAnswers.get(FmRegisteredInUKPage).contains(false)) {
+    if request.userAnswers.get(FmRegisteredInUKPage).contains(false) then {
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

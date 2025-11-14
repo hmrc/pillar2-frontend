@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {

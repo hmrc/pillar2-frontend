@@ -42,7 +42,7 @@ class UpeNameRegistrationController @Inject() (
   navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeNameRegistrationView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -50,7 +50,7 @@ class UpeNameRegistrationController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(UpeNameRegistrationPage).map(companyName => form.fill(companyName)).getOrElse(form)
-    if (request.userAnswers.get(UpeRegisteredInUKPage).contains(false)) {
+    if request.userAnswers.get(UpeRegisteredInUKPage).contains(false) then {
       Ok(view(preparedForm, mode))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

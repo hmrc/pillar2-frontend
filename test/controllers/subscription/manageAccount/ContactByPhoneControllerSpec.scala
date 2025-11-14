@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -211,7 +211,7 @@ class ContactByPhoneControllerSpec extends SpecBase {
     }
 
     "must return bad request when invalid data is submitted" in {
-      val userAnswer = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val userAnswer  = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

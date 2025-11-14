@@ -19,9 +19,9 @@ package controllers.subscription
 import base.SpecBase
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, UserAnswers}
-import pages._
+import pages.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate

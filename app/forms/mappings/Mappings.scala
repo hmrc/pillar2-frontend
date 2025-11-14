@@ -24,22 +24,22 @@ import java.time.LocalDate
 trait Mappings extends Formatters with Constraints {
 
   protected def text(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(stringFormatter(errorKey, args))
+    of(using stringFormatter(errorKey, args))
 
   protected def pillar2Id(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(pillar2IdFormatter(errorKey, args))
+    of(using pillar2IdFormatter(errorKey, args))
 
   protected def bankAccount(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(bankAccountFormatter(errorKey, args))
+    of(using bankAccountFormatter(errorKey, args))
 
   protected def bic(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Option[String]] =
-    of(dependentFieldFormatter[String]("iban", errorKey, bankAccountFormatter(errorKey, args), args))
+    of(using dependentFieldFormatter[String]("iban", errorKey, bankAccountFormatter(errorKey, args), args))
 
   protected def iban(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[Option[String]] =
-    of(dependentFieldFormatter[String]("bic", errorKey, bankAccountFormatter(errorKey, args), args))
+    of(using dependentFieldFormatter[String]("bic", errorKey, bankAccountFormatter(errorKey, args), args))
 
   protected def sortCode(errorKey: String = "error.required", args: Seq[String] = Seq.empty): FieldMapping[String] =
-    of(sortCodeFormatter(errorKey, args))
+    of(using sortCodeFormatter(errorKey, args))
 
   protected def int(
     requiredKey:    String = "error.required",
@@ -48,25 +48,25 @@ trait Mappings extends Formatters with Constraints {
     invalidLength:  String = "error.length",
     args:           Seq[String] = Seq.empty
   ): FieldMapping[Int] =
-    of(intFormatter(requiredKey, wholeNumberKey, nonNumericKey, invalidLength, args))
+    of(using intFormatter(requiredKey, wholeNumberKey, nonNumericKey, invalidLength, args))
 
   protected def boolean(
     requiredKey: String = "error.required",
     invalidKey:  String = "error.boolean",
     args:        Seq[String] = Seq.empty
   ): FieldMapping[Boolean] =
-    of(booleanFormatter(requiredKey, invalidKey, args))
+    of(using booleanFormatter(requiredKey, invalidKey, args))
 
   protected def currency(
     requiredKey:     String = "error.required",
     invalidCurrency: String = "error.invalidNumeric"
   ): FieldMapping[BigDecimal] =
-    of(currencyFormatter(requiredKey, invalidCurrency))
+    of(using currencyFormatter(requiredKey, invalidCurrency))
 
   protected def enumerable[A](requiredKey: String = "error.required", invalidKey: String = "error.invalid", args: Seq[String] = Seq.empty)(implicit
-    ev:                                    Enumerable[A]
+    ev: Enumerable[A]
   ): FieldMapping[A] =
-    of(enumerableFormatter[A](requiredKey, invalidKey, args))
+    of(using enumerableFormatter[A](requiredKey, invalidKey, args))
 
   protected def localDate(
     invalidKey:                  String,
@@ -83,7 +83,7 @@ trait Mappings extends Formatters with Constraints {
     messageKeyPart:              String,
     validateMonthInStringFormat: Option[Boolean] = Some(false)
   ): FieldMapping[LocalDate] =
-    of(
+    of(using
       new LocalDateFormatter(
         invalidKey,
         allRequiredKey,

@@ -18,8 +18,9 @@ package connectors
 
 import config.FrontendAppConfig
 import models.InternalIssueError
-import models.bars._
+import models.bars.*
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -36,7 +37,7 @@ class BarsConnector @Inject() (implicit val config: FrontendAppConfig, val http:
   def verify(business: Business, account: Account, trackingId: UUID)(implicit hc: HeaderCarrier): Future[BarsAccountResponse] =
     http
       .post(url"$url")
-      .setHeader(headers :+ ("X-Tracking-Id" -> trackingId.toString): _*)
+      .setHeader(headers :+ ("X-Tracking-Id" -> trackingId.toString)*)
       .withBody(Json.toJson(BarsBusinessAssessmentRequest(account, business)))
       .execute[BarsAccountResponse]
       .recoverWith { case _ => Future.failed(InternalIssueError) }

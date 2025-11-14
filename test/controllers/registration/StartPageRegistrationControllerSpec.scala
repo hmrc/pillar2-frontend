@@ -21,7 +21,7 @@ import helpers.ViewInstances
 import models.NormalMode
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
 
@@ -40,7 +40,7 @@ class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
         FakeRequest(GET, controllers.registration.routes.StartPageRegistrationController.onPageLoad(NormalMode).url)
 
       val result = controller.onPageLoad(NormalMode)()(request)
-      status(result) shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include(
         "We need to match the details of the Ultimate Parent Entity to HMRC records"
       )

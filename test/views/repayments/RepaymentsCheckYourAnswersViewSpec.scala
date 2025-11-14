@@ -23,14 +23,14 @@ import models.{UkOrAbroadBankAccount, UserAnswers}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import pages._
+import pages.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers.repayments._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.repayments.*
+import viewmodels.govuk.summarylist.*
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
 class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
-  lazy val amount: BigDecimal = BigDecimal(9.99)
+  lazy val amount:     BigDecimal  = BigDecimal(9.99)
   lazy val userAnswer: UserAnswers = emptyUserAnswers
     .setOrException(RepaymentsRefundAmountPage, amount)
     .setOrException(ReasonForRequestingRefundPage, "answer for reason")
@@ -68,7 +68,7 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
   )
 
   lazy val page: RepaymentsCheckYourAnswersView = inject[RepaymentsCheckYourAnswersView]
-  lazy val view: Document =
+  lazy val view: Document                       =
     Jsoup.parse(page(listRefund, listBankAccountDetails, contactDetailsList)(request, appConfig, messages).toString())
   lazy val pageTitle: String = "Check your answers before submitting your repayment request"
 

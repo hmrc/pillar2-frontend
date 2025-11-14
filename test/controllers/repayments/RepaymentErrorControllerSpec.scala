@@ -21,8 +21,8 @@ import forms.RepaymentAccountNameConfirmationForm
 import models.NormalMode
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import views.html.repayments._
+import play.api.test.Helpers.*
+import views.html.repayments.*
 
 class RepaymentErrorControllerSpec extends SpecBase {
 

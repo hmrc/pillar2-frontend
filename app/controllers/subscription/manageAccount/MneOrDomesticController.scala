@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.MneOrDomesticFormProvider
 import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
 import models.MneOrDomestic
@@ -45,7 +45,7 @@ class MneOrDomesticController @Inject() (
   mneOrDomesticFormProvider:                      MneOrDomesticFormProvider,
   val controllerComponents:                       MessagesControllerComponents,
   mneOrDomesticView:                              MneOrDomesticView
-)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

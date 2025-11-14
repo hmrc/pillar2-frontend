@@ -21,10 +21,10 @@ import controllers.actions.EnrolmentIdentifierAction.{HmrcAsAgentKey, defaultPre
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.Results.*
+import play.api.mvc.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -40,7 +40,7 @@ class ASAEnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
-)(implicit val ec:            ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {

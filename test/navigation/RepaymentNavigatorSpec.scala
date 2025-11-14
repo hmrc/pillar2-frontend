@@ -18,9 +18,9 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import models._
-import models.repayments._
-import pages._
+import models.*
+import models.repayments.*
+import pages.*
 
 class RepaymentNavigatorSpec extends SpecBase {
 

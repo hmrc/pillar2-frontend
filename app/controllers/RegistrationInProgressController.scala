@@ -35,7 +35,7 @@ class RegistrationInProgressController @Inject() (
   identify:                 IdentifierAction,
   viewHomepage:             RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

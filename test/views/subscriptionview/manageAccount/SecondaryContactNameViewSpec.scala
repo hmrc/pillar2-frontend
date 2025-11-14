@@ -100,7 +100,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "show error when name contains invalid characters" in {
       val invalidInput = "Test <script>alert('xss')</script> & Company"
-      val errorView = Jsoup.parse(
+      val errorView    = Jsoup.parse(
         page(form.bind(Map("value" -> invalidInput)), isAgent = false, organisationName = None)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()

@@ -25,12 +25,12 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.DateTimeUtils.LocalDateOps
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
 import java.time.LocalDate
@@ -163,7 +163,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   }
 
   lazy val page: CheckYourAnswersView = inject[CheckYourAnswersView]
-  lazy val view: Document = Jsoup.parse(
+  lazy val view: Document             = Jsoup.parse(
     page(upeSummaryList, nfmSummaryList, groupDetailSummaryList, primaryContactSummaryList, secondaryContactSummaryList, addressSummaryList)(
       request,
       appConfig,

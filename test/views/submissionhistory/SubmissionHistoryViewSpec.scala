@@ -29,8 +29,8 @@ import java.time.{LocalDate, ZonedDateTime}
 
 class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
-  lazy val page: SubmissionHistoryView = inject[SubmissionHistoryView]
-  lazy val organisationView: Document =
+  lazy val page:             SubmissionHistoryView = inject[SubmissionHistoryView]
+  lazy val organisationView: Document              =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
   lazy val agentView: Document =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())

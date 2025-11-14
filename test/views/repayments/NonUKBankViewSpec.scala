@@ -124,7 +124,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "form is submitted with values exceeding maximum length" should {
-    val longInput: String = randomAlphaNumericStringGenerator(99)
+    val longInput: String   = randomAlphaNumericStringGenerator(99)
     val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(

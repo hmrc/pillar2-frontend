@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.RepaymentAccountNameConfirmationForm
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
@@ -27,7 +27,7 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.repayments._
+import views.html.repayments.*
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
@@ -45,11 +45,11 @@ class RepaymentErrorController @Inject() (
   bankDetailsErrorView:                   BankDetailsErrorView,
   submissionErrorView:                    RepaymentSubmissionErrorView,
   accountNameConfirmationView:            AccountNameConfirmationView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[Boolean] = formProvider()
+  val form:                            Form[Boolean]      = formProvider()
   def onPageLoadNotConfirmedDetails(): Action[AnyContent] =
     Action { implicit request =>
       Ok(couldNotConfirmDetailsView(NormalMode))

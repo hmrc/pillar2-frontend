@@ -59,7 +59,7 @@ object CountryOptions {
             InputOption(country(1).replaceAll("country:", ""), country.head)
           }
 
-          val filteredCountries = if (includeUk) countries else countries.filterNot(_.value == UKCountryCode)
+          val filteredCountries = if includeUk then countries else countries.filterNot(_.value == UKCountryCode)
           filteredCountries.sortBy(_.label.toLowerCase)
         }
       }

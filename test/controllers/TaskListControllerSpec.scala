@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import connectors.UserAnswersConnectors
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import models.subscription.AccountingPeriod
 import models.tasklist.SectionStatus
 import models.{MneOrDomestic, NonUKAddress, UserAnswers}
@@ -27,12 +27,12 @@ import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages._
+import pages.*
 import play.api
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import utils.RowStatus
 
@@ -122,7 +122,7 @@ class TaskListControllerSpec extends SpecBase {
     }
 
     "redirected to subscription confirmation page if the user has already subscribed with a pillar 2 reference" in {
-      val userAnswer = UserAnswers("id").setOrException(PlrReferencePage, "id")
+      val userAnswer  = UserAnswers("id").setOrException(PlrReferencePage, "id")
       val application = applicationBuilder(None)
         .overrides(
           api.inject.bind[SessionRepository].toInstance(mockSessionRepository)

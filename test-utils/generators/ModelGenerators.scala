@@ -16,7 +16,7 @@
 
 package generators
 
-import models._
+import models.*
 import models.grs.EntityType
 import org.scalacheck.{Arbitrary, Gen}
 

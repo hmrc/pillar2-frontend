@@ -32,7 +32,7 @@
 
 @layout(pageTitle = title(form, messages("repayment.requestRepaymentAmount.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
-@formHelper(action = controllers.repayments.routes.RequestRepaymentAmountController.onSubmit(mode), 'autoComplete -> "off") {
+@formHelper(action = controllers.repayments.routes.RequestRepaymentAmountController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form))

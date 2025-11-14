@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.SecondaryContactNameFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
@@ -43,7 +43,7 @@ class SecondaryContactNameController @Inject() (
   formProvider:              SecondaryContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      SecondaryContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

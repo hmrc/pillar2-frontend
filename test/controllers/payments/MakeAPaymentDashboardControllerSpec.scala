@@ -27,10 +27,10 @@ import pages.PlrReferencePage
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 import views.html.{LegacyMakeAPaymentDashboardView, MakeAPaymentDashboardView}
@@ -58,7 +58,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val mockOpsConnector = mock[OPSConnector]
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application      = applicationBuilder(userAnswers = None, enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
           inject.bind[OPSConnector].toInstance(mockOpsConnector)
@@ -91,7 +91,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val mockOpsConnector = mock[OPSConnector]
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application      = applicationBuilder(userAnswers = None, enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
           inject.bind[OPSConnector].toInstance(mockOpsConnector)
@@ -212,7 +212,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
       val sessionUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "12345678")
-      val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
+      val application        = applicationBuilder(userAnswers = Some(sessionUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )

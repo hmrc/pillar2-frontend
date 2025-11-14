@@ -17,14 +17,14 @@
 package controllers.dueandoverduereturns
 
 import base.SpecBase
-import controllers.{routes => baseRoutes}
+import controllers.routes as baseRoutes
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import services.SubscriptionService

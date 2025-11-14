@@ -28,7 +28,7 @@
 
 @layout(pageTitle = title(form, messages("ukOrAbroadBankAccount.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
-    @formHelper(action = controllers.repayments.routes.UkOrAbroadBankAccountController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.repayments.routes.UkOrAbroadBankAccountController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

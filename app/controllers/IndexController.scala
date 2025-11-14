@@ -25,7 +25,7 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -38,14 +38,14 @@ class IndexController @Inject() (
   override val authConnector: AuthConnector,
   sessionRepository:          SessionRepository,
   identify:                   IdentifierAction
-)(implicit appConfig:         FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with AuthorisedFunctions
     with Logging {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
-    if (request.enrolments.exists(_.key == appConfig.enrolmentKey)) {
+    if request.enrolments.exists(_.key == appConfig.enrolmentKey) then {
       Redirect(routes.HomepageController.onPageLoad)
     } else {
       Redirect(routes.TaskListController.onPageLoad)
@@ -58,7 +58,7 @@ class IndexController @Inject() (
       .retrieve(Retrievals.internalId and Retrievals.affinityGroup and Retrievals.allEnrolments) {
         case Some(_) ~ Some(Organisation) ~ e if hasPillarEnrolment(e) => Future.successful(Redirect(routes.HomepageController.onPageLoad))
         case Some(_) ~ Some(Organisation) ~ _                          => Future.successful(Redirect(routes.TaskListController.onPageLoad))
-        case Some(internalId) ~ Some(Agent) ~ _ =>
+        case Some(internalId) ~ Some(Agent) ~ _                        =>
           sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
             maybeUserAnswers.flatMap(_.get(RedirectToASAHome)) match {
               case Some(true) => Future.successful(Redirect(appConfig.asaHomePageUrl))

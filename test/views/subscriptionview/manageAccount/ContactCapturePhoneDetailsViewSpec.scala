@@ -29,7 +29,7 @@ class ContactCapturePhoneDetailsViewSpec extends ViewSpecBase {
   lazy val formProvider: CapturePhoneDetailsFormProvider = new CapturePhoneDetailsFormProvider
   lazy val page:         ContactCapturePhoneDetailsView  = inject[ContactCapturePhoneDetailsView]
   lazy val username:     String                          = "John Doe"
-  lazy val view: Document =
+  lazy val view:         Document                        =
     Jsoup.parse(page(formProvider(username), username, isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
   lazy val pageTitle: String = "What is the phone number"
 

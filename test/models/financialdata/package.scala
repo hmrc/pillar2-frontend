@@ -16,7 +16,7 @@
 
 package models
 
-import cats.syntax.option._
+import cats.syntax.option.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import org.scalacheck.{Arbitrary, Gen}
 
@@ -26,12 +26,12 @@ package object financialdata {
 
   private val anyDate: Gen[LocalDate] =
     Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay)
-  private val anyTaxPeriod: Gen[TaxPeriod] = anyDate.map(date => TaxPeriod(date.minusYears(1), date))
+  private val anyTaxPeriod:                Gen[TaxPeriod]                        = anyDate.map(date => TaxPeriod(date.minusYears(1), date))
   private val anyMainTransactionChargeRef: Gen[EtmpMainTransactionRef.ChargeRef] = Gen.oneOf(EtmpMainTransactionRef.values.collect {
     case chargeRef: EtmpMainTransactionRef.ChargeRef => chargeRef
   })
   private val anySubTransactionRef: Gen[EtmpSubtransactionRef] = Gen.oneOf(EtmpSubtransactionRef.values)
-  val anyOutstandingFinancialItem: Gen[FinancialItem] = for {
+  val anyOutstandingFinancialItem:  Gen[FinancialItem]         = for {
     dueDate      <- anyDate
     clearingDate <- Gen.option(Gen.const(dueDate.plusDays(7)))
   } yield FinancialItem(dueDate.some, clearingDate)

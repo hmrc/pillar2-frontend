@@ -18,9 +18,9 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import models._
+import models.*
 import models.subscription.AccountingPeriod
-import pages._
+import pages.*
 
 import java.time.LocalDate
 

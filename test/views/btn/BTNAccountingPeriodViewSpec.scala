@@ -25,8 +25,8 @@ import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 import views.html.btn.BTNAccountingPeriodView
 
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {

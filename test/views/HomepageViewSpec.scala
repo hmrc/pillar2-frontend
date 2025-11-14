@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import controllers.routes
-import models.DueAndOverdueReturnBannerScenario._
+import models.DueAndOverdueReturnBannerScenario.*
 import models.OutstandingPaymentBannerScenario.{Outstanding, Paid}
 import models.{BtnBanner, DynamicNotificationAreaState}
 import org.jsoup.Jsoup

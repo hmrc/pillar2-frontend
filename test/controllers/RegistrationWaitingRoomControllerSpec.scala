@@ -18,10 +18,10 @@ package controllers
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.SubscriptionStatus._
+import models.subscription.SubscriptionStatus.*
 import pages.SubscriptionStatusPage
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomControllerSpec extends SpecBase {

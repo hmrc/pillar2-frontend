@@ -28,7 +28,7 @@ package object controllers {
     *   a filtered sequence of AccountingPeriodDetails, sorted in reverse chronological order, ensuring that we remove any periods where the start
     *   date is after today
     */
-  def filteredAccountingPeriodDetails(implicit request: ObligationsAndSubmissionsSuccessDataRequest[_]): Seq[AccountingPeriodDetails] =
+  def filteredAccountingPeriodDetails(implicit request: ObligationsAndSubmissionsSuccessDataRequest[?]): Seq[AccountingPeriodDetails] =
     request.obligationsAndSubmissionsSuccessData.accountingPeriodDetails
       .filterNot(_.startDate.isAfter(now))
       .sortBy(_.startDate)

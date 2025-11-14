@@ -18,7 +18,7 @@ package navigation
 
 import controllers.routes
 import models.subscription.SubscriptionLocalData
-import pages._
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -53,7 +53,7 @@ class AmendSubscriptionNavigator @Inject() {
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
-        if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryPhonePreferencePage).isEmpty) {
+        if nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryPhonePreferencePage).isEmpty then {
           controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad
         } else {
           contactDetailCheckYourAnswersRoute
@@ -65,7 +65,7 @@ class AmendSubscriptionNavigator @Inject() {
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
-        if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryEmailPage).isEmpty) {
+        if nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryEmailPage).isEmpty then {
           controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad
         } else {
           contactDetailCheckYourAnswersRoute
@@ -77,7 +77,7 @@ class AmendSubscriptionNavigator @Inject() {
     subscriptionUserAnswers
       .get(SubAddSecondaryContactPage)
       .map { nominatedSecondaryContact =>
-        if (nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryContactNamePage).isEmpty) {
+        if nominatedSecondaryContact & subscriptionUserAnswers.get(SubSecondaryContactNamePage).isEmpty then {
           controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad
         } else {
           contactDetailCheckYourAnswersRoute
@@ -89,7 +89,7 @@ class AmendSubscriptionNavigator @Inject() {
     subscriptionUserAnswers
       .get(SubPrimaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
-        if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubPrimaryCapturePhonePage).isEmpty) {
+        if nominatedPhoneNumber & subscriptionUserAnswers.get(SubPrimaryCapturePhonePage).isEmpty then {
           controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad
         } else {
           contactDetailCheckYourAnswersRoute
@@ -101,7 +101,7 @@ class AmendSubscriptionNavigator @Inject() {
     subscriptionUserAnswers
       .get(SubSecondaryPhonePreferencePage)
       .map { nominatedPhoneNumber =>
-        if (nominatedPhoneNumber & subscriptionUserAnswers.get(SubSecondaryCapturePhonePage).isEmpty) {
+        if nominatedPhoneNumber & subscriptionUserAnswers.get(SubSecondaryCapturePhonePage).isEmpty then {
           controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad
         } else {
           contactDetailCheckYourAnswersRoute

@@ -25,7 +25,7 @@ import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import pages.RevenueEqPage
 import play.api.inject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.TurnOverEligibilityView
 

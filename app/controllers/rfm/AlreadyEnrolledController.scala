@@ -27,7 +27,7 @@ import javax.inject.Inject
 class AlreadyEnrolledController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     AlreadyEnrolledView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

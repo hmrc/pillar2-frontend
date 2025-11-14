@@ -86,9 +86,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         page(emptyResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
       )
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "show the 'no returns' message" in {
         val noReturnsMessage: Element = view.getElementsByClass("govuk-body").first()
@@ -105,9 +104,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         page(allFulfilledResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
       )
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "show the 'no returns' message (since all are fulfilled)" in {
         val noReturnsMessage: Element = view.getElementsByClass("govuk-body").first()
@@ -127,9 +125,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         page(dueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString()
       )
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "show the multiple returns information" in {
         val infoMessages: Elements = view.select("p.govuk-body")
@@ -162,9 +159,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
       lazy val view: Document =
         Jsoup.parse(page(overdueReturnsResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "show a table with properly formatted overdue returns" in {
         val tables: Elements = view.select("table.govuk-table")
@@ -186,9 +182,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     "there is a mix of due and fulfilled returns" must {
       lazy val view: Document = Jsoup.parse(page(mixedStatusResponse, fromDate, toDate, agentView = false)(request, appConfig, messages).toString())
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "only show due/open returns in the table (not fulfilled ones)" in {
         val tables: Elements = view.select("table.govuk-table")
@@ -205,9 +200,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
     "there are multiple accounting periods" must {
       lazy val view: Document = Jsoup.parse(page(multiplePeriodsResponse, fromDate, toDate, false)(request, appConfig, messages).toString())
 
-      "display the common page elements" in {
+      "display the common page elements" in
         verifyCommonPageElements(view)
-      }
 
       "show headings for each accounting period with open obligations" in {
         val periodHeadings: Elements = view.select("h2.govuk-heading-s")

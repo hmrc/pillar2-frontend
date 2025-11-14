@@ -18,8 +18,8 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 
 class UltimateParentNavigatorSpec extends SpecBase {
 

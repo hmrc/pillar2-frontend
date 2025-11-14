@@ -27,13 +27,13 @@ import pages.{FmEntityTypePage, RfmEntityTypePage, UpeEntityTypePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
 class GrsReturnControllerSpec extends SpecBase {
 
-  private val validRegisterWithIdResponse = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
+  private val validRegisterWithIdResponse               = Json.parse(validRegistrationWithIdResponse).as[IncorporatedEntityRegistrationData]
   private val validRegisterWithIdResponseWithoutPartner =
     Json.parse(validRegistrationWithIdResponseWithoutPartnerId).as[IncorporatedEntityRegistrationData]
   private val failedIdentifierLimited   = Json.parse(registrationNotCalledLimited).as[IncorporatedEntityRegistrationData]
@@ -48,7 +48,7 @@ class GrsReturnControllerSpec extends SpecBase {
   "GrsReturn Controller" must {
 
     "return 303 redirect to the next page with UK Limited company for UPE" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -71,7 +71,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to the next page with Limited Liability Partnership for UPE" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -112,7 +112,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if UK Limited company for UPE and no registered Business Partner Id exists" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -129,7 +129,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if Limited Liability Partnership for UPE and no registered Business Partner Id exists" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -146,7 +146,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to the next page with UK Limited company for Filing Member" in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -169,7 +169,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if UK Limited company for FM and no registered Business Partner Id exists" in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -186,7 +186,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to the next page with Limited Liability Partnership for Filing Member" in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -210,7 +210,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if Limited Liability Partnership for Filing Member and no registered Business Partner Id exists" in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -227,7 +227,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to the next page with UK Limited company for RFM" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -250,7 +250,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to the next page with Limited Liability Partnership for RFM" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -274,7 +274,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if Limited Liability Partnership for RFM and no Company Profile exists" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -291,7 +291,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if Limited Liability Partnership for RFM and no SAUTR exists" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -308,7 +308,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to Journey Recovery page if Limited Liability Partnership for RFM and no registered Business Partner Id exists" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -346,7 +346,7 @@ class GrsReturnControllerSpec extends SpecBase {
 
     "return 303 redirect to Journey Recovery page for RFM When businesspartnerId not set for UKLimited " in {
 
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -370,7 +370,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "return 303 redirect to Journey Recovery page for RFM When businesspartnerId not set for LLP " in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -394,7 +394,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration not called controller for UPE if GRS fails to identify the entity" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -417,7 +417,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration not called controller for nfm if GRS fails to identify the entity" in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -441,7 +441,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration failed controller if grs registration fails in the fm journey " in {
-      val ua = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(FmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -464,7 +464,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration failed controller if grs registration fails in the upe journey" in {
-      val ua = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(UpeEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -488,7 +488,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration failed controller if grs registration fails in the RFM journey " in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.UkLimitedCompany).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
@@ -511,7 +511,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to registration not called controller for nfm if GRS fails to identify the entity in RFM journey" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
@@ -535,7 +535,7 @@ class GrsReturnControllerSpec extends SpecBase {
     }
 
     "redirect to JourneyRecoveryController for RFM if an invalid result received from GRS" in {
-      val ua = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
+      val ua          = emptyUserAnswers.set(RfmEntityTypePage, EntityType.LimitedLiabilityPartnership).success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))

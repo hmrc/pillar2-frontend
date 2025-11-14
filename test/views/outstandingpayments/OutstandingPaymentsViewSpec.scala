@@ -18,14 +18,14 @@ package views.outstandingpayments
 
 import base.ViewSpecBase
 import controllers.routes
-import controllers.routes._
+import controllers.routes.*
 import models.financialdata.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.outstandingpayments.OutstandingPaymentsView
-import views.outstandingpayments.OutstandingPaymentsViewSpec._
+import views.outstandingpayments.OutstandingPaymentsViewSpec.*
 
 import java.time.LocalDate
 

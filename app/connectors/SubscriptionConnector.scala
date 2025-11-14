@@ -18,15 +18,16 @@ package connectors
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector.constructUrl
-import models._
-import models.subscription._
+import models.*
+import models.subscription.*
 import org.apache.pekko.Done
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import utils.FutureConverter.FutureOps
 
@@ -48,7 +49,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           response.json.as[SuccessResponse].success.plrReference.toFuture
         case conflictResponse if conflictResponse.status.equals(CONFLICT)                                   => Future.failed(DuplicateSubmissionError)
         case unprocessableEntityResponse if unprocessableEntityResponse.status.equals(UNPROCESSABLE_ENTITY) => Future.failed(UnprocessableEntityError)
-        case errorResponse =>
+        case errorResponse                                                                                  =>
           logger.debug(
             s"[Subscription failed with regSafeId ${subscriptionRequestParameters.regSafeId} " +
               s"and fmSafeId ${subscriptionRequestParameters.fmSafeId}"
@@ -60,7 +61,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def cacheSubscription(
     readSubscriptionParameter: ReadSubscriptionRequestParameters
-  )(implicit hc:               HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
       .get(url"$subscriptionUrl")
@@ -76,7 +77,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscription(
     plrReference: String
-  )(implicit hc:  HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
@@ -88,14 +89,14 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         case response if response.status == UNPROCESSABLE_ENTITY =>
           Future.failed(UnprocessableEntityError)
         case notFoundResponse if notFoundResponse.status == 404 => Future.successful(None)
-        case e =>
+        case e                                                  =>
           logger.warn(s"Connection issue when calling read subscription with status: ${e.status}")
           Future.failed(InternalIssueError)
       }
   }
 
   def getSubscriptionCache(
-    userId:      String
+    userId: String
   )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
     http
       .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
@@ -109,7 +110,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
       }
 
   def save(userId: String, subscriptionLocalData: JsValue)(implicit
-    hc:            HeaderCarrier
+    hc: HeaderCarrier
   ): Future[JsValue] =
     http
       .post(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")

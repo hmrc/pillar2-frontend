@@ -27,7 +27,7 @@ import javax.inject.Inject
 class BTNProblemWithServiceController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     BTNProblemWithServiceView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -44,14 +44,14 @@ class CaptureSubscriptionAddressController @Inject() (
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CaptureSubscriptionAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[NonUKAddress] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(SubAddSecondaryContactPage)) {
+    if request.userAnswers.isPageDefined(SubAddSecondaryContactPage) then {
       val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
       Ok(view(preparedForm, mode, countryOptions.options()))
     } else {

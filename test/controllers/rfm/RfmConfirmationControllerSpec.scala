@@ -24,12 +24,12 @@ import play.api.inject
 import play.api.inject.bind
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import views.html.rfm.RfmConfirmationView
 
 import java.time.ZonedDateTime

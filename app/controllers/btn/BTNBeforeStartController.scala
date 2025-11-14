@@ -19,7 +19,7 @@ package controllers.btn
 import cats.data.OptionT
 import cats.implicits.catsStdInstancesForFuture
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.btn.BTNStatus
 import models.{Mode, UserAnswers}
@@ -45,7 +45,7 @@ class BTNBeforeStartController @Inject() (
   subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 

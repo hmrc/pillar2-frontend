@@ -30,7 +30,7 @@ import play.api.inject
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.rfm.CorporatePositionView
 
@@ -44,7 +44,7 @@ class CorporatePositionControllerSpec extends SpecBase {
   "RFM Corporate Position controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 

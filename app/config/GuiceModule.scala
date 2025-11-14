@@ -18,8 +18,8 @@ package config
 
 import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
-import connectors._
-import controllers.actions._
+import connectors.*
+import controllers.actions.*
 import org.apache.fop.apps.FopFactory
 import play.api.{Configuration, Environment}
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
@@ -50,7 +50,7 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     bind(classOf[FopFactory]).toProvider(classOf[FopFactoryProvider])
 
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
-    if (grsStubEnabled) {
+    if grsStubEnabled then {
       bind(classOf[IncorporatedEntityIdentificationFrontendConnector])
         .to(classOf[StubIncorporatedEntityIdentificationFrontendConnector])
         .asEagerSingleton()

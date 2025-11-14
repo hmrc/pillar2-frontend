@@ -18,16 +18,16 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.ManageContactDetailsStatus._
+import models.subscription.ManageContactDetailsStatus.*
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito._
+import org.mockito.Mockito.*
 import org.scalatest.BeforeAndAfterEach
 import pages.ManageContactDetailsStatusPage
 import play.api.i18n.Messages
 import play.api.i18n.MessagesApi
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import views.html.subscriptionview.manageAccount.ManageContactDetailsWaitingRoomView

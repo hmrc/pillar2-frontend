@@ -31,7 +31,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -228,7 +228,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
   "MneOrDomesticController for Agents" should {
 
     "return OK and the correct view for a GET when previous data is found" in {
-      val userAnswer = emptySubscriptionLocalData.set(SubMneOrDomesticPage, MneOrDomestic.Uk).success.value
+      val userAnswer  = emptySubscriptionLocalData.set(SubMneOrDomesticPage, MneOrDomestic.Uk).success.value
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

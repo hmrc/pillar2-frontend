@@ -17,8 +17,8 @@
 package navigation
 
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 import play.api.mvc.Call
 import utils.RowStatus
 
@@ -33,7 +33,7 @@ class NominatedFilingMemberNavigator @Inject() {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
-  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad()
   private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
 
   private val normalRoutes: Page => UserAnswers => Call = {
@@ -53,7 +53,7 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(NominateFilingMemberPage)
       .map { fmNominated =>
-        if (fmNominated) {
+        if fmNominated then {
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
         } else {
           routes.TaskListController.onPageLoad
@@ -65,10 +65,10 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(DuplicateSafeIdPage)
       .map { fmNominated =>
-        if (fmNominated) {
+        if fmNominated then {
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
         } else {
-          controllers.routes.CheckYourAnswersController.onPageLoad
+          controllers.routes.CheckYourAnswersController.onPageLoad()
         }
       }
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
@@ -77,7 +77,7 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(FmRegisteredInUKPage)
       .map { ukBased =>
-        if (ukBased) {
+        if ukBased then {
           controllers.fm.routes.NfmEntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode)
@@ -89,7 +89,7 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(FmPhonePreferencePage)
       .map { provided =>
-        if (provided) {
+        if provided then {
           controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(NormalMode)
         } else {
           nfmCheckYourAnswers
@@ -106,9 +106,9 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(NominateFilingMemberPage)
       .map(nominated =>
-        if (nominated & userAnswers.fmFinalStatus != RowStatus.Completed) {
+        if nominated & userAnswers.fmFinalStatus != RowStatus.Completed then {
           controllers.fm.routes.IsNfmUKBasedController.onPageLoad(NormalMode)
-        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+        } else if userAnswers.get(CheckYourAnswersLogicPage).isDefined then {
           reviewAndSubmitCheckYourAnswers
         } else {
           nfmCheckYourAnswers
@@ -116,7 +116,7 @@ class NominatedFilingMemberNavigator @Inject() {
       )
       .getOrElse(routes.JourneyRecoveryController.onPageLoad())
   private def whichCheckYourAnswerPageContact(userAnswers: UserAnswers): Call =
-    if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+    if userAnswers.get(CheckYourAnswersLogicPage).isDefined then {
       reviewAndSubmitCheckYourAnswers
     } else {
       nfmCheckYourAnswers
@@ -126,9 +126,9 @@ class NominatedFilingMemberNavigator @Inject() {
     userAnswers
       .get(FmPhonePreferencePage)
       .map { nominatedPhoneNumber =>
-        if (nominatedPhoneNumber & userAnswers.get(FmCapturePhonePage).isEmpty) {
+        if nominatedPhoneNumber & userAnswers.get(FmCapturePhonePage).isEmpty then {
           controllers.fm.routes.NfmCapturePhoneDetailsController.onPageLoad(CheckMode)
-        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+        } else if userAnswers.get(CheckYourAnswersLogicPage).isDefined then {
           reviewAndSubmitCheckYourAnswers
         } else {
           nfmCheckYourAnswers

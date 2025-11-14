@@ -16,10 +16,10 @@
 
 package navigation
 
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import controllers.routes.{IndexController, JourneyRecoveryController}
-import models._
-import pages._
+import models.*
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -41,7 +41,7 @@ class BTNNavigator @Inject() {
 
     userAnswers
       .get(page)
-      .map(provided => if (provided) yesRoute else noRoute)
+      .map(provided => if provided then yesRoute else noRoute)
       .getOrElse(JourneyRecoveryController.onPageLoad())
   }
 }

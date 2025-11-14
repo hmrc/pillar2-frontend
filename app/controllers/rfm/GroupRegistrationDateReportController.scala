@@ -17,7 +17,7 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.GroupRegistrationDateReportFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -43,7 +43,7 @@ class GroupRegistrationDateReportController @Inject() (
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
   view:                             GroupRegistrationDateReportView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

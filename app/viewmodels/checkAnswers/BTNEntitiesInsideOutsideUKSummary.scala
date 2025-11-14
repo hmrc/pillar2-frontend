@@ -20,15 +20,15 @@ import pages.EntitiesInsideOutsideUKPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.{SiteChange, SiteNo, SiteYes}
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object BTNEntitiesInsideOutsideUKSummary {
 
   def row(answers: UserAnswers, ukOnly: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
-    if (ukOnly) {
+    if ukOnly then {
       answers.get(EntitiesInsideOutsideUKPage).map { answer =>
-        val value = if (answer) SiteYes else SiteNo
+        val value = if answer then SiteYes else SiteNo
 
         SummaryListRowViewModel(
           key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel.uk",
@@ -41,7 +41,7 @@ object BTNEntitiesInsideOutsideUKSummary {
       }
     } else {
       answers.get(EntitiesInsideOutsideUKPage).map { answer =>
-        val value = if (answer) SiteYes else SiteNo
+        val value = if answer then SiteYes else SiteNo
 
         SummaryListRowViewModel(
           key = "btn.entitiesInsideOutsideUK.checkYourAnswersLabel",

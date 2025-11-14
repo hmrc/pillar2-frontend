@@ -18,20 +18,20 @@ package controllers
 
 import base.SpecBase
 import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
-import models._
+import models.*
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import models.subscription.AccountingPeriod
-import models.subscription.SubscriptionStatus._
+import models.subscription.SubscriptionStatus.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{times, verify, when}
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.{GatewayTimeoutException, HttpException}
@@ -45,7 +45,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
   private val plrReference = "XE1111123456789"
 
-  private val date = LocalDate.of(2025, 7, 18)
+  private val date        = LocalDate.of(2025, 7, 18)
   private val grsResponse = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(
@@ -66,7 +66,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       )
     )
   )
-  private val regData = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
+  private val regData           = RegistrationInfo(crn = "123", utr = "345", safeId = "567", registrationDate = None, filingMember = None)
   private val defaultUserAnswer = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, true)
     .setOrException(UpeGRSResponsePage, grsResponse)
@@ -121,7 +121,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
     "on page load method " should {
       "return OK and the correct view if an answer is provided to every contact detail question" in {
 
-        val userAnswer = UserAnswers("id")
+        val userAnswer  = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(subData))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -146,7 +146,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "return OK and the correct view if an answer is provided to every ultimate parent question" in {
 
-        val userAnswer = UserAnswers("id")
+        val userAnswer  = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upNoID))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -168,7 +168,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "return OK and the correct view if an answer is provided to every Filing member question" in {
 
-        val userAnswer = UserAnswers("id")
+        val userAnswer  = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmNoID))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -191,7 +191,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "return OK and the correct view if an answer is provided with limited company upe" in {
 
-        val userAnswer = UserAnswers("id")
+        val userAnswer  = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(upId))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -221,7 +221,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
       "return OK and the correct view if an answer is provided with limited company nfm" in {
 
-        val userAnswer = UserAnswers("id")
+        val userAnswer  = UserAnswers("id")
         val application = applicationBuilder(userAnswers = Some(nfmId))
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
@@ -252,7 +252,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
       "redirected to cannot return after subscription error page if the user has already subscribed with a pillar 2 reference" in {
 
         val sessionRepositoryUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "someID")
-        val application = applicationBuilder(None)
+        val application                  = applicationBuilder(None)
           .overrides(
             bind[SessionRepository].toInstance(mockSessionRepository),
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)

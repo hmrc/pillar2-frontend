@@ -19,7 +19,7 @@ package controllers.repayments
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.UserAnswers
-import models.repayments.RepaymentsStatus._
+import models.repayments.RepaymentsStatus.*
 import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -38,7 +38,7 @@ class RepaymentsWaitingRoomController @Inject() (
   sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsWaitingRoomView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

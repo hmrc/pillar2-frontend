@@ -20,7 +20,7 @@ import models.UserAnswers
 import models.btn.BTNStatus
 import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.*
 import models.subscription.AccountingPeriod
 import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import play.api.i18n.Messages
@@ -46,7 +46,7 @@ trait ObligationsAndSubmissionsDataFixture {
 
   val testZonedDateTime:                            ZonedDateTime = ZonedDateTime.now(utcZoneId).truncatedTo(ChronoUnit.SECONDS)
   val obligationsAndSubmissionsSuccessResponseJson: JsValue       = Json.toJson(obligationsAndSubmissionsSuccessResponse().success)
-  val validBTNCyaUa: UserAnswers = UserAnswers("id")
+  val validBTNCyaUa:                                UserAnswers   = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, AccountingPeriod(LocalDate.of(2024, 10, 24), LocalDate.of(2025, 10, 23)))
     .setOrException(EntitiesInsideOutsideUKPage, true)
   lazy val submittedBTNRecord: UserAnswers = validBTNCyaUa.set(BTNStatus, BTNStatus.submitted).get

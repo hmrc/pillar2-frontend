@@ -16,7 +16,7 @@
 
 package models.repayments
 
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class NonUKBank(bankName: String, nameOnBankAccount: String, bic: Option[String], iban: Option[String])
 object NonUKBank {

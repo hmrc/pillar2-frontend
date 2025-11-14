@@ -22,10 +22,10 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersViewSpec extends ViewSpecBase {
@@ -64,7 +64,7 @@ class UpeCheckYourAnswersViewSpec extends ViewSpecBase {
   )
 
   lazy val page: UpeCheckYourAnswersView = inject[UpeCheckYourAnswersView]
-  lazy val view: Document = Jsoup.parse(
+  lazy val view: Document                = Jsoup.parse(
     page(summaryList)(request, appConfig, messages).toString()
   )
   lazy val pageTitle: String = "Check your answers for ultimate parent details"

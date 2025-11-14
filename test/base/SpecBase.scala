@@ -17,11 +17,11 @@
 package base
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import generators.StringGenerators
-import helpers._
+import helpers.*
 import models.UserAnswers
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.*
 import models.requests.IdentifierRequest
 import models.subscription.SubscriptionLocalData
 import org.apache.pekko.actor.ActorSystem
@@ -31,15 +31,15 @@ import org.scalatest.matchers.must.Matchers
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatest.{BeforeAndAfterEach, OptionValues}
 import org.scalatestplus.play.guice.GuiceOneAppPerSuite
-import play.api.http._
+import play.api.http.*
 import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.mvc._
+import play.api.mvc.*
 import play.api.test.Helpers.baseApplicationBuilder.injector
-import play.api.test._
+import play.api.test.*
 import play.api.{Application, Configuration}
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 

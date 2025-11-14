@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmContactDetailsRegistrationView
 
 class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
@@ -26,7 +26,7 @@ class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
   "Rfm Contact Details Registration Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 

@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import controllers.routes
-import controllers.subscription.manageAccount.{routes => manageRoutes}
+import controllers.subscription.manageAccount.routes as manageRoutes
 import forms.mappings.Mappings
 import helpers.AllMocks
 import models.UserAnswers
@@ -28,9 +28,9 @@ import org.mockito.Mockito.{reset, verify, when}
 import org.scalatest.concurrent.ScalaFutures
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
-import play.api.test.CSRFTokenHelper._
+import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import services.SubscriptionService

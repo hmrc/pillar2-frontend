@@ -35,7 +35,7 @@
 @layout(pageTitle = title(form, messages("groupAccountingPeriod.amend.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map(" " -> "endDate.day")))

@@ -24,7 +24,7 @@ import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import pages.{SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
 import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}

@@ -30,12 +30,12 @@ import scala.concurrent.Future
 class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends PartnershipIdentificationFrontendConnector {
 
   override def createPartnershipJourney(userType: UserType, partnershipType: EntityType, mode: Mode)(implicit
-    hc:                                           HeaderCarrier
+    hc: HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] =
     Future.successful(
       GrsCreateRegistrationResponse(
         journeyStartUrl = s"/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}/${userType.toString
-          .toLowerCase()}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
+            .toLowerCase()}&entityType=${EntityType.LimitedLiabilityPartnership.toString}"
       )
     )
 

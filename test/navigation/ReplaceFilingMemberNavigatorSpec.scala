@@ -17,15 +17,15 @@
 package navigation
 
 import base.SpecBase
-import models._
+import models.*
 import models.rfm.CorporatePosition
-import pages._
+import pages.*
 
 import java.time.LocalDate
 
 class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
-  val navigator = new ReplaceFilingMemberNavigator
+  val navigator            = new ReplaceFilingMemberNavigator
   private val nonUKAddress = NonUKAddress(
     addressLine1 = "line1",
     addressLine2 = None,

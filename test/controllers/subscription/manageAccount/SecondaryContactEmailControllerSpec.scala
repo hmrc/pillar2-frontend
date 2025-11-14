@@ -30,7 +30,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -98,7 +98,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -125,7 +125,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request =
+      val request     =
         FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
           .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
@@ -140,7 +140,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "redirect to bookmark page if no data is found for primary contact name page" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request =
+      val request     =
         FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
 
       running(application) {
@@ -190,7 +190,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
   "SecondaryContactEmail Controller for Agent View Contact details" should {
 
     "must return OK and the correct view for a GET when no data is found" in {
-      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -255,7 +255,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
@@ -345,7 +345,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val userAnswers =
         emptySubscriptionLocalData.setOrException(SubSecondaryContactNamePage, "Keith")
       val expectedUserAnswers = userAnswers.setOrException(SubSecondaryEmailPage, "keith@google.com")
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+      val application         = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),

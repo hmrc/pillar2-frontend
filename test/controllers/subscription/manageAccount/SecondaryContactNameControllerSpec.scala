@@ -29,7 +29,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -97,7 +97,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
             .withFormUrlEncodedBody(("value", stringInput))
 
@@ -154,7 +154,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
   "SecondaryContactName Controller for Agent View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
+      val ua          = emptySubscriptionLocalData.setOrException(SubAddSecondaryContactPage, true).setOrException(SubPrimaryContactNamePage, "asd")
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -226,7 +226,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        val request =
+        val request     =
           FakeRequest(
             POST,
             controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url
@@ -252,7 +252,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubAddSecondaryContactPage, true)
       val expectedUserAnswers = userAnswers.setOrException(SubSecondaryContactNamePage, "Keith")
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+      val application         = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),

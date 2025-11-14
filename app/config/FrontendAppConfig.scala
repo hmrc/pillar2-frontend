@@ -58,10 +58,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   lazy val enrolmentStoreProxyUrl: String =
     s"${configuration.get[Service]("microservice.services.enrolment-store-proxy").baseUrl}${configuration
-      .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
+        .get[String]("microservice.services.enrolment-store-proxy.startUrl")}"
 
   val taxEnrolmentsUrl1: String = s"${configuration.get[Service]("microservice.services.tax-enrolments").baseUrl}${configuration
-    .get[String]("microservice.services.tax-enrolments.url1")}"
+      .get[String]("microservice.services.tax-enrolments.url1")}"
 
   val taxEnrolmentsUrl2: String = s"${configuration.get[String]("microservice.services.tax-enrolments.url2")}"
 
@@ -87,7 +87,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val incorporatedEntityBvEnabled: Boolean = configuration.get[Boolean]("features.incorporatedEntityBvEnabled")
   val partnershipBvEnabled:        Boolean = configuration.get[Boolean]("features.partnershipBvEnabled")
 
-  //Enable Disable
+  // Enable Disable
   val grsStubEnabled: Boolean = configuration.get[Boolean]("features.grsStubEnabled")
 
   lazy val locationCanonicalList: String = loadConfig("location.canonical.list.all")
@@ -107,7 +107,7 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   def transactionHistoryEndDate: LocalDate = {
     val date = configuration.get[String]("features.transactionHistoryEndDate")
 
-    if (date == "now") LocalDate.now() else LocalDate.parse(date)
+    if date == "now" then LocalDate.now() else LocalDate.parse(date)
   }
 
   val maxDaysAgoToConsiderPaymentAsRecent: Int = configuration.get[Int]("payments.maxDaysAgoToConsiderPaymentAsRecent")

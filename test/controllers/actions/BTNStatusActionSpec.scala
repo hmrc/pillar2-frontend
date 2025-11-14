@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import cats.syntax.option._
+import cats.syntax.option.*
 import controllers.btn.routes
 import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.btn.BTNStatus
@@ -52,7 +52,7 @@ class BTNStatusActionSpec
     with TryValues
     with ScalaCheckDrivenPropertyChecks {
 
-  private val userId = "some-test-user-id"
+  private val userId      = "some-test-user-id"
   private val fakeRequest = SubscriptionDataRequest(
     FakeRequest("GET", "/some-example"),
     userId,
@@ -61,7 +61,7 @@ class BTNStatusActionSpec
     isAgent = false
   )
   private val successResult = Results.Ok("")
-  private val successBlock: SubscriptionDataRequest[_] => Future[Result] = _ => Future.successful(successResult)
+  private val successBlock: SubscriptionDataRequest[?] => Future[Result] = _ => Future.successful(successResult)
 
   trait BTNStatusActionTestCase {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]

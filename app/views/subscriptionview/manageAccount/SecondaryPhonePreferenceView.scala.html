@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("secondaryPhonePreference.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
 
-    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onSubmit, 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onSubmit, Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

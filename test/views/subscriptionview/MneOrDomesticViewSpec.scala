@@ -28,7 +28,7 @@ class MneOrDomesticViewSpec extends ViewSpecBase {
 
   lazy val formProvider: MneOrDomesticFormProvider = new MneOrDomesticFormProvider
   lazy val page:         MneOrDomesticView         = inject[MneOrDomesticView]
-  lazy val view: Document =
+  lazy val view:         Document                  =
     Jsoup.parse(page(formProvider(), NormalMode)(request, appConfig, messages).toString())
   lazy val pageTitle: String = "Entity locations"
 

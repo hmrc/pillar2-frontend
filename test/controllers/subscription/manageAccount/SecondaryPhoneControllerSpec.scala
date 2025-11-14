@@ -24,13 +24,13 @@ import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchersSugar.eqTo
 import org.mockito.Mockito.{verify, when}
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -127,7 +127,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url)
-        val result =
+        val result  =
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -138,7 +138,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryPhoneController.onSubmit.url)
+      val request     = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryPhoneController.onSubmit.url)
         .withFormUrlEncodedBody("phoneNumber" -> "12233444")
 
       running(application) {
@@ -251,7 +251,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -295,7 +295,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url)
-        val result =
+        val result  =
           route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -337,7 +337,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
         .setOrException(SubSecondaryEmailPage, "name")
         .setOrException(SubSecondaryPhonePreferencePage, true)
       val expectedUserAnswers = userAnswers.setOrException(SubSecondaryCapturePhonePage, "123456")
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+      val application         = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),

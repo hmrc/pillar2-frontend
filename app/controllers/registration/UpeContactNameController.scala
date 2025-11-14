@@ -42,14 +42,14 @@ class UpeContactNameController @Inject() (
   navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(UpeRegisteredAddressPage)) {
+    if request.userAnswers.isPageDefined(UpeRegisteredAddressPage) then {
       val preparedForm = request.userAnswers.get(UpeContactNamePage).map(contactName => form.fill(contactName)).getOrElse(form)
       Ok(view(preparedForm, mode))
     } else {

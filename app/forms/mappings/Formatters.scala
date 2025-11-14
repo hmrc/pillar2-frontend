@@ -105,8 +105,8 @@ trait Formatters extends Transforms with Constraints {
       val fieldValue     = data.get(key).map(_.trim).filter(_.nonEmpty)
       val dependentValue = data.get(dependentFieldName).map(_.trim).filter(_.nonEmpty)
 
-      if (fieldValue.isDefined || dependentValue.isDefined) {
-        if (fieldValue.isDefined) {
+      if fieldValue.isDefined || dependentValue.isDefined then {
+        if fieldValue.isDefined then {
           formatter.bind(key, data).map(Some(_))
         } else {
           Right(None)
@@ -250,7 +250,7 @@ trait Formatters extends Transforms with Constraints {
     }
 
   private[mappings] def enumerableFormatter[A](requiredKey: String, invalidKey: String, args: Seq[String] = Seq.empty)(implicit
-    ev:                                                     Enumerable[A]
+    ev: Enumerable[A]
   ): Formatter[A] =
     new Formatter[A] {
 

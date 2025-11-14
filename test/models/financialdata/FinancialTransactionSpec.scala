@@ -17,8 +17,8 @@
 package models.financialdata
 
 import base.SpecBase
-import cats.syntax.option._
-import models.financialdata.EtmpMainTransactionRef._
+import cats.syntax.option.*
+import models.financialdata.EtmpMainTransactionRef.*
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import org.scalatest.Assertion

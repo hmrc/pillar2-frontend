@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
-import models.subscription.SubscriptionStatus._
+import models.subscription.SubscriptionStatus.*
 import pages.SubscriptionStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -34,7 +34,7 @@ class RegistrationWaitingRoomController @Inject() (
   requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationWaitingRoomView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

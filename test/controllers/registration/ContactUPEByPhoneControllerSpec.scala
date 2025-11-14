@@ -22,12 +22,12 @@ import forms.ContactUPEByPhoneFormProvider
 import models.NormalMode
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.ContactUPEByPhoneView
 
 import scala.concurrent.Future

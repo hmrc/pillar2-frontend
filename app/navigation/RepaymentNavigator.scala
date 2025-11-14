@@ -17,8 +17,8 @@
 package navigation
 
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -52,7 +52,7 @@ class RepaymentNavigator @Inject() {
     userAnswers
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
-        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+        if ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount then {
           controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = NormalMode)
         } else {
           controllers.repayments.routes.NonUKBankController.onPageLoad(mode = NormalMode)
@@ -64,8 +64,8 @@ class RepaymentNavigator @Inject() {
     userAnswers
       .get(RepaymentAccountNameConfirmationPage)
       .map { isCorrectAccountName =>
-        if (isCorrectAccountName) {
-          if (mode == NormalMode) {
+        if isCorrectAccountName then {
+          if mode == NormalMode then {
             controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(mode)
           } else { controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad }
         } else {
@@ -93,7 +93,7 @@ class RepaymentNavigator @Inject() {
     userAnswers
       .get(UkOrAbroadBankAccountPage)
       .map { ukOrAbroad =>
-        if (ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount) {
+        if ukOrAbroad == UkOrAbroadBankAccount.UkBankAccount then {
           userAnswers.get(BankAccountDetailsPage) match {
             case Some(_) => controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
             case _       => controllers.repayments.routes.BankAccountDetailsController.onPageLoad(mode = CheckMode)
@@ -122,7 +122,7 @@ class RepaymentNavigator @Inject() {
     userAnswers
       .get(RepaymentsContactByPhonePage)
       .map { PhoneNumber =>
-        if (PhoneNumber & userAnswers.get(RepaymentsPhoneDetailsPage).isEmpty) {
+        if PhoneNumber & userAnswers.get(RepaymentsPhoneDetailsPage).isEmpty then {
           controllers.repayments.routes.RepaymentsPhoneDetailsController.onPageLoad(CheckMode)
         } else {
           controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad

@@ -17,10 +17,10 @@
 package navigation
 
 import base.SpecBase
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 
 class BTNNavigatorSpec extends SpecBase {
 

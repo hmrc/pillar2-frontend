@@ -18,10 +18,10 @@ package models.audit
 
 import models.btn.BtnResponse
 import models.subscription.AccountingPeriod
-import play.api.libs.functional.syntax._
-import play.api.libs.json._
+import play.api.libs.functional.syntax.*
+import play.api.libs.json.*
 
-import java.time._
+import java.time.*
 
 case class CreateBtnAuditEvent(
   pillarReference:            String,

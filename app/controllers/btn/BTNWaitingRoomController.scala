@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import models.btn.BTNStatus
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -37,7 +37,7 @@ class BTNWaitingRoomController @Inject() (
   dataRequiredAction:                     SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
   btnWaitingRoomView:                     BTNWaitingRoomView
-)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

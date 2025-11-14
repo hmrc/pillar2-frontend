@@ -41,7 +41,7 @@ class UpeContactEmailController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
   view:                      UpeContactEmailView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

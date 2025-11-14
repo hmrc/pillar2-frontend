@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.ContactNameComplianceFormProvider
 import models.{Mode, NormalMode}
 import navigation.SubscriptionNavigator
@@ -44,13 +44,13 @@ class ContactNameComplianceController @Inject() (
   formProvider:              ContactNameComplianceFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactNameComplianceView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
+    if request.userAnswers.groupDetailStatus == RowStatus.Completed then {
       val preparedForm = request.userAnswers.get(SubPrimaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form

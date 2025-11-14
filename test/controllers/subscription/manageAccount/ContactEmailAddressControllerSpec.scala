@@ -26,7 +26,7 @@ import pages.{SubPrimaryContactNamePage, SubPrimaryEmailPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -207,7 +207,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request when invalid data is submitted" in {
-      val ua = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
+      val ua          = emptySubscriptionLocalData.set(SubPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()

@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.SecondaryContactEmailFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
@@ -40,7 +40,7 @@ class SecondaryContactEmailController @Inject() (
   formProvider:                           SecondaryContactEmailFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   SecondaryContactEmailView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class SecondaryContactEmailController @Inject() (
       request.subscriptionLocalData
         .get(SubSecondaryContactNamePage)
         .map { contactName =>
-          val form = formProvider(contactName)
+          val form         = formProvider(contactName)
           val preparedForm = request.subscriptionLocalData.get(SubSecondaryEmailPage) match {
             case Some(v) => form.fill(v)
             case None    => form

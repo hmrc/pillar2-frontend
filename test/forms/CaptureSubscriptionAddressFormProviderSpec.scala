@@ -184,7 +184,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
       "not bind postal code exceeding maximum length" in {
         val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
-        val data = Map(
+        val data         = Map(
           countryFieldName  -> "GB",
           postcodeFieldName -> longPostcode
         )
@@ -214,7 +214,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
       "not bind postal code exceeding maximum length" in {
         val longPostcode = "A" * (maxAddressLineLength + 1) // Safe characters only
-        val data = Map(
+        val data         = Map(
           countryFieldName  -> "US",
           postcodeFieldName -> longPostcode
         )
@@ -278,7 +278,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
     "handle maximum length postcode for non-GB countries" in {
       val maxLengthPostcode = "A" * 10
-      val result = form.bind(
+      val result            = form.bind(
         Map(
           "addressLine1" -> "123 Test Street",
           "addressLine3" -> "Test City",
@@ -293,7 +293,7 @@ class CaptureSubscriptionAddressFormProviderSpec extends StringFieldBehaviours {
 
     "reject over-length postcode for non-GB countries" in {
       val tooLongPostcode = "A" * 11
-      val result = form.bind(
+      val result          = form.bind(
         Map(
           "addressLine1" -> "123 Test Street",
           "addressLine3" -> "Test City",

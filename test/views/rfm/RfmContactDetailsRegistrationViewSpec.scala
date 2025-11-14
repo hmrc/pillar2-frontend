@@ -26,9 +26,9 @@ import play.api.test.FakeRequest
 import views.html.rfm.RfmContactDetailsRegistrationView
 
 class RfmContactDetailsRegistrationViewSpec extends ViewSpecBase {
-  lazy val page:      RfmContactDetailsRegistrationView = inject[RfmContactDetailsRegistrationView]
-  lazy val pageTitle: String                            = "We need contact details for your Pillar 2 Top-up Taxes account"
-  lazy val rfmRequest: Request[AnyContent] =
+  lazy val page:       RfmContactDetailsRegistrationView = inject[RfmContactDetailsRegistrationView]
+  lazy val pageTitle:  String                            = "We need contact details for your Pillar 2 Top-up Taxes account"
+  lazy val rfmRequest: Request[AnyContent]               =
     FakeRequest("GET", controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url).withCSRFToken
 
   lazy val view: Document =

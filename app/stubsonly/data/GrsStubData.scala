@@ -19,9 +19,9 @@ package stubsonly.data
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
-import models.grs._
+import models.grs.*
 import models.registration
-import models.registration._
+import models.registration.*
 import play.api.libs.json.Json
 
 import java.time.LocalDate
@@ -55,7 +55,7 @@ trait GrsStubData {
     )
 
   private def validCompanyProfile(partnership: Boolean): CompanyProfile = CompanyProfile(
-    companyName = if (partnership) "Test Example Partnership Name" else "Test Example Company Name",
+    companyName = if partnership then "Test Example Partnership Name" else "Test Example Company Name",
     companyNumber = "76543210",
     dateOfIncorporation = Some(LocalDate.parse("2010-12-12")),
     unsanitisedCHROAddress = IncorporatedEntityAddress(

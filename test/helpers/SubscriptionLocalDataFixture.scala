@@ -20,19 +20,19 @@ import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
 import models.subscription.AccountStatus.ActiveAccount
-import models.subscription._
+import models.subscription.*
 import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers.manageAccount._
+import viewmodels.checkAnswers.manageAccount.*
 import viewmodels.govuk.summarylist.SummaryListViewModel
 
 import java.time.LocalDate
 
 trait SubscriptionLocalDataFixture {
   private val upeCorrespondenceAddress = UpeCorrespAddressDetails("middle", None, Some("lane"), None, None, "obv")
-  private val upeDetailsAmend =
+  private val upeDetailsAmend          =
     UpeDetailsAmend("plrReference", None, None, "orgName", LocalDate.of(2024, 1, 31), domesticOnly = false, filingMember = false)
   private val contactDetails = ContactDetailsType("shadow", Some("dota2"), "shadow@fiend.com")
   val filingMemberAmendDetails: FilingMemberAmendDetails = FilingMemberAmendDetails(
@@ -123,7 +123,7 @@ trait SubscriptionLocalDataFixture {
     contactAddress = NonUKAddress("middle", None, "lane", None, None, "obv")
   )
 
-  def subscriptionDataGroupSummaryList()(implicit messages: Messages, request: SubscriptionDataRequest[_]): SummaryList = SummaryListViewModel(
+  def subscriptionDataGroupSummaryList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       MneOrDomesticSummary.row(),
       GroupAccountingPeriodSummary.row(),
@@ -132,7 +132,7 @@ trait SubscriptionLocalDataFixture {
     ).flatten
   )
 
-  def subscriptionDataPrimaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[_]): SummaryList = SummaryListViewModel(
+  def subscriptionDataPrimaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       ContactNameComplianceSummary.row(),
       ContactEmailAddressSummary.row(),
@@ -141,7 +141,7 @@ trait SubscriptionLocalDataFixture {
     ).flatten
   )
 
-  def subscriptionDataSecondaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[_]): SummaryList = SummaryListViewModel(
+  def subscriptionDataSecondaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       AddSecondaryContactSummary.row(),
       SecondaryContactNameSummary.row(),
@@ -152,8 +152,8 @@ trait SubscriptionLocalDataFixture {
   )
 
   def subscriptionDataAddress(countryOptions: CountryOptions)(implicit
-    messages:                                 Messages,
-    request:                                  SubscriptionDataRequest[_]
+    messages: Messages,
+    request:  SubscriptionDataRequest[?]
   ): SummaryList = SummaryListViewModel(
     rows = Seq(ContactCorrespondenceAddressSummary.row(countryOptions)).flatten
   )

@@ -19,7 +19,7 @@ package controllers.rfm
 import base.SpecBase
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class RfmCannotReturnAfterConfirmationControllerSpec extends SpecBase {
 

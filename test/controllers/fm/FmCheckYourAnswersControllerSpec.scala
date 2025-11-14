@@ -18,9 +18,9 @@ package controllers.fm
 
 import base.SpecBase
 import models.NonUKAddress
-import pages._
+import pages.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.RowStatus
 import viewmodels.govuk.SummaryListFluency
 

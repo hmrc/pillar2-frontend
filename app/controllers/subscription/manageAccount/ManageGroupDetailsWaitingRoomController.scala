@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import models.subscription.ManageGroupDetailsStatus._
+import models.subscription.ManageGroupDetailsStatus.*
 import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -41,7 +41,7 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
   sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   futures:                                Futures
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {

@@ -18,12 +18,12 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 
 class NominatedFilingMemberNavigatorSpec extends SpecBase {
 
-  val navigator = new NominatedFilingMemberNavigator
+  val navigator            = new NominatedFilingMemberNavigator
   private val nonUKAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,

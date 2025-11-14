@@ -18,7 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import forms.BTNEntitiesInsideOutsideUKFormProvider
 import models.{MneOrDomestic, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
@@ -30,7 +30,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.btn.{BTNAmendDetailsView, BTNEntitiesInsideOutsideUKView}
 
@@ -54,8 +54,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
 
   "EntitiesBothInUKAndOutsideController" when {
 
-    "must return OK and the correct view for a GET" in {
-
+    "must return OK and the correct view for a GET" in
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         val request = FakeRequest(GET, entitiesInsideOutsideUKRoute)
@@ -71,7 +70,6 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
           messages(application)
         ).toString
       }
-    }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
 
@@ -95,7 +93,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in {
+    "must redirect to the CheckYourAnswers page when answer is Yes and valid data is submitted" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -109,7 +107,6 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual CheckYourAnswersController.onPageLoad.url
       }
-    }
 
     "must redirect to a knockback page when a BTN is submitted" in {
 
@@ -131,7 +128,7 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
       }
     }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
@@ -153,7 +150,6 @@ class BTNEntitiesInsideOutsideUKControllerSpec extends SpecBase with MockitoSuga
           messages(application)
         ).toString
       }
-    }
 
     "must redirect to BTN specific error page when subscription data is not returned" in {
       val application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))

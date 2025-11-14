@@ -27,7 +27,7 @@ import java.time.LocalDate
 object SubmissionHistoryHelper {
 
   def generateSubmissionHistoryTable(accountingPeriods: Seq[AccountingPeriodDetails])(implicit
-    messages:                                           Messages
+    messages: Messages
   ): Seq[Table] =
     accountingPeriods
       .filter(accountPeriod => accountPeriod.obligations.flatMap(_.submissions).nonEmpty)
