@@ -58,7 +58,7 @@ class RepaymentsWaitingRoomController @Inject() (
       case (Some(SuccessfullyCompleted), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
       case (Some(UnexpectedResponseError), Some(true)) =>
-        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed()))
       case (Some(IncompleteDataError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
       case (s, _) => Future.successful(Ok(view(s)))

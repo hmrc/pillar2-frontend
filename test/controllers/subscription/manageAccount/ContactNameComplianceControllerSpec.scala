@@ -49,7 +49,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -70,7 +70,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -92,7 +92,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       running(application) {
         val stringInput = randomStringGenerator(161)
         val request     =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", stringInput))
 
         val boundForm = formProvider().bind(Map("value" -> stringInput))
@@ -120,11 +120,13 @@ class ContactNameComplianceControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "name")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
+          .onPageLoad()
+          .url
       }
     }
 
@@ -146,7 +148,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
@@ -173,7 +175,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactNameComplianceView]
         status(result) mustEqual OK
@@ -200,7 +202,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
       running(application) {
         val stringInput = randomStringGenerator(161)
         val request     =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", stringInput))
         val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[ContactNameComplianceView]

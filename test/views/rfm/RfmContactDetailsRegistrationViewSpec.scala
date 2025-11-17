@@ -29,7 +29,7 @@ class RfmContactDetailsRegistrationViewSpec extends ViewSpecBase {
   lazy val page:       RfmContactDetailsRegistrationView = inject[RfmContactDetailsRegistrationView]
   lazy val pageTitle:  String                            = "We need contact details for your Pillar 2 Top-up Taxes account"
   lazy val rfmRequest: Request[AnyContent]               =
-    FakeRequest("GET", controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url).withCSRFToken
+    FakeRequest("GET", controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url).withCSRFToken
 
   lazy val view: Document =
     Jsoup.parse(page()(rfmRequest, appConfig, messages).toString())

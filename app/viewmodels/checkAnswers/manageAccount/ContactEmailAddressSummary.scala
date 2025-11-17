@@ -56,7 +56,7 @@ object ContactEmailAddressSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("contactEmailAddress.change.hidden"))
         )

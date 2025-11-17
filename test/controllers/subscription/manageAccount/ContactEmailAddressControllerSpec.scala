@@ -53,7 +53,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -77,7 +77,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -95,7 +95,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url)
             .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
         status(result) mustEqual BAD_REQUEST
@@ -106,7 +106,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
 
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -124,18 +124,20 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onSubmit().url)
           .withFormUrlEncodedBody("emailAddress" -> "test@test.com")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
+          .onPageLoad()
+          .url
       }
     }
 
     "must redirect to journey recovery if no primary contact name is found for POST" in {
       val application = applicationBuilder().build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -163,7 +165,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
         )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactEmailAddressView]
@@ -193,7 +195,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
         )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[ContactEmailAddressView]
@@ -222,7 +224,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
           )
             .withFormUrlEncodedBody(("emailAddress", ""))
         val result = route(application, request).value
@@ -244,7 +246,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
         )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -266,7 +268,7 @@ class ContactEmailAddressControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
         )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

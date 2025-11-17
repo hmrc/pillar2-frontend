@@ -67,7 +67,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        view().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a paragraph" in {
@@ -105,7 +105,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         paragraph.text mustBe "If the accounting period dates are wrong, update your group’s accounting period dates before continuing."
         link.text mustBe "update your group’s accounting period dates"
         link.attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         link.attr("target") mustBe "_self"
         link.attr("rel") mustNot be("noopener noreferrer")
       }
@@ -117,7 +117,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         paragraphs.text mustNot include("If the accounting period dates are wrong, update your group’s accounting period dates before continuing.")
         link.text mustNot include("update your group’s accounting period dates")
         link.attr("href") mustNot include(
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         )
       }
 
@@ -140,7 +140,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a caption" in {
@@ -183,7 +183,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         paragraph.text mustBe "If the accounting period dates are wrong, update the group’s accounting period dates before continuing."
         link.text mustBe "update the group’s accounting period dates"
         link.attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         link.attr("target") mustBe "_self"
         link.attr("rel") mustNot be("noopener noreferrer")
       }
@@ -195,7 +195,7 @@ class BTNAccountingPeriodViewSpec extends ViewSpecBase {
         paragraphs.text mustNot include("If the accounting period dates are wrong, update the group’s accounting period dates before continuing.")
         link.text mustNot include("update the group’s accounting period dates")
         link.attr("href") mustNot include(
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
         )
       }
 

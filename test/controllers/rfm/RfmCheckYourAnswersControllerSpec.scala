@@ -78,7 +78,7 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
           .withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url)
       }
     }
 

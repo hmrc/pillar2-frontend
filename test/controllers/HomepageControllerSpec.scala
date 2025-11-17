@@ -90,7 +90,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
@@ -133,7 +133,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           )
           .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
         when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
@@ -158,7 +158,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         .thenReturn(Future.successful(None))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -187,7 +187,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("XMPLR0123456789").url

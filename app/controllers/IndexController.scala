@@ -46,7 +46,7 @@ class IndexController @Inject() (
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     if request.enrolments.exists(_.key == appConfig.enrolmentKey) then {
-      Redirect(routes.HomepageController.onPageLoad)
+      Redirect(routes.HomepageController.onPageLoad())
     } else {
       Redirect(routes.TaskListController.onPageLoad)
     }
@@ -56,13 +56,13 @@ class IndexController @Inject() (
   def onPageLoadBanner(): Action[AnyContent] = Action.async { implicit request =>
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.internalId and Retrievals.affinityGroup and Retrievals.allEnrolments) {
-        case Some(_) ~ Some(Organisation) ~ e if hasPillarEnrolment(e) => Future.successful(Redirect(routes.HomepageController.onPageLoad))
+        case Some(_) ~ Some(Organisation) ~ e if hasPillarEnrolment(e) => Future.successful(Redirect(routes.HomepageController.onPageLoad()))
         case Some(_) ~ Some(Organisation) ~ _                          => Future.successful(Redirect(routes.TaskListController.onPageLoad))
         case Some(internalId) ~ Some(Agent) ~ _                        =>
           sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
             maybeUserAnswers.flatMap(_.get(RedirectToASAHome)) match {
               case Some(true) => Future.successful(Redirect(appConfig.asaHomePageUrl))
-              case _          => Future.successful(Redirect(routes.HomepageController.onPageLoad))
+              case _          => Future.successful(Redirect(routes.HomepageController.onPageLoad()))
             }
           }
         case Some(_) ~ Some(Individual) ~ _ => Future.successful(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad))

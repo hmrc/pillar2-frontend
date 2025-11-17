@@ -132,7 +132,7 @@ class AgentController @Inject() (
       (submitted, unauthorised) match {
         case (Some(true), _) =>
           logger.info("Agent has already submitted client's Pillar ID")
-          Future.successful(Redirect(routes.HomepageController.onPageLoad))
+          Future.successful(Redirect(routes.HomepageController.onPageLoad()))
 
         case (_, Some(newClientPillarId)) =>
           for {
@@ -142,7 +142,7 @@ class AgentController @Inject() (
             _                          <- sessionRepository.set(answersWithSubmissionFlag)
           } yield {
             logger.info("Agent has confirmed client's Pillar 2 ID successfully")
-            Redirect(routes.HomepageController.onPageLoad)
+            Redirect(routes.HomepageController.onPageLoad())
           }
 
         case _ =>

@@ -27,7 +27,7 @@ class RepaymentNavigatorSpec extends SpecBase {
   val navigator = new RepaymentNavigator
 
   private lazy val journeyRecovery        = routes.JourneyRecoveryController.onPageLoad()
-  private lazy val repaymentsQuestionsCYA = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+  private lazy val repaymentsQuestionsCYA = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad()
 
   "Navigator" when {
 
@@ -39,7 +39,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           UnknownPage,
           NormalMode,
           UserAnswers("id")
-        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad
+        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad()
       }
 
       "go to type of bank account page after submitting their reason for requesting a repayment" in {
@@ -185,7 +185,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           UnknownPage,
           CheckMode,
           UserAnswers("id")
-        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad
+        ) mustBe controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad()
       }
 
       "go to Repayment questions CYA page from Repayments Repayment Amount page" in {
@@ -330,7 +330,7 @@ class RepaymentNavigatorSpec extends SpecBase {
           RepaymentAccountNameConfirmationPage,
           CheckMode,
           emptyUserAnswers.setOrException(RepaymentAccountNameConfirmationPage, true)
-        ) mustBe controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad
+        ) mustBe controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad()
       }
 
       "go to bank account details from partial account name page if user selects No" in {

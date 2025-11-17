@@ -34,7 +34,7 @@ object SecondaryPhonePreferenceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("secondaryPhonePreference.change.hidden"))
         )

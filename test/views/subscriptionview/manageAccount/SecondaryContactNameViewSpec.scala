@@ -55,8 +55,8 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "include a helpful hint with examples" in {

@@ -61,7 +61,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad().url)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -130,7 +130,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
             )
           )
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

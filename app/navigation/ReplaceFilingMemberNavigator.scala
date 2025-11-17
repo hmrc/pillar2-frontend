@@ -76,7 +76,7 @@ class ReplaceFilingMemberNavigator @Inject() {
     case RfmSecondaryPhonePreferencePage => rfmSecondaryPhonePreferenceCheck
     case RfmSecondaryCapturePhonePage    => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
     case RfmContactAddressPage           => _ => controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad
-    case RfmCheckYourAnswersPage         => _ => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+    case RfmCheckYourAnswersPage         => _ => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
     case _                               => _ => controllers.rfm.routes.StartPageController.onPageLoad
   }
 
@@ -89,7 +89,7 @@ class ReplaceFilingMemberNavigator @Inject() {
   private def rfmRegistrationDetailsCheckRoute(userAnswers: UserAnswers): Call =
     userAnswers.get(RfmContactAddressPage) match {
       case Some(value) => reviewAndSubmitCheckYourAnswers
-      case _           => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+      case _           => controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
     }
 
   private def phonePreferenceLogicNormal(userAnswers: UserAnswers): Call =
@@ -199,7 +199,7 @@ class ReplaceFilingMemberNavigator @Inject() {
       .get(RfmCorporatePositionPage)
       .map { corporatePosition =>
         if corporatePosition == CorporatePosition.Upe then {
-          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
         } else {
           controllers.rfm.routes.CheckNewFilingMemberController.onPageLoad(NormalMode)
         }

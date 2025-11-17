@@ -31,7 +31,7 @@ class RfmNewFilingMemberDetailsRegistrationControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url)
 
         val result = route(application, request).value
 

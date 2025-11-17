@@ -27,12 +27,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
 
   val navigator = new AmendSubscriptionNavigator
 
-  private lazy val contactCYA      = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad
-  private lazy val groupCYA        = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+  private lazy val contactCYA      = controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
+  private lazy val groupCYA        = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
   private lazy val agentContactCYA =
-    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad()
   private lazy val agentGroupCYA =
-    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad
+    controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad()
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
   private lazy val jr          = controllers.routes.JourneyRecoveryController.onPageLoad()
   private val secondaryContact = emptySubscriptionLocalData
@@ -90,7 +90,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         SubPrimaryPhonePreferencePage,
         emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value
       ) mustBe
-        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad
+        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a primary contact number and they have already provided one" in {
       val ua =
@@ -112,12 +112,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
     }
     "go to secondary contact name page if they have chosen to nominate one but no further info has been provided" in {
       navigator.nextPage(SubAddSecondaryContactPage, emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
     }
     "go to email page from secondary contact name page if they have chosen to nominate a secondary contact but no email has been provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value.set(SubAddSecondaryContactPage, true).success.value
       navigator.nextPage(SubSecondaryContactNamePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad()
     }
     "go to contact CYA page from secondary contact email page if they have already provided all the information for a secondary contact" in {
       navigator.nextPage(SubSecondaryEmailPage, secondaryContact) mustBe
@@ -130,12 +130,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         subSecondaryPhonePreference = None
       )
       navigator.nextPage(SubSecondaryEmailPage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad()
     }
     "go secondary capture phone page if they have chosen to nominate a secondary contact number and non provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a secondary contact number and they have already provided one" in {
       val ua =
@@ -205,7 +205,7 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         SubPrimaryPhonePreferencePage,
         emptySubscriptionLocalData.set(SubPrimaryPhonePreferencePage, true).success.value
       ) mustBe
-        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad
+        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a primary contact number and they have already provided one" in {
       val ua =
@@ -230,12 +230,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         SubAddSecondaryContactPage,
         emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true).success.value
       ) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad()
     }
     "go to email page from secondary contact name page if they have chosen to nominate a secondary contact but no email has been provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryContactNamePage, "name").success.value.set(SubAddSecondaryContactPage, true).success.value
       navigator.nextPage(SubSecondaryContactNamePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad()
     }
     "go to contact CYA page from secondary contact email page if they have already provided all the information for a secondary contact" in {
       navigator.nextPage(SubSecondaryEmailPage, secondaryContact) mustBe
@@ -248,12 +248,12 @@ class AmendSubscriptionNavigatorSpec extends SpecBase {
         subSecondaryPhonePreference = None
       )
       navigator.nextPage(SubSecondaryEmailPage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad()
     }
     "go secondary capture phone page if they have chosen to nominate a secondary contact number and non provided" in {
       val ua = emptySubscriptionLocalData.set(SubSecondaryPhonePreferencePage, true).success.value
       navigator.nextPage(SubSecondaryPhonePreferencePage, ua) mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad
+        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad()
     }
     "go contact CYA page if they have chosen to nominate a secondary contact number and they have already provided one" in {
       val ua =

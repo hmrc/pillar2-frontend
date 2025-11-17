@@ -29,8 +29,8 @@ class SubscriptionNavigatorSpec extends SpecBase {
   val navigator                = new SubscriptionNavigator
   private val accountingPeriod = AccountingPeriod(LocalDate.now(), LocalDate.now())
 
-  private lazy val contactCYA      = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
-  private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
+  private lazy val contactCYA      = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad()
+  private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad()
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
   "Navigator" when {

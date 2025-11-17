@@ -43,7 +43,7 @@ class RfmSaveProgressInformControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad().url)
 
         val result = route(application, request).value
 

@@ -61,8 +61,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display total amount due correctly" in {
@@ -97,7 +97,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       val button = organisationView.getElementsByClass("govuk-button").first()
 
       button.text() mustBe "Pay online"
-      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url
+      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
     }
 
     "display other ways to pay section" in {

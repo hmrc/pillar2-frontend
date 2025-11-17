@@ -50,7 +50,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(completeUpeJourney)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.DuplicateSafeIdController.onPageLoad().url)
         val view    = application.injector.instanceOf[DuplicateSafeIdView]
         val result  = route(application, request).value
 
@@ -63,7 +63,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.DuplicateSafeIdController.onPageLoad().url)
         val result  = route(application, request).value
 
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -75,7 +75,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
       val application = applicationBuilder().build()
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url).withFormUrlEncodedBody(
+          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit().url).withFormUrlEncodedBody(
             "nominateFilingMember" -> "$$"
           )
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
@@ -95,7 +95,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit().url)
             .withFormUrlEncodedBody(("nominateFilingMember", "true"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -111,7 +111,7 @@ class DuplicateSafeIdControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.routes.DuplicateSafeIdController.onSubmit().url)
             .withFormUrlEncodedBody(("nominateFilingMember", "false"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

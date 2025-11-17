@@ -132,7 +132,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
@@ -152,7 +152,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Do you have a second contact?")
@@ -174,7 +174,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Do you have a second contact?")
@@ -205,7 +205,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Contact details")
@@ -217,7 +217,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
     "redirect to bookmark page if address page not answered" in {
       val application = applicationBuilder(subscriptionLocalData = None).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -241,7 +241,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -273,7 +273,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -307,7 +307,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -342,7 +342,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -377,7 +377,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -520,7 +520,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
 
           whenReady(result.failed) { e =>
@@ -549,7 +549,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
 
           status(result) mustEqual OK

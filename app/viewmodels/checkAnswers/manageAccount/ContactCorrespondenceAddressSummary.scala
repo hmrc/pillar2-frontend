@@ -41,7 +41,7 @@ object ContactCorrespondenceAddressSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+              controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url
             )
               .withVisuallyHiddenText(messages("subscriptionAddress.checkYourAnswersLabel.hidden"))
           )

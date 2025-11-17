@@ -89,7 +89,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display organisation information correctly" in {
@@ -104,7 +104,7 @@ class HomepageViewSpec extends ViewSpecBase {
       returnsCard.getElementsByTag("h2").text() mustBe "Returns"
 
       links.get(0).text() mustBe "View all due and overdue returns"
-      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+      links.get(0).attr("href") mustBe controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
       links.get(1).text() mustBe "View submission history"
       links.get(1).attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
     }
@@ -125,7 +125,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       paymentsCardLinks.get(2).text() mustBe "Request a repayment"
       paymentsCardLinks.get(2).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
     }
 
     "display manage account card with correct content" in {
@@ -138,13 +138,13 @@ class HomepageViewSpec extends ViewSpecBase {
 
       manageCardLinks.get(0).text() mustBe "Manage contact details"
       manageCardLinks.get(0).attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
       manageCardHelpTexts.get(0).text() mustBe
         "Edit the details we use to contact you about Pillar 2 Top-up Taxes."
 
       manageCardLinks.get(1).text() mustBe "Manage group details"
       manageCardLinks.get(1).attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       manageCardHelpTexts.get(1).text() mustBe
         "Amend your group's accounting period or update changes to your entity's locations."
 
@@ -231,7 +231,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
       returnsCardLinks.get(0).attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
 
       returnsCardLinks.get(1).text() mustBe "View submission history"
       returnsCardLinks.get(1).attr("href") mustBe
@@ -273,7 +273,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
       returnsCardLinks.get(0).attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
 
       returnsCardLinks.get(1).text() mustBe "View submission history"
       returnsCardLinks.get(1).attr("href") mustBe
@@ -315,7 +315,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
       returnsCardLinks.get(0).attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
 
       returnsCardLinks.get(1).text() mustBe "View submission history"
       returnsCardLinks.get(1).attr("href") mustBe
@@ -446,7 +446,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       paymentsCardLinks.get(2).text() mustBe "Request a repayment"
       paymentsCardLinks.get(2).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
     }
 
     "display Payments Outstanding tag with red style when Outstanding scenario is provided" in {
@@ -524,7 +524,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display organisation information correctly" in {
@@ -540,7 +540,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       returnsCardLinks.get(0).text() mustBe "View all due and overdue returns"
       returnsCardLinks.get(0).attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
 
       returnsCardLinks.get(1).text() mustBe "View submission history"
       returnsCardLinks.get(1).attr("href") mustBe
@@ -563,7 +563,7 @@ class HomepageViewSpec extends ViewSpecBase {
 
       paymentsCardLinks.get(2).text() mustBe "Request a repayment"
       paymentsCard.getElementsByTag("a").get(2).attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
     }
 
     "display manage account card with correct content" in {
@@ -576,13 +576,13 @@ class HomepageViewSpec extends ViewSpecBase {
 
       manageCardLinks.get(0).text() mustBe "Manage contact details"
       manageCardLinks.get(0).attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
       manageCardHelpTexts.get(0).text() mustBe
         "Edit the details we use to contact your client about Pillar 2 Top-up Taxes."
 
       manageCardLinks.get(1).text() mustBe "Manage group details"
       manageCardLinks.get(1).attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       manageCardHelpTexts.get(1).text() mustBe
         "Amend your client's accounting period or update changes to entity locations."
 

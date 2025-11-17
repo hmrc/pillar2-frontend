@@ -44,7 +44,7 @@ class RfmWaitingRoomController @Inject() (
       .get(RfmStatusPage) match {
       case Some(SuccessfullyCompleted) =>
         logger.info("successfully replaced filing member")
-        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad)
+        Redirect(controllers.rfm.routes.RfmConfirmationController.onPageLoad())
       case Some(FailedInternalIssueError) => Redirect(controllers.rfm.routes.AmendApiFailureController.onPageLoad)
       case Some(FailException)            =>
         logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")

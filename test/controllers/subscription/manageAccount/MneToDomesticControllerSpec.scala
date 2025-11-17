@@ -34,7 +34,7 @@ class MneToDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url)
 
         val result = route(application, request).value
 

@@ -88,54 +88,54 @@ class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLoca
       summaryListKeys.get(0).text() mustBe contactNameLabel
       summaryListItems.get(0).text() mustBe contactNameValue
       summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url
 
       summaryListKeys.get(1).text() mustBe emailAddressLabel
       summaryListItems.get(1).text() mustBe emailAddressValue
       summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactEmailAddressController.onPageLoad().url
 
       summaryListKeys.get(2).text() mustBe contactByPhoneLabel
       summaryListItems.get(2).text() mustBe contactByPhoneValue
       summaryListActions.get(2).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ContactByPhoneController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactByPhoneController.onPageLoad().url
 
       summaryListKeys.get(3).text() mustBe contactPhoneLabel
       summaryListItems.get(3).text() mustBe contactPhoneValue
       summaryListActions.get(3).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad().url
     }
 
     "display secondary contact details as below in summary list" in {
       summaryListKeys.get(4).text() mustBe secondContactLabel
       summaryListItems.get(4).text() mustBe secondContactValue
       summaryListActions.get(4).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url
 
       summaryListKeys.get(5).text() mustBe secondContactNameLabel
       summaryListItems.get(5).text() mustBe secondContactNameValue
       summaryListActions.get(5).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url
 
       summaryListKeys.get(6).text() mustBe secondEmailAddressLabel
       summaryListItems.get(6).text() mustBe secondEmailAddressValue
       summaryListActions.get(6).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
 
       summaryListKeys.get(7).text() mustBe secondContactByPhoneLabel
       summaryListItems.get(7).text() mustBe secondContactByPhoneValue
       summaryListActions.get(7).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad().url
 
       summaryListKeys.get(8).text() mustBe secondContactPhoneLabel
       summaryListItems.get(8).text() mustBe secondContactPhoneValue
       summaryListActions.get(8).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad().url
 
       summaryListKeys.get(9).text() mustBe addressLabel
       summaryListItems.get(9).text() mustBe addressValue
       summaryListActions.get(9).getElementsByClass("govuk-link").attr("href") mustBe
-        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url
+        controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url
     }
 
     "have a continue button" in {

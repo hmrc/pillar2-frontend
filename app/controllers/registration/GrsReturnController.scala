@@ -357,7 +357,7 @@ class GrsReturnController @Inject() (
         logger.info(
           s"Registration successful for $entityType with journey ID $journeyId --redirecting to continue RFM"
         )
-        Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad)
+        Redirect(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad())
 
       case (true, _, _, Some(_)) =>
         logger.info(

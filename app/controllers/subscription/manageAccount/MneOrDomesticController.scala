@@ -78,7 +78,7 @@ class MneOrDomesticController @Inject() (
                 } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
               case EntityLocationChangeBlocked =>
                 logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
-                Future.successful(Redirect(controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad))
+                Future.successful(Redirect(controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad()))
             }
         )
     }

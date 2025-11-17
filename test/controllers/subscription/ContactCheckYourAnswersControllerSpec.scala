@@ -58,7 +58,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include(
@@ -76,7 +76,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     "redirect to bookmark page if address page not answered" in {
       val application = applicationBuilder(userAnswers = Some(subDataWithoutAddress)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -88,7 +88,7 @@ class ContactCheckYourAnswersControllerSpec extends SpecBase with SummaryListFlu
     "redirect to tasklist on page on form submission" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.routes.ContactCheckYourAnswersController.onSubmit().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.routes.TaskListController.onPageLoad.url)

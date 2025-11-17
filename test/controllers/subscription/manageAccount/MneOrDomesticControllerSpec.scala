@@ -65,7 +65,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswer)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
@@ -82,7 +82,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val application = applicationBuilder().build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
@@ -100,7 +100,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", "invalid value"))
         val result = route(application, request).value
 
@@ -125,7 +125,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
 
         val result = route(application, request).value
@@ -154,7 +154,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.UkAndOther.toString)
 
         val result = route(application, request).value
@@ -183,7 +183,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.UkAndOther.toString)
 
         val result = route(application, request).value
@@ -211,13 +211,13 @@ class MneOrDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url
         verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
@@ -236,7 +236,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
@@ -255,7 +255,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MneOrDomesticView]
 
@@ -279,7 +279,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url
           )
             .withFormUrlEncodedBody(("value", "invalid value"))
         val result = route(application, request).value
@@ -306,7 +306,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
 
         val result = route(application, request).value
@@ -337,7 +337,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.UkAndOther.toString)
 
         val result = route(application, request).value
@@ -368,7 +368,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.UkAndOther.toString)
 
         val result = route(application, request).value
@@ -398,13 +398,13 @@ class MneOrDomesticControllerSpec extends SpecBase {
       setupAgentAuth()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
 
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url
         verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
@@ -431,7 +431,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit().url)
             .withFormUrlEncodedBody("value" -> MneOrDomestic.Uk.toString)
         val result = route(application, request).value
 

@@ -48,7 +48,7 @@ class RegistrationInProgressController @Inject() (
       .maybeReadSubscription(plrReference)
       .map {
         case Some(_) =>
-          Redirect(controllers.routes.HomepageController.onPageLoad)
+          Redirect(controllers.routes.HomepageController.onPageLoad())
         case None =>
           Ok(view(plrReference))
       }

@@ -57,7 +57,7 @@ object ContactCapturePhoneDetailsSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
+              controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad().url
             )
               .withVisuallyHiddenText(messages("contactCapturePhoneDetails.change.hidden"))
           )

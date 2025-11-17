@@ -214,7 +214,7 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
         "has the proper link" in forAll(agentOrOrgNotificationArea, returnExpected) { (template, returnExpected) =>
           val page         = template(returnExpected)
           val link         = page.getElementById(submitUktrLinkId)
-          val expectedHref = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+          val expectedHref = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
           isALinkWithTextAndHref("View all due and overdue returns", expectedHref, link)
         }
 

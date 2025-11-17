@@ -127,11 +127,11 @@ class BarsService @Inject() (
         )
 
       case (_, _, _, SortCodeIsPresentOnEISCD.Error, _, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
       case (_, _, _, _, NonStandardAccountDetailsRequiredForBacs.Yes, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError())
       case (_, _, _, _, _, SortCodeSupportsDirectCredit.Error) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
       case (accountNumberIsWellFormatted, accountExists, nameMatches, sortCodeIsPresentOnEISCD, _, _) =>
         Future successful handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -143,7 +143,7 @@ class BarsService @Inject() (
           form
         )
 
-      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
   }
 
@@ -166,8 +166,8 @@ class BarsService @Inject() (
     form:                         Form[BankAccountDetails]
   )(implicit request: Request[?], messages: Messages): Result =
     accountExists match {
-      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
-      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
+      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError())
+      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
       case AccountExists.No            =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -178,7 +178,7 @@ class BarsService @Inject() (
           mode,
           form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
 
   private def handleNameMatches(
@@ -191,8 +191,8 @@ class BarsService @Inject() (
     form:                         Form[BankAccountDetails]
   )(implicit request: Request[?], messages: Messages): Result =
     nameMatches match {
-      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
-      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
+      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
+      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
       case NameMatches.No            =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -203,7 +203,7 @@ class BarsService @Inject() (
           mode,
           form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
 
   private def handlePartialNameMatch(
@@ -216,7 +216,7 @@ class BarsService @Inject() (
       updatedAnswers <- OptionT.fromOption[Future](userAnswers.set(BarsAccountNamePartialPage, accountName).toOption)
       _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield Redirect(navigator.nextPage(BarsAccountNamePartialPage, mode, userAnswers))
-  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError))
+  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError()))
 
   private def handleAndDisplayErrors(
     accountNumberIsWellFormatted: AccountNumberIsWellFormatted,

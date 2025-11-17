@@ -72,7 +72,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad().url
       }
     }
 

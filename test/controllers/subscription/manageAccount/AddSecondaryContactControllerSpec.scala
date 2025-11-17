@@ -58,7 +58,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -82,7 +82,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
 
         val boundForm = formProvider("name").bind(Map("value" -> ""))
@@ -102,7 +102,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to book mark page for a GET if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+      val request     = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
 
       running(application) {
         val result =
@@ -116,7 +116,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder().build()
-      val request     = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+      val request     = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
         .withFormUrlEncodedBody(
           "value" -> "true"
         )
@@ -168,7 +168,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "false")
 
         val result = route(application, request).value
@@ -193,11 +193,13 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController
+          .onPageLoad()
+          .url
       }
     }
 
@@ -224,7 +226,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[AddSecondaryContactView]
         status(result) mustEqual OK
@@ -255,7 +257,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onPageLoad().url)
             .withFormUrlEncodedBody(("value", ""))
         val boundForm = formProvider("name").bind(Map("value" -> ""))
         val view      = application.injector.instanceOf[AddSecondaryContactView]
@@ -282,7 +284,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -303,7 +305,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
           .withFormUrlEncodedBody(
             "value" -> "true"
           )
@@ -359,7 +361,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "false")
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER

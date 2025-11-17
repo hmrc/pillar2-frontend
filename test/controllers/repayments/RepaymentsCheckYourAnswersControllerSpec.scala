@@ -58,7 +58,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).get mustEqual controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad().url
@@ -76,7 +76,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -114,7 +114,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("£1000")
@@ -151,7 +151,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include("£1000")
@@ -182,7 +182,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result          = route(application, request).value
           val responseContent = contentAsString(result)
 
@@ -209,7 +209,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result          = route(application, request).value
           val responseContent = contentAsString(result)
 
@@ -236,7 +236,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result          = route(application, request).value
           val responseContent = contentAsString(result)
 
@@ -263,7 +263,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+          val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
           val result          = route(application, request).value
           val responseContent = contentAsString(result)
 
@@ -289,7 +289,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
       running(application) {
-        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
         val result          = route(application, request).value
         val responseContent = contentAsString(result)
 
@@ -314,7 +314,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
       running(application) {
-        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
         val result          = route(application, request).value
         val responseContent = contentAsString(result)
 
@@ -339,7 +339,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
       running(application) {
-        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url)
+        val request         = FakeRequest(GET, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url)
         val result          = route(application, request).value
         val responseContent = contentAsString(result)
 
@@ -354,7 +354,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         val userAnswer  = completeRepaymentDataUkBankAccount.remove(RepaymentsRefundAmountPage).success.value
         val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
         running(application) {
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad.url
@@ -377,7 +377,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockAuditService.auditRepayments(any())(any())).thenReturn(Future.successful(AuditResult.Success))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
@@ -400,7 +400,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER

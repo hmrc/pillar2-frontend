@@ -60,7 +60,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   }
 
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
-    FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad.url)
+    FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
     when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
@@ -73,7 +73,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       "countryCode"  -> "GB"
     ) ++ alterations
 
-    FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit.url)
+    FakeRequest(POST, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onSubmit().url)
       .withFormUrlEncodedBody(address.toSeq*)
   }
 
@@ -85,7 +85,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       val result = route(organisationApp, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
     }
 
     "must return OK and the correct view for a GET if page not previously answered" in {
@@ -151,7 +151,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       val result = route(agentApp, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url
     }
 
     "return form with errors when postcode is invalid" should {

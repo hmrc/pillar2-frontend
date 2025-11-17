@@ -34,7 +34,7 @@
 
 @(pil2Id: String, companyName: String, currentDate: String, currentTime: String, mneOrDomestic: MneOrDomestic)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("registrationConfirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
   @govukPanel(Panel(
     title = Text(messages("registrationConfirmation.registrationComplete")),
@@ -56,7 +56,7 @@
 
   @paragraphBody(messages("registrationConfirmation.now", link(
     text = messages("registrationConfirmation.link-home"),
-    call = Call("GET", controllers.routes.HomepageController.onPageLoad.url),
+    call = Call("GET", controllers.routes.HomepageController.onPageLoad().url),
     fullStop = true
   )))
 

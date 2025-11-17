@@ -99,7 +99,7 @@ class CheckYourAnswersController @Inject() (
                 } yield {
                   pollForSubscriptionData(plr, request.userId)
                     .map { _ =>
-                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad)
+                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad())
                     }
                     .recover { case _ =>
                       Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plr))

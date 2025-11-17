@@ -34,7 +34,7 @@ object GroupAccountingPeriodSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("groupAccountingPeriod.change.hidden"))
         )

@@ -42,7 +42,7 @@ object MneOrDomesticSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("mneOrDomestic.change.hidden"))
         )

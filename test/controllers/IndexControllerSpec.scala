@@ -67,7 +67,7 @@ class IndexControllerSpec extends SpecBase {
         val request = FakeRequest(GET, routes.IndexController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad().url
 
       }
     }
@@ -105,7 +105,7 @@ class IndexControllerSpec extends SpecBase {
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad.url
+      redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad().url
     }
   }
 
@@ -123,7 +123,7 @@ class IndexControllerSpec extends SpecBase {
       val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad.url
+      redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad().url
     }
   }
 

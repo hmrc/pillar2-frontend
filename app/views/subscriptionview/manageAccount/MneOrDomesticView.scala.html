@@ -37,9 +37,9 @@
     HtmlFormat.raw(s"""<a href="mailto:${appConfig.pillar2mailbox}" class="govuk-link">${appConfig.pillar2mailbox}</a>""")
 }
 
-    @layout(pageTitle = title(form, messages("mneOrDomestic.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+    @layout(pageTitle = title(form, messages("mneOrDomestic.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
-        @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit, Symbol("autoComplete") -> "off") {
+        @formHelper(action = controllers.subscription.manageAccount.routes.MneOrDomesticController.onSubmit(), Symbol("autoComplete") -> "off") {
 
             @if(form.errors.nonEmpty) {
                 @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

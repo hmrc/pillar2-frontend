@@ -53,7 +53,7 @@ class ManageContactDetailsWaitingRoomController @Inject() (
         status match {
           case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
             logger.info(s"[ManageContactDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
-            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad()))
 
           case Some(ManageContactDetailsStatus.InProgress) =>
             logger.info(s"[ManageContactDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
@@ -61,22 +61,22 @@ class ManageContactDetailsWaitingRoomController @Inject() (
 
           case Some(ManageContactDetailsStatus.FailException) =>
             logger.warn(s"[ManageContactDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
           case Some(ManageContactDetailsStatus.FailedInternalIssueError) =>
             logger.warn(
               s"[ManageContactDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page"
             )
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
           case _ =>
             logger.warn(s"[ManageContactDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
         }
       }
       .recover { case ex =>
         logger.error(s"[ManageContactDetailsWaitingRoom] Error while loading waiting room for ${request.userId}: ${ex.getMessage}")
-        Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad())
       }
   }
 }

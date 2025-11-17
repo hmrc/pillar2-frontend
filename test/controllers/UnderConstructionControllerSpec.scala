@@ -62,7 +62,7 @@ class UnderConstructionControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.UnderConstructionController.onPageLoadAgent.url)
+        val request = FakeRequest(GET, controllers.routes.UnderConstructionController.onPageLoadAgent().url)
 
         val result = route(application, request).value
 

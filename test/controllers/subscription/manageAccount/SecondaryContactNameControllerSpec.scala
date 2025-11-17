@@ -53,7 +53,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -76,7 +76,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url)
 
         val view = application.injector.instanceOf[SecondaryContactNameView]
 
@@ -98,7 +98,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val stringInput = randomStringGenerator(161)
         val request     =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url)
             .withFormUrlEncodedBody(("value", stringInput))
 
         val boundForm = formProvider().bind(Map("value" -> stringInput))
@@ -137,7 +137,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "Keith")
 
         val result = route(application, request).value
@@ -168,7 +168,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url
         )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryContactNameView]
@@ -199,7 +199,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onPageLoad().url
         )
         val view   = application.injector.instanceOf[SecondaryContactNameView]
         val result = route(application, request).value
@@ -229,7 +229,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
         val request     =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url
+            controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url
           )
             .withFormUrlEncodedBody(("value", stringInput))
         val boundForm = formProvider().bind(Map("value" -> stringInput))
@@ -269,7 +269,7 @@ class SecondaryContactNameControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit.url
+          controllers.subscription.manageAccount.routes.SecondaryContactNameController.onSubmit().url
         )
           .withFormUrlEncodedBody("value" -> "Keith")
 

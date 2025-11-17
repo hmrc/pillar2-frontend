@@ -34,7 +34,7 @@
 
 @layout(
     pageTitle = titleNoForm(messages("repayment.requestRepaymentBeforeStart.title")),
-    bannerUrl = Some(routes.HomepageController.onPageLoad.url)
+    bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
     @heading(messages("repayment.requestRepaymentBeforeStart.header"), classes = "govuk-heading-l")
     @if(agentView) {

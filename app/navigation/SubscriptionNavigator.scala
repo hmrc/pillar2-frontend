@@ -32,8 +32,8 @@ class SubscriptionNavigator @Inject() {
     case CheckMode =>
       checkRouteMap(page)(userAnswers)
   }
-  private lazy val groupDetailCheckYourAnswerRoute: Call = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad
-  private lazy val contactDetailCheckYourAnswersRoute = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad
+  private lazy val groupDetailCheckYourAnswerRoute: Call = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad()
+  private lazy val contactDetailCheckYourAnswersRoute = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad()
   private lazy val reviewAndSubmitCheckYourAnswers    = controllers.routes.CheckYourAnswersController.onPageLoad()
 
   private val normalRoutes: Page => UserAnswers => Call = {

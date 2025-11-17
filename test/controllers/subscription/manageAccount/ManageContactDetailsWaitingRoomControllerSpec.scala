@@ -67,7 +67,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.HomepageController.onPageLoad().url
         }
       }
 
@@ -114,7 +114,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
         }
       }
 
@@ -136,7 +136,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
         }
       }
 
@@ -155,7 +155,7 @@ class ManageContactDetailsWaitingRoomControllerSpec extends SpecBase with Before
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad().url
         }
       }
     }

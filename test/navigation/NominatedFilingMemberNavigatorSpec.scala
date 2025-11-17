@@ -33,7 +33,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
     countryCode = "AB"
   )
 
-  private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+  private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad()
   private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {

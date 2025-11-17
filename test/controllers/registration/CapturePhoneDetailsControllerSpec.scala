@@ -121,7 +121,7 @@ class CapturePhoneDetailsControllerSpec extends SpecBase {
             .withFormUrlEncodedBody(("phoneNumber", "1234567890"))
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad().url
       }
     }
 

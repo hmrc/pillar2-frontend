@@ -55,7 +55,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -82,7 +82,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
       running(application) {
         val request =
-          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
+          FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url)
 
         val result = route(application, request).value
 
@@ -106,7 +106,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
       running(application) {
         when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url)
             .withFormUrlEncodedBody(("emailAddress", "12345"))
 
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
@@ -126,7 +126,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
+        FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url)
           .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {
@@ -141,7 +141,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       val application = applicationBuilder(userAnswers = None).build()
       val request     =
-        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url)
+        FakeRequest(GET, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url)
 
       running(application) {
         val result = route(application, request).value
@@ -173,7 +173,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url)
+          FakeRequest(POST, controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit().url)
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
 
         val result = route(application, request).value
@@ -205,7 +205,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
           )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryContactEmailView]
@@ -241,7 +241,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
           )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[SecondaryContactEmailView]
@@ -272,7 +272,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
           )
             .withFormUrlEncodedBody(("emailAddress", "12345"))
         val view      = application.injector.instanceOf[SecondaryContactEmailView]
@@ -303,7 +303,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
           )
             .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
         val result = route(application, request).value
@@ -328,7 +328,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             GET,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onPageLoad().url
           )
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -363,7 +363,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit.url
+            controllers.subscription.manageAccount.routes.SecondaryContactEmailController.onSubmit().url
           )
             .withFormUrlEncodedBody("emailAddress" -> "keith@google.com")
         val result = route(application, request).value

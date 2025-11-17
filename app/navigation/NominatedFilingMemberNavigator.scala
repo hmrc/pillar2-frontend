@@ -34,7 +34,7 @@ class NominatedFilingMemberNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
   private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad()
-  private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
+  private lazy val nfmCheckYourAnswers             = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad()
 
   private val normalRoutes: Page => UserAnswers => Call = {
     case NominateFilingMemberPage => nfmLogic
