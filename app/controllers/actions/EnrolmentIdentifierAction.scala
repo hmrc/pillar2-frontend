@@ -16,18 +16,19 @@
 
 package controllers.actions
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.*
+import controllers.actions.EnrolmentIdentifierAction.{HmrcAsAgentKey, HmrcPillar2OrgKey, VerifyAgentClientPredicate, defaultPredicate}
 import controllers.routes
 import models.requests.IdentifierRequest
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
-import play.api.mvc.Results.*
 import play.api.mvc.*
+import play.api.mvc.Results.*
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -35,7 +36,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

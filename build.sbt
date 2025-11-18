@@ -6,7 +6,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "pillar2-frontend"
 
-ThisBuild / scalaVersion := "3.7.3"
+ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / majorVersion := 0
 ThisBuild / useSuperShell := false
 ThisBuild / semanticdbEnabled := true
