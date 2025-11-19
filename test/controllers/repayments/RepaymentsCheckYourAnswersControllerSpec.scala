@@ -21,8 +21,7 @@ import models.repayments.RepaymentsStatus.{SuccessfullyCompleted, UnexpectedResp
 import models.repayments.SendRepaymentDetails
 import models.{UnexpectedResponse, UserAnswers}
 import org.apache.pekko.Done
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import pages.*
 import play.api.inject.bind

@@ -18,6 +18,7 @@ package generators
 
 import models.*
 import models.grs.EntityType
+import models.repayments.{BankAccountDetails, NonUKBank, RepaymentsStatus}
 import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
@@ -35,6 +36,31 @@ trait ModelGenerators {
   implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
     Arbitrary {
       Gen.oneOf(EntityType.values.toSeq)
+    }
+
+  implicit lazy val arbitraryRepaymentsStatus: Arbitrary[RepaymentsStatus] =
+    Arbitrary {
+      Gen.oneOf(RepaymentsStatus.values)
+    }
+
+  implicit lazy val arbitraryBankAccountDetails: Arbitrary[BankAccountDetails] =
+    Arbitrary {
+      for {
+        bankName          <- Gen.alphaStr.suchThat(_.nonEmpty)
+        nameOnBankAccount <- Gen.alphaStr.suchThat(_.nonEmpty)
+        sortCode          <- Gen.alphaStr.suchThat(_.nonEmpty)
+        accountNumber     <- Gen.alphaStr.suchThat(_.nonEmpty)
+      } yield BankAccountDetails(bankName, nameOnBankAccount, sortCode, accountNumber)
+    }
+
+  implicit lazy val arbitraryNonUKBank: Arbitrary[NonUKBank] =
+    Arbitrary {
+      for {
+        bankName          <- Gen.alphaStr.suchThat(_.nonEmpty)
+        nameOnBankAccount <- Gen.alphaStr.suchThat(_.nonEmpty)
+        bic               <- Gen.option(Gen.alphaStr.suchThat(_.nonEmpty))
+        iban              <- Gen.option(Gen.alphaStr.suchThat(_.nonEmpty))
+      } yield NonUKBank(bankName, nameOnBankAccount, bic, iban)
     }
 
 }

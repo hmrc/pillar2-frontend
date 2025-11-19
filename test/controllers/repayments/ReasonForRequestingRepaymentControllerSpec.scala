@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.ReasonForRequestingRepaymentFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.RepaymentNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.ReasonForRequestingRefundPage
 import play.api.inject.bind

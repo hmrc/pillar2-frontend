@@ -21,7 +21,7 @@ import forms.TurnOverEligibilityFormProvider
 import helpers.ViewInstances
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import pages.RevenueEqPage
 import play.api.inject
 import play.api.test.FakeRequest

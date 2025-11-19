@@ -20,8 +20,7 @@ import base.SpecBase
 import forms.UkOrAbroadBankAccountFormProvider
 import models.{NormalMode, UkOrAbroadBankAccount, UserAnswers}
 import navigation.RepaymentNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.UkOrAbroadBankAccountPage
 import play.api.inject.bind

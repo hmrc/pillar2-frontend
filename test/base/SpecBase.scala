@@ -36,7 +36,6 @@ import play.api.i18n.{Messages, MessagesApi}
 import play.api.inject.bind
 import play.api.inject.guice.GuiceApplicationBuilder
 import play.api.mvc.*
-import play.api.test.Helpers.baseApplicationBuilder.injector
 import play.api.test.*
 import play.api.{Application, Configuration}
 import uk.gov.hmrc.auth.core.*
@@ -75,7 +74,7 @@ trait SpecBase
   implicit lazy val system:            ActorSystem       = ActorSystem()
   implicit lazy val applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
   implicit lazy val materializer:      Materializer      = Materializer(system)
-  def injectedParsers:                 PlayBodyParsers   = injector.instanceOf[PlayBodyParsers]
+  def injectedParsers:                 PlayBodyParsers   = app.injector.instanceOf[PlayBodyParsers]
 
   val PlrReference = "XMPLR0123456789"
 

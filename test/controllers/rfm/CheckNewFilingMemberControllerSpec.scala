@@ -18,7 +18,7 @@ package controllers.rfm
 
 import base.SpecBase
 import models.{CheckMode, NormalMode}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 

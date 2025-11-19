@@ -25,7 +25,7 @@ class UltimateParentNavigatorSpec extends SpecBase {
 
   val navigator                    = new UltimateParentNavigator
   private lazy val upeCYA          = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad()
-  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad()
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {
 

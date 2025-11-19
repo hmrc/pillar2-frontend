@@ -22,8 +22,7 @@ import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
 import models.rfm.CorporatePosition
 import navigation.ReplaceFilingMemberNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.inject

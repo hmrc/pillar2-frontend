@@ -19,7 +19,7 @@ package controllers.registration
 import base.SpecBase
 import helpers.ViewInstances
 import models.NormalMode
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 
@@ -39,7 +39,7 @@ class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
       val request =
         FakeRequest(GET, controllers.registration.routes.StartPageRegistrationController.onPageLoad(NormalMode).url)
 
-      val result = controller.onPageLoad(NormalMode)()(request)
+      val result = controller().onPageLoad(NormalMode)()(request)
       status(result)        shouldBe OK
       contentAsString(result) should include(
         "We need to match the details of the Ultimate Parent Entity to HMRC records"
@@ -55,7 +55,7 @@ class StartPageRegistrationControllerSpec extends SpecBase with ViewInstances {
     "submit and redirect to " in {
       val request =
         FakeRequest(POST, controllers.registration.routes.StartPageRegistrationController.onSubmit(NormalMode).url)
-      val result = controller.onSubmit(NormalMode)()(request)
+      val result = controller().onSubmit(NormalMode)()(request)
       status(result) shouldBe SEE_OTHER
       redirectLocation(result).value mustEqual controllers.registration.routes.UPERegisteredInUKConfirmationController.onPageLoad(NormalMode).url
     }

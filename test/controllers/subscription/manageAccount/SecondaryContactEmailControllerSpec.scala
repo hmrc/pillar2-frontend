@@ -21,8 +21,7 @@ import connectors.{SubscriptionConnector, UserAnswersConnectors}
 import controllers.actions.TestAuthRetrievals.Ops
 import forms.SecondaryContactEmailFormProvider
 import navigation.AmendSubscriptionNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage}
 import play.api.data.Form

@@ -65,7 +65,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual OK
@@ -85,7 +85,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -110,7 +110,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
         ).build()
 
         running(application) {
-          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -135,7 +135,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual OK
@@ -155,7 +155,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url).withCSRFToken
+          val request = FakeRequest(GET, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -178,7 +178,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url).withCSRFToken
+          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -201,7 +201,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit.url).withCSRFToken
+          val request = FakeRequest(POST, manageRoutes.ManageGroupDetailsCheckYourAnswersController.onSubmit().url).withCSRFToken
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER

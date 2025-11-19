@@ -103,7 +103,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
 
@@ -121,7 +121,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
   }

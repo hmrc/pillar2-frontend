@@ -24,8 +24,7 @@ import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
 import org.apache.pekko.Done
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{atLeastOnce, verify, when}
 import pages.*
 import play.api.inject.bind

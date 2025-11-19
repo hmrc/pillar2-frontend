@@ -21,8 +21,7 @@ import connectors.SubscriptionConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import forms.AddSecondaryContactFormProvider
 import navigation.AmendSubscriptionNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.*
 import play.api.inject.bind

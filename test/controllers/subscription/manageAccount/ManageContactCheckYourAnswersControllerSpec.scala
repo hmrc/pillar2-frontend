@@ -418,7 +418,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -459,7 +459,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
@@ -498,7 +498,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           .build()
 
         running(application) {
-          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER

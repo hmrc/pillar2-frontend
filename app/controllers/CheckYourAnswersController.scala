@@ -97,7 +97,7 @@ class CheckYourAnswersController @Inject() (
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield {
-                  pollForSubscriptionData(plr, request.userId)
+                  pollForSubscriptionData(plr)
                     .map { _ =>
                       Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad())
                     }
@@ -230,7 +230,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def pollForSubscriptionData(plrReference: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+  private def pollForSubscriptionData(plrReference: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     val maxAttempts = {
       if appConfig.subscriptionPollingIntervalSeconds <= 0 then {
         logger.error("Invalid subscriptionPollingIntervalSeconds configuration: must be greater than 0")

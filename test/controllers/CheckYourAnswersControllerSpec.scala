@@ -24,8 +24,7 @@ import models.registration.*
 import models.subscription.AccountingPeriod
 import models.subscription.SubscriptionStatus.*
 import org.apache.pekko.Done
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import pages.*
 import play.api.inject.bind
@@ -132,7 +131,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -157,7 +156,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -178,7 +177,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
 
@@ -201,7 +200,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -231,7 +230,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
           contentAsString(result) must include(
@@ -261,7 +260,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
           when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
-          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad.url)
+          val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.routes.CannotReturnAfterSubscriptionController.onPageLoad.url
@@ -301,7 +300,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
@@ -338,7 +337,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result).value mustEqual routes.JourneyRecoveryController.onPageLoad().url
@@ -349,7 +348,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         val application = applicationBuilder(userAnswers = None).build()
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)
@@ -384,7 +383,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -421,7 +420,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -458,7 +457,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -492,7 +491,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -526,7 +525,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -560,7 +559,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -594,7 +593,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
@@ -630,7 +629,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .thenReturn(Future.failed(new HttpException("Bad Request", BAD_REQUEST)))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
@@ -668,7 +667,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
 
         running(application) {
-          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit.url)
+          val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))

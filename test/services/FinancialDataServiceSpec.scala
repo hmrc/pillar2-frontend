@@ -198,7 +198,9 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
 
         val missingOutstandingAmount    = validApiTransaction.map(_.copy(outstandingAmount = None))
         val outstandingAmountZeroOrLess =
-          Gen.choose(Long.MinValue, 0).flatMap(outstanding => validApiTransaction.map(_.copy(outstandingAmount = BigDecimal(outstanding).some)))
+          Gen
+            .choose(Long.MinValue, 0.toLong)
+            .flatMap(outstanding => validApiTransaction.map(_.copy(outstandingAmount = BigDecimal(outstanding).some)))
 
         val allChargeItemsMissingDueDate = validApiTransaction.map(tx => tx.copy(items = tx.items.map(_.copy(dueDate = None))))
 

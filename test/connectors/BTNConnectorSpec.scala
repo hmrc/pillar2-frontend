@@ -99,12 +99,11 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
 
     "return InternalIssueError when the pillar-2 backend returns any unsupported status." in forAll(
       Gen.posNum[Int].retryUntil(code => !Seq(CREATED, BAD_REQUEST, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR).contains(code))
-    ) {
-      httpStatus: Int =>
-        implicit val pillar2Id: String = "XEPLR4000000000"
-        stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
-        val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)
-        result.failed.futureValue mustBe InternalIssueError
+    ) { (httpStatus: Int) =>
+      implicit val pillar2Id: String = "XEPLR4000000000"
+      stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
+      val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)
+      result.failed.futureValue mustBe InternalIssueError
     }
   }
 }

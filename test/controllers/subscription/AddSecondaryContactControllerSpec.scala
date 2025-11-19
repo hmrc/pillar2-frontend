@@ -21,8 +21,7 @@ import connectors.UserAnswersConnectors
 import forms.AddSecondaryContactFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.SubscriptionNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.*
 import play.api.libs.json.Json

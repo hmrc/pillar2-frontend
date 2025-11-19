@@ -52,7 +52,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad().url
       }
     }
     " redirect to error page in case of a duplicated submission response" in {

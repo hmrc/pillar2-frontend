@@ -26,7 +26,7 @@ import models.{MneOrDomestic, NonUKAddress, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import pages.*
 import play.api
 import play.api.inject

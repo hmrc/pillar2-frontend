@@ -20,8 +20,7 @@ import base.SpecBase
 import connectors.OPSConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import models.UserAnswers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import pages.PlrReferencePage
 import play.api.inject

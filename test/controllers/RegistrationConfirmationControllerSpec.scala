@@ -59,7 +59,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
         when(mockSessionRepository.get(any()))
           .thenReturn(
             Future.successful(
@@ -97,7 +97,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
       val currentTimeGMT:  String = ZonedDateTime.now().toTimeGmtFormat
 
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
 
         when(mockSessionRepository.get(any()))
           .thenReturn(
@@ -126,7 +126,7 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
     "redirect to journey recover if no pillar 2 reference or data found in session repository" in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.RegistrationConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

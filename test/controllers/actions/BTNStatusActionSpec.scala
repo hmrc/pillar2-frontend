@@ -21,13 +21,16 @@ import controllers.btn.routes
 import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.btn.BTNStatus
 import models.requests.SubscriptionDataRequest
-import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.TryValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import pages.EntitiesInsideOutsideUKPage
 import play.api.mvc.{Result, Results}
@@ -44,7 +47,6 @@ import scala.concurrent.Future
 class BTNStatusActionSpec
     extends AnyWordSpec
     with MockitoSugar
-    with ArgumentMatchersSugar
     with must.Matchers
     with UserAnswersFixture
     with SubscriptionLocalDataFixture

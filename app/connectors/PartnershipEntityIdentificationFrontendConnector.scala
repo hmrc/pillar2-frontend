@@ -23,7 +23,6 @@ import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
 import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
-import services.audit.AuditService
 import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
@@ -42,9 +41,8 @@ trait PartnershipIdentificationFrontendConnector {
 }
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:    FrontendAppConfig,
-  httpClient:   HttpClientV2,
-  auditService: AuditService
+  appConfig:  FrontendAppConfig,
+  httpClient: HttpClientV2
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext

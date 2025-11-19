@@ -21,7 +21,7 @@ import connectors.UserAnswersConnectors
 import models.requests.{IdentifierRequest, OptionalDataRequest}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
 

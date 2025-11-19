@@ -21,7 +21,7 @@ import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntit
 import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
-import org.mockito.captor.ArgCaptor
+import org.mockito.ArgumentCaptor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.Assertion
@@ -132,12 +132,12 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
 
           result mustBe AuditResult.Success
 
-          val captor = ArgCaptor[ExtendedDataEvent]
-          verify(auditConnector).sendExtendedEvent(captor)(any, any)
+          val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
+          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
 
-          captor.value.auditSource mustBe "pillar2-frontend"
-          captor.value.auditType mustBe "belowThresholdNotification"
-          captor.value.detail mustBe Json.obj(
+          captor.getValue.auditSource mustBe "pillar2-frontend"
+          captor.getValue.auditType mustBe "belowThresholdNotification"
+          captor.getValue.detail mustBe Json.obj(
             "pillarReference"            -> pillarReference,
             "accountingPeriodStart"      -> apStartDate,
             "accountingPeriodEnd"        -> apEndDate,
@@ -178,12 +178,12 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
 
           result mustBe AuditResult.Success
 
-          val captor = ArgCaptor[ExtendedDataEvent]
-          verify(auditConnector).sendExtendedEvent(captor)(any, any)
+          val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
+          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
 
-          captor.value.auditSource mustBe "pillar2-frontend"
-          captor.value.auditType mustBe "belowThresholdNotification"
-          captor.value.detail mustBe Json.obj(
+          captor.getValue.auditSource mustBe "pillar2-frontend"
+          captor.getValue.auditType mustBe "belowThresholdNotification"
+          captor.getValue.detail mustBe Json.obj(
             "pillarReference"            -> pillarReference,
             "accountingPeriodStart"      -> apStartDate,
             "accountingPeriodEnd"        -> apEndDate,
@@ -298,12 +298,12 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
 
           result mustBe auditResult
 
-          val captor = ArgCaptor[ExtendedDataEvent]
-          verify(auditConnector).sendExtendedEvent(captor)(any, any)
+          val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
+          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
 
-          captor.value.auditSource mustBe "pillar2-frontend"
-          captor.value.auditType mustBe "belowThresholdNotification"
-          captor.value.detail mustBe Json.obj(
+          captor.getValue.auditSource mustBe "pillar2-frontend"
+          captor.getValue.auditType mustBe "belowThresholdNotification"
+          captor.getValue.detail mustBe Json.obj(
             "pillarReference"            -> pillarReference,
             "accountingPeriodStart"      -> apStartDate,
             "accountingPeriodEnd"        -> apEndDate,

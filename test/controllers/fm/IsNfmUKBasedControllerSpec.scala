@@ -21,8 +21,7 @@ import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.NominatedFilingMemberNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage}
 import play.api.inject.bind

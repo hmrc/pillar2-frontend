@@ -16,7 +16,7 @@
 
 package forms.behaviours
 
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.data.{Form, FormError}
 
 trait DecimalFieldBehaviours extends FieldBehaviours {
@@ -30,18 +30,16 @@ trait DecimalFieldBehaviours extends FieldBehaviours {
 
   def decimalFieldWithMinimum(form: Form[?], fieldName: String, minimum: BigDecimal, expectedError: FormError): Unit =
     s"not bind numbers below $minimum" in
-      forAll(decimalsBelowValue(minimum) -> "decimalBelowMin") {
-        number: BigDecimal =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors shouldEqual Seq(expectedError)
+      forAll(decimalsBelowValue(minimum) -> "decimalBelowMin") { (number: BigDecimal) =>
+        val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
+        result.errors shouldEqual Seq(expectedError)
       }
 
   def decimalFieldWithMaximum(form: Form[?], fieldName: String, maximum: BigDecimal, expectedError: FormError): Unit =
     s"not bind numbers above $maximum" in
-      forAll(decimalsAboveValue(maximum + 0.01) -> "decimalAboveMax") {
-        number: BigDecimal =>
-          val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
-          result.errors shouldEqual Seq(expectedError)
+      forAll(decimalsAboveValue(maximum + 0.01) -> "decimalAboveMax") { (number: BigDecimal) =>
+        val result = form.bind(Map(fieldName -> number.toString)).apply(fieldName)
+        result.errors shouldEqual Seq(expectedError)
       }
 
   def decimalsFieldWithRange(

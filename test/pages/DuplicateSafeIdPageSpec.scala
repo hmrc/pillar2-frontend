@@ -68,120 +68,118 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
   }
 
   "must remove FM data when DuplicateSafeIdPage is true" in
-    forAll {
-      userAnswers: UserAnswers =>
-        val result = userAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(FmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(FmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(FmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(FmContactNamePage, "contactName")
-          .success
-          .value
-          .set(FmContactEmailPage, "some@email.com")
-          .success
-          .value
-          .set(FmPhonePreferencePage, true)
-          .success
-          .value
-          .set(FmCapturePhonePage, "12312321")
-          .success
-          .value
-          .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-          .success
-          .value
-          .set(FmEntityTypePage, UkLimitedCompany)
-          .success
-          .value
-          .set(FmGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(FmSafeIDPage, "XB0000000000001")
-          .success
-          .value
-          .set(DuplicateSafeIdPage, true)
-          .success
-          .value
+    forAll { (userAnswers: UserAnswers) =>
+      val result = userAnswers
+        .set(NominateFilingMemberPage, true)
+        .success
+        .value
+        .set(FmRegisteredInUKPage, false)
+        .success
+        .value
+        .set(FmNameRegistrationPage, "name")
+        .success
+        .value
+        .set(FmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+        .set(FmContactNamePage, "contactName")
+        .success
+        .value
+        .set(FmContactEmailPage, "some@email.com")
+        .success
+        .value
+        .set(FmPhonePreferencePage, true)
+        .success
+        .value
+        .set(FmCapturePhonePage, "12312321")
+        .success
+        .value
+        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
+        .success
+        .value
+        .set(FmEntityTypePage, UkLimitedCompany)
+        .success
+        .value
+        .set(FmGRSResponsePage, grsResponse)
+        .success
+        .value
+        .set(FmSafeIDPage, "XB0000000000001")
+        .success
+        .value
+        .set(DuplicateSafeIdPage, true)
+        .success
+        .value
 
-        result.get(FmRegisteredInUKPage) mustNot be(defined)
-        result.get(FmNameRegistrationPage) mustNot be(defined)
-        result.get(FmRegisteredAddressPage) mustNot be(defined)
-        result.get(FmContactNamePage) mustNot be(defined)
-        result.get(FmContactEmailPage) mustNot be(defined)
-        result.get(FmPhonePreferencePage) mustNot be(defined)
-        result.get(FmCapturePhonePage) mustNot be(defined)
-        result.get(GrsFilingMemberStatusPage) mustNot be(defined)
-        result.get(FmEntityTypePage) mustNot be(defined)
-        result.get(FmGRSResponsePage) mustNot be(defined)
-        result.get(FmSafeIDPage) mustNot be(defined)
-        result.get(DuplicateSafeIdPage) mustBe Some(true)
+      result.get(FmRegisteredInUKPage) mustNot be(defined)
+      result.get(FmNameRegistrationPage) mustNot be(defined)
+      result.get(FmRegisteredAddressPage) mustNot be(defined)
+      result.get(FmContactNamePage) mustNot be(defined)
+      result.get(FmContactEmailPage) mustNot be(defined)
+      result.get(FmPhonePreferencePage) mustNot be(defined)
+      result.get(FmCapturePhonePage) mustNot be(defined)
+      result.get(GrsFilingMemberStatusPage) mustNot be(defined)
+      result.get(FmEntityTypePage) mustNot be(defined)
+      result.get(FmGRSResponsePage) mustNot be(defined)
+      result.get(FmSafeIDPage) mustNot be(defined)
+      result.get(DuplicateSafeIdPage) mustBe Some(true)
     }
 
   "must remove FM data and set NominateFilingMemberPage false when DuplicateSafeIdPage is false" in
-    forAll {
-      userAnswers: UserAnswers =>
-        val result = userAnswers
-          .set(NominateFilingMemberPage, true)
-          .success
-          .value
-          .set(FmRegisteredInUKPage, false)
-          .success
-          .value
-          .set(FmNameRegistrationPage, "name")
-          .success
-          .value
-          .set(FmRegisteredAddressPage, nonUkAddress)
-          .success
-          .value
-          .set(FmContactNamePage, "contactName")
-          .success
-          .value
-          .set(FmContactEmailPage, "some@email.com")
-          .success
-          .value
-          .set(FmPhonePreferencePage, true)
-          .success
-          .value
-          .set(FmCapturePhonePage, "12312321")
-          .success
-          .value
-          .set(GrsFilingMemberStatusPage, RowStatus.Completed)
-          .success
-          .value
-          .set(FmEntityTypePage, UkLimitedCompany)
-          .success
-          .value
-          .set(FmGRSResponsePage, grsResponse)
-          .success
-          .value
-          .set(FmSafeIDPage, "XB0000000000001")
-          .success
-          .value
-          .set(DuplicateSafeIdPage, false)
-          .success
-          .value
+    forAll { (userAnswers: UserAnswers) =>
+      val result = userAnswers
+        .set(NominateFilingMemberPage, true)
+        .success
+        .value
+        .set(FmRegisteredInUKPage, false)
+        .success
+        .value
+        .set(FmNameRegistrationPage, "name")
+        .success
+        .value
+        .set(FmRegisteredAddressPage, nonUkAddress)
+        .success
+        .value
+        .set(FmContactNamePage, "contactName")
+        .success
+        .value
+        .set(FmContactEmailPage, "some@email.com")
+        .success
+        .value
+        .set(FmPhonePreferencePage, true)
+        .success
+        .value
+        .set(FmCapturePhonePage, "12312321")
+        .success
+        .value
+        .set(GrsFilingMemberStatusPage, RowStatus.Completed)
+        .success
+        .value
+        .set(FmEntityTypePage, UkLimitedCompany)
+        .success
+        .value
+        .set(FmGRSResponsePage, grsResponse)
+        .success
+        .value
+        .set(FmSafeIDPage, "XB0000000000001")
+        .success
+        .value
+        .set(DuplicateSafeIdPage, false)
+        .success
+        .value
 
-        result.get(FmRegisteredInUKPage) mustNot be(defined)
-        result.get(FmNameRegistrationPage) mustNot be(defined)
-        result.get(FmRegisteredAddressPage) mustNot be(defined)
-        result.get(FmContactNamePage) mustNot be(defined)
-        result.get(FmContactEmailPage) mustNot be(defined)
-        result.get(FmPhonePreferencePage) mustNot be(defined)
-        result.get(FmCapturePhonePage) mustNot be(defined)
-        result.get(GrsFilingMemberStatusPage) mustNot be(defined)
-        result.get(FmEntityTypePage) mustNot be(defined)
-        result.get(FmGRSResponsePage) mustNot be(defined)
-        result.get(FmSafeIDPage) mustNot be(defined)
-        result.get(DuplicateSafeIdPage) mustBe Some(false)
-        result.get(NominateFilingMemberPage) mustBe Some(false)
+      result.get(FmRegisteredInUKPage) mustNot be(defined)
+      result.get(FmNameRegistrationPage) mustNot be(defined)
+      result.get(FmRegisteredAddressPage) mustNot be(defined)
+      result.get(FmContactNamePage) mustNot be(defined)
+      result.get(FmContactEmailPage) mustNot be(defined)
+      result.get(FmPhonePreferencePage) mustNot be(defined)
+      result.get(FmCapturePhonePage) mustNot be(defined)
+      result.get(GrsFilingMemberStatusPage) mustNot be(defined)
+      result.get(FmEntityTypePage) mustNot be(defined)
+      result.get(FmGRSResponsePage) mustNot be(defined)
+      result.get(FmSafeIDPage) mustNot be(defined)
+      result.get(DuplicateSafeIdPage) mustBe Some(false)
+      result.get(NominateFilingMemberPage) mustBe Some(false)
     }
 
 }

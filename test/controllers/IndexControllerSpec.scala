@@ -79,7 +79,7 @@ class IndexControllerSpec extends SpecBase {
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.TaskListController.onPageLoad.url
@@ -102,7 +102,7 @@ class IndexControllerSpec extends SpecBase {
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(enrolments)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -120,7 +120,7 @@ class IndexControllerSpec extends SpecBase {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe controllers.routes.HomepageController.onPageLoad().url
@@ -137,7 +137,7 @@ class IndexControllerSpec extends SpecBase {
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe applicationConfig.asaHomePageUrl
@@ -152,7 +152,7 @@ class IndexControllerSpec extends SpecBase {
       .thenReturn(Future.successful(Some(id) ~ Some(Individual) ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe routes.UnauthorisedIndividualAffinityController.onPageLoad.url
@@ -166,7 +166,7 @@ class IndexControllerSpec extends SpecBase {
       .thenReturn(Future.successful(Some(id) ~ None ~ Enrolments(Set.empty)))
 
     running(application) {
-      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner.url)
+      val request = FakeRequest(GET, routes.IndexController.onPageLoadBanner().url)
       val result  = route(application, request).value
       status(result) mustEqual SEE_OTHER
       redirectLocation(result).value mustBe routes.UnauthorisedController.onPageLoad.url

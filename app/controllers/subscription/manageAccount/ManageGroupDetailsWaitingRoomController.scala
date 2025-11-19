@@ -17,15 +17,13 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
 import models.subscription.ManageGroupDetailsStatus.*
 import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
 
@@ -35,12 +33,9 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
-  requireData:                            SubscriptionDataRequiredAction,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageGroupDetailsWaitingRoomView,
-  sessionRepository:                      SessionRepository,
-  subscriptionService:                    SubscriptionService,
-  futures:                                Futures
+  sessionRepository:                      SessionRepository
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport

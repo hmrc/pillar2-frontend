@@ -32,7 +32,7 @@ class SubscriptionNavigatorSpec extends SpecBase {
   private lazy val contactCYA      = controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad()
   private lazy val groupCYA        = controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad()
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
-  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad()
   "Navigator" when {
 
     "in Normal mode" must {

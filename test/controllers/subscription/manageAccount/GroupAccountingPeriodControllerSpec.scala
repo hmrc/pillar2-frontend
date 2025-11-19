@@ -23,8 +23,7 @@ import forms.GroupAccountingPeriodFormProvider
 import models.MneOrDomestic
 import models.subscription.AccountingPeriod
 import navigation.AmendSubscriptionNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.inject.bind
