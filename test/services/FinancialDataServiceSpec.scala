@@ -22,6 +22,7 @@ import connectors.FinancialDataConnector
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
 import models.financialdata.*
+import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
@@ -60,8 +61,8 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
     items = Seq(dueApiFinancialTransaction, clearedApiFinancialTransaction)
   )
 
-  val parsedOutstandingChargeValues: (TaxPeriod, EtmpSubtransactionRef.Dtt.type, BigDecimal, OutstandingCharge.FinancialItems) = (
-    TaxPeriod(uktrMainApiTransaction.taxPeriodFrom.value, uktrMainApiTransaction.taxPeriodTo.value),
+  val parsedOutstandingChargeValues: (AccountingPeriod, EtmpSubtransactionRef.Dtt.type, BigDecimal, OutstandingCharge.FinancialItems) = (
+    AccountingPeriod(uktrMainApiTransaction.taxPeriodFrom.value, uktrMainApiTransaction.taxPeriodTo.value),
     EtmpSubtransactionRef.Dtt,
     uktrMainApiTransaction.outstandingAmount.value,
     OutstandingCharge.FinancialItems(

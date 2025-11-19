@@ -95,7 +95,7 @@
                     ),
                     rows =  summary.transactions.map { tx =>
                         Seq(
-                            TableRow(content = Text(tx.name)),
+                            TableRow(content = Text(tx.transactionRef.displayName)),
                             TableRow(content = Text(formatCurrencyAmount(tx.outstandingAmount)), format = Some("numeric")),
                             TableRow(content = Text(tx.dueDate.toDateFormat))
                         )

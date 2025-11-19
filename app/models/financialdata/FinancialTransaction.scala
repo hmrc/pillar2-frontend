@@ -16,13 +16,15 @@
 
 package models.financialdata
 
+import models.subscription.AccountingPeriod
+
 import java.time.LocalDate
 
 sealed trait FinancialTransaction
 
 object FinancialTransaction {
   sealed trait OutstandingCharge extends FinancialTransaction {
-    val taxPeriod:          TaxPeriod
+    val accountingPeriod:   AccountingPeriod
     val subTransactionRef:  EtmpSubtransactionRef
     val outstandingAmount:  BigDecimal
     val chargeItems:        OutstandingCharge.FinancialItems
@@ -34,12 +36,12 @@ object FinancialTransaction {
   object OutstandingCharge {
 
     def apply(mainTransactionRef: EtmpMainTransactionRef.ChargeRef)(
-      taxPeriod:         TaxPeriod,
+      accountingPeriod:  AccountingPeriod,
       subTransactionRef: EtmpSubtransactionRef,
       outstandingAmount: BigDecimal,
       chargeItems:       FinancialItems
     ): OutstandingCharge = {
-      val fields = (taxPeriod, subTransactionRef, outstandingAmount, chargeItems)
+      val fields = (accountingPeriod, subTransactionRef, outstandingAmount, chargeItems)
       mainTransactionRef match {
         case EtmpMainTransactionRef.UkTaxReturnMain     => UktrMainOutstandingCharge.apply.tupled(fields)
         case EtmpMainTransactionRef.LatePaymentInterest => LatePaymentInterestOutstandingCharge.apply.tupled(fields)
@@ -48,7 +50,7 @@ object FinancialTransaction {
     }
 
     final case class UktrMainOutstandingCharge(
-      taxPeriod:         TaxPeriod,
+      accountingPeriod:  AccountingPeriod,
       subTransactionRef: EtmpSubtransactionRef,
       outstandingAmount: BigDecimal,
       chargeItems:       FinancialItems
@@ -57,7 +59,7 @@ object FinancialTransaction {
     }
 
     final case class LatePaymentInterestOutstandingCharge(
-      taxPeriod:         TaxPeriod,
+      accountingPeriod:  AccountingPeriod,
       subTransactionRef: EtmpSubtransactionRef,
       outstandingAmount: BigDecimal,
       chargeItems:       FinancialItems
@@ -66,7 +68,7 @@ object FinancialTransaction {
     }
 
     final case class RepaymentInterestOutstandingCharge(
-      taxPeriod:         TaxPeriod,
+      accountingPeriod:  AccountingPeriod,
       subTransactionRef: EtmpSubtransactionRef,
       outstandingAmount: BigDecimal,
       chargeItems:       FinancialItems

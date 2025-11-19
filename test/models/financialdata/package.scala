@@ -18,6 +18,7 @@ package models
 
 import cats.syntax.option.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
+import models.subscription.AccountingPeriod
 import org.scalacheck.{Arbitrary, Gen}
 
 import java.time.LocalDate
@@ -26,7 +27,7 @@ package object financialdata {
 
   private val anyDate: Gen[LocalDate] =
     Gen.choose(LocalDate.of(2023, 1, 1).toEpochDay, LocalDate.now.plusYears(3).toEpochDay).map(LocalDate.ofEpochDay)
-  private val anyTaxPeriod:                Gen[TaxPeriod]                        = anyDate.map(date => TaxPeriod(date.minusYears(1), date))
+  private val anyAccountingPeriod:         Gen[AccountingPeriod]                 = anyDate.map(date => AccountingPeriod(date.minusYears(1), date))
   private val anyMainTransactionChargeRef: Gen[EtmpMainTransactionRef.ChargeRef] = Gen.oneOf(EtmpMainTransactionRef.values.collect {
     case chargeRef: EtmpMainTransactionRef.ChargeRef => chargeRef
   })
@@ -36,12 +37,12 @@ package object financialdata {
     clearingDate <- Gen.option(Gen.const(dueDate.plusDays(7)))
   } yield FinancialItem(dueDate.some, clearingDate)
 
-  private val anyOutstandingChargeFields: Gen[(TaxPeriod, EtmpSubtransactionRef, BigDecimal, OutstandingCharge.FinancialItems)] = for {
-    taxPeriod         <- anyTaxPeriod
+  private val anyOutstandingChargeFields: Gen[(AccountingPeriod, EtmpSubtransactionRef, BigDecimal, OutstandingCharge.FinancialItems)] = for {
+    accountingPeriod  <- anyAccountingPeriod
     subTxRef          <- anySubTransactionRef
     outstandingAmount <- Gen.choose(0.01, 100000000.00).map(BigDecimal.valueOf)
     items             <- Gen.listOfN(3, anyOutstandingFinancialItem)
-  } yield (taxPeriod, subTxRef, outstandingAmount, OutstandingCharge.FinancialItems(taxPeriod.to, items))
+  } yield (accountingPeriod, subTxRef, outstandingAmount, OutstandingCharge.FinancialItems(accountingPeriod.endDate, items))
 
   private val anyPaymentTransaction: Gen[Payment] = Gen.listOfN(3, anyOutstandingFinancialItem).map { items =>
     Payment(Payment.FinancialItems(items))

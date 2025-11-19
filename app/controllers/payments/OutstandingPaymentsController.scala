@@ -22,7 +22,6 @@ import controllers.actions.*
 import controllers.routes.JourneyRecoveryController
 import models.*
 import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary}
-import models.subscription.AccountingPeriod
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -57,21 +56,21 @@ class OutstandingPaymentsController @Inject() (
 
   private def toOutstandingPaymentsSummaries(financialData: FinancialData): Seq[FinancialSummary] =
     financialData.onlyOutstandingCharges
-      .groupBy(_.taxPeriod)
-      .map { case (taxPeriod, transactions) =>
+      .groupBy(_.accountingPeriod)
+      .map { case (accountingPeriod, transactions) =>
         val transactionSummaries: Seq[TransactionSummary] =
           transactions
             .groupBy(_.mainTransactionRef)
             .map { case (transactionRef, groupedTransactions) =>
               TransactionSummary(
-                transactionRef.displayName,
+                transactionRef,
                 groupedTransactions.map(_.outstandingAmount).sum,
                 groupedTransactions.map(_.chargeItems.earliestDueDate).min
               )
             }
             .toSeq
 
-        FinancialSummary(AccountingPeriod(taxPeriod.from, taxPeriod.to), transactionSummaries.sortBy(_.dueDate).reverse)
+        FinancialSummary(accountingPeriod, transactionSummaries.sortBy(_.dueDate).reverse)
       }
       .toSeq
       .sortBy(_.accountingPeriod.dueDate)
@@ -97,7 +96,7 @@ class OutstandingPaymentsController @Inject() (
         outstandingPaymentSummaries = toOutstandingPaymentsSummaries(financialData)
       } yield {
         val amountDue               = outstandingPaymentSummaries.flatMap(_.transactions.map(_.outstandingAmount)).sum.max(0)
-        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.hasOverdueReturnPayment(now()))
+        val hasOverdueReturnPayment = outstandingPaymentSummaries.exists(_.overdueReturnPayments(now()).nonEmpty)
 
         Ok(view(outstandingPaymentSummaries, plrRef, amountDue, hasOverdueReturnPayment))
       }).value
