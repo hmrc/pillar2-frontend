@@ -17,12 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import com.github.tomakehurst.wiremock.client.WireMock._
 import connectors.ObligationsAndSubmissionsConnector
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
-import java.time.ZonedDateTime
 
 class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServerHandler {
 
