@@ -15,29 +15,22 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.rfm.RfmStatus
-@import views.html.components.gds._
+@import views.html.components.loadingSpinner
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton,
-        heading: heading
+        loadingSpinner: loadingSpinner
 )
 
 
-@(rfmStatus: Option[RfmStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("rfmWaitingRoom.title")), showSignOut= false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
-    <meta http-equiv="refresh" content="2" />
-    <div class="hods-loading-spinner">
-        <div
-        class="hods-loading-spinner__spinner"
-        aria-live="polite"
-        role="status"
-        ></div>
-        <div class="hods-loading-spinner__content">
-            @heading(messages("rfmWaitingRoom.h1"), "govuk-heading-m")
-            @heading(messages("rfmWaitingRoom.h2"), "govuk-body-s", "h2")
-        </div>
-    </div>
+  @loadingSpinner(
+    secondsUntilRedirect = 2,
+    redirectUrl = controllers.rfm.routes.RfmWaitingRoomController.onPageLoad(),
+  )(
+    h1Message = messages("rfmWaitingRoom.h1"),
+    h2Message = messages("rfmWaitingRoom.h2"),
+  )
 }

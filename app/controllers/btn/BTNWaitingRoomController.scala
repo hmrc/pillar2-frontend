@@ -62,7 +62,6 @@ class BTNWaitingRoomController @Inject() (
             logger.info("BTNWaitingRoomController: Status is processing, showing waiting room with refresh header")
             Future.successful(
               Ok(btnWaitingRoomView()).withHeaders(
-                "Refresh"       -> s"${appConfig.btnWaitingRoomPollIntervalSeconds}",
                 "Cache-Control" -> "no-store, no-cache, must-revalidate",
                 "Pragma"        -> "no-cache",
                 "Expires"       -> "0"

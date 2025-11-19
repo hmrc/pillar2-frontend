@@ -49,7 +49,7 @@ class RfmWaitingRoomController @Inject() (
       case Some(FailException) =>
         logger.warn("Replace filing member failed as expected a value for RfmUkBased page but could not find one")
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
-      case s => Ok(view(s))
+      case _ => Ok(view())
     }
 
   }
