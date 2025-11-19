@@ -15,31 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.subscription.SubscriptionStatus
-@import views.html.components.gds._
+@import views.html.components.loadingSpinner
 
 @this(
         layout: templates.Layout,
-        heading: heading
+        loadingSpinner: loadingSpinner
 )
 
-@(subscriptionStatus: Option[SubscriptionStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("registrationWaitingRoom.title")), showSignOut= false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
-
-  @if(subscriptionStatus.isEmpty) {
-    <meta http-equiv="refresh" content="2" />
-  }
-
-  <div class="hods-loading-spinner">
-    <div
-            class="hods-loading-spinner__spinner"
-            aria-live="polite"
-            role="status"
-    ></div>
-    <div class="hods-loading-spinner__content">
-      @heading(messages("registrationWaitingRoom.h1"), "govuk-heading-m")
-      @heading(messages("registrationWaitingRoom.h2"), "govuk-body-s", "h2")
-    </div>
-  </div>
+  @loadingSpinner(
+    secondsUntilRedirect = 2,
+    redirectUrl = controllers.routes.RegistrationWaitingRoomController.onPageLoad()
+  )(
+    h1Message = messages("registrationWaitingRoom.h1"),
+    h2Message = messages("registrationWaitingRoom.h2")
+  )
 }

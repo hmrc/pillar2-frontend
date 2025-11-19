@@ -15,28 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.subscription.ManageContactDetailsStatus
-@import views.html.components.gds._
+@import views.html.components.loadingSpinner
 
 @this(
         layout: templates.Layout,
-        govukButton: GovukButton,
-        heading: heading
+        loadingSpinner: loadingSpinner
 )
 
-@(status: Option[ManageContactDetailsStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("manageContactDetails.title")), showSignOut = false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
-    <meta http-equiv="refresh" content="2;url=@controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad" />
-    <div class="hods-loading-spinner">
-        <div
-        class="hods-loading-spinner__spinner"
-        aria-live="polite"
-        role="status"
-        ></div>
-        <div class="hods-loading-spinner__content">
-            @heading(messages("manageContactDetails.h1"), "govuk-heading-m")
-            @heading(messages("manageContactDetails.h2"), "govuk-body-s", "h2")
-        </div>
-    </div>
+  @loadingSpinner(
+    secondsUntilRedirect = 2,
+    redirectUrl = controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad
+  )(
+    h1Message = messages("manageContactDetails.h1"),
+    h2Message = messages("manageContactDetails.h2")
+  )
 }

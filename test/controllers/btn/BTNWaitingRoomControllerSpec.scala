@@ -18,6 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import models.btn.BTNStatus
+import org.jsoup.Jsoup
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
@@ -135,7 +136,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
         }
       }
 
-      "set the Refresh header with the correct poll interval from configuration" in {
+      "set the meta tag with an http-equiv value of the correct poll interval from configuration" in {
         val userAnswers        = emptyUserAnswers.set(BTNStatus, BTNStatus.processing).get
         val customPollInterval = 5
 
@@ -154,7 +155,11 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          header("Refresh", result) mustEqual Some(customPollInterval.toString)
+          val metaTag = Jsoup.parse(contentAsString(result)).getElementsByTag("meta").last()
+
+          metaTag.attr("http-equiv") mustBe "refresh"
+          metaTag.attr("content").split(";").head mustBe customPollInterval.toString
+          metaTag.attr("content").split(";").last mustBe "url=".concat(routes.BTNWaitingRoomController.onPageLoad.url)
         }
       }
     }
