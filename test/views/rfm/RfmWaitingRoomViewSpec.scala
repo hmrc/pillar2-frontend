@@ -17,7 +17,6 @@
 package views.rfm
 
 import base.ViewSpecBase
-import models.rfm.RfmStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -31,7 +30,7 @@ class RfmWaitingRoomViewSpec extends ViewSpecBase {
   lazy val rfmRequest: Request[AnyContent] =
     FakeRequest("GET", controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url).withCSRFToken
   lazy val page:      RfmWaitingRoomView = inject[RfmWaitingRoomView]
-  lazy val view:      Document           = Jsoup.parse(page(Some(SuccessfullyCompleted))(rfmRequest, appConfig, messages).toString())
+  lazy val view:      Document           = Jsoup.parse(page()(rfmRequest, appConfig, messages).toString())
   lazy val pageTitle: String             = "Submitting..."
 
   "Rfm Waiting Room View" should {

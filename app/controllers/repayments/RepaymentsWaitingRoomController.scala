@@ -48,20 +48,20 @@ class RepaymentsWaitingRoomController @Inject() (
     val repaymentsWaitingRoomVisited = request.userAnswers.get(RepaymentsWaitingRoomVisited)
 
     (repaymentStatusPage, repaymentsWaitingRoomVisited) match {
-      case (s, None) =>
+      case (_, None) =>
         for {
           optionalSessionData <- sessionRepository.get(request.userAnswers.id)
           sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
           updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsWaitingRoomVisited, true))
           _              <- sessionRepository.set(updatedAnswers)
-        } yield Ok(view(s))
+        } yield Ok(view())
       case (Some(SuccessfullyCompleted), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
       case (Some(UnexpectedResponseError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed()))
       case (Some(IncompleteDataError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
-      case (s, _) => Future.successful(Ok(view(s)))
+      case (_, _) => Future.successful(Ok(view()))
     }
 
   }

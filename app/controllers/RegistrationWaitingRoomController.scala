@@ -43,13 +43,13 @@ class RegistrationWaitingRoomController @Inject() (
     request.userAnswers
       .get(SubscriptionStatusPage) match {
       case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad())
-      case Some(RegistrationInProgress)                   => Ok(view(Some(RegistrationInProgress)))
+      case Some(RegistrationInProgress)                   => Ok(view())
       case Some(FailedWithDuplicatedSubmission)           => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithUnprocessableEntity)            => Redirect(controllers.subscription.routes.SubscriptionFailureController.onPageLoad)
       case Some(FailedWithInternalIssueError)             => Redirect(controllers.subscription.routes.SubscriptionFailedController.onPageLoad)
       case Some(FailedWithNoMneOrDomesticValueFoundError) => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
       case Some(FailedWithDuplicatedSafeIdError)          => Redirect(controllers.subscription.routes.DuplicateSafeIdController.onPageLoad())
-      case s                                              => Ok(view(s))
+      case _                                              => Ok(view())
     }
 
   }
