@@ -91,7 +91,7 @@ class BTNStatusActionSpec
             }
           )
 
-          val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+          val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
           result mustBe successResult
         }
@@ -104,7 +104,7 @@ class BTNStatusActionSpec
           emptyUserAnswers.set(BTNStatus, BTNStatus.processing).success.value.some
         })
 
-        val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+        val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
         result mustBe Results.Redirect(routes.BTNWaitingRoomController.onPageLoad)
       }
@@ -132,7 +132,7 @@ class BTNStatusActionSpec
             )(any[HeaderCarrier])
           ).thenReturn(Future.successful(AuditResult.Success))
 
-          val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+          val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
           result mustBe Results.Redirect(routes.CheckYourAnswersController.cannotReturnKnockback)
 
@@ -170,7 +170,7 @@ class BTNStatusActionSpec
               )(any[HeaderCarrier])
             ).thenReturn(Future.successful(AuditResult.Success))
 
-            val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+            val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
             result mustBe Results.Redirect(routes.CheckYourAnswersController.cannotReturnKnockback)
 

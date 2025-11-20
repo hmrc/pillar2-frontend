@@ -19,9 +19,9 @@ import base.SpecBase
 import models.audit.RepaymentsAuditEvent
 import models.registration.{IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.{verify, when}
-import org.mockito.ArgumentCaptor
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.Assertion
