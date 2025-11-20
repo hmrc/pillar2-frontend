@@ -51,7 +51,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   auditService:                           AuditService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -171,7 +171,7 @@ class CheckYourAnswersController @Inject() (
             }
         }
 
-        Future.successful(Redirect(routes.BTNWaitingRoomController.onPageLoad))
+        Future.successful(Redirect(controllers.routes.GenericWaitingRoomController.onPageLoad("btn")))
       case None =>
         logger.error("user answers not found")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

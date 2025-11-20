@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,19 +15,24 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.btn.BTNStatus
-@import views.html.components.gds._
-@import controllers.btn.routes
+@import views.html.components.loadingSpinner
 
 @this(
     layout: templates.Layout,
-    heading: heading
+    loadingSpinner: loadingSpinner
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(
+    pageTitle: String,
+    heading: String,
+    subHeading: String,
+    pollInterval: Int,
+    redirectUrl: Call,
+    afterHeadingsMessage: Option[String] = None
+)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("btn.waitingRoom.title")),
+  pageTitle = titleNoForm(pageTitle),
   headBlock = None,
   showSignOut = false,
   bannerUrl = None,
@@ -35,18 +40,13 @@
   showBackLink = false,
   timeout = false
 ) {
-  <div class="hods-loading-spinner">
-    <div
-            class="hods-loading-spinner__spinner"
-            aria-live="polite"
-            role="status"
-    ></div>
-    <div class="hods-loading-spinner__content">
-      @heading(messages("btn.waitingRoom.submitting"), "govuk-heading-m")
-      @heading(messages("btn.waitingRoom.dontLeave"), "govuk-body-s", "h2")
-      <div class="govuk-body">
-        <p>@messages("btn.waitingRoom.redirect")</p>
-      </div>
-    </div>
-  </div>
+  @loadingSpinner(
+    secondsUntilRedirect = pollInterval,
+    redirectUrl = redirectUrl
+  )(
+    h1Message = heading,
+    h2Message = subHeading,
+    afterHeadingsMessage = afterHeadingsMessage
+  )
 }
+

@@ -15,27 +15,21 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.repayments.RepaymentsStatus
-@import views.html.components.gds._
+@import views.html.components.loadingSpinner
 
 @this(
         layout: templates.Layout,
-        heading: heading
+        loadingSpinner: loadingSpinner
 )
 
-@(repaymentsStatus: Option[RepaymentsStatus])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("repaymentsWaitingRoom.title")), showSignOut= false, bannerUrl = None, serviceBannerClickable = false, showBackLink = false) {
-  <meta http-equiv="refresh" content="2" />
-  <div class="hods-loading-spinner">
-    <div
-            class="hods-loading-spinner__spinner"
-            aria-live="polite"
-            role="status"
-    ></div>
-    <div class="hods-loading-spinner__content">
-      @heading(messages("repaymentsWaitingRoom.h1"), "govuk-heading-m")
-      @heading(messages("repaymentsWaitingRoom.h2"), "govuk-body-s", "h2")
-    </div>
-  </div>
+  @loadingSpinner(
+    secondsUntilRedirect = 2,
+    redirectUrl = controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad()
+  )(
+    h1Message = messages("repaymentsWaitingRoom.h1"),
+    h2Message = messages("repaymentsWaitingRoom.h2"),
+  )
 }

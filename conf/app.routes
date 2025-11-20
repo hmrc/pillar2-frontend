@@ -581,4 +581,4 @@ GET       /below-threshold-notification/problem-with-service                    
 GET       /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onPageLoad
 POST      /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onSubmit
 
-GET       /below-threshold-notification/processing-submission                                       controllers.btn.BTNWaitingRoomController.onPageLoad
+GET       /below-threshold-notification/processing-submission                                       controllers.GenericWaitingRoomController.onPageLoad(feature = "btn")

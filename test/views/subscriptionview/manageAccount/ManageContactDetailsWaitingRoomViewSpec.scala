@@ -17,7 +17,6 @@
 package views.subscriptionview.manageAccount
 
 import base.ViewSpecBase
-import models.subscription.ManageContactDetailsStatus
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -25,70 +24,38 @@ import views.html.subscriptionview.manageAccount.ManageContactDetailsWaitingRoom
 
 class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
-  lazy val page: ManageContactDetailsWaitingRoomView = inject[ManageContactDetailsWaitingRoomView]
-  lazy val inProgressView: Document = Jsoup.parse(page(Some(ManageContactDetailsStatus.InProgress))(request, appConfig, messages).toString())
-  lazy val completedView: Document =
-    Jsoup.parse(page(Some(ManageContactDetailsStatus.SuccessfullyCompleted))(request, appConfig, messages).toString())
-  lazy val pageTitle: String = "Submitting your contact details"
+  lazy val page:      ManageContactDetailsWaitingRoomView = inject[ManageContactDetailsWaitingRoomView]
+  lazy val view:      Document                            = Jsoup.parse(page()(request, appConfig, messages).toString())
+  lazy val pageTitle: String                              = "Submitting your contact details"
 
   "Manage Contact Details Waiting Room View" should {
-
-    "when status is InProgress" must {
-      "have a title" in {
-        inProgressView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-      }
-
-      "have a unique H1 heading" in {
-        val h1Elements: Elements = inProgressView.getElementsByTag("h1")
-        h1Elements.size() mustBe 1
-        h1Elements.text() mustBe pageTitle
-      }
-
-      "have a banner with without a link" in {
-        val className: String = "govuk-header__service-name"
-        inProgressView.getElementsByClass(className).attr("href") mustBe empty
-      }
-
-      "have a sub heading" in {
-        inProgressView.getElementsByTag("h2").first().text() mustBe
-          "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
-      }
-
-      "display spinner" in {
-        inProgressView.getElementsByClass("hods-loading-spinner__spinner").size() must be > 0
-      }
-
-      "have a meta refresh tag" in {
-        val metaRefresh = Option(inProgressView.select("meta[http-equiv=refresh]").first())
-        metaRefresh must not be None
-      }
+    "have a title" in {
+      view.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
     }
 
-    "when status is SuccessfullyCompleted" must {
-      "have a title" in {
-        completedView.title() mustBe s"$pageTitle - Report Pillar 2 Top-up Taxes - GOV.UK"
-      }
+    "have a unique H1 heading" in {
+      val h1Elements: Elements = view.getElementsByTag("h1")
+      h1Elements.size() mustBe 1
+      h1Elements.text() mustBe pageTitle
+    }
 
-      "have a unique H1 heading" in {
-        val h1Elements: Elements = completedView.getElementsByTag("h1")
-        h1Elements.size() mustBe 1
-        h1Elements.text() mustBe pageTitle
-      }
+    "have a banner with without a link" in {
+      val className: String = "govuk-header__service-name"
+      view.getElementsByClass(className).attr("href") mustBe empty
+    }
 
-      "have a banner with without a link" in {
-        val className: String = "govuk-header__service-name"
-        completedView.getElementsByClass(className).attr("href") mustBe empty
-      }
+    "have a sub heading" in {
+      view.getElementsByTag("h2").first().text() mustBe
+        "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
+    }
 
-      "have a sub heading" in {
-        completedView.getElementsByTag("h2").first().text() mustBe
-          "Do not press back in your browser or leave this page. It may take up to a minute to process this change."
-      }
+    "display spinner" in {
+      view.getElementsByClass("hods-loading-spinner__spinner").size() must be > 0
+    }
 
-      "have a meta refresh tag" in {
-        val metaRefresh = Option(completedView.select("meta[http-equiv=refresh]").first())
-        metaRefresh must not be None
-      }
+    "have a meta refresh tag" in {
+      val metaRefresh = Option(view.select("meta[http-equiv=refresh]").first())
+      metaRefresh must not be None
     }
   }
 }
