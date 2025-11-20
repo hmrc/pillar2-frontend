@@ -18,7 +18,7 @@ package controllers.btn
 
 import base.SpecBase
 import cats.syntax.either._
-import controllers.btn.routes._
+import controllers.routes.GenericWaitingRoomController
 import controllers.routes.IndexController
 import models.audit.{ApiResponseFailure, ApiResponseSuccess}
 import models.btn._
@@ -179,7 +179,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
         }
       }
 
@@ -221,7 +221,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
 
           verify(mockSessionRepository).set(any)
         }
@@ -248,7 +248,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
 
           verify(mockSessionRepository).set(any)
 
@@ -277,7 +277,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
 
           verify(mockSessionRepository).set(any)
 
@@ -300,7 +300,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
         }
       }
 
@@ -319,7 +319,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
         }
       }
 
@@ -338,7 +338,7 @@ class CheckYourAnswersControllerSpec
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual GenericWaitingRoomController.onPageLoad("btn").url
         }
       }
 

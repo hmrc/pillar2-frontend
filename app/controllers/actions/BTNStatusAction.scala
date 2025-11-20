@@ -67,7 +67,7 @@ class BTNStatusAction @Inject() (
                 entitiesInsideOutsideUk.getOrElse(false)
               )
               .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(BTNWaitingRoomController.onPageLoad)))
+          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(controllers.routes.GenericWaitingRoomController.onPageLoad("btn"))))
           case _                          => Future.successful(Right(request))
         }
       }

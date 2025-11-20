@@ -1,5 +1,5 @@
 @*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -22,10 +22,17 @@
     loadingSpinner: loadingSpinner
 )
 
-@()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(
+    pageTitle: String,
+    heading: String,
+    subHeading: String,
+    pollInterval: Int,
+    redirectUrl: Call,
+    afterHeadingsMessage: Option[String] = None
+)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(
-  pageTitle = titleNoForm(messages("btn.waitingRoom.title")),
+  pageTitle = titleNoForm(pageTitle),
   headBlock = None,
   showSignOut = false,
   bannerUrl = None,
@@ -34,11 +41,12 @@
   timeout = false
 ) {
   @loadingSpinner(
-    secondsUntilRedirect = appConfig.btnWaitingRoomPollIntervalSeconds,
-    redirectUrl = controllers.btn.routes.BTNWaitingRoomController.onPageLoad
+    secondsUntilRedirect = pollInterval,
+    redirectUrl = redirectUrl
   )(
-    h1Message = messages("btn.waitingRoom.submitting"),
-    h2Message = messages("btn.waitingRoom.dontLeave"),
-    afterHeadingsMessage = Some(messages("btn.waitingRoom.redirect"))
+    h1Message = heading,
+    h2Message = subHeading,
+    afterHeadingsMessage = afterHeadingsMessage
   )
 }
+
