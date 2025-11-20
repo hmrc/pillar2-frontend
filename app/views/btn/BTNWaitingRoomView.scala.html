@@ -15,13 +15,11 @@
  *@
 
 @import config.FrontendAppConfig
-@import models.btn.BTNStatus
-@import views.html.components.gds._
-@import controllers.btn.routes
+@import views.html.components.loadingSpinner
 
 @this(
     layout: templates.Layout,
-    heading: heading
+    loadingSpinner: loadingSpinner
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
@@ -35,18 +33,12 @@
   showBackLink = false,
   timeout = false
 ) {
-  <div class="hods-loading-spinner">
-    <div
-            class="hods-loading-spinner__spinner"
-            aria-live="polite"
-            role="status"
-    ></div>
-    <div class="hods-loading-spinner__content">
-      @heading(messages("btn.waitingRoom.submitting"), "govuk-heading-m")
-      @heading(messages("btn.waitingRoom.dontLeave"), "govuk-body-s", "h2")
-      <div class="govuk-body">
-        <p>@messages("btn.waitingRoom.redirect")</p>
-      </div>
-    </div>
-  </div>
+  @loadingSpinner(
+    secondsUntilRedirect = appConfig.btnWaitingRoomPollIntervalSeconds,
+    redirectUrl = controllers.btn.routes.BTNWaitingRoomController.onPageLoad
+  )(
+    h1Message = messages("btn.waitingRoom.submitting"),
+    h2Message = messages("btn.waitingRoom.dontLeave"),
+    afterHeadingsMessage = Some(messages("btn.waitingRoom.redirect"))
+  )
 }

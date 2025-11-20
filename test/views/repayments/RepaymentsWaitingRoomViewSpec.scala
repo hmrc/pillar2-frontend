@@ -17,7 +17,6 @@
 package views.repayments
 
 import base.ViewSpecBase
-import models.repayments.RepaymentsStatus.SuccessfullyCompleted
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
@@ -26,7 +25,7 @@ import views.html.repayments.RepaymentsWaitingRoomView
 class RepaymentsWaitingRoomViewSpec extends ViewSpecBase {
 
   lazy val page:      RepaymentsWaitingRoomView = inject[RepaymentsWaitingRoomView]
-  lazy val view:      Document                  = Jsoup.parse(page(Some(SuccessfullyCompleted))(request, appConfig, messages).toString())
+  lazy val view:      Document                  = Jsoup.parse(page()(request, appConfig, messages).toString())
   lazy val pageTitle: String                    = "Submitting your repayment request"
 
   "Repayments Waiting Room View" should {
