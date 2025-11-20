@@ -24,7 +24,7 @@ import play.api.libs.json.Json
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -38,7 +38,7 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
       s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions/$dateFrom/$dateTo"
     logger.info(s"Calling the backend ($url) with pillar2Id: $pillar2Id")
 
-    val httpRequest = http
+    http
       .get(url"$url")
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
@@ -51,31 +51,5 @@ class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfi
             Future.failed(new RuntimeException(s"Unexpected response status: ${response.status}"))
         }
       }
-      .recover {
-        case UpstreamErrorResponse(_, INTERNAL_SERVER_ERROR, _, _) if config.handleObligationsAndSubmissions500Errors =>
-          logger.warn(
-            s"Received 500 error from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
-          )
-          ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
-        case _: GatewayTimeoutException if config.handleObligationsAndSubmissions500Errors =>
-          logger.warn(
-            s"Received timeout from obligations and submissions endpoint for pillar2Id: $pillar2Id. Returning empty response due to feature flag."
-          )
-          ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
-        case UpstreamErrorResponse(_, status, _, _) =>
-          logger.error(s"Unexpected response status $status from obligations and submissions endpoint for pillar2Id: $pillar2Id")
-          throw new RuntimeException(s"Unexpected response status: $status")
-      }
-
-    val timeoutFuture = Future {
-      Thread.sleep(config.obligationsAndSubmissionsTimeoutMilliseconds)
-      logger.warn(
-        s"Request timeout after ${config.obligationsAndSubmissionsTimeoutMilliseconds} milliseconds for pillar2Id: $pillar2Id. Returning empty response."
-      )
-      ObligationsAndSubmissionsSuccess(ZonedDateTime.now(), Seq.empty)
-    }
-
-    // Race between the HTTP request and the timeout
-    Future.firstCompletedOf(Seq(httpRequest, timeoutFuture))
   }
 }

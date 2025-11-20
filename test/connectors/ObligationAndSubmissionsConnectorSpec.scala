@@ -17,12 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import com.github.tomakehurst.wiremock.client.WireMock.*
 import connectors.ObligationsAndSubmissionsConnector
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-
-import java.time.ZonedDateTime
 
 class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServerHandler {
 
@@ -67,97 +64,6 @@ class ObligationAndSubmissionsConnectorSpec extends SpecBase with WireMockServer
       )
 
       whenReady(connector.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
-    }
-
-    "return empty response when feature flag is enabled and backend returns 500 error" in {
-      val appWithFeatureFlag: Application = new GuiceApplicationBuilder()
-        .configure(
-          conf = "microservice.services.pillar2.port" -> server.port(),
-          "features.handleObligationsAndSubmissions500Errors" -> true
-        )
-        .build()
-
-      val connectorWithFeatureFlag: ObligationsAndSubmissionsConnector = appWithFeatureFlag.injector.instanceOf[ObligationsAndSubmissionsConnector]
-
-      stubGet(
-        url,
-        INTERNAL_SERVER_ERROR,
-        """{"error": "Internal server error"}""",
-        Map("X-Pillar2-Id" -> PlrReference)
-      )
-
-      val result = connectorWithFeatureFlag.getData(pillar2Id, fromDate, toDate).futureValue
-
-      result.processingDate mustBe a[ZonedDateTime]
-      result.accountingPeriodDetails mustBe Seq.empty
-    }
-
-    "fail when feature flag is disabled and backend returns 500 error" in {
-      val appWithFeatureFlagDisabled: Application = new GuiceApplicationBuilder()
-        .configure(
-          conf = "microservice.services.pillar2.port" -> server.port(),
-          "features.handleObligationsAndSubmissions500Errors" -> false
-        )
-        .build()
-
-      val connectorWithFeatureFlagDisabled: ObligationsAndSubmissionsConnector =
-        appWithFeatureFlagDisabled.injector.instanceOf[ObligationsAndSubmissionsConnector]
-
-      stubGet(
-        url,
-        INTERNAL_SERVER_ERROR,
-        """{"error": "Internal server error"}""",
-        Map("X-Pillar2-Id" -> PlrReference)
-      )
-
-      whenReady(connectorWithFeatureFlagDisabled.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
-    }
-
-    "fail when feature flag is enabled but backend returns other error status" in {
-      val appWithFeatureFlag: Application = new GuiceApplicationBuilder()
-        .configure(
-          conf = "microservice.services.pillar2.port" -> server.port(),
-          "features.handleObligationsAndSubmissions500Errors" -> true
-        )
-        .build()
-
-      val connectorWithFeatureFlag: ObligationsAndSubmissionsConnector = appWithFeatureFlag.injector.instanceOf[ObligationsAndSubmissionsConnector]
-
-      stubGet(
-        url,
-        BAD_REQUEST,
-        headers = Map("X-Pillar2-Id" -> PlrReference)
-      )
-
-      whenReady(connectorWithFeatureFlag.getData(pillar2Id, fromDate, toDate).failed)(ex => ex mustBe an[Exception])
-    }
-
-    "return empty response when request times out after configured timeout period" in {
-      val appWithTimeout: Application = new GuiceApplicationBuilder()
-        .configure(
-          conf = "microservice.services.pillar2.port" -> server.port(),
-          "features.obligationsAndSubmissionsTimeoutMilliseconds" -> 500
-        )
-        .build()
-
-      val connectorWithTimeout: ObligationsAndSubmissionsConnector = appWithTimeout.injector.instanceOf[ObligationsAndSubmissionsConnector]
-
-      // Create a stub that delays response longer than the timeout
-      server.stubFor(
-        get(urlEqualTo(url))
-          .withHeader("X-Pillar2-Id", equalTo(PlrReference))
-          .willReturn(
-            aResponse()
-              .withStatus(200)
-              .withBody(obligationsAndSubmissionsSuccessResponseJson.toString())
-              .withFixedDelay(1000) // 1 second delay, longer than 500 millisecond timeout
-          )
-      )
-
-      val result = connectorWithTimeout.getData(pillar2Id, fromDate, toDate).futureValue
-
-      result.processingDate mustBe a[ZonedDateTime]
-      result.accountingPeriodDetails mustBe Seq.empty
     }
   }
 }
