@@ -112,18 +112,6 @@ class FrontendAppConfigSpec extends SpecBase {
       }
     }
 
-    ".handleObligationsAndSubmissions500Errors" must {
-      "return correct feature flag value" in {
-        config.handleObligationsAndSubmissions500Errors mustBe false
-      }
-    }
-
-    ".obligationsAndSubmissionsTimeoutMilliseconds" must {
-      "return correct timeout value" in {
-        config.obligationsAndSubmissionsTimeoutMilliseconds mustBe 5000
-      }
-    }
-
     ".maxDaysAgoToConsiderPaymentAsRecent" must {
       "read value from config" in {
         config.maxDaysAgoToConsiderPaymentAsRecent mustBe 60
