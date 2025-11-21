@@ -128,7 +128,6 @@ trait Formatters extends Transforms with Constraints {
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Boolean] =
         baseFormatter
           .bind(key, data)
-          .right
           .flatMap {
             case "true"  => Right(true)
             case "false" => Right(false)
@@ -257,7 +256,7 @@ trait Formatters extends Transforms with Constraints {
       private val baseFormatter = stringFormatter(requiredKey, args)
 
       override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], A] =
-        baseFormatter.bind(key, data).right.flatMap { str =>
+        baseFormatter.bind(key, data).flatMap { str =>
           ev.withName(str)
             .map(Right.apply)
             .getOrElse(Left(Seq(FormError(key, invalidKey, args))))
