@@ -18,7 +18,7 @@ package controllers.actions
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction.{HmrcAsAgentKey, HmrcPillar2OrgKey, VerifyAgentClientPredicate, defaultPredicate}
+import controllers.actions.EnrolmentIdentifierAction.*
 import controllers.routes
 import models.requests.IdentifierRequest
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, UnauthorisedClientPillar2ReferencePage}
