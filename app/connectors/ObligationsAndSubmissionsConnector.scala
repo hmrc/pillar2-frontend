@@ -22,6 +22,7 @@ import play.api.Logging
 import play.api.http.Status.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.time.LocalDate
