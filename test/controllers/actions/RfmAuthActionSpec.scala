@@ -25,8 +25,8 @@ import org.mockito.Mockito.when
 import play.api.mvc.*
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 
 import java.util.UUID

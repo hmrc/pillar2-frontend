@@ -18,8 +18,8 @@ package helpers
 
 import org.apache.pekko.stream.testkit.NoMaterializer
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration, HttpConfiguration}
-import play.api.i18n.Messages.UrlMessageSource
 import play.api.i18n.*
+import play.api.i18n.Messages.UrlMessageSource
 import play.api.mvc.*
 import play.api.test.Helpers.*
 

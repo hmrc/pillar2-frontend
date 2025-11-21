@@ -18,8 +18,8 @@ package services
 
 import base.SpecBase
 import connectors.*
-import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.*
+import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
 import models.registration.*
 import models.rfm.CorporatePosition

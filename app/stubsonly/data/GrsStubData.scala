@@ -16,10 +16,10 @@
 
 package stubsonly.data
 
+import models.grs.*
 import models.grs.EntityType.{LimitedLiabilityPartnership, UkLimitedCompany}
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed, RegistrationNotCalled}
 import models.grs.VerificationStatus.{Fail, Pass}
-import models.grs.*
 import models.registration
 import models.registration.*
 import play.api.libs.json.Json

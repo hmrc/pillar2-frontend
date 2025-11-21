@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
-import models.tasklist.SectionStatus.Completed
 import models.tasklist.*
+import models.tasklist.SectionStatus.Completed
 import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport

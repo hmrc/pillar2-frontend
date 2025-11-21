@@ -19,9 +19,9 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import forms.BTNChooseAccountingPeriodFormProvider
+import models.obligationsandsubmissions.*
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions.*
 import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

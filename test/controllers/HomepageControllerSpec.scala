@@ -20,14 +20,14 @@ import base.SpecBase
 import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
+import models.*
 import models.DueAndOverdueReturnBannerScenario.*
 import models.OutstandingPaymentBannerScenario.{Outstanding, Paid}
-import models.*
-import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.financialdata.*
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.obligationsandsubmissions.ObligationStatus
-import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.*
+import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
@@ -37,8 +37,8 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{FinancialDataService, ObligationsAndSubmissionsService, SubscriptionService}
-import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DateTimeUtils.LocalDateOps

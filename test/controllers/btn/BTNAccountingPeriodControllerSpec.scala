@@ -19,10 +19,10 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import controllers.btn.routes.*
+import models.obligationsandsubmissions.*
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.BTN
-import models.obligationsandsubmissions.*
 import models.subscription.{AccountingPeriod, SubscriptionLocalData}
 import models.{NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}

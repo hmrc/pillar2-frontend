@@ -19,8 +19,8 @@ package helpers
 import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.requests.SubscriptionDataRequest
 import models.rfm.CorporatePosition
-import models.subscription.AccountStatus.ActiveAccount
 import models.subscription.*
+import models.subscription.AccountStatus.ActiveAccount
 import models.{MneOrDomestic, NonUKAddress, Verifier}
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList

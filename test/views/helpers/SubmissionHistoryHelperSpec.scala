@@ -16,8 +16,8 @@
 
 package views.helpers
 
-import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import models.obligationsandsubmissions.*
+import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import org.mockito.Mockito.when
 import org.scalatest.matchers.should.Matchers
 import org.scalatest.wordspec.AnyWordSpec

@@ -17,8 +17,8 @@
 package services
 
 import connectors.*
-import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.*
+import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFacts, KnownFactsParameters}
 import models.registration.*
 import models.rfm.CorporatePosition
 import models.subscription.*

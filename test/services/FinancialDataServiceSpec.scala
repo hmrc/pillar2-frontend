@@ -19,9 +19,9 @@ package services
 import base.SpecBase
 import cats.syntax.option.*
 import connectors.FinancialDataConnector
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.financialdata.*
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when

@@ -19,8 +19,8 @@ package stubsonly.controllers.actions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.eacd.Pillar2Enrolment
-import play.api.mvc.Results.*
 import play.api.mvc.*
+import play.api.mvc.Results.*
 import stubsonly.models.requests.TestOnlyAuthorisedRequest
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*

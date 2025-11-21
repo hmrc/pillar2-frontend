@@ -22,8 +22,8 @@ import cats.syntax.functorFilter.*
 import cats.syntax.option.*
 import cats.syntax.validated.*
 import connectors.FinancialDataConnector
-import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.financialdata.*
+import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.subscription.AccountingPeriod
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}

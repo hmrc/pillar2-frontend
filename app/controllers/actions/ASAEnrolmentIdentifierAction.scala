@@ -21,10 +21,10 @@ import controllers.actions.EnrolmentIdentifierAction.{HmrcAsAgentKey, defaultPre
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results.*
 import play.api.mvc.*
-import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
+import play.api.mvc.Results.*
 import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier

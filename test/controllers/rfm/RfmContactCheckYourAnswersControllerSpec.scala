@@ -18,8 +18,8 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.*
+import models.EnrolmentRequest.AllocateEnrolmentParameters
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}

@@ -18,9 +18,9 @@ package helpers
 
 import models.UserAnswers
 import models.btn.BTNStatus
+import models.obligationsandsubmissions.*
 import models.obligationsandsubmissions.ObligationStatus.{Fulfilled, Open}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
-import models.obligationsandsubmissions.*
 import models.subscription.AccountingPeriod
 import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import play.api.i18n.Messages

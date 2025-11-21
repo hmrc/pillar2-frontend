@@ -19,9 +19,9 @@ package controllers.registration
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
 import controllers.actions.*
 import models.fm.JourneyType
+import models.grs.*
 import models.grs.RegistrationStatus.{Registered, RegistrationFailed}
 import models.grs.VerificationStatus.Fail
-import models.grs.*
 import models.registration.{GrsResponse, RegistrationInfo}
 import models.requests.DataRequest
 import pages.*
