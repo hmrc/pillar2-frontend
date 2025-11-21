@@ -28,33 +28,21 @@ class BTNNavigatorSpec extends SpecBase {
 
   "BTN Navigator" when {
 
-    "in Normal mode" when {
+    "must go from a page that doesn't exist in the route map to Index" in {
 
-      "must go from a page that doesn't exist in the route map to Index" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
-      }
-
-      "go from EntitiesInsideOutsideUKPage period page to CheckYourAnswersPage page when answer is Yes" in {
-        navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)) mustBe
-          CheckYourAnswersController.onPageLoad
-      }
-
-      "go from EntitiesInsideOutsideUKPage period page to amend group details page when answer is No" in {
-        navigator.nextPage(EntitiesInsideOutsideUKPage, NormalMode, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, false)) mustBe
-          BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
-      }
-
+      case object UnknownPage extends Page
+      navigator.nextPage(UnknownPage, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
     }
 
-    "in Check mode" when {
-
-      "must go from a page that doesn't exist in the edit route map to CheckYourAnswers" in {
-
-        case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe routes.IndexController.onPageLoad
-      }
+    "go from EntitiesInsideOutsideUKPage period page to CheckYourAnswersPage page when answer is Yes" in {
+      navigator.nextPage(EntitiesInsideOutsideUKPage, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, true)) mustBe
+        CheckYourAnswersController.onPageLoad
     }
+
+    "go from EntitiesInsideOutsideUKPage period page to amend group details page when answer is No" in {
+      navigator.nextPage(EntitiesInsideOutsideUKPage, emptyUserAnswers.setOrException(EntitiesInsideOutsideUKPage, false)) mustBe
+        BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails()
+    }
+
   }
 }

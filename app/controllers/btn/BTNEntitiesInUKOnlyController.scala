@@ -79,7 +79,7 @@ class BTNEntitiesInUKOnlyController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, updatedAnswers))
             )
         case None =>
           logger.error("user answers not found")
