@@ -28,8 +28,12 @@ import utils.DateTimeUtils.utcZoneId
 
 import java.time.Clock
 import javax.inject.Singleton
+import scala.annotation.unused
 
-class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+class GuiceModule(
+  @unused environment: Environment,
+  configuration:       Configuration
+) extends AbstractModule {
 
   override def configure(): Unit = {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
