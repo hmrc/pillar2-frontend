@@ -33,7 +33,7 @@
 @maybeAgentKey = @{if(isAgent) ".agent" else ""}
 
 @dueAndOverdueReturnsUrl = @{
-    controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+    controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
 }
 
 @viewOutstandingPaymentsUrl = @{

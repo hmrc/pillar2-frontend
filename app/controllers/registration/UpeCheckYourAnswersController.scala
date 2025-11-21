@@ -25,8 +25,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.registrationview.UpeCheckYourAnswersView
 
 class UpeCheckYourAnswersController @Inject() (
@@ -36,14 +36,14 @@ class UpeCheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     UpeCheckYourAnswersView,
   countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val upeStatus = request.userAnswers.upeStatus
     val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
-    if (upeStatus == RowStatus.Completed | upeStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
+    if upeStatus == RowStatus.Completed | upeStatus == RowStatus.InProgress & CheckYourAnswersLogic then {
       val list = SummaryListViewModel(
         rows = Seq(
           UpeNameRegistrationSummary.row(request.userAnswers),

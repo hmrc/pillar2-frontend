@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import pages.RepaymentsRefundAmountPage
 import play.api.inject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.repayments.RequestRefundAmountView
 
@@ -52,8 +52,8 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-      val amount = BigDecimal(9.99)
-      val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+      val amount      = BigDecimal(9.99)
+      val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
@@ -142,8 +142,8 @@ class RequestRepaymentAmountControllerSpec extends SpecBase {
     }
 
     "must display pre-populated refund amount field when previously answered" in {
-      val amount = BigDecimal(9999.99)
-      val ua     = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
+      val amount      = BigDecimal(9999.99)
+      val ua          = emptyUserAnswers.setOrException(RepaymentsRefundAmountPage, amount)
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

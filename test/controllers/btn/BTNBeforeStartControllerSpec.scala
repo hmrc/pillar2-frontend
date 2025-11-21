@@ -27,7 +27,7 @@ import pages.{PlrReferencePage, SubAccountingPeriodPage}
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
 import views.html.btn.BTNBeforeStartView
@@ -52,7 +52,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
   "BTNBeforeStartController" must {
 
-    "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in {
+    "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
@@ -74,9 +74,8 @@ class BTNBeforeStartControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-    }
 
-    "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in {
+    "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in
       running(application) {
         when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
@@ -98,7 +97,6 @@ class BTNBeforeStartControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-    }
 
     "redirect to BTN error page when no subscription data is found" in {
       def application: Application = applicationBuilder(subscriptionLocalData = None, userAnswers = Some(emptyUserAnswers))

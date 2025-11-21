@@ -34,7 +34,7 @@
     } else {
       titleNoForm(messages("btn.entitiesInsideOutsideUK.amend.title"))
     },
-    bannerUrl = Some(routes.HomepageController.onPageLoad.url)
+    bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
 
     @if(isAgent) {
@@ -57,6 +57,6 @@
 
     @paragraphMessageWithLink(
       linkMessage = messages("btn.entitiesInsideOutsideUK.amend.link"),
-      linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+      linkUrl = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
     )
 }

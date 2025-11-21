@@ -41,7 +41,7 @@ class NfmEmailAddressController @Inject() (
   formProvider:              NfmEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmEmailAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class NfmEmailAddressController @Inject() (
     request.userAnswers
       .get(FmContactNamePage)
       .map { name =>
-        val form = formProvider(name)
+        val form         = formProvider(name)
         val preparedForm = request.userAnswers.get(FmContactEmailPage) match {
           case Some(value) => form.fill(value)
           case None        => form

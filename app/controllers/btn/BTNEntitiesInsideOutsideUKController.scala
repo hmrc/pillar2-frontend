@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.BTNEntitiesInsideOutsideUKFormProvider
 import models.Mode
 import navigation.BTNNavigator
@@ -44,7 +44,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNEntitiesInsideOutsideUKView,
   viewAmend:                              BTNAmendDetailsView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -53,7 +53,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
-          val form = formProvider()
+          val form         = formProvider()
           val preparedForm = userAnswers.get(EntitiesInsideOutsideUKPage) match {
             case None        => form
             case Some(value) => form.fill(value)
@@ -82,7 +82,7 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
                 for {
                   updatedAnswers <- Future.fromTry(userAnswers.set(EntitiesInsideOutsideUKPage, value))
                   _              <- sessionRepository.set(updatedAnswers)
-                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, mode, updatedAnswers))
+                } yield Redirect(navigator.nextPage(EntitiesInsideOutsideUKPage, updatedAnswers))
             )
         case None =>
           logger.error("user answers not found")

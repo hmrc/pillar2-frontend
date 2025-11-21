@@ -21,7 +21,7 @@ import connectors.BarsConnector
 import forms.BankAccountDetailsFormProvider
 import helpers.ViewInstances
 import models.NormalMode
-import models.bars._
+import models.bars.*
 import models.repayments.BankAccountDetails
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -31,7 +31,7 @@ import play.api.inject.bind
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, defaultAwaitTimeout, running}
-import services.BarsServiceSpec._
+import services.BarsServiceSpec.*
 import views.html.repayments.BankAccountDetailsView
 
 import scala.concurrent.Future

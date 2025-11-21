@@ -17,7 +17,7 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
@@ -43,7 +43,7 @@ class BTNChooseAccountingPeriodController @Inject() (
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNChooseAccountingPeriodView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -55,7 +55,7 @@ class BTNChooseAccountingPeriodController @Inject() (
           case Some(userAnswers) =>
             val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
             val form              = formProvider()
-            val preparedForm = userAnswers
+            val preparedForm      = userAnswers
               .get(BTNChooseAccountingPeriodPage)
               .flatMap { chosenPeriod =>
                 accountingPeriods.find(_._1 == chosenPeriod).map { case (_, index) =>
@@ -104,7 +104,7 @@ class BTNChooseAccountingPeriodController @Inject() (
                             .take(chosenIndex)
                             .exists(_._1.underEnquiry)
 
-                        if (shouldShowWarning) {
+                        if shouldShowWarning then {
                           Redirect(routes.BTNUnderEnquiryWarningController.onPageLoad)
                         } else {
                           Redirect(controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode))

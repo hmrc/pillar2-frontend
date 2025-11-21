@@ -62,9 +62,9 @@ private[mappings] class LocalDateFormatter(
 
     val month = new MonthFormatter(invalidMonth, args)
 
-    val bindedDay: Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
+    val bindedDay:   Either[Seq[FormError], Int] = intDay.bind(s"$key.day", data)
     val bindedMonth: Either[Seq[FormError], Int] =
-      if (validateMonthInStringFormat.getOrElse(false))(month.bind(s"$key.month", data)) else intMonth.bind(s"$key.month", data)
+      if validateMonthInStringFormat.getOrElse(false) then month.bind(s"$key.month", data) else intMonth.bind(s"$key.month", data)
     val bindedYear: Either[Seq[FormError], Int] = intYear.bind(s"$key.year", data)
 
     (bindedDay, bindedMonth, bindedYear) match {
@@ -76,9 +76,9 @@ private[mappings] class LocalDateFormatter(
         Left(Seq(FormError(key, s"$messageKeyPart.error.$key.monthYear.invalid", args)))
       case (Left(_), Right(_), Left(_)) =>
         Left(Seq(FormError(key, s"$messageKeyPart.error.$key.dayYear.invalid", args)))
-      case (Left(dayError), Right(_), Right(_))   => Left(dayError)
-      case (Right(_), Left(monthError), Right(_)) => Left(monthError)
-      case (Right(_), Right(_), Left(yearError))  => Left(yearError)
+      case (Left(dayError), Right(_), Right(_))                                    => Left(dayError)
+      case (Right(_), Left(monthError), Right(_))                                  => Left(monthError)
+      case (Right(_), Right(_), Left(yearError))                                   => Left(yearError)
       case (Right(day), Right(month), Right(year)) if isRealDate(day, month, year) =>
         toDate(key, day, month, year)
       case (Right(_), Right(_), Right(_)) =>
@@ -97,7 +97,7 @@ private[mappings] class LocalDateFormatter(
 
     override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Int] = {
 
-      val months = Month.values.toList
+      val months      = Month.values.toList
       val updatedData = data.map {
         case (key, value) if key.contains("month") => key -> value.replaceFirst("^0+(?!$)", "")
         case other                                 => other

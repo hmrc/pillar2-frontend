@@ -63,7 +63,7 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               )
             )
         ),
-      "postalCode" -> optionalPostcode().verifying(regexp(XSSRegex, "address.postcode.error.xss")),
+      "postalCode"  -> optionalPostcode().verifying(regexp(XSSRegex, "address.postcode.error.xss")),
       "countryCode" ->
         text("nfmRegisteredAddress.country.error.required")
           .verifying(
@@ -72,6 +72,6 @@ class NfmRegisteredAddressFormProvider @Inject() extends Mappings with AddressMa
               regexp(XSSRegex, "country.error.xss")
             )
           )
-    )(NonUKAddress.apply)(NonUKAddress.unapply)
+    )(NonUKAddress.apply)(nonUKAddress => Some(Tuple.fromProductTyped(nonUKAddress)))
   )
 }

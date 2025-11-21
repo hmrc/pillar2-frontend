@@ -39,7 +39,7 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
   lazy val accountingPeriod: AccountingPeriod     = AccountingPeriod(startDate, endDate)
   lazy val page:             CheckYourAnswersView = inject[CheckYourAnswersView]
   lazy val pageTitle:        String               = "Check your answers to submit your Below-Threshold Notification"
-  lazy val validBTNCyaUa: UserAnswers = UserAnswers("id")
+  lazy val validBTNCyaUa:    UserAnswers          = UserAnswers("id")
     .setOrException(SubAccountingPeriodPage, accountingPeriod)
     .setOrException(EntitiesInsideOutsideUKPage, true)
 
@@ -70,8 +70,8 @@ class CheckYourAnswersViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph" in {

@@ -21,7 +21,7 @@ import controllers.routes
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import uk.gov.hmrc.govukfrontend.views.Aliases._
+import uk.gov.hmrc.govukfrontend.views.Aliases.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.Table
 import views.html.paymenthistory.TransactionHistoryView
 
@@ -100,8 +100,8 @@ class TransactionHistoryViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      groupView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have correct paragraphs for a group" in {

@@ -29,7 +29,7 @@ class RepaymentErrorReturnController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   view:                                   RepaymentsErrorReturnView
-)(implicit appConfig:                     FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -19,6 +19,7 @@ package stubsonly.connectors
 import config.FrontendAppConfig
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -54,7 +55,7 @@ class TestOnlyConnector @Inject() (
       .execute[HttpResponse]
       .map { response =>
         response.status match {
-          case 200 | 201 => ()
+          case 200 | 201            => ()
           case status @ (400 | 404) =>
             val errorMessage = s"Error status: $status, body: ${response.body}"
             logger.error(errorMessage)

@@ -21,15 +21,14 @@ import connectors.UserAnswersConnectors
 import forms.IsNFMUKBasedFormProvider
 import models.{NormalMode, UserAnswers}
 import navigation.NominatedFilingMemberNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{FmRegisteredInUKPage, GrsFilingMemberStatusPage, NominateFilingMemberPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.RowStatus
 import views.html.fmview.IsNFMUKBasedView
 

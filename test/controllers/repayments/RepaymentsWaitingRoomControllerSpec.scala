@@ -18,10 +18,10 @@ package controllers.repayments
 
 import base.SpecBase
 import models.UserAnswers
-import models.repayments.RepaymentsStatus._
+import models.repayments.RepaymentsStatus.*
 import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.repayments.RepaymentsWaitingRoomView
 
 class RepaymentsWaitingRoomControllerSpec extends SpecBase {
@@ -68,7 +68,7 @@ class RepaymentsWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url
+        redirectLocation(result).value mustEqual routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed().url
       }
     }
 

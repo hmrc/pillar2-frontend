@@ -17,14 +17,14 @@
 package models.subscription
 
 import cats.data.{EitherNec, NonEmptyChain}
-import cats.implicits._
-import models._
+import cats.implicits.*
+import models.*
 import models.grs.EntityType
 import models.registration.GrsResponse
-import pages._
+import pages.*
 import play.api.i18n.Messages
 import queries.Query
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 
 final case class upeJourney(
   upeRegisteredInUK:                 Boolean,

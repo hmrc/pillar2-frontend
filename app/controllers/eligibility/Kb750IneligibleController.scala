@@ -27,7 +27,7 @@ import javax.inject.Inject
 class Kb750IneligibleController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     Kb750IneligibleView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

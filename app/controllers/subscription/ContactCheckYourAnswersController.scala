@@ -26,8 +26,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.ContactCheckYourAnswersView
 
 class ContactCheckYourAnswersController @Inject() (
@@ -38,7 +38,7 @@ class ContactCheckYourAnswersController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactCheckYourAnswersView,
   countryOptions:            CountryOptions
-)(implicit appConfig:        FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -65,7 +65,7 @@ class ContactCheckYourAnswersController @Inject() (
     )
     val contactsStatus = request.userAnswers.contactsStatus
     val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
-    if (contactsStatus == RowStatus.Completed | contactsStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
+    if contactsStatus == RowStatus.Completed | contactsStatus == RowStatus.InProgress & CheckYourAnswersLogic then {
       Ok(view(primaryContactList, secondaryContactList, address))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

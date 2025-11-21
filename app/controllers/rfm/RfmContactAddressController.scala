@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmContactAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
@@ -44,10 +44,10 @@ class RfmContactAddressController @Inject() (
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmContactAddressView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[NonUKAddress] = formProvider()
+  val form:                   Form[NonUKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val preparedForm = request.userAnswers.get(RfmContactAddressPage) match {
       case Some(value) => form.fill(value)

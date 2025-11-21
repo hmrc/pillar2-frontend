@@ -17,21 +17,21 @@
 package models.financialdata
 
 import base.SpecBase
-import cats.syntax.option._
+import cats.syntax.option.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import org.scalacheck.Gen
 import org.scalatest.LoneElement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import utils.DateTimeUtils.{fixedClock, today}
 
-import java.time._
+import java.time.*
 
 class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with LoneElement {
 
   "FinancialData" when {
 
     "fetching onlyOutstandingCharges" should {
-      "filter transactions correctly" in forAll { allKindsOfTransaction: Seq[FinancialTransaction] =>
+      "filter transactions correctly" in forAll { (allKindsOfTransaction: Seq[FinancialTransaction]) =>
         val droppedTransactions = allKindsOfTransaction.collect { case nonCharge: FinancialTransaction.Payment =>
           nonCharge
         }
@@ -42,7 +42,7 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with Lone
     }
 
     "calculateTotalOutstandingAmount" should {
-      "return the sum of all outstanding amounts from valid transactions" in forAll { anyTransactionKind: Seq[FinancialTransaction] =>
+      "return the sum of all outstanding amounts from valid transactions" in forAll { (anyTransactionKind: Seq[FinancialTransaction]) =>
         val expectedTotal = FinancialData(anyTransactionKind).onlyOutstandingCharges
           .foldLeft[BigDecimal](0)((acc, charge) => acc + charge.outstandingAmount)
 
@@ -58,14 +58,14 @@ class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with Lone
     "onlyOverdueOutstandingCharges" should {
       "return any overdue outstanding charges" in forAll(
         outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isBefore(today))
-      ) { pastDueCharge: OutstandingCharge =>
+      ) { (pastDueCharge: OutstandingCharge) =>
         val financialData = FinancialData(Seq(pastDueCharge))
         financialData.onlyOverdueOutstandingCharges.loneElement mustBe pastDueCharge
       }
 
       "return an empty collection when there are no overdue outstanding charges" in forAll(
         outstandingTransaction.retryUntil(_.chargeItems.earliestDueDate.isAfter(today))
-      ) { futureDueCharge: OutstandingCharge =>
+      ) { (futureDueCharge: OutstandingCharge) =>
         val financialData = FinancialData(Seq(futureDueCharge))
 
         financialData.onlyOverdueOutstandingCharges mustBe empty

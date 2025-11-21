@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.CapturePhoneDetailsFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -40,7 +40,7 @@ class ContactCapturePhoneDetailsController @Inject() (
   formProvider:                           CapturePhoneDetailsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ContactCapturePhoneDetailsView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class ContactCapturePhoneDetailsController @Inject() (
         _                     <- subscriptionLocalData.get(SubPrimaryPhonePreferencePage)
         contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
       } yield {
-        val form = formProvider(contactName)
+        val form         = formProvider(contactName)
         val preparedForm = subscriptionLocalData.get(SubPrimaryCapturePhonePage) match {
           case Some(v) => form.fill(v)
           case None    => form

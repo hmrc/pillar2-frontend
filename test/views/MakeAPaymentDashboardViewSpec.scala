@@ -22,7 +22,7 @@ import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import views.html.MakeAPaymentDashboardView
 
-import scala.jdk.CollectionConverters._
+import scala.jdk.CollectionConverters.*
 
 class MakeAPaymentDashboardViewSpec extends ViewSpecBase {
   private val page:                  MakeAPaymentDashboardView = inject[MakeAPaymentDashboardView]

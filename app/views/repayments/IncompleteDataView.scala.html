@@ -30,8 +30,8 @@ paragraphMessageWithLink: ParagraphMessageWithLink
 pageTitle = titleNoForm(messages("repayments.incompleteDataView.title")),
 authorised = false,
 showBackLink = true,
-bannerUrl = Some(routes.HomepageController.onPageLoad.url)
+bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
 @heading(messages("repayments.incompleteDataView.heading"), "govuk-heading-l")
-@paragraphMessageWithLink(Some(messages("repayments.incompleteDataView.paragraphStart")), messages("repayments.incompleteDataView.link.text"), Some(messages("repayments.incompleteDataView.paragraphStop")), linkUrl = controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url, linkFullStop= false)
+@paragraphMessageWithLink(Some(messages("repayments.incompleteDataView.paragraphStart")), messages("repayments.incompleteDataView.link.text"), Some(messages("repayments.incompleteDataView.paragraphStop")), linkUrl = controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url, linkFullStop= false)
 }

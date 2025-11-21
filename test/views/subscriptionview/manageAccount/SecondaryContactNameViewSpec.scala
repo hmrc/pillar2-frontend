@@ -55,8 +55,8 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view().getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      view(isAgent = true).getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "include a helpful hint with examples" in {
@@ -100,7 +100,7 @@ class SecondaryContactNameViewSpec extends ViewSpecBase {
 
     "show error when name contains invalid characters" in {
       val invalidInput = "Test <script>alert('xss')</script> & Company"
-      val errorView = Jsoup.parse(
+      val errorView    = Jsoup.parse(
         page(form.bind(Map("value" -> invalidInput)), isAgent = false, organisationName = None)(request, appConfig, messages).toString()
       )
       val errorSummary = errorView.getElementsByClass("govuk-error-summary").first()

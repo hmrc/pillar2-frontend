@@ -17,10 +17,10 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import com.github.tomakehurst.wiremock.client.WireMock._
-import connectors.SubscriptionConnectorSpec._
+import com.github.tomakehurst.wiremock.client.WireMock.*
+import connectors.SubscriptionConnectorSpec.*
 import models.UnprocessableEntityError
-import models.subscription._
+import models.subscription.*
 import models.{InternalIssueError, UnexpectedResponse}
 import org.apache.pekko.Done
 import org.scalacheck.Gen
@@ -217,7 +217,7 @@ object SubscriptionConnectorSpec {
   private val id                         = "testId"
   private val plrReference               = "testPlrRef"
   private val readSubscriptionParameters = ReadSubscriptionRequestParameters(id, plrReference)
-  private val successfulResponseJson =
+  private val successfulResponseJson     =
     """
       |{
       |

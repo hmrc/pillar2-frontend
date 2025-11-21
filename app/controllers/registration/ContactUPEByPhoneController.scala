@@ -42,7 +42,7 @@ class ContactUPEByPhoneController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
   view:                      ContactUPEByPhoneView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class ContactUPEByPhoneController @Inject() (
       _           <- request.userAnswers.get(UpeContactEmailPage)
       contactName <- request.userAnswers.get(UpeContactNamePage)
     } yield {
-      val form = formProvider(contactName)
+      val form         = formProvider(contactName)
       val preparedForm = request.userAnswers.get(UpePhonePreferencePage) match {
         case None        => form
         case Some(value) => form.fill(value)

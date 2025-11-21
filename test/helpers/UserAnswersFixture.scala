@@ -16,14 +16,14 @@
 
 package helpers
 
-import models._
-import models.grs._
-import models.registration._
+import models.*
+import models.grs.*
+import models.registration.*
 import models.repayments.{BankAccountDetails, NonUKBank}
 import models.rfm.CorporatePosition
 import models.subscription.AccountingPeriod
 import org.scalatest.TryValues
-import pages._
+import pages.*
 import utils.RowStatus
 
 import java.time.LocalDate
@@ -663,7 +663,7 @@ trait UserAnswersFixture extends TryValues {
     iban = Some("123132"),
     bic = Some("11111111")
   )
-  private val refundAmount: BigDecimal = 10000.1
+  private val refundAmount:               BigDecimal  = 10000.1
   val completeRepaymentDataUkBankAccount: UserAnswers = emptyUserAnswers
     .setOrException(PlrReferencePage, "plrReference")
     .setOrException(RepaymentsContactNamePage, "name")

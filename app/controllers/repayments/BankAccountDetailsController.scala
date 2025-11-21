@@ -18,7 +18,7 @@ package controllers.repayments
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.BankAccountDetailsFormProvider
 import models.Mode
 import models.repayments.BankAccountDetails
@@ -45,7 +45,7 @@ class BankAccountDetailsController @Inject() (
   formProvider:                           BankAccountDetailsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BankAccountDetailsView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -76,7 +76,7 @@ class BankAccountDetailsController @Inject() (
             for {
               updatedAnswers <- Future.fromTry(request.userAnswers.set(BankAccountDetailsPage, bankAccountDetails))
               _              <- sessionRepository.set(updatedAnswers)
-              result <-
+              result         <-
                 barsService
                   .verifyBusinessAccount(bankAccountDetails, updatedAnswers, form, mode)
             } yield result

@@ -17,13 +17,13 @@
 package controllers.btn
 
 import base.SpecBase
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.BTNChooseAccountingPeriodPage
-import play.api.inject._
+import play.api.inject.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import utils.DateTimeUtils.LocalDateOps

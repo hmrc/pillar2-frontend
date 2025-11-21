@@ -27,7 +27,7 @@ import javax.inject.Inject
 class StandardOrganisationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     StandardOrganisationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

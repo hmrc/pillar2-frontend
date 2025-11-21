@@ -41,7 +41,7 @@ class ContactEmailAddressController @Inject() (
   formProvider:              ContactEmailAddressFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactEmailAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class ContactEmailAddressController @Inject() (
     request.userAnswers
       .get(SubPrimaryContactNamePage)
       .map { contactName =>
-        val form = formProvider(contactName)
+        val form         = formProvider(contactName)
         val preparedForm = request.userAnswers.get(SubPrimaryEmailPage) match {
           case Some(v) => form.fill(v)
           case None    => form

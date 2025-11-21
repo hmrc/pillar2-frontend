@@ -23,8 +23,8 @@ import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.SubCheckYourAnswersView
 
 class GroupDetailCheckYourAnswersController @Inject() (
@@ -33,7 +33,7 @@ class GroupDetailCheckYourAnswersController @Inject() (
   requireData:              DataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     SubCheckYourAnswersView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -46,7 +46,7 @@ class GroupDetailCheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(request.userAnswers)
       ).flatten
     )
-    if (request.userAnswers.groupDetailStatus == RowStatus.Completed) {
+    if request.userAnswers.groupDetailStatus == RowStatus.Completed then {
       Ok(view(list))
     } else {
       Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)

@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -42,7 +42,7 @@ class RfmCapturePrimaryPhoneController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmCapturePrimaryPhoneView,
   navigator:                        ReplaceFilingMemberNavigator
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

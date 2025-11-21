@@ -20,7 +20,7 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.BarsConnector
 import controllers.repayments.routes
-import models.bars._
+import models.bars.*
 import models.repayments.BankAccountDetails
 import models.{Mode, UserAnswers}
 import navigation.RepaymentNavigator
@@ -28,7 +28,7 @@ import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage}
 import play.api.Logging
 import play.api.data.{Form, FormError}
 import play.api.i18n.Messages
-import play.api.mvc.Results._
+import play.api.mvc.Results.*
 import play.api.mvc.{Request, Result}
 import repositories.SessionRepository
 import uk.gov.hmrc.http.HeaderCarrier
@@ -56,7 +56,7 @@ class BarsService @Inject() (
     mode:        Mode
   )(implicit
     hc:       HeaderCarrier,
-    request:  Request[_],
+    request:  Request[?],
     messages: Messages
   ): Future[Result] = {
     lazy val trackingId = UUID.randomUUID()
@@ -73,8 +73,8 @@ class BarsService @Inject() (
     userAnswers:         UserAnswers,
     mode:                Mode,
     form:                Form[BankAccountDetails]
-  )(implicit request:    Request[_], messages: Messages): Future[Result] = {
-    import barsAccountResponse._
+  )(implicit request: Request[?], messages: Messages): Future[Result] = {
+    import barsAccountResponse.*
     (
       accountNumberIsWellFormatted,
       accountExists,
@@ -127,11 +127,11 @@ class BarsService @Inject() (
         )
 
       case (_, _, _, SortCodeIsPresentOnEISCD.Error, _, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
       case (_, _, _, _, NonStandardAccountDetailsRequiredForBacs.Yes, _) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError())
       case (_, _, _, _, _, SortCodeSupportsDirectCredit.Error) =>
-        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+        Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
       case (accountNumberIsWellFormatted, accountExists, nameMatches, sortCodeIsPresentOnEISCD, _, _) =>
         Future successful handleAndDisplayErrors(
           accountNumberIsWellFormatted,
@@ -143,7 +143,7 @@ class BarsService @Inject() (
           form
         )
 
-      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Future successful Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
   }
 
@@ -164,11 +164,11 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request:             Request[_], messages: Messages): Result =
+  )(implicit request: Request[?], messages: Messages): Result =
     accountExists match {
-      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError)
-      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
-      case AccountExists.No =>
+      case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError())
+      case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
+      case AccountExists.No            =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
           accountExists,
@@ -178,7 +178,7 @@ class BarsService @Inject() (
           mode,
           form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
 
   private def handleNameMatches(
@@ -189,11 +189,11 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request:             Request[_], messages: Messages): Result =
+  )(implicit request: Request[?], messages: Messages): Result =
     nameMatches match {
-      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
-      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails)
-      case NameMatches.No =>
+      case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
+      case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
+      case NameMatches.No            =>
         handleAndDisplayErrors(
           accountNumberIsWellFormatted,
           accountExists,
@@ -203,7 +203,7 @@ class BarsService @Inject() (
           mode,
           form
         )
-      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError)
+      case _ => Redirect(routes.RepaymentErrorController.onPageLoadError())
     }
 
   private def handlePartialNameMatch(
@@ -216,7 +216,7 @@ class BarsService @Inject() (
       updatedAnswers <- OptionT.fromOption[Future](userAnswers.set(BarsAccountNamePartialPage, accountName).toOption)
       _              <- OptionT.liftF(sessionRepository.set(updatedAnswers))
     } yield Redirect(navigator.nextPage(BarsAccountNamePartialPage, mode, userAnswers))
-  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError))
+  }.getOrElse(Redirect(routes.RepaymentErrorController.onPageLoadError()))
 
   private def handleAndDisplayErrors(
     accountNumberIsWellFormatted: AccountNumberIsWellFormatted,
@@ -226,7 +226,7 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request:             Request[_], messages: Messages): Result = {
+  )(implicit request: Request[?], messages: Messages): Result = {
     val preparedForm = userAnswers.get(BankAccountDetailsPage).map(ua => form.fill(ua)).getOrElse(form)
 
     val maybeFormErrors: Seq[Option[FormError]] =

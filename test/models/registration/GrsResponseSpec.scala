@@ -16,7 +16,6 @@
 
 package models.registration
 import models.grs.{BusinessVerificationResult, RegistrationStatus, VerificationStatus}
-import models.registration.GrsResponse
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import play.api.libs.json.Json

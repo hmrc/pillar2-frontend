@@ -40,7 +40,7 @@
 @layout(pageTitle = title(form, messages("mneOrDomestic.title"))) {
 
 
-    @formHelper(action = controllers.subscription.routes.MneOrDomesticController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.subscription.routes.MneOrDomesticController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

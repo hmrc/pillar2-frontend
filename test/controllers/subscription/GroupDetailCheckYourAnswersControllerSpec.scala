@@ -19,9 +19,9 @@ package controllers.subscription
 import base.SpecBase
 import models.subscription.AccountingPeriod
 import models.{MneOrDomestic, UserAnswers}
-import pages._
+import pages.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -44,7 +44,7 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Check your answer")
@@ -62,7 +62,7 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
         .value
       val application = applicationBuilder(userAnswers = Some(userAnswer)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
         contentAsString(result) must include("Check your answer")
@@ -73,7 +73,7 @@ class GroupDetailCheckYourAnswersControllerSpec extends SpecBase with SummaryLis
     "redirect to in progress page if either MneOrDomestic or AccountingPeriod not answered " in {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.routes.GroupDetailCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result) mustBe Some(controllers.subscription.routes.InprogressTaskListController.onPageLoad.url)

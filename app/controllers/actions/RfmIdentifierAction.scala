@@ -21,11 +21,11 @@ import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.*
+import play.api.mvc.Results.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -36,9 +36,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Named("RfmIdentifier")
 class RfmIdentifierAction @Inject() (
-  override val authConnector:    AuthConnector,
-  config:                        FrontendAppConfig,
-  val parser:                    BodyParsers.Default
+  override val authConnector: AuthConnector,
+  config:                     FrontendAppConfig,
+  val parser:                 BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
@@ -56,7 +56,7 @@ class RfmIdentifierAction @Inject() (
         case Some(internalId) ~ Some(groupID) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ Some(credentials) =>
           // (Admin is deprecated, Admin and User are equivalent. see auth-client)
           // https://github.com/hmrc/auth-client/blob/main/src-common/main/scala/uk/gov/hmrc/auth/core/model.scala#L143
-          if (enrolments.enrolments.exists(_.key == config.enrolmentKey)) {
+          if enrolments.enrolments.exists(_.key == config.enrolmentKey) then {
             logger.info("Rfm - Organisation:User already enrolled login attempt")
             Future.successful(Left(Redirect(controllers.rfm.routes.AlreadyEnrolledController.onPageLoad)))
           } else {

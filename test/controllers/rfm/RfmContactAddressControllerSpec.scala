@@ -28,15 +28,15 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
 class RfmContactAddressControllerSpec extends SpecBase {
   val formProvider = new RfmContactAddressFormProvider()
 
-  val defaultUa:   UserAnswers = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
-  def application: Application = applicationBuilder(userAnswers = Some(defaultUa)).build()
+  val defaultUa:           UserAnswers = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
+  def application:         Application = applicationBuilder(userAnswers = Some(defaultUa)).build()
   def applicationOverride: Application = {
     when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
@@ -58,15 +58,14 @@ class RfmContactAddressControllerSpec extends SpecBase {
     ) ++ alterations
 
     FakeRequest(POST, routes.RfmContactAddressController.onSubmit(NormalMode).url)
-      .withFormUrlEncodedBody(address.toSeq: _*)
+      .withFormUrlEncodedBody(address.toSeq*)
   }
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
   "RfmContactAddress Controller" when {
 
-    "return OK and the correct view for a GET with no previous answer" in {
-
+    "return OK and the correct view for a GET with no previous answer" in
       running(application) {
         val result = route(application, getRequest).value
 
@@ -78,7 +77,6 @@ class RfmContactAddressControllerSpec extends SpecBase {
         contentAsString(result) must include("Postcode (if applicable)")
         contentAsString(result) must include("Enter text and then choose from the list.")
       }
-    }
 
     "must return OK and populate the view correctly when the question has been previously answered" in {
       val uaWithAddress = defaultUa.set(RfmContactAddressPage, nonUkAddress).success.value
@@ -93,7 +91,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
       }
     }
 
-    "display next page and status should be ok if valid data is used when country code is GB" in {
+    "display next page and status should be ok if valid data is used when country code is GB" in
       running(applicationOverride) {
         val result = route(applicationOverride, postRequest()).value
 
@@ -101,7 +99,6 @@ class RfmContactAddressControllerSpec extends SpecBase {
         redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url
 
       }
-    }
 
     "return form with errors when postcode is invalid" should {
 
@@ -141,7 +138,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
       }
     }
 
-    "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
+    "display error page and status should be Bad request if address line1 is mora than 35 characters" in
       running(application) {
         val result = route(application, postRequest("addressLine1" -> textOver35Chars, "addressLine2" -> textOver35Chars)).value
 
@@ -149,6 +146,5 @@ class RfmContactAddressControllerSpec extends SpecBase {
         contentAsString(result) must include("The first line of the address must be 35 characters or less")
         contentAsString(result) must include("The second line of the address must be 35 characters or less")
       }
-    }
   }
 }

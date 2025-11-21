@@ -20,8 +20,8 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.UserAnswers
+import models.tasklist.*
 import models.tasklist.SectionStatus.Completed
-import models.tasklist._
 import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -41,7 +41,7 @@ class TaskListController @Inject() (
   sessionRepository:         SessionRepository,
   view:                      TaskListView,
   val userAnswersConnectors: UserAnswersConnectors
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -57,7 +57,7 @@ class TaskListController @Inject() (
     sessionRepository.get(request.userId).flatMap { optionalUA =>
       optionalUA.map(UserAnswers => UserAnswers.get(PlrReferencePage).isDefined) match {
 
-        case Some(true) => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad))
+        case Some(true)                                => Future.successful(Redirect(routes.RegistrationConfirmationController.onPageLoad()))
         case _ if pillar2ReferenceFromReadSubscription =>
           userAnswersConnectors.remove(request.userId).map { _ =>
             logger.info("Remove existing amend data from local database if exist")

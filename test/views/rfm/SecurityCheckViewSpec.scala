@@ -30,7 +30,7 @@ import views.html.rfm.SecurityCheckView
 class SecurityCheckViewSpec extends ViewSpecBase {
 
   lazy val formProvider: RfmSecurityCheckFormProvider = new RfmSecurityCheckFormProvider
-  lazy val rfmRequest: Request[AnyContent] =
+  lazy val rfmRequest:   Request[AnyContent]          =
     FakeRequest("GET", controllers.rfm.routes.SecurityCheckController.onPageLoad(NormalMode).url).withCSRFToken
   lazy val page:      SecurityCheckView = inject[SecurityCheckView]
   lazy val view:      Document          = Jsoup.parse(page(formProvider(), NormalMode)(rfmRequest, appConfig, messages).toString())

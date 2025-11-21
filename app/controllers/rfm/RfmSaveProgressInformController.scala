@@ -18,7 +18,7 @@ package controllers.rfm
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -32,7 +32,7 @@ class RfmSaveProgressInformController @Inject() (
   requireData:                      DataRequiredAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmSaveProgressInformView
-)(implicit appConfig:               FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

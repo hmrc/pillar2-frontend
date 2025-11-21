@@ -17,9 +17,9 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import connectors.BarsConnectorSpec._
+import connectors.BarsConnectorSpec.*
 import models.InternalIssueError
-import models.bars._
+import models.bars.*
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 

@@ -32,8 +32,8 @@ class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
 
   }
 
-  "must remove NonUKBankPage when UkBankAccount is selected" in {
-    forAll { userAnswers: UserAnswers =>
+  "must remove NonUKBankPage when UkBankAccount is selected" in
+    forAll { (userAnswers: UserAnswers) =>
       val result = userAnswers
         .set(NonUKBankPage, NonUKBank("BankName", "Name", Some("HBUKGB4B"), Some("GB29NWBK60161331926819")))
         .success
@@ -44,10 +44,9 @@ class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
 
       result.get(NonUKBankPage) mustNot be(defined)
     }
-  }
 
-  "must remove BankAccountDetailsPage when ForeignBankAccount is selected" in {
-    forAll { userAnswers: UserAnswers =>
+  "must remove BankAccountDetailsPage when ForeignBankAccount is selected" in
+    forAll { (userAnswers: UserAnswers) =>
       val result = userAnswers
         .set(BankAccountDetailsPage, BankAccountDetails("BankName", "Name", "123456", "12345678"))
         .success
@@ -58,6 +57,5 @@ class UkOrAbroadBankAccountPageSpec extends PageBehaviours {
 
       result.get(BankAccountDetailsPage) mustNot be(defined)
     }
-  }
 
 }

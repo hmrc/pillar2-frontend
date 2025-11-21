@@ -19,9 +19,9 @@ package controllers.btn
 import base.SpecBase
 import connectors.SubscriptionConnector
 import forms.BTNChooseAccountingPeriodFormProvider
+import models.obligationsandsubmissions.*
 import models.obligationsandsubmissions.ObligationStatus.Open
 import models.obligationsandsubmissions.ObligationType.UKTR
-import models.obligationsandsubmissions._
 import models.{Mode, NormalMode, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -30,7 +30,7 @@ import play.api.Application
 import play.api.data.Form
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import uk.gov.hmrc.http.HeaderCarrier
@@ -61,7 +61,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     .build()
 
   "BTNChooseAccountingPeriodController" must {
-    "must return OK and the correct view for a GET" in {
+    "must return OK and the correct view for a GET" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
@@ -78,7 +78,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-    }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val userAnswers = UserAnswers(userAnswersId).set(BTNChooseAccountingPeriodPage, chosenAccountingPeriod._1).success.value
@@ -107,7 +106,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "must redirect to the AccountingPeriod page when a valid answer is submitted" in {
+    "must redirect to the AccountingPeriod page when a valid answer is submitted" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -123,9 +122,8 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNAccountingPeriodController.onPageLoad(mode).url
       }
-    }
 
-    "must redirect to the UnderEnquiryWarning page when a valid answer is submitted and period is under enquiry" in {
+    "must redirect to the UnderEnquiryWarning page when a valid answer is submitted and period is under enquiry" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
@@ -148,9 +146,8 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNUnderEnquiryWarningController.onPageLoad.url
       }
-    }
 
-    "must return a Bad Request and errors when invalid data is submitted" in {
+    "must return a Bad Request and errors when invalid data is submitted" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(false)
@@ -170,7 +167,6 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
           messages(application)
         ).toString
       }
-    }
 
     "redirect to BTN error page when no subscription data is found" in {
       def application: Application = applicationBuilder()
@@ -189,7 +185,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       }
     }
 
-    "redirect to BTN error page if obligations service fails" in {
+    "redirect to BTN error page if obligations service fails" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
@@ -201,6 +197,5 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.btn.routes.BTNProblemWithServiceController.onPageLoad.url
       }
-    }
   }
 }

@@ -16,10 +16,10 @@
 
 package navigation
 
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import controllers.routes.{IndexController, JourneyRecoveryController}
-import models._
-import pages._
+import models.*
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -27,21 +27,17 @@ import javax.inject.{Inject, Singleton}
 @Singleton
 class BTNNavigator @Inject() {
 
-  def nextPage(page: Page, mode: Mode, userAnswers: UserAnswers): Call = page match {
-    case booleanPage: QuestionPage[Boolean] => booleanNavigator(booleanPage, mode, userAnswers)
-    case _ => IndexController.onPageLoad
+  def nextPage(page: Page, userAnswers: UserAnswers): Call = page match {
+    case EntitiesInsideOutsideUKPage => booleanNavigator(userAnswers)
+    case _                           => IndexController.onPageLoad
   }
 
-  private def booleanNavigator(page: QuestionPage[Boolean], mode: Mode, userAnswers: UserAnswers): Call = {
-    val (yesRoute, noRoute) = page match {
-      case EntitiesInsideOutsideUKPage =>
-        (CheckYourAnswersController.onPageLoad, BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails())
-      case _ => (IndexController.onPageLoad, IndexController.onPageLoad)
-    }
+  private def booleanNavigator(userAnswers: UserAnswers): Call = {
+    val (yesRoute, noRoute) = (CheckYourAnswersController.onPageLoad, BTNEntitiesInsideOutsideUKController.onPageLoadAmendGroupDetails())
 
     userAnswers
-      .get(page)
-      .map(provided => if (provided) yesRoute else noRoute)
+      .get(EntitiesInsideOutsideUKPage)
+      .map(provided => if provided then yesRoute else noRoute)
       .getOrElse(JourneyRecoveryController.onPageLoad())
   }
 }

@@ -23,13 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.rfm.RfmContactCheckYourAnswersView
 
 class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
@@ -97,7 +97,7 @@ class RfmContactCheckYourAnswersViewSpec extends ViewSpecBase {
   lazy val rfmRequest: Request[AnyContent] =
     FakeRequest("GET", controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url).withCSRFToken
   lazy val page: RfmContactCheckYourAnswersView = inject[RfmContactCheckYourAnswersView]
-  lazy val view: Document = Jsoup.parse(
+  lazy val view: Document                       = Jsoup.parse(
     page(rfmCorporatePositionSummaryList, rfmPrimaryContactList, rfmSecondaryContactList, address)(rfmRequest, appConfig, messages).toString()
   )
   lazy val pageTitle:        String   = "Check your answers before submitting"

@@ -22,7 +22,7 @@ import org.mockito.{ArgumentMatcher, ArgumentMatchers}
 import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.libs.json.JsValue
-import play.api.test._
+import play.api.test.*
 import uk.gov.hmrc.http.client.RequestBuilder
 import uk.gov.hmrc.http.{HeaderCarrier, HttpReads}
 

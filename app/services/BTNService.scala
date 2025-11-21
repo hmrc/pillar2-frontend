@@ -16,7 +16,7 @@
 
 package services
 
-import connectors._
+import connectors.*
 import models.InternalIssueError
 import models.btn.{BTNRequest, BtnResponse}
 import play.api.Logging
@@ -28,7 +28,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class BTNService @Inject() (
   btnConnector: BTNConnector
-)(implicit ec:  ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends Logging {
 
   def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[BtnResponse] =

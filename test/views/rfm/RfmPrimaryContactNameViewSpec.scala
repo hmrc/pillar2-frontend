@@ -92,7 +92,7 @@ class RfmPrimaryContactNameViewSpec extends ViewSpecBase {
 
     "show invalid character error when special characters are entered" in {
       val invalidInput = "Test <script>alert('xss')</script>"
-      val errorView = Jsoup.parse(
+      val errorView    = Jsoup.parse(
         page(form.bind(Map("value" -> invalidInput)), NormalMode)(request, appConfig, messages).toString()
       )
 

@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.RepaymentsContactNameFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
@@ -42,7 +42,7 @@ class RepaymentsContactNameController @Inject() (
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactNameView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -27,7 +27,7 @@ import javax.inject.Inject
 class UnauthorisedIndividualAffinityController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     UnauthorisedIndividualView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

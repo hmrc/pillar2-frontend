@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -58,7 +58,7 @@ class RequestRepaymentBeforeStartControllerSpec extends SpecBase {
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[RequestRefundBeforeStartView]
         status(result) mustEqual OK

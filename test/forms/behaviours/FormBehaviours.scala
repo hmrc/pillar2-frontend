@@ -17,14 +17,14 @@
 package forms.behaviours
 
 import forms.FormSpec
-import models._
+import models.*
 import play.api.data.Form
 
 trait FormBehaviours extends FormSpec {
 
   val validData: Map[String, String]
 
-  val form: Form[_]
+  val form: Form[?]
 
   def questionForm[A](expectedResult: A): Unit =
     "bind valid values correctly" in {
@@ -34,7 +34,7 @@ trait FormBehaviours extends FormSpec {
     }
 
   def formWithOptionalTextFields(fields: String*): Unit =
-    for (field <- fields)
+    for field <- fields do
       s"bind when $field is omitted" in {
         val data      = validData - field
         val boundForm = form.bind(data)
@@ -42,7 +42,7 @@ trait FormBehaviours extends FormSpec {
       }
 
   def formWithMandatoryTextFields(fields: Field*): Unit =
-    for (field <- fields) {
+    for field <- fields do {
       s"fail to bind when ${field.name} is omitted" in {
         val data          = validData - field.name
         val expectedError = error(field.name, field.errorKeys(Required))
@@ -71,7 +71,7 @@ trait FormBehaviours extends FormSpec {
   }
 
   def formWithBooleans(fields: String*): Unit =
-    for (field <- fields) {
+    for field <- fields do {
       s"fail to bind when $field is omitted" in {
         val data          = validData - field
         val expectedError = error(field, "error.boolean")
@@ -86,7 +86,7 @@ trait FormBehaviours extends FormSpec {
     }
 
   def formWithOptionField(field: Field, validValues: String*): Unit = {
-    for (validValue <- validValues)
+    for validValue <- validValues do
       s"bind when ${field.name} is set to $validValue" in {
         val data      = validData + (field.name -> validValue)
         val boundForm = form.bind(data)

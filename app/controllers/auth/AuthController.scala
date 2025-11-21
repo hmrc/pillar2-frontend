@@ -17,12 +17,11 @@
 package controllers.auth
 
 import config.FrontendAppConfig
-import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -33,9 +32,8 @@ class AuthController @Inject() (
   val controllerComponents:   MessagesControllerComponents,
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
-  sessionRepository:          SessionRepository,
-  identify:                   IdentifierAction
-)(implicit ec:                ExecutionContext)
+  sessionRepository:          SessionRepository
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController
     with AuthorisedFunctions
     with I18nSupport {

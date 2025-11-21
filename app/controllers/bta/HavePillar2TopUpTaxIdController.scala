@@ -18,7 +18,7 @@ package controllers.bta
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.HavePillar2TopUpTaxIdFormProvider
 import models.Mode
 import pages.BtaPillar2ReferencePage
@@ -41,7 +41,7 @@ class HavePillar2TopUpTaxIdController @Inject() (
   formProvider:              HavePillar2TopUpTaxIdFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      HavePillar2TopUpTaxIdView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class HavePillar2TopUpTaxIdController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val btaAccessEnabled = appConfig.btaAccessEnabled
-    if (btaAccessEnabled) {
+    if btaAccessEnabled then {
       val preparedForm = request.userAnswers.get(BtaPillar2ReferencePage) match {
         case Some(value) => form.fill(value)
         case None        => form

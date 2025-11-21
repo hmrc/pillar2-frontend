@@ -38,7 +38,7 @@
 
   @p(messages("btn.underEnquiryWarning.p2"))
 
-  @formWithCSRF(action = controllers.btn.routes.BTNUnderEnquiryWarningController.onSubmit, 'autoComplete -> "off") {
+  @formWithCSRF(action = controllers.btn.routes.BTNUnderEnquiryWarningController.onSubmit, Symbol("autoComplete") -> "off") {
     @govukButton(Button(
       content = Text(messages("btn.underEnquiryWarning.continue")),
       classes = "govuk-button"
@@ -47,6 +47,6 @@
 
   @paragraphMessageWithLink(
     linkMessage = messages("btn.underEnquiryWarning.returnToHomePageText.link"),
-    linkUrl = controllers.routes.HomepageController.onPageLoad.url
+    linkUrl = controllers.routes.HomepageController.onPageLoad().url
   )
 }

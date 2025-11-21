@@ -21,8 +21,8 @@ import forms.RepaymentAccountNameConfirmationForm
 import models.NormalMode
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import views.html.repayments._
+import play.api.test.Helpers.*
+import views.html.repayments.*
 
 class RepaymentErrorControllerSpec extends SpecBase {
 
@@ -35,7 +35,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails.url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadNotConfirmedDetails().url)
 
         val result = route(application, request).value
 
@@ -51,7 +51,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed.url)
+        val request = FakeRequest(GET, controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed().url)
 
         val result = route(application, request).value
 
@@ -70,7 +70,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError.url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadError().url)
 
         val result = route(application, request).value
 
@@ -89,7 +89,7 @@ class RepaymentErrorControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError.url)
+        val request = FakeRequest(GET, routes.RepaymentErrorController.onPageLoadBankDetailsError().url)
 
         val result = route(application, request).value
 

@@ -20,7 +20,7 @@ import base.SpecBase
 import models.UkOrAbroadBankAccount
 import models.audit.RepaymentsAuditEvent
 import models.repayments.{BankAccountDetails, NonUKBank}
-import pages._
+import pages.*
 
 class RepaymentsHelpersSpec extends SpecBase {
 

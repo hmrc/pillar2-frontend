@@ -26,7 +26,7 @@ import pages.{FmContactEmailPage, FmContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.fmview.NfmEmailAddressView
 
 import scala.concurrent.Future
@@ -38,7 +38,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
   "NfmContactEmail Controller" when {
 
     "return OK and the correct view for a GET if page not previously answered" in {
-      val ua = emptyUserAnswers.setOrException(FmContactNamePage, "Ashley Smith")
+      val ua          = emptyUserAnswers.setOrException(FmContactNamePage, "Ashley Smith")
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -165,7 +165,7 @@ class NfmEmailAddressControllerSpec extends SpecBase {
       }
     }
     "must redirect to next page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
+      val ua          = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

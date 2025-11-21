@@ -26,7 +26,7 @@ import pages.{FmNameRegistrationPage, FmRegisteredInUKPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.fmview.NfmNameRegistrationView
 
 import scala.concurrent.Future
@@ -91,7 +91,7 @@ class NfmNameRegistrationControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(106)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.fm.routes.NfmNameRegistrationController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", stringInput))
 

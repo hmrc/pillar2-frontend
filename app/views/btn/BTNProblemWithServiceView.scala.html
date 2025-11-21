@@ -27,7 +27,7 @@
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("btn.error.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("btn.error.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
   @heading(messages("btn.error.heading"), classes = "govuk-heading-xl")
 
@@ -35,6 +35,6 @@
 
   @paragraphMessageWithLink(
     linkMessage = messages("btn.error.returnToHomePageText.link"),
-    linkUrl = controllers.routes.HomepageController.onPageLoad.url
+    linkUrl = controllers.routes.HomepageController.onPageLoad().url
   )
 }

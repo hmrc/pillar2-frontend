@@ -18,7 +18,7 @@ package controllers.subscription
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class SubscriptionFailureControllerSpec extends SpecBase {
 

@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.RequestRepaymentAmountFormProvider
 import models.{Mode, NormalMode}
 import navigation.RepaymentNavigator
@@ -42,11 +42,11 @@ class RequestRepaymentAmountController @Inject() (
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  val form: Form[BigDecimal] = formProvider()
+  val form:                                Form[BigDecimal]   = formProvider()
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {

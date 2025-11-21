@@ -33,7 +33,7 @@
 @layout(pageTitle = title(form, messages("contactUPEByPhone.title"))) {
 
 
-    @formHelper(action = controllers.registration.routes.ContactUPEByPhoneController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.ContactUPEByPhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

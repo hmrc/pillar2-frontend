@@ -31,8 +31,8 @@ import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers.manageAccount._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.manageAccount.*
+import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
@@ -48,14 +48,14 @@ class ManageContactCheckYourAnswersController @Inject() (
   sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     sessionRepository.get(request.userId).flatMap {
-      case None => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
+      case None          => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       case Some(answers) =>
         answers.get(ManageContactDetailsStatusPage) match {
           case Some(ManageContactDetailsStatus.InProgress) =>
@@ -115,7 +115,7 @@ class ManageContactCheckYourAnswersController @Inject() (
             userAnswers <- sessionRepository.get(request.userId)
             updatedAnswers = userAnswers match {
                                case Some(answers) => answers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
-                               case None =>
+                               case None          =>
                                  UserAnswers(request.userId).setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
                              }
             _ <- sessionRepository.set(updatedAnswers)
@@ -128,11 +128,11 @@ class ManageContactCheckYourAnswersController @Inject() (
   }
 
   private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
-    hc:                                              HeaderCarrier,
-    ec:                                              ExecutionContext
+    hc: HeaderCarrier,
+    ec: ExecutionContext
   ): Future[Unit] = {
     val result = for {
-      userAnswers <- OptionT.liftF(sessionRepository.get(userId))
+      userAnswers     <- OptionT.liftF(sessionRepository.get(userId))
       referenceNumber <- OptionT
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))

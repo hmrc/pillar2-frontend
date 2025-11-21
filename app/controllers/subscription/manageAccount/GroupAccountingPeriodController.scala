@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.GroupAccountingPeriodFormProvider
 import models.subscription.AccountingPeriod
 import navigation.AmendSubscriptionNavigator
@@ -42,7 +42,7 @@ class GroupAccountingPeriodController @Inject() (
   formProvider:                           GroupAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   GroupAccountingPeriodView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

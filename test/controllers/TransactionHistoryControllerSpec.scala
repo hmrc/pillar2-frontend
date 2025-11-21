@@ -20,16 +20,16 @@ import base.SpecBase
 import connectors.FinancialDataConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import helpers.ViewInstances
-import models._
-import models.subscription._
+import models.*
+import models.subscription.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
-import uk.gov.hmrc.auth.core._
+import uk.gov.hmrc.auth.core.*
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
 import java.time.LocalDate

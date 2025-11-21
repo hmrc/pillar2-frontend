@@ -26,7 +26,7 @@ import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryP
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.ContactCapturePhoneDetailsView
 
 import scala.concurrent.Future

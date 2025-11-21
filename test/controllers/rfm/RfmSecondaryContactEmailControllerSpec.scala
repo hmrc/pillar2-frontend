@@ -28,7 +28,7 @@ import play.api.inject
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmSecondaryContactEmailView
 
 import scala.concurrent.Future
@@ -82,7 +82,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -108,7 +108,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to RFM Phone Preference page with valid data" in {
 
-      val ua = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(
           inject.bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
@@ -131,7 +131,7 @@ class RfmSecondaryContactEmailControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
+      val request     = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryContactEmailController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {

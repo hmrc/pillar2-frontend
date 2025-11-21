@@ -45,7 +45,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
     }
 
     "have a banner with a link to the Homepage" in {
-      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a first paragraph" in {
@@ -65,7 +65,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
       organisationViewParagraphs.get(3).text() mustBe "Information on your group’s due and overdue returns."
       organisationViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
       organisationViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
   }
 
@@ -73,7 +73,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a banner with a link to the Homepage" in {
-      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a first paragraph" in {
@@ -89,7 +89,7 @@ class SubmissionHistoryNoSubmissionsViewSpec extends ViewSpecBase {
       agentViewParagraphs.get(3).text() mustBe "Information on your client’s due and overdue returns."
       agentViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
       agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
   }
 }

@@ -41,7 +41,7 @@ class MakeAPaymentDashboardController @Inject() (
   legacyView:                             LegacyMakeAPaymentDashboardView,
   getData:                                DataRetrievalAction,
   opsConnector:                           OPSConnector
-)(implicit appConfig:                     FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -53,16 +53,16 @@ class MakeAPaymentDashboardController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
       (for {
-        userAnswers <- sessionRepository.get(request.userId)
+        userAnswers     <- sessionRepository.get(request.userId)
         referenceNumber <-
           extractReferenceNumber(userAnswers).fold(Future.failed[String](new RuntimeException("Reference number not found")))(Future.successful)
-        view = if (appConfig.enablePayByBankAccount) payByBankAccountView(referenceNumber) else legacyView(referenceNumber)
+        view = if appConfig.enablePayByBankAccount then payByBankAccountView(referenceNumber) else legacyView(referenceNumber)
       } yield Ok(view)).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
   def onRedirect(): Action[AnyContent] = (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
     (for {
-      userAnswers <- sessionRepository.get(request.userId)
+      userAnswers     <- sessionRepository.get(request.userId)
       referenceNumber <-
         extractReferenceNumber(userAnswers).fold(Future.failed[String](new RuntimeException("Reference number not found")))(Future.successful)
       redirect <- opsConnector.getRedirectLocation(referenceNumber)

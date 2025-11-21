@@ -39,7 +39,7 @@
 @layout(pageTitle = title(form, messages("groupRegistrationDateReport.title"))) {
 
 
-    @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.GroupRegistrationDateReportController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(

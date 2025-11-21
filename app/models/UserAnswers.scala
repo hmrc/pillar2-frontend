@@ -18,9 +18,9 @@ package models
 
 import cats.data.EitherNec
 import cats.implicits.catsSyntaxOption
-import helpers._
+import helpers.*
 import pages.QuestionPage
-import play.api.libs.json._
+import play.api.libs.json.*
 import queries.{Gettable, Query, Settable}
 import uk.gov.hmrc.mongo.play.json.formats.MongoJavatimeFormats
 
@@ -37,7 +37,7 @@ final case class UserAnswers(
     with BookmarkHelper {
 
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
-    Reads.optionNoError(Reads.at(page.path)).reads(data).getOrElse(None)
+    Reads.optionNoError(using Reads.at(page.path)).reads(data).getOrElse(None)
 
   def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): EitherNec[Query, A] =
     get(page).toRightNec(page)
@@ -78,7 +78,7 @@ final case class UserAnswers(
     }
   }
 
-  def removeMultiple(pages: Settable[_]*): Try[UserAnswers] =
+  def removeMultiple(pages: Settable[?]*): Try[UserAnswers] =
     pages.foldLeft[Try[UserAnswers]](Success(this))((acc, page) => acc.flatMap(_.remove(page)))
 }
 
@@ -86,24 +86,24 @@ object UserAnswers {
 
   val reads: Reads[UserAnswers] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").read[String] and
         (__ \ "data").read[JsObject] and
-        (__ \ "lastUpdated").read(MongoJavatimeFormats.instantFormat)
-    )(UserAnswers.apply _)
+        (__ \ "lastUpdated").read(using MongoJavatimeFormats.instantFormat)
+    )(UserAnswers.apply)
   }
 
   val writes: OWrites[UserAnswers] = {
 
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
 
     (
       (__ \ "_id").write[String] and
         (__ \ "data").write[JsObject] and
-        (__ \ "lastUpdated").write(MongoJavatimeFormats.instantFormat)
-    )(unlift(UserAnswers.unapply))
+        (__ \ "lastUpdated").write(using MongoJavatimeFormats.instantFormat)
+    )(userAnswers => Tuple.fromProductTyped(userAnswers))
   }
 
   implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)

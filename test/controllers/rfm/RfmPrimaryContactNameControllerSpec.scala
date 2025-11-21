@@ -26,7 +26,7 @@ import pages.RfmPrimaryContactNamePage
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmPrimaryContactNameView
 
 import scala.concurrent.Future
@@ -39,7 +39,7 @@ class RfmPrimaryContactNameControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET when RFM access is enabled" in {
 
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 

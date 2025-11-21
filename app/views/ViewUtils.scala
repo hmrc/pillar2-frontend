@@ -21,7 +21,7 @@ import play.api.i18n.Messages
 
 object ViewUtils {
 
-  def title(form: Form[_], title: String, section: Option[String] = None)(implicit messages: Messages): String =
+  def title(form: Form[?], title: String, section: Option[String] = None)(implicit messages: Messages): String =
     titleNoForm(
       title = s"${errorPrefix(form)} ${messages(title)}",
       section = section
@@ -32,10 +32,10 @@ object ViewUtils {
 
   def noTitle(implicit messages: Messages): String = s"${messages("service.name")} - ${messages("site.govuk")}"
 
-  def errorPrefix(form: Form[_])(implicit messages: Messages): String =
-    if (form.hasErrors || form.hasGlobalErrors) messages("error.browser.title.prefix") else ""
+  def errorPrefix(form: Form[?])(implicit messages: Messages): String =
+    if form.hasErrors || form.hasGlobalErrors then messages("error.browser.title.prefix") else ""
 
-  def localDateErrorKey(form: Form[_], fieldKey: String): String = {
+  def localDateErrorKey(form: Form[?], fieldKey: String): String = {
     val fieldErrors   = form.errors.filter(_.key.startsWith(fieldKey))
     val missingFields = fieldErrors.flatMap(_.args.map(_.toString)).distinct
 
@@ -43,18 +43,18 @@ object ViewUtils {
     val invalidMonth = form(s"$fieldKey.month").value.exists(month => month.toIntOption.exists(m => m < 1 || m > 12))
     val invalidYear  = form(s"$fieldKey.year").value.exists(year => year.toIntOption.exists(y => y < 1000 || y > 9999))
 
-    if (invalidDay || fieldErrors.exists(_.key == s"$fieldKey.day") || missingFields.contains("day")) {
+    if invalidDay || fieldErrors.exists(_.key == s"$fieldKey.day") || missingFields.contains("day") then {
       s"$fieldKey.day"
-    } else if (invalidMonth || fieldErrors.exists(_.key == s"$fieldKey.month") || missingFields.contains("month")) {
+    } else if invalidMonth || fieldErrors.exists(_.key == s"$fieldKey.month") || missingFields.contains("month") then {
       s"$fieldKey.month"
-    } else if (invalidYear || fieldErrors.exists(_.key == s"$fieldKey.year") || missingFields.contains("year")) {
+    } else if invalidYear || fieldErrors.exists(_.key == s"$fieldKey.year") || missingFields.contains("year") then {
       s"$fieldKey.year"
     } else {
       s"$fieldKey.day"
     }
   }
 
-  def errorKey(form: Form[_], fieldKey: String): String = {
+  def errorKey(form: Form[?], fieldKey: String): String = {
     val errorMessageKeys = form.errors.map(x => x.message).find(x => x.contains(fieldKey))
     val emptyErrorFields = form.errors.filter(x => x.key == fieldKey).flatMap(x => x.args.map(_.toString)).headOption
 
@@ -79,5 +79,5 @@ object ViewUtils {
   def formatCurrencyAmount(amount: BigDecimal): String = s"£${formatAmount(amount)}"
 
   def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
-    if (isAgent) agentText else groupText
+    if isAgent then agentText else groupText
 }

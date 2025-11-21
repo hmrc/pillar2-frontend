@@ -26,7 +26,7 @@ import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.fmview.ContactNfmByPhoneView
 
 import scala.concurrent.Future
@@ -142,7 +142,7 @@ class ContactNfmByPhoneControllerSpec extends SpecBase {
     }
 
     "must redirect to next page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
+      val ua          = emptyUserAnswers.set(FmContactNamePage, "TestName").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

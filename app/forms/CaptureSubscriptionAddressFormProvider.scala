@@ -63,7 +63,7 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
               )
             )
         ),
-      "postalCode" -> xssFirstOptionalPostcode(),
+      "postalCode"  -> xssFirstOptionalPostcode(),
       "countryCode" ->
         text("subscriptionAddress.country.error.required")
           .verifying(
@@ -72,6 +72,6 @@ class CaptureSubscriptionAddressFormProvider @Inject() extends Mappings with Add
               regexp(XSSRegex, "country.error.xss")
             )
           )
-    )(NonUKAddress.apply)(NonUKAddress.unapply)
+    )(NonUKAddress.apply)(nonUKAddress => Some(Tuple.fromProductTyped(nonUKAddress)))
   )
 }

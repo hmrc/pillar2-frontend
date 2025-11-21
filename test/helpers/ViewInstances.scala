@@ -18,22 +18,22 @@ package helpers
 
 import base.SpecBase
 import play.api.i18n.DefaultLangs
-import uk.gov.hmrc.govukfrontend.views.html.components._
+import uk.gov.hmrc.govukfrontend.views.html.components.*
 import uk.gov.hmrc.govukfrontend.views.html.helpers.{GovukFormGroup, GovukHintAndErrorMessage, GovukLogo}
-import uk.gov.hmrc.hmrcfrontend.config._
+import uk.gov.hmrc.hmrcfrontend.config.*
 import uk.gov.hmrc.hmrcfrontend.views.config.{HmrcFooterItems, StandardBetaBanner}
-import uk.gov.hmrc.hmrcfrontend.views.html.components._
-import uk.gov.hmrc.hmrcfrontend.views.html.helpers._
+import uk.gov.hmrc.hmrcfrontend.views.html.components.*
+import uk.gov.hmrc.hmrcfrontend.views.html.helpers.*
 import uk.gov.hmrc.play.language.LanguageUtils
-import views.html._
-import views.html.components.gds._
+import views.html.*
+import views.html.components.gds.*
 import views.html.eligibilityview.EligibilityConfirmationView
-import views.html.fmview._
-import views.html.registrationview._
+import views.html.fmview.*
+import views.html.registrationview.*
 import views.html.repayments.RequestRefundAmountView
 import views.html.rfm.RfmEntityTypeView
-import views.html.subscriptionview._
-import views.html.templates._
+import views.html.subscriptionview.*
+import views.html.templates.*
 
 trait ViewInstances extends StubMessageControllerComponents {
   this: SpecBase =>

@@ -17,7 +17,7 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import models._
+import models.*
 import models.financialdata.FinancialDataResponse
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder

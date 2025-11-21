@@ -18,7 +18,7 @@ package views
 
 import base.ViewSpecBase
 import models.DynamicNotificationAreaState
-import models.DynamicNotificationAreaState._
+import models.DynamicNotificationAreaState.*
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.scalacheck.Arbitrary.arbitrary
@@ -53,7 +53,7 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
 
   "Dynamic notification area" must {
     "not render anything" in forAll(agentOrOrgNotificationArea) { template =>
-      val page = template(NoNotification)
+      val page   = template(NoNotification)
       val allIds = Seq(
         firstSectionBreakId,
         lastSectionBreakId,
@@ -214,7 +214,7 @@ class DynamicNotificationAreaViewSpec extends ViewSpecBase with ScalaCheckProper
         "has the proper link" in forAll(agentOrOrgNotificationArea, returnExpected) { (template, returnExpected) =>
           val page         = template(returnExpected)
           val link         = page.getElementById(submitUktrLinkId)
-          val expectedHref = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+          val expectedHref = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
           isALinkWithTextAndHref("View all due and overdue returns", expectedHref, link)
         }
 

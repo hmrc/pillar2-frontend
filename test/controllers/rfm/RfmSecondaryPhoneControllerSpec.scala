@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmSecondaryPhoneView
 
 import scala.concurrent.Future

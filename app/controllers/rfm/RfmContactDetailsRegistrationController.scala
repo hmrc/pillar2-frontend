@@ -29,7 +29,7 @@ class RfmContactDetailsRegistrationController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmContactDetailsRegistrationView
-)(implicit appConfig:               FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

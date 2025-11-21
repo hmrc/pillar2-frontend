@@ -29,7 +29,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class FopService @Inject() (
-  fopFactory:  FopFactory
+  fopFactory: FopFactory
 )(implicit ec: ExecutionContext) {
 
   private val userAgentBlock: FOUserAgent => Unit = { foUserAgent =>

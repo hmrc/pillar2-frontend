@@ -18,7 +18,7 @@ package controllers.bta
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.bta.EACDStubView
 
 class EACDStubControllerSpec extends SpecBase {
@@ -31,7 +31,7 @@ class EACDStubControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
 
@@ -53,7 +53,7 @@ class EACDStubControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> false
-          ): _*
+          )*
         )
         .build()
 

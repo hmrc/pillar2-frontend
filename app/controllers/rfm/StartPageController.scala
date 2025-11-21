@@ -27,7 +27,7 @@ import javax.inject.Inject
 class StartPageController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageView
-)(implicit val appConfig:   FrontendAppConfig)
+)(implicit val appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

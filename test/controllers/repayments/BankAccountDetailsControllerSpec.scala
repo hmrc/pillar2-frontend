@@ -26,7 +26,7 @@ import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccou
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.BarsService
 import services.BarsServiceSpec.bankAccountDetails
@@ -54,7 +54,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
     "must populate the view correctly on a GET when the question has previously been answered" in {
       val testBankAccountDetails = BankAccountDetails("TestBankName", "TestAccountName", "112233", "12345611")
       val ua                     = emptyUserAnswers.setOrException(BankAccountDetailsPage, testBankAccountDetails)
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val application            = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
@@ -141,7 +141,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
     "must display pre-populated UK Bank Name field when previously answered" in {
       val testBankAccountDetails = BankAccountDetails("Natwest", "Epic Adventure Inc", "206705", "86473611")
       val ua                     = emptyUserAnswers.setOrException(BankAccountDetailsPage, testBankAccountDetails)
-      val application = applicationBuilder(userAnswers = Some(ua))
+      val application            = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))

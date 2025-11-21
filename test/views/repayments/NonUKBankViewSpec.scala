@@ -51,7 +51,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a paragraph" in {
@@ -124,7 +124,7 @@ class NonUKBankViewSpec extends ViewSpecBase with StringGenerators {
   }
 
   "form is submitted with values exceeding maximum length" should {
-    val longInput: String = randomAlphaNumericStringGenerator(99)
+    val longInput: String   = randomAlphaNumericStringGenerator(99)
     val errorView: Document = Jsoup.parse(
       page(
         formProvider().bind(

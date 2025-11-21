@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.ReasonForRequestingRepaymentFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
@@ -42,7 +42,7 @@ class ReasonForRequestingRepaymentController @Inject() (
   formProvider:                           ReasonForRequestingRepaymentFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ReasonForRequestingRefundView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -18,12 +18,12 @@ package navigation
 
 import base.SpecBase
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 
 class NominatedFilingMemberNavigatorSpec extends SpecBase {
 
-  val navigator = new NominatedFilingMemberNavigator
+  val navigator            = new NominatedFilingMemberNavigator
   private val nonUKAddress = NonUKAddress(
     addressLine1 = "1 drive",
     addressLine2 = None,
@@ -33,8 +33,8 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
     countryCode = "AB"
   )
 
-  private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad
-  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad
+  private lazy val nfmCYA          = controllers.fm.routes.NfmCheckYourAnswersController.onPageLoad()
+  private lazy val submitAndReview = controllers.routes.CheckYourAnswersController.onPageLoad()
   private lazy val jr              = controllers.routes.JourneyRecoveryController.onPageLoad()
   "Navigator" when {
 
@@ -64,7 +64,7 @@ class NominatedFilingMemberNavigatorSpec extends SpecBase {
       }
       "go to CYA page from duplicate safeId page if they choose no" in {
         navigator.nextPage(DuplicateSafeIdPage, NormalMode, emptyUserAnswers.setOrException(DuplicateSafeIdPage, false)) mustBe
-          controllers.routes.CheckYourAnswersController.onPageLoad
+          controllers.routes.CheckYourAnswersController.onPageLoad()
       }
       "go to journey recovery if no answer for duplicate safeId page can be found" in {
         navigator.nextPage(DuplicateSafeIdPage, NormalMode, emptyUserAnswers) mustBe

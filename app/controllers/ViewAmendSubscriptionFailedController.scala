@@ -25,7 +25,7 @@ import views.html.errors.ViewAmendSubscriptionFailedView
 import javax.inject.Inject
 
 class ViewAmendSubscriptionFailedController @Inject() (val controllerComponents: MessagesControllerComponents, view: ViewAmendSubscriptionFailedView)(
-  implicit appConfig:                                                            FrontendAppConfig
+  implicit appConfig: FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

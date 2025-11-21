@@ -28,7 +28,7 @@ case object RfmUkBasedPage extends QuestionPage[Boolean] {
   override def toString: String = "RfmUkBased"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(true)) {
+    if value.contains(true) then {
       userAnswers
         .remove(RfmNameRegistrationPage)
         .flatMap(
@@ -36,7 +36,7 @@ case object RfmUkBasedPage extends QuestionPage[Boolean] {
             _.remove(RfmCheckYourAnswersLogicPage)
           )
         )
-    } else if (value.contains(false)) {
+    } else if value.contains(false) then {
       userAnswers
         .remove(RfmEntityTypePage)
         .flatMap(

@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import controllers.btn.routes._
+import controllers.btn.routes.*
 import models.btn.BTNStatus
 import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
@@ -34,20 +34,20 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNStatusAction @Inject() (
   val sessionRepository: SessionRepository,
   auditService:          AuditService
-)(implicit val ec:       ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends Logging
     with FrontendHeaderCarrierProvider {
 
   def subscriptionRequest: ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] =
     new ActionRefiner[SubscriptionDataRequest, SubscriptionDataRequest] {
       override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-        btnAlreadySubmitted(request.userId, request.subscriptionLocalData)(request)
+        btnAlreadySubmitted(request.userId, request.subscriptionLocalData)(using request)
 
       override protected def executionContext: ExecutionContext = ec
     }
 
   private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(implicit
-    request:                                                  T
+    request: T
   ): Future[Either[Result, T]] =
     sessionRepository
       .get(userId)

@@ -21,11 +21,11 @@ import config.FrontendAppConfig
 import connectors.FinancialDataConnector
 import controllers.TransactionHistoryController.{generatePagination, generateTransactionHistoryTable}
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models._
+import models.*
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc._
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.govukfrontend.views.Aliases.Text
@@ -50,7 +50,7 @@ class TransactionHistoryController @Inject() (
   transactionHistoryView:                         TransactionHistoryView,
   noTransactionHistoryView:                       NoTransactionHistoryView,
   transactionHistoryErrorView:                    TransactionHistoryErrorView
-)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -63,7 +63,7 @@ class TransactionHistoryController @Inject() (
         referenceNumber <- OptionT
                              .fromOption[Future](userAnswers.get(AgentClientPillar2ReferencePage))
                              .orElse(OptionT.fromOption[Future](referenceNumberService.get(Some(userAnswers), request.enrolments)))
-        subscriptionData <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
+        subscriptionData   <- OptionT.liftF(subscriptionService.readSubscription(referenceNumber))
         transactionHistory <-
           OptionT.liftF(
             financialDataConnector
@@ -105,12 +105,12 @@ object TransactionHistoryController {
   private val ROWS_ON_PAGE: Int = 10
 
   private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
-    messages:                                                   Messages
+    messages: Messages
   ): Option[Pagination] = {
     val paginationIndex = page.getOrElse(1)
     val numberOfPages   = financialHistory.grouped(ROWS_ON_PAGE).size
 
-    if (numberOfPages < 2) { None }
+    if numberOfPages < 2 then { None }
     else {
       Some(
         Pagination(
@@ -139,7 +139,7 @@ object TransactionHistoryController {
       )
 
   private def generatePreviousLink(paginationIndex: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == 1) { None }
+    if paginationIndex == 1 then { None }
     else {
       Some(
         PaginationLink(
@@ -152,7 +152,7 @@ object TransactionHistoryController {
     }
 
   private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(implicit messages: Messages): Option[PaginationLink] =
-    if (paginationIndex == numberOfPages) { None }
+    if paginationIndex == numberOfPages then { None }
     else {
       Some(
         PaginationLink(
@@ -165,7 +165,7 @@ object TransactionHistoryController {
     }
 
   private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, financialHistory: Seq[FinancialHistory])(implicit
-    messages:                                                               Messages
+    messages: Messages
   ): Option[Table] = {
     val currentPage: Option[Seq[FinancialHistory]] = financialHistory.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
 

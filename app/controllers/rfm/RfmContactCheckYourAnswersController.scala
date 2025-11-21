@@ -16,12 +16,12 @@
 
 package controllers.rfm
 import cats.data.OptionT.{fromOption, liftF}
-import cats.implicits._
+import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import models.rfm.CorporatePosition
-import models.rfm.RfmStatus._
+import models.rfm.RfmStatus.*
 import models.subscription.NewFilingMemberDetail
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{PlrReferencePage, RfmStatusPage}
@@ -35,8 +35,8 @@ import services.SubscriptionService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.rfm.RfmContactCheckYourAnswersView
 
 import javax.inject.{Inject, Named}
@@ -55,7 +55,7 @@ class RfmContactCheckYourAnswersController @Inject() (
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
   countryOptions:                      CountryOptions
-)(implicit ec:                         ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -71,7 +71,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         rfm        <- userAnswer.get(RfmStatusPage)
       } yield rfm) match {
         case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
-        case _ =>
+        case _                =>
           (for {
             userAnswer <- optionalUserAnswer
             _          <- userAnswer.get(PlrReferencePage)
@@ -92,17 +92,17 @@ class RfmContactCheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
-    if (request.userAnswers.isRfmJourneyCompleted) {
+    if request.userAnswers.isRfmJourneyCompleted then {
       updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
       val rfmStatus = (for {
         newFilingMemberInformation <- fromOption[Future](request.userAnswers.getNewFilingMemberDetail)
         subscriptionData           <- liftF(subscriptionService.readSubscription(newFilingMemberInformation.plrReference))
-        amendData <-
+        amendData                  <-
           liftF(
             subscriptionService.createAmendObjectForReplacingFilingMember(subscriptionData, newFilingMemberInformation, request.userAnswers)
           )
-        _ <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
-        _ <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
+        _                <- liftF(subscriptionService.amendFilingMemberDetails(request.userAnswers.id, amendData))
+        _                <- liftF(subscriptionService.deallocateEnrolment(newFilingMemberInformation.plrReference))
         upeEnrolmentInfo <- liftF(
                               subscriptionService.getUltimateParentEnrolmentInformation(
                                 subscriptionData = subscriptionData,
@@ -114,7 +114,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         _ <- liftF(subscriptionService.allocateEnrolment(groupId = groupId, plrReference = newFilingMemberInformation.plrReference, upeEnrolmentInfo))
         _ <- liftF(userAnswersConnectors.remove(request.userId))
         _ <- liftF(updateSessionData(request.userAnswers, PlrReferencePage, newFilingMemberInformation.plrReference))
-        _ <- if (isNewNfmNonUkBased(newFilingMemberInformation)) { liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) }
+        _ <- if isNewNfmNonUkBased(newFilingMemberInformation) then { liftF(auditService.auditReplaceFilingMember(newFilingMemberInformation)) }
              else { liftF(Future.unit) }
       } yield SuccessfullyCompleted).value
         .flatMap {

@@ -17,7 +17,7 @@
 package base
 
 import com.github.tomakehurst.wiremock.WireMockServer
-import com.github.tomakehurst.wiremock.client.WireMock._
+import com.github.tomakehurst.wiremock.client.WireMock.*
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig
 import com.github.tomakehurst.wiremock.stubbing.StubMapping
 import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
@@ -71,7 +71,7 @@ trait WireMockServerHandler extends BeforeAndAfterAll with BeforeAndAfterEach {
     headers:          Map[String, String] = Map.empty
   ): StubMapping = {
 
-    val requestMaybeHeaders = if (headers.nonEmpty) {
+    val requestMaybeHeaders = if headers.nonEmpty then {
       headers.foldLeft(get(urlEqualTo(expectedEndpoint))) { case (req, (key, value)) => req.withHeader(key, equalTo(value)) }
     } else get(urlEqualTo(expectedEndpoint))
 

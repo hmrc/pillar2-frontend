@@ -16,18 +16,21 @@
 
 package controllers.actions
 
-import cats.syntax.option._
+import cats.syntax.option.*
 import controllers.btn.routes
 import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.btn.BTNStatus
 import models.requests.SubscriptionDataRequest
-import org.mockito.{ArgumentMatchersSugar, MockitoSugar}
+import org.mockito.ArgumentMatchers
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.TryValues
 import org.scalatest.concurrent.ScalaFutures
 import org.scalatest.matchers.must
 import org.scalatest.wordspec.AnyWordSpec
+import org.scalatestplus.mockito.MockitoSugar
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import pages.EntitiesInsideOutsideUKPage
 import play.api.mvc.{Result, Results}
@@ -44,7 +47,6 @@ import scala.concurrent.Future
 class BTNStatusActionSpec
     extends AnyWordSpec
     with MockitoSugar
-    with ArgumentMatchersSugar
     with must.Matchers
     with UserAnswersFixture
     with SubscriptionLocalDataFixture
@@ -52,7 +54,7 @@ class BTNStatusActionSpec
     with TryValues
     with ScalaCheckDrivenPropertyChecks {
 
-  private val userId = "some-test-user-id"
+  private val userId      = "some-test-user-id"
   private val fakeRequest = SubscriptionDataRequest(
     FakeRequest("GET", "/some-example"),
     userId,
@@ -61,7 +63,7 @@ class BTNStatusActionSpec
     isAgent = false
   )
   private val successResult = Results.Ok("")
-  private val successBlock: SubscriptionDataRequest[_] => Future[Result] = _ => Future.successful(successResult)
+  private val successBlock: SubscriptionDataRequest[?] => Future[Result] = _ => Future.successful(successResult)
 
   trait BTNStatusActionTestCase {
     val mockSessionRepository: SessionRepository = mock[SessionRepository]
@@ -89,7 +91,7 @@ class BTNStatusActionSpec
             }
           )
 
-          val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+          val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
           result mustBe successResult
         }
@@ -102,7 +104,7 @@ class BTNStatusActionSpec
           emptyUserAnswers.set(BTNStatus, BTNStatus.processing).success.value.some
         })
 
-        val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+        val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
         result mustBe Results.Redirect(routes.BTNWaitingRoomController.onPageLoad)
       }
@@ -130,7 +132,7 @@ class BTNStatusActionSpec
             )(any[HeaderCarrier])
           ).thenReturn(Future.successful(AuditResult.Success))
 
-          val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+          val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
           result mustBe Results.Redirect(routes.CheckYourAnswersController.cannotReturnKnockback)
 
@@ -168,7 +170,7 @@ class BTNStatusActionSpec
               )(any[HeaderCarrier])
             ).thenReturn(Future.successful(AuditResult.Success))
 
-            val result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
+            val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
             result mustBe Results.Redirect(routes.CheckYourAnswersController.cannotReturnKnockback)
 

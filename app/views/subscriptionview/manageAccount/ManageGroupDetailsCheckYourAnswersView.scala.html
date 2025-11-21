@@ -28,8 +28,8 @@
 
 @(list: SummaryList, isAgent: Boolean, organisationName: Option[String])(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
-    @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit) {
+@layout(pageTitle = titleNoForm(messages("manageFurtherGroupDetails.checkYourAnswers.title")), showBackLink = true, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
+    @formHelper(action = controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onSubmit()) {
         @if(isAgent && organisationName.isDefined) {
             @sectionHeader(organisationName.get)
         }

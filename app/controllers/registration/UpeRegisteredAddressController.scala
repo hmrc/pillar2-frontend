@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.UpeRegisteredAddressFormProvider
 import models.{Mode, UKAddress}
 import navigation.UltimateParentNavigator
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -44,10 +44,10 @@ class UpeRegisteredAddressController @Inject() (
   navigator:                 UltimateParentNavigator,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UpeRegisteredAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[UKAddress] = formProvider()
+  val form:                   Form[UKAddress]    = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(UpeNameRegistrationPage)

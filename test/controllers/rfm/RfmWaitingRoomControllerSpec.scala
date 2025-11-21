@@ -24,10 +24,10 @@ import models.{NonUKAddress, UserAnswers}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.rfm.RfmWaitingRoomView
 
@@ -72,7 +72,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmConfirmationController.onPageLoad().url
       }
     }
 

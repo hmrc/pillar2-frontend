@@ -44,7 +44,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
   formProvider:              UPERegisteredInUKConfirmationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UPERegisteredInUKConfirmationView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -67,7 +67,7 @@ class UPERegisteredInUKConfirmationController @Inject() (
         {
           case value @ true =>
             for {
-              updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
+              updatedAnswers  <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, value))
               updatedAnswers1 <- Future.fromTry(
                                    request.userAnswers
                                      .get(GrsUpeStatusPage)

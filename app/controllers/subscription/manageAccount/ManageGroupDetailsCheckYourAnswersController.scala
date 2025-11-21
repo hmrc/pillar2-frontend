@@ -17,13 +17,13 @@
 package controllers.subscription.manageAccount
 
 import cats.data.OptionT
-import cats.implicits._
+import cats.implicits.*
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.subscription.ManageGroupDetailsStatus._
+import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
@@ -35,8 +35,8 @@ import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers.manageAccount._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.manageAccount.*
+import viewmodels.govuk.summarylist.*
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 import javax.inject.Named
@@ -52,7 +52,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService,
   val userAnswersConnectors:              UserAnswersConnectors
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -60,7 +60,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   def onPageLoad(): Action[AnyContent] =
     (identify andThen getData andThen requireData).async { implicit request =>
       sessionRepository.get(request.userId).flatMap {
-        case None => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
+        case None          => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         case Some(answers) =>
           answers.get(ManageGroupDetailsStatusPage) match {
             case Some(InProgress) =>
@@ -91,7 +91,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
               userAnswers <- sessionRepository.get(request.userId)
               updatedAnswers = userAnswers match {
                                  case Some(answers) => answers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
-                                 case None =>
+                                 case None          =>
                                    UserAnswers(request.userId).setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
                                }
               _ <- sessionRepository.set(updatedAnswers)
@@ -105,11 +105,11 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     }
 
   private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
-    hc:                                              HeaderCarrier,
-    ec:                                              ExecutionContext
+    hc: HeaderCarrier,
+    ec: ExecutionContext
   ): Future[Unit] = {
     val result = for {
-      userAnswers <- OptionT.liftF(sessionRepository.get(userId))
+      userAnswers     <- OptionT.liftF(sessionRepository.get(userId))
       referenceNumber <- OptionT
                            .fromOption[Future](userAnswers.flatMap(_.get(AgentClientPillar2ReferencePage)))
                            .orElse(OptionT.fromOption[Future](referenceNumberService.get(None, enrolments = Some(enrolments))))

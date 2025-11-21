@@ -30,7 +30,7 @@ class UpeContactNameViewSpec extends ViewSpecBase with StringGenerators {
   lazy val formProvider: UpeContactNameFormProvider = new UpeContactNameFormProvider()
   lazy val page:         UpeContactNameView         = inject[UpeContactNameView]
   lazy val pageTitle:    String                     = "What is the name of the person or team from the Ultimate Parent Entity to keep on record?"
-  lazy val view: Document = Jsoup.parse(
+  lazy val view:         Document                   = Jsoup.parse(
     page(formProvider(), NormalMode)(request, appConfig, messages).toString()
   )
 

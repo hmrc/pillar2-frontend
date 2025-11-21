@@ -29,7 +29,7 @@ class UnderConstructionController @Inject() (
   view:                     UnderConstruction,
   viewAgent:                UnderConstructionAgent,
   errorView:                UnderConstructionError
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

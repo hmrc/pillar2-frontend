@@ -35,7 +35,7 @@ class TestOnlyController @Inject() (
   testOnlyAuthorise:        TestOnlyAuthorisedAction,
   getData:                  DataRetrievalAction,
   testOnlyConnector:        TestOnlyConnector
-)(implicit val ec:          ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends FrontendBaseController {
 
   private val logger = Logger(getClass)
@@ -52,7 +52,7 @@ class TestOnlyController @Inject() (
   }
 
   def getAllRecords: Action[AnyContent] = Action.async { implicit request =>
-    testOnlyConnector.getAllRecords().map(httpResponse => Ok((httpResponse.json)))
+    testOnlyConnector.getAllRecords().map(httpResponse => Ok(httpResponse.json))
   }
 
   def upsertRecord(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>

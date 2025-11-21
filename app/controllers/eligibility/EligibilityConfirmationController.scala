@@ -28,7 +28,7 @@ import scala.concurrent.Future
 class EligibilityConfirmationController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     EligibilityConfirmationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

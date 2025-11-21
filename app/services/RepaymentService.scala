@@ -16,11 +16,11 @@
 
 package services
 
-import connectors._
-import models.repayments._
+import connectors.*
+import models.repayments.*
 import models.{UkOrAbroadBankAccount, UserAnswers}
 import org.apache.pekko.Done
-import pages._
+import pages.*
 import play.api.Logging
 import uk.gov.hmrc.http.HeaderCarrier
 
@@ -52,7 +52,7 @@ class RepaymentService @Inject() (
 
   private def getBankDetails(userAnswers: UserAnswers): Option[BankDetails] =
     userAnswers.get(UkOrAbroadBankAccountPage).flatMap { typeOfBankAccount =>
-      if (typeOfBankAccount == UkOrAbroadBankAccount.UkBankAccount) {
+      if typeOfBankAccount == UkOrAbroadBankAccount.UkBankAccount then {
         userAnswers
           .get(BankAccountDetailsPage)
           .map(bankDetails =>

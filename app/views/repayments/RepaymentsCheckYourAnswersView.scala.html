@@ -32,10 +32,10 @@
 
 @(listRefund: SummaryList, listBankAccountDetails: SummaryList, contactDetailsList: SummaryList)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+@layout(pageTitle = titleNoForm(messages("repaymentsCheckYourAnswers.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
 
-    @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit) {
+    @formHelper(action = controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit()) {
 
         @heading(messages("repaymentsCheckYourAnswers.heading"), classes = "govuk-heading-l")
 

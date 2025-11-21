@@ -17,19 +17,18 @@
 package services
 
 import base.SpecBase
-import connectors._
+import connectors.*
+import models.*
 import models.EnrolmentRequest.{AllocateEnrolmentParameters, KnownFactsParameters, KnownFactsResponse}
-import models._
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import models.rfm.CorporatePosition
-import models.subscription._
+import models.subscription.*
 import org.apache.pekko.Done
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{never, verify, when}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
-import pages._
+import org.scalatest.matchers.should.Matchers.*
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.Helpers.running
@@ -530,7 +529,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
         when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails("id", amendData).futureValue mustEqual Done
       }
@@ -540,7 +539,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector)
         )
         when(mockSubscriptionConnector.amendSubscription(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.amendFilingMemberDetails("id", amendData).failed.futureValue mustEqual InternalIssueError
       }
@@ -554,7 +553,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(expectedGroupIdReturned)
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.deallocateEnrolment("plrReference").futureValue mustEqual Done
       }
@@ -566,7 +565,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(Future.successful(None))
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.deallocateEnrolment("plrReference").failed.futureValue mustEqual models.InternalIssueError
       }
@@ -578,7 +577,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
         when(mockEnrolmentStoreProxyConnector.getGroupIds(any())(any())).thenReturn(expectedGroupIdReturned)
         when(mockTaxEnrolmentConnector.revokeEnrolment(any(), any())(any())).thenReturn(Future.failed(InternalIssueError))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.deallocateEnrolment("plrReference").failed.futureValue mustEqual models.InternalIssueError
       }
@@ -591,7 +590,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[TaxEnrolmentConnector].toInstance(mockTaxEnrolmentConnector)
         )
         when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.allocateEnrolment("groupdID", "plr", enrolmentInfo).futureValue mustEqual Done
       }
@@ -602,7 +601,7 @@ class SubscriptionServiceSpec extends SpecBase {
         )
         when(mockTaxEnrolmentConnector.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
           .thenReturn(Future.failed(InternalIssueError))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
 
         service.allocateEnrolment("groupdID", "plr", enrolmentInfo).failed.futureValue mustEqual models.InternalIssueError
       }
@@ -627,7 +626,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
         )
         when(mockEnrolmentStoreProxyConnector.getKnownFacts(any[KnownFactsParameters])(any())).thenReturn(knownFactsResponse)
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
         val result = service.getUltimateParentEnrolmentInformation(subscriptionData, "plrId", "id")
         result.futureValue mustBe allocateEnrolmentParameters
       }
@@ -637,7 +636,7 @@ class SubscriptionServiceSpec extends SpecBase {
           bind[EnrolmentStoreProxyConnector].toInstance(mockEnrolmentStoreProxyConnector)
         )
         when(mockEnrolmentStoreProxyConnector.getKnownFacts(any[KnownFactsParameters])(any())).thenReturn(Future.failed(InternalIssueError))
-        val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
+        val service: SubscriptionService = application.injector().instanceOf[SubscriptionService]
         val result = service.getUltimateParentEnrolmentInformation(subscriptionData, "plrId", "id")
         result.failed.futureValue mustEqual InternalIssueError
       }
@@ -663,7 +662,7 @@ class SubscriptionServiceSpec extends SpecBase {
         when(mockRegistrationConnector.registerNewFilingMember(any())(any())).thenReturn(Future.successful("someSafeId"))
         val service: SubscriptionService = application.injector.instanceOf[SubscriptionService]
         val expectedResult = amendData.copy(upeDetails = amendData.upeDetails.copy(filingMember = false))
-        val result = service.createAmendObjectForReplacingFilingMember(
+        val result         = service.createAmendObjectForReplacingFilingMember(
           subscriptionData,
           replaceFilingMemberData.copy(corporatePosition = CorporatePosition.NewNfm),
           userAnswers
@@ -807,7 +806,7 @@ class SubscriptionServiceSpec extends SpecBase {
 
     "getCompanyNameFromGRS" when {
       "return the company name if it is stored in the session" in {
-        val date = LocalDate.now()
+        val date        = LocalDate.now()
         val grsResponse = GrsResponse(
           Some(
             IncorporatedEntityRegistrationData(

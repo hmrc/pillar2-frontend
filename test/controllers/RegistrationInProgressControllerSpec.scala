@@ -22,7 +22,7 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.SubscriptionService
 
 import scala.concurrent.Future
@@ -68,7 +68,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad().url
       }
     }
 

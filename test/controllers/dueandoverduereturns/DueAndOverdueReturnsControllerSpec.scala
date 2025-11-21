@@ -17,14 +17,14 @@
 package controllers.dueandoverduereturns
 
 import base.SpecBase
-import controllers.{routes => baseRoutes}
+import controllers.routes as baseRoutes
 import helpers.ObligationsAndSubmissionsDataFixture
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
 import services.SubscriptionService
@@ -59,7 +59,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
           .thenReturn(Future.successful(emptyResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -76,7 +76,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
           .thenReturn(Future.successful(dueReturnsResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -93,7 +93,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
           .thenReturn(Future.successful(overdueReturnsResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual OK
@@ -110,7 +110,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
           .thenReturn(Future.failed(new RuntimeException("Test exception")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
-        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url)
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER

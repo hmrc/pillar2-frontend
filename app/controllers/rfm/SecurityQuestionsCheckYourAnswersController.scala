@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxApplicativeError
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import models.{InternalIssueError, Mode, NoResultFound}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Logging
@@ -30,8 +30,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
 import javax.inject.Named
@@ -45,7 +45,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   subscriptionService:              SubscriptionService,
   val controllerComponents:         MessagesControllerComponents,
   view:                             SecurityQuestionsCheckYourAnswersView
-)(implicit appConfig:               FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -58,7 +58,7 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
           RfmRegistrationDateSummary.row(request.userAnswers)
         ).flatten
       )
-      if (request.userAnswers.securityQuestionStatus == RowStatus.Completed) {
+      if request.userAnswers.securityQuestionStatus == RowStatus.Completed then {
         Ok(view(mode, list))
       } else {
         Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad)
@@ -67,17 +67,17 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
 
   def onSubmit: Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
     (for {
-      inputPillar2Reference <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
-      inputRegistrationDate <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
-      readData              <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
+      inputPillar2Reference  <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
+      inputRegistrationDate  <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))
+      readData               <- OptionT.liftF(subscriptionService.readSubscription(inputPillar2Reference))
       matchingPillar2Records <-
         OptionT.liftF(subscriptionService.matchingPillar2Records(request.userId, inputPillar2Reference, inputRegistrationDate))
     } yield
-      if (matchingPillar2Records) {
-        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
-      } else if (!matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate)) {
+      if matchingPillar2Records then {
+        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad())
+      } else if !matchingPillar2Records & readData.upeDetails.registrationDate.isEqual(inputRegistrationDate) then {
         userAnswersConnectors.remove(request.userId)
-        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad)
+        Redirect(controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad())
       } else {
         Redirect(controllers.rfm.routes.MismatchedRegistrationDetailsController.onPageLoad)
       })

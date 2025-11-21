@@ -28,11 +28,10 @@ class SubscriptionLocalDataSpec extends SpecBase {
     }
   }
   "set" must {
-    "return failure if path does not exist" in {
+    "return failure if path does not exist" in
       emptySubscriptionLocalData.set(UpeRegisteredInUKPage, true).map { value =>
         value mustEqual JsResultException
       }
-    }
     "return success if path  exist" in {
       val requiredObject = emptySubscriptionLocalData.set(SubAddSecondaryContactPage, true)
       requiredObject.map { value =>
@@ -42,11 +41,10 @@ class SubscriptionLocalDataSpec extends SpecBase {
   }
 
   "remove" must {
-    "return failure if path does not exist" in {
+    "return failure if path does not exist" in
       emptySubscriptionLocalData.remove(UpeRegisteredInUKPage).map { value =>
         value mustEqual JsResultException
       }
-    }
     "return success if path  exist" in {
       val objectBefore = emptySubscriptionLocalData
       val objectAfter  = emptySubscriptionLocalData.remove(SubAddSecondaryContactPage)

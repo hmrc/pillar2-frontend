@@ -35,7 +35,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val userName:     String                           = "Test Company"
 
   def registeredOfficeAddressPageTitle(username: String = ""): String = {
-    val usernamePart: String = if (username.nonEmpty) s" of $username" else username
+    val usernamePart: String = if username.nonEmpty then s" of $username" else username
     s"What is the registered office address$usernamePart?"
   }
 
@@ -101,7 +101,7 @@ class NfmRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "form is submitted with values exceeding maximum length" should {
-      val longInput: String = randomAlphaNumericStringGenerator(99)
+      val longInput: String   = randomAlphaNumericStringGenerator(99)
       val errorView: Document = Jsoup.parse(
         page(
           form.bind(

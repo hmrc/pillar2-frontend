@@ -27,7 +27,7 @@ import javax.inject.Inject
 class SignedOutController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     SignedOutView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

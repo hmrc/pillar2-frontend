@@ -31,7 +31,7 @@ class UpeContactEmailViewSpec extends ViewSpecBase with StringGenerators {
   lazy val page:         UpeContactEmailView         = inject[UpeContactEmailView]
   lazy val pageTitle:    String                      = "What is the email address?"
   lazy val userName:     String                      = "userName"
-  val view: Document = Jsoup.parse(
+  val view:              Document                    = Jsoup.parse(
     page(formProvider(userName), NormalMode, "userName")(request, appConfig, messages).toString()
   )
 

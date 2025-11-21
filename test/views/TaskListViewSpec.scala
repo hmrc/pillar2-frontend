@@ -41,13 +41,13 @@ class TaskListViewSpec extends ViewSpecBase {
       ),
       SectionViewModel("Further group details", None, CannotStart)
     )
-  val contactDetailsSection: SectionViewModel = SectionViewModel("Contact details", None, CannotStart)
+  val contactDetailsSection:  SectionViewModel = SectionViewModel("Contact details", None, CannotStart)
   val reviewAndSubmitSection: SectionViewModel =
     SectionViewModel("Check your answers before submitting your registration", None, CannotStart)
   val completedSectionCounter = 1
 
   lazy val page: TaskListView = inject[TaskListView]
-  lazy val view: Document =
+  lazy val view: Document     =
     Jsoup.parse(
       page(groupDetailsSections, contactDetailsSection, reviewAndSubmitSection, completedSectionCounter)(request, messages, appConfig).toString()
     )

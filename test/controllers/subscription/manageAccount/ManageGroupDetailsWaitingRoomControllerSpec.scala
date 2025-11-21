@@ -18,16 +18,16 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import controllers.routes
-import controllers.subscription.manageAccount.{routes => manageRoutes}
+import controllers.subscription.manageAccount.routes as manageRoutes
 import helpers.AllMocks
 import models.subscription.ManageGroupDetailsStatus.{InProgress, SuccessfullyCompleted}
-import org.mockito.ArgumentMatchers.{any, eq => eqTo}
-import org.mockito.Mockito._
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
+import org.mockito.Mockito.*
 import pages.ManageGroupDetailsStatusPage
 import play.api.inject.bind
-import play.api.test.CSRFTokenHelper._
+import play.api.test.CSRFTokenHelper.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.twirl.api.Html
 import repositories.SessionRepository
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
@@ -85,7 +85,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.HomepageController.onPageLoad().url
       }
     }
 
@@ -103,7 +103,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
 
@@ -121,7 +121,7 @@ class ManageGroupDetailsWaitingRoomControllerSpec extends SpecBase with AllMocks
         val result  = route(application, request).value
 
         status(result) mustBe SEE_OTHER
-        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad.url
+        redirectLocation(result).value mustBe routes.ViewAmendSubscriptionFailedController.onPageLoad().url
       }
     }
   }

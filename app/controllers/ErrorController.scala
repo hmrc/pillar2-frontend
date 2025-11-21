@@ -25,7 +25,7 @@ import views.html.errors.{ErrorTemplate, PageNotFound}
 import javax.inject.Inject
 
 class ErrorController @Inject() (val controllerComponents: MessagesControllerComponents, ErrorView: ErrorTemplate, pageNotFoundView: PageNotFound)(
-  implicit appConfig:                                      FrontendAppConfig
+  implicit appConfig: FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

@@ -26,7 +26,7 @@ import pages.{UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredInUKPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.UpeNameRegistrationView
 
 import scala.concurrent.Future
@@ -121,7 +121,7 @@ class UpeNameRegistrationControllerSpec extends SpecBase {
       running(application) {
 
         val stringInput = randomStringGenerator(106)
-        val request =
+        val request     =
           FakeRequest(POST, routes.UpeNameRegistrationController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", stringInput))
 

@@ -22,11 +22,11 @@ import forms.NominateFilingMemberYesNoFormProvider
 import models.{NormalMode, UKAddress, UserAnswers}
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.fmview.NominateFilingMemberYesNoView
 
 import scala.concurrent.Future
@@ -35,7 +35,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
 
   val formProvider = new NominateFilingMemberYesNoFormProvider()
 
-  val UkAddress: UKAddress = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
+  val UkAddress:          UKAddress   = UKAddress("this", None, "over", None, "m123hs", countryCode = "AR")
   val completeUpeJourney: UserAnswers = emptyUserAnswers
     .setOrException(UpeRegisteredInUKPage, false)
     .setOrException(UpeNameRegistrationPage, "name")

@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmSecondaryPhonePreferenceView
 
 import scala.concurrent.Future
@@ -145,7 +145,7 @@ class RfmSecondaryPhonePreferenceControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onSubmit(NormalMode).url)
+      val request     = FakeRequest(POST, controllers.rfm.routes.RfmSecondaryPhonePreferenceController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("value" -> "true")
 
       running(application) {

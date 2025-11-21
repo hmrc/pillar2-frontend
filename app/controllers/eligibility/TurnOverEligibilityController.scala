@@ -35,7 +35,7 @@ class TurnOverEligibilityController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     TurnOverEligibilityView,
   sessionRepository:        SessionRepository
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -69,7 +69,7 @@ class TurnOverEligibilityController @Inject() (
                   updatedAnswers <- Future.fromTry(userAnswer.set(RevenueEqPage, earnsAboveThreshold))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield
-                  if (earnsAboveThreshold) {
+                  if earnsAboveThreshold then {
                     Redirect(controllers.eligibility.routes.EligibilityConfirmationController.onPageLoad)
                   } else {
                     Redirect(controllers.eligibility.routes.Kb750IneligibleController.onPageLoad)

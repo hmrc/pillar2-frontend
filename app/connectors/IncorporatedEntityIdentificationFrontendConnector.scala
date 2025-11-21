@@ -22,7 +22,8 @@ import models.registration.{IncorporatedEntityCreateRegistrationRequest, Incorpo
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -31,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 trait IncorporatedEntityIdentificationFrontendConnector {
   def createLimitedCompanyJourney(userType: UserType, mode:      Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
-  def getJourneyData(journeyId:             String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData]
+  def getJourneyData(journeyId:             String)(implicit hc: HeaderCarrier):                    Future[IncorporatedEntityRegistrationData]
 }
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
@@ -45,9 +46,9 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
     s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
 
   def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit
-    hc:                                     HeaderCarrier
+    hc: HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] = {
-    val serviceName = ServiceName()
+    val serviceName         = ServiceName()
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
       businessVerificationCheck = appConfig.incorporatedEntityBvEnabled,

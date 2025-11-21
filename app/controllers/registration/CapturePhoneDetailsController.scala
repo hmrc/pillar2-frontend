@@ -42,7 +42,7 @@ class CapturePhoneDetailsController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
   view:                      CapturePhoneDetailsView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class CapturePhoneDetailsController @Inject() (
       _           <- request.userAnswers.get(UpePhonePreferencePage)
       contactName <- request.userAnswers.get(UpeContactNamePage)
     } yield {
-      val form = formProvider(contactName)
+      val form         = formProvider(contactName)
       val preparedForm = request.userAnswers.get(UpeCapturePhonePage) match {
         case None        => form
         case Some(value) => form.fill(value)

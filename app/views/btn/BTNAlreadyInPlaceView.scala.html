@@ -26,7 +26,7 @@
 )
 
 @()(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
-    @layout(pageTitle = titleNoForm(messages("btn.alreadyInPlace.title")), bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+    @layout(pageTitle = titleNoForm(messages("btn.alreadyInPlace.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
         @formHelper(action = controllers.btn.routes.BTNAccountingPeriodController.onSubmit(NormalMode), Symbol("autoComplete") -> "off") {
             @heading(messages("btn.alreadyInPlace.heading"), classes = "govuk-heading-l")
 
@@ -34,7 +34,7 @@
 
             @paragraphMessageWithLink(
               linkMessage = messages("btn.alreadyInPlace.link"),
-              linkUrl = controllers.routes.HomepageController.onPageLoad.url
+              linkUrl = controllers.routes.HomepageController.onPageLoad().url
             )
   }
 }

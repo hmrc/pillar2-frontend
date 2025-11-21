@@ -22,15 +22,14 @@ import forms.RfmCorporatePositionFormProvider
 import models.NormalMode
 import models.rfm.CorporatePosition
 import navigation.ReplaceFilingMemberNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{RfmCorporatePositionPage, RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.inject
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.rfm.CorporatePositionView
 
@@ -44,7 +43,7 @@ class CorporatePositionControllerSpec extends SpecBase {
   "RFM Corporate Position controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -101,7 +100,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url
       }
     }
 

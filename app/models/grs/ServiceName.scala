@@ -23,7 +23,7 @@ final case class ServiceName(en: OptServiceName)
 
 object ServiceName {
   def apply()(implicit messagesApi: MessagesApi): ServiceName =
-    ServiceName(OptServiceName(optServiceName = messagesApi("service.name")(Lang("en"))))
+    ServiceName(OptServiceName(optServiceName = messagesApi("service.name")(using Lang("en"))))
 
   implicit val format: OFormat[ServiceName] = Json.format[ServiceName]
 }

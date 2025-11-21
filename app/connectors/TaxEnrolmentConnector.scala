@@ -23,6 +23,7 @@ import org.apache.pekko.Done
 import play.api.Logging
 import play.api.http.Status.{CREATED, NO_CONTENT}
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2

@@ -24,7 +24,7 @@ import org.mockito.Mockito.when
 import org.mockito.stubbing.OngoingStubbing
 import play.api.Application
 import play.api.inject.bind
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.ZonedDateTime
@@ -56,13 +56,12 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
       }
     }
 
-    "throw exception when connector fails" in {
+    "throw exception when connector fails" in
       running(application) {
         setupMockConnector(Future.failed(new RuntimeException))
 
         whenReady(service.handleData(pillar2Id, fromDate, toDate).failed)(exception => exception mustBe a[RuntimeException])
       }
-    }
 
     "return empty response when connector returns empty obligations and submissions" in {
       val emptyResponse = ObligationsAndSubmissionsSuccess(

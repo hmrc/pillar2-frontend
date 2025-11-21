@@ -18,14 +18,14 @@ package views.outstandingpayments
 
 import base.ViewSpecBase
 import controllers.routes
-import controllers.routes._
+import controllers.routes.*
 import models.financialdata.{EtmpMainTransactionRef, FinancialSummary, TransactionSummary}
 import models.subscription.AccountingPeriod
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import views.html.outstandingpayments.OutstandingPaymentsView
-import views.outstandingpayments.OutstandingPaymentsViewSpec._
+import views.outstandingpayments.OutstandingPaymentsViewSpec.*
 
 import java.time.LocalDate
 
@@ -61,8 +61,8 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
-      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      organisationView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
+      agentView.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "display total amount due correctly" in {
@@ -97,7 +97,7 @@ class OutstandingPaymentsViewSpec extends ViewSpecBase {
       val button = organisationView.getElementsByClass("govuk-button").first()
 
       button.text() mustBe "Pay online"
-      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url
+      button.attr("href") mustBe controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url
     }
 
     "display other ways to pay section" in {

@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmContactByPhoneFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -42,7 +42,7 @@ class RfmContactByPhoneController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmContactByPhoneView,
   navigator:                        ReplaceFilingMemberNavigator
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -50,7 +50,7 @@ class RfmContactByPhoneController @Inject() (
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { contactName =>
-        val form = formProvider(contactName)
+        val form         = formProvider(contactName)
         val preparedForm = request.userAnswers.get(RfmContactByPhonePage) match {
           case Some(v) => form.fill(v)
           case None    => form

@@ -19,10 +19,10 @@ package controllers.repayments
 import cats.data.OptionT
 import cats.data.OptionT.fromOption
 import config.FrontendAppConfig
-import controllers.actions._
-import models.repayments.RepaymentsStatus._
+import controllers.actions.*
+import models.repayments.RepaymentsStatus.*
 import models.{UnexpectedResponse, UserAnswers}
-import pages._
+import pages.*
 import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -32,8 +32,8 @@ import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils.ZonedDateTimeOps
-import viewmodels.checkAnswers.repayments._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.repayments.*
+import viewmodels.govuk.summarylist.*
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
 import java.time.ZonedDateTime
@@ -50,7 +50,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
   view:                                   RepaymentsCheckYourAnswersView,
   auditService:                           AuditService,
   repaymentService:                       RepaymentService
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -74,7 +74,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
         case _ =>
-          if (request.userAnswers.isRepaymentsJourneyCompleted) {
+          if request.userAnswers.isRepaymentsJourneyCompleted then {
             for {
               optionalSessionData <- sessionRepository.get(request.userAnswers.id)
               sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
@@ -97,10 +97,10 @@ class RepaymentsCheckYourAnswersController @Inject() (
               }
             for {
               updatedStatus <- repaymentsStatus
-              success = (updatedStatus == SuccessfullyCompleted)
+              success = updatedStatus == SuccessfullyCompleted
               optionalSessionData <- sessionRepository.get(request.userAnswers.id)
               sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-              updatedAnswers <- if (success) {
+              updatedAnswers <- if success then {
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
@@ -108,26 +108,27 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-
-                if (success) Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
+                if success then Future.fromTry(updatedAnswers.set(RepaymentCompletionStatus, true)) else Future.successful(updatedAnswers)
               updatedAnswers1 <-
-                if (success) Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
+                if success then Future.fromTry(updatedAnswers0.remove(RepaymentAccountNameConfirmationPage)) else Future.successful(updatedAnswers0)
               updatedAnswers2 <-
-                if (success) Future.fromTry(updatedAnswers1.remove(RepaymentsContactByPhonePage)) else Future.successful(updatedAnswers1)
+                if success then Future.fromTry(updatedAnswers1.remove(RepaymentsContactByPhonePage)) else Future.successful(updatedAnswers1)
               updatedAnswers3 <-
-                if (success) Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
+                if success then Future.fromTry(updatedAnswers2.remove(RepaymentsContactEmailPage)) else Future.successful(updatedAnswers2)
               updatedAnswers4 <-
-                if (success) Future.fromTry(updatedAnswers3.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers3)
+                if success then Future.fromTry(updatedAnswers3.remove(RepaymentsContactNamePage)) else Future.successful(updatedAnswers3)
               updatedAnswers5 <-
-                if (success) Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
+                if success then Future.fromTry(updatedAnswers4.remove(RepaymentsRefundAmountPage)) else Future.successful(updatedAnswers4)
               updatedAnswers6 <-
-                if (success) Future.fromTry(updatedAnswers5.remove(RepaymentsPhoneDetailsPage)) else Future.successful(updatedAnswers5)
+                if success then Future.fromTry(updatedAnswers5.remove(RepaymentsPhoneDetailsPage)) else Future.successful(updatedAnswers5)
               updatedAnswers7 <-
-                if (success) Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
+                if success then Future.fromTry(updatedAnswers6.remove(UkOrAbroadBankAccountPage)) else Future.successful(updatedAnswers6)
               updatedAnswers8 <-
-                if (success) Future.fromTry(updatedAnswers7.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers7)
-              updatedAnswers9  <- if (success) Future.fromTry(updatedAnswers8.remove(NonUKBankPage)) else Future.successful(updatedAnswers8)
-              updatedAnswers10 <- if (success) Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
-              _                <- sessionRepository.set(updatedAnswers10)
+                if success then Future.fromTry(updatedAnswers7.remove(ReasonForRequestingRefundPage)) else Future.successful(updatedAnswers7)
+              updatedAnswers9  <- if success then Future.fromTry(updatedAnswers8.remove(NonUKBankPage)) else Future.successful(updatedAnswers8)
+              updatedAnswers10 <-
+                if success then Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
+              _ <- sessionRepository.set(updatedAnswers10)
             } yield (): Unit
             Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
           } else {

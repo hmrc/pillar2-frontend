@@ -18,7 +18,7 @@ package models.subscription
 
 import models.{MneOrDomestic, NonUKAddress, RichJsObject}
 import pages.QuestionPage
-import play.api.libs.json._
+import play.api.libs.json.*
 import queries.{Gettable, Settable}
 
 import scala.util.{Failure, Success, Try}
@@ -43,7 +43,7 @@ case class SubscriptionLocalData(
 
   private lazy val jsObj = Json.toJsObject(this)
   def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
-    Reads.optionNoError(Reads.at(page.path)).reads(jsObj).getOrElse(None)
+    Reads.optionNoError(using Reads.at(page.path)).reads(jsObj).getOrElse(None)
 
   def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[SubscriptionLocalData] = {
     val updatedData = jsObj.setObject(page.path, Json.toJson(value)) match {
@@ -71,7 +71,7 @@ case class SubscriptionLocalData(
   }
 
   def removeIfExists[A](page: Settable[A])(implicit rds: Reads[A]): Try[SubscriptionLocalData] =
-    if (get(page.asInstanceOf[Gettable[A]]).isDefined) {
+    if get(page.asInstanceOf[Gettable[A]]).isDefined then {
       remove(page)
     } else {
       Success(this)

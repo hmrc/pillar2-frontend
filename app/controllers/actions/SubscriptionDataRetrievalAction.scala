@@ -27,7 +27,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class SubscriptionDataRetrievalActionImpl @Inject() (
-  val subscriptionConnector:     SubscriptionConnector
+  val subscriptionConnector: SubscriptionConnector
 )(implicit val executionContext: ExecutionContext)
     extends SubscriptionDataRetrievalAction
     with Logging {

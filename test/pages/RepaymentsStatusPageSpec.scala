@@ -17,7 +17,6 @@
 package pages
 
 import models.repayments.RepaymentsStatus
-import org.scalacheck.ScalacheckShapeless.derivedArbitrary
 import pages.behaviours.PageBehaviours
 
 class RepaymentsStatusPageSpec extends PageBehaviours {

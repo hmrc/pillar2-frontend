@@ -33,7 +33,7 @@ govukButton: GovukButton
 @layout(pageTitle = title(form, messages("entityType.title"))) {
 
 
-    @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.registration.routes.EntityTypeController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

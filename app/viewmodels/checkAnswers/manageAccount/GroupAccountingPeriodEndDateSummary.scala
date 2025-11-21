@@ -20,13 +20,13 @@ import models.requests.SubscriptionDataRequest
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import utils.DateTimeUtils._
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import utils.DateTimeUtils.*
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object GroupAccountingPeriodEndDateSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubAccountingPeriodPage).map { accountingPeriod =>
       val startDate: String = accountingPeriod.endDate.toDateFormat
 

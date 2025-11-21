@@ -22,8 +22,8 @@ import models.CheckMode
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
-import utils.DateTimeUtils._
-import viewmodels.checkAnswers._
+import utils.DateTimeUtils.*
+import viewmodels.checkAnswers.*
 import viewmodels.govuk.all.SummaryListViewModel
 import views.html.subscriptionview.SubCheckYourAnswersView
 

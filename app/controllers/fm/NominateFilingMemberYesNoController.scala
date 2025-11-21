@@ -44,14 +44,14 @@ class NominateFilingMemberYesNoController @Inject() (
   formProvider:              NominateFilingMemberYesNoFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NominateFilingMemberYesNoView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.upeStatus == RowStatus.Completed) {
+    if request.userAnswers.upeStatus == RowStatus.Completed then {
       val preparedForm = request.userAnswers.get(NominateFilingMemberPage) match {
         case Some(value) => form.fill(value)
         case None        => form

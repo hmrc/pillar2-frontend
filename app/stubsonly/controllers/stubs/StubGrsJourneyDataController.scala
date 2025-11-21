@@ -38,7 +38,7 @@ class StubGrsJourneyDataController @Inject() (
   getData:                  DataRetrievalAction,
   grsStubFormProvider:      GrsStubFormProvider,
   view:                     StubGrsRegistrationDataView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with GrsStubData
     with I18nSupport {
@@ -100,7 +100,7 @@ class StubGrsJourneyDataController @Inject() (
           Redirect(
             s"/report-pillar2-top-up-taxes/grs-return/" +
               s"$continueUrl?journeyId=${Base64Utils
-                .base64UrlEncode(grsStubFormData.grsJourneyDataJson)}"
+                  .base64UrlEncode(grsStubFormData.grsJourneyDataJson)}"
           )
       )
   }

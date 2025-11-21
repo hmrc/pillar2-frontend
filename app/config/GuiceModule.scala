@@ -18,8 +18,8 @@ package config
 
 import com.google.inject.name.{Named, Names}
 import com.google.inject.{AbstractModule, Provides}
-import connectors._
-import controllers.actions._
+import connectors.*
+import controllers.actions.*
 import org.apache.fop.apps.FopFactory
 import play.api.{Configuration, Environment}
 import stubsonly.connectors.stubs.{StubIncorporatedEntityIdentificationFrontendConnector, StubPartnershipEntityIdentificationFrontendConnector}
@@ -28,8 +28,12 @@ import utils.DateTimeUtils.utcZoneId
 
 import java.time.Clock
 import javax.inject.Singleton
+import scala.annotation.unused
 
-class GuiceModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+class GuiceModule(
+  @unused environment: Environment,
+  configuration:       Configuration
+) extends AbstractModule {
 
   override def configure(): Unit = {
     bind(classOf[DataRetrievalAction]).to(classOf[DataRetrievalActionImpl]).asEagerSingleton()
@@ -43,14 +47,17 @@ class GuiceModule(environment: Environment, configuration: Configuration) extend
     // For session based storage instead of cred based, change to SessionIdentifierAction
     bind(classOf[IdentifierAction]).to(classOf[AuthenticatedIdentifierAction]).asEagerSingleton()
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("RfmIdentifier")).to(classOf[RfmIdentifierAction]).asEagerSingleton()
-    bind(classOf[IdentifierAction]).annotatedWith(Names.named("EnrolmentIdentifier")).to(classOf[EnrolmentIdentifierAction]).asEagerSingleton()
+    bind(classOf[IdentifierAction])
+      .annotatedWith(Names.named("EnrolmentIdentifier"))
+      .to(classOf[EnrolmentIdentifierAction].asSubclass(classOf[IdentifierAction]))
+      .asEagerSingleton()
     bind(classOf[IdentifierAction]).annotatedWith(Names.named("ASAEnrolmentIdentifier")).to(classOf[ASAEnrolmentIdentifierAction]).asEagerSingleton()
 
     bind(classOf[Clock]).toInstance(Clock.systemDefaultZone.withZone(utcZoneId))
     bind(classOf[FopFactory]).toProvider(classOf[FopFactoryProvider])
 
     val grsStubEnabled = configuration.get[Boolean]("features.grsStubEnabled")
-    if (grsStubEnabled) {
+    if grsStubEnabled then {
       bind(classOf[IncorporatedEntityIdentificationFrontendConnector])
         .to(classOf[StubIncorporatedEntityIdentificationFrontendConnector])
         .asEagerSingleton()

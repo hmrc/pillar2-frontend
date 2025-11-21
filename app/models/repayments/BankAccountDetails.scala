@@ -22,9 +22,9 @@ import play.twirl.api.HtmlFormat
 final case class BankAccountDetails(bankName: String, nameOnBankAccount: String, sortCode: String, accountNumber: String) {
 
   val field1:      String = HtmlFormat.escape(bankName).toString + "<br>"
-  val field2:      String = HtmlFormat.escape(nameOnBankAccount.mkString("")) + "<br>"
+  val field2:      String = HtmlFormat.escape(nameOnBankAccount.mkString("")).body + "<br>"
   val field3:      String = HtmlFormat.escape(sortCode).toString + "<br>"
-  val field4:      String = HtmlFormat.escape(accountNumber.mkString("")) + "<br>"
+  val field4:      String = HtmlFormat.escape(accountNumber.mkString("")).body + "<br>"
   val fullDetails: String = field1 + field2 + field3 + field4
 }
 

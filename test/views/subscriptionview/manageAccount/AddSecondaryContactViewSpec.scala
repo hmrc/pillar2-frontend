@@ -29,7 +29,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
   lazy val formProvider: AddSecondaryContactFormProvider = new AddSecondaryContactFormProvider
   lazy val page:         AddSecondaryContactView         = inject[AddSecondaryContactView]
   lazy val username:     String                          = "John Doe"
-  lazy val view: Document =
+  lazy val view:         Document                        =
     Jsoup.parse(page(formProvider(username), username, isAgent = false, Some("OrgName"))(request, appConfig, messages).toString())
   lazy val pageTitle: String = "Add a secondary contact"
 
@@ -51,7 +51,7 @@ class AddSecondaryContactViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have two description paragraphs" in {

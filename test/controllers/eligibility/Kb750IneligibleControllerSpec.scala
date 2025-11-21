@@ -18,9 +18,9 @@ package controllers.eligibility
 
 import base.SpecBase
 import helpers.ViewInstances
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 class Kb750IneligibleControllerSpec extends SpecBase with ViewInstances {
 
@@ -37,7 +37,7 @@ class Kb750IneligibleControllerSpec extends SpecBase with ViewInstances {
         FakeRequest(GET, controllers.eligibility.routes.Kb750IneligibleController.onPageLoad.url)
 
       val result = controller.onPageLoad()()(request)
-      status(result) shouldBe OK
+      status(result)        shouldBe OK
       contentAsString(result) should include(
         "Pillar 2 Top-up Taxes apply to groups that have consolidated global revenues of €750 million or more in at least 2 of the previous 4 accounting periods."
       )

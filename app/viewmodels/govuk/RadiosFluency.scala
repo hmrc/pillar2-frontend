@@ -32,9 +32,9 @@ trait RadiosFluency {
   object RadiosViewModel extends ErrorMessageAwareness with FieldsetFluency {
 
     def apply(
-      field:             Field,
-      items:             Seq[RadioItem],
-      legend:            Legend
+      field:  Field,
+      items:  Seq[RadioItem],
+      legend: Legend
     )(implicit messages: Messages): Radios =
       apply(
         field = field,
@@ -43,20 +43,20 @@ trait RadiosFluency {
       )
 
     def apply(
-      field:             Field,
-      items:             Seq[RadioItem],
-      fieldset:          Fieldset
+      field:    Field,
+      items:    Seq[RadioItem],
+      fieldset: Fieldset
     )(implicit messages: Messages): Radios =
       Radios(
         fieldset = Some(fieldset),
         name = field.name,
-        items = items map (item => item copy (checked = field.value.isDefined && field.value == item.value)),
+        items = items map (item => item.copy(checked = field.value.isDefined && field.value == item.value)),
         errorMessage = errorMessage(field)
       )
 
     def yesNo(
-      field:             Field,
-      legend:            Legend
+      field:  Field,
+      legend: Legend
     )(implicit messages: Messages): Radios =
       yesNo(
         field = field,
@@ -64,8 +64,8 @@ trait RadiosFluency {
       )
 
     def yesNo(
-      field:             Field,
-      fieldset:          Fieldset
+      field:    Field,
+      fieldset: Fieldset
     )(implicit messages: Messages): Radios = {
 
       val items = Seq(
@@ -92,19 +92,19 @@ trait RadiosFluency {
   implicit class FluentRadios(radios: Radios) {
 
     def withHint(hint: Hint): Radios =
-      radios copy (hint = Some(hint))
+      radios.copy(hint = Some(hint))
 
     def withFormGroupClasses(classes: String): Radios =
-      radios copy (formGroup = FormGroup(classes = Some(classes)))
+      radios.copy(formGroup = FormGroup(classes = Some(classes)))
 
     def withIdPrefix(prefix: String): Radios =
-      radios copy (idPrefix = Some(prefix))
+      radios.copy(idPrefix = Some(prefix))
 
     def withCssClass(newClass: String): Radios =
-      radios copy (classes = s"${radios.classes} $newClass")
+      radios.copy(classes = s"${radios.classes} $newClass")
 
     def withAttribute(attribute: (String, String)): Radios =
-      radios copy (attributes = radios.attributes + attribute)
+      radios.copy(attributes = radios.attributes + attribute)
 
     def inline(): Radios =
       radios.withCssClass("govuk-radios--inline")

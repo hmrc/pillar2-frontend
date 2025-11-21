@@ -17,16 +17,16 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import cats.syntax.either._
+import cats.syntax.either.*
 import models.InternalIssueError
-import models.btn._
+import models.btn.*
 import org.scalacheck.Arbitrary.arbitrary
 import org.scalacheck.Gen
 import org.scalatest.EitherValues
 import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
-import play.api.libs.json._
+import play.api.libs.json.*
 import uk.gov.hmrc.http.test.WireMockSupport
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -99,7 +99,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
 
     "return InternalIssueError when the pillar-2 backend returns any unsupported status." in forAll(
       Gen.posNum[Int].retryUntil(code => !Seq(CREATED, BAD_REQUEST, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR).contains(code))
-    ) { httpStatus: Int =>
+    ) { (httpStatus: Int) =>
       implicit val pillar2Id: String = "XEPLR4000000000"
       stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)

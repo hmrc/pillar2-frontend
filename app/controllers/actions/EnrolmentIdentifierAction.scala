@@ -16,18 +16,18 @@
 
 package controllers.actions
 
+import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions.EnrolmentIdentifierAction._
 import controllers.routes
 import models.requests.IdentifierRequest
 import pages.{AgentClientPillar2ReferencePage, PlrReferencePage, UnauthorisedClientPillar2ReferencePage}
 import play.api.Logging
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.*
+import play.api.mvc.Results.*
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.authorise.Predicate
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
@@ -35,7 +35,7 @@ import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.http.HeaderCarrierConverter
 import utils.Pillar2SessionKeys
 
-import javax.inject.{Inject, Named, Singleton}
+import javax.inject.{Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
@@ -45,7 +45,7 @@ class EnrolmentIdentifierAction @Inject() (
   sessionRepository:          SessionRepository,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
-)(implicit val ec:            ExecutionContext)
+)(implicit val ec: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
@@ -62,9 +62,9 @@ class EnrolmentIdentifierAction @Inject() (
       Retrievals.credentialRole and
       Retrievals.credentials
 
-    authorised(defaultPredicate)
+    authorised(EnrolmentIdentifierAction.defaultPredicate)
       .retrieve(retrievals) {
-        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(HmrcAsAgentKey).isDefined =>
+        case Some(internalId) ~ enrolments ~ Some(Agent) ~ _ ~ _ if enrolments.getEnrolment(EnrolmentIdentifierAction.HmrcAsAgentKey).isDefined =>
           authAsAgent(request, internalId)
         case Some(internalId) ~ enrolments ~ Some(Organisation) ~ Some(User) ~ credentials =>
           authAsOrg(request, internalId, enrolments, credentials)
@@ -99,7 +99,7 @@ class EnrolmentIdentifierAction @Inject() (
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
         .flatMap(_.get(PlrReferencePage))
-        .orElse(enrolments.getEnrolment(HmrcPillar2OrgKey)) match {
+        .orElse(enrolments.getEnrolment(EnrolmentIdentifierAction.HmrcPillar2OrgKey)) match {
         case Some(_) =>
           Future.successful(
             Right(
@@ -124,7 +124,7 @@ class EnrolmentIdentifierAction @Inject() (
         .flatMap(_.get(AgentClientPillar2ReferencePage))
         .orElse(maybeUserAnswers.flatMap(_.get(UnauthorisedClientPillar2ReferencePage))) match {
         case Some(backEndClientPillar2Id) =>
-          authorised(VerifyAgentClientPredicate(backEndClientPillar2Id))
+          authorised(EnrolmentIdentifierAction.VerifyAgentClientPredicate(backEndClientPillar2Id))
             .retrieve(
               Retrievals.internalId and Retrievals.allEnrolments
                 and Retrievals.affinityGroup and Retrievals.credentialRole and Retrievals.credentials
@@ -153,7 +153,7 @@ class EnrolmentIdentifierAction @Inject() (
             } recover {
             case _: NoActiveSession =>
               Left(Redirect(config.loginUrl, Map("continue" -> Seq(config.loginContinueUrl))))
-            case e: InsufficientEnrolments if e.reason == HmrcPillar2OrgKey =>
+            case e: InsufficientEnrolments if e.reason == EnrolmentIdentifierAction.HmrcPillar2OrgKey =>
               logger.info(s"EnrolmentAuthIdentifierAction - authAsAgent - Insufficient enrolment for Agent due to ${e.msg} -- ${e.reason}")
               Left(Redirect(routes.AgentController.onPageLoadUnauthorised))
             case _: InternalError =>

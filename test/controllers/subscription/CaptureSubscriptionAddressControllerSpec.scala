@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
@@ -58,7 +58,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
     ) ++ alterations
 
     FakeRequest(POST, controllers.subscription.routes.CaptureSubscriptionAddressController.onSubmit(NormalMode).url)
-      .withFormUrlEncodedBody(address.toSeq: _*)
+      .withFormUrlEncodedBody(address.toSeq*)
   }
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
@@ -69,7 +69,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       val result = route(application, postRequest()).value
 
       status(result) mustEqual SEE_OTHER
-      redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad.url
+      redirectLocation(result).value mustEqual controllers.subscription.routes.ContactCheckYourAnswersController.onPageLoad().url
     }
     "must return OK and the correct view for a GET if page not previously answered" in {
       val result = route(application, getRequest).value

@@ -27,7 +27,7 @@ import javax.inject.Inject
 class KbUKIneligibleController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     KbUKIneligibleView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

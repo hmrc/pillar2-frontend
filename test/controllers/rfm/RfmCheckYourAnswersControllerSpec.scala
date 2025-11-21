@@ -20,7 +20,7 @@ import base.SpecBase
 import models.{NonUKAddress, NormalMode, UserAnswers}
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import viewmodels.govuk.SummaryListFluency
 
 class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
@@ -52,7 +52,7 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
     }
 
     "redirect to restart error page when rfm noId question status is not completed" in {
-      val userAnswer = UserAnswers(userAnswersId)
+      val userAnswer  = UserAnswers(userAnswersId)
       val application = applicationBuilder(userAnswers = Some(userAnswer))
         .build()
       running(application) {
@@ -78,7 +78,7 @@ class RfmCheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency
           .withFormUrlEncodedBody()
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad.url)
+        redirectLocation(result) mustBe Some(controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad().url)
       }
     }
 

@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
@@ -41,7 +41,7 @@ class RepaymentsPhoneDetailsController @Inject() (
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsPhoneDetailsView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class RepaymentsPhoneDetailsController @Inject() (
         _           <- request.userAnswers.get(RepaymentsContactByPhonePage)
         contactName <- request.userAnswers.get(RepaymentsContactNamePage)
       } yield {
-        val form = formProvider(contactName)
+        val form         = formProvider(contactName)
         val preparedForm = request.userAnswers.get(RepaymentsPhoneDetailsPage) match {
           case None        => form
           case Some(value) => form.fill(value)

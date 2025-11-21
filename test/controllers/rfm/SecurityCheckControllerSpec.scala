@@ -19,14 +19,14 @@ package controllers.rfm
 import base.SpecBase
 import connectors.{EnrolmentStoreProxyConnector, UserAnswersConnectors}
 import forms.RfmSecurityCheckFormProvider
-import models._
+import models.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.RfmPillar2ReferencePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.rfm.{SecurityCheckErrorView, SecurityCheckView}
 

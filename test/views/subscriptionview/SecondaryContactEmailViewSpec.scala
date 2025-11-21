@@ -63,7 +63,7 @@ class SecondaryContactEmailViewSpec extends ViewSpecBase with StringGenerators {
 
     "form is submitted with missing values" should {
       val emptyEmailAddress: Map[String, String] = Map("emailAddress" -> "")
-      val errorView: Document = Jsoup.parse(
+      val errorView:         Document            = Jsoup.parse(
         page(form.bind(emptyEmailAddress), NormalMode, contactName)(request, appConfig, messages).toString()
       )
 

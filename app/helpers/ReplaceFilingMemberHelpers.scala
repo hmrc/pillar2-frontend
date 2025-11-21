@@ -19,12 +19,12 @@ package helpers
 import models.rfm.CorporatePosition
 import models.subscription.{ContactDetailsType, NewFilingMemberDetail}
 import models.{GovUKMarginBottom9, NonUKAddress, UserAnswers}
-import pages._
+import pages.*
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
+import viewmodels.checkAnswers.*
 import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
 
 trait ReplaceFilingMemberHelpers {
@@ -87,7 +87,7 @@ trait ReplaceFilingMemberHelpers {
 
   def getSecondaryContact: Option[ContactDetailsType] =
     get(RfmAddSecondaryContactPage).flatMap { nominated =>
-      if (nominated) {
+      if nominated then {
         for {
           secondaryName  <- get(RfmSecondaryContactNamePage)
           secondaryEmail <- get(RfmSecondaryEmailPage)
@@ -99,7 +99,7 @@ trait ReplaceFilingMemberHelpers {
 
   private def getSecondaryPhone: Option[String] =
     get(RfmSecondaryPhonePreferencePage).flatMap { nominated =>
-      if (nominated) get(RfmSecondaryCapturePhonePage) else None
+      if nominated then get(RfmSecondaryCapturePhonePage) else None
     }
 
   def getNewFilingMemberDetail: Option[NewFilingMemberDetail] =
@@ -138,29 +138,29 @@ trait ReplaceFilingMemberHelpers {
 
   private def getNameRegistration: Option[String] =
     get(RfmUkBasedPage).flatMap { ukBased =>
-      if (ukBased) None else get(RfmNameRegistrationPage)
+      if ukBased then None else get(RfmNameRegistrationPage)
     }
 
   private def getRegistrationAddress: Option[NonUKAddress] =
     get(RfmUkBasedPage).flatMap { ukBased =>
-      if (ukBased) None else get(RfmRegisteredAddressPage)
+      if ukBased then None else get(RfmRegisteredAddressPage)
     }
 
   private def getPrimaryPhone: Option[String] =
     get(RfmContactByPhonePage).flatMap { nominated =>
-      if (nominated) get(RfmCapturePrimaryPhonePage) else None
+      if nominated then get(RfmCapturePrimaryPhonePage) else None
     }
 
   private def isAllSecondaryInfoProvided: Boolean =
     get(RfmAddSecondaryContactPage)
       .map { nominated =>
-        if (nominated) {
+        if nominated then {
           (for {
             _         <- get(RfmSecondaryContactNamePage)
             _         <- get(RfmSecondaryEmailPage)
             nominated <- get(RfmSecondaryPhonePreferencePage)
           } yield
-            if (nominated) {
+            if nominated then {
               get(RfmSecondaryCapturePhonePage).map(_ => true).getOrElse(false)
             } else {
               true
@@ -178,7 +178,7 @@ trait ReplaceFilingMemberHelpers {
       _                     <- get(RfmContactAddressPage)
       primaryPhoneNominated <- get(RfmContactByPhonePage)
     } yield
-      if (primaryPhoneNominated) {
+      if primaryPhoneNominated then {
         get(RfmCapturePrimaryPhonePage).map(_ => true).getOrElse(false)
       } else {
         true
@@ -187,10 +187,10 @@ trait ReplaceFilingMemberHelpers {
   def isRfmJourneyCompleted: Boolean =
     get(RfmCorporatePositionPage)
       .map(corporatePosition =>
-        if (corporatePosition == CorporatePosition.Upe) {
-          if (isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+        if corporatePosition == CorporatePosition.Upe then {
+          if isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided then true else false
         } else {
-          if (isAllNewFilingMemberInfoProvided & isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided) true else false
+          if isAllNewFilingMemberInfoProvided & isAllSecondaryInfoProvided & isAllPrimaryContactInfoProvided then true else false
         }
       )
       .getOrElse(false)
@@ -198,7 +198,7 @@ trait ReplaceFilingMemberHelpers {
   private def isAllNewFilingMemberInfoProvided: Boolean =
     get(RfmUkBasedPage)
       .map { ukBased =>
-        if (ukBased) {
+        if ukBased then {
           (for {
             _ <- get(RfmEntityTypePage)
             _ <- get(RfmGrsDataPage)

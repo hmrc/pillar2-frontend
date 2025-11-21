@@ -27,7 +27,7 @@ import views.html.rfm.IncompleteDataView
 
 class IncompleteDataViewSpec extends ViewSpecBase {
 
-  lazy val page: IncompleteDataView = inject[IncompleteDataView]
+  lazy val page:       IncompleteDataView  = inject[IncompleteDataView]
   lazy val rfmRequest: Request[AnyContent] =
     FakeRequest("GET", controllers.rfm.routes.RfmIncompleteDataController.onPageLoad.url).withCSRFToken
   lazy val view:      Document = Jsoup.parse(page()(rfmRequest, appConfig, messages).toString())

@@ -16,7 +16,7 @@
 
 package services.audit
 
-import models.audit._
+import models.audit.*
 import models.grs.EntityType
 import models.registration.{IncorporatedEntityAddress, IncorporatedEntityRegistrationData, PartnershipEntityRegistrationData}
 import models.subscription.{AccountingPeriod, NewFilingMemberDetail}
@@ -29,12 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuditService @Inject() (
   auditConnector: AuditConnector
-)(implicit ec:    ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends Logging {
 
   def auditGrsReturnForLimitedCompany(
     responseReceived: IncorporatedEntityRegistrationData
-  )(implicit hc:      HeaderCarrier): Future[AuditResult] =
+  )(implicit hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       GrsReturnAuditEvent(
         entityType = EntityType.UkLimitedCompany.toString,
@@ -56,8 +56,8 @@ class AuditService @Inject() (
 
   def auditGrsReturnForLLP(
     responseReceived: PartnershipEntityRegistrationData
-  )(implicit hc:      HeaderCarrier): Future[AuditResult] = {
-    val emptyString = ""
+  )(implicit hc: HeaderCarrier): Future[AuditResult] = {
+    val emptyString    = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
       .getOrElse(("", "", ""))
@@ -98,7 +98,7 @@ class AuditService @Inject() (
 
   def auditGrsReturnNfmForLimitedCompany(
     responseReceived: IncorporatedEntityRegistrationData
-  )(implicit hc:      HeaderCarrier): Future[AuditResult] =
+  )(implicit hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       GrsReturnNfmAuditEvent(nfmRegistration =
         NfmRegistration(
@@ -122,8 +122,8 @@ class AuditService @Inject() (
 
   def auditGrsReturnNfmForLLP(
     responseReceived: PartnershipEntityRegistrationData
-  )(implicit hc:      HeaderCarrier): Future[AuditResult] = {
-    val emptyString = ""
+  )(implicit hc: HeaderCarrier): Future[AuditResult] = {
+    val emptyString    = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
       .getOrElse(("", "", ""))
@@ -210,7 +210,7 @@ class AuditService @Inject() (
     accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,
     response:                   ApiResponseData
-  )(implicit hc:                HeaderCarrier): Future[AuditResult] =
+  )(implicit hc: HeaderCarrier): Future[AuditResult] =
     sendEventBTN(
       CreateBtnAuditEvent(
         pillarReference = pillarReference,
@@ -225,7 +225,7 @@ class AuditService @Inject() (
     pillarReference:         String,
     accountingPeriod:        AccountingPeriod,
     entitiesInsideOutsideUk: Boolean
-  )(implicit hc:             HeaderCarrier): Future[AuditResult] = sendEventBTN(
+  )(implicit hc: HeaderCarrier): Future[AuditResult] = sendEventBTN(
     BtnAlreadySubmittedAuditEvent(pillarReference, accountingPeriod, entitiesInsideOutsideUk)
   )
 

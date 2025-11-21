@@ -6,7 +6,7 @@ import uk.gov.hmrc.versioning.SbtGitVersioning.autoImport.majorVersion
 
 lazy val appName: String = "pillar2-frontend"
 
-ThisBuild / scalaVersion := "2.13.16"
+ThisBuild / scalaVersion := "3.3.5"
 ThisBuild / majorVersion := 0
 ThisBuild / useSuperShell := false
 ThisBuild / semanticdbEnabled := true
@@ -14,7 +14,7 @@ ThisBuild / semanticdbVersion := scalafixSemanticdb.revision
 
 lazy val root: Project = (project in file("."))
   .enablePlugins(PlayScala, SbtDistributablesPlugin)
-  .disablePlugins(JUnitXmlReportPlugin) //Required to prevent https://github.com/scalatest/scalatest/issues/1427
+  .disablePlugins(JUnitXmlReportPlugin) // Required to prevent https://github.com/scalatest/scalatest/issues/1427
   .settings(
     name := appName,
 
@@ -30,7 +30,6 @@ lazy val root: Project = (project in file("."))
 
     // Build and dependency settings
     Global / onChangedBuildSource := ReloadOnSourceChanges,
-    update / evictionWarningOptions := EvictionWarningOptions.default.withWarnScalaVersionEviction(false),
     libraryDependencies ++= AppDependencies(),
     retrieveManaged := true,
 
@@ -106,9 +105,8 @@ lazy val twirlImports: Seq[String] = Seq(
 
 lazy val compilerSettings = Seq(
   "-feature",
-  "-Wconf:cat=deprecation:ws,cat=feature:ws,cat=optimizer:ws,src=target/.*:s",
-  "-Ypatmat-exhaust-depth",
-  "off"
+  "-Wconf:cat=deprecation:w,cat=feature:w,src=target/.*:s,msg=Flag.*repeatedly:s",
+  "-Yretain-trees"
 )
 
 addCommandAlias("prePrChecks", "; scalafmtCheckAll; scalafmtSbtCheck; scalafixAll --check")

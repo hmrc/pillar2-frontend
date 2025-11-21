@@ -27,7 +27,7 @@ class ManageContactDetailsWaitingRoomViewSpec extends ViewSpecBase {
 
   lazy val page: ManageContactDetailsWaitingRoomView = inject[ManageContactDetailsWaitingRoomView]
   lazy val inProgressView: Document = Jsoup.parse(page(Some(ManageContactDetailsStatus.InProgress))(request, appConfig, messages).toString())
-  lazy val completedView: Document =
+  lazy val completedView:  Document =
     Jsoup.parse(page(Some(ManageContactDetailsStatus.SuccessfullyCompleted))(request, appConfig, messages).toString())
   lazy val pageTitle: String = "Submitting your contact details"
 

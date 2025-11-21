@@ -17,16 +17,16 @@
 package services
 
 import base.SpecBase
-import cats.syntax.either._
+import cats.syntax.either.*
 import connectors.BTNConnector
 import models.InternalIssueError
-import models.btn._
+import models.btn.*
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.Application
 import play.api.inject.bind
-import play.api.test.Helpers._
-import services.BTNServiceSpec._
+import play.api.test.Helpers.*
+import services.BTNServiceSpec.*
 import uk.gov.hmrc.http.HeaderCarrier
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -42,7 +42,7 @@ class BTNServiceSpec extends SpecBase {
     .build()
 
   "BTNService" must {
-    "return a BtnSuccess when connector returns a success" in {
+    "return a BtnSuccess when connector returns a success" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.successful(successResponse))
@@ -50,9 +50,8 @@ class BTNServiceSpec extends SpecBase {
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
         result mustBe successResponse
       }
-    }
 
-    "return a BtnError when connector returns a modelled failure" in {
+    "return a BtnError when connector returns a modelled failure" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.successful(errorResponse))
@@ -60,9 +59,8 @@ class BTNServiceSpec extends SpecBase {
         val result = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).futureValue
         result mustBe errorResponse
       }
-    }
 
-    "return InternalIssueError when BTN connector returns InternalIssueError" in {
+    "return InternalIssueError when BTN connector returns InternalIssueError" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(InternalIssueError))
@@ -70,9 +68,8 @@ class BTNServiceSpec extends SpecBase {
         val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         failure mustBe InternalIssueError
       }
-    }
 
-    "throw an Exception when BTN connector throws a RuntimeException" in {
+    "throw an Exception when BTN connector throws a RuntimeException" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new RuntimeException("runtime error")))
@@ -80,9 +77,8 @@ class BTNServiceSpec extends SpecBase {
         val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         failure mustBe InternalIssueError
       }
-    }
 
-    "handle exceptions other than InternalIssueError" in {
+    "handle exceptions other than InternalIssueError" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new IllegalArgumentException("Test exception")))
@@ -90,8 +86,7 @@ class BTNServiceSpec extends SpecBase {
         val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         failure mustBe InternalIssueError
       }
-    }
-    "handle any other unexpected error" in {
+    "handle any other unexpected error" in
       running(application) {
         when(mockBTNConnector.submitBTN(any())(any[HeaderCarrier], any(), any[ExecutionContext]))
           .thenReturn(Future.failed(new Error("Unexpected error")))
@@ -99,7 +94,6 @@ class BTNServiceSpec extends SpecBase {
         val failure = service.submitBTN(btnRequestBodyDefaultAccountingPeriodDates).failed.futureValue
         failure mustBe InternalIssueError
       }
-    }
   }
 }
 

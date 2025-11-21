@@ -20,7 +20,7 @@ import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
 import models.audit.RepaymentsAuditEvent
 import models.repayments.{BankAccountDetails, NonUKBank}
 import models.{UkOrAbroadBankAccount, UserAnswers}
-import pages._
+import pages.*
 
 trait RepaymentHelpers {
 
@@ -79,7 +79,7 @@ trait RepaymentHelpers {
 
   private def getRepaymentsPhoneDetails: Option[String] =
     get(RepaymentsContactByPhonePage).flatMap { nominated =>
-      if (nominated) get(RepaymentsPhoneDetailsPage) else None
+      if nominated then get(RepaymentsPhoneDetailsPage) else None
     }
 
 }

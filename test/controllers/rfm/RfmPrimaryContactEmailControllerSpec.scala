@@ -42,7 +42,7 @@ import pages.{RfmPrimaryContactEmailPage, RfmPrimaryContactNamePage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmPrimaryContactEmailView
 
 import scala.concurrent.Future
@@ -53,7 +53,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
   "Rfm Primary ContactEmail Controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -101,7 +101,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
 
     "must redirect to the next page when valid data is submitted" in {
 
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -119,7 +119,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
       }
     }
     "Bad request when invalid data submitted in POST" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
       running(application) {
@@ -134,7 +134,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
 
     "Bad request when no data added and click on submit" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
       running(application) {
@@ -149,7 +149,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
     }
 
     "Bad request when invalid data submitted in POST with email length is more that 122 characters" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
       running(application) {

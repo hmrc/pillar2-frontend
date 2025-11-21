@@ -35,7 +35,7 @@ class UpeRegisteredAddressViewSpec extends ViewSpecBase with StringGenerators {
   lazy val userName:     String                           = "Test Company"
 
   def registeredOfficeAddressPageTitle(username: String = ""): String = {
-    val usernamePart: String = if (username.nonEmpty) s" of $username" else username
+    val usernamePart: String = if username.nonEmpty then s" of $username" else username
     s"What is the registered office address$usernamePart?"
   }
 

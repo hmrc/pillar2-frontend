@@ -19,9 +19,10 @@ package connectors
 import config.FrontendAppConfig
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import play.api.Logging
-import play.api.http.Status._
+import play.api.http.Status.*
 import play.api.libs.json.Json
-import uk.gov.hmrc.http._
+import uk.gov.hmrc.http.*
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 
 import java.time.LocalDate
@@ -31,8 +32,8 @@ import scala.concurrent.{ExecutionContext, Future}
 class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def getData(pillar2Id: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
-    hc:                  HeaderCarrier,
-    ec:                  ExecutionContext
+    hc: HeaderCarrier,
+    ec: ExecutionContext
   ): Future[ObligationsAndSubmissionsSuccess] = {
     val url =
       s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/obligations-and-submissions/$dateFrom/$dateTo"

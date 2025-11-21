@@ -23,7 +23,7 @@ import org.mockito.Mockito.when
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.btn.BTNWaitingRoomView
 
@@ -64,7 +64,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
 
           val timestamp = System.currentTimeMillis() - 5000
-          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
+          val request   = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
               "btn_submission_initiated" -> "true",
               "btn_submission_timestamp" -> timestamp.toString
@@ -86,7 +86,7 @@ class BTNWaitingRoomControllerSpec extends SpecBase with MockitoSugar {
           when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
 
           val timestamp = System.currentTimeMillis() - 1000
-          val request = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
+          val request   = FakeRequest(GET, routes.BTNWaitingRoomController.onPageLoad.url)
             .withSession(
               "btn_submission_initiated" -> "true",
               "btn_submission_timestamp" -> timestamp.toString

@@ -18,10 +18,10 @@ package helpers
 
 import org.apache.pekko.stream.testkit.NoMaterializer
 import play.api.http.{DefaultFileMimeTypes, FileMimeTypesConfiguration, HttpConfiguration}
+import play.api.i18n.*
 import play.api.i18n.Messages.UrlMessageSource
-import play.api.i18n._
-import play.api.mvc._
-import play.api.test.Helpers._
+import play.api.mvc.*
+import play.api.test.Helpers.*
 
 import java.util.Locale
 import scala.concurrent.ExecutionContext

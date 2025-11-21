@@ -38,13 +38,13 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object ContactCapturePhoneDetailsSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
-    if (request.subscriptionLocalData.subPrimaryPhonePreference) {
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
+    if request.subscriptionLocalData.subPrimaryPhonePreference then {
       request.subscriptionLocalData.get(SubPrimaryCapturePhonePage).map { answer =>
         val value = ValueViewModel(
           HtmlContent(
@@ -57,7 +57,7 @@ object ContactCapturePhoneDetailsSummary {
           actions = Seq(
             ActionItemViewModel(
               "site.change",
-              controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad.url
+              controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onPageLoad().url
             )
               .withVisuallyHiddenText(messages("contactCapturePhoneDetails.change.hidden"))
           )

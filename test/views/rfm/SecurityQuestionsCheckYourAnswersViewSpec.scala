@@ -26,9 +26,9 @@ import play.api.mvc.{AnyContent, Request}
 import play.api.test.CSRFTokenHelper.CSRFRequest
 import play.api.test.FakeRequest
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.{RfmRegistrationDateSummary, RfmSecurityCheckSummary}
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.summarylist.*
 import views.html.rfm.SecurityQuestionsCheckYourAnswersView
 
 class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {

@@ -22,6 +22,7 @@ import models.{GroupIds, InternalIssueError, UnexpectedJsResult}
 import play.api.Logging
 import play.api.http.Status.OK
 import play.api.libs.json.{JsError, JsSuccess, Json}
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
@@ -34,13 +35,13 @@ import scala.concurrent.{ExecutionContext, Future}
 class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
   def getGroupIds(plrReference: String)(implicit
-    hc:                         HeaderCarrier
+    hc: HeaderCarrier
   ): Future[Option[GroupIds]] = {
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
     val submissionUrl           = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments/$serviceEnrolmentPattern/groups"
     http
       .get(url"$submissionUrl")
-      .execute[HttpResponse](readRaw, ec)
+      .execute[HttpResponse](using readRaw, ec)
       .map {
         case response if response.status == OK =>
           logger.info(s"getGroupIds - success")
@@ -62,11 +63,11 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
       .withBody(Json.toJson(knownFacts))
       .execute[HttpResponse]
       .flatMap { response =>
-        if (response.status == OK) {
+        if response.status == OK then {
           logger.info("getKnownFacts - received ok status")
           response.json.validate[KnownFactsResponse] match {
             case JsSuccess(correctResponse, _) => correctResponse.toFuture
-            case JsError(_) =>
+            case JsError(_)                    =>
               logger.error("Known facts response from tax enrolment received in unexpected json form")
               Future.failed(UnexpectedJsResult)
           }

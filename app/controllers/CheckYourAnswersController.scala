@@ -20,10 +20,10 @@ import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import models._
+import models.*
 import models.subscription.SubscriptionStatus
-import models.subscription.SubscriptionStatus._
-import pages._
+import models.subscription.SubscriptionStatus.*
+import pages.*
 import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
@@ -36,12 +36,12 @@ import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
 import java.time.{LocalDate, ZonedDateTime}
-import scala.concurrent.duration._
+import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 
 class CheckYourAnswersController @Inject() (
@@ -56,7 +56,7 @@ class CheckYourAnswersController @Inject() (
   view:                     CheckYourAnswersView,
   countryOptions:           CountryOptions,
   futures:                  Futures
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -78,11 +78,11 @@ class CheckYourAnswersController @Inject() (
   }
 
   def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.finalStatusCheck) {
+    if request.userAnswers.finalStatusCheck then {
       subscriptionService.getCompanyName(request.userAnswers) match {
         case Left(errorRedirect) => errorRedirect
-        case Right(companyName) =>
-          val subscriptionStatus: Future[WithName with SubscriptionStatus] =
+        case Right(companyName)  =>
+          val subscriptionStatus: Future[WithName & SubscriptionStatus] =
             request.userAnswers
               .get(SubMneOrDomesticPage)
               .map { mneOrDom =>
@@ -97,9 +97,9 @@ class CheckYourAnswersController @Inject() (
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield {
-                  pollForSubscriptionData(plr, request.userId)
+                  pollForSubscriptionData(plr)
                     .map { _ =>
-                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad)
+                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad())
                     }
                     .recover { case _ =>
                       Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plr))
@@ -230,9 +230,9 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def pollForSubscriptionData(plrReference: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+  private def pollForSubscriptionData(plrReference: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     val maxAttempts = {
-      if (appConfig.subscriptionPollingIntervalSeconds <= 0) {
+      if appConfig.subscriptionPollingIntervalSeconds <= 0 then {
         logger.error("Invalid subscriptionPollingIntervalSeconds configuration: must be greater than 0")
         throw new IllegalArgumentException("subscriptionPollingIntervalSeconds must be greater than 0")
       }
@@ -241,14 +241,14 @@ class CheckYourAnswersController @Inject() (
     val delaySeconds = appConfig.subscriptionPollingIntervalSeconds
 
     def attemptRead(attempt: Int): Future[Unit] =
-      if (attempt >= maxAttempts) {
+      if attempt >= maxAttempts then {
         Future.failed(new RuntimeException("Subscription polling timeout"))
       } else {
         subscriptionService
           .readSubscription(plrReference)
           .map(_ => ())
           .recoverWith { case _ =>
-            if (attempt + 1 < maxAttempts) {
+            if attempt + 1 < maxAttempts then {
               futures.delayed(delaySeconds.seconds)(attemptRead(attempt + 1))
             } else {
               Future.failed(new RuntimeException("Subscription polling timeout"))

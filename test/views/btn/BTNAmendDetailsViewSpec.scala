@@ -54,8 +54,8 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        viewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
-        viewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        viewUkOnly().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        viewUkAndOther().getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have paragraph content and link" in {
@@ -67,14 +67,14 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
           "update the location of your entities before submitting a BTN."
         ukOnlyParagraphs.get(2).getElementsByTag("a").text mustBe "Amend group details"
         ukOnlyParagraphs.get(2).getElementsByTag("a").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
 
         ukAndOtherParagraphs.get(0).text mustBe "You reported that your group has entities both in and outside of the UK."
         ukAndOtherParagraphs.get(1).text() mustBe "If this has changed, you must amend your group details to " +
           "update the location of your entities before submitting a BTN."
         ukAndOtherParagraphs.get(2).getElementsByTag("a").text mustBe "Amend group details"
         ukAndOtherParagraphs.get(2).getElementsByTag("a").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       }
 
       "have a back link" in {
@@ -95,8 +95,8 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
       }
 
       "have a banner with a link to the Homepage" in {
-        viewUkOnly(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
-        viewUkAndOther(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        viewUkOnly(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
+        viewUkAndOther(isAgent = true).getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have paragraph content and link" in {
@@ -108,14 +108,14 @@ class BTNAmendDetailsViewSpec extends ViewSpecBase {
           "the location of the entities before submitting a BTN."
         ukOnlyParagraphs.get(2).getElementsByTag("a").text mustBe "Amend group details"
         ukOnlyParagraphs.get(2).getElementsByTag("a").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
 
         ukAndOtherParagraphs.get(0).text() mustBe "You reported that the group has entities both in and outside of the UK."
         ukAndOtherParagraphs.get(1).text() mustBe "If this has changed, you must amend the group details to update " +
           "the location of the entities before submitting a BTN."
         ukAndOtherParagraphs.get(2).getElementsByTag("a").text mustBe "Amend group details"
         ukAndOtherParagraphs.get(2).getElementsByTag("a").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.ManageGroupDetailsCheckYourAnswersController.onPageLoad().url
       }
 
       "have a back link" in {

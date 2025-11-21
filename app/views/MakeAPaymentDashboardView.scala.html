@@ -36,7 +36,7 @@
     @paragraphMessageWithLink(Some(messages("payment.dashboard.message2")), linkMessage = messages("payment.dashboard.linkText"),
         linkUrl = "https://www.gov.uk/guidance/pay-pillar-2-top-up-taxes-domestic-top-up-tax-and-multinational-top-up-tax")
     @govukButton(
-        ButtonViewModel(messages("payment.dashboard.buttonText")).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url)
+        ButtonViewModel(messages("payment.dashboard.buttonText")).asLink(controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url)
     )
 
 }

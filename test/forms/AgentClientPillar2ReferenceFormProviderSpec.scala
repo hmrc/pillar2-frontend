@@ -15,8 +15,6 @@
  */
 
 package forms
-
-import forms.Validation
 import forms.behaviours.BooleanFieldBehaviours
 import mapping.Constants
 import play.api.data.Form

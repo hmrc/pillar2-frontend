@@ -18,7 +18,7 @@ package controllers.dueandoverduereturns
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.routes.JourneyRecoveryController
 import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage

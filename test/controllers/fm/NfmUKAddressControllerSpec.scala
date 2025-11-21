@@ -26,7 +26,7 @@ import pages.FmNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
@@ -122,7 +122,7 @@ class NfmUKAddressControllerSpec extends SpecBase {
     }
 
     "must redirect to next page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(FmNameRegistrationPage, "Name").success.value
+      val ua          = emptyUserAnswers.set(FmNameRegistrationPage, "Name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
