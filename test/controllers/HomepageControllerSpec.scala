@@ -160,7 +160,6 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSubscriptionService.maybeReadSubscription(any())(any()))
         .thenReturn(Future.successful(None))
-      when(mockSubscriptionService.cacheSubscription(any)(any)).thenReturn(Future.successful(mock[SubscriptionData]))
 
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)

@@ -32,7 +32,7 @@ class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
       .getPillar2ID(enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
       .orElse(userAnswers.flatMap(_.get(PlrReferencePage)))
       .orElse(
-        if (stubbedHosts.exists(appConfig.host.contains)) {
+        if stubbedHosts.exists(appConfig.host.contains) then {
           Some("XMPLR0012345674")
         } else {
           None
@@ -41,5 +41,5 @@ class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
 }
 
 object ReferenceNumberService {
-  val stubbedHosts = List("localhost", "development", "staging")
+  val stubbedHosts: List[String] = List("localhost", "development", "staging")
 }
