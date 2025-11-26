@@ -29,6 +29,7 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers._
 import repositories.SessionRepository
+import services.ReferenceNumberService
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
@@ -235,10 +236,13 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
     "redirect to journey recovery for a GET if pillar 2 reference is missing" in {
       val application = applicationBuilder(userAnswers = None)
         .overrides(
-          inject.bind[SessionRepository].toInstance(mockSessionRepository)
+          inject.bind[SessionRepository].toInstance(mockSessionRepository),
+          inject.bind[ReferenceNumberService].toInstance(mockReferenceNumberService)
         )
         .build()
+
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
+      when(mockReferenceNumberService.get(any(), any())).thenReturn(None)
 
       running(application) {
         val request =
