@@ -27,7 +27,7 @@ import javax.inject.Inject
 class KbMnIneligibleController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     KbMnIneligibleView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

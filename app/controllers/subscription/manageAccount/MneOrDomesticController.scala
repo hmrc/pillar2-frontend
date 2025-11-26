@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.MneOrDomesticFormProvider
 import models.EntityLocationChangeResult.{EntityLocationChangeAllowed, EntityLocationChangeBlocked}
 import models.MneOrDomestic
@@ -45,7 +45,7 @@ class MneOrDomesticController @Inject() (
   mneOrDomesticFormProvider:                      MneOrDomesticFormProvider,
   val controllerComponents:                       MessagesControllerComponents,
   mneOrDomesticView:                              MneOrDomesticView
-)(implicit ec:                                    ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -78,7 +78,7 @@ class MneOrDomesticController @Inject() (
                 } yield Redirect(navigator.nextPage(SubMneOrDomesticPage, updatedAnswers))
               case EntityLocationChangeBlocked =>
                 logger.info(s"Blocked entity location change from ${request.subscriptionLocalData.subMneOrDomestic} to $newMneOrDomesticValue")
-                Future.successful(Redirect(controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad))
+                Future.successful(Redirect(controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad()))
             }
         )
     }

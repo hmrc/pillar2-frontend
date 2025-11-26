@@ -24,7 +24,7 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
 import org.jsoup.select.Elements
 import play.api.mvc.AnyContent
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsCheckYourAnswersView
 
 class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
@@ -54,7 +54,7 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a summary list" in {
@@ -67,14 +67,14 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         summaryListKeys.get(0).text() mustBe mne
         summaryListItems.get(0).text() mustBe mneValue
         summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url
 
         val ap      = "Group’s accounting period"
         val apValue = ""
         summaryListKeys.get(1).text() mustBe ap
         summaryListItems.get(1).text() mustBe apValue
         summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
 
         val startDate = "Start date"
         val endDate   = "End date"
@@ -120,14 +120,14 @@ class ManageGroupDetailsCheckYourAnswersViewSpec extends ViewSpecBase with Subsc
         summaryListKeys.get(0).text() mustBe mne
         summaryListItems.get(0).text() mustBe mneValue
         summaryListActions.get(0).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.MneOrDomesticController.onPageLoad().url
 
         val ap      = "Group’s accounting period"
         val apValue = ""
         summaryListKeys.get(1).text() mustBe ap
         summaryListItems.get(1).text() mustBe apValue
         summaryListActions.get(1).getElementsByClass("govuk-link").attr("href") mustBe
-          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
 
         val startDate = "Start date"
         val endDate   = "End date"

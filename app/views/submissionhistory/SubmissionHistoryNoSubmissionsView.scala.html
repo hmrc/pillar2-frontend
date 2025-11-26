@@ -30,7 +30,7 @@
 @(isAgent: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 @layout(
     pageTitle = titleNoForm(messages("submissionHistoryNoSubmissions.title")),
-    bannerUrl = Some(routes.HomepageController.onPageLoad.url)
+    bannerUrl = Some(routes.HomepageController.onPageLoad().url)
 ) {
     @heading(messages("submissionHistoryNoSubmissions.heading"), classes = "govuk-heading-l")
     @if(isAgent) {
@@ -43,8 +43,8 @@
     <br>
     @h2(messages("submissionHistoryNoSubmissions.h2"), size = "m")
     @if(isAgent) {
-    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.agent.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url, linkFullStop = true)
+    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.agent.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url, linkFullStop = true)
     } else {
-    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.group.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url, linkFullStop = true)
+    @paragraphMessageWithLink(Some(messages("submissionHistoryNoSubmissions.group.p3")), linkMessage = messages("submissionHistoryNoSubmissions.link"), linkUrl = controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url, linkFullStop = true)
     }
 }

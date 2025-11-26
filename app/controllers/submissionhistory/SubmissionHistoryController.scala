@@ -18,7 +18,7 @@ package controllers.submissionhistory
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
@@ -44,7 +44,7 @@ class SubmissionHistoryController @Inject() (
   view:                                   SubmissionHistoryView,
   viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
   sessionRepository:                      SessionRepository
-)(implicit ec:                            ExecutionContext, config: FrontendAppConfig)
+)(implicit ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -60,7 +60,7 @@ class SubmissionHistoryController @Inject() (
       toDate   = LocalDate.now()
       data <- OptionT.liftF(obligationsAndSubmissionsService.handleData(referenceNumber, fromDate, toDate))
     } yield
-      if (data.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty))) {
+      if data.accountingPeriodDetails.exists(_.obligations.exists(_.submissions.nonEmpty)) then {
         Ok(view(data.accountingPeriodDetails, request.isAgent))
       } else {
         Ok(viewNoSubmissions(request.isAgent))

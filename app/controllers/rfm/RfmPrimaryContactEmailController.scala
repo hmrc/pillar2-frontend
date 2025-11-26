@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmPrimaryContactEmailFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -41,7 +41,7 @@ class RfmPrimaryContactEmailController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmPrimaryContactEmailView,
   navigator:                        ReplaceFilingMemberNavigator
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class RfmPrimaryContactEmailController @Inject() (
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { username =>
-        val form = formProvider(username)
+        val form         = formProvider(username)
         val preparedForm = request.userAnswers.get(RfmPrimaryContactEmailPage) match {
           case Some(value) => form.fill(value)
           case None        => form

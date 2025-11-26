@@ -42,7 +42,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph with a link" in {
@@ -51,7 +51,7 @@ class IncompleteDataViewSpec extends ViewSpecBase {
       paragraph.text mustBe "You need to go back and complete all the required answers before submitting your repayment request."
       paragraph.getElementsByTag("a").text() mustBe "go back and complete all the required answers"
       paragraph.getElementsByTag("a").attr("href") mustBe
-        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad.url
+        controllers.repayments.routes.RequestRepaymentBeforeStartController.onPageLoad().url
     }
 
   }

@@ -22,7 +22,7 @@ import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierA
 import forms.NfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.NominatedFilingMemberNavigator
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -44,10 +44,10 @@ class NfmRegisteredAddressController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 NominatedFilingMemberNavigator,
   view:                      NfmRegisteredAddressView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
-  val form: Form[NonUKAddress] = formProvider()
+  val form:                   Form[NonUKAddress] = formProvider()
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     request.userAnswers
       .get(FmNameRegistrationPage)

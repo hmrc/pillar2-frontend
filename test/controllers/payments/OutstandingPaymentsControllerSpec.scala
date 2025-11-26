@@ -18,16 +18,16 @@ package controllers.payments
 
 import base.SpecBase
 import controllers.actions.EnrolmentIdentifierAction.DelegatedAuthRule
-import controllers.payments.OutstandingPaymentsControllerSpec._
-import models._
+import controllers.payments.OutstandingPaymentsControllerSpec.*
+import models.*
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
-import models.financialdata._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.FinancialDataService
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}

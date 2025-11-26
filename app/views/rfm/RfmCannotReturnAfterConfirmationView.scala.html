@@ -36,6 +36,6 @@
     @paragraphMessageWithLink(
         message1 = Some(messages("rfm.cannotReturnAfterConfirmation.p2")),
         linkMessage = messages("rfm.cannotReturnAfterConfirmation.link"),
-        linkUrl = routes.HomepageController.onPageLoad.url,
+        linkUrl = routes.HomepageController.onPageLoad().url,
         linkFullStop = true)
 }

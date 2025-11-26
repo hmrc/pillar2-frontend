@@ -20,14 +20,14 @@ import models.{CheckMode, UserAnswers}
 import pages.SubUsePrimaryContactPage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object UseContactPrimarySummary {
 
   def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
     answers.get(SubUsePrimaryContactPage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+      val value = if answer then "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "useContactPrimary.checkYourAnswersLabel",
         value = ValueViewModel(value),

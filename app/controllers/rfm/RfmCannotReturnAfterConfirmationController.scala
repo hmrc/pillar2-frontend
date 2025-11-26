@@ -29,7 +29,7 @@ class RfmCannotReturnAfterConfirmationController @Inject() (
   Identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmCannotReturnAfterConfirmationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

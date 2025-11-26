@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.bta.HavePillar2TopUpTaxIdView
 
 import scala.concurrent.Future
@@ -40,12 +40,12 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
   "Have Pillar two TopUp Tax Id  Controller" when {
 
     "return OK and the correct view for a GET" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
       running(application) {
@@ -70,7 +70,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> false
-          ): _*
+          )*
         )
         .build()
 
@@ -96,7 +96,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
 
@@ -114,13 +114,13 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
     }
 
     " redirect to en-eligible page when NO is selected " in {
-      val ua = emptyUserAnswers.set(BtaPillar2ReferencePage, false).success.value
+      val ua          = emptyUserAnswers.set(BtaPillar2ReferencePage, false).success.value
       val application = applicationBuilder(Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
 
@@ -143,7 +143,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
 
@@ -160,7 +160,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
       running(application) {
@@ -181,7 +181,7 @@ class HavePillar2TopUpTaxIdControllerSpec extends SpecBase {
         .configure(
           Seq(
             "features.btaAccessEnabled" -> true
-          ): _*
+          )*
         )
         .build()
 

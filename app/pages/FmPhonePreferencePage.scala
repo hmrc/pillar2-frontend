@@ -28,7 +28,7 @@ case object FmPhonePreferencePage extends QuestionPage[Boolean] {
   override def toString: String = "fmPhonePreference"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(false)) {
+    if value.contains(false) then {
       userAnswers
         .remove(FmCapturePhonePage)
     } else {

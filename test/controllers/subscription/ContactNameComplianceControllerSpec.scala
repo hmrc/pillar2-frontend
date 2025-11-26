@@ -27,7 +27,7 @@ import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage, SubPrimaryContactNa
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.ContactNameComplianceView
 
 import java.time.LocalDate
@@ -119,7 +119,7 @@ class ContactNameComplianceControllerSpec extends SpecBase {
 
       running(application) {
         val stringInput = randomStringGenerator(161)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.subscription.routes.ContactNameComplianceController.onPageLoad(NormalMode).url)
             .withFormUrlEncodedBody(("value", stringInput))
 

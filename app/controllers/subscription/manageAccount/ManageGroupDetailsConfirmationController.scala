@@ -29,7 +29,7 @@ class ManageGroupDetailsConfirmationController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     ManageGroupDetailsConfirmationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

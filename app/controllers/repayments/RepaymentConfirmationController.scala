@@ -17,9 +17,9 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import models.UserAnswers
-import pages._
+import pages.*
 import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -34,7 +34,7 @@ class RepaymentConfirmationController @Inject() (
   view:                                   RepaymentsConfirmationView,
   getSessionData:                         SessionDataRetrievalAction,
   requireSessionData:                     SessionDataRequiredAction
-)(implicit appConfig:                     FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

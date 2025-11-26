@@ -19,7 +19,7 @@ package controllers.repayments
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SessionDataRequiredAction, SessionDataRetrievalAction}
 import models.UserAnswers
-import models.repayments.RepaymentsStatus._
+import models.repayments.RepaymentsStatus.*
 import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -38,7 +38,7 @@ class RepaymentsWaitingRoomController @Inject() (
   sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsWaitingRoomView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -58,7 +58,7 @@ class RepaymentsWaitingRoomController @Inject() (
       case (Some(SuccessfullyCompleted), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentConfirmationController.onPageLoad()))
       case (Some(UnexpectedResponseError), Some(true)) =>
-        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed))
+        Future.successful(Redirect(controllers.repayments.routes.RepaymentErrorController.onPageLoadRepaymentSubmissionFailed()))
       case (Some(IncompleteDataError), Some(true)) =>
         Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
       case (s, _) => Future.successful(Ok(view(s)))

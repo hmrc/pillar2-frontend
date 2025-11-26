@@ -50,7 +50,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a hint" in {
@@ -92,7 +92,7 @@ class RepaymentsContactNameViewSpec extends ViewSpecBase with StringGenerators {
     }
 
     "form is submitted with value exceeding maximum length" should {
-      val longInput: String = randomAlphaNumericStringGenerator(199)
+      val longInput: String   = randomAlphaNumericStringGenerator(199)
       val errorView: Document = Jsoup.parse(
         page(
           formProvider().bind(

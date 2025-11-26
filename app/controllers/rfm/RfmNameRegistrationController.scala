@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmNameRegistrationFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
@@ -43,7 +43,7 @@ class RfmNameRegistrationController @Inject() (
   formProvider:                     RfmNameRegistrationFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmNameRegistrationView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

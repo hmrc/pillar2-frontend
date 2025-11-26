@@ -17,15 +17,15 @@
 package navigation
 
 import base.SpecBase
-import models._
+import models.*
 import models.rfm.CorporatePosition
-import pages._
+import pages.*
 
 import java.time.LocalDate
 
 class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
-  val navigator = new ReplaceFilingMemberNavigator
+  val navigator            = new ReplaceFilingMemberNavigator
   private val nonUKAddress = NonUKAddress(
     addressLine1 = "line1",
     addressLine2 = None,
@@ -138,7 +138,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       "go to Rfm Contact Details Registration page from Rfm Check Your Answers Page" in {
         val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmRegisteredAddressPage, nonUKAddress)
         navigator.nextPage(RfmCheckYourAnswersPage, NormalMode, ua) mustBe
-          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
       }
 
       "go to RfmSecondaryContactName page if they select Yes on RfmAddSecondaryContact page" in {
@@ -276,7 +276,7 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
       "go to Rfm Contact Details Registration page from Rfm Check Your Answers Page" in {
         val ua = emptyUserAnswers.setOrException(RfmNameRegistrationPage, "first last").setOrException(RfmRegisteredAddressPage, nonUKAddress)
         navigator.nextPage(RfmCheckYourAnswersPage, CheckMode, ua) mustBe
-          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad
+          controllers.rfm.routes.RfmContactDetailsRegistrationController.onPageLoad()
       }
 
       "go to submit and review CYA page from primary contact name  page if" in {

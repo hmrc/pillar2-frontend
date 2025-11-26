@@ -19,11 +19,11 @@ package stubsonly.controllers.actions
 import com.google.inject.{Inject, Singleton}
 import config.FrontendAppConfig
 import models.eacd.Pillar2Enrolment
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.*
+import play.api.mvc.Results.*
 import stubsonly.models.requests.TestOnlyAuthorisedRequest
-import uk.gov.hmrc.auth.core._
-import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals._
+import uk.gov.hmrc.auth.core.*
+import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals.*
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendHeaderCarrierProvider
 
@@ -31,9 +31,9 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class TestOnlyAuthorisedAction @Inject() (
-  override val authConnector:    AuthConnector,
-  config:                        FrontendAppConfig,
-  val parser:                    BodyParsers.Default
+  override val authConnector: AuthConnector,
+  config:                     FrontendAppConfig,
+  val parser:                 BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends ActionBuilder[TestOnlyAuthorisedRequest, AnyContent]
     with FrontendHeaderCarrierProvider
@@ -45,14 +45,14 @@ class TestOnlyAuthorisedAction @Inject() (
     block:   TestOnlyAuthorisedRequest[A] => Future[Result]
   ): Future[Result] =
     authorised().retrieve(internalId and allEnrolments and groupIdentifier) { case optInternalId ~ enrolments ~ optGroupId =>
-      val internalId: String = optInternalId.getOrElseFail("Unable to retrieve internalId")
-      val groupId:    String = optGroupId.getOrElseFail("Unable to retrieve groupIdentifier")
+      val internalId:       String         = optInternalId.getOrElseFail("Unable to retrieve internalId")
+      val groupId:          String         = optGroupId.getOrElseFail("Unable to retrieve groupIdentifier")
       val pillar2Reference: Option[String] = enrolments
         .getEnrolment(Pillar2Enrolment.ServiceName)
         .flatMap(_.getIdentifier(Pillar2Enrolment.IdentifierKey).map(_.value))
 
       block(TestOnlyAuthorisedRequest(request, internalId, groupId, pillar2Reference))
-    }(hc(request), executionContext) recover { case _: NoActiveSession =>
+    }(using hc(using request), executionContext) recover { case _: NoActiveSession =>
       Redirect(config.loginUrl, Map("continue" -> Seq(s"${config.host}${request.uri}")))
     }
 

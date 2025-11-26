@@ -16,7 +16,7 @@
 
 package models.subscription
 
-import enumeratum._
+import enumeratum.*
 
 sealed trait ManageGroupDetailsStatus extends EnumEntry
 

@@ -24,12 +24,12 @@ import play.api.inject
 import play.api.inject.bind
 import play.api.mvc.Result
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import views.html.rfm.RfmConfirmationView
 
 import java.time.ZonedDateTime
@@ -61,7 +61,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad().url)
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -130,7 +130,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
             )
           )
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
-        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.rfm.routes.RfmConfirmationController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

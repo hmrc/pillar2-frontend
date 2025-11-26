@@ -20,13 +20,13 @@ import models.UserAnswers
 import org.scalatest.freespec.AnyFreeSpec
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
-import pages._
+import pages.*
 
 class RepaymentJourneyModelSpec extends AnyFreeSpec with Matchers with OptionValues with EitherValues with TryValues {
 
   "from" - {
 
-    val amount: BigDecimal = BigDecimal(100.99)
+    val amount:               BigDecimal         = BigDecimal(100.99)
     val ukBankAccountDetails: BankAccountDetails = BankAccountDetails(
       bankName = "Barclays",
       nameOnBankAccount = "Epic Adventure Inc",

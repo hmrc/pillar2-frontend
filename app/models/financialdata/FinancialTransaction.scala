@@ -36,16 +36,16 @@ object FinancialTransaction {
   object OutstandingCharge {
 
     def apply(mainTransactionRef: EtmpMainTransactionRef.ChargeRef)(
-      accountingPeriod:           AccountingPeriod,
-      subTransactionRef:          EtmpSubtransactionRef,
-      outstandingAmount:          BigDecimal,
-      chargeItems:                FinancialItems
+      accountingPeriod:  AccountingPeriod,
+      subTransactionRef: EtmpSubtransactionRef,
+      outstandingAmount: BigDecimal,
+      chargeItems:       FinancialItems
     ): OutstandingCharge = {
       val fields = (accountingPeriod, subTransactionRef, outstandingAmount, chargeItems)
       mainTransactionRef match {
-        case EtmpMainTransactionRef.UkTaxReturnMain     => (UktrMainOutstandingCharge.apply _).tupled(fields)
-        case EtmpMainTransactionRef.LatePaymentInterest => (LatePaymentInterestOutstandingCharge.apply _).tupled(fields)
-        case EtmpMainTransactionRef.RepaymentInterest   => (RepaymentInterestOutstandingCharge.apply _).tupled(fields)
+        case EtmpMainTransactionRef.UkTaxReturnMain     => UktrMainOutstandingCharge.apply.tupled(fields)
+        case EtmpMainTransactionRef.LatePaymentInterest => LatePaymentInterestOutstandingCharge.apply.tupled(fields)
+        case EtmpMainTransactionRef.RepaymentInterest   => RepaymentInterestOutstandingCharge.apply.tupled(fields)
       }
     }
 

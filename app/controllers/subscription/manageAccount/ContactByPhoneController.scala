@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.ContactByPhoneFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.{SubPrimaryCapturePhonePage, SubPrimaryContactNamePage, SubPrimaryPhonePreferencePage}
@@ -40,7 +40,7 @@ class ContactByPhoneController @Inject() (
   formProvider:                           ContactByPhoneFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ContactByPhoneView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -49,7 +49,7 @@ class ContactByPhoneController @Inject() (
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>
-          val form = formProvider(contactName)
+          val form         = formProvider(contactName)
           val preparedForm = request.subscriptionLocalData.get(SubPrimaryPhonePreferencePage) match {
             case Some(v) => form.fill(v)
             case None    => form

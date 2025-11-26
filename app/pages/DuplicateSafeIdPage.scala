@@ -28,9 +28,9 @@ case object DuplicateSafeIdPage extends QuestionPage[Boolean] {
   override def toString: String = "DuplicateSafeId"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(true)) {
+    if value.contains(true) then {
       cleanNfmData(userAnswers)
-    } else if (value.contains(false)) {
+    } else if value.contains(false) then {
       cleanNfmData(userAnswers).flatMap(_.set(NominateFilingMemberPage, false))
     } else {
       super.cleanup(value, userAnswers)

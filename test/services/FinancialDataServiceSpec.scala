@@ -17,11 +17,11 @@
 package services
 
 import base.SpecBase
-import cats.syntax.option._
+import cats.syntax.option.*
 import connectors.FinancialDataConnector
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.OutstandingCharge
 import models.financialdata.FinancialTransaction.OutstandingCharge.{LatePaymentInterestOutstandingCharge, RepaymentInterestOutstandingCharge, UktrMainOutstandingCharge}
-import models.financialdata._
 import models.subscription.AccountingPeriod
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -197,9 +197,11 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
         val missingTaxPeriodFrom = validApiTransaction.map(_.copy(taxPeriodFrom = None))
         val missingTaxPeriodTo   = validApiTransaction.map(_.copy(taxPeriodTo = None))
 
-        val missingOutstandingAmount = validApiTransaction.map(_.copy(outstandingAmount = None))
+        val missingOutstandingAmount    = validApiTransaction.map(_.copy(outstandingAmount = None))
         val outstandingAmountZeroOrLess =
-          Gen.choose(Long.MinValue, 0).flatMap(outstanding => validApiTransaction.map(_.copy(outstandingAmount = BigDecimal(outstanding).some)))
+          Gen
+            .choose(Long.MinValue, 0.toLong)
+            .flatMap(outstanding => validApiTransaction.map(_.copy(outstandingAmount = BigDecimal(outstanding).some)))
 
         val allChargeItemsMissingDueDate = validApiTransaction.map(tx => tx.copy(items = tx.items.map(_.copy(dueDate = None))))
 

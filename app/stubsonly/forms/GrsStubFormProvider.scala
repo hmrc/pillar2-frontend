@@ -18,7 +18,7 @@ package stubsonly.forms
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import stubsonly.models.GrsStubFormData
 
 class GrsStubFormProvider extends Mappings {
@@ -27,6 +27,6 @@ class GrsStubFormProvider extends Mappings {
     Form(
       mapping(
         "grsJourneyDataJson" -> text()
-      )(GrsStubFormData.apply)(GrsStubFormData.unapply)
+      )(GrsStubFormData.apply)(grsStubFormData => Some(grsStubFormData.grsJourneyDataJson))
     )
 }

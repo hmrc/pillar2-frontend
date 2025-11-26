@@ -18,7 +18,7 @@ package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.IsNFMUKBasedFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
@@ -44,14 +44,14 @@ class IsNfmUKBasedController @Inject() (
   formProvider:              IsNFMUKBasedFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      IsNFMUKBasedView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(NominateFilingMemberPage)) {
+    if request.userAnswers.isPageDefined(NominateFilingMemberPage) then {
       val preparedForm = request.userAnswers.get(FmRegisteredInUKPage) match {
         case Some(value) => form.fill(value)
         case None        => form
@@ -71,7 +71,7 @@ class IsNfmUKBasedController @Inject() (
           value match {
             case true =>
               for {
-                updatedAnswers <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
+                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, value))
                 updatedAnswers1 <- Future.fromTry(
                                      request.userAnswers
                                        .get(GrsFilingMemberStatusPage)

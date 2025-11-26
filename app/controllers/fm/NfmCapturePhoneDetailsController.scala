@@ -18,7 +18,7 @@ package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.CapturePhoneDetailsFormProvider
 import models.Mode
 import navigation.NominatedFilingMemberNavigator
@@ -42,7 +42,7 @@ class NfmCapturePhoneDetailsController @Inject() (
   formProvider:              CapturePhoneDetailsFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmCapturePhoneDetailsView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class NfmCapturePhoneDetailsController @Inject() (
       _    <- request.userAnswers.get(FmPhonePreferencePage)
       name <- request.userAnswers.get(FmContactNamePage)
     } yield {
-      val form = formProvider(name)
+      val form         = formProvider(name)
       val preparedForm = request.userAnswers.get(FmCapturePhonePage) match {
         case Some(value) => form.fill(value)
         case None        => form

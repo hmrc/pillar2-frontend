@@ -21,8 +21,8 @@ import models.UserAnswers
 import pages.RepaymentCompletionStatus
 import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
-import utils.DateTimeUtils._
+import play.api.test.Helpers.*
+import utils.DateTimeUtils.*
 import views.html.repayments.RepaymentsConfirmationView
 
 import java.time.ZonedDateTime
@@ -32,8 +32,8 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
   "Repayment confirmation controller" when {
 
     "must return OK and the correct view for a GET" in {
-      val currentDateTimeGMT: String = ZonedDateTime.now().toDateTimeGmtFormat
-      val testUserAnswers: UserAnswers = emptyUserAnswers
+      val currentDateTimeGMT: String      = ZonedDateTime.now().toDateTimeGmtFormat
+      val testUserAnswers:    UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
         .setOrException(RepaymentConfirmationTimestampPage, currentDateTimeGMT)
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()

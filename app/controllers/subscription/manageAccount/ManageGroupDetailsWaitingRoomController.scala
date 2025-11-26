@@ -17,15 +17,13 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import models.subscription.ManageGroupDetailsStatus._
+import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
+import models.subscription.ManageGroupDetailsStatus.*
 import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.libs.concurrent.Futures
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
-import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
 
@@ -35,13 +33,10 @@ import scala.concurrent.{ExecutionContext, Future}
 class ManageGroupDetailsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
-  requireData:                            SubscriptionDataRequiredAction,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageGroupDetailsWaitingRoomView,
-  sessionRepository:                      SessionRepository,
-  subscriptionService:                    SubscriptionService,
-  futures:                                Futures
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+  sessionRepository:                      SessionRepository
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -58,7 +53,7 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
         status match {
           case Some(SuccessfullyCompleted) =>
             logger.info(s"[ManageGroupDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
-            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad()))
 
           case Some(InProgress) =>
             logger.info(s"[ManageGroupDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
@@ -66,20 +61,20 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
 
           case Some(FailedInternalIssueError) =>
             logger.warn(s"[ManageGroupDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
           case Some(FailException) =>
             logger.warn(s"[ManageGroupDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
           case _ =>
             logger.warn(s"[ManageGroupDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
-            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
         }
       }
       .recover { case ex =>
         logger.error(s"[ManageGroupDetailsWaitingRoom] Error while loading waiting room for ${request.userId}: ${ex.getMessage}")
-        Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad)
+        Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad())
       }
   }
 

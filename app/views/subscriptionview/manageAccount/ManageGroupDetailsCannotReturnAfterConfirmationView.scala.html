@@ -36,7 +36,7 @@
     @paragraphMessageWithLink(
         message1 = Some(messages("manageGroupDetails.cannotReturnAfterConfirmation.p2")),
         linkMessage = messages("manageGroupDetails.cannotReturnAfterConfirmation.link"),
-        linkUrl = controllers.routes.HomepageController.onPageLoad.url,
+        linkUrl = controllers.routes.HomepageController.onPageLoad().url,
         linkFullStop = true
     )
 } 

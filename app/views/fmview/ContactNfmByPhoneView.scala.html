@@ -32,7 +32,7 @@
 @layout(pageTitle = title(form, messages("contactNfmByPhone.title"))) {
 
 
-    @formHelper(action = controllers.fm.routes.ContactNfmByPhoneController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.fm.routes.ContactNfmByPhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

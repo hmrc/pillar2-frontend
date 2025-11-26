@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmPrimaryContactNameFormProvider
 import models.{Mode, NormalMode}
 import navigation.ReplaceFilingMemberNavigator
@@ -43,7 +43,7 @@ class RfmPrimaryContactNameController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmPrimaryContactNameView,
   navigator:                        ReplaceFilingMemberNavigator
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

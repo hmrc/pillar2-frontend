@@ -34,7 +34,7 @@
 
 @layout(pageTitle = title(form, messages("rfm.addSecondaryContact.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.RfmAddSecondaryContactController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value_0")))

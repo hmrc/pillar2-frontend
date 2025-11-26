@@ -28,7 +28,7 @@ import javax.inject.Inject
 class BTNUnderEnquiryWarningController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     BTNUnderEnquiryWarningView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

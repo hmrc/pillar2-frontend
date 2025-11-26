@@ -32,7 +32,7 @@ class GrsRegistrationNotCalledController @Inject() (
   upeView:                             RegistrationNotCalledUpeView,
   nfmView:                             RegistrationNotCalledNfmView,
   rfmView:                             RegistrationNotCalledRfmView
-)(implicit appConfig:                  FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

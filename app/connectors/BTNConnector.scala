@@ -16,15 +16,16 @@
 
 package connectors
 
-import cats.syntax.either._
+import cats.syntax.either.*
 import config.FrontendAppConfig
 import models.InternalIssueError
-import models.btn._
+import models.btn.*
 import play.api.Logging
-import play.api.http.Status._
-import play.api.libs.json._
+import play.api.http.Status.*
+import play.api.libs.json.*
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
-import uk.gov.hmrc.http._
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse}
 
@@ -34,7 +35,7 @@ import scala.util.Try
 
 class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: HttpClientV2) extends Logging {
   def submitBTN(
-    btnRequest:  BTNRequest
+    btnRequest: BTNRequest
   )(implicit hc: HeaderCarrier, pillar2Id: String, ec: ExecutionContext): Future[BtnResponse] = {
     val urlBTN = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
@@ -44,7 +45,7 @@ class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: H
       .withBody(Json.toJson(btnRequest))
       .setHeader("X-Pillar2-Id" -> pillar2Id)
       .execute[HttpResponse]
-      .flatMap { response: HttpResponse =>
+      .flatMap { (response: HttpResponse) =>
         response.status match {
           case CREATED =>
             logger.info(s"submitBTN request successful with status = ${response.status}. HttpResponse = ${response.body}. ")

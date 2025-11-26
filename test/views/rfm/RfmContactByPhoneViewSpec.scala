@@ -30,9 +30,9 @@ import views.html.rfm.RfmContactByPhoneView
 class RfmContactByPhoneViewSpec extends ViewSpecBase {
 
   lazy val formProvider = new RfmContactByPhoneFormProvider
-  lazy val page:     RfmContactByPhoneView = inject[RfmContactByPhoneView]
-  lazy val username: String                = "John Doe"
-  lazy val rfmRequest: Request[AnyContent] =
+  lazy val page:       RfmContactByPhoneView = inject[RfmContactByPhoneView]
+  lazy val username:   String                = "John Doe"
+  lazy val rfmRequest: Request[AnyContent]   =
     FakeRequest("GET", controllers.rfm.routes.RfmContactByPhoneController.onPageLoad(NormalMode).url).withCSRFToken
   lazy val view:      Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(rfmRequest, appConfig, messages).toString())
   lazy val pageTitle: String   = "Can we contact by phone"

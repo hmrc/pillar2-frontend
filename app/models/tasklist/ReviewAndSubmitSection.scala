@@ -22,12 +22,12 @@ import play.api.mvc.Call
 import utils.RowStatus
 
 object ReviewAndSubmitSection extends Section {
-  override def toRequiredSection(ss: SectionStatus): Call = routes.CheckYourAnswersController.onPageLoad
+  override def toRequiredSection(ss: SectionStatus): Call = routes.CheckYourAnswersController.onPageLoad()
 
   override def name(ss: SectionStatus): String = "taskList.task.review"
 
   override def progress(answers: UserAnswers): SectionStatus = {
-    import answers._
+    import answers.*
     answers.finalCYAStatus(upeStatus, fmStatus, groupDetailStatus, contactsStatus) match {
       case RowStatus.NotStarted => NotStarted
       case _                    => CannotStart

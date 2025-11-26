@@ -19,7 +19,7 @@ package controllers
 import base.SpecBase
 import models.NormalMode
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.ContentView
 
 class ContentControllerSpec extends SpecBase {
@@ -43,7 +43,7 @@ class ContentControllerSpec extends SpecBase {
     }
 
     "must redirect to next page accounting period when valid data is submitted" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
       running(application) {

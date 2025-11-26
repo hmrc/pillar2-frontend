@@ -21,7 +21,7 @@ import cats.implicits.catsSyntaxTuple15Parallel
 import models.grs.GrsRegistrationData
 import models.rfm.CorporatePosition.{NewNfm, Upe}
 import models.{NonUKAddress, UserAnswers}
-import pages._
+import pages.*
 import queries.Query
 
 final case class RfmJourneyModel(

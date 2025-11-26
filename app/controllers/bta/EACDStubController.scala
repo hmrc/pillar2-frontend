@@ -29,13 +29,13 @@ class EACDStubController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     EACDStubView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] = identify { implicit request =>
     val btaAccessEnabled: Boolean = appConfig.btaAccessEnabled
-    if (btaAccessEnabled) {
+    if btaAccessEnabled then {
       Ok(view())
     } else {
       Redirect(controllers.routes.ErrorController.pageNotFoundLoad)

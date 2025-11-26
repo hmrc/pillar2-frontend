@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
-import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -27,11 +27,9 @@ import javax.inject.Inject
 
 class ManageGroupDetailsCannotReturnAfterConfirmationController @Inject() (
   identify:                 IdentifierAction,
-  getData:                  SubscriptionDataRetrievalAction,
-  requireData:              SubscriptionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     ManageGroupDetailsCannotReturnAfterConfirmationView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -20,21 +20,21 @@ import models.requests.SubscriptionDataRequest
 import pages.SubSecondaryPhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object SecondaryPhonePreferenceSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryPhonePreferencePage).map { answer =>
-      val value = if (answer) "site.yes" else "site.no"
+      val value = if answer then "site.yes" else "site.no"
       SummaryListRowViewModel(
         key = "secondaryPhonePreference.checkYourAnswersLabel",
         value = ValueViewModel(value),
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryPhonePreferenceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("secondaryPhonePreference.change.hidden"))
         )

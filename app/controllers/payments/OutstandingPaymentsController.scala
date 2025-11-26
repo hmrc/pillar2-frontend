@@ -18,9 +18,9 @@ package controllers.payments
 
 import cats.data.OptionT
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.routes.JourneyRecoveryController
-import models._
+import models.*
 import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary}
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging

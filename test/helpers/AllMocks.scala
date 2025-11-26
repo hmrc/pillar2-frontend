@@ -17,8 +17,8 @@
 package helpers
 
 import config.FrontendAppConfig
-import connectors._
-import controllers.actions._
+import connectors.*
+import controllers.actions.*
 import forms.TradingBusinessConfirmationFormProvider
 import models.fm.FilingMember
 import models.registration.Registration
@@ -29,7 +29,7 @@ import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.MessagesApi
 import play.api.mvc.MessagesControllerComponents
 import repositories.SessionRepository
-import services._
+import services.*
 import services.audit.AuditService
 import uk.gov.hmrc.auth.core.AuthConnector
 import uk.gov.hmrc.http.client.HttpClientV2

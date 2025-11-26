@@ -24,7 +24,7 @@ case class RegistrationWithoutIDResponse(safeId: SafeId)
 object RegistrationWithoutIDResponse {
 
   implicit val reads: Reads[RegistrationWithoutIDResponse] = {
-    import play.api.libs.functional.syntax._
+    import play.api.libs.functional.syntax.*
     (__ \ "safeId").read[String] fmap (id => RegistrationWithoutIDResponse(SafeId(id)))
   }
 

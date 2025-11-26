@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.SecondaryPhoneView
 
 import scala.concurrent.Future
@@ -108,7 +108,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.subscription.routes.SecondaryPhoneController.onPageLoad(NormalMode).url)
-        val result =
+        val result  =
           route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -142,7 +142,7 @@ class SecondaryPhoneControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a POST if no previous existing data is found" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryPhoneController.onSubmit(NormalMode).url)
+      val request     = FakeRequest(POST, controllers.subscription.routes.SecondaryPhoneController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("phoneNumber" -> "12233444")
 
       running(application) {

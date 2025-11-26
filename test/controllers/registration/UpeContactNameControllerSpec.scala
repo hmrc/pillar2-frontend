@@ -26,7 +26,7 @@ import pages.{UpeContactNamePage, UpeNameRegistrationPage, UpeRegisteredAddressP
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.UpeContactNameView
 
 import scala.concurrent.Future
@@ -117,7 +117,7 @@ class UpeContactNameControllerSpec extends SpecBase {
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val stringInput = randomStringGenerator(201)
-        val request =
+        val request     =
           FakeRequest(POST, routes.UpeContactNameController.onSubmit(NormalMode).url).withFormUrlEncodedBody("value" -> stringInput)
         val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[UpeContactNameView]

@@ -20,7 +20,7 @@ import base.SpecBase
 import connectors.UserAnswersConnectors
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.manageAccount.MneToDomesticView
 
 class MneToDomesticControllerSpec extends SpecBase {
@@ -34,7 +34,7 @@ class MneToDomesticControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url)
 
         val result = route(application, request).value
 

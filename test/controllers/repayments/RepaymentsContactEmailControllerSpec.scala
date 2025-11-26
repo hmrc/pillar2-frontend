@@ -25,7 +25,7 @@ import pages.{RepaymentsContactEmailPage, RepaymentsContactNamePage}
 import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier, Enrolments}
 import views.html.repayments.RepaymentsContactEmailView
@@ -35,8 +35,8 @@ import scala.concurrent.Future
 class RepaymentsContactEmailControllerSpec extends SpecBase {
 
   val formProvider = new RepaymentsContactEmailFormProvider()
-  val form: Form[String] = formProvider("ABC Limited")
-  val agentEnrolmentWithDelegatedAuth: Enrolments = Enrolments(
+  val form:                            Form[String] = formProvider("ABC Limited")
+  val agentEnrolmentWithDelegatedAuth: Enrolments   = Enrolments(
     Set(
       Enrolment("HMRC-PILLAR2-ORG", List(EnrolmentIdentifier("PLRID", "XMPLR0123456789")), "Activated", Some("pillar2-auth"))
     )
@@ -118,7 +118,7 @@ class RepaymentsContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
+      val ua          = emptyUserAnswers.set(RepaymentsContactNamePage, "ABC Limited").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(inject.bind[SessionRepository].toInstance(mockSessionRepository))
         .build()

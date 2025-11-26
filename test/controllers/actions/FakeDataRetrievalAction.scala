@@ -17,7 +17,7 @@
 package controllers.actions
 
 import models.UserAnswers
-import models.requests._
+import models.requests.*
 import models.subscription.SubscriptionLocalData
 
 import scala.concurrent.{ExecutionContext, Future}

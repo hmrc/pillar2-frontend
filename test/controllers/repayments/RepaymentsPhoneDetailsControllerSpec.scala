@@ -25,7 +25,7 @@ import pages.{RepaymentsContactByPhonePage, RepaymentsContactNamePage, Repayment
 import play.api.data.Form
 import play.api.inject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.repayments.RepaymentsPhoneDetailsView
 
@@ -116,7 +116,7 @@ class RepaymentsPhoneDetailsControllerSpec extends SpecBase {
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsCheckYourAnswersController.onPageLoad().url
       }
     }
 

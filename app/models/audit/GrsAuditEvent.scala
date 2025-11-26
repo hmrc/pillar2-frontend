@@ -17,7 +17,7 @@
 package models.audit
 
 import models.grs.{BusinessVerificationResult, GrsRegistrationResult}
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class GrsReturnAuditEvent(
   entityType:           String,

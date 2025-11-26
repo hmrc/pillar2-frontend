@@ -18,11 +18,11 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmRegisteredAddressFormProvider
 import models.{Mode, NonUKAddress}
 import navigation.ReplaceFilingMemberNavigator
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
@@ -44,7 +44,7 @@ class RfmRegisteredAddressController @Inject() (
   val countryOptions:               CountryOptions,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmRegisteredAddressView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

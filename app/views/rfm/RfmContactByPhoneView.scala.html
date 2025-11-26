@@ -31,7 +31,7 @@
 
 @layout(pageTitle = title(form, messages("rfmContactByPhone.title"))) {
 
-    @formHelper(action = controllers.rfm.routes.RfmContactByPhoneController.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = controllers.rfm.routes.RfmContactByPhoneController.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form,  errorLinkOverrides = Map("value" -> "value_0")))

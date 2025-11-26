@@ -29,7 +29,7 @@ class KeepAliveController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   sessionRepository:        SessionRepository
-)(implicit ec:              ExecutionContext)
+)(implicit ec: ExecutionContext)
     extends FrontendBaseController {
 
   def keepAlive: Action[AnyContent] = (identify andThen getData).async { implicit request =>

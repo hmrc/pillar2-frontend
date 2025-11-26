@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.RepaymentsContactEmailFormProvider
 import models.Mode
 import navigation.RepaymentNavigator
@@ -41,7 +41,7 @@ class RepaymentsContactEmailController @Inject() (
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsContactEmailView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -50,7 +50,7 @@ class RepaymentsContactEmailController @Inject() (
       request.userAnswers
         .get(RepaymentsContactNamePage)
         .map { username =>
-          val form = formProvider(username)
+          val form         = formProvider(username)
           val preparedForm = request.userAnswers.get(RepaymentsContactEmailPage) match {
             case Some(value) => form.fill(value)
             case None        => form

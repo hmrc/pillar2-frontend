@@ -16,28 +16,28 @@
 
 package controllers.subscription
 
-import cats.syntax.option._
+import cats.syntax.option.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import controllers.subscription.UseContactPrimaryController.contactSummaryList
 import forms.UseContactPrimaryFormProvider
 import models.requests.DataRequest
 import models.subscription.SubscriptionContactDetails
 import models.{Mode, NormalMode}
 import navigation.SubscriptionNavigator
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
@@ -53,7 +53,7 @@ class UseContactPrimaryController @Inject() (
   formProvider:              UseContactPrimaryFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UseContactPrimaryView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[Boolean] = formProvider()
@@ -117,9 +117,9 @@ class UseContactPrimaryController @Inject() (
     request.userAnswers
       .get(NominateFilingMemberPage)
       .flatMap { registered =>
-        if (registered) {
+        if registered then {
           request.userAnswers.get(FmRegisteredInUKPage).map { ukBased =>
-            if (!ukBased) {
+            if !ukBased then {
               (for {
                 contactName  <- request.userAnswers.get(FmContactNamePage)
                 contactEmail <- request.userAnswers.get(FmContactEmailPage)
@@ -180,7 +180,7 @@ class UseContactPrimaryController @Inject() (
 
 object UseContactPrimaryController {
   private[controllers] def contactSummaryList(contactName: String, contactEmail: String, contactTel: Option[String])(implicit
-    messages:                                              Messages
+    messages: Messages
   ): SummaryList =
     SummaryListViewModel(
       rows = Seq(

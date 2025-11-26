@@ -42,14 +42,14 @@ class NfmContactNameController @Inject() (
   formProvider:              NfmContactNameFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      NfmContactNameView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(FmRegisteredAddressPage)) {
+    if request.userAnswers.isPageDefined(FmRegisteredAddressPage) then {
       val preparedForm = request.userAnswers.get(FmContactNamePage) match {
         case Some(value) => form.fill(value)
         case None        => form

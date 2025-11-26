@@ -35,7 +35,7 @@ class GroupTerritoriesController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
   sessionRepository:        SessionRepository
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -69,7 +69,7 @@ class GroupTerritoriesController @Inject() (
                   updatedAnswers <- Future.fromTry(userAnswer.set(UpeEqPage, isRegisteringUpe))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield
-                  if (isRegisteringUpe) {
+                  if isRegisteringUpe then {
                     Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
                   } else {
                     Redirect(controllers.eligibility.routes.RegisteringNfmForThisGroupController.onPageLoad)

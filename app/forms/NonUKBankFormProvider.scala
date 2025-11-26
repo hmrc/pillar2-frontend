@@ -53,6 +53,6 @@ class NonUKBankFormProvider @Inject() extends Mappings {
             regexp(Validation.IBANRegex, "repayments.nonUKBank.error.iban.format")
           )
         )
-    )(NonUKBank.apply)(NonUKBank.unapply)
+    )(NonUKBank.apply)(nonUKBank => Some(Tuple.fromProductTyped(nonUKBank)))
   )
 }

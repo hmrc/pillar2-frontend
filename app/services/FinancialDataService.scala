@@ -17,13 +17,13 @@
 package services
 
 import cats.data.{Validated, ValidatedNec}
-import cats.syntax.apply._
-import cats.syntax.functorFilter._
-import cats.syntax.option._
-import cats.syntax.validated._
+import cats.syntax.apply.*
+import cats.syntax.functorFilter.*
+import cats.syntax.option.*
+import cats.syntax.validated.*
 import connectors.FinancialDataConnector
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
-import models.financialdata._
 import models.subscription.AccountingPeriod
 import play.api.Logging
 import services.FinancialDataService.IgnoredEtmpTransaction.{DidNotPassFilter, RequiredValueMissing, UnrelatedValue}
@@ -50,7 +50,7 @@ object FinancialDataService extends Logging {
       .map(parseFinancialTransactionToDomain)
       .mapFilter {
         case Validated.Valid(responseTransaction) => Some(responseTransaction)
-        case Validated.Invalid(reasons) =>
+        case Validated.Invalid(reasons)           =>
           logger.debug {
             val concatReasons = reasons.map(_.errorMessage).toNonEmptyList.toList.mkString("", " ", ".")
             s"Dropping financial transaction while mapping to domain: $concatReasons"

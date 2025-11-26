@@ -29,7 +29,7 @@ class TurnOverEligibilityViewSpec extends ViewSpecBase {
   lazy val formProvider: Form[Boolean]           = new TurnOverEligibilityFormProvider()()
   lazy val page:         TurnOverEligibilityView = inject[TurnOverEligibilityView]
   lazy val view:         Document                = Jsoup.parse(page(formProvider)(request, appConfig, messages).toString())
-  lazy val pageTitle: String =
+  lazy val pageTitle:    String                  =
     "Does the group have consolidated annual revenues of €750 million or more in at least 2 of the previous 4 accounting periods?"
 
   "Turn Over Eligibility View" should {

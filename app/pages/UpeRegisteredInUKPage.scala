@@ -28,7 +28,7 @@ case object UpeRegisteredInUKPage extends QuestionPage[Boolean] {
   override def toString: String = "upeRegisteredInUK"
 
   override def cleanup(value: Option[Boolean], userAnswers: UserAnswers): Try[UserAnswers] =
-    if (value.contains(true)) {
+    if value.contains(true) then {
       userAnswers
         .remove(UpeNameRegistrationPage)
         .flatMap(
@@ -42,7 +42,7 @@ case object UpeRegisteredInUKPage extends QuestionPage[Boolean] {
             )
           )
         )
-    } else if (value.contains(false)) {
+    } else if value.contains(false) then {
       userAnswers
         .remove(GrsUpeStatusPage)
         .flatMap(

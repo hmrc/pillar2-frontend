@@ -42,7 +42,7 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
 
     "have a banner with a link to the Homepage" in {
       val className: String = "govuk-header__link govuk-header__service-name"
-      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph" in {
@@ -53,7 +53,7 @@ class BTNAlreadyInPlaceViewSpec extends ViewSpecBase {
       val returnLink: Element = view.getElementsByClass("govuk-body").last().getElementsByTag("a").first()
 
       returnLink.text mustBe "Return to homepage"
-      returnLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
+      returnLink.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
       returnLink.attr("target") mustBe "_self"
     }
 

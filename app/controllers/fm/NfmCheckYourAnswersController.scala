@@ -25,8 +25,8 @@ import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.fmview.FilingMemberCheckYourAnswersView
 
 class NfmCheckYourAnswersController @Inject() (
@@ -36,14 +36,14 @@ class NfmCheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     FilingMemberCheckYourAnswersView,
   countryOptions:           CountryOptions
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
     val fmStatus = request.userAnswers.fmStatus
     val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
-    if (fmStatus == RowStatus.Completed | fmStatus == RowStatus.InProgress & CheckYourAnswersLogic) {
+    if fmStatus == RowStatus.Completed | fmStatus == RowStatus.InProgress & CheckYourAnswersLogic then {
       val list = SummaryListViewModel(
         rows = Seq(
           NfmNameRegistrationSummary.row(request.userAnswers),

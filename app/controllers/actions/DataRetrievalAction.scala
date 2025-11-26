@@ -29,7 +29,7 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject() (
-  val userAnswersConnectors:     UserAnswersConnectors
+  val userAnswersConnectors: UserAnswersConnectors
 )(implicit val executionContext: ExecutionContext)
     extends DataRetrievalAction
     with Logging {

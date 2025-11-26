@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
@@ -45,7 +45,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-  def application: Application = applicationBuilder(Some(defaultUa)).build()
+  def application:         Application = applicationBuilder(Some(defaultUa)).build()
   def applicationOverride: Application = {
     when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
@@ -67,15 +67,14 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
     ) ++ alterations
 
     FakeRequest(POST, controllers.registration.routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
-      .withFormUrlEncodedBody(address.toSeq: _*)
+      .withFormUrlEncodedBody(address.toSeq*)
   }
 
   "UpeRegisteredAddressController" when {
 
     ".onPageLoad" should {
 
-      "return OK and the correct view for a GET with no previous answer" in {
-
+      "return OK and the correct view for a GET with no previous answer" in
         running(application) {
           val result = route(application, getRequest).value
           status(result) mustEqual OK
@@ -87,7 +86,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
           contentAsString(result) must include("Region (optional)")
           contentAsString(result) must include("Enter text and then choose from the list.")
         }
-      }
 
       "return OK and the correct view for a GET with previous answers with" when {
 
@@ -100,9 +98,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) must include("1 drive")
-            contentAsString(result) must include("la la land")
-            contentAsString(result) must include("m19hgs")
+            contentAsString(result)                       must include("1 drive")
+            contentAsString(result)                       must include("la la land")
+            contentAsString(result)                       must include("m19hgs")
             contentAsString(result).replaceAll("\\s", "") must include(
               """<option value="GB" selected>United Kingdom</option>""".replaceAll("\\s", "")
             )
@@ -118,9 +116,9 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
-            contentAsString(result) must include("132 My Street")
-            contentAsString(result) must include("Kingston")
-            contentAsString(result) must include("12401")
+            contentAsString(result)                       must include("132 My Street")
+            contentAsString(result)                       must include("Kingston")
+            contentAsString(result)                       must include("12401")
             contentAsString(result).replaceAll("\\s", "") must include(
               """<option value="US" selected>United States of America</option>""".replaceAll("\\s", "")
             )
@@ -130,15 +128,13 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
       "include/not include UK in country list based on user answer in UpeRegisteredInUKPage" should {
 
-        "include UK if UpeRegisteredInUKPage is true" in {
-
+        "include UK if UpeRegisteredInUKPage is true" in
           running(application) {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
             contentAsString(result).replaceAll("\\s", "") must include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
-        }
 
         "not include UK if UpeRegisteredInUKPage is false" in {
 
@@ -166,8 +162,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
       "in a form with errors, include/not include UK in country list based on previous answers" should {
 
-        "include UK if UpeRegisteredInUKPage is true" in {
-
+        "include UK if UpeRegisteredInUKPage is true" in
           running(application) {
             val result = route(application, postRequest("postalCode" -> textOver35Chars)).value
 
@@ -175,7 +170,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
               """<option value="GB" selected>United Kingdom</option>""".replaceAll("\\s", "")
             )
           }
-        }
 
         "not include UK if UpeRegisteredInUKPage is false" in {
 
@@ -199,20 +193,19 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
         }
       }
 
-      "redirect to next page and status should be OK if valid data is used when country code is GB" in {
+      "redirect to next page and status should be OK if valid data is used when country code is GB" in
         running(applicationOverride) {
           val result = route(applicationOverride, postRequest()).value
 
           status(result) mustEqual SEE_OTHER
           redirectLocation(result).value mustEqual controllers.registration.routes.UpeContactNameController.onPageLoad(NormalMode).url
         }
-      }
 
       "return errors if invalid data is submitted" when {
 
         "a UK address is submitted" when {
 
-          "empty form" in {
+          "empty form" in
             running(application) {
               val result = route(
                 application,
@@ -231,9 +224,8 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Enter the town or city")
               contentAsString(result) must include("Enter a full UK postcode")
             }
-          }
 
-          "invalid length" in {
+          "invalid length" in
             running(application) {
               val result = route(
                 application,
@@ -254,12 +246,10 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Region must be 35 characters or less")
               contentAsString(result) must include("Enter a full UK postcode")
             }
-          }
         }
 
         "a non-UK address is submitted" when {
-          "empty form" in {
-
+          "empty form" in
             running(application) {
               val result = route(
                 application,
@@ -278,9 +268,8 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Enter the town or city")
               contentAsString(result) must include("Enter the postcode")
             }
-          }
 
-          "invalid length" in {
+          "invalid length" in
             running(application) {
               val result = route(
                 application,
@@ -301,7 +290,6 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Region must be 35 characters or less")
               contentAsString(result) must include("Postcode must be 10 characters or less")
             }
-          }
         }
       }
     }

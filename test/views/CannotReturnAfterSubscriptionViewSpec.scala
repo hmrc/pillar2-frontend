@@ -49,7 +49,7 @@ class CannotReturnAfterSubscriptionViewSpec extends ViewSpecBase {
 
       val link = linkSection.getElementsByClass("govuk-link").first()
       link.text() mustBe "report and manage your Pillar 2 Top-up Taxes."
-      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
+      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }
 
     "not display back link" in {

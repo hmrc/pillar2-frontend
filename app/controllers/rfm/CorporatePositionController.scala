@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmCorporatePositionFormProvider
 import models.Mode
 import models.rfm.CorporatePosition
@@ -46,7 +46,7 @@ class CorporatePositionController @Inject() (
   navigator:                        ReplaceFilingMemberNavigator,
   val controllerComponents:         MessagesControllerComponents,
   view:                             CorporatePositionView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

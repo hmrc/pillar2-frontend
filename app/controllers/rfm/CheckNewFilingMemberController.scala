@@ -31,7 +31,7 @@ class CheckNewFilingMemberController @Inject() (
   @Named("RfmIdentifier") identify: IdentifierAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             CheckNewFilingMemberView
-)(implicit appConfig:               FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

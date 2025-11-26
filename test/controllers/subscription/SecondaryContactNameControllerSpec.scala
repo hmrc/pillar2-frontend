@@ -26,7 +26,7 @@ import pages.{SubAddSecondaryContactPage, SubPrimaryContactNamePage, SubSecondar
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.SecondaryContactNameView
 
 import scala.concurrent.Future

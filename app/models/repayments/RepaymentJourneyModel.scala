@@ -20,7 +20,7 @@ import cats.data.EitherNec
 import cats.implicits.catsSyntaxTuple9Parallel
 import models.UkOrAbroadBankAccount.{ForeignBankAccount, UkBankAccount}
 import models.{UkOrAbroadBankAccount, UserAnswers}
-import pages._
+import pages.*
 import queries.Query
 
 final case class RepaymentJourneyModel(

@@ -18,10 +18,10 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.AddSecondaryContactFormProvider
 import navigation.AmendSubscriptionNavigator
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
@@ -42,7 +42,7 @@ class AddSecondaryContactController @Inject() (
   navigator:                              AmendSubscriptionNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   AddSecondaryContactView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

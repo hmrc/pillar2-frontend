@@ -29,8 +29,8 @@ import java.time.{LocalDate, ZonedDateTime}
 
 class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissionsDataFixture {
 
-  lazy val page: SubmissionHistoryView = inject[SubmissionHistoryView]
-  lazy val organisationView: Document =
+  lazy val page:             SubmissionHistoryView = inject[SubmissionHistoryView]
+  lazy val organisationView: Document              =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = false)(request, appConfig, messages).toString())
   lazy val agentView: Document =
     Jsoup.parse(page(allFulfilledResponse.accountingPeriodDetails, isAgent = true)(request, appConfig, messages).toString())
@@ -51,7 +51,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     }
 
     "have a banner with a link to the Homepage" in {
-      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      organisationView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph detailing submission details" in {
@@ -99,7 +99,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       organisationViewParagraphs.get(3).text mustBe "Information on your group’s due and overdue returns."
       organisationViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
       organisationViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
   }
 
@@ -107,7 +107,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
     val agentViewParagraphs: Elements = agentView.getElementsByTag("p")
 
     "have a banner with a link to the Homepage" in {
-      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad.url
+      agentView.getElementsByClass(bannerClassName).attr("href") mustBe routes.HomepageController.onPageLoad().url
     }
 
     "have a paragraph detailing submission details" in {
@@ -121,7 +121,7 @@ class SubmissionHistoryViewSpec extends ViewSpecBase with ObligationsAndSubmissi
       agentViewParagraphs.get(3).text mustBe "Information on your client’s due and overdue returns."
       agentViewParagraphs.get(3).getElementsByTag("a").text mustBe "due and overdue returns"
       agentViewParagraphs.get(3).getElementsByTag("a").attr("href") mustBe
-        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad.url
+        controllers.dueandoverduereturns.routes.DueAndOverdueReturnsController.onPageLoad().url
     }
   }
 }

@@ -26,7 +26,7 @@ import pages.RfmRegistrationDatePage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.GroupRegistrationDateReportView
 
 import java.time.LocalDate
@@ -55,7 +55,7 @@ class GroupRegistrationDateReportControllerSpec extends SpecBase {
 
     "must return OK and the correct view for a GET if page has previously been answered" in {
 
-      val ua = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
+      val ua          = emptyUserAnswers.setOrException(RfmRegistrationDatePage, startDate)
       val application = applicationBuilder(Some(ua))
         .build()
 

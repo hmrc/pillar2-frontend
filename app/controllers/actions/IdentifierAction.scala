@@ -21,11 +21,11 @@ import config.FrontendAppConfig
 import controllers.routes
 import models.requests.IdentifierRequest
 import play.api.Logging
-import play.api.mvc.Results._
-import play.api.mvc._
+import play.api.mvc.*
+import play.api.mvc.Results.*
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.v2.Retrievals
 import uk.gov.hmrc.auth.core.retrieve.~
 import uk.gov.hmrc.http.HeaderCarrier
@@ -39,9 +39,9 @@ trait IdentifierAction
     with ActionFunction[Request, IdentifierRequest]
 
 class AuthenticatedIdentifierAction @Inject() (
-  override val authConnector:    AuthConnector,
-  config:                        FrontendAppConfig,
-  val parser:                    BodyParsers.Default
+  override val authConnector: AuthConnector,
+  config:                     FrontendAppConfig,
+  val parser:                 BodyParsers.Default
 )(implicit val executionContext: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
@@ -73,7 +73,7 @@ class AuthenticatedIdentifierAction @Inject() (
         case _ ~ _ ~ Some(Organisation) ~ _ ~ _ => Future.successful(Left(Redirect(routes.UnauthorisedWrongRoleController.onPageLoad)))
         case _ ~ _ ~ Some(Individual) ~ _ ~ _   => Future.successful(Left(Redirect(routes.UnauthorisedIndividualAffinityController.onPageLoad)))
         case _ ~ _ ~ Some(Agent) ~ _ ~ _        => Future.successful(Left(Redirect(routes.UnauthorisedAgentAffinityController.onPageLoad)))
-        case _ =>
+        case _                                  =>
           Future.successful(Left(Redirect(routes.UnauthorisedController.onPageLoad)))
       } recover {
       case _: NoActiveSession =>

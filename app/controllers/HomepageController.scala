@@ -20,20 +20,20 @@ import cats.data.OptionT
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import models.DueAndOverdueReturnBannerScenario._
-import models.financialdata.PaymentState._
+import models.DueAndOverdueReturnBannerScenario.*
+import models.financialdata.PaymentState.*
 import models.financialdata.{FinancialData, PaymentState}
-import models.obligationsandsubmissions._
+import models.obligationsandsubmissions.*
 import models.requests.OptionalDataRequest
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
 import models.subscription.{AccountStatus, ReadSubscriptionRequestParameters, SubscriptionData}
-import models.{DueAndOverdueReturnBannerScenario, _}
-import pages._
+import models.{DueAndOverdueReturnBannerScenario, *}
+import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc._
+import play.api.mvc.*
 import repositories.SessionRepository
-import services._
+import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
@@ -78,7 +78,7 @@ class HomepageController @Inject() (
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
         updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
         _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
-        result <-
+        result          <-
           OptionT.liftF {
             subscriptionService
               .maybeReadSubscription(referenceNumber)
@@ -98,15 +98,15 @@ class HomepageController @Inject() (
     }
 
   private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
-    request:                                    OptionalDataRequest[_],
-    hc:                                         HeaderCarrier
+    request: OptionalDataRequest[?],
+    hc:      HeaderCarrier
   ): Future[Result] = {
     val accountStatus = subscriptionData.accountStatus.getOrElse(ActiveAccount)
     sessionRepository.get(request.userId).flatMap { maybeUserAnswers =>
       maybeUserAnswers.getOrElse(UserAnswers(request.userId))
       for {
         obligationsResponse <- osService.handleData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
-        financialData <-
+        financialData       <-
           financialDataService.retrieveFinancialData(plrReference, LocalDate.now().minusYears(SubmissionAccountingPeriods), LocalDate.now())
       } yield {
         val hasReturnsUnderEnquiry = obligationsResponse.accountingPeriodDetails.exists(_.underEnquiry)
@@ -140,7 +140,7 @@ class HomepageController @Inject() (
   def getDueOrOverdueReturnsStatus(obligationsAndSubmissions: ObligationsAndSubmissionsSuccess): Option[DueAndOverdueReturnBannerScenario] = {
 
     def periodStatus(period: AccountingPeriodDetails): Option[DueAndOverdueReturnBannerScenario] =
-      if (period.obligations.isEmpty) {
+      if period.obligations.isEmpty then {
         None
       } else {
         val uktrObligation:       Option[Obligation] = period.uktrObligation

@@ -37,7 +37,7 @@ class RegistrationConfirmationController @Inject() (
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationConfirmationView
-)(implicit ec:              ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -45,7 +45,7 @@ class RegistrationConfirmationController @Inject() (
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
-        pillar2Id <- Pillar2Reference
+        pillar2Id  <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
         mneOrDom              <- userAnswer.get(SubMneOrDomesticPage)
