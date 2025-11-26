@@ -289,8 +289,8 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
 
         "show the agent-specific submission history description" in {
           val submissionHistoryParagraph: Element =
-            view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
-          submissionHistoryParagraph.text mustBe "You can find full details of your client’s submitted returns on the submission history page."
+            view.select("p.govuk-body").stream.filter(p => p.text.contains("submission and submission amendment")).findFirst().get()
+          submissionHistoryParagraph.text mustBe "Details of submission and submission amendment dates."
         }
       }
     }
