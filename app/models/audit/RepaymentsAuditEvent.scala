@@ -18,7 +18,7 @@ package models.audit
 
 import models.UkOrAbroadBankAccount
 import models.repayments.{BankAccountDetails, NonUKBank}
-import play.api.libs.json._
+import play.api.libs.json.*
 
 case class RepaymentsAuditEvent(
   refundAmount:              BigDecimal,

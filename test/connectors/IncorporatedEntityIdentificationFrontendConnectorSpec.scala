@@ -21,9 +21,9 @@ import helpers.ViewInstances
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, IncorporatedEntityRegistrationData}
 import models.{NormalMode, UserType}
-import org.mockito.ArgumentMatchers.{any, eq => Meq}
+import org.mockito.ArgumentMatchers.{any, eq as Meq}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.StringContextOps
 

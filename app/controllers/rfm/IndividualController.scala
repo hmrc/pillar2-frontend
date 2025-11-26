@@ -27,7 +27,7 @@ import javax.inject.Inject
 class IndividualController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     IndividualView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

@@ -21,7 +21,7 @@ object Validation {
     """^(?!\.)("([^"\r\\]|\\["\r\\])*"|([-a-zA-Z0-9!#$%&'*+/=?^_`{|}~]|(?<!\.)\.)*)(?<!\.)@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$"""
   final val GroupIdRegex:           String = "^X[A-Z]PLR[0-9]{10}$"
   final val RegistrationPhoneRegex: String = """^[A-Z0-9 )/(\-*#+]+$"""
-  final val PhoneRegex: String =
+  final val PhoneRegex:             String =
     "^(?:(?:\\(?(?:00|\\+)([1-4]\\d\\d|[1-9]\\d?)\\)?)?[-. /]?)?((?:\\(?\\d{1,}\\)?[-. /]?){0,})(?:[-. /]?(?:#|ext\\.?|extension|x)[-. /]?(\\d+))?$"
   final val BICSwiftRegex:             String = "^[A-Z]{6}[A-Z0-9]{2}([A-Z0-9]{3})?$"
   final val IBANRegex:                 String = "^[A-Z]{2}[0-9]{2}[0-9A-Z]{10,30}$"

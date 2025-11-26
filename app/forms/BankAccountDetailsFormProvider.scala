@@ -56,6 +56,6 @@ class BankAccountDetailsFormProvider @Inject() extends Mappings {
               regexp(Validation.AccountNumberRegex, "repayments.bankAccountDetails.accountNumberFormatError")
             )
           )
-    )(BankAccountDetails.apply)(BankAccountDetails.unapply)
+    )(BankAccountDetails.apply)(bankAccountDetails => Some(Tuple.fromProductTyped(bankAccountDetails)))
   )
 }

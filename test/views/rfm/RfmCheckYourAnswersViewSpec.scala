@@ -25,7 +25,7 @@ import org.mockito.Mockito.when
 import pages.{RfmNameRegistrationPage, RfmRegisteredAddressPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.checkAnswers.{RfmNameRegistrationSummary, RfmRegisteredAddressSummary}
-import viewmodels.govuk.summarylist._
+import viewmodels.govuk.summarylist.*
 import views.html.rfm.RfmCheckYourAnswersView
 
 class RfmCheckYourAnswersViewSpec extends ViewSpecBase {

@@ -20,14 +20,13 @@ import base.SpecBase
 import forms.UkOrAbroadBankAccountFormProvider
 import models.{NormalMode, UkOrAbroadBankAccount, UserAnswers}
 import navigation.RepaymentNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.UkOrAbroadBankAccountPage
 import play.api.inject.bind
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import views.html.repayments.UkOrAbroadBankAccountView
 

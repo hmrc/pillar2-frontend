@@ -26,7 +26,7 @@ import pages.UpeNameRegistrationPage
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
@@ -45,7 +45,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
       }
     }
     "return OK and the correct view for a GET with no previous answer" in {
-      val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
+      val ua          = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 
@@ -58,7 +58,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
     }
 
     "must return OK and the correct view for a GET if page previously been answered" in {
-      val ua = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
+      val ua          = emptyUserAnswers.set(UpeNameRegistrationPage, "company").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -82,7 +82,7 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if invalid post code is used  when country code is GB" in {
       val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Alex").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
+      val application           = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
@@ -107,14 +107,14 @@ class UpeUKAddressControllerSpec extends SpecBase {
 
     "display error page and status should be Bad request if address line1 is mora than 35 characters" in {
       val userAnswersWitNameReg = emptyUserAnswers.set(UpeNameRegistrationPage, "Alex").success.value
-      val application = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
+      val application           = applicationBuilder(userAnswers = Some(userAnswersWitNameReg))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
 
       running(application) {
         when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val badHouse = "27 house" * 120
-        val request =
+        val request  =
           FakeRequest(POST, routes.UpeRegisteredAddressController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(
               (

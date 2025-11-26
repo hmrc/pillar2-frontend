@@ -21,6 +21,7 @@ import models.InternalIssueError
 import models.registration.RegistrationWithoutIDResponse
 import play.api.Logging
 import play.api.libs.json.Json
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
@@ -32,7 +33,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
 class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClientV2)(
-  implicit ec:                                                    ExecutionContext
+  implicit ec: ExecutionContext
 ) extends Logging {
   private val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
   private val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"

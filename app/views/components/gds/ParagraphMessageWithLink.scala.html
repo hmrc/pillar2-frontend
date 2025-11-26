@@ -27,4 +27,4 @@
    linkFullStop: Boolean = false
 )
 
-<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".")} @message2.map{message => @Html(message)}</p>
+<p class="@classes"> @message1.map{message => @Html(message) }  <a class="@linkClass" href="@linkUrl" rel="@linkRel" target="@target">@linkMessage</a>@{if(linkFullStop)(".") else ("")} @message2.map{message => @Html(message)}</p>

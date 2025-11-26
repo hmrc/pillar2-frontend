@@ -22,12 +22,12 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object ContactNameComplianceSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubPrimaryContactNamePage).map { answer =>
       val value = ValueViewModel(HtmlContent(HtmlFormat.escape(answer)))
       SummaryListRowViewModel(
@@ -36,7 +36,7 @@ object ContactNameComplianceSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.ContactNameComplianceController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("contactNameCompliance.change.hidden"))
         )

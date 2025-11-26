@@ -20,7 +20,7 @@ import base.SpecBase
 import com.typesafe.config.ConfigException
 import mapping.Constants.English
 import models.grs.EntityType
-import org.mockito.MockitoSugar
+import org.scalatestplus.mockito.MockitoSugar
 import play.api.Application
 import utils.InputOption
 

@@ -31,14 +31,14 @@ trait SelectFluency {
   object SelectViewModel extends ErrorMessageAwareness {
 
     def apply(
-      field:             Field,
-      items:             Seq[SelectItem],
-      label:             Label
+      field: Field,
+      items: Seq[SelectItem],
+      label: Label
     )(implicit messages: Messages): Select =
       Select(
         id = field.id,
         name = field.name,
-        items = items map (item => item copy (selected = field.value.isDefined && field.value == item.value)),
+        items = items map (item => item.copy(selected = field.value.isDefined && field.value == item.value)),
         label = label,
         errorMessage = errorMessage(field)
       )
@@ -47,19 +47,19 @@ trait SelectFluency {
   implicit class FluentSelect(select: Select) {
 
     def withHint(hint: Hint): Select =
-      select copy (hint = Some(hint))
+      select.copy(hint = Some(hint))
 
     def describedBy(value: String): Select =
-      select copy (describedBy = Some(value))
+      select.copy(describedBy = Some(value))
 
     def withFormGroupClasses(classes: String): Select =
-      select copy (formGroup = FormGroup(classes = Some(classes)))
+      select.copy(formGroup = FormGroup(classes = Some(classes)))
 
     def withCssClass(newClass: String): Select =
-      select copy (classes = s"${select.classes} $newClass")
+      select.copy(classes = s"${select.classes} $newClass")
 
     def withAttribute(attribute: (String, String)): Select =
-      select copy (attributes = select.attributes + attribute)
+      select.copy(attributes = select.attributes + attribute)
 
   }
 
@@ -75,9 +75,9 @@ trait SelectFluency {
   implicit class FluentSelectItem(item: SelectItem) {
 
     def disabled: SelectItem =
-      item copy (disabled = true)
+      item.copy(disabled = true)
 
     def withAttribute(attribute: (String, String)): SelectItem =
-      item copy (attributes = item.attributes + attribute)
+      item.copy(attributes = item.attributes + attribute)
   }
 }

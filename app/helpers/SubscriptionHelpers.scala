@@ -17,7 +17,7 @@
 package helpers
 
 import models.{EnrolmentInfo, UserAnswers}
-import pages._
+import pages.*
 import utils.RowStatus
 
 trait SubscriptionHelpers {
@@ -210,20 +210,19 @@ trait SubscriptionHelpers {
       contactsFinalStatus == RowStatus.Completed
 
   def finalCYAStatus(upe: RowStatus, nfm: RowStatus, groupDetail: RowStatus, contactDetail: RowStatus): RowStatus =
-    if (
-      upe == RowStatus.Completed &
+    if upe == RowStatus.Completed &
         nfm == RowStatus.Completed &
         groupDetail == RowStatus.Completed &
         contactDetail == RowStatus.Completed
-    ) {
+    then {
       RowStatus.NotStarted
     } else { RowStatus.CannotStartYet }
 
   def getFmSafeID: Option[String] =
     get(NominateFilingMemberPage).flatMap(nominated =>
-      if (nominated) {
+      if nominated then {
         get(FmRegisteredInUKPage).flatMap { ukBased =>
-          if (ukBased) get(FmSafeIDPage) else get(FmNonUKSafeIDPage)
+          if ukBased then get(FmSafeIDPage) else get(FmNonUKSafeIDPage)
         }
       } else {
         None
@@ -232,21 +231,20 @@ trait SubscriptionHelpers {
 
   def getUpeSafeID: Option[String] =
     get(UpeRegisteredInUKPage).flatMap { ukBased =>
-      if (ukBased) get(UpeRegInformationPage).map(regInfo => regInfo.safeId) else get(UpeNonUKSafeIDPage)
+      if ukBased then get(UpeRegInformationPage).map(regInfo => regInfo.safeId) else get(UpeNonUKSafeIDPage)
     }
 
   def createEnrolmentInfo(plpID: String): EnrolmentInfo =
     get(UpeRegisteredInUKPage)
       .flatMap { ukBased =>
-        if (ukBased) {
+        if ukBased then {
           get(UpeRegInformationPage)
             .map { regInfo =>
               EnrolmentInfo(ctUtr = Some(regInfo.utr), crn = Some(regInfo.crn), plrId = plpID)
             }
         } else {
-          get(UpeRegisteredAddressPage).map(address =>
-            EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID)
-          )
+          get(UpeRegisteredAddressPage)
+            .map(address => EnrolmentInfo(nonUkPostcode = Some(address.postalCode), countryCode = Some(address.countryCode), plrId = plpID))
         }
       }
       .getOrElse(EnrolmentInfo(plrId = plpID))

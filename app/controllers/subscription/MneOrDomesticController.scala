@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.MneOrDomesticFormProvider
 import models.{MneOrDomestic, Mode}
 import navigation.SubscriptionNavigator
@@ -44,14 +44,14 @@ class MneOrDomesticController @Inject() (
   formProvider:              MneOrDomesticFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      MneOrDomesticView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[MneOrDomestic] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.fmStatus == RowStatus.Completed) {
+    if request.userAnswers.fmStatus == RowStatus.Completed then {
       val preparedForm = request.userAnswers.get(SubMneOrDomesticPage) match {
         case Some(value) => form.fill(value)
         case None        => form

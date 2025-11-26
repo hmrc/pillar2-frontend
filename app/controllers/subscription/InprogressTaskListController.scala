@@ -25,7 +25,7 @@ import views.html.IncompleteSubscriptionDataView
 import javax.inject.Inject
 
 class InprogressTaskListController @Inject() (val controllerComponents: MessagesControllerComponents, view: IncompleteSubscriptionDataView)(implicit
-  appConfig:                                                            FrontendAppConfig
+  appConfig: FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 

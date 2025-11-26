@@ -22,9 +22,9 @@ import models.grs.EntityType.LimitedLiabilityPartnership
 import models.grs.{GrsCreateRegistrationResponse, OptServiceName, ServiceName}
 import models.registration.{IncorporatedEntityCreateRegistrationRequest, PartnershipEntityRegistrationData}
 import models.{NormalMode, UserType}
-import org.mockito.ArgumentMatchers.{any, eq => Meq}
+import org.mockito.ArgumentMatchers.{any, eq as Meq}
 import org.mockito.Mockito.{verify, when}
-import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
+import org.scalatest.matchers.should.Matchers.*
 import play.api.libs.json.Json
 import uk.gov.hmrc.http.StringContextOps
 
@@ -33,7 +33,7 @@ import scala.concurrent.Future
 class PartnershipEntityIdentificationFrontendConnectorSpec extends MockitoStubUtils with ViewInstances {
   private val validGrsCreateRegistrationResponse = new GrsCreateRegistrationResponse("http://journey-start")
   val apiUrl: String = s"${applicationConfig.partnershipEntityIdentificationFrontendBaseUrl}/partnership-identification/api"
-  val connector = new PartnershipIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient, mockAuditService)
+  val connector                                 = new PartnershipIdentificationFrontendConnectorImpl(applicationConfig, mockHttpClient)
   private val validRegisterWithIdResponseForLLP = Json.parse(validRegistrationWithIdResponseForLLP).as[PartnershipEntityRegistrationData]
   val serviceName: ServiceName = ServiceName(OptServiceName("Report Pillar 2 Top-up Taxes"))
 

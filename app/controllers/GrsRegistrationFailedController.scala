@@ -32,7 +32,7 @@ class GrsRegistrationFailedController @Inject() (
   upeView:                             RegistrationFailedUpeView,
   nfmView:                             RegistrationFailedNfmView,
   rfmView:                             RegistrationFailedRfmView
-)(implicit appConfig:                  FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

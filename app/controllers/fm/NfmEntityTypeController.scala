@@ -18,7 +18,7 @@ package controllers.fm
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions._
+import controllers.actions.*
 import forms.NfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.NfmEntityTypeView
@@ -46,7 +46,7 @@ class NfmEntityTypeController @Inject() (
   formProvider:                                      NfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              NfmEntityTypeView
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -60,7 +60,7 @@ class NfmEntityTypeController @Inject() (
         request.userAnswers
           .get(FmEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType.toString == EntityType.Other.toString) { // TODO Check logic - would have to be registered in the UK to get to this page
+            if !ukBased & entityType.toString == EntityType.Other.toString then { // TODO Check logic - would have to be registered in the UK to get to this page
               for {
                 updatedAnswers <- Future.fromTry(
                                     request.userAnswers.set(FmRegisteredInUKPage, true)
@@ -94,9 +94,9 @@ class NfmEntityTypeController @Inject() (
             case EntityType.LimitedLiabilityPartnership =>
               logger.info("Filing Member- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
               for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                updatedAnswers   <- Future.fromTry(request.userAnswers.set(FmRegisteredInUKPage, true))
+                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(FmEntityTypePage, value))
+                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Fm, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))

@@ -17,14 +17,14 @@
 package controllers.btn
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import pages.BTNChooseAccountingPeriodPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils._
+import utils.DateTimeUtils.*
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -39,7 +39,7 @@ class BTNConfirmationController @Inject() (
   view:                                   BTNConfirmationView,
   sessionRepository:                      SessionRepository,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

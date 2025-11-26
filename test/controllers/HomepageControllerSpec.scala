@@ -20,25 +20,25 @@ import base.SpecBase
 import connectors.FinancialDataConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import generators.ModelGenerators
-import models.DueAndOverdueReturnBannerScenario._
+import models.*
+import models.DueAndOverdueReturnBannerScenario.*
 import models.OutstandingPaymentBannerScenario.{Outstanding, Paid}
-import models._
+import models.financialdata.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
-import models.financialdata._
 import models.obligationsandsubmissions.ObligationStatus
+import models.subscription.*
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
-import models.subscription._
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.{FinancialDataService, ObligationsAndSubmissionsService, SubscriptionService}
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
 import utils.DateTimeUtils.LocalDateOps
@@ -90,7 +90,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
@@ -133,7 +133,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           )
           .build()
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
         when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
@@ -158,7 +158,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         .thenReturn(Future.successful(None))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
@@ -187,7 +187,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.RegistrationInProgressController.onPageLoad("XMPLR0123456789").url
@@ -204,7 +204,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller: HomepageController = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Open,
@@ -306,7 +306,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Open,
@@ -344,7 +344,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Open,
@@ -382,7 +382,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Fulfilled,
@@ -534,7 +534,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Fulfilled,
@@ -604,7 +604,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val futureDueDate = LocalDate.now().plusDays(7)
-        val obligations = Seq(
+        val obligations   = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.GIR,
             status = ObligationStatus.Open,
@@ -770,7 +770,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
 
         val pastDueDate          = LocalDate.now().minusDays(7)
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
-        val obligations = Seq(
+        val obligations          = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Fulfilled,
@@ -820,7 +820,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(70)
-        val obligations = Seq(
+        val obligations          = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Fulfilled,
@@ -870,7 +870,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
-        val obligations = Seq(
+        val obligations          = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.UKTR,
             status = ObligationStatus.Fulfilled,
@@ -908,7 +908,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         val controller = application.injector.instanceOf[HomepageController]
 
         val recentSubmissionDate = java.time.ZonedDateTime.now().minusDays(30)
-        val obligations = Seq(
+        val obligations          = Seq(
           models.obligationsandsubmissions.Obligation(
             obligationType = models.obligationsandsubmissions.ObligationType.GIR,
             status = ObligationStatus.Fulfilled,
@@ -1012,8 +1012,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
     "return Outstanding when there is an outstanding payment that has exceeded the due date to be made" in {
       val application = applicationBuilder(userAnswers = None, enrolments).build()
       running(application) {
-        val controller  = application.injector.instanceOf[HomepageController]
-        val pastDueDate = LocalDate.now.minusDays(7)
+        val controller         = application.injector.instanceOf[HomepageController]
+        val pastDueDate        = LocalDate.now.minusDays(7)
         val pastDueTransaction =
           notYetDueFinancialTransaction.copy(chargeItems = notYetDueFinancialTransaction.chargeItems.copy(earliestDueDate = pastDueDate))
 
@@ -1190,8 +1190,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
   }
 
   "determineBtnBanner" should {
-    val application = applicationBuilder().build()
-    val controller  = application.injector.instanceOf[HomepageController]
+    val application     = applicationBuilder().build()
+    val controller      = application.injector.instanceOf[HomepageController]
     val nonBtnDnaStates = Gen.oneOf(
       Gen.const(DynamicNotificationAreaState.AccruingInterest(100)),
       Gen.const(DynamicNotificationAreaState.OutstandingPayments(100)),

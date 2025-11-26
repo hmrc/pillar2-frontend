@@ -18,7 +18,7 @@ package controllers.eligibility
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.eligibilityview.EligibilityConfirmationView
 
 class EligibilityConfirmationControllerSpec extends SpecBase {

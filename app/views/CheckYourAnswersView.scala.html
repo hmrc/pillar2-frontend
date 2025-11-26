@@ -35,7 +35,7 @@
 @layout(pageTitle = titleNoForm(messages("checkYourAnswers.title"))) {
 
 
-    @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit) {
+    @formHelper(action = controllers.routes.CheckYourAnswersController.onSubmit()) {
 
         @sectionHeader(messages("checkYourAnswers.heading.caption"))
 

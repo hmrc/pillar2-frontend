@@ -17,7 +17,7 @@
 package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import connectors.SubscriptionConnector
-import controllers.actions._
+import controllers.actions.*
 import forms.ContactNameComplianceFormProvider
 import navigation.AmendSubscriptionNavigator
 import pages.SubPrimaryContactNamePage
@@ -41,7 +41,7 @@ class ContactNameComplianceController @Inject() (
   formProvider:                           ContactNameComplianceFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ContactNameComplianceView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[String] = formProvider()

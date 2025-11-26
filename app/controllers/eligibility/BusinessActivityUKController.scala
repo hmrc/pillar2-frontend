@@ -35,7 +35,7 @@ class BusinessActivityUKController @Inject() (
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     BusinessActivityUKView
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -69,7 +69,7 @@ class BusinessActivityUKController @Inject() (
                   updatedAnswers <- Future.fromTry(userAnswer.set(BusinessActivityUKPage, conductsBusinessInUK))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield
-                  if (conductsBusinessInUK) {
+                  if conductsBusinessInUK then {
                     Redirect(controllers.eligibility.routes.TurnOverEligibilityController.onPageLoad)
                   } else {
                     Redirect(controllers.eligibility.routes.KbUKIneligibleController.onPageLoad)

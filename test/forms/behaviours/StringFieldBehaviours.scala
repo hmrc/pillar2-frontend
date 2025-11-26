@@ -21,7 +21,7 @@ import play.api.data.{Form, FormError}
 
 trait StringFieldBehaviours extends FieldBehaviours {
 
-  def fieldWithMaxLength(form: Form[_], fieldName: String, maxLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
+  def fieldWithMaxLength(form: Form[?], fieldName: String, maxLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
     s"not bind strings longer than $maxLength characters" in {
       val gen = generator.getOrElse(stringsLongerThan(maxLength))
       forAll(gen -> "longString") { string =>
@@ -30,7 +30,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
       }
     }
 
-  def fieldWithMinLength(form: Form[_], fieldName: String, minLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
+  def fieldWithMinLength(form: Form[?], fieldName: String, minLength: Int, lengthError: FormError, generator: Option[Gen[String]] = None): Unit =
     s"not bind strings less than $minLength characters" in {
       val gen = generator.getOrElse(stringsShorterThan(minLength))
       forAll(gen -> "shortString") { string =>
@@ -40,21 +40,20 @@ trait StringFieldBehaviours extends FieldBehaviours {
     }
 
   def fieldWithRegex(
-    form:              Form[_],
+    form:              Form[?],
     fieldName:         String,
     regex:             String,
     regexViolationGen: Gen[String],
     regexError:        FormError
   ): Unit =
-    "not bind data violating the regex" in {
+    "not bind data violating the regex" in
       forAll(regexViolationGen) { invalidValue =>
         val result = form.bind(Map(fieldName -> invalidValue)).apply(fieldName)
         result.errors must contain only regexError
       }
-    }
 
   def postcodeField(
-    form:      Form[_],
+    form:      Form[?],
     maxLength: Int
   ): Unit = {
 
@@ -74,7 +73,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
         result.errors must contain only invalidFormatGBError
       }
 
-      "not bind invalid formatted postal code" in {
+      "not bind invalid formatted postal code" in
         forAll(invalidPostcodeGen) { invalidValue =>
           val data = Map(
             countryFieldName  -> "GB",
@@ -83,9 +82,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.value mustBe Some(invalidValue)
         }
-      }
 
-      "not bind postal code exceeding maximum length" in {
+      "not bind postal code exceeding maximum length" in
         forAll(stringsLongerThan(maxLength)) { longPostalCode =>
           val data = Map(
             countryFieldName  -> "GB",
@@ -94,9 +92,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.errors must contain only invalidFormatGBError
         }
-      }
 
-      "bind valid postal code" in {
+      "bind valid postal code" in
         forAll(nonEmptyRegexConformingStringWithMaxLength(POSTCODE_REGEX, maxLength)) { validValue =>
           val data = Map(
             countryFieldName  -> "GB",
@@ -105,7 +102,6 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.value mustBe Some(validValue)
         }
-      }
 
     }
 
@@ -119,7 +115,7 @@ trait StringFieldBehaviours extends FieldBehaviours {
         result.value mustBe Some("")
       }
 
-      "not bind postal code exceeding maximum length" in {
+      "not bind postal code exceeding maximum length" in
         forAll(stringsLongerThan(maxLength)) { longPostalCode =>
           val data = Map(
             countryFieldName  -> "US",
@@ -128,9 +124,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.errors must contain only lengthError
         }
-      }
 
-      "bind postal code even if it violates the postcode regex" in {
+      "bind postal code even if it violates the postcode regex" in
         forAll(invalidPostcodeGen) { invalidValue =>
           val data = Map(
             countryFieldName  -> "US",
@@ -139,9 +134,8 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.value mustBe Some(invalidValue)
         }
-      }
 
-      "bind valid postal code" in {
+      "bind valid postal code" in
         forAll(nonEmptyRegexConformingStringWithMaxLength(POSTCODE_REGEX, maxLength)) { validValue =>
           val data = Map(
             countryFieldName  -> "US",
@@ -150,7 +144,6 @@ trait StringFieldBehaviours extends FieldBehaviours {
           val result = form.bind(data).apply(postcodeFieldName)
           result.value mustBe Some(validValue)
         }
-      }
     }
   }
 }

@@ -17,8 +17,8 @@
 package navigation
 
 import controllers.routes
-import models._
-import pages._
+import models.*
+import pages.*
 import play.api.mvc.Call
 
 import javax.inject.{Inject, Singleton}
@@ -32,8 +32,8 @@ class UltimateParentNavigator @Inject() {
       checkRouteMap(page)(userAnswers)
   }
 
-  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad
-  private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad
+  private lazy val reviewAndSubmitCheckYourAnswers = controllers.routes.CheckYourAnswersController.onPageLoad()
+  private lazy val upeCheckYourAnswers             = controllers.registration.routes.UpeCheckYourAnswersController.onPageLoad()
   private val normalRoutes: Page => UserAnswers => Call = {
     case UpeRegisteredInUKPage    => domesticOrNotRoute
     case UpeNameRegistrationPage  => _ => controllers.registration.routes.UpeRegisteredAddressController.onPageLoad(NormalMode)
@@ -49,7 +49,7 @@ class UltimateParentNavigator @Inject() {
     userAnswers
       .get(UpeRegisteredInUKPage)
       .map { ukBased =>
-        if (ukBased) {
+        if ukBased then {
           controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode)
         } else {
           controllers.registration.routes.UpeNameRegistrationController.onPageLoad(NormalMode)
@@ -61,7 +61,7 @@ class UltimateParentNavigator @Inject() {
     userAnswers
       .get(UpePhonePreferencePage)
       .map { provided =>
-        if (provided) {
+        if provided then {
           controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(NormalMode)
         } else {
           upeCheckYourAnswers
@@ -76,7 +76,7 @@ class UltimateParentNavigator @Inject() {
   }
 
   private def whichCheckYourAnswerPageContact(userAnswers: UserAnswers): Call =
-    if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+    if userAnswers.get(CheckYourAnswersLogicPage).isDefined then {
       reviewAndSubmitCheckYourAnswers
     } else {
       upeCheckYourAnswers
@@ -86,9 +86,9 @@ class UltimateParentNavigator @Inject() {
     userAnswers
       .get(UpePhonePreferencePage)
       .map { nominatedPhoneNumber =>
-        if (nominatedPhoneNumber & userAnswers.get(UpeCapturePhonePage).isEmpty) {
+        if nominatedPhoneNumber & userAnswers.get(UpeCapturePhonePage).isEmpty then {
           controllers.registration.routes.CapturePhoneDetailsController.onPageLoad(CheckMode)
-        } else if (userAnswers.get(CheckYourAnswersLogicPage).isDefined) {
+        } else if userAnswers.get(CheckYourAnswersLogicPage).isDefined then {
           reviewAndSubmitCheckYourAnswers
         } else {
           upeCheckYourAnswers

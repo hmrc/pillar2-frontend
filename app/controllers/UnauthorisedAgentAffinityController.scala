@@ -27,7 +27,7 @@ import javax.inject.Inject
 class UnauthorisedAgentAffinityController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     UnauthorisedAgentView
-)(implicit appConfig:       FrontendAppConfig)
+)(implicit appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

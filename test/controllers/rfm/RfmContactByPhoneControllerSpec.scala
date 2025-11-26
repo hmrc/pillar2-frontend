@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmContactByPhoneView
 
 import scala.concurrent.Future
@@ -62,7 +62,7 @@ class RfmContactByPhoneControllerSpec extends SpecBase {
     }
 
     "send  to recovery page if no name is provided" in {
-      val ua = emptyUserAnswers
+      val ua          = emptyUserAnswers
       val application = applicationBuilder(userAnswers = Some(ua))
         .build()
 

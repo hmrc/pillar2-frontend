@@ -22,9 +22,9 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.SiteChange
-import utils.DateTimeUtils._
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import utils.DateTimeUtils.*
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object SubAccountingPeriodSummary {
 
@@ -32,7 +32,7 @@ object SubAccountingPeriodSummary {
     val startDate: String = accountingPeriod.startDate.toDateFormat
     val endDate:   String = accountingPeriod.endDate.toDateFormat
 
-    if (multipleAccountingPeriods) {
+    if multipleAccountingPeriods then {
       Some(
         SummaryListRowViewModel(
           key = "btn.accountingPeriod.checkYourAnswersLabel",

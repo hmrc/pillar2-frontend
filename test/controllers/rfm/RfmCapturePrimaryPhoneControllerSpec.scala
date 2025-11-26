@@ -26,7 +26,7 @@ import pages.{RfmCapturePrimaryPhonePage, RfmContactByPhonePage, RfmPrimaryConta
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.rfm.RfmCapturePrimaryPhoneView
 
 import scala.concurrent.Future
@@ -81,7 +81,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
     }
 
     "must redirect to next page when valid data is submitted" in {
-      val ua = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
+      val ua          = emptyUserAnswers.set(RfmPrimaryContactNamePage, "sad").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()

@@ -18,7 +18,7 @@ package controllers.registration
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions._
+import controllers.actions.*
 import forms.EntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, NormalMode, UserType}
@@ -28,7 +28,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.EntityTypeView
@@ -46,7 +46,7 @@ class EntityTypeController @Inject() (
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              EntityTypeView
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -60,7 +60,7 @@ class EntityTypeController @Inject() (
         request.userAnswers
           .get(UpeEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType.toString == EntityType.Other.toString) {
+            if !ukBased & entityType.toString == EntityType.Other.toString then {
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -93,9 +93,9 @@ class EntityTypeController @Inject() (
             case EntityType.LimitedLiabilityPartnership =>
               logger.info("UPE- Initialising GRS journey with entity type chosen as Limited Liability Partnership")
               for {
-                updatedAnswers  <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
-                updatedAnswers1 <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
-                _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+                updatedAnswers   <- Future.fromTry(request.userAnswers.set(UpeRegisteredInUKPage, true))
+                updatedAnswers1  <- Future.fromTry(updatedAnswers.set(UpeEntityTypePage, value))
+                _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
                 createJourneyRes <-
                   partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Upe, EntityType.LimitedLiabilityPartnership, mode)
               } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))

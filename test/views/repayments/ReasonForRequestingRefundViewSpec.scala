@@ -49,7 +49,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
 
       "have a banner with a link to the Homepage" in {
         val className: String = "govuk-header__link govuk-header__service-name"
-        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad.url
+        view.getElementsByClass(className).attr("href") mustBe routes.HomepageController.onPageLoad().url
       }
 
       "have a hint description" in {
@@ -90,7 +90,7 @@ class ReasonForRequestingRefundViewSpec extends ViewSpecBase with Generators wit
     }
 
     "form is submitted with value exceeding maximum length" should {
-      val longInput: String = randomAlphaNumericStringGenerator(299)
+      val longInput: String   = randomAlphaNumericStringGenerator(299)
       val errorView: Document = Jsoup.parse(
         page(formProvider().bind(Map("value" -> longInput)), NormalMode)(request, appConfig, messages).toString()
       )

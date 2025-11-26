@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmAddSecondaryContactFormProvider
 import models.Mode
 import navigation.ReplaceFilingMemberNavigator
@@ -41,7 +41,7 @@ class RfmAddSecondaryContactController @Inject() (
   formProvider:                     RfmAddSecondaryContactFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmAddSecondaryContactView
-)(implicit ec:                      ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

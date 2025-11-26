@@ -24,16 +24,16 @@ import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{never, verify, when}
-import pages._
+import pages.*
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
-import views.html._
+import views.html.*
 import views.html.rfm.AgentView
 
 import java.util.UUID
@@ -294,7 +294,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad().url
         verify(mockSessionRepository, never()).set(any())
       }
     }
@@ -323,7 +323,7 @@ class AgentControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad().url
         verify(mockSessionRepository, never()).set(any())
       }
     }
@@ -349,7 +349,7 @@ class AgentControllerSpec extends SpecBase {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad().url
 
         verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
           ua.get(AgentClientPillar2ReferencePage).contains(PlrReference) &&
@@ -361,7 +361,7 @@ class AgentControllerSpec extends SpecBase {
 
     "successfully switch client when agent already has a confirmed client" in {
       val newPlrReference = "XMPLR0012345677"
-      val userAnswer = emptyUserAnswers
+      val userAnswer      = emptyUserAnswers
         .setOrException(AgentClientPillar2ReferencePage, PlrReference)
         .setOrException(UnauthorisedClientPillar2ReferencePage, newPlrReference)
 
@@ -383,7 +383,7 @@ class AgentControllerSpec extends SpecBase {
         val request = FakeRequest(POST, routes.AgentController.onSubmitConfirmClientDetails.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.HomepageController.onPageLoad().url
 
         verify(mockSessionRepository).set(argThat { (ua: UserAnswers) =>
           ua.get(AgentClientPillar2ReferencePage).contains(newPlrReference) &&

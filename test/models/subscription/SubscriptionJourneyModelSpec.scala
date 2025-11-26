@@ -18,12 +18,12 @@ package models.subscription
 
 import base.SpecBase
 import helpers.ViewInstances
-import models._
+import models.*
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import org.scalatest.matchers.must.Matchers
 import org.scalatest.{EitherValues, OptionValues, TryValues}
-import pages._
+import pages.*
 
 import java.time.LocalDate
 
@@ -35,7 +35,7 @@ class SubscriptionJourneyModelSpec extends SpecBase with Matchers with OptionVal
   val startDate:         LocalDate = LocalDate.of(2023, 12, 31)
   val endDate:           LocalDate = LocalDate.of(2025, 12, 31)
   private val accountingPeriod = AccountingPeriod(startDate, endDate, None)
-  private val grsLCResponse = GrsResponse(
+  private val grsLCResponse    = GrsResponse(
     Some(
       IncorporatedEntityRegistrationData(
         companyProfile = CompanyProfile(

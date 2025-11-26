@@ -28,7 +28,7 @@ import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 
 import scala.concurrent.Future
 
@@ -44,7 +44,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
   val textOver35Chars = "ThisAddressIsOverThirtyFiveCharacters"
 
-  def application: Application = applicationBuilder(Some(defaultUa)).build()
+  def application:         Application = applicationBuilder(Some(defaultUa)).build()
   def applicationOverride: Application = applicationBuilder(Some(defaultUa))
     .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
     .build()
@@ -62,22 +62,20 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
     ) ++ alterations
 
     FakeRequest(POST, controllers.fm.routes.NfmRegisteredAddressController.onSubmit(NormalMode).url)
-      .withFormUrlEncodedBody(address.toSeq: _*)
+      .withFormUrlEncodedBody(address.toSeq*)
   }
 
   "NfmRegisteredAddressController" when {
 
     ".onPageLoad" should {
 
-      "return OK and the correct view for a GET if Nfm access is enabled and no previous data is found" in {
-
+      "return OK and the correct view for a GET if Nfm access is enabled and no previous data is found" in
         running(application) {
           val result = route(application, getRequest).value
 
           status(result) mustEqual OK
           contentAsString(result) must include("Name")
         }
-      }
 
       "return OK and the correct view for a GET if Nfm access is enabled and page has previously been answered" in {
         val ua = defaultUa
@@ -96,15 +94,13 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
 
       "include/not include UK in country list based on user answer in NfmUkBasedPage" should {
 
-        "include UK if NfmUkBasedPage is true" in {
-
+        "include UK if NfmUkBasedPage is true" in
           running(application) {
             val result = route(application, getRequest).value
             status(result) mustEqual OK
 
             contentAsString(result).replaceAll("\\s", "") must include("""<option value="GB">United Kingdom</option>""".replaceAll("\\s", ""))
           }
-        }
 
         "not include UK if NfmUkBasedPage is false" in {
 
@@ -178,7 +174,7 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
       "return errors if invalid data is submitted" when {
         "a UK address is submitted" when {
 
-          "empty form" in {
+          "empty form" in
             running(application) {
               val result = route(
                 application,
@@ -197,9 +193,8 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Enter the town or city")
               contentAsString(result) must include("Enter a full UK postcode")
             }
-          }
 
-          "invalid length" in {
+          "invalid length" in
             running(application) {
               val result = route(
                 application,
@@ -220,11 +215,9 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
               contentAsString(result) must include("Region must be 35 characters or less")
               contentAsString(result) must include("Enter a full UK postcode")
             }
-          }
 
           "a non-UK address is submitted" when {
-            "empty form" in {
-
+            "empty form" in
               running(application) {
                 val result = route(
                   application,
@@ -242,9 +235,8 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
                 contentAsString(result) must include("Enter the first line of the address")
                 contentAsString(result) must include("Enter the town or city")
               }
-            }
 
-            "invalid length" in {
+            "invalid length" in
               running(application) {
                 val result = route(
                   application,
@@ -265,7 +257,6 @@ class NfmRegisteredAddressControllerSpec extends SpecBase {
                 contentAsString(result) must include("Region must be 35 characters or less")
                 contentAsString(result) must include("Postcode must be 10 characters or less")
               }
-            }
           }
         }
       }

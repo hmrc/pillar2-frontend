@@ -17,7 +17,6 @@
 package connectors
 
 import base.{SpecBase, WireMockServerHandler}
-import connectors.ObligationsAndSubmissionsConnector
 import play.api.Application
 import play.api.inject.guice.GuiceApplicationBuilder
 

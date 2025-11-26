@@ -18,7 +18,7 @@ package pages
 
 import models.grs.EntityType.UkLimitedCompany
 import models.grs.{GrsRegistrationResult, RegistrationStatus}
-import models.registration._
+import models.registration.*
 import models.{NonUKAddress, UserAnswers}
 import pages.behaviours.PageBehaviours
 import utils.RowStatus
@@ -67,9 +67,8 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
 
   }
 
-  "must remove FM data when DuplicateSafeIdPage is true" in {
-
-    forAll { userAnswers: UserAnswers =>
+  "must remove FM data when DuplicateSafeIdPage is true" in
+    forAll { (userAnswers: UserAnswers) =>
       val result = userAnswers
         .set(NominateFilingMemberPage, true)
         .success
@@ -124,11 +123,9 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
       result.get(FmSafeIDPage) mustNot be(defined)
       result.get(DuplicateSafeIdPage) mustBe Some(true)
     }
-  }
 
-  "must remove FM data and set NominateFilingMemberPage false when DuplicateSafeIdPage is false" in {
-
-    forAll { userAnswers: UserAnswers =>
+  "must remove FM data and set NominateFilingMemberPage false when DuplicateSafeIdPage is false" in
+    forAll { (userAnswers: UserAnswers) =>
       val result = userAnswers
         .set(NominateFilingMemberPage, true)
         .success
@@ -184,6 +181,5 @@ class DuplicateSafeIdPageSpec extends PageBehaviours {
       result.get(DuplicateSafeIdPage) mustBe Some(false)
       result.get(NominateFilingMemberPage) mustBe Some(false)
     }
-  }
 
 }

@@ -17,7 +17,7 @@
 package navigation
 
 import models.{Mode, UserAnswers}
-import pages._
+import pages.*
 import play.api.mvc.Call
 
 class FakeNavigator(desiredRoute: Call) extends UltimateParentNavigator {

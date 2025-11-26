@@ -18,7 +18,7 @@ package models.audit
 
 import models.NonUKAddress
 import models.rfm.CorporatePosition
-import play.api.libs.json._
+import play.api.libs.json.*
 
 import java.time.LocalDate
 

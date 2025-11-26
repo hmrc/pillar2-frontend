@@ -51,7 +51,7 @@ class RegisteringNfmForThisGroupController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     RegisteringNfmForThisGroupView,
   sessionRepository:        SessionRepository
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -85,7 +85,7 @@ class RegisteringNfmForThisGroupController @Inject() (
                   updatedAnswers <- Future.fromTry(userAnswer.set(NfmEqPage, isRegisteringFilingMember))
                   _              <- sessionRepository.set(updatedAnswers)
                 } yield
-                  if (isRegisteringFilingMember) {
+                  if isRegisteringFilingMember then {
                     Redirect(controllers.eligibility.routes.BusinessActivityUKController.onPageLoad)
                   } else {
                     Redirect(controllers.eligibility.routes.KbMnIneligibleController.onPageLoad)

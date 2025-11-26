@@ -22,10 +22,10 @@ import models.{InternalIssueError, NoResultFound, NormalMode}
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages._
+import pages.*
 import play.api.inject
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import services.SubscriptionService
 import viewmodels.govuk.SummaryListFluency
 
@@ -57,7 +57,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
       }
 
       "redirect to Journey Recovery page when security question status is not completed" in {
-        val userAnswer = emptyUserAnswers
+        val userAnswer  = emptyUserAnswers
         val application = applicationBuilder(userAnswers = Some(userAnswer))
           .build()
         running(application) {
@@ -88,7 +88,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad().url
         }
       }
 
@@ -111,7 +111,7 @@ class SecurityQuestionsCheckYourAnswersControllerSpec extends SpecBase with Summ
           val result = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmSaveProgressInformController.onPageLoad().url
         }
       }
 

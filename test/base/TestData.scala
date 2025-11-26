@@ -16,7 +16,7 @@
 
 package base
 
-import models.repayments._
+import models.repayments.*
 
 trait TestData {
 

@@ -196,7 +196,7 @@ class GroupRegistrationDateReportFormProviderSpec extends DateBehaviours {
 
   "throw a form error for when registration date is in the future" in {
     val futureDate = LocalDate.now.plusDays(1)
-    val data = Map(
+    val data       = Map(
       "rfmRegistrationDate.day"   -> futureDate.getDayOfMonth.toString,
       "rfmRegistrationDate.month" -> futureDate.getMonthValue.toString,
       "rfmRegistrationDate.year"  -> futureDate.getYear.toString

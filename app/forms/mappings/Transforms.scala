@@ -47,8 +47,8 @@ trait Transforms {
     strip(minimiseSpace(value.trim.toUpperCase))
 
   private[mappings] def postCodeValidTransform(value: String): String =
-    if (value.matches(regexPostcode)) {
-      if (value.contains(" ")) {
+    if value.matches(regexPostcode) then {
+      if value.contains(" ") then {
         value
       } else {
         value.substring(0, value.length - 3) + " " + value.substring(value.length - 3, value.length)

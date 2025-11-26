@@ -27,7 +27,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
     data.get(key).map(_.trim).filter(_.nonEmpty)
 
   private def validateXss(postcode: String, key: String): Option[FormError] =
-    if (!postcode.matches(XSSRegex)) Some(FormError(key, "address.postcode.error.xss")) else None
+    if !postcode.matches(XSSRegex) then Some(FormError(key, "address.postcode.error.xss")) else None
 
   private def formatErrors(errors: Seq[FormError], key: String): Seq[FormError] =
     errors.map(error => FormError(key, error.message, error.args))
@@ -37,7 +37,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
 
     (normalisedPostcode, country) match {
       case (zip, Some("GB")) if zip.matches(regexPostcode) =>
-        val formatted = if (zip.contains(" ")) zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
+        val formatted = if zip.contains(" ") then zip else zip.substring(0, zip.length - 3) + " " + zip.substring(zip.length - 3)
         Right(formatted)
       case (_, Some("GB")) =>
         Left(Seq(FormError("", "address.postcode.error.invalid.GB")))
@@ -57,7 +57,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
       case (Some(postcode), _) =>
         validateXss(postcode, key) match {
           case Some(xssError) => Left(Seq(xssError))
-          case None =>
+          case None           =>
             validateAndFormatPostcode(postcode, country, isOptional = true) match {
               case Right(formatted) => Right(Some(formatted))
               case Left(errors)     => Left(formatErrors(errors, key))
@@ -72,7 +72,7 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
       case Some(postcode) =>
         validateXss(postcode, key) match {
           case Some(xssError) => Left(Seq(xssError))
-          case None =>
+          case None           =>
             validateAndFormatPostcode(postcode, country) match {
               case Right(formatted) => Right(formatted)
               case Left(errors)     => Left(formatErrors(errors, key))
@@ -89,41 +89,45 @@ trait AddressMappings extends Mappings with Constraints with Transforms {
     requiredKeyGB:    String = "address.postcode.error.invalid.GB",
     invalidLengthKey: String = "address.postcode.error.length",
     countryFieldName: String = "countryCode"
-  ): FieldMapping[Option[String]] = of(optionalPostcodeFormatter(requiredKeyGB, invalidLengthKey, countryFieldName))
+  ): FieldMapping[Option[String]] = of(using optionalPostcodeFormatter(requiredKeyGB, invalidLengthKey, countryFieldName))
   protected def mandatoryPostcode(
     requiredKeyGB:    String = "address.postcode.error.invalid.GB",
     requiredKeyOther: String = "address.postcode.error.required",
     invalidLengthKey: String = "address.postcode.error.length",
     countryFieldName: String = "countryCode"
-  ): FieldMapping[String] = of(mandatoryPostcodeFormatter(requiredKeyGB, requiredKeyOther, invalidLengthKey, countryFieldName))
+  ): FieldMapping[String] = of(using mandatoryPostcodeFormatter(requiredKeyGB, requiredKeyOther, invalidLengthKey, countryFieldName))
 
   protected def xssFirstOptionalPostcode(): FieldMapping[Option[String]] =
-    of(new Formatter[Option[String]] {
+    of(using
+      new Formatter[Option[String]] {
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
-        val rawPostcode = extractTrimmedValue(data, key)
-        val country     = extractTrimmedValue(data, "countryCode")
+        override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], Option[String]] = {
+          val rawPostcode = extractTrimmedValue(data, key)
+          val country     = extractTrimmedValue(data, "countryCode")
 
-        handleOptionalPostcodeLogic(key, rawPostcode, country)
+          handleOptionalPostcodeLogic(key, rawPostcode, country)
+        }
+
+        override def unbind(key: String, value: Option[String]): Map[String, String] =
+          Map(key -> value.getOrElse(""))
       }
-
-      override def unbind(key: String, value: Option[String]): Map[String, String] =
-        Map(key -> value.getOrElse(""))
-    })
+    )
 
   protected def xssFirstMandatoryPostcode(): FieldMapping[String] =
-    of(new Formatter[String] {
+    of(using
+      new Formatter[String] {
 
-      override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
-        val rawPostcode = extractTrimmedValue(data, key)
-        val country     = extractTrimmedValue(data, "countryCode")
+        override def bind(key: String, data: Map[String, String]): Either[Seq[FormError], String] = {
+          val rawPostcode = extractTrimmedValue(data, key)
+          val country     = extractTrimmedValue(data, "countryCode")
 
-        handleMandatoryPostcodeLogic(key, rawPostcode, country)
+          handleMandatoryPostcodeLogic(key, rawPostcode, country)
+        }
+
+        override def unbind(key: String, value: String): Map[String, String] =
+          Map(key -> value)
       }
-
-      override def unbind(key: String, value: String): Map[String, String] =
-        Map(key -> value)
-    })
+    )
 
 }
 

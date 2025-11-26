@@ -23,7 +23,7 @@
 
 @(plrReference: String)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
-@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad.url)) {
+@layout(pageTitle = noTitle, showBackLink = false, twoThirdsPagelayout = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
   <h1 class="govuk-heading-l">@messages("homepage.title")</h1>
 

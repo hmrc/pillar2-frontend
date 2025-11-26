@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.errors.ViewAmendSubscriptionFailedView
 class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
   "ViewAmendSubscriptionFailed Controller" when {
@@ -28,7 +28,7 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad().url)
         val view    = application.injector.instanceOf[ViewAmendSubscriptionFailedView]
 
         val result = route(application, request).value
@@ -43,7 +43,7 @@ class ViewAmendSubscriptionFailedControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = None).build()
 
       running(application) {
-        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad.url)
+        val request = FakeRequest(GET, routes.ViewAmendSubscriptionFailedController.onPageLoad().url)
         val view    = application.injector.instanceOf[ViewAmendSubscriptionFailedView]
 
         val result = route(application, request).value

@@ -74,6 +74,6 @@ class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappi
               regexp(XSSRegex, "country.error.xss")
             )
           )
-    )(NonUKAddress.apply)(NonUKAddress.unapply)
+    )(NonUKAddress.apply)(nonUKAddress => Some(Tuple.fromProductTyped(nonUKAddress)))
   )
 }

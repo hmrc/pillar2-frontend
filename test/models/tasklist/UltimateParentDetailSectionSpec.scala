@@ -20,7 +20,7 @@ import base.SpecBase
 import models.UserAnswers
 import org.scalatest.OptionValues
 import org.scalatest.matchers.must.Matchers
-import org.scalatest.prop.TableDrivenPropertyChecks._
+import org.scalatest.prop.TableDrivenPropertyChecks.*
 import org.scalatest.prop.TableFor3
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
 
@@ -47,13 +47,12 @@ class UltimateParentDetailSectionSpec extends UltimateParentDetailSectionFixture
     }
   }
 
-  "progress" should {
+  "progress" should
     forAll(progressScenarios) { (assertion: String, input: UserAnswers, result: SectionStatus) =>
       s"$assertion" in {
         UltimateParentDetailSection.progress(input) mustBe result
       }
     }
-  }
 
   "prerequisiteSections" should {
     "be empty" in {

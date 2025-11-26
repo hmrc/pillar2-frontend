@@ -18,10 +18,10 @@ package controllers
 
 import base.SpecBase
 import models.UserAnswers
-import models.subscription.SubscriptionStatus._
+import models.subscription.SubscriptionStatus.*
 import pages.SubscriptionStatusPage
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.RegistrationWaitingRoomView
 
 class RegistrationWaitingRoomControllerSpec extends SpecBase {
@@ -52,7 +52,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad.url
+        redirectLocation(result).value mustEqual routes.RegistrationConfirmationController.onPageLoad().url
       }
     }
     " redirect to error page in case of a duplicated submission response" in {
@@ -114,7 +114,7 @@ class RegistrationWaitingRoomControllerSpec extends SpecBase {
         val result  = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
-        redirectLocation(result).value mustEqual controllers.subscription.routes.DuplicateSafeIdController.onPageLoad.url
+        redirectLocation(result).value mustEqual controllers.subscription.routes.DuplicateSafeIdController.onPageLoad().url
       }
     }
 

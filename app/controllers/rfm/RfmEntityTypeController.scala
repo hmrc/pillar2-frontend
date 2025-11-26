@@ -18,16 +18,16 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import connectors.{IncorporatedEntityIdentificationFrontendConnector, PartnershipIdentificationFrontendConnector, UserAnswersConnectors}
-import controllers.actions._
+import controllers.actions.*
 import forms.RfmEntityTypeFormProvider
 import models.grs.EntityType
 import models.{Mode, UserType}
-import pages._
+import pages.*
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.*
 import uk.gov.hmrc.http.HttpVerbs.GET
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmEntityTypeView
@@ -45,7 +45,7 @@ class RfmEntityTypeController @Inject() (
   formProvider:                                      RfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              RfmEntityTypeView
-)(implicit ec:                                       ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -58,7 +58,7 @@ class RfmEntityTypeController @Inject() (
         request.userAnswers
           .get(RfmEntityTypePage)
           .map { entityType =>
-            if (!ukBased & entityType == EntityType.Other) {
+            if !ukBased & entityType == EntityType.Other then {
               for {
                 updatedAnswers <- Future.fromTry(request.userAnswers.set(RfmUkBasedPage, true))
                 _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -88,9 +88,9 @@ class RfmEntityTypeController @Inject() (
             } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))
           case value @ EntityType.LimitedLiabilityPartnership =>
             for {
-              updatedAnswers  <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
-              updatedAnswers1 <- Future.fromTry(updatedAnswers.remove(RfmGRSUkLimitedPage))
-              _               <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
+              updatedAnswers   <- Future.fromTry(request.userAnswers.set(RfmEntityTypePage, value))
+              updatedAnswers1  <- Future.fromTry(updatedAnswers.remove(RfmGRSUkLimitedPage))
+              _                <- userAnswersConnectors.save(updatedAnswers1.id, Json.toJson(updatedAnswers1.data))
               createJourneyRes <-
                 partnershipIdentificationFrontendConnector.createPartnershipJourney(UserType.Rfm, EntityType.LimitedLiabilityPartnership, mode)
             } yield Redirect(Call(GET, createJourneyRes.journeyStartUrl))

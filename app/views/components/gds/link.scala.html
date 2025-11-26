@@ -57,4 +57,4 @@
 
 @* The <a> tag is split on purpose - to avoid inline-block whitespace problem *@
 <a @targetAttrs @idAttr class="@linkClasses" @linkStyles href="@call"
-  >@caption</a>@{if(fullStop)(".")}
+  >@caption</a>@{if(fullStop)(".") else ("")}

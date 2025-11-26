@@ -51,7 +51,7 @@
 
     @paragraphBody(messages("rfmConfirmation.now", link(
         text = messages("rfmConfirmation.link-home"),
-        call = Call("GET", controllers.routes.HomepageController.onPageLoad.url),
+        call = Call("GET", controllers.routes.HomepageController.onPageLoad().url),
         fullStop = false
     ), messages("rfmConfirmation.now.group")))
 

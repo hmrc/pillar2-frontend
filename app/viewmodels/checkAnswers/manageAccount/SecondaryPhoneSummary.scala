@@ -21,12 +21,12 @@ import pages.SubSecondaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.*
 
 object SecondaryPhoneSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[_]): Option[SummaryListRow] =
+  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryCapturePhonePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryPhone.checkYourAnswersLabel",
@@ -34,7 +34,7 @@ object SecondaryPhoneSummary {
         actions = Seq(
           ActionItemViewModel(
             "site.change",
-            controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad.url
+            controllers.subscription.manageAccount.routes.SecondaryPhoneController.onPageLoad().url
           )
             .withVisuallyHiddenText(messages("secondaryPhone.change.hidden"))
         )

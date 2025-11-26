@@ -16,7 +16,7 @@
 
 package models
 
-import models.registration._
+import models.registration.*
 
 case class EnrolmentInfo(
   ctUtr:         Option[String] = None,

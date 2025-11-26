@@ -23,15 +23,14 @@ import forms.GroupAccountingPeriodFormProvider
 import models.MneOrDomestic
 import models.subscription.AccountingPeriod
 import navigation.AmendSubscriptionNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{SubAccountingPeriodPage, SubMneOrDomesticPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.auth.core.{AuthConnector, User}
@@ -59,7 +58,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
@@ -79,7 +78,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
@@ -104,7 +103,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(ua)).build()
 
       running(application) {
-        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url)
         val result  = route(application, request).value
 
         val view = application.injector.instanceOf[GroupAccountingPeriodView]
@@ -123,7 +122,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(emptySubscriptionLocalData)).build()
 
       val request =
-        FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url)
+        FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
           .withFormUrlEncodedBody(("value", "invalid value"))
 
       running(application) {
@@ -162,7 +161,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url)
+        val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url)
           .withFormUrlEncodedBody(
             "startDate.day"   -> "1",
             "startDate.month" -> "1",
@@ -186,7 +185,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
   "GroupAccountingPeriod Controller for Agent View Contact details" when {
 
     "must return OK and the correct view for a GET if no previous data is found" in {
-      val ua = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
+      val ua          = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val application = applicationBuilder(subscriptionLocalData = Some(ua))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
@@ -200,7 +199,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
         )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[GroupAccountingPeriodView]
@@ -234,7 +233,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           GET,
-          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad.url
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onPageLoad().url
         )
         val result = route(application, request).value
         val view   = application.injector.instanceOf[GroupAccountingPeriodView]
@@ -263,7 +262,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
         val request =
           FakeRequest(
             POST,
-            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url
+            controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url
           )
             .withFormUrlEncodedBody(("value", "invalid value"))
         val boundForm = formProvider(true).bind(Map("value" -> "invalid value"))
@@ -287,7 +286,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       val someDate            = LocalDate.of(2024, 1, 1)
       val userAnswers         = emptySubscriptionLocalData
       val expectedUserAnswers = userAnswers.setOrException(SubAccountingPeriodPage, AccountingPeriod(someDate, someDate.plusMonths(5), None))
-      val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
+      val application         = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(
           bind[AmendSubscriptionNavigator].toInstance(mockNavigator),
           bind[SubscriptionConnector].toInstance(mockSubscriptionConnector),
@@ -304,7 +303,7 @@ class GroupAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(
           POST,
-          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit.url
+          controllers.subscription.manageAccount.routes.GroupAccountingPeriodController.onSubmit().url
         )
           .withFormUrlEncodedBody(
             "startDate.day"   -> "1",

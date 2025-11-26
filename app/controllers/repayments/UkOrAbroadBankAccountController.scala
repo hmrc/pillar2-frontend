@@ -17,7 +17,7 @@
 package controllers.repayments
 
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import forms.UkOrAbroadBankAccountFormProvider
 import models.{Mode, UkOrAbroadBankAccount}
 import navigation.RepaymentNavigator
@@ -42,7 +42,7 @@ class UkOrAbroadBankAccountController @Inject() (
   formProvider:                           UkOrAbroadBankAccountFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   UkOrAbroadBankAccountView
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 

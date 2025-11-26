@@ -79,7 +79,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
 
       val link: Element = paragraphs.get(4).getElementsByTag("a").first()
       link.text mustBe "report and manage your group's Pillar 2 Top-up Taxes"
-      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad.url
+      link.attr("href") mustBe controllers.routes.HomepageController.onPageLoad().url
     }
 
     "have a 'Print this page' link" in {

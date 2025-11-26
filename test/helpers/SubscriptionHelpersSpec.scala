@@ -17,9 +17,9 @@
 package helpers
 
 import base.SpecBase
-import models.registration._
+import models.registration.*
 import models.{EnrolmentInfo, UKAddress}
-import pages._
+import pages.*
 import utils.RowStatus
 
 class SubscriptionHelpersSpec extends SpecBase {

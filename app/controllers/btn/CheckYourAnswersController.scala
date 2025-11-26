@@ -18,13 +18,13 @@ package controllers.btn
 
 import com.google.inject.Inject
 import config.FrontendAppConfig
-import controllers.actions._
+import controllers.actions.*
 import models.MneOrDomestic.Uk
 import models.audit.{ApiResponseData, ApiResponseFailure}
 import models.btn.{BTNRequest, BTNStatus}
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
-import pages._
+import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -32,8 +32,8 @@ import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import viewmodels.checkAnswers._
-import viewmodels.govuk.summarylist._
+import viewmodels.checkAnswers.*
+import viewmodels.govuk.summarylist.*
 import views.html.btn.{BTNCannotReturnView, CheckYourAnswersView}
 
 import java.time.{Clock, ZonedDateTime}
@@ -51,7 +51,7 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   auditService:                           AuditService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec:                            ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -124,7 +124,7 @@ class CheckYourAnswersController @Inject() (
                       for {
                         submittedAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.submitted))
                         _                <- sessionRepository.set(submittedAnswers)
-                        _ <- auditService.auditBTNSubmission(
+                        _                <- auditService.auditBTNSubmission(
                                pillarReference = pillar2Id,
                                accountingPeriod = subAccountingPeriod,
                                entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
@@ -135,7 +135,7 @@ class CheckYourAnswersController @Inject() (
                       for {
                         errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
                         _            <- sessionRepository.set(errorAnswers)
-                        _ <- auditService.auditBTNSubmission(
+                        _            <- auditService.auditBTNSubmission(
                                pillarReference = pillar2Id,
                                accountingPeriod = subAccountingPeriod,
                                entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
@@ -147,13 +147,13 @@ class CheckYourAnswersController @Inject() (
                   Future.successful(())
               }
             }
-            .recover { err: Throwable =>
+            .recover { (err: Throwable) =>
               sessionRepository.get(request.userId).flatMap {
                 case Some(latest) =>
                   for {
                     errorAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.error))
                     _            <- sessionRepository.set(errorAnswers)
-                    _ <- auditService.auditBTNSubmission(
+                    _            <- auditService.auditBTNSubmission(
                            pillarReference = pillar2Id,
                            accountingPeriod = subAccountingPeriod,
                            entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),

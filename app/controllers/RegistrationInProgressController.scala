@@ -35,7 +35,7 @@ class RegistrationInProgressController @Inject() (
   identify:                 IdentifierAction,
   viewHomepage:             RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
-)(implicit appConfig:       FrontendAppConfig, ec: ExecutionContext)
+)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -48,7 +48,7 @@ class RegistrationInProgressController @Inject() (
       .maybeReadSubscription(plrReference)
       .map {
         case Some(_) =>
-          Redirect(controllers.routes.HomepageController.onPageLoad)
+          Redirect(controllers.routes.HomepageController.onPageLoad())
         case None =>
           Ok(view(plrReference))
       }

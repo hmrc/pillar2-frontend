@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.SecondaryPhonePreferenceFormProvider
 import models.Mode
 import navigation.SubscriptionNavigator
@@ -42,7 +42,7 @@ class SecondaryPhonePreferenceController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 SubscriptionNavigator,
   view:                      SecondaryPhonePreferenceView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
@@ -51,7 +51,7 @@ class SecondaryPhonePreferenceController @Inject() (
       _           <- request.userAnswers.get(SubSecondaryEmailPage)
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
     } yield {
-      val form = formProvider(contactName)
+      val form         = formProvider(contactName)
       val preparedForm = request.userAnswers.get(SubSecondaryPhonePreferencePage) match {
         case Some(v) => form.fill(v)
         case None    => form

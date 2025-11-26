@@ -17,7 +17,7 @@
 package forms
 
 import forms.mappings.Mappings
-import play.api.data._
+import play.api.data.*
 
 import java.time.LocalDate
 import javax.inject.Inject

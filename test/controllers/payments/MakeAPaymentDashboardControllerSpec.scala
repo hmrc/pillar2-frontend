@@ -20,17 +20,16 @@ import base.SpecBase
 import connectors.OPSConnector
 import controllers.actions.TestAuthRetrievals.Ops
 import models.UserAnswers
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
 import pages.PlrReferencePage
 import play.api.inject
 import play.api.inject.bind
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import repositories.SessionRepository
+import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
-import uk.gov.hmrc.auth.core._
 import uk.gov.hmrc.auth.core.retrieve.Credentials
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier}
 import views.html.{LegacyMakeAPaymentDashboardView, MakeAPaymentDashboardView}
@@ -58,7 +57,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val mockOpsConnector = mock[OPSConnector]
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application      = applicationBuilder(userAnswers = None, enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
           inject.bind[OPSConnector].toInstance(mockOpsConnector)
@@ -70,7 +69,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           "http://localhost:9900/pay-api/pay"
         )
         val request =
-          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url)
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url)
 
         val result = route(application, request).value
 
@@ -91,7 +90,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         )
       )
       val mockOpsConnector = mock[OPSConnector]
-      val application = applicationBuilder(userAnswers = None, enrolments)
+      val application      = applicationBuilder(userAnswers = None, enrolments)
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository),
           inject.bind[OPSConnector].toInstance(mockOpsConnector)
@@ -103,7 +102,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           new GatewayTimeoutException("Call to OPS timed out")
         )
         val request =
-          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onRedirect.url)
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onRedirect().url)
 
         val result = route(application, request).value
 
@@ -131,7 +130,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val request =
-          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad().url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[MakeAPaymentDashboardView]
@@ -166,7 +165,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
         val request =
-          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad().url)
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[LegacyMakeAPaymentDashboardView]
@@ -197,7 +196,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
             )
           )
-        val request = FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
@@ -212,7 +211,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
     "return OK and the correct view for a GET pillar 2 reference retrieved from the database" in {
       val sessionUserAnswers = UserAnswers("id").setOrException(PlrReferencePage, "12345678")
-      val application = applicationBuilder(userAnswers = Some(sessionUserAnswers))
+      val application        = applicationBuilder(userAnswers = Some(sessionUserAnswers))
         .overrides(
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
@@ -220,7 +219,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionUserAnswers)))
 
       running(application) {
-        val request = FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+        val request = FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result  = route(application, request).value
         val view    = application.injector.instanceOf[MakeAPaymentDashboardView]
         status(result) mustEqual OK
@@ -242,7 +241,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
       running(application) {
         val request =
-          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad.url)
+          FakeRequest(GET, controllers.payments.routes.MakeAPaymentDashboardController.onPageLoad().url)
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url

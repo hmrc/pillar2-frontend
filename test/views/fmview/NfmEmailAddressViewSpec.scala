@@ -32,7 +32,7 @@ class NfmEmailAddressViewSpec extends ViewSpecBase {
   lazy val view: Document = Jsoup.parse(page(formProvider(userName), NormalMode, userName)(request, appConfig, messages).toString())
 
   def pageTitle(username: String = ""): String = {
-    val usernamePart: String = if (username.nonEmpty) s" for $username" else username
+    val usernamePart: String = if username.nonEmpty then s" for $username" else username
     s"What is the email address$usernamePart?"
   }
 

@@ -32,7 +32,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
   val obligationsAndSubmissionsService: ObligationsAndSubmissionsService
-)(implicit val executionContext:        ExecutionContext)
+)(implicit val executionContext: ExecutionContext)
     extends ObligationsAndSubmissionsDataRetrievalAction
     with Logging {
 
@@ -55,7 +55,7 @@ class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
       }
       .recover { case _: Exception =>
         logger.warn(s"obligations and submissions data not found")
-        if (JourneyCheck.isBTNJourney(request.path)) {
+        if JourneyCheck.isBTNJourney(request.path) then {
           Left(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))
         } else {
           Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

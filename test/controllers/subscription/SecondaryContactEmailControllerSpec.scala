@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.subscriptionview.SecondaryContactEmailView
 
 import scala.concurrent.Future
@@ -81,7 +81,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     }
 
     "must return a Bad Request and errors when invalid data is submitted" in {
-      val ua = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
+      val ua          = emptyUserAnswers.set(SubSecondaryContactNamePage, "name").success.value
       val application = applicationBuilder(userAnswers = Some(ua))
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
@@ -108,7 +108,7 @@ class SecondaryContactEmailControllerSpec extends SpecBase {
     "must redirect to Journey Recovery for a GET if no data is found for secondary contact name" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
+      val request     = FakeRequest(POST, controllers.subscription.routes.SecondaryContactEmailController.onSubmit(NormalMode).url)
         .withFormUrlEncodedBody("emailAddress" -> "name@gmail.com")
 
       running(application) {

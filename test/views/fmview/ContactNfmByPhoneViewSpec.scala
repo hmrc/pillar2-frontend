@@ -32,7 +32,7 @@ class ContactNfmByPhoneViewSpec extends ViewSpecBase {
   lazy val view: Document = Jsoup.parse(page(formProvider(username), NormalMode, username)(request, appConfig, messages).toString())
 
   def pageTitle(username: String = ""): String = {
-    val usernamePart: String = if (username.nonEmpty) s" $username" else username
+    val usernamePart: String = if username.nonEmpty then s" $username" else username
     s"Can we contact$usernamePart by phone?"
   }
 

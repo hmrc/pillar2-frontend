@@ -43,14 +43,14 @@ class DuplicateSafeIdController @Inject() (
   formProvider:              DuplicateSafeIdFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      DuplicateSafeIdView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
   def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.upeStatus == RowStatus.Completed) {
+    if request.userAnswers.upeStatus == RowStatus.Completed then {
       Ok(view(form))
     } else {
       Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())

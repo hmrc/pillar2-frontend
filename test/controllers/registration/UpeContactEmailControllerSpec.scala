@@ -42,7 +42,7 @@ import pages.{UpeContactEmailPage, UpeContactNamePage, UpeNameRegistrationPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.registrationview.UpeContactEmailView
 
 import scala.concurrent.Future
@@ -150,7 +150,7 @@ class UpeContactEmailControllerSpec extends SpecBase {
     "Journey Recovery when no data found for contact name in POST" in {
 
       val application = applicationBuilder(userAnswers = None).build()
-      val request = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
+      val request     = FakeRequest(POST, routes.UpeContactEmailController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
         "emailAddress" -> "al@gmail.com"
       )
       running(application) {

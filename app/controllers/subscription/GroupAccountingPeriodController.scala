@@ -18,7 +18,7 @@ package controllers.subscription
 
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
-import controllers.actions._
+import controllers.actions.*
 import forms.GroupAccountingPeriodFormProvider
 import models.Mode
 import models.subscription.AccountingPeriod
@@ -44,14 +44,14 @@ class GroupAccountingPeriodController @Inject() (
   formProvider:              GroupAccountingPeriodFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      GroupAccountingPeriodView
-)(implicit ec:               ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def form: Form[AccountingPeriod] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    if (request.userAnswers.isPageDefined(SubMneOrDomesticPage)) {
+    if request.userAnswers.isPageDefined(SubMneOrDomesticPage) then {
       val preparedForm = request.userAnswers.get(SubAccountingPeriodPage) match {
         case Some(v) => form.fill(v)
         case None    => form

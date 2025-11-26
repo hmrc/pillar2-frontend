@@ -22,8 +22,8 @@ import models.registration.{IncorporatedEntityCreateRegistrationRequest, Partner
 import models.{Mode, UserType}
 import play.api.i18n.MessagesApi
 import play.api.libs.json.Json
-import services.audit.AuditService
-import uk.gov.hmrc.http.HttpReads.Implicits._
+import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
+import uk.gov.hmrc.http.HttpReads.Implicits.*
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, StringContextOps}
 
@@ -35,15 +35,14 @@ trait PartnershipIdentificationFrontendConnector {
     userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
-  )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse]
+  )(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
 
   def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData]
 }
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
-  appConfig:    FrontendAppConfig,
-  httpClient:   HttpClientV2,
-  auditService: AuditService
+  appConfig:  FrontendAppConfig,
+  httpClient: HttpClientV2
 )(implicit
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
@@ -54,9 +53,9 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
-  )(implicit hc:     HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
+  )(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
 
-    val serviceName = ServiceName()
+    val serviceName         = ServiceName()
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
       continueUrl = s"${appConfig.grsContinueUrl}/${mode.toString.toLowerCase}/${userType.toString.toLowerCase()}",
       businessVerificationCheck = appConfig.partnershipBvEnabled,

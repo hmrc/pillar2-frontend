@@ -31,8 +31,8 @@ trait DateFluency {
   object DateViewModel extends ErrorMessageAwareness {
 
     def apply(
-      field:             Field,
-      legend:            Legend
+      field:  Field,
+      legend: Legend
     )(implicit messages: Messages): DateInput =
       apply(
         field = field,
@@ -40,8 +40,8 @@ trait DateFluency {
       )
 
     def apply(
-      field:             Field,
-      fieldset:          Fieldset
+      field:    Field,
+      fieldset: Fieldset
     )(implicit messages: Messages): DateInput = {
 
       val items = Seq(
@@ -78,12 +78,11 @@ trait DateFluency {
 
     private def getErrorClassForInputItem(id: String, field: Field): String =
       field.error.fold("") { error =>
-        if (
-          error.args.contains(id) ||
+        if error.args.contains(id) ||
           error.message.contains("required.all") ||
           error.message.contains("endDate.before.startDate") ||
           error.message.toLowerCase.contains(id.toLowerCase())
-        ) {
+        then {
           "govuk-input--error"
         } else {
           ""
@@ -95,24 +94,24 @@ trait DateFluency {
   implicit class FluentDate(date: DateInput) {
 
     def withNamePrefix(prefix: String): DateInput =
-      date copy (namePrefix = Some(prefix))
+      date.copy(namePrefix = Some(prefix))
 
     def withHint(hint: Hint): DateInput =
-      date copy (hint = Some(hint))
+      date.copy(hint = Some(hint))
 
     def withFormGroupClasses(classes: String): DateInput =
-      date copy (formGroup = FormGroup(classes = Some(classes)))
+      date.copy(formGroup = FormGroup(classes = Some(classes)))
 
     def withCssClass(newClass: String): DateInput =
-      date copy (classes = s"${date.classes} $newClass")
+      date.copy(classes = s"${date.classes} $newClass")
 
     def withAttribute(attribute: (String, String)): DateInput =
-      date copy (attributes = date.attributes + attribute)
+      date.copy(attributes = date.attributes + attribute)
 
     def asDateOfBirth(): DateInput =
-      date copy (items = date.items map { item =>
+      date.copy(items = date.items map { item =>
         val name = item.id.split('.').last
-        item copy (autocomplete = Some(s"bday-$name"))
+        item.copy(autocomplete = Some(s"bday-$name"))
       })
   }
 }

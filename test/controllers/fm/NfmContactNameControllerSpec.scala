@@ -26,7 +26,7 @@ import pages.{FmContactNamePage, FmRegisteredAddressPage}
 import play.api.inject.bind
 import play.api.libs.json.Json
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.fmview.NfmContactNameView
 
 import scala.concurrent.Future
@@ -95,7 +95,7 @@ class NfmContactNameControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
       running(application) {
         val stringInput = randomStringGenerator(106)
-        val request =
+        val request     =
           FakeRequest(POST, controllers.fm.routes.NfmContactNameController.onPageLoad(NormalMode).url).withFormUrlEncodedBody(("value", stringInput))
         val boundForm = formProvider().bind(Map("value" -> stringInput))
         val view      = application.injector.instanceOf[NfmContactNameView]

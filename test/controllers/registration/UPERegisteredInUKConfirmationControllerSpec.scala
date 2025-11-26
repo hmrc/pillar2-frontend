@@ -21,14 +21,13 @@ import connectors.UserAnswersConnectors
 import forms.UPERegisteredInUKConfirmationFormProvider
 import models.NormalMode
 import navigation.UltimateParentNavigator
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.{GrsUpeStatusPage, UpeRegisteredInUKPage}
 import play.api.libs.json.Json
 import play.api.mvc.Call
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
 
