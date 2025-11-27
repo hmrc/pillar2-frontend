@@ -18,13 +18,12 @@
 
 @this(heading: heading)
 
-@(secondsUntilRedirect: Int, redirectUrl: Call)(
+@(
     h1Message: String,
     h2Message: String,
     afterHeadingsMessage: Option[String] = None
 )
 
-<meta http-equiv="refresh" content="@secondsUntilRedirect;url=@redirectUrl" />
 <div class="hods-loading-spinner">
     <div
         class="hods-loading-spinner__spinner"
