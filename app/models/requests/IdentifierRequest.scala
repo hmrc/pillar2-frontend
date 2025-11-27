@@ -28,3 +28,4 @@ case class IdentifierRequest[A](
   isAgent:            Boolean = false,
   userIdForEnrolment: String
 ) extends WrappedRequest[A](request)
+    with UserIdRequest[A]

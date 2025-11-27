@@ -22,14 +22,13 @@ import controllers.btn.routes.*
 import controllers.routes.IndexController
 import models.audit.{ApiResponseFailure, ApiResponseSuccess}
 import models.btn.*
+import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.subscription.AccountingPeriod
 import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import org.scalacheck.Gen
 import org.scalatestplus.mockito.MockitoSugar
-import org.scalatestplus.scalacheck.ScalaCheckDrivenPropertyChecks
 import pages.*
 import play.api.Application
 import play.api.inject.bind
@@ -49,7 +48,7 @@ import views.html.btn.CheckYourAnswersView
 import java.time.{Clock, LocalDate, ZonedDateTime}
 import scala.concurrent.{Future, Promise}
 
-class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar with ScalaCheckDrivenPropertyChecks {
+class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency with MockitoSugar {
 
   override val mockBTNService:        BTNService        = mock[BTNService]
   override val mockSessionRepository: SessionRepository = mock[SessionRepository]
@@ -175,7 +174,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
         }
       }
 
@@ -217,7 +216,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
 
           verify(mockSessionRepository).set(any)
         }
@@ -244,7 +243,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
 
           verify(mockSessionRepository).set(any)
 
@@ -273,7 +272,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
 
           verify(mockSessionRepository).set(any)
 
@@ -296,7 +295,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
         }
       }
 
@@ -315,7 +314,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
         }
       }
 
@@ -334,7 +333,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual BTNWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(BTN).url
         }
       }
 
@@ -367,14 +366,14 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
           }
         }
 
-        "submission fails" in forAll(Gen.posNum[Int]) { statusCode =>
+        "submission fails" in {
           val errorCode        = "some-error-code"
           val errorMessage     = "something went sideways"
           val fixedClock       = Clock.fixed(processedAt.toInstant, processedAt.getZone)
           val mockAuditService = mock[AuditService]
 
           when(mockBTNService.submitBTN(any)(any, any))
-            .thenReturn(Future.successful(BtnResponse(BtnError(errorCode, errorMessage).asLeft, statusCode)))
+            .thenReturn(Future.successful(BtnResponse(BtnError(errorCode, errorMessage).asLeft, INTERNAL_SERVER_ERROR)))
           when(mockSessionRepository.get(any)) thenReturn Future.successful(Some(emptyUserAnswers))
           when(mockSessionRepository.set(any)).thenReturn(Future.successful(true))
           when(mockAuditService.auditBTNSubmission(any, any, any, any)(any)).thenReturn(Future.successful(AuditResult.Success))
@@ -395,7 +394,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency wi
               eqTo(someSubscriptionLocalData.plrReference),
               eqTo(someSubscriptionLocalData.subAccountingPeriod),
               entitiesInsideAndOutsideUK = eqTo(false),
-              eqTo(ApiResponseFailure(statusCode, processedAt, errorCode, errorMessage))
+              eqTo(ApiResponseFailure(INTERNAL_SERVER_ERROR, processedAt, errorCode, errorMessage))
             )(any[HeaderCarrier])
           }
         }

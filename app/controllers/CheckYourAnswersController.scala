@@ -16,11 +16,16 @@
 
 package controllers
 
+import cats.data.{EitherT, OptionT}
+import cats.syntax.either.*
+import cats.syntax.functor.*
+import cats.syntax.semigroupal.*
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import models.*
+import models.longrunningsubmissions.LongRunningSubmission.Registration
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus.*
 import pages.*
@@ -43,6 +48,7 @@ import views.html.CheckYourAnswersView
 import java.time.{LocalDate, ZonedDateTime}
 import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.chaining.*
 
 class CheckYourAnswersController @Inject() (
   override val messagesApi: MessagesApi,
@@ -77,73 +83,48 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
     if request.userAnswers.finalStatusCheck then {
       subscriptionService.getCompanyName(request.userAnswers) match {
-        case Left(errorRedirect) => errorRedirect
+        case Left(errorRedirect) => Future.successful(errorRedirect)
         case Right(companyName)  =>
-          val subscriptionStatus: Future[WithName & SubscriptionStatus] =
-            request.userAnswers
-              .get(SubMneOrDomesticPage)
-              .map { mneOrDom =>
-                (for {
-                  plr <- subscriptionService.createSubscription(request.userAnswers)
-                  dataToSave = UserAnswers(request.userId)
-                                 .setOrException(UpeNameRegistrationPage, companyName)
-                                 .setOrException(SubMneOrDomesticPage, mneOrDom)
-                                 .setOrException(PlrReferencePage, plr)
-                                 .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
-                                 .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
-                  _ <- sessionRepository.set(dataToSave)
-                  _ <- userAnswersConnectors.remove(request.userId)
-                } yield {
-                  pollForSubscriptionData(plr)
-                    .map { _ =>
-                      Redirect(controllers.routes.RegistrationConfirmationController.onPageLoad())
-                    }
-                    .recover { case _ =>
-                      Redirect(controllers.routes.RegistrationInProgressController.onPageLoad(plr))
-                    }
-                  SuccessfullyCompletedSubscription
-                })
-                  .recover {
-                    case _: GatewayTimeoutException =>
-                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Gateway timeout")
-                      FailedWithInternalIssueError
-                    case InternalIssueError =>
-                      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to failed call to the backend")
-                      FailedWithInternalIssueError
-                    case DuplicateSubmissionError =>
-                      logger.error("Subscription failed due to a Duplicate Submission")
-                      FailedWithDuplicatedSubmission
-                    case UnprocessableEntityError =>
-                      logger.error("Subscription failed due to a business validation error")
-                      FailedWithUnprocessableEntity
-                    case DuplicateSafeIdError =>
-                      logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
-                      FailedWithDuplicatedSafeIdError
-                    case error: HttpException =>
-                      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to HTTP error ${error.responseCode}", error)
-                      FailedWithInternalIssueError
-                    case error: Exception =>
-                      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to unexpected error", error)
-                      FailedWithInternalIssueError
+          EitherT
+            .fromOption[Future](request.userAnswers.get(SubMneOrDomesticPage), ifNone = FailedWithNoMneOrDomesticValueFoundError)
+            .product(EitherT.liftF(subscriptionService.createSubscription(request.userAnswers)))
+            .semiflatMap { (mneOrDom, plr) =>
+              sessionRepository
+                .set(
+                  UserAnswers(request.userId)
+                    .setOrException(UpeNameRegistrationPage, companyName)
+                    .setOrException(SubMneOrDomesticPage, mneOrDom)
+                    .setOrException(PlrReferencePage, plr)
+                    .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
+                    .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
+                    .setOrException(SubscriptionStatusPage, RegistrationInProgress)
+                )
+                .as(plr)
+            }
+            .semiflatTap(_ => userAnswersConnectors.remove(request.userId))
+            .value
+            .recover(onSubmitErrorHandling.andThen(_.asLeft))
+            .pipe(EitherT.apply)
+            .foldF(
+              failureSubscriptionStatus =>
+                OptionT(sessionRepository.get(request.userId))
+                  .getOrElse(UserAnswers(request.userId))
+                  .flatMap { preFailureAnswers =>
+                    sessionRepository.set(preFailureAnswers.setOrException(SubscriptionStatusPage, failureSubscriptionStatus))
                   }
+                  .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Registration))),
+              plr => {
+                // kick off background polling and session updates on another thread; return before resolution.
+                checkUntilSubscriptionResolution(plr = plr, userId = request.userId)
+                Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Registration)))
               }
-              .getOrElse(Future.successful(FailedWithNoMneOrDomesticValueFoundError))
-
-          for {
-            updatedSubscriptionStatus <- subscriptionStatus
-            optionalSessionData       <- sessionRepository.get(request.userAnswers.id)
-            sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-            updatedSessionData <- Future.fromTry(sessionData.set(SubscriptionStatusPage, updatedSubscriptionStatus))
-            _                  <- sessionRepository.set(updatedSessionData)
-          } yield (): Unit
-
-          Redirect(controllers.routes.RegistrationWaitingRoomController.onPageLoad())
+            )
       }
     } else {
-      Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad)
+      Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
     }
   }
 
@@ -230,6 +211,21 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
+  private def checkUntilSubscriptionResolution(plr: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+    pollForSubscriptionData(plr)
+      .flatMap { _ =>
+        for {
+          updatedAnswers:   Option[UserAnswers] <- sessionRepository.get(userId)
+          completedAnswers: UserAnswers         <- updatedAnswers.fold[Future[UserAnswers]] {
+                                             val message = s"Could not find user answers for $plr after creating subscription."
+                                             logger.error(message)
+                                             Future.failed(new Exception(message))
+                                           }(ua => Future.fromTry(ua.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription)))
+          _ <- sessionRepository.set(completedAnswers)
+        } yield ()
+      }
+      .recover(logger.error(s"Encountered error in background task while checking for subscription resolution", _))
+
   private def pollForSubscriptionData(plrReference: String)(implicit hc: HeaderCarrier): Future[Unit] = {
     val maxAttempts = {
       if appConfig.subscriptionPollingIntervalSeconds <= 0 then {
@@ -257,5 +253,29 @@ class CheckYourAnswersController @Inject() (
       }
 
     attemptRead(0)
+  }
+
+  private val onSubmitErrorHandling: PartialFunction[Throwable, SubscriptionStatus] = {
+    case _: GatewayTimeoutException =>
+      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to a Gateway timeout")
+      FailedWithInternalIssueError
+    case InternalIssueError =>
+      logger.error("SUBSCRIPTION_FAILURE: Subscription failed due to failed call to the backend")
+      FailedWithInternalIssueError
+    case DuplicateSubmissionError =>
+      logger.error("Subscription failed due to a Duplicate Submission")
+      FailedWithDuplicatedSubmission
+    case UnprocessableEntityError =>
+      logger.error("Subscription failed due to a business validation error")
+      FailedWithUnprocessableEntity
+    case DuplicateSafeIdError =>
+      logger.error("Subscription failed due to a Duplicate SafeId for UPE and NFM")
+      FailedWithDuplicatedSafeIdError
+    case error: HttpException =>
+      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to HTTP error ${error.responseCode}", error)
+      FailedWithInternalIssueError
+    case error: Exception =>
+      logger.error(s"SUBSCRIPTION_FAILURE: Subscription failed due to unexpected error", error)
+      FailedWithInternalIssueError
   }
 }

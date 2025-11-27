@@ -16,12 +16,14 @@
 
 package controllers.btn
 
+import cats.syntax.functor.*
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import controllers.actions.*
 import models.MneOrDomestic.Uk
 import models.audit.{ApiResponseData, ApiResponseFailure}
 import models.btn.{BTNRequest, BTNStatus}
+import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.obligationsandsubmissions.AccountingPeriodDetails
 import models.subscription.AccountingPeriod
 import pages.*
@@ -171,7 +173,7 @@ class CheckYourAnswersController @Inject() (
             }
         }
 
-        Future.successful(Redirect(routes.BTNWaitingRoomController.onPageLoad))
+        setProcessingF.as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN)))
       case None =>
         logger.error("user answers not found")
         Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

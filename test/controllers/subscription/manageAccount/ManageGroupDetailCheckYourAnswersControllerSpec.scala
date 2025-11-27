@@ -22,6 +22,7 @@ import controllers.subscription.manageAccount.routes as manageRoutes
 import forms.mappings.Mappings
 import helpers.AllMocks
 import models.UserAnswers
+import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.subscription.ManageGroupDetailsStatus
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{reset, verify, when}
@@ -116,7 +117,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
         }
       }
 
@@ -182,7 +183,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
 
           // Verify that InProgress status was set
           val expectedAnswers = emptyUserAnswers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
@@ -205,7 +206,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
 
           verify(mockSessionRepository).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.id == emptyUserAnswers.id &&

@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package pages
+package models.longrunningsubmissions
 
-import play.api.libs.json.JsPath
+import queries.Gettable
 
-case object RepaymentsWaitingRoomVisited extends QuestionPage[Boolean] {
+sealed trait SubmissionLookupError
 
-  override def path: JsPath = JsPath \ toString
-
-  override def toString: String = "repaymentsWaitingRoomVisited"
-
+object SubmissionLookupError {
+  case class UserAnswersNotFound(pillarRef: String) extends SubmissionLookupError
+  case class SpecificAnswerNotFound(missingAnswer: Gettable[?]) extends SubmissionLookupError
 }
