@@ -20,7 +20,7 @@ import base.SpecBase
 import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
 import pages.{SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
@@ -65,8 +65,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
             Future.successful(
               Some(
                 emptyUserAnswers
-                  .setOrException(PdfRegistrationDatePage, currentDate)
-                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
+                  .setOrException(RegistrationConfirmationPageDate, currentDate)
+                  .setOrException(RegistrationConfirmationPageTimestamp, currentTimeGMT)
                   .setOrException(UpeNameRegistrationPage, testCompanyName)
                   .setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
               )
@@ -104,8 +104,8 @@ class RegistrationConfirmationControllerSpec extends SpecBase {
             Future.successful(
               Some(
                 emptyUserAnswers
-                  .setOrException(PdfRegistrationDatePage, currentDate)
-                  .setOrException(PdfRegistrationTimeStampPage, currentTimeGMT)
+                  .setOrException(RegistrationConfirmationPageDate, currentDate)
+                  .setOrException(RegistrationConfirmationPageTimestamp, currentTimeGMT)
                   .setOrException(UpeNameRegistrationPage, testCompanyName)
                   .setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
               )

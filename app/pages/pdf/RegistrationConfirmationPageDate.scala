@@ -1,5 +1,5 @@
 /*
- * Copyright 2025 HM Revenue & Customs
+ * Copyright 2024 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -19,9 +19,9 @@ package pages.pdf
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-case object RepaymentConfirmationTimestampPage extends QuestionPage[String] {
+object RegistrationConfirmationPageDate extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "repaymentConfirmationTimeStamp"
+  override def toString: String = "registrationDate"
 }

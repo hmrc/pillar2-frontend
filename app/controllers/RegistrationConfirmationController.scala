@@ -18,7 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
 import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -50,8 +50,8 @@ class RegistrationConfirmationController @Inject() (
                        .orElse(userAnswer.get(PlrReferencePage))
         mneOrDom              <- userAnswer.get(SubMneOrDomesticPage)
         companyName           <- userAnswer.get(UpeNameRegistrationPage)
-        registrationDate      <- userAnswer.get(PdfRegistrationDatePage)
-        registrationTimeStamp <- userAnswer.get(PdfRegistrationTimeStampPage)
+        registrationDate      <- userAnswer.get(RegistrationConfirmationPageDate)
+        registrationTimeStamp <- userAnswer.get(RegistrationConfirmationPageTimestamp)
       } yield Ok(view(pillar2Id, companyName, registrationDate, registrationTimeStamp, mneOrDom)))
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }

@@ -19,7 +19,7 @@ package controllers.repayments
 import base.SpecBase
 import models.UserAnswers
 import pages.RepaymentCompletionStatus
-import pages.pdf.RepaymentConfirmationTimestampPage
+import pages.pdf.RepaymentConfirmationPage
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import utils.DateTimeUtils.*
@@ -35,7 +35,7 @@ class RepaymentConfirmationControllerSpec extends SpecBase {
       val currentDateTimeGMT: String      = ZonedDateTime.now().toDateTimeGmtFormat
       val testUserAnswers:    UserAnswers = emptyUserAnswers
         .setOrException(RepaymentCompletionStatus, true)
-        .setOrException(RepaymentConfirmationTimestampPage, currentDateTimeGMT)
+        .setOrException(RepaymentConfirmationPage, currentDateTimeGMT)
       val application = applicationBuilder(userAnswers = Some(testUserAnswers)).build()
 
       running(application) {

@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import models.UserAnswers
 import pages.*
-import pages.pdf.RepaymentConfirmationTimestampPage
+import pages.pdf.RepaymentConfirmationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,7 +42,7 @@ class RepaymentConfirmationController @Inject() (
     (identify andThen getSessionData andThen requireSessionData) { implicit request =>
       implicit val userAnswers: UserAnswers = request.userAnswers
       (for {
-        confirmationTimestamp <- userAnswers.get(RepaymentConfirmationTimestampPage)
+        confirmationTimestamp <- userAnswers.get(RepaymentConfirmationPage)
         completionStatus      <- userAnswers.get(RepaymentCompletionStatus) if completionStatus
       } yield Ok(view(confirmationTimestamp)))
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))

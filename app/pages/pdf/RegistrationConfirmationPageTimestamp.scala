@@ -19,7 +19,7 @@ package pages.pdf
 import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-object PdfRegistrationTimeStampPage extends QuestionPage[String] {
+object RegistrationConfirmationPageTimestamp extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 

@@ -24,7 +24,7 @@ import models.*
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus.*
 import pages.*
-import pages.pdf.{PdfRegistrationDatePage, PdfRegistrationTimeStampPage}
+import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Futures
@@ -92,8 +92,8 @@ class CheckYourAnswersController @Inject() (
                                  .setOrException(UpeNameRegistrationPage, companyName)
                                  .setOrException(SubMneOrDomesticPage, mneOrDom)
                                  .setOrException(PlrReferencePage, plr)
-                                 .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
-                                 .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
+                                 .setOrException(RegistrationConfirmationPageDate, LocalDate.now().toDateFormat)
+                                 .setOrException(RegistrationConfirmationPageTimestamp, ZonedDateTime.now().toTimeGmtFormat)
                   _ <- sessionRepository.set(dataToSave)
                   _ <- userAnswersConnectors.remove(request.userId)
                 } yield {
