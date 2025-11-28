@@ -20,8 +20,7 @@ import base.SpecBase
 import models.MneOrDomestic
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
-import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
-import pages.{SubMneOrDomesticPage, UpeNameRegistrationPage}
+import pages.*
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*

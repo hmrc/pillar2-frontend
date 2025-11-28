@@ -18,8 +18,7 @@ package controllers.repayments
 
 import base.SpecBase
 import models.UserAnswers
-import pages.RepaymentCompletionStatus
-import pages.pdf.RepaymentConfirmationPage
+import pages.{RepaymentCompletionStatus, RepaymentConfirmationPage}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import utils.DateTimeUtils.*

@@ -14,14 +14,13 @@
  * limitations under the License.
  */
 
-package pages.pdf
+package pages
 
-import pages.QuestionPage
 import play.api.libs.json.JsPath
 
-object RegistrationConfirmationPageDate extends QuestionPage[String] {
+object RegistrationConfirmationPageTimestamp extends QuestionPage[String] {
 
   override def path: JsPath = JsPath \ toString
 
-  override def toString: String = "registrationDate"
+  override def toString: String = "registrationTimeStamp"
 }

@@ -18,8 +18,7 @@ package controllers
 
 import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
-import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
-import pages.{PlrReferencePage, SubMneOrDomesticPage, UpeNameRegistrationPage}
+import pages.*
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository

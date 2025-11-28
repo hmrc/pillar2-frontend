@@ -20,7 +20,6 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import models.UserAnswers
 import pages.*
-import pages.pdf.RepaymentConfirmationPage
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController

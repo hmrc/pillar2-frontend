@@ -24,7 +24,6 @@ import models.*
 import models.subscription.SubscriptionStatus
 import models.subscription.SubscriptionStatus.*
 import pages.*
-import pages.pdf.{RegistrationConfirmationPageDate, RegistrationConfirmationPageTimestamp}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Futures

@@ -23,7 +23,6 @@ import controllers.actions.*
 import models.repayments.RepaymentsStatus.*
 import models.{UnexpectedResponse, UserAnswers}
 import pages.*
-import pages.pdf.RepaymentConfirmationPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
