@@ -295,10 +295,6 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
           howToSubmitAReturnParagraph.text mustBe "Find out more about how to report your client’s Pillar 2 Top-up Taxes."
         }
       }
-
-      "displaying submission history section" must {
-        Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
-      }
     }
   }
 }
