@@ -20,11 +20,11 @@ import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
-import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.*
+import models.rfm.{CorporatePosition, RfmStatus}
 import models.subscription.NewFilingMemberDetail
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{PlrReferencePage, RfmStatusPage}
+import pages.{PlrReferencePage, RfmConfirmationPage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Writes
@@ -39,8 +39,10 @@ import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.rfm.RfmContactCheckYourAnswersView
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi:            MessagesApi,
@@ -129,8 +131,17 @@ class RfmContactCheckYourAnswersController @Inject() (
         updatedRfmStatus    <- rfmStatus
         optionalSessionData <- sessionRepository.get(request.userAnswers.id)
         sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, updatedRfmStatus))
-        _                  <- sessionRepository.set(updatedSessionData)
+        updatedSessionData <- Future.fromTry {
+                                sessionData
+                                  .set(RfmStatusPage, updatedRfmStatus)
+                                  .flatMap { ua =>
+                                    updatedRfmStatus match {
+                                      case RfmStatus.SuccessfullyCompleted => ua.set(RfmConfirmationPage, ZonedDateTime.now())
+                                      case _                               => Success(ua)
+                                    }
+                                  }
+                              }
+        _ <- sessionRepository.set(updatedSessionData)
       } yield (): Unit
       Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
     } else {

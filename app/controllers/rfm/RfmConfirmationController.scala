@@ -18,16 +18,14 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import pages.PlrReferencePage
+import pages.{PlrReferencePage, RfmConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.ZonedDateTimeOps
 import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -49,7 +47,8 @@ class RfmConfirmationController @Inject() (
         pillar2Id  <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, ZonedDateTime.now().toDateTimeGmtFormat)))
+        submittedAt <- userAnswer.get(RfmConfirmationPage)
+      } yield Ok(view(pillar2Id, submittedAt)))
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }
