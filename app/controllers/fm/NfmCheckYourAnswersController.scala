@@ -21,7 +21,7 @@ import config.FrontendAppConfig
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.CheckYourAnswersLogicPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -36,12 +36,13 @@ class NfmCheckYourAnswersController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     FilingMemberCheckYourAnswersView,
   countryOptions:           CountryOptions
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val fmStatus = request.userAnswers.fmStatus
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val fmStatus              = request.userAnswers.fmStatus
     val CheckYourAnswersLogic: Boolean = request.userAnswers.get(CheckYourAnswersLogicPage).isDefined
     if fmStatus == RowStatus.Completed | fmStatus == RowStatus.InProgress & CheckYourAnswersLogic then {
       val list = SummaryListViewModel(

@@ -20,7 +20,7 @@ import models.obligationsandsubmissions.ObligationType.{GIR, UKTR}
 import models.obligationsandsubmissions.SubmissionType.UKTR_CREATE
 import play.api.libs.json.{Json, OFormat, Writes}
 import utils.Constants.ReceivedPeriodInDays
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.*
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
@@ -30,13 +30,13 @@ sealed trait ObligationsAndSubmissionsResponse
 case class ObligationsAndSubmissionsSuccessResponse(success: ObligationsAndSubmissionsSuccess) extends ObligationsAndSubmissionsResponse
 
 object ObligationsAndSubmissionsSuccessResponse {
-  implicit val writes: Writes[ObligationsAndSubmissionsSuccessResponse] = Json.writes[ObligationsAndSubmissionsSuccessResponse]
+  given writes: Writes[ObligationsAndSubmissionsSuccessResponse] = Json.writes[ObligationsAndSubmissionsSuccessResponse]
 }
 
 case class ObligationsAndSubmissionsSuccess(processingDate: ZonedDateTime, accountingPeriodDetails: Seq[AccountingPeriodDetails])
 
 object ObligationsAndSubmissionsSuccess {
-  implicit val format: OFormat[ObligationsAndSubmissionsSuccess] = Json.format[ObligationsAndSubmissionsSuccess]
+  given format: OFormat[ObligationsAndSubmissionsSuccess] = Json.format[ObligationsAndSubmissionsSuccess]
 }
 
 case class AccountingPeriodDetails(
@@ -68,5 +68,5 @@ case class AccountingPeriodDetails(
 }
 
 object AccountingPeriodDetails {
-  implicit val format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
+  given format: OFormat[AccountingPeriodDetails] = Json.format[AccountingPeriodDetails]
 }

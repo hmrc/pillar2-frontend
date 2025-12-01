@@ -20,14 +20,15 @@ import models.{CheckMode, UserAnswers}
 import pages.UpeContactNamePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object UpeContactNameSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers
       .get(UpeContactNamePage)
       .map { answer =>

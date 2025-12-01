@@ -19,13 +19,14 @@ package viewmodels.checkAnswers
 import models.UserAnswers
 import pages.SubAccountingPeriodPage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeUtils.*
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object GroupAccountingPeriodStartDateSummary {
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(SubAccountingPeriodPage).map { accountingPeriod =>
       SummaryListRowViewModel(
         key = "groupAccountingStartDatePeriod.checkYourAnswersLabel",

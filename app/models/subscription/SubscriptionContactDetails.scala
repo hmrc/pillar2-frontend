@@ -41,5 +41,5 @@ case class NewFilingMemberDetail(
 )
 
 object NewFilingMemberDetail {
-  implicit val format: OFormat[NewFilingMemberDetail] = Json.format[NewFilingMemberDetail]
+  given format: OFormat[NewFilingMemberDetail] = Json.format[NewFilingMemberDetail]
 }

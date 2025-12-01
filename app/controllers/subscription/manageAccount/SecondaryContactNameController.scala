@@ -25,7 +25,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.SecondaryContactNameView
 
@@ -41,15 +41,16 @@ class SecondaryContactNameController @Inject() (
   formProvider:                           SecondaryContactNameFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   SecondaryContactNameView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData) { implicit request =>
-      val preparedForm = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
+    (identify andThen getData andThen requireData) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.subscriptionLocalData.get(SubSecondaryContactNamePage) match {
         case Some(v) => form.fill(v)
         case None    => form
       }
@@ -57,7 +58,8 @@ class SecondaryContactNameController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       form
         .bindFromRequest()
         .fold(

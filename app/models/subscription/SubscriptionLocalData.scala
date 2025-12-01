@@ -16,7 +16,7 @@
 
 package models.subscription
 
-import models.{MneOrDomestic, NonUKAddress, RichJsObject}
+import models.*
 import pages.QuestionPage
 import play.api.libs.json.*
 import queries.{Gettable, Settable}
@@ -42,10 +42,10 @@ case class SubscriptionLocalData(
 ) {
 
   private lazy val jsObj = Json.toJsObject(this)
-  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
+  def get[A](page: Gettable[A])(using rds: Reads[A]): Option[A] =
     Reads.optionNoError(using Reads.at(page.path)).reads(jsObj).getOrElse(None)
 
-  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[SubscriptionLocalData] = {
+  def set[A](page: Settable[A], value: A)(using writes: Writes[A]): Try[SubscriptionLocalData] = {
     val updatedData = jsObj.setObject(page.path, Json.toJson(value)) match {
       case JsSuccess(jsValue, _) =>
         Success(jsValue)
@@ -55,7 +55,7 @@ case class SubscriptionLocalData(
 
     updatedData.map(_.as[SubscriptionLocalData])
   }
-  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): SubscriptionLocalData =
+  def setOrException[A](page: QuestionPage[A], value: A)(using writes: Writes[A]): SubscriptionLocalData =
     set(page, value) match {
       case Success(ua) => ua
       case Failure(ex) => throw ex
@@ -70,7 +70,7 @@ case class SubscriptionLocalData(
     updatedData.map(_.as[SubscriptionLocalData])
   }
 
-  def removeIfExists[A](page: Settable[A])(implicit rds: Reads[A]): Try[SubscriptionLocalData] =
+  def removeIfExists[A](page: Settable[A])(using rds: Reads[A]): Try[SubscriptionLocalData] =
     if get(page.asInstanceOf[Gettable[A]]).isDefined then {
       remove(page)
     } else {
@@ -80,5 +80,5 @@ case class SubscriptionLocalData(
 }
 
 object SubscriptionLocalData {
-  implicit val format: OFormat[SubscriptionLocalData] = Json.format[SubscriptionLocalData]
+  given format: OFormat[SubscriptionLocalData] = Json.format[SubscriptionLocalData]
 }

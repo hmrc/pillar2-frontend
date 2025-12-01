@@ -37,7 +37,7 @@ trait CheckboxFluency {
       name:   String,
       items:  Seq[CheckboxItem],
       legend: Legend
-    )(implicit messages: Messages): Checkboxes =
+    )(using messages: Messages): Checkboxes =
       apply(
         form = form,
         name = name,
@@ -50,7 +50,7 @@ trait CheckboxFluency {
       name:     String,
       items:    Seq[CheckboxItem],
       fieldset: Fieldset
-    )(implicit messages: Messages): Checkboxes =
+    )(using messages: Messages): Checkboxes =
       Checkboxes(
         fieldset = Some(fieldset),
         name = name,
@@ -61,7 +61,7 @@ trait CheckboxFluency {
       )
   }
 
-  implicit class FluentCheckboxes(checkboxes: Checkboxes) {
+  extension (checkboxes: Checkboxes) {
 
     def describedBy(value: String): Checkboxes =
       checkboxes.copy(describedBy = Some(value))

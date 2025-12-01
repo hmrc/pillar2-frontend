@@ -19,7 +19,7 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.*
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.AmendApiFailureView
 
@@ -31,11 +31,12 @@ class AmendApiFailureController @Inject() (
   requireData:                      DataRequiredAction,
   val controllerComponents:         MessagesControllerComponents,
   view:                             AmendApiFailureView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     Ok(view())
   }
 }

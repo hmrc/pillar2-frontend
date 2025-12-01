@@ -370,10 +370,10 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
-        when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
+        when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(using any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockAuditService.auditRepayments(any())(any())).thenReturn(Future.successful(AuditResult.Success))
+        when(mockAuditService.auditRepayments(any())(using any())).thenReturn(Future.successful(AuditResult.Success))
 
         running(application) {
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
@@ -394,7 +394,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           )
           .build()
         when(mockRepaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
-        when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(using any())).thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 

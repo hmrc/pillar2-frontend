@@ -24,7 +24,7 @@ import java.time.ZonedDateTime
 case class Submission(submissionType: SubmissionType, receivedDate: ZonedDateTime, country: Option[String])
 
 object Submission {
-  implicit val format: OFormat[Submission] = Json.format[Submission]
+  given format: OFormat[Submission] = Json.format[Submission]
 }
 
 sealed trait SubmissionType extends EnumEntry {

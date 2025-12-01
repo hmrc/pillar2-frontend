@@ -34,7 +34,7 @@ trait SelectFluency {
       field: Field,
       items: Seq[SelectItem],
       label: Label
-    )(implicit messages: Messages): Select =
+    )(using messages: Messages): Select =
       Select(
         id = field.id,
         name = field.name,
@@ -44,7 +44,7 @@ trait SelectFluency {
       )
   }
 
-  implicit class FluentSelect(select: Select) {
+  extension (select: Select) {
 
     def withHint(hint: Hint): Select =
       select.copy(hint = Some(hint))

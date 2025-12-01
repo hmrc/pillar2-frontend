@@ -26,7 +26,7 @@ import pages.{UpeCapturePhonePage, UpeContactNamePage, UpePhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.CapturePhoneDetailsView
 
@@ -42,11 +42,12 @@ class CapturePhoneDetailsController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 UltimateParentNavigator,
   view:                      CapturePhoneDetailsView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     (for {
       _           <- request.userAnswers.get(UpePhonePreferencePage)
       contactName <- request.userAnswers.get(UpeContactNamePage)
@@ -62,7 +63,8 @@ class CapturePhoneDetailsController @Inject() (
       .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(UpeContactNamePage)
       .map { contactName =>

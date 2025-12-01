@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.FinancialDataConnector
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import generators.ModelGenerators
 import models.*
 import models.DueAndOverdueReturnBannerScenario.*
@@ -41,7 +41,7 @@ import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.Agent
 import uk.gov.hmrc.auth.core.retrieve.{Credentials, ~}
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import views.html.HomepageView
 
 import java.time.LocalDate
@@ -95,11 +95,11 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(FinancialData(Seq.empty)))
 
         val result = route(application, request).value
@@ -135,8 +135,8 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
       running(application) {
         val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
-        when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.failed(models.UnprocessableEntityError))
+        when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
         val result = route(application, request).value
@@ -175,14 +175,14 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[AuthConnector].toInstance(mockAuthConnector)
           )
           .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
-      when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.failed(models.UnprocessableEntityError))
-      when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+      when(mockSubscriptionService.maybeReadSubscription(any())(using any())).thenReturn(Future.failed(models.UnprocessableEntityError))
+      when(mockSubscriptionService.cacheSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
 

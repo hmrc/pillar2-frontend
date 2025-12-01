@@ -45,7 +45,7 @@ class EnrolmentIdentifierAction @Inject() (
   sessionRepository:          SessionRepository,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
@@ -54,7 +54,7 @@ class EnrolmentIdentifierAction @Inject() (
   override protected def executionContext: ExecutionContext       = ec
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     val retrievals = Retrievals.internalId and
       Retrievals.allEnrolments and
@@ -118,7 +118,7 @@ class EnrolmentIdentifierAction @Inject() (
     }
 
   private def authAsAgent[A](request: Request[A], internalId: String): Future[Either[Result, IdentifierRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     sessionRepository.get(internalId).flatMap { maybeUserAnswers =>
       maybeUserAnswers
         .flatMap(_.get(AgentClientPillar2ReferencePage))

@@ -25,7 +25,7 @@ import models.tasklist.SectionStatus.Completed
 import pages.PlrReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.TaskListView
@@ -41,12 +41,13 @@ class TaskListController @Inject() (
   sessionRepository:         SessionRepository,
   view:                      TaskListView,
   val userAnswersConnectors: UserAnswersConnectors
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent]    = request
     val groupDetailSection       = groupSections(request.userAnswers)
     val contactDetailSection     = contactSection(request.userAnswers)
     val reviewAndSubmitSection   = reviewSection(request.userAnswers)

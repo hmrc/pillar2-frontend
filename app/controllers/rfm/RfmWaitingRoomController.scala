@@ -22,7 +22,7 @@ import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, Successful
 import pages.RfmStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmWaitingRoomView
 
@@ -34,12 +34,13 @@ class RfmWaitingRoomController @Inject() (
   requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmWaitingRoomView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(RfmStatusPage) match {
       case Some(SuccessfullyCompleted) =>

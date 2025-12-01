@@ -36,7 +36,7 @@ import scala.util.Try
 class BTNConnector @Inject() (val config: FrontendAppConfig, val httpClientV2: HttpClientV2) extends Logging {
   def submitBTN(
     btnRequest: BTNRequest
-  )(implicit hc: HeaderCarrier, pillar2Id: String, ec: ExecutionContext): Future[BtnResponse] = {
+  )(using hc: HeaderCarrier, pillar2Id: String, ec: ExecutionContext): Future[BtnResponse] = {
     val urlBTN = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/below-threshold-notification/submit"
 
     logger.info(s"Calling pillar-2 backend url = $urlBTN with pillar2Id: $pillar2Id.")

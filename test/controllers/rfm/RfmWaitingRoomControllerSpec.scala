@@ -66,7 +66,7 @@ class RfmWaitingRoomControllerSpec extends SpecBase {
         )
         .build()
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+      when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url)

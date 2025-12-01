@@ -19,16 +19,17 @@ package viewmodels.checkAnswers
 import models.CheckMode
 import models.subscription.AccountingPeriod
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.SiteChange
 import utils.DateTimeUtils.*
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object SubAccountingPeriodSummary {
 
-  def row(accountingPeriod: AccountingPeriod, multipleAccountingPeriods: Boolean)(implicit messages: Messages): Option[SummaryListRow] = {
+  def row(accountingPeriod: AccountingPeriod, multipleAccountingPeriods: Boolean)(using messages: Messages): Option[SummaryListRow] = {
     val startDate: String = accountingPeriod.startDate.toDateFormat
     val endDate:   String = accountingPeriod.endDate.toDateFormat
 

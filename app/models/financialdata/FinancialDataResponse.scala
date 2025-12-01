@@ -24,7 +24,7 @@ final case class FinancialDataResponse(financialTransactions: Seq[FinancialDataR
 
 object FinancialDataResponse {
 
-  implicit val format: OFormat[FinancialDataResponse] = Json.format
+  given format: OFormat[FinancialDataResponse] = Json.format
 
   final case class FinancialTransaction(
     mainTransaction:   Option[String],
@@ -38,11 +38,11 @@ object FinancialDataResponse {
   final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
 
   object FinancialTransaction {
-    implicit val format: OFormat[FinancialTransaction] = Json.format
+    given format: OFormat[FinancialTransaction] = Json.format
   }
 
   object FinancialItem {
-    implicit val format: OFormat[FinancialItem] = Json.format
+    given format: OFormat[FinancialItem] = Json.format
   }
 
 }

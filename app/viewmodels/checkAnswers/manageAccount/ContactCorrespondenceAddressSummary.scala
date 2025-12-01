@@ -19,15 +19,16 @@ package viewmodels.checkAnswers.manageAccount
 import models.requests.SubscriptionDataRequest
 import pages.SubRegisteredAddressPage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(countryOptions: CountryOptions)(implicit
+  def row(countryOptions: CountryOptions)(using
     messages: Messages,
     request:  SubscriptionDataRequest[?]
   ): Option[SummaryListRow] =

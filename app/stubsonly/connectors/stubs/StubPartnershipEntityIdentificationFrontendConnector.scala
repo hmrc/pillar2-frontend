@@ -29,7 +29,7 @@ import scala.concurrent.Future
 
 class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends PartnershipIdentificationFrontendConnector {
 
-  override def createPartnershipJourney(userType: UserType, partnershipType: EntityType, mode: Mode)(implicit
+  override def createPartnershipJourney(userType: UserType, partnershipType: EntityType, mode: Mode)(using
     hc: HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] =
     Future.successful(
@@ -39,7 +39,7 @@ class StubPartnershipEntityIdentificationFrontendConnector @Inject() () extends 
       )
     )
 
-  override def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
+  override def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
     Future.successful(Json.parse(Base64Utils.base64UrlDecode(journeyId)).as[PartnershipEntityRegistrationData])
 
 }

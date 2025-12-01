@@ -31,7 +31,7 @@ trait FieldsetFluency {
       Fieldset(legend = Some(legend))
   }
 
-  implicit class FluentFieldset(fieldset: Fieldset) {
+  extension (fieldset: Fieldset) {
 
     def describedBy(value: String): Fieldset =
       fieldset.copy(describedBy = Some(value))
@@ -55,7 +55,7 @@ trait FieldsetFluency {
       Legend(content = content)
   }
 
-  implicit class FluentLegend(legend: Legend) {
+  implicit class FluentFieldset(legend: Legend) {
 
     def asPageHeading(size: LegendSize = LegendSize.ExtraLarge): Legend =
       legend

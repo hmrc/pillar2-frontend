@@ -21,6 +21,7 @@ import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import forms.BTNChooseAccountingPeriodFormProvider
 import models.Mode
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import pages.BTNChooseAccountingPeriodPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
@@ -43,14 +44,15 @@ class BTNChooseAccountingPeriodController @Inject() (
   formProvider:                           BTNChooseAccountingPeriodFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNChooseAccountingPeriodView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
-      .async { implicit request =>
+      .async { request =>
+        given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
             val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex
@@ -72,7 +74,8 @@ class BTNChooseAccountingPeriodController @Inject() (
 
   def onSubmit(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
-      .async { implicit request =>
+      .async { request =>
+        given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
             val accountingPeriods = filteredAccountingPeriodDetails.zipWithIndex

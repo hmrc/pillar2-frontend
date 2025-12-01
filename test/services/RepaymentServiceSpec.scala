@@ -85,7 +85,7 @@ class RepaymentServiceSpec extends SpecBase {
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         val service = application.injector().instanceOf[RepaymentService]
-        when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
+        when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(using any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
         service.sendRepaymentDetails(validRepaymentPayloadUkBank).futureValue mustEqual Done
       }
@@ -95,7 +95,7 @@ class RepaymentServiceSpec extends SpecBase {
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         val service = application.injector().instanceOf[RepaymentService]
-        when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockRepaymentConnector.repayment(any[SendRepaymentDetails])(using any())).thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.clear(any())).thenReturn(Future.successful(true))
         service.sendRepaymentDetails(validRepaymentPayloadUkBank).failed.futureValue mustEqual UnexpectedResponse
       }

@@ -19,13 +19,14 @@ package viewmodels.checkAnswers.manageAccount
 import models.requests.SubscriptionDataRequest
 import pages.SubAddSecondaryContactPage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object AddSecondaryContactSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
+  def row()(using messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubAddSecondaryContactPage).map { answer =>
       val value = if answer then "site.yes" else "site.no"
       SummaryListRowViewModel(

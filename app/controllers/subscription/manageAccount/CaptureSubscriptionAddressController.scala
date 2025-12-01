@@ -25,7 +25,7 @@ import pages.SubRegisteredAddressPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.manageAccount.CaptureSubscriptionAddressView
@@ -42,21 +42,23 @@ class CaptureSubscriptionAddressController @Inject() (
   val countryOptions:                     CountryOptions,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   CaptureSubscriptionAddressView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[NonUKAddress] = formProvider()
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData) { implicit request =>
-      val preparedForm =
+    (identify andThen getData) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          =
         request.maybeSubscriptionLocalData.flatMap(_.get(SubRegisteredAddressPage).map(address => form.fill(address))).getOrElse(form)
       Ok(view(preparedForm, countryOptions.options(), request.isAgent, request.maybeSubscriptionLocalData.flatMap(_.organisationName)))
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       form
         .bindFromRequest()
         .fold(

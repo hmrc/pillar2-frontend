@@ -30,12 +30,13 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class BarsConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) {
+class BarsConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) {
+  given ExecutionContext = ec
 
   private val url:     String                = s"${config.barsBaseUrl}/verify/business"
   private val headers: Seq[(String, String)] = Seq("Content-Type" -> "application/json")
 
-  def verify(business: Business, account: Account, trackingId: UUID)(implicit hc: HeaderCarrier): Future[BarsAccountResponse] =
+  def verify(business: Business, account: Account, trackingId: UUID)(using hc: HeaderCarrier): Future[BarsAccountResponse] =
     http
       .post(url"$url")
       .setHeader(headers :+ ("X-Tracking-Id" -> trackingId.toString)*)

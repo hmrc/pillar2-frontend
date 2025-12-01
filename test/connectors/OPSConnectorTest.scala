@@ -45,7 +45,7 @@ class OPSConnectorTest extends SpecBase with WireMockServerHandler {
 
       val response = OPSRedirectResponse("journeyId", "nextUrl")
       stubResponse(endpoint, CREATED, Json.toJson(response).toString())
-      implicit val hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
+      given hc: HeaderCarrier = HeaderCarrier(sessionId = Some(SessionId("test-session-id")))
       val result = connector.getRedirectLocation("pillar2Id").futureValue
       result mustEqual response.nextUrl
     }

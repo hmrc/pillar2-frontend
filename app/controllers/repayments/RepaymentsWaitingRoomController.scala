@@ -23,7 +23,7 @@ import models.repayments.RepaymentsStatus.*
 import pages.{RepaymentsStatusPage, RepaymentsWaitingRoomVisited}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RepaymentsWaitingRoomView
@@ -38,12 +38,13 @@ class RepaymentsWaitingRoomController @Inject() (
   sessionRepository:                      SessionRepository,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsWaitingRoomView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent]        = request
     val repaymentStatusPage          = request.userAnswers.get(RepaymentsStatusPage)
     val repaymentsWaitingRoomVisited = request.userAnswers.get(RepaymentsWaitingRoomVisited)
 

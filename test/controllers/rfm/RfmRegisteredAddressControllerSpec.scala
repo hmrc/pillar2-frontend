@@ -139,7 +139,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
 
     ".onSubmit" should {
       "redirect to NoIdCheckYourAnswersController with valid data onSubmit" in {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         running(applicationOverride) {
           val result = route(applicationOverride, postRequest()).value
 
@@ -165,7 +165,7 @@ class RfmRegisteredAddressControllerSpec extends SpecBase {
       "in a form with errors, include/not include UK in country list based on previous answers" should {
         "include UK if RfmUkBasedPage is true" in {
 
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
           running(application) {
             val result = route(application, postRequest("postalCode" -> textOver35Chars)).value

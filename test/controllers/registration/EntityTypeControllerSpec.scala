@@ -93,7 +93,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(jsUserAnswers))
         val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
@@ -121,7 +121,7 @@ class EntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.registration.routes.EntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsUserAnswers))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(jsUserAnswers))
         val view = application.injector.instanceOf[EntityTypeView]
 
         val result = route(application, request).value
@@ -175,9 +175,9 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(using any()))
           .thenReturn(
             Future.successful(
               GrsCreateRegistrationResponse(
@@ -207,8 +207,8 @@ class EntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(using any()))
           .thenReturn(
             Future.successful(
               GrsCreateRegistrationResponse(
@@ -244,7 +244,7 @@ class EntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.registration.routes.EntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any()))
           .thenReturn(Future.successful(jsonTobeReturned))
         val result = route(application, request).value
 

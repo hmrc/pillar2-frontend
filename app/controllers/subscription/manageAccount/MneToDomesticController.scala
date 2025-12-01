@@ -19,7 +19,7 @@ package controllers.subscription.manageAccount
 import config.FrontendAppConfig
 import controllers.actions.*
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.MneToDomesticView
 
@@ -29,12 +29,13 @@ class MneToDomesticController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   MneToDomesticView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    identify { implicit request =>
+    identify { request =>
+      given Request[AnyContent] = request
       Ok(view(request.isAgent))
     }
 }

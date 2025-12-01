@@ -158,9 +158,9 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.createLimitedCompanyJourney(any(), any())(using any()))
           .thenReturn(
             Future.successful(
               GrsCreateRegistrationResponse(
@@ -196,8 +196,8 @@ class RfmEntityTypeControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.createPartnershipJourney(any(), any(), any())(using any()))
           .thenReturn(
             Future.successful(
               GrsCreateRegistrationResponse(
@@ -233,7 +233,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
       running(application) {
         val request = FakeRequest(POST, controllers.rfm.routes.RfmEntityTypeController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody(("value", EntityType.Other.toString))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(jsonTobeReturned))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -257,7 +257,7 @@ class RfmEntityTypeControllerSpec extends SpecBase {
 
       running(application) {
         val request = FakeRequest(GET, controllers.rfm.routes.RfmEntityTypeController.onPageLoad(NormalMode).url)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(jsonTobeReturned))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(jsonTobeReturned))
         val view = application.injector.instanceOf[RfmEntityTypeView]
 
         val result = route(application, request).value

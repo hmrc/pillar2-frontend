@@ -87,7 +87,7 @@ class BankAccountDetailsControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockBarsService.verifyBusinessAccount(any(), any(), any(), any())(any(), any(), any()))
+        when(mockBarsService.verifyBusinessAccount(any(), any(), any(), any())(using any(), any(), any()))
           .thenReturn(Future successful Redirect(controllers.repayments.routes.RepaymentsContactNameController.onPageLoad(NormalMode)))
 
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))

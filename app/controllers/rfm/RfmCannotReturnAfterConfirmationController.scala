@@ -19,7 +19,7 @@ package controllers.rfm
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmCannotReturnAfterConfirmationView
 
@@ -29,11 +29,12 @@ class RfmCannotReturnAfterConfirmationController @Inject() (
   Identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmCannotReturnAfterConfirmationView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = Identify { request =>
+    given Request[AnyContent] = request
     Ok(view())
   }
 

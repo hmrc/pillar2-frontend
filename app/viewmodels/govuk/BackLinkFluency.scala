@@ -26,14 +26,14 @@ trait BackLinkFluency {
 
   object BackLinkViewModel {
 
-    def apply(href: String)(implicit messages: Messages): BackLink =
+    def apply(href: String)(using messages: Messages): BackLink =
       BackLink(
         href = href,
         content = Text(messages("site.back"))
       )
   }
 
-  implicit class FluentBackLink(backLink: BackLink) {
+  extension (backLink: BackLink) {
 
     def withCssClass(newClass: String): BackLink =
       backLink.copy(classes = s"${backLink.classes} $newClass")

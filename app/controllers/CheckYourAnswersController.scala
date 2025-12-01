@@ -29,12 +29,12 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.libs.concurrent.Futures
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.http.{GatewayTimeoutException, HeaderCarrier, HttpException}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
+import utils.DateTimeUtils.*
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
@@ -56,13 +56,14 @@ class CheckYourAnswersController @Inject() (
   view:                     CheckYourAnswersView,
   countryOptions:           CountryOptions,
   futures:                  Futures
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
-    implicit val userAnswers: UserAnswers = request.userAnswers
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
+    given userAnswers: UserAnswers = request.userAnswers
     sessionRepository.get(request.userId).map { optionalUserAnswer =>
       (for {
         userAnswer <- optionalUserAnswer
@@ -77,7 +78,8 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     if request.userAnswers.finalStatusCheck then {
       subscriptionService.getCompanyName(request.userAnswers) match {
         case Left(errorRedirect) => errorRedirect
@@ -147,7 +149,7 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Unit] =
+  private def setCheckYourAnswersLogic(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[Unit] =
     for {
       updatedAnswers      <- Future.fromTry(userAnswers.set(CheckYourAnswersLogicPage, true))
       _                   <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
@@ -157,12 +159,12 @@ class CheckYourAnswersController @Inject() (
       _                  <- sessionRepository.set(updatedSessionData)
     } yield (): Unit
 
-  private def addressSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def addressSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(ContactCorrespondenceAddressSummary.row(userAnswers, countryOptions)).flatten
     ).withCssClass("govuk-!-margin-bottom-6")
 
-  private def secondaryContactSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def secondaryContactSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         AddSecondaryContactSummary.row(userAnswers),
@@ -173,7 +175,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def primaryContactSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def primaryContactSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         ContactNameComplianceSummary.row(userAnswers),
@@ -183,7 +185,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def nfmSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def nfmSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         NominateFilingMemberYesNoSummary.row(userAnswers),
@@ -202,7 +204,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def upeSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def upeSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         UpeNameRegistrationSummary.row(userAnswers),
@@ -220,7 +222,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def groupDetailSummaryList(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def groupDetailSummaryList(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         MneOrDomesticSummary.row(userAnswers),
@@ -230,7 +232,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def pollForSubscriptionData(plrReference: String)(implicit hc: HeaderCarrier): Future[Unit] = {
+  private def pollForSubscriptionData(plrReference: String)(using hc: HeaderCarrier): Future[Unit] = {
     val maxAttempts = {
       if appConfig.subscriptionPollingIntervalSeconds <= 0 then {
         logger.error("Invalid subscriptionPollingIntervalSeconds configuration: must be greater than 0")

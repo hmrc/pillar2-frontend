@@ -26,8 +26,8 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsService @Inject() (
   obligationAndSubmissionsConnector: ObligationsAndSubmissionsConnector
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext) {
 
-  def handleData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccess] =
+  def handleData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[ObligationsAndSubmissionsSuccess] =
     obligationAndSubmissionsConnector.getData(pillar2Id, fromDate, toDate).flatMap(Future.successful)
 }

@@ -26,7 +26,7 @@ import models.{InternalIssueError, Mode, NoResultFound}
 import pages.{RfmPillar2ReferencePage, RfmRegistrationDatePage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
@@ -45,14 +45,15 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
   subscriptionService:              SubscriptionService,
   val controllerComponents:         MessagesControllerComponents,
   view:                             SecurityQuestionsCheckYourAnswersView
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      val list = SummaryListViewModel(
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      val list                  = SummaryListViewModel(
         rows = Seq(
           RfmSecurityCheckSummary.row(request.userAnswers),
           RfmRegistrationDateSummary.row(request.userAnswers)
@@ -65,7 +66,8 @@ class SecurityQuestionsCheckYourAnswersController @Inject() (
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { request =>
+    given Request[AnyContent] = request
     (for {
       inputPillar2Reference  <- OptionT.fromOption[Future](request.userAnswers.get(RfmPillar2ReferencePage))
       inputRegistrationDate  <- OptionT.fromOption[Future](request.userAnswers.get(RfmRegistrationDatePage))

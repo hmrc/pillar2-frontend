@@ -26,12 +26,12 @@ import pages.*
 import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.ZonedDateTimeOps
+import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.repayments.*
 import viewmodels.govuk.summarylist.*
 import views.html.repayments.RepaymentsCheckYourAnswersView
@@ -50,14 +50,15 @@ class RepaymentsCheckYourAnswersController @Inject() (
   view:                                   RepaymentsCheckYourAnswersView,
   auditService:                           AuditService,
   repaymentService:                       RepaymentService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      given userAnswers: UserAnswers = request.userAnswers
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
@@ -69,7 +70,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
       request.userAnswers.get(RepaymentsStatusPage) match {
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
@@ -137,7 +139,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       }
     }
 
-  private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def contactDetailsList()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         RepaymentsContactNameSummary.row(userAnswers),
@@ -147,7 +149,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listBankAccountDetails()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listBankAccountDetails()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         UkOrAbroadBankAccountSummary.row(userAnswers),
@@ -162,7 +164,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listRefund()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listRefund()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         RequestRefundAmountSummary.row(userAnswers),

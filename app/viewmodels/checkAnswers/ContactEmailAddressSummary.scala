@@ -36,14 +36,15 @@ import models.{CheckMode, UserAnswers}
 import pages.SubPrimaryEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object ContactEmailAddressSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(SubPrimaryEmailPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(

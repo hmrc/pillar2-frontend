@@ -18,7 +18,7 @@ package controllers
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import forms.AgentClientPillar2ReferenceFormProvider
 import models.{InternalIssueError, UserAnswers}
 import org.mockito.ArgumentMatchers
@@ -81,7 +81,7 @@ class AgentControllerSpec extends SpecBase {
         .build()
       val userAnswer = emptyUserAnswers
         .setOrException(AgentClientPillar2ReferencePage, PlrReference)
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -109,7 +109,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -139,14 +139,14 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(any()))
+      when(mockSubscriptionService.readSubscription(ArgumentMatchers.eq("XMPLR0123456789"))(using any()))
         .thenReturn(Future.successful(subscriptionData))
 
       running(application) {
@@ -168,14 +168,14 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
           )
         )
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSubscriptionService.readSubscription(any())(any()))
+      when(mockSubscriptionService.readSubscription(any())(using any()))
         .thenReturn(Future.failed(InternalIssueError))
 
       running(application) {
@@ -196,7 +196,7 @@ class AgentControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -234,7 +234,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -255,7 +255,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -282,7 +282,7 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -311,7 +311,7 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ agentWithDelegatedEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -338,7 +338,7 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -372,7 +372,7 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -403,7 +403,7 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ agentWithDelegatedEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -430,8 +430,8 @@ class AgentControllerSpec extends SpecBase {
 
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
       when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockUserAnswersConnectors.getUserAnswer(any())(any())).thenReturn(Future.successful(Some(userAnswer)))
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockUserAnswersConnectors.getUserAnswer(any())(using any())).thenReturn(Future.successful(Some(userAnswer)))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -456,7 +456,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -495,7 +495,7 @@ class AgentControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ agentEnrolments ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

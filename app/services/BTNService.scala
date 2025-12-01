@@ -28,10 +28,10 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class BTNService @Inject() (
   btnConnector: BTNConnector
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
-  def submitBTN(btnRequest: BTNRequest)(implicit headerCarrier: HeaderCarrier, pillar2Id: String): Future[BtnResponse] =
+  def submitBTN(btnRequest: BTNRequest)(using headerCarrier: HeaderCarrier, pillar2Id: String): Future[BtnResponse] =
     btnConnector
       .submitBTN(btnRequest)
       .map { btnResponse =>

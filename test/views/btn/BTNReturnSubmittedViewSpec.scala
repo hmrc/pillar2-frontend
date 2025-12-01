@@ -25,7 +25,7 @@ import models.obligationsandsubmissions.{AccountingPeriodDetails, Obligation, Su
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import views.html.btn.BTNReturnSubmittedView
 
 import java.time.{LocalDate, ZonedDateTime}

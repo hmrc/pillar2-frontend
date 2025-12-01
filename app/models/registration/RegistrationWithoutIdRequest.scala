@@ -22,5 +22,5 @@ import play.api.libs.json.{Json, OFormat}
 final case class RegistrationWithoutIdRequest(orgType: Option[EntityType])
 
 object RegistrationWithoutIdRequest {
-  implicit val format: OFormat[RegistrationWithoutIdRequest] = Json.format[RegistrationWithoutIdRequest]
+  given format: OFormat[RegistrationWithoutIdRequest] = Json.format[RegistrationWithoutIdRequest]
 }

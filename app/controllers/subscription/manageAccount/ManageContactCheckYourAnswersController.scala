@@ -19,12 +19,13 @@ package controllers.subscription.manageAccount
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import models.requests.SubscriptionDataRequest
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -48,12 +49,13 @@ class ManageContactCheckYourAnswersController @Inject() (
   sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given SubscriptionDataRequest[AnyContent] = request
     sessionRepository.get(request.userId).flatMap {
       case None          => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       case Some(answers) =>
@@ -104,7 +106,8 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     logger.info(s"[ManageContactCheckYourAnswers] Submission started for user ${request.userId}")
     sessionRepository.get(request.userId).flatMap { userAnswers =>
       userAnswers.flatMap(_.get(ManageContactDetailsStatusPage)) match {
@@ -127,7 +130,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
   }
 
-  private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
+  private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -162,7 +165,7 @@ class ManageContactCheckYourAnswersController @Inject() (
       .map(_ => ())
   }
 
-  private def setStatusOnFailure(userId: String, status: ManageContactDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+  private def setStatusOnFailure(userId: String, status: ManageContactDetailsStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
     sessionRepository
       .get(userId)
       .flatMap { maybeUa =>

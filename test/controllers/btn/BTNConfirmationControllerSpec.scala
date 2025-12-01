@@ -26,7 +26,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.ObligationsAndSubmissionsService
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import views.html.btn.BTNConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}
@@ -56,7 +56,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any()))
             .thenReturn(Future.successful(obligationsData))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
@@ -100,7 +100,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any()))
             .thenReturn(Future.successful(obligationsData))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
@@ -153,7 +153,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any()))
             .thenReturn(Future.successful(obligationsData))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)
@@ -206,7 +206,7 @@ class BTNConfirmationControllerSpec extends SpecBase {
 
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
-          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any()))
+          when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any()))
             .thenReturn(Future.successful(obligationsData))
 
           val request = FakeRequest(GET, controllers.btn.routes.BTNConfirmationController.onPageLoad.url)

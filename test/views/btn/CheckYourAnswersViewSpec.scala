@@ -25,9 +25,10 @@ import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import pages.{EntitiesInsideOutsideUKPage, SubAccountingPeriodPage}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
-import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
+import viewmodels.govuk.all.SummaryListViewModel
+import viewmodels.govuk.summarylist.withCssClass
 import views.html.btn.CheckYourAnswersView
 
 import java.time.LocalDate

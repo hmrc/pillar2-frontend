@@ -24,7 +24,7 @@ trait BookmarkHelper {
 
   self: UserAnswers =>
 
-  def isPageDefined[A](page: Gettable[A])(implicit rds: Reads[A]): Boolean =
+  def isPageDefined[A](page: Gettable[A])(using rds: Reads[A]): Boolean =
     get(page) match {
       case Some(_) => true
       case _       => false

@@ -22,7 +22,7 @@ import models.subscription.SubscriptionStatus.*
 import pages.SubscriptionStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.RegistrationWaitingRoomView
 
@@ -34,12 +34,13 @@ class RegistrationWaitingRoomController @Inject() (
   requireData:              SessionDataRequiredAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     RegistrationWaitingRoomView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(SubscriptionStatusPage) match {
       case Some(SuccessfullyCompletedSubscription)        => Redirect(routes.RegistrationConfirmationController.onPageLoad())

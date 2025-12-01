@@ -26,20 +26,20 @@ import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClientV2)(
-  implicit ec: ExecutionContext
+class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersConnectors, val config: FrontendAppConfig, val http: HttpClientV2)(using
+  ec: ExecutionContext
 ) extends Logging {
   private val upeRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/upe/registration"
   private val fmRegistrationUrl  = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/fm/registration"
   private val rfmRegistrationUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/rfm/registration"
 
-  def registerUltimateParent(id: String)(implicit hc: HeaderCarrier): Future[String] =
+  def registerUltimateParent(id: String)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$upeRegistrationUrl/$id")
       .withBody(Json.obj())
@@ -52,7 +52,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         Future.failed(InternalIssueError)
     }
 
-  def registerFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
+  def registerFilingMember(id: String)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$fmRegistrationUrl/$id")
       .withBody(Json.obj())
@@ -69,7 +69,7 @@ class RegistrationConnector @Inject() (val userAnswersConnectors: UserAnswersCon
         Future.failed(InternalIssueError)
     }
 
-  def registerNewFilingMember(id: String)(implicit hc: HeaderCarrier): Future[String] =
+  def registerNewFilingMember(id: String)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$rfmRegistrationUrl/$id")
       .withBody(Json.obj())

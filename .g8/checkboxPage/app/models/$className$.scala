@@ -28,6 +28,6 @@ object $className$ extends Enumerable.Implicits {
         )
     }
 
-  implicit val enumerable: Enumerable[$className$] =
+  given enumerable: Enumerable[$className$] =
     Enumerable(values.map(v => v.toString -> v): _*)
 }

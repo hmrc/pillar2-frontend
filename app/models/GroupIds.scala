@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class GroupIds(principalGroupIds: Seq[String], delegatedGroupIds: Seq[String])
 
 object GroupIds {
-  implicit val format: OFormat[GroupIds] = Json.format[GroupIds]
+  given format: OFormat[GroupIds] = Json.format[GroupIds]
 }

@@ -37,8 +37,10 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
       )
     )
 
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
+  given ExecutionContext = executionContext
 }
 
 class FakeSubscriptionDataRetrievalAction(
@@ -56,13 +58,17 @@ class FakeSubscriptionDataRetrievalAction(
       )
     )
 
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
+  given ExecutionContext = executionContext
 }
 
 class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends SessionDataRetrievalAction {
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
+  given ExecutionContext = executionContext
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
     Future(SessionOptionalDataRequest(request, request.userId, dataToReturn))

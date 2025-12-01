@@ -47,7 +47,7 @@ class UpeRegisteredAddressControllerSpec extends SpecBase {
 
   def application:         Application = applicationBuilder(Some(defaultUa)).build()
   def applicationOverride: Application = {
-    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+    when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     applicationBuilder(Some(defaultUa))
       .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

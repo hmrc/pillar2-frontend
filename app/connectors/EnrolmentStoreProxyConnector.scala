@@ -26,15 +26,16 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
+class EnrolmentStoreProxyConnector @Inject() (ec: ExecutionContext, val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
+  given ExecutionContext = ec
 
-  def getGroupIds(plrReference: String)(implicit
+  def getGroupIds(plrReference: String)(using
     hc: HeaderCarrier
   ): Future[Option[GroupIds]] = {
     val serviceEnrolmentPattern = s"HMRC-PILLAR2-ORG~PLRID~$plrReference"
@@ -56,7 +57,7 @@ class EnrolmentStoreProxyConnector @Inject() (implicit ec: ExecutionContext, val
 
   }
 
-  def getKnownFacts(knownFacts: KnownFactsParameters)(implicit hc: HeaderCarrier): Future[KnownFactsResponse] = {
+  def getKnownFacts(knownFacts: KnownFactsParameters)(using hc: HeaderCarrier): Future[KnownFactsResponse] = {
     val submissionUrl = s"${config.enrolmentStoreProxyUrl}/enrolment-store/enrolments"
     http
       .post(url"$submissionUrl")

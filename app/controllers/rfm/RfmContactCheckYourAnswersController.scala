@@ -28,7 +28,7 @@ import pages.{PlrReferencePage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Writes
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import queries.Settable
 import repositories.SessionRepository
 import services.SubscriptionService
@@ -55,13 +55,14 @@ class RfmContactCheckYourAnswersController @Inject() (
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
   countryOptions:                      CountryOptions
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
-    implicit val userAnswers: UserAnswers = request.userAnswers
+  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
+    given userAnswers: UserAnswers = request.userAnswers
     val address = SummaryListViewModel(
       rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
@@ -91,7 +92,8 @@ class RfmContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     if request.userAnswers.isRfmJourneyCompleted then {
       updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
       val rfmStatus = (for {
@@ -153,7 +155,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       _                  <- sessionRepository.set(updatedSessionData)
     } yield (): Unit
 
-  private def updateSessionData[A](userAnswers: UserAnswers, page: Settable[A], value: A)(implicit writes: Writes[A]): Future[Unit] =
+  private def updateSessionData[A](userAnswers: UserAnswers, page: Settable[A], value: A)(using writes: Writes[A]): Future[Unit] =
     for {
       optionalSessionData <- sessionRepository.get(userAnswers.id)
       sessionData = optionalSessionData.getOrElse(UserAnswers(userAnswers.id))

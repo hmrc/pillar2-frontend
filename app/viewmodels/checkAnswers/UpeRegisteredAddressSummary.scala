@@ -19,15 +19,16 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.UpeRegisteredAddressPage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object UpeRegisteredAddressSummary {
 
-  def row(answers: UserAnswers, countryOptions: CountryOptions)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, countryOptions: CountryOptions)(using messages: Messages): Option[SummaryListRow] =
     answers.get(UpeRegisteredAddressPage).map { answer =>
       val country = countryOptions.getCountryNameFromCode(answer.countryCode)
       SummaryListRowViewModel(

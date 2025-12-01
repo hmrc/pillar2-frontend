@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import forms.MneOrDomesticFormProvider
 import models.MneOrDomestic
 import navigation.AmendSubscriptionNavigator
@@ -50,7 +50,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
   private val expectedNextPage:  Call                      = Call(GET, "/")
 
   private def setupAgentAuth(): Unit =
-    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
       .thenReturn(
         Future.successful(
           Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -111,7 +111,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -131,7 +131,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -140,7 +140,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -160,7 +160,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -169,7 +169,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -189,7 +189,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -198,7 +198,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
 
@@ -217,7 +217,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url
-        verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
+        verify(mockSubscriptionConnector, never()).save(any(), any())(using any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
     }
@@ -290,7 +290,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -312,7 +312,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -321,7 +321,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -343,7 +343,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -352,7 +352,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData        = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
       val expectedUserAnswers = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
@@ -374,7 +374,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }
@@ -383,7 +383,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val previousData = emptySubscriptionLocalData.setOrException(SubMneOrDomesticPage, MneOrDomestic.UkAndOther)
 
@@ -404,7 +404,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.subscription.manageAccount.routes.MneToDomesticController.onPageLoad().url
-        verify(mockSubscriptionConnector, never()).save(any(), any())(any[HeaderCarrier])
+        verify(mockSubscriptionConnector, never()).save(any(), any())(using any[HeaderCarrier])
         verify(mockNavigator, never()).nextPage(any(), any())
       }
     }
@@ -413,7 +413,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
       val mockNavigator = mock[AmendSubscriptionNavigator]
 
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers         = emptySubscriptionLocalData
       val expectedUserAnswers = userAnswers.setOrException(SubMneOrDomesticPage, MneOrDomestic.Uk)
@@ -436,7 +436,7 @@ class MneOrDomesticControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubMneOrDomesticPage, expectedUserAnswers)
       }
     }

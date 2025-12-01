@@ -50,7 +50,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
 
   "AuditService" should {
     "return success for auditGrsReturnForLimitedCompany" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditGrsReturnForLimitedCompany(validRegisterWithIdResponse).futureValue
@@ -58,7 +58,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     }
 
     "return success for auditGrsReturnForLLP" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditGrsReturnForLLP(validRegisterWithIdResponseForLLP).futureValue
@@ -66,7 +66,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     }
 
     "return success for auditGrsReturnNfmForLimitedCompany" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditGrsReturnNfmForLimitedCompany(validRegisterWithIdResponse).futureValue
@@ -74,7 +74,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     }
 
     "return success for auditGrsReturnNfmForLLP" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditGrsReturnNfmForLLP(validRegisterWithIdResponseForLLP).futureValue
@@ -82,7 +82,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     }
 
     "return success for auditRepayments" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditRepayments(validRepayment).futureValue
@@ -90,7 +90,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
     }
 
     "return success for auditReplaceFilingMember" in withMockedAuditConnector { (auditService, auditConnector) =>
-      when(auditConnector.sendExtendedEvent(any())(any(), any()))
+      when(auditConnector.sendExtendedEvent(any())(using any(), any()))
         .thenReturn(Future.successful(AuditResult.Success))
 
       val result = auditService.auditReplaceFilingMember(validReplaceFilingMemberNoId).futureValue
@@ -112,7 +112,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
       "return Success when audit call is successful" when {
 
         "BTN was successful" in withMockedAuditConnector { (auditService, auditConnector) =>
-          when(auditConnector.sendExtendedEvent(any())(any(), any()))
+          when(auditConnector.sendExtendedEvent(any())(using any(), any()))
             .thenReturn(Future.successful(AuditResult.Success))
 
           val result = auditService
@@ -133,7 +133,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
           result mustBe AuditResult.Success
 
           val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
-          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
+          verify(auditConnector).sendExtendedEvent(captor.capture())(using any, any)
 
           captor.getValue.auditSource mustBe "pillar2-frontend"
           captor.getValue.auditType mustBe "belowThresholdNotification"
@@ -156,7 +156,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
         }
 
         "BTN failed" in withMockedAuditConnector { (auditService, auditConnector) =>
-          when(auditConnector.sendExtendedEvent(any())(any(), any()))
+          when(auditConnector.sendExtendedEvent(any())(using any(), any()))
             .thenReturn(Future.successful(AuditResult.Success))
 
           val result = auditService
@@ -179,7 +179,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
           result mustBe AuditResult.Success
 
           val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
-          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
+          verify(auditConnector).sendExtendedEvent(captor.capture())(using any, any)
 
           captor.getValue.auditSource mustBe "pillar2-frontend"
           captor.getValue.auditType mustBe "belowThresholdNotification"
@@ -203,7 +203,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
       }
 
       "return Disabled when audit connector is disabled" in withMockedAuditConnector { (auditService, auditConnector) =>
-        when(auditConnector.sendExtendedEvent(any())(any(), any()))
+        when(auditConnector.sendExtendedEvent(any())(using any(), any()))
           .thenReturn(Future.successful(AuditResult.Disabled))
 
         val result = auditService
@@ -225,7 +225,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
       }
 
       "return Failure when audit connector returns failure" in withMockedAuditConnector { (auditService, auditConnector) =>
-        when(auditConnector.sendExtendedEvent(any())(any(), any()))
+        when(auditConnector.sendExtendedEvent(any())(using any(), any()))
           .thenReturn(Future.successful(AuditResult.Failure("Audit failure")))
 
         val result = auditService
@@ -247,7 +247,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
       }
 
       "propagate exceptions from audit connector" in withMockedAuditConnector { (auditService, auditConnector) =>
-        when(auditConnector.sendExtendedEvent(any())(any(), any()))
+        when(auditConnector.sendExtendedEvent(any())(using any(), any()))
           .thenReturn(Future.failed(new RuntimeException("Test exception")))
 
         val result = auditService
@@ -282,7 +282,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
         arbitrary[Boolean]
       ) { (auditResult, insideOutsideUk) =>
         withMockedAuditConnector { (auditService, auditConnector) =>
-          when(auditConnector.sendExtendedEvent(any())(any(), any()))
+          when(auditConnector.sendExtendedEvent(any())(using any(), any()))
             .thenReturn(Future.successful(auditResult))
 
           val result = auditService
@@ -299,7 +299,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
           result mustBe auditResult
 
           val captor: ArgumentCaptor[ExtendedDataEvent] = ArgumentCaptor.forClass(classOf[ExtendedDataEvent])
-          verify(auditConnector).sendExtendedEvent(captor.capture())(any, any)
+          verify(auditConnector).sendExtendedEvent(captor.capture())(using any, any)
 
           captor.getValue.auditSource mustBe "pillar2-frontend"
           captor.getValue.auditType mustBe "belowThresholdNotification"
@@ -314,7 +314,7 @@ class AuditServiceSpec extends SpecBase with ScalaFutures with ScalaCheckDrivenP
 
       "propagate any failures sending the audit event" in withMockedAuditConnector { (auditService, auditConnector) =>
         val error = new Exception("failed to send event")
-        when(auditConnector.sendExtendedEvent(any())(any(), any()))
+        when(auditConnector.sendExtendedEvent(any())(using any(), any()))
           .thenReturn(Future.failed(error))
 
         val result = auditService

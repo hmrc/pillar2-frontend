@@ -34,7 +34,7 @@ object RfmStatus extends Enumerable.Implicits {
     InProgress
   )
 
-  implicit val enumerable: Enumerable[RfmStatus] =
+  given enumerable: Enumerable[RfmStatus] =
     Enumerable(values.map(v => v.toString -> v)*)
 
 }

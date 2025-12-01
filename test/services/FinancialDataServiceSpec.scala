@@ -82,7 +82,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
       "return financial data from the connector" in {
         val apiResponse = FinancialDataResponse(Seq(uktrMainApiTransaction))
 
-        when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(apiResponse))
 
         val result = service.retrieveFinancialData("test-plr", LocalDate.now.minusYears(1), LocalDate.now)
@@ -103,7 +103,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
 
         val exception = new RuntimeException("Connector error")
 
-        when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(exception))
 
         val result = service.retrieveFinancialData("test-plr", LocalDate.now.minusYears(1), LocalDate.now)
@@ -134,7 +134,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
           )
         ) { (name, apiResponse, parsedExpected) =>
           s"parsing a $name charge transaction" in forAll(Gen.oneOf(EtmpSubtransactionRef.values)) { subTxRef =>
-            when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+            when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
               .thenReturn(Future.successful(FinancialDataResponse(Seq(apiResponse.copy(subTransaction = subTxRef.value.some)))))
 
             val result = service.retrieveFinancialData("fake-plr", LocalDate.now().minusYears(1), LocalDate.now()).futureValue
@@ -170,7 +170,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
         val paymentApiResponses = apiFinancialItems.map(items => minimumPaymentApiResponse.copy(items = items))
 
         "have the required data" in forAll(paymentApiResponses) { paymentResponse =>
-          when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
             .thenReturn(Future.successful(FinancialDataResponse(Seq(paymentResponse))))
 
           val result        = service.retrieveFinancialData("fake-plr", LocalDate.now().minusYears(1), LocalDate.now()).futureValue
@@ -220,7 +220,7 @@ class FinancialDataServiceSpec extends SpecBase with OptionValues with ScalaChec
           )
         ) { (failureReason, responsesToDrop) =>
           s"transaction is dropped because $failureReason" in forAll(responsesToDrop) { responseToDrop =>
-            when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+            when(mockFinancialDataConnector.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
               .thenReturn(Future.successful(FinancialDataResponse(Seq(responseToDrop))))
 
             val result = service.retrieveFinancialData("fake-plr", LocalDate.now().minusYears(1), LocalDate.now()).futureValue

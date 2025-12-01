@@ -19,13 +19,14 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.RfmRegistrationDatePage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.DateTimeUtils.*
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object RfmRegistrationDateSummary {
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(RfmRegistrationDatePage).map { registrationDate =>
       SummaryListRowViewModel(
         key = "rfmRegistrationDate.checkYourAnswersLabel",

@@ -21,9 +21,9 @@ import play.api.libs.json.{Json, OFormat, OWrites}
 case class Identifier(key: String, value: String)
 
 object Identifier {
-  implicit val format: OFormat[Identifier] = Json.format[Identifier]
+  given format: OFormat[Identifier] = Json.format[Identifier]
 
-  implicit lazy val writes: OWrites[Identifier] = OWrites[Identifier] { identifier =>
+  given writes: OWrites[Identifier] = OWrites[Identifier] { identifier =>
     Json.obj(
       "key"   -> identifier.key,
       "value" -> identifier.value
@@ -34,9 +34,9 @@ object Identifier {
 case class Verifier(key: String, value: String)
 
 object Verifier {
-  implicit val format: OFormat[Verifier] = Json.format[Verifier]
+  given format: OFormat[Verifier] = Json.format[Verifier]
 
-  implicit lazy val writes: OWrites[Verifier] = OWrites[Verifier] { verifier =>
+  given writes: OWrites[Verifier] = OWrites[Verifier] { verifier =>
     Json.obj(
       "key"   -> verifier.key,
       "value" -> verifier.value
@@ -47,9 +47,9 @@ object Verifier {
 case class EnrolmentRequest(identifiers: Seq[Identifier], verifiers: Seq[Verifier])
 
 object EnrolmentRequest {
-  implicit val format: OFormat[EnrolmentRequest] = Json.format[EnrolmentRequest]
+  given format: OFormat[EnrolmentRequest] = Json.format[EnrolmentRequest]
 
-  implicit lazy val writes: OWrites[EnrolmentRequest] = OWrites[EnrolmentRequest] { enrolmentRequest =>
+  given writes: OWrites[EnrolmentRequest] = OWrites[EnrolmentRequest] { enrolmentRequest =>
     Json.obj(
       "identifiers" -> enrolmentRequest.identifiers,
       "verifiers"   -> enrolmentRequest.verifiers
@@ -64,21 +64,21 @@ object EnrolmentRequest {
   )
 
   object AllocateEnrolmentParameters {
-    implicit val format: OFormat[AllocateEnrolmentParameters] = Json.format[AllocateEnrolmentParameters]
+    given format: OFormat[AllocateEnrolmentParameters] = Json.format[AllocateEnrolmentParameters]
   }
 
   case class KnownFacts(key: String, value: String)
   object KnownFacts {
-    implicit val format: OFormat[KnownFacts] = Json.format[KnownFacts]
+    given format: OFormat[KnownFacts] = Json.format[KnownFacts]
   }
 
   case class KnownFactsParameters(service: String = "HMRC-PILLAR2-ORG", knownFacts: Seq[KnownFacts])
   object KnownFactsParameters {
-    implicit val format: OFormat[KnownFactsParameters] = Json.format[KnownFactsParameters]
+    given format: OFormat[KnownFactsParameters] = Json.format[KnownFactsParameters]
   }
 
   case class KnownFactsResponse(service: String = "HMRC-PILLAR2-ORG", enrolments: Seq[EnrolmentRequest])
   object KnownFactsResponse {
-    implicit val format: OFormat[KnownFactsResponse] = Json.format[KnownFactsResponse]
+    given format: OFormat[KnownFactsResponse] = Json.format[KnownFactsResponse]
   }
 }

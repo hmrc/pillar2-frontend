@@ -19,7 +19,7 @@ package controllers.bta
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.bta.NoPlrIdGuidanceView
 
@@ -29,11 +29,12 @@ class NoPlrIdGuidanceController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     NoPlrIdGuidanceView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = identify { request =>
+    given Request[AnyContent] = request
     val btaAccessEnabled: Boolean = appConfig.btaAccessEnabled
     if btaAccessEnabled then {
       Ok(view())

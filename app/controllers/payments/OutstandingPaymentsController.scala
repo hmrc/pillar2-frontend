@@ -25,7 +25,7 @@ import models.financialdata.{FinancialData, FinancialSummary, TransactionSummary
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{FinancialDataService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -47,7 +47,7 @@ class OutstandingPaymentsController @Inject() (
   financialDataService:                   FinancialDataService,
   view:                                   OutstandingPaymentsView,
   sessionRepository:                      SessionRepository
-)(implicit
+)(using
   appConfig: FrontendAppConfig,
   ec:        ExecutionContext
 ) extends FrontendBaseController
@@ -77,9 +77,10 @@ class OutstandingPaymentsController @Inject() (
       .reverse
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
-      implicit val hc:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
-      implicit val isAgent: Boolean       = request.isAgent
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
+      given hc:      HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+      given isAgent: Boolean       = request.isAgent
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))

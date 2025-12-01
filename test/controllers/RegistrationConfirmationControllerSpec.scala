@@ -27,7 +27,7 @@ import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.{Enrolment, EnrolmentIdentifier}
-import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
+import utils.DateTimeUtils.{toDateFormat, toTimeGmtFormat}
 import views.html.registrationview.RegistrationConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}

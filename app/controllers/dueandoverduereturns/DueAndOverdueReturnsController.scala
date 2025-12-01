@@ -24,7 +24,7 @@ import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.http.HeaderCarrier
@@ -46,7 +46,7 @@ class DueAndOverdueReturnsController @Inject() (
   obligationsAndSubmissionsService:       ObligationsAndSubmissionsService,
   view:                                   DueAndOverdueReturnsView,
   sessionRepository:                      SessionRepository
-)(implicit
+)(using
   appConfig: FrontendAppConfig,
   ec:        ExecutionContext
 ) extends FrontendBaseController
@@ -54,8 +54,9 @@ class DueAndOverdueReturnsController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
-      implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
+      given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       (for {
         maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))

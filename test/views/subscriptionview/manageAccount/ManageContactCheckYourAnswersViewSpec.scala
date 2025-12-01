@@ -28,7 +28,7 @@ import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.manageAccount.ManageContactCheckYourAnswersView
 
 class ManageContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLocalDataFixture {
-  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+  given subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
     SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
   lazy val page: ManageContactCheckYourAnswersView = inject[ManageContactCheckYourAnswersView]

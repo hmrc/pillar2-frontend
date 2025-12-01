@@ -29,7 +29,8 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.Constants.SubmissionAccountingPeriods
 import utils.DateTimeUtils.utcZoneId
 import viewmodels.checkAnswers.{BTNEntitiesInsideOutsideUKSummary, SubAccountingPeriodSummary}
-import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
+import viewmodels.govuk.all.SummaryListViewModel
+import viewmodels.govuk.summarylist.withCssClass
 
 import java.time.temporal.ChronoUnit
 import java.time.{LocalDate, ZonedDateTime}
@@ -192,7 +193,7 @@ trait ObligationsAndSubmissionsDataFixture {
       .setOrException(SubAccountingPeriodPage, AccountingPeriod(startDate, endDate))
       .setOrException(EntitiesInsideOutsideUKPage, true)
 
-  def buildSummaryList(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate)(implicit messages: Messages): SummaryList = SummaryListViewModel(
+  def buildSummaryList(startDate: LocalDate, endDate: LocalDate, dueDate: LocalDate)(using messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       SubAccountingPeriodSummary.row(AccountingPeriod(startDate, endDate), multipleAccountingPeriods = true),
       BTNEntitiesInsideOutsideUKSummary.row(buildBtnUserAnswers(startDate, endDate, dueDate), ukOnly = true)

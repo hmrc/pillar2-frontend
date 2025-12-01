@@ -36,7 +36,7 @@ object EntityType extends Enumerable.Implicits {
     Other
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] =
+  def options(using messages: Messages): Seq[RadioItem] =
     Seq(
       RadioItem(
         content = Text(messages(s"entityType.${UkLimitedCompany.toString}")),
@@ -58,6 +58,6 @@ object EntityType extends Enumerable.Implicits {
       )
     )
 
-  implicit val enumerable: Enumerable[EntityType] =
+  given enumerable: Enumerable[EntityType] =
     Enumerable(values.map(v => v.toString -> v)*)
 }

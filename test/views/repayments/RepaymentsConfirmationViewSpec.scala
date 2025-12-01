@@ -20,7 +20,7 @@ import base.ViewSpecBase
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.ZonedDateTimeOps
+import utils.DateTimeUtils.toDateTimeGmtFormat
 import views.html.repayments.RepaymentsConfirmationView
 
 import java.time.ZonedDateTime

@@ -22,6 +22,7 @@ import forms.mappings.{AddressMappings, Mappings}
 import models.NonUKAddress
 import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
+import scala.language.implicitConversions
 
 import javax.inject.Inject
 

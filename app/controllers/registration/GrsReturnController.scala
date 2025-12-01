@@ -47,11 +47,12 @@ class GrsReturnController @Inject() (
   incorporatedEntityIdentificationFrontendConnector: IncorporatedEntityIdentificationFrontendConnector,
   partnershipIdentificationFrontendConnector:        PartnershipIdentificationFrontendConnector,
   auditService:                                      AuditService
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendBaseController
     with Logging {
 
-  def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def continueUpe(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(UpeEntityTypePage)
       .map {
@@ -62,7 +63,7 @@ class GrsReturnController @Inject() (
 
   }
 
-  private def upeLimited(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
+  private def upeLimited(request: DataRequest[AnyContent], journeyId: String)(using hc: HeaderCarrier): Future[Result] =
     incorporatedEntityIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
       auditService.auditGrsReturnForLimitedCompany(data)
       if data.registration.registrationStatus == Registered then {
@@ -105,7 +106,7 @@ class GrsReturnController @Inject() (
       }
     }
 
-  private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(implicit hc: HeaderCarrier): Future[Result] =
+  private def upePartnership(request: DataRequest[AnyContent], journeyId: String)(using hc: HeaderCarrier): Future[Result] =
     partnershipIdentificationFrontendConnector.getJourneyData(journeyId).flatMap { data =>
       auditService.auditGrsReturnForLLP(data)
       if data.registration.registrationStatus == Registered then
@@ -148,7 +149,8 @@ class GrsReturnController @Inject() (
       }
     }
 
-  def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def continueFm(journeyId: String): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(FmEntityTypePage)
       .map {
@@ -230,7 +232,8 @@ class GrsReturnController @Inject() (
   }
 
   def continueRfm(journeyId: String): Action[AnyContent] =
-    (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+    (rfmIdentify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       request.userAnswers
         .get(RfmEntityTypePage)
         .map {

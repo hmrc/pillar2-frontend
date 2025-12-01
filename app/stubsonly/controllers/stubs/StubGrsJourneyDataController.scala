@@ -21,7 +21,7 @@ import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import models.grs.EntityType
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import stubsonly.data.GrsStubData
 import stubsonly.forms.GrsStubFormProvider
 import stubsonly.models.GrsStubFormData
@@ -38,7 +38,7 @@ class StubGrsJourneyDataController @Inject() (
   getData:                  DataRetrievalAction,
   grsStubFormProvider:      GrsStubFormProvider,
   view:                     StubGrsRegistrationDataView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with GrsStubData
     with I18nSupport {
@@ -58,7 +58,8 @@ class StubGrsJourneyDataController @Inject() (
   private val registrationNotCalledBvFailedF: EntityType => String =
     constructGrsStubFormData(_, bvFailed, registrationNotCalled, identifiersMatch = true)
 
-  def onPageLoad(continueUrl: String, orgType: String): Action[AnyContent] = Action { implicit request =>
+  def onPageLoad(continueUrl: String, orgType: String): Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     val e: EntityType = EntityType.enumerable.withName(orgType).get
 
     Ok(
@@ -76,7 +77,8 @@ class StubGrsJourneyDataController @Inject() (
     )
   }
 
-  def onSubmit(continueUrl: String, entityType: String): Action[AnyContent] = (identity andThen getData) { implicit request =>
+  def onSubmit(continueUrl: String, entityType: String): Action[AnyContent] = (identity andThen getData) { request =>
+    given Request[AnyContent] = request
     val e: EntityType = EntityType.enumerable.withName(entityType).get
 
     form

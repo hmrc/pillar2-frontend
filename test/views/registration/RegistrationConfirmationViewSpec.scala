@@ -23,7 +23,7 @@ import models.MneOrDomestic.{Uk, UkAndOther}
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
+import utils.DateTimeUtils.{toDateFormat, toTimeGmtFormat}
 import views.html.registrationview.RegistrationConfirmationView
 
 import java.time.{LocalDate, ZonedDateTime}

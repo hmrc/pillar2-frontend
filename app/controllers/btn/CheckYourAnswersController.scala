@@ -27,7 +27,7 @@ import models.subscription.AccountingPeriod
 import pages.*
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.BTNService
 import services.audit.AuditService
@@ -51,13 +51,14 @@ class CheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   auditService:                           AuditService,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen getData andThen requireData andThen btnStatus.subscriptionRequest).async { request =>
+      given Request[AnyContent] = request
       sessionRepository.get(request.userId).map {
         case Some(userAnswers) =>
           userAnswers.get(EntitiesInsideOutsideUKPage) match {
@@ -96,7 +97,8 @@ class CheckYourAnswersController @Inject() (
       }
     }
 
-  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit: Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     sessionRepository.get(request.userId).flatMap {
       case Some(userAnswers) =>
         val subAccountingPeriod: AccountingPeriod =
@@ -106,7 +108,7 @@ class CheckYourAnswersController @Inject() (
           accountingPeriodTo = subAccountingPeriod.endDate
         )
 
-        implicit val pillar2Id: String = request.subscriptionLocalData.plrReference
+        given pillar2Id: String = request.subscriptionLocalData.plrReference
 
         val setProcessingF: Future[Unit] = for {
           updatedAnswers <- Future.fromTry(userAnswers.set(BTNStatus, BTNStatus.processing))
@@ -178,7 +180,8 @@ class CheckYourAnswersController @Inject() (
     }
   }
 
-  def cannotReturnKnockback: Action[AnyContent] = identify { implicit request =>
+  def cannotReturnKnockback: Action[AnyContent] = identify { request =>
+    given Request[AnyContent] = request
     BadRequest(cannotReturnView())
   }
 }

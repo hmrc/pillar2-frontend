@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.ASAStubView
 
@@ -34,12 +34,13 @@ class ASAStubController @Inject() (
   @Named("ASAEnrolmentIdentifier") identify: IdentifierAction,
   getData:                                   DataRetrievalAction,
   requireData:                               DataRequiredAction
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad: Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       Future.successful(Ok(view()))
     }
 }

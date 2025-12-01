@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 final case class KeyMap(key: String, value: String)
 
 object KeyMap {
-  implicit val format: OFormat[KeyMap] = Json.format[KeyMap]
+  given format: OFormat[KeyMap] = Json.format[KeyMap]
 }

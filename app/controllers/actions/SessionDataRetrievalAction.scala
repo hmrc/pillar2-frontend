@@ -26,7 +26,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class SessionDataRetrievalActionImpl @Inject() (
   val sessionRepository: SessionRepository
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends SessionDataRetrievalAction
     with Logging {
 

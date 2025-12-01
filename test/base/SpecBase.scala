@@ -69,12 +69,12 @@ trait SpecBase
     with ObligationsAndSubmissionsDataFixture
     with StringGenerators {
 
-  implicit lazy val ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
-  implicit lazy val hc:                HeaderCarrier     = HeaderCarrier()
-  implicit lazy val system:            ActorSystem       = ActorSystem()
-  implicit lazy val applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
-  implicit lazy val materializer:      Materializer      = Materializer(system)
-  def injectedParsers:                 PlayBodyParsers   = app.injector.instanceOf[PlayBodyParsers]
+  given ec:                ExecutionContext  = scala.concurrent.ExecutionContext.Implicits.global
+  given hc:                HeaderCarrier     = HeaderCarrier()
+  given system:            ActorSystem       = ActorSystem()
+  given applicationConfig: FrontendAppConfig = app.injector.instanceOf[FrontendAppConfig]
+  given materializer:      Materializer      = Materializer(system)
+  def injectedParsers:     PlayBodyParsers   = app.injector.instanceOf[PlayBodyParsers]
 
   val PlrReference = "XMPLR0123456789"
 

@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 @Singleton
 class FopService @Inject() (
   fopFactory: FopFactory
-)(implicit ec: ExecutionContext) {
+)(using ec: ExecutionContext) {
 
   private val userAgentBlock: FOUserAgent => Unit = { foUserAgent =>
     foUserAgent.setAccessibility(true)

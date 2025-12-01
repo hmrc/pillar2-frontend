@@ -20,14 +20,15 @@ import models.{CheckMode, UserAnswers}
 import pages.FmContactEmailPage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object NfmEmailAddressSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers
       .get(FmContactEmailPage)
       .map { answer =>

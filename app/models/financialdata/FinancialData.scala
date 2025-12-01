@@ -29,13 +29,13 @@ final case class FinancialData(financialTransactions: Seq[FinancialTransaction])
 
   def calculateOutstandingAmount: BigDecimal = onlyOutstandingCharges.map(_.outstandingAmount).sum
 
-  def onlyOverdueOutstandingCharges(implicit clock: Clock): Seq[OutstandingCharge] =
+  def onlyOverdueOutstandingCharges(using clock: Clock): Seq[OutstandingCharge] =
     onlyOutstandingCharges.filter(_.chargeItems.earliestDueDate.isBefore(LocalDate.now(clock)))
 
-  def overdueAccruingInterestCharges(implicit clock: Clock): Seq[InterestOutstandingCharge] =
+  def overdueAccruingInterestCharges(using clock: Clock): Seq[InterestOutstandingCharge] =
     onlyOverdueOutstandingCharges.collect { case charge: InterestOutstandingCharge => charge }
 
-  def hasRecentPayment(implicit clock: Clock, appConfig: FrontendAppConfig): Boolean =
+  def hasRecentPayment(using clock: Clock, appConfig: FrontendAppConfig): Boolean =
     onlyPayments
       .flatMap(_.paymentItems.latestClearingDate)
       .exists { latestClearing =>

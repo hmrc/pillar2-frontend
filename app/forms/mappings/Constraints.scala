@@ -26,16 +26,17 @@ import scala.util.{Success, Try}
 
 trait Constraints {
 
-  implicit def convertToOptionalConstraint[T](constraint: Constraint[T]): Constraint[Option[T]] =
-    Constraint {
-      case Some(t) => constraint.apply(t)
-      case _       => Valid
-    }
+  given convertToOptionalConstraint[T]: Conversion[Constraint[T], Constraint[Option[T]]] with
+    def apply(constraint: Constraint[T]): Constraint[Option[T]] =
+      Constraint {
+        case Some(t) => constraint(t)
+        case _       => Valid
+      }
 
   private val regxPostcode = """^[A-Z]{1,2}[0-9][0-9A-Z]?\s?[0-9][A-Z]{2}$"""
 
   protected def postCode(errorKey: String): Constraint[String] = regexp(regxPostcode, errorKey)
-  protected def country(countryOptions: CountryOptions, errorKey: String)(implicit messages: Messages): Constraint[String] =
+  protected def country(countryOptions: CountryOptions, errorKey: String)(using messages: Messages): Constraint[String] =
     Constraint { input =>
       countryOptions
         .options()
@@ -60,7 +61,7 @@ trait Constraints {
         Invalid(errorKey, charLength)
     }
 
-  protected def minimumValue[A](minimum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def minimumValue[A](minimum: A, errorKey: String)(using ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev.*
 
@@ -71,7 +72,7 @@ trait Constraints {
       }
     }
 
-  protected def maximumValue[A](maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def maximumValue[A](maximum: A, errorKey: String)(using ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev.*
 
@@ -82,7 +83,7 @@ trait Constraints {
       }
     }
 
-  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(implicit ev: Ordering[A]): Constraint[A] =
+  protected def inRange[A](minimum: A, maximum: A, errorKey: String)(using ev: Ordering[A]): Constraint[A] =
     Constraint { input =>
       import ev.*
 

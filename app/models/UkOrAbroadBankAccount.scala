@@ -32,7 +32,7 @@ object UkOrAbroadBankAccount extends Enumerable.Implicits {
     ForeignBankAccount
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+  def options(using messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
       content = Text(messages(s"ukOrAbroadBankAccount.${value.toString}")),
       value = Some(value.toString),
@@ -40,6 +40,6 @@ object UkOrAbroadBankAccount extends Enumerable.Implicits {
     )
   }
 
-  implicit val enumerable: Enumerable[UkOrAbroadBankAccount] =
+  given enumerable: Enumerable[UkOrAbroadBankAccount] =
     Enumerable(values.map(v => v.toString -> v)*)
 }

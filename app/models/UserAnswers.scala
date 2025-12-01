@@ -36,13 +36,13 @@ final case class UserAnswers(
     with RepaymentHelpers
     with BookmarkHelper {
 
-  def get[A](page: Gettable[A])(implicit rds: Reads[A]): Option[A] =
+  def get[A](page: Gettable[A])(using rds: Reads[A]): Option[A] =
     Reads.optionNoError(using Reads.at(page.path)).reads(data).getOrElse(None)
 
-  def getEither[A](page: Gettable[A])(implicit rds: Reads[A]): EitherNec[Query, A] =
+  def getEither[A](page: Gettable[A])(using rds: Reads[A]): EitherNec[Query, A] =
     get(page).toRightNec(page)
 
-  def set[A](page: Settable[A], value: A)(implicit writes: Writes[A]): Try[UserAnswers] =
+  def set[A](page: Settable[A], value: A)(using writes: Writes[A]): Try[UserAnswers] =
     page.cleanupBeforeSettingValue(Some(value), this).flatMap { ua =>
       val updatedData = ua.data.setObject(page.path, Json.toJson(value)) match {
         case JsSuccess(jsValue, _) =>
@@ -57,7 +57,7 @@ final case class UserAnswers(
       }
     }
 
-  def setOrException[A](page: QuestionPage[A], value: A)(implicit writes: Writes[A]): UserAnswers =
+  def setOrException[A](page: QuestionPage[A], value: A)(using writes: Writes[A]): UserAnswers =
     set(page, value) match {
       case Success(ua) => ua
       case Failure(ex) => throw ex
@@ -106,5 +106,5 @@ object UserAnswers {
     )(userAnswers => Tuple.fromProductTyped(userAnswers))
   }
 
-  implicit val format: OFormat[UserAnswers] = OFormat(reads, writes)
+  given format: OFormat[UserAnswers] = OFormat(reads, writes)
 }

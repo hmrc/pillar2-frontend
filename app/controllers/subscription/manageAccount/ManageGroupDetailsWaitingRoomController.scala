@@ -22,7 +22,7 @@ import models.subscription.ManageGroupDetailsStatus.*
 import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
@@ -36,12 +36,13 @@ class ManageGroupDetailsWaitingRoomController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   ManageGroupDetailsWaitingRoomView,
   sessionRepository:                      SessionRepository
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData).async { request =>
+    given Request[AnyContent] = request
     logger.info(s"[ManageGroupDetailsWaitingRoom] Loading waiting room for user ${request.userId}")
 
     sessionRepository

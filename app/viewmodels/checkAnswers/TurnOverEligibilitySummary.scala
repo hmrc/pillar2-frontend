@@ -20,13 +20,14 @@ import controllers.eligibility.routes
 import models.UserAnswers
 import pages.TurnOverEligibilityPage
 import play.api.i18n.Messages
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 
 object TurnOverEligibilitySummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(TurnOverEligibilityPage).map { answer =>
       val value = if answer then "site.yes" else "site.no"
 

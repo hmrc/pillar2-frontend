@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.AddSecondaryContactView
 
@@ -42,12 +42,13 @@ class AddSecondaryContactController @Inject() (
   navigator:                              AmendSubscriptionNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   AddSecondaryContactView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData) { implicit request =>
+    (identify andThen getData) { request =>
+      given Request[AnyContent] = request
       (for {
         subscriptionLocalData <- request.maybeSubscriptionLocalData
         contactName           <- subscriptionLocalData.get(SubPrimaryContactNamePage)
@@ -66,7 +67,8 @@ class AddSecondaryContactController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       request.subscriptionLocalData
         .get(SubPrimaryContactNamePage)
         .map { contactName =>

@@ -30,12 +30,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class DataRetrievalActionImpl @Inject() (
   val userAnswersConnectors: UserAnswersConnectors
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends DataRetrievalAction
     with Logging {
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[OptionalDataRequest[A]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     userAnswersConnectors.get(request.userId).map { data =>
       OptionalDataRequest(
         request.request,

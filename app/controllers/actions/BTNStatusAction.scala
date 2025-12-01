@@ -34,7 +34,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNStatusAction @Inject() (
   val sessionRepository: SessionRepository,
   auditService:          AuditService
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends Logging
     with FrontendHeaderCarrierProvider {
 
@@ -46,7 +46,7 @@ class BTNStatusAction @Inject() (
       override protected def executionContext: ExecutionContext = ec
     }
 
-  private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(implicit
+  private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(using
     request: T
   ): Future[Either[Result, T]] =
     sessionRepository

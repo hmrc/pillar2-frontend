@@ -27,7 +27,7 @@ import scala.concurrent.Future
 
 class SessionDataRetrievalActionSpec extends SpecBase {
 
-  class Harness(sessionRepository: SessionRepository) extends SessionDataRetrievalActionImpl(sessionRepository)(ec) {
+  class Harness(sessionRepository: SessionRepository) extends SessionDataRetrievalActionImpl(sessionRepository)(using ec) {
     def callTransform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] = transform(request)
   }
 

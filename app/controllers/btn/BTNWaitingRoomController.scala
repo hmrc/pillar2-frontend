@@ -21,7 +21,7 @@ import controllers.actions.*
 import models.btn.BTNStatus
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.BTNWaitingRoomView
@@ -37,12 +37,13 @@ class BTNWaitingRoomController @Inject() (
   dataRequiredAction:                     SubscriptionDataRequiredAction,
   sessionRepository:                      SessionRepository,
   btnWaitingRoomView:                     BTNWaitingRoomView
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen dataRetrievalAction andThen dataRequiredAction).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen dataRetrievalAction andThen dataRequiredAction).async { request =>
+    given Request[AnyContent] = request
     sessionRepository.get(request.userId).flatMap {
       case Some(userAnswers) =>
         val status = userAnswers.get(BTNStatus)
