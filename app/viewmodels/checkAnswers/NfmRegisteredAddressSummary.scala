@@ -19,12 +19,13 @@ package viewmodels.checkAnswers
 import models.{CheckMode, UserAnswers}
 import pages.FmRegisteredAddressPage
 import play.api.i18n.Messages
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object NfmRegisteredAddressSummary {
 

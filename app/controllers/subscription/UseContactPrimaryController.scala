@@ -33,7 +33,6 @@ import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import play.api.mvc.*
 import play.twirl.api.HtmlFormat
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -43,6 +42,7 @@ import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 import scala.util.Success
 
 class UseContactPrimaryController @Inject() (

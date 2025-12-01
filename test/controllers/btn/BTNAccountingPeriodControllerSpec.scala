@@ -33,7 +33,6 @@ import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
 import repositories.SessionRepository
-import scala.language.implicitConversions
 import services.ObligationsAndSubmissionsService
 import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
@@ -46,6 +45,7 @@ import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturn
 
 import java.time.LocalDate
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 class BTNAccountingPeriodControllerSpec extends SpecBase {
 

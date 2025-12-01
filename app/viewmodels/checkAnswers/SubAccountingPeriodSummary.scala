@@ -19,13 +19,14 @@ package viewmodels.checkAnswers
 import models.CheckMode
 import models.subscription.AccountingPeriod
 import play.api.i18n.Messages
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.SiteChange
 import utils.DateTimeUtils.*
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object SubAccountingPeriodSummary {
 

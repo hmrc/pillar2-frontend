@@ -21,9 +21,9 @@ import mapping.Constants
 import models.repayments.NonUKBank
 import play.api.data.Form
 import play.api.data.Forms.mapping
-import scala.language.implicitConversions
 
 import javax.inject.Inject
+import scala.language.implicitConversions
 
 class NonUKBankFormProvider @Inject() extends Mappings {
 

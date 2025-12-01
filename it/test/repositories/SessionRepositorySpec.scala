@@ -54,7 +54,7 @@ class SessionRepositorySpec
     mongoComponent = mongoComponent,
     appConfig = mockAppConfig,
     clock = stubClock
-  )(ec)
+  )(using ec)
 
   ".set" should {
 

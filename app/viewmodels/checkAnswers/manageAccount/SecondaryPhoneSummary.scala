@@ -20,10 +20,11 @@ import models.requests.SubscriptionDataRequest
 import pages.SubSecondaryCapturePhonePage
 import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object SecondaryPhoneSummary {
 

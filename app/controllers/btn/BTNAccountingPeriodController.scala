@@ -30,7 +30,6 @@ import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
 import play.api.mvc.*
 import repositories.SessionRepository
-import scala.language.implicitConversions
 import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -42,6 +41,7 @@ import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturn
 import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,

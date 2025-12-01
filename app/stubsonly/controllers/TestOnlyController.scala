@@ -19,7 +19,7 @@ package stubsonly.controllers
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
+import play.api.mvc.*
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
 import uk.gov.hmrc.http.HeaderCarrier

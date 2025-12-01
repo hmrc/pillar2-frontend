@@ -23,12 +23,13 @@ import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
 import play.twirl.api.HtmlFormat
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
 import views.html.btn.BTNAccountingPeriodView
+
+import scala.language.implicitConversions
 
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 

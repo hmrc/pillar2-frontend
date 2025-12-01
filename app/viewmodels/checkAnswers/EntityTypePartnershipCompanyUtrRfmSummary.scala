@@ -19,11 +19,12 @@ package viewmodels.checkAnswers
 import models.UserAnswers
 import pages.RfmGRSUkPartnershipPage
 import play.api.i18n.Messages
-import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
 import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object EntityTypePartnershipCompanyUtrRfmSummary {
 
