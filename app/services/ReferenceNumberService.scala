@@ -19,7 +19,6 @@ package services
 import config.FrontendAppConfig
 import models.UserAnswers
 import pages.PlrReferencePage
-import services.ReferenceNumberService.stubbedHosts
 import uk.gov.hmrc.auth.core.Enrolment
 import utils.Pillar2Reference
 
@@ -31,15 +30,4 @@ class ReferenceNumberService @Inject() (appConfig: FrontendAppConfig) {
     Pillar2Reference
       .getPillar2ID(enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
       .orElse(userAnswers.flatMap(_.get(PlrReferencePage)))
-      .orElse(
-        if stubbedHosts.exists(appConfig.host.contains) then {
-          Some("XMPLR0012345674")
-        } else {
-          None
-        }
-      )
-}
-
-object ReferenceNumberService {
-  val stubbedHosts: List[String] = List("localhost", "development", "staging")
 }

@@ -25,7 +25,7 @@ import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, Su
 import controllers.routes
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -123,13 +123,17 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
     } yield ()
 
-    result.value
+    result
+      .getOrElseF(Future.failed(MissingReferenceNumberError))
       .recoverWith {
         case InternalIssueError =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
           setStatusOnFailure(userId, ManageGroupDetailsStatus.FailedInternalIssueError)
         case e: Exception =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}")
+          setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)
+        case MissingReferenceNumberError =>
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Pillar 2 Reference Number for $userId not found")
           setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)
       }
       .map(_ => ())
