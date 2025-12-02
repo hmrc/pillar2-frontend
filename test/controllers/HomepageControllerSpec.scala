@@ -154,11 +154,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
             bind[SubscriptionService].toInstance(mockSubscriptionService)
           )
           .build()
-
       when(mockSessionRepository.get(any()))
-        .thenReturn(Future.successful(None))
-      when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-      when(mockSubscriptionService.maybeReadSubscription(any())(any()))
         .thenReturn(Future.successful(None))
 
       running(application) {
@@ -167,6 +163,7 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.JourneyRecoveryController.onPageLoad().url
       }
+
     }
 
     "redirect to registration in progress page when subscription is still processing for agent" in {

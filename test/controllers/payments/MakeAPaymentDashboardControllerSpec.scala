@@ -237,7 +237,6 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
           inject.bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-
       when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
       running(application) {
