@@ -17,9 +17,9 @@
 package controllers
 
 import cats.data.{EitherT, OptionT}
-import cats.syntax.either.*
-import cats.syntax.functor.*
-import cats.syntax.semigroupal.*
+import cats.syntax.either.given
+import cats.syntax.functor.given
+import cats.syntax.semigroupal.given
 import com.google.inject.Inject
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
@@ -45,7 +45,7 @@ import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
-import java.time.{LocalDate, ZonedDateTime}
+import java.time.{Clock, LocalDate, ZonedDateTime}
 import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.chaining.*
@@ -62,7 +62,7 @@ class CheckYourAnswersController @Inject() (
   view:                     CheckYourAnswersView,
   countryOptions:           CountryOptions,
   futures:                  Futures
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig, clock: Clock)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -88,21 +88,27 @@ class CheckYourAnswersController @Inject() (
       subscriptionService.getCompanyName(request.userAnswers) match {
         case Left(errorRedirect) => Future.successful(errorRedirect)
         case Right(companyName)  =>
-          EitherT
-            .fromOption[Future](request.userAnswers.get(SubMneOrDomesticPage), ifNone = FailedWithNoMneOrDomesticValueFoundError)
+          // The waiting room needs SubscriptionStatusPage populated to load. We also set everything else we can here.
+          val preRedirectSteps = EitherT
+            .pure[Future, SubscriptionStatus](request.userAnswers)
+            .flatMap(ua => EitherT.fromOption(ua.get(SubMneOrDomesticPage), ifNone = FailedWithNoMneOrDomesticValueFoundError))
+            .semiflatMap { mneOrDom =>
+              val sessionToPersist = UserAnswers(request.userId)
+                .setOrException(UpeNameRegistrationPage, companyName)
+                .setOrException(SubMneOrDomesticPage, mneOrDom)
+                .setOrException(SubscriptionStatusPage, RegistrationInProgress)
+              sessionRepository.set(sessionToPersist).as(sessionToPersist)
+            }
+
+          // We "discard" the actual submission future, running this purely for its side effects of updating the session.
+          preRedirectSteps
             .product(EitherT.liftF(subscriptionService.createSubscription(request.userAnswers)))
-            .semiflatMap { (mneOrDom, plr) =>
-              sessionRepository
-                .set(
-                  UserAnswers(request.userId)
-                    .setOrException(UpeNameRegistrationPage, companyName)
-                    .setOrException(SubMneOrDomesticPage, mneOrDom)
-                    .setOrException(PlrReferencePage, plr)
-                    .setOrException(PdfRegistrationDatePage, LocalDate.now().toDateFormat)
-                    .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now().toTimeGmtFormat)
-                    .setOrException(SubscriptionStatusPage, RegistrationInProgress)
-                )
-                .as(plr)
+            .semiflatMap { case (userAnswersFromSession, plr) =>
+              val answersToSet = userAnswersFromSession
+                .setOrException(PlrReferencePage, plr)
+                .setOrException(PdfRegistrationDatePage, LocalDate.now(clock).toDateFormat)
+                .setOrException(PdfRegistrationTimeStampPage, ZonedDateTime.now(clock).toTimeGmtFormat)
+              sessionRepository.set(answersToSet).as((answersToSet, plr))
             }
             .semiflatTap(_ => userAnswersConnectors.remove(request.userId))
             .value
@@ -114,14 +120,16 @@ class CheckYourAnswersController @Inject() (
                   .getOrElse(UserAnswers(request.userId))
                   .flatMap { preFailureAnswers =>
                     sessionRepository.set(preFailureAnswers.setOrException(SubscriptionStatusPage, failureSubscriptionStatus))
-                  }
-                  .as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Registration))),
-              plr => {
-                // kick off background polling and session updates on another thread; return before resolution.
+                  },
+              (persistedAnswers, plr) => {
                 checkUntilSubscriptionResolution(plr = plr, userId = request.userId)
-                Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Registration)))
+                // We want to redirect away from waiting room as soon as the submission succeeded, even if we can't read it back yet.
+                sessionRepository.set(persistedAnswers.setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
               }
             )
+
+          // Send user to waiting room even before submission has started.
+          preRedirectSteps.value.as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Registration)))
       }
     } else {
       Future.successful(Redirect(controllers.subscription.routes.InprogressTaskListController.onPageLoad))
