@@ -17,22 +17,18 @@
 package controllers.rfm
 
 import config.FrontendAppConfig
-import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.rfm.StartPageView
 
 import javax.inject.Inject
 
 class StartPageController @Inject() (
-  val controllerComponents: MessagesControllerComponents,
-  view:                     StartPageView
+  val controllerComponents: MessagesControllerComponents
 )(implicit val appConfig: FrontendAppConfig)
-    extends FrontendBaseController
-    with I18nSupport {
+    extends FrontendBaseController {
 
   def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    Ok(view())
+    Redirect(appConfig.rfmGuidanceUrl)
   }
 
 }

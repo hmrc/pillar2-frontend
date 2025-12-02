@@ -19,23 +19,20 @@ package controllers.rfm
 import base.SpecBase
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
-import views.html.rfm.StartPageView
 
 class StartPageControllerSpec extends SpecBase {
 
   "StartPage Controller" when {
 
-    "must return OK and the correct view" in {
+    "must redirect to gov.uk guidance" in {
 
       val application = applicationBuilder(userAnswers = None)
         .build()
       running(application) {
         val request = FakeRequest(GET, routes.StartPageController.onPageLoad.url)
         val result  = route(application, request).value
-        val view    = application.injector.instanceOf[StartPageView]
-        status(result) mustEqual OK
-        val content = contentAsString(result)
-        content mustEqual view()(request, applicationConfig, messages(application)).toString
+        status(result) mustEqual SEE_OTHER
+        redirectLocation(result).value mustEqual applicationConfig.rfmGuidanceUrl
       }
     }
   }

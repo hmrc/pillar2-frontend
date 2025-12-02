@@ -43,9 +43,9 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
     "in Normal mode" must {
 
-      "must go from a page that doesn't exist in the route map to rfm start page" in {
+      "must go from a page that doesn't exist in the route map to journey recovery" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
+        navigator.nextPage(UnknownPage, NormalMode, UserAnswers("id")) mustBe controllers.routes.JourneyRecoveryController.onPageLoad()
       }
 
       "go to contact email page from contact name page" in {
@@ -235,9 +235,9 @@ class ReplaceFilingMemberNavigatorSpec extends SpecBase {
 
     "in Check mode" must {
 
-      "must go from a page that doesn't exist in the route map to rfm start page" in {
+      "must go from a page that doesn't exist in the route map to journey recovery" in {
         case object UnknownPage extends Page
-        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.rfm.routes.StartPageController.onPageLoad
+        navigator.nextPage(UnknownPage, CheckMode, UserAnswers("id")) mustBe controllers.routes.JourneyRecoveryController.onPageLoad()
       }
       "go to security questions CYA page from pillar 2 reference page" in {
         navigator.nextPage(
