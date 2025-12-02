@@ -545,7 +545,9 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(
+            result
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
