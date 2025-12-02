@@ -510,9 +510,9 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
       }
 
       "handle MissingReferenceNumberError during submission" in {
-        val mockSessionRepository = mock[SessionRepository]
-        val userAnswers           = UserAnswers("id")
-        val initialUserAnswersWithInProgress = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val mockSessionRepository             = mock[SessionRepository]
+        val userAnswers                       = UserAnswers("id")
+        val initialUserAnswersWithInProgress  = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
         val finalUserAnswersWithFailException = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailException)
 
         when(mockSessionRepository.get(userAnswers.id))
