@@ -46,7 +46,6 @@ import viewmodels.govuk.summarylist.*
 import views.html.CheckYourAnswersView
 
 import java.time.{Clock, LocalDate, ZonedDateTime}
-import scala.concurrent.duration.*
 import scala.concurrent.{ExecutionContext, Future}
 import scala.util.chaining.*
 
@@ -121,11 +120,9 @@ class CheckYourAnswersController @Inject() (
                   .flatMap { preFailureAnswers =>
                     sessionRepository.set(preFailureAnswers.setOrException(SubscriptionStatusPage, failureSubscriptionStatus))
                   },
-              (persistedAnswers, plr) => {
-                checkUntilSubscriptionResolution(plr = plr, userId = request.userId)
+              (persistedAnswers, plr) =>
                 // We want to redirect away from waiting room as soon as the submission succeeded, even if we can't read it back yet.
                 sessionRepository.set(persistedAnswers.setOrException(SubscriptionStatusPage, SuccessfullyCompletedSubscription))
-              }
             )
 
           // Send user to waiting room even before submission has started.
@@ -218,50 +215,6 @@ class CheckYourAnswersController @Inject() (
         GroupAccountingPeriodEndDateSummary.row(userAnswers)
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
-
-  private def checkUntilSubscriptionResolution(plr: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] =
-    pollForSubscriptionData(plr)
-      .flatMap { _ =>
-        for {
-          updatedAnswers:   Option[UserAnswers] <- sessionRepository.get(userId)
-          completedAnswers: UserAnswers         <- updatedAnswers.fold[Future[UserAnswers]] {
-                                             val message = s"Could not find user answers for $plr after creating subscription."
-                                             logger.error(message)
-                                             Future.failed(new Exception(message))
-                                           }(ua => Future.fromTry(ua.set(SubscriptionStatusPage, SuccessfullyCompletedSubscription)))
-          _ <- sessionRepository.set(completedAnswers)
-        } yield ()
-      }
-      .recover(logger.error(s"Encountered error in background task while checking for subscription resolution", _))
-
-  private def pollForSubscriptionData(plrReference: String)(implicit hc: HeaderCarrier): Future[Unit] = {
-    val maxAttempts = {
-      if appConfig.subscriptionPollingIntervalSeconds <= 0 then {
-        logger.error("Invalid subscriptionPollingIntervalSeconds configuration: must be greater than 0")
-        throw new IllegalArgumentException("subscriptionPollingIntervalSeconds must be greater than 0")
-      }
-      appConfig.subscriptionPollingTimeoutSeconds / appConfig.subscriptionPollingIntervalSeconds
-    }
-    val delaySeconds = appConfig.subscriptionPollingIntervalSeconds
-
-    def attemptRead(attempt: Int): Future[Unit] =
-      if attempt >= maxAttempts then {
-        Future.failed(new RuntimeException("Subscription polling timeout"))
-      } else {
-        subscriptionService
-          .readSubscription(plrReference)
-          .map(_ => ())
-          .recoverWith { case _ =>
-            if attempt + 1 < maxAttempts then {
-              futures.delayed(delaySeconds.seconds)(attemptRead(attempt + 1))
-            } else {
-              Future.failed(new RuntimeException("Subscription polling timeout"))
-            }
-          }
-      }
-
-    attemptRead(0)
-  }
 
   private val onSubmitErrorHandling: PartialFunction[Throwable, SubscriptionStatus] = {
     case _: GatewayTimeoutException =>
