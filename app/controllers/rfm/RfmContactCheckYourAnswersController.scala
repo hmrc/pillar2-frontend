@@ -20,6 +20,7 @@ import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
+import models.longrunningsubmissions.LongRunningSubmission.RFM
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.*
 import models.subscription.NewFilingMemberDetail
@@ -71,7 +72,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         userAnswer <- optionalUserAnswer
         rfm        <- userAnswer.get(RfmStatusPage)
       } yield rfm) match {
-        case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+        case Some(InProgress) => Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM))
         case _                =>
           (for {
             userAnswer <- optionalUserAnswer
@@ -134,7 +135,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, updatedRfmStatus))
         _                  <- sessionRepository.set(updatedSessionData)
       } yield (): Unit
-      Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
+      Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM)))
     } else {
       Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }

@@ -77,8 +77,7 @@ class HomepageController @Inject() (
         updatedAnswers2 <- OptionT.liftF(Future.fromTry(updatedAnswers1.remove(RepaymentsStatusPage)))
         updatedAnswers3 <- OptionT.liftF(Future.fromTry(updatedAnswers2.remove(RepaymentCompletionStatus)))
         updatedAnswers4 <- OptionT.liftF(Future.fromTry(updatedAnswers3.remove(RfmStatusPage)))
-        updatedAnswers5 <- OptionT.liftF(Future.fromTry(updatedAnswers4.remove(RepaymentsWaitingRoomVisited)))
-        _               <- OptionT.liftF(sessionRepository.set(updatedAnswers5))
+        _               <- OptionT.liftF(sessionRepository.set(updatedAnswers4))
         result          <-
           OptionT.liftF {
             subscriptionService

@@ -20,6 +20,7 @@ import base.SpecBase
 import controllers.actions.TestAuthRetrievals.~
 import models.*
 import models.fm.{FilingMember, FilingMemberNonUKData}
+import models.longrunningsubmissions.LongRunningSubmission.ManageContactDetails
 import models.subscription.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
@@ -247,7 +248,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         status(result) mustEqual SEE_OTHER
         redirectLocation(
           result
-        ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+        ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
       }
     }
 
@@ -279,7 +280,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedUpdatedAnswers))
         }
       }
@@ -313,7 +314,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
@@ -348,7 +349,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           // Verify initial status update
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
@@ -383,7 +384,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           // Verify initial status update
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
@@ -422,7 +423,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
@@ -463,7 +464,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
@@ -502,7 +503,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
