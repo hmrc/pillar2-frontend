@@ -19,7 +19,6 @@ package controllers.subscription.manageAccount
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
-import models.longrunningsubmissions.LongRunningSubmission.ManageContactDetails
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage}
@@ -61,7 +60,7 @@ class ManageContactCheckYourAnswersController @Inject() (
         answers.get(ManageContactDetailsStatusPage) match {
           case Some(ManageContactDetailsStatus.InProgress) =>
             Future.successful(
-              Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails))
+              Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
             )
           case _ =>
             val primaryContactList = SummaryListViewModel(
@@ -110,7 +109,7 @@ class ManageContactCheckYourAnswersController @Inject() (
     sessionRepository.get(request.userId).flatMap { userAnswers =>
       userAnswers.flatMap(_.get(ManageContactDetailsStatusPage)) match {
         case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
-          Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails)))
+          Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
         case _ =>
           for {
             userAnswers <- sessionRepository.get(request.userId)
@@ -122,7 +121,7 @@ class ManageContactCheckYourAnswersController @Inject() (
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
             updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-            Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails))
+            Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
           }
       }
     }

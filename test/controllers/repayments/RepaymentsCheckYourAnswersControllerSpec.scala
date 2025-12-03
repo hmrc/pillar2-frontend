@@ -17,7 +17,6 @@
 package controllers.repayments
 
 import base.SpecBase
-import models.longrunningsubmissions.LongRunningSubmission.Repayments
 import models.repayments.RepaymentsStatus.{SuccessfullyCompleted, UnexpectedResponseError}
 import models.repayments.SendRepaymentDetails
 import models.{UnexpectedResponse, UserAnswers}
@@ -380,7 +379,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.repayments.routes.RepaymentsCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(Repayments).url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
           verify(mockSessionRepository, times(2)).get(eqTo("id"))
           verify(mockSessionRepository, times(2)).set(any())
         }
@@ -404,7 +403,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(Repayments).url
+          redirectLocation(result).value mustEqual controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad().url
           verify(mockSessionRepository).set(eqTo(userAnswer))
         }
       }

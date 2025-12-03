@@ -23,7 +23,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
-import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, UserAnswers}
@@ -65,7 +64,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         case Some(answers) =>
           answers.get(ManageGroupDetailsStatusPage) match {
             case Some(InProgress) =>
-              Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
+              Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
             case _ =>
               val list = SummaryListViewModel(
                 rows = Seq(
@@ -86,7 +85,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       sessionRepository.get(request.userId).flatMap { userAnswers =>
         userAnswers.flatMap(_.get(ManageGroupDetailsStatusPage)) match {
           case Some(ManageGroupDetailsStatus.SuccessfullyCompleted) =>
-            Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
+            Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
           case _ =>
             for {
               userAnswers <- sessionRepository.get(request.userId)
@@ -99,7 +98,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             } yield {
               updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
               logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
-              Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails))
+              Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
             }
         }
       }

@@ -18,7 +18,6 @@ package controllers.actions
 
 import controllers.btn.routes.*
 import models.btn.BTNStatus
-import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.EntitiesInsideOutsideUKPage
@@ -68,7 +67,7 @@ class BTNStatusAction @Inject() (
                 entitiesInsideOutsideUk.getOrElse(false)
               )
               .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN))))
+          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(BTNWaitingRoomController.onPageLoad)))
           case _                          => Future.successful(Right(request))
         }
       }
