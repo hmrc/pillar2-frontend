@@ -92,7 +92,7 @@ object LongRunningSubmission extends StringEnum[LongRunningSubmission] {
 
   val values: IndexedSeq[LongRunningSubmission] = findValues
 
-  implicit def pathBinder(implicit stringBinder: PathBindable[String]): PathBindable[LongRunningSubmission] =
+  given pathBinder(using stringBinder: PathBindable[String]): PathBindable[LongRunningSubmission] =
     new PathBindable[LongRunningSubmission] {
       override def bind(key: String, value: String): Either[String, LongRunningSubmission] = for {
         pathSegment      <- stringBinder.bind(key, value)

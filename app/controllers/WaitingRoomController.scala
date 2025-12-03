@@ -40,7 +40,7 @@ class WaitingRoomController @Inject() (
   requireSubscription:                             SubscriptionDataRequiredAction,
   longRunningSubmissionService:                    LongRunningSubmissionService,
   waitingRoomView:                                 WaitingRoomView
-)(implicit
+)(using
   ec:     ExecutionContext,
   config: FrontendAppConfig
 ) extends FrontendBaseController
@@ -48,7 +48,8 @@ class WaitingRoomController @Inject() (
     with Logging {
 
   def onPageLoad(submission: LongRunningSubmission): Action[AnyContent] =
-    pageLoadAction(submission).async { implicit request =>
+    pageLoadAction(submission).async { request =>
+      given UserIdRequest[AnyContent] = request
       longRunningSubmissionService
         .getCurrentState(submission)
         .map {

@@ -35,7 +35,7 @@ import scala.concurrent.Future
 
 class LongRunningSubmissionServiceSpec extends AnyWordSpec with must.Matchers with MockitoSugar with ScalaFutures with EitherValues {
 
-  implicit val request: UserIdRequest[?] = {
+  given request: UserIdRequest[?] = {
     val instance = mock[UserIdRequest[Unit]]
     when(instance.userId).thenReturn("some-user-id")
     instance

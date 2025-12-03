@@ -161,13 +161,13 @@ class LongRunningSubmissionSpec extends AnyWordSpec with must.Matchers with Scal
         "replace-filing-member"        -> LongRunningSubmission.RFM
       )
     ) { (fragment, expectedConfig) =>
-      LongRunningSubmission.pathBinder(PathBindable.bindableString).bind("submission", fragment).value mustBe expectedConfig
+      LongRunningSubmission.pathBinder(using PathBindable.bindableString).bind("submission", fragment).value mustBe expectedConfig
     }
 
     "fail when no config is defined the url" in forAll(arbitrary[String].retryUntil(!LongRunningSubmission.values.map(_.pathSegment).contains(_))) {
       invalidPathSegment =>
         LongRunningSubmission
-          .pathBinder(PathBindable.bindableString)
+          .pathBinder(using PathBindable.bindableString)
           .bind("submission", invalidPathSegment)
           .left
           .value mustBe "No matching LongRunningSubmission for fragment."

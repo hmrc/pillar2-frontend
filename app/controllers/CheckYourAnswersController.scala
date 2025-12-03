@@ -221,7 +221,7 @@ class CheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def checkUntilSubscriptionResolution(plr: String, userId: String)(implicit hc: HeaderCarrier): Future[Unit] =
+  private def checkUntilSubscriptionResolution(plr: String, userId: String)(using hc: HeaderCarrier): Future[Unit] =
     pollForSubscriptionData(plr)
       .flatMap { _ =>
         for {
