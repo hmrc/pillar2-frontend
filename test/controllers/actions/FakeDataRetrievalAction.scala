@@ -16,11 +16,9 @@
 
 package controllers.actions
 
-import helpers.SubscriptionLocalDataFixture
 import models.UserAnswers
 import models.requests.*
 import models.subscription.SubscriptionLocalData
-import play.api.mvc.Result
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -64,22 +62,6 @@ class FakeSubscriptionDataRetrievalAction(
     scala.concurrent.ExecutionContext.Implicits.global
 
   given ExecutionContext = executionContext
-}
-
-class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionLocalDataFixture {
-  override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
-    Future.successful(
-      Right[Result, SubscriptionDataRequest[A]](
-        SubscriptionDataRequest(
-          request,
-          request.userId,
-          request.maybeSubscriptionLocalData.getOrElse(emptySubscriptionLocalData),
-          request.enrolments,
-          request.isAgent
-        )
-      )
-    )
-  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
 }
 
 class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends SessionDataRetrievalAction {

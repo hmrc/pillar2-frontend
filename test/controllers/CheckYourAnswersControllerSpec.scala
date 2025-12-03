@@ -20,12 +20,10 @@ import base.SpecBase
 import connectors.{TaxEnrolmentConnector, UserAnswersConnectors}
 import models.*
 import models.grs.{EntityType, GrsRegistrationResult, RegistrationStatus}
-import models.longrunningsubmissions.LongRunningSubmission
 import models.registration.*
 import models.subscription.AccountingPeriod
 import models.subscription.SubscriptionStatus.*
 import org.apache.pekko.Done
-import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{times, verify, when}
 import pages.*
@@ -41,7 +39,6 @@ import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
 import scala.concurrent.Future
-import scala.jdk.CollectionConverters.given
 
 class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
@@ -308,7 +305,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           await(result)
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository, times(2)).set(any())
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -390,7 +387,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -427,7 +424,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -464,7 +461,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -498,7 +495,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -532,7 +529,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -566,7 +563,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -600,7 +597,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
 
@@ -611,13 +608,6 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .setOrException(SubPrimaryEmailPage, "email@hello.com")
           .setOrException(SubPrimaryPhonePreferencePage, true)
           .setOrException(SubPrimaryCapturePhonePage, "123213")
-
-        val companyName = "Company Name"
-
-        val preSubmissionSession = UserAnswers(userAnswer.id)
-          .setOrException(UpeNameRegistrationPage, companyName)
-          .setOrException(SubMneOrDomesticPage, userAnswer.get(SubMneOrDomesticPage).value)
-          .setOrException(SubscriptionStatusPage, RegistrationInProgress)
 
         val sessionData = defaultUserAnswer
           .setOrException(SubscriptionStatusPage, FailedWithInternalIssueError)
@@ -632,27 +622,20 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right(companyName))
+        when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new HttpException("Bad Request", BAD_REQUEST)))
-
-        val sessionDataWrites = ArgumentCaptor.forClass(classOf[UserAnswers])
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           await(result)
           status(result) mustBe SEE_OTHER
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
           verify(mockSessionRepository).get(any())
-          verify(mockSessionRepository, times(2)).set(sessionDataWrites.capture())
-
-          sessionDataWrites.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
-            preSubmissionSession.data,
-            sessionData.data
-          )
+          verify(mockSessionRepository, times(1)).set(any())
         }
       }
 
@@ -688,7 +671,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           val result  = route(application, request).value
           status(result) mustBe SEE_OTHER
           verify(mockSessionRepository).set(eqTo(sessionData))
-          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.Registration).url
+          redirectLocation(result).value mustEqual routes.RegistrationWaitingRoomController.onPageLoad().url
         }
       }
     }

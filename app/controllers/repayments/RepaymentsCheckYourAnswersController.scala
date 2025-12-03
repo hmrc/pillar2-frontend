@@ -20,7 +20,6 @@ import cats.data.OptionT
 import cats.data.OptionT.fromOption
 import config.FrontendAppConfig
 import controllers.actions.*
-import models.longrunningsubmissions.LongRunningSubmission.Repayments
 import models.repayments.RepaymentsStatus.*
 import models.{UnexpectedResponse, UserAnswers}
 import pages.*
@@ -63,7 +62,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
-          Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
@@ -75,7 +74,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       given Request[AnyContent] = request
       request.userAnswers.get(RepaymentsStatusPage) match {
         case Some(SuccessfullyCompleted) =>
-          Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
+          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
         case _ =>
           if request.userAnswers.isRepaymentsJourneyCompleted then {
             for {
@@ -133,7 +132,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                 if success then Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
               _ <- sessionRepository.set(updatedAnswers10)
             } yield (): Unit
-            Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
+            Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
           } else {
             Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
           }

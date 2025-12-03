@@ -20,7 +20,6 @@ import cats.syntax.option.*
 import controllers.btn.routes
 import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.btn.BTNStatus
-import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.requests.SubscriptionDataRequest
 import org.mockito.ArgumentMatchers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
@@ -107,7 +106,7 @@ class BTNStatusActionSpec
 
         val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
 
-        result mustBe Results.Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN))
+        result mustBe Results.Redirect(routes.BTNWaitingRoomController.onPageLoad)
       }
     }
 

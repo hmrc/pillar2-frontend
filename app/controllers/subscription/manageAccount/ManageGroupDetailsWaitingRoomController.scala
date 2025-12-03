@@ -18,23 +18,23 @@ package controllers.subscription.manageAccount
 
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRetrievalAction}
-import models.subscription.ManageContactDetailsStatus
-import pages.ManageContactDetailsStatusPage
+import models.subscription.ManageGroupDetailsStatus.*
+import pages.ManageGroupDetailsStatusPage
 import play.api.Logging
 import play.api.i18n.I18nSupport
 import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import views.html.subscriptionview.manageAccount.ManageContactDetailsWaitingRoomView
+import views.html.subscriptionview.manageAccount.ManageGroupDetailsWaitingRoomView
 
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
-class ManageContactDetailsWaitingRoomController @Inject() (
+class ManageGroupDetailsWaitingRoomController @Inject() (
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   getData:                                SubscriptionDataRetrievalAction,
   val controllerComponents:               MessagesControllerComponents,
-  view:                                   ManageContactDetailsWaitingRoomView,
+  view:                                   ManageGroupDetailsWaitingRoomView,
   sessionRepository:                      SessionRepository
 )(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
@@ -43,41 +43,40 @@ class ManageContactDetailsWaitingRoomController @Inject() (
 
   def onPageLoad: Action[AnyContent] = (identify andThen getData).async { request =>
     given Request[AnyContent] = request
-    logger.info(s"[ManageContactDetailsWaitingRoom] Loading waiting room for user ${request.userId}")
+    logger.info(s"[ManageGroupDetailsWaitingRoom] Loading waiting room for user ${request.userId}")
 
     sessionRepository
       .get(request.userId)
       .flatMap { refreshedAnswers =>
-        val status = refreshedAnswers.flatMap(_.get(ManageContactDetailsStatusPage))
-        logger.info(s"[ManageContactDetailsWaitingRoom] Current status for ${request.userId}: $status")
+        val status = refreshedAnswers.flatMap(_.get(ManageGroupDetailsStatusPage))
+        logger.info(s"[ManageGroupDetailsWaitingRoom] Current status for ${request.userId}: $status")
 
         status match {
-          case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
-            logger.info(s"[ManageContactDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
+          case Some(SuccessfullyCompleted) =>
+            logger.info(s"[ManageGroupDetailsWaitingRoom] SuccessfullyCompleted detected for ${request.userId}, redirecting to dashboard")
             Future.successful(Redirect(controllers.routes.HomepageController.onPageLoad()))
 
-          case Some(ManageContactDetailsStatus.InProgress) =>
-            logger.info(s"[ManageContactDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
-            Future.successful(Ok(view(Some(ManageContactDetailsStatus.InProgress))))
+          case Some(InProgress) =>
+            logger.info(s"[ManageGroupDetailsWaitingRoom] InProgress status for ${request.userId}, re-rendering spinner")
+            Future.successful(Ok(view(Some(InProgress))))
 
-          case Some(ManageContactDetailsStatus.FailException) =>
-            logger.warn(s"[ManageContactDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
+          case Some(FailedInternalIssueError) =>
+            logger.warn(s"[ManageGroupDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page")
             Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
-          case Some(ManageContactDetailsStatus.FailedInternalIssueError) =>
-            logger.warn(
-              s"[ManageContactDetailsWaitingRoom] FailedInternalIssueError status detected for ${request.userId}, redirecting to error page"
-            )
+          case Some(FailException) =>
+            logger.warn(s"[ManageGroupDetailsWaitingRoom] FailException status detected for ${request.userId}, redirecting to error page")
             Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
 
           case _ =>
-            logger.warn(s"[ManageContactDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
+            logger.warn(s"[ManageGroupDetailsWaitingRoom] Missing or unexpected status for ${request.userId}, redirecting to error page")
             Future.successful(Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad()))
         }
       }
       .recover { case ex =>
-        logger.error(s"[ManageContactDetailsWaitingRoom] Error while loading waiting room for ${request.userId}: ${ex.getMessage}")
+        logger.error(s"[ManageGroupDetailsWaitingRoom] Error while loading waiting room for ${request.userId}: ${ex.getMessage}")
         Redirect(controllers.routes.ViewAmendSubscriptionFailedController.onPageLoad())
       }
   }
+
 }
