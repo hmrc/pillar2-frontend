@@ -83,7 +83,7 @@ trait CheckboxFluency {
       )
   }
 
-  implicit class FluentCheckboxItem(item: CheckboxItem) {
+  extension (item: CheckboxItem) {
 
     def withLabel(label: Label): CheckboxItem =
       item.copy(label = Some(label))
@@ -94,7 +94,7 @@ trait CheckboxFluency {
     def withConditionalHtml(html: Html): CheckboxItem =
       item.copy(conditionalHtml = Some(html))
 
-    def disabled(): CheckboxItem =
+    def disabledCheckboxItem(): CheckboxItem =
       item.copy(disabled = true)
 
     def withAttribute(attribute: (String, String)): CheckboxItem =

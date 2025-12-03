@@ -49,7 +49,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("registeringNfmGroup"),
-                legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("registeringNfmForThisGroup.heading")).asPageHeadingLegend(Large)
             )
             .withHint(Hint(content = Text(messages("registeringNfmForThisGroup.hint"))))
         )

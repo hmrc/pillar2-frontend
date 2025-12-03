@@ -44,7 +44,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("turnOverEligibility.heading")).asPageHeadingLegend(Large)
             )
             .withHint(Hint(content = Text(messages("turnOverEligibility.hint"))))
         )

@@ -72,9 +72,9 @@ trait SelectFluency {
       SelectItem(value = Some(value), text = text)
   }
 
-  implicit class FluentSelectItem(item: SelectItem) {
+  extension (item: SelectItem) {
 
-    def disabled: SelectItem =
+    def disabledItem(): SelectItem =
       item.copy(disabled = true)
 
     def withAttribute(attribute: (String, String)): SelectItem =

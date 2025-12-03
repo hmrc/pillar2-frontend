@@ -23,7 +23,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("$className;format="decap"$.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("$className;format="decap"$.heading")).asPageHeadingLabel(Large)
             )
             .asNumeric()
             .withWidth(Fixed10)

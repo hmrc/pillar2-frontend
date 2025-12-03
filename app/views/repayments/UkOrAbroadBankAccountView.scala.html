@@ -37,7 +37,7 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("ukOrAbroadBankAccount.heading")).asPageHeading(Large),
+                legend = LegendViewModel(messages("ukOrAbroadBankAccount.heading")).asPageHeadingLegend(Large),
                 items  = UkOrAbroadBankAccount.options
             )
         )

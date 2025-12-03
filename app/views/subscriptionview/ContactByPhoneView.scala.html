@@ -46,7 +46,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("contactByPhone.heading", userName)).asPageHeading(Large)
+                legend = LegendViewModel(messages("contactByPhone.heading", userName)).asPageHeadingLegend(Large)
             )
             .withHint(Hint(content = Text(messages("contactByPhone.hint"))))
         )

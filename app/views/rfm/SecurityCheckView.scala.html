@@ -45,7 +45,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("rfm.securityCheck.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm.securityCheck.heading")).asPageHeadingLabel(Large)
             )
             .withHint(Hint(content = Text(messages("rfm.securityCheck.hint"))))
             .withWidth(TwoThirds)
