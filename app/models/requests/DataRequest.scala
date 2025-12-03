@@ -21,11 +21,6 @@ import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.subscription.SubscriptionLocalData
 import play.api.mvc.{Request, WrappedRequest}
 import uk.gov.hmrc.auth.core.Enrolment
-
-trait UserIdRequest[A] extends Request[A] {
-  def userId: String
-}
-
 case class OptionalDataRequest[A](
   request:            Request[A],
   userId:             String,
@@ -35,7 +30,6 @@ case class OptionalDataRequest[A](
   userIdForEnrolment: String,
   isAgent:            Boolean
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 case class DataRequest[A](
   request:            Request[A],
@@ -46,7 +40,6 @@ case class DataRequest[A](
   userIdForEnrolment: String,
   isAgent:            Boolean
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 final case class OptionalSubscriptionDataRequest[A](
   request:                    Request[A],
@@ -55,7 +48,6 @@ final case class OptionalSubscriptionDataRequest[A](
   enrolments:                 Set[Enrolment],
   isAgent:                    Boolean
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 final case class SubscriptionDataRequest[A](
   request:               Request[A],
@@ -64,7 +56,6 @@ final case class SubscriptionDataRequest[A](
   enrolments:            Set[Enrolment],
   isAgent:               Boolean
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 final case class ObligationsAndSubmissionsSuccessDataRequest[A](
   request:                              Request[A],
@@ -74,18 +65,15 @@ final case class ObligationsAndSubmissionsSuccessDataRequest[A](
   enrolments:                           Set[Enrolment],
   isAgent:                              Boolean
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 final case class SessionDataRequest[A](
   request:     IdentifierRequest[A],
   userId:      String,
   userAnswers: UserAnswers
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]
 
 final case class SessionOptionalDataRequest[A](
   request:     IdentifierRequest[A],
   userId:      String,
   userAnswers: Option[UserAnswers]
 ) extends WrappedRequest[A](request)
-    with UserIdRequest[A]

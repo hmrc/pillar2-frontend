@@ -36,4 +36,7 @@ object ManageContactDetailsStatus extends Enum[ManageContactDetailsStatus] with 
   case object FailException extends ManageContactDetailsStatus {
     override def entryName = "failException"
   }
+  case object Completed extends ManageContactDetailsStatus {
+    override def entryName = "completed"
+  }
 }
