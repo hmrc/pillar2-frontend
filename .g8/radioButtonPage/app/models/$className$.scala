@@ -15,7 +15,7 @@ object $className$ extends Enumerable.Implicits {
     $option1key;format="Camel"$, $option2key;format="Camel"$
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
+  def options(using messages: Messages): Seq[RadioItem] = values.zipWithIndex.map {
     case (value, index) =>
       RadioItem(
         content = Text(messages(s"$className;format="decap"$.\${value.toString}")),
