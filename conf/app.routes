@@ -530,6 +530,9 @@ GET        /repayment/error/incomplete-repayment-request                        
 GET        /repayment/confirmation                                                                  controllers.repayments.RepaymentConfirmationController.onPageLoad()
 GET        /repayment/error/return                                                                  controllers.repayments.RepaymentErrorReturnController.onPageLoad()
 
+GET        /repayment/processing-repayment                                                          controllers.repayments.RepaymentsWaitingRoomController.onPageLoad()
+GET        /replace-filing-member/review-submit/processing                                          controllers.rfm.RfmWaitingRoomController.onPageLoad()
+GET        /review-submit/processing-registration                                                   controllers.RegistrationWaitingRoomController.onPageLoad()
 GET        /review-submit/registration-in-progress/:plrReference                                   controllers.RegistrationInProgressController.onPageLoad(plrReference: String)
 
 GET        /payment/history                                                                         controllers.TransactionHistoryController.onPageLoadTransactionHistory(page: Option[Int])
@@ -537,7 +540,10 @@ GET        /payment/history-empty                                               
 GET        /repayment/error/payment-history                                                         controllers.TransactionHistoryController.onPageLoadError()
 GET        /payment/outstanding                                                                     controllers.payments.OutstandingPaymentsController.onPageLoad
 
+GET        /manage-account/contact/waiting-room                                                     controllers.subscription.manageAccount.ManageContactDetailsWaitingRoomController.onPageLoad
 GET        /manage-contact-details/cannot-return                                                    controllers.subscription.manageAccount.ManageContactCannotReturnAfterConfirmationController.onPageLoad
+
+GET       /manage-account/details/waiting-room                                                      controllers.subscription.manageAccount.ManageGroupDetailsWaitingRoomController.onPageLoad
 
 GET       /submission-history                                                                       controllers.submissionhistory.SubmissionHistoryController.onPageLoad
 GET       /due-and-overdue-returns                                                                  controllers.dueandoverduereturns.DueAndOverdueReturnsController.onPageLoad()
@@ -572,7 +578,7 @@ GET       /below-threshold-notification/cannot-return                           
 
 GET       /below-threshold-notification/confirmation                                                controllers.btn.BTNConfirmationController.onPageLoad
 GET       /below-threshold-notification/problem-with-service                                        controllers.btn.BTNProblemWithServiceController.onPageLoad
-GET       /below-threshold-notification/under-enquiry-warning                                       controllers.btn.BTNUnderEnquiryWarningController.onPageLoad
-POST      /below-threshold-notification/under-enquiry-warning                                       controllers.btn.BTNUnderEnquiryWarningController.onSubmit
+GET       /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onPageLoad
+POST      /below-threshold-notification/under-enquiry-warning                                        controllers.btn.BTNUnderEnquiryWarningController.onSubmit
 
-GET       /submission-in-progress/:submission                                                       controllers.WaitingRoomController.onPageLoad(submission: models.longrunningsubmissions.LongRunningSubmission)
+GET       /below-threshold-notification/processing-submission                                       controllers.btn.BTNWaitingRoomController.onPageLoad
