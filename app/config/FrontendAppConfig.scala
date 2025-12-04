@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
+import models.longrunningsubmissions.LongRunningSubmission
 import play.api.Configuration
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -115,5 +116,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
   val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
 
-  val btnWaitingRoomPollIntervalSeconds: Int = configuration.get[Int]("btn.waitingRoom.pollIntervalSeconds")
+  val longRunningSubmissionConfig: LongRunningSubmission => LongRunningSubmissionConfig =
+    LongRunningSubmission.values.map { submission =>
+      submission -> LongRunningSubmissionConfig(
+        submission.configKey,
+        configuration.get[Int](s"long-running-submissions.${submission.configKey}.pollingIntervalSeconds")
+      )
+    }.toMap
 }
+
+case class LongRunningSubmissionConfig(key: String, pollingIntervalSeconds: Int)

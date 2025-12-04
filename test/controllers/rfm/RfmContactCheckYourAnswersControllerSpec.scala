@@ -18,8 +18,10 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.routes
 import models.*
 import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.longrunningsubmissions.LongRunningSubmission
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
@@ -297,7 +299,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
@@ -336,7 +338,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
@@ -378,7 +380,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -407,7 +409,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -442,7 +444,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -474,7 +476,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -511,7 +513,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -544,7 +546,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -570,7 +572,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -603,7 +605,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
