@@ -40,7 +40,7 @@ class WaitingRoomController @Inject() (
   requireSubscription:                             SubscriptionDataRequiredAction,
   longRunningSubmissionService:                    LongRunningSubmissionService,
   waitingRoomView:                                 WaitingRoomView
-)(implicit
+)(using
   ec:     ExecutionContext,
   config: FrontendAppConfig
 ) extends FrontendBaseController
