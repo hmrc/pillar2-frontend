@@ -28,10 +28,12 @@ import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import models.obligationsandsubmissions.ObligationStatus
 import models.subscription.*
 import models.subscription.AccountStatus.{ActiveAccount, InactiveAccount}
+import org.mockito.ArgumentCaptor
 import org.mockito.ArgumentMatchers.any
-import org.mockito.Mockito.when
+import org.mockito.Mockito.{verify, when}
 import org.scalacheck.Gen
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
+import pages.{ManageContactDetailsStatusPage, ManageGroupDetailsStatusPage}
 import play.api.inject.bind
 import play.api.test.FakeRequest
 import play.api.test.Helpers.*
@@ -121,6 +123,52 @@ class HomepageControllerSpec extends SpecBase with ModelGenerators with ScalaChe
           applicationConfig,
           messages(application)
         ).toString
+      }
+    }
+
+    "remove ManageGroupDetailsStatusPage and ManageContactDetailsStatusPage from user answers" in {
+      val initialUserAnswers = emptyUserAnswers
+        .set(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
+        .success
+        .value
+        .set(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        .success
+        .value
+
+      val application =
+        applicationBuilder(userAnswers = Some(initialUserAnswers), enrolments)
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService),
+            bind[ObligationsAndSubmissionsService].toInstance(mockObligationsAndSubmissionsService),
+            bind[FinancialDataService].toInstance(mockFinancialDataService),
+            bind[FinancialDataConnector].toInstance(mockFinancialDataConnector)
+          )
+          .build()
+
+      running(application) {
+        val request = FakeRequest(GET, controllers.routes.HomepageController.onPageLoad().url)
+
+        when(mockSessionRepository.get(any()))
+          .thenReturn(Future.successful(Some(initialUserAnswers)))
+        when(mockSessionRepository.set(any()))
+          .thenReturn(Future.successful(true))
+        when(mockSubscriptionService.maybeReadSubscription(any())(any())).thenReturn(Future.successful(Some(subscriptionData)))
+        when(mockSubscriptionService.cacheSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Fulfilled)))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+          .thenReturn(Future.successful(FinancialData(Seq.empty)))
+
+        val result = route(application, request).value
+        status(result) mustEqual OK
+
+        val captor = ArgumentCaptor.forClass(classOf[UserAnswers])
+        verify(mockSessionRepository).set(captor.capture())
+
+        val savedAnswers = captor.getValue
+        savedAnswers.get(ManageGroupDetailsStatusPage)   must not be defined
+        savedAnswers.get(ManageContactDetailsStatusPage) must not be defined
       }
     }
 
