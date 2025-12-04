@@ -18,6 +18,7 @@ package controllers.repayments
 
 import cats.data.OptionT
 import cats.data.OptionT.fromOption
+import cats.syntax.functor.given
 import config.FrontendAppConfig
 import controllers.actions.*
 import models.longrunningsubmissions.LongRunningSubmission.Repayments
@@ -37,7 +38,7 @@ import viewmodels.checkAnswers.repayments.*
 import viewmodels.govuk.summarylist.*
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
-import java.time.ZonedDateTime
+import java.time.{Clock, ZonedDateTime}
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -50,7 +51,8 @@ class RepaymentsCheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsCheckYourAnswersView,
   auditService:                           AuditService,
-  repaymentService:                       RepaymentService
+  repaymentService:                       RepaymentService,
+  clock:                                  Clock
 )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
@@ -70,19 +72,21 @@ class RepaymentsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
       request.userAnswers.get(RepaymentsStatusPage) match {
         case Some(SuccessfullyCompleted) =>
-          Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
+          Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments)))
         case _ =>
           if request.userAnswers.isRepaymentsJourneyCompleted then {
-            for {
+            val requirementsToRespond: Future[Unit] = for {
               optionalSessionData <- sessionRepository.get(request.userAnswers.id)
               sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
               updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsStatusPage, InProgress))
               _              <- sessionRepository.set(updatedAnswers)
             } yield (): Unit
+
             val repaymentsStatus = (for {
+              _                  <- OptionT.liftF(requirementsToRespond)
               repaymentData      <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
               _                  <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
               repaymentAuditData <- fromOption[Future](request.userAnswers.getRepaymentAuditDetail)
@@ -105,7 +109,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
-                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, ZonedDateTime.now().toDateTimeGmtFormat))
+                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, ZonedDateTime.now(clock).toDateTimeGmtFormat))
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-
@@ -131,9 +135,9 @@ class RepaymentsCheckYourAnswersController @Inject() (
                 if success then Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
               _ <- sessionRepository.set(updatedAnswers10)
             } yield (): Unit
-            Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
+            requirementsToRespond.as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments)))
           } else {
-            Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
+            Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
           }
       }
     }

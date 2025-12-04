@@ -16,17 +16,16 @@
 
 package models.financialdata
 
-import base.SpecBase
+import base.{SpecBase, TestDateTimeUtils}
 import cats.syntax.option.*
 import models.financialdata.FinancialTransaction.{OutstandingCharge, Payment}
 import org.scalacheck.Gen
 import org.scalatest.LoneElement
 import org.scalatestplus.scalacheck.ScalaCheckPropertyChecks
-import utils.DateTimeUtils.{fixedClock, today}
 
 import java.time.*
 
-class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with LoneElement {
+class FinancialDataSpec extends SpecBase with ScalaCheckPropertyChecks with LoneElement with TestDateTimeUtils {
 
   "FinancialData" when {
 
