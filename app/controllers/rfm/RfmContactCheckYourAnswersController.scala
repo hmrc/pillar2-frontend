@@ -21,7 +21,6 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
 import models.longrunningsubmissions.LongRunningSubmission.RFM
-import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.*
 import models.rfm.{CorporatePosition, RfmStatus}
 import models.subscription.NewFilingMemberDetail
