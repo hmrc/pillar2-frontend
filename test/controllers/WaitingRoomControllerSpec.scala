@@ -73,7 +73,7 @@ class WaitingRoomControllerSpec
       new FakeSubscriptionDataRequiredAction,
       submissionService,
       waitingRoomView
-    )(app.injector.instanceOf[ExecutionContext], config)
+    )(using app.injector.instanceOf[ExecutionContext], config)
   }
 
   case object DummyPage extends Gettable[Unit] with Settable[Unit] {
