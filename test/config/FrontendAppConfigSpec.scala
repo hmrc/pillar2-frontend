@@ -17,11 +17,16 @@
 package config
 
 import base.SpecBase
+import com.typesafe.config.{Config, ConfigException}
+import models.longrunningsubmissions.LongRunningSubmission.*
 import org.mockito.Mockito.when
+import org.scalatest.prop.TableDrivenPropertyChecks
+import play.api.Configuration
 import play.api.inject.Injector
 import play.api.mvc.RequestHeader
+import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
-class FrontendAppConfigSpec extends SpecBase {
+class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
 
   def injector:                   Injector          = app.injector
   val config:                     FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
@@ -121,6 +126,38 @@ class FrontendAppConfigSpec extends SpecBase {
     ".pillar2mailbox" must {
       "read value from config" in {
         config.pillar2mailbox mustBe "pillar2mailbox@hmrc.gov.uk"
+      }
+    }
+
+    "loading long-running submission config" must {
+      "pull the proper timeouts for all submission kinds" in forAll(
+        Table(
+          "submission kind"    -> "expected timeout",
+          BTN                  -> 3,
+          ManageContactDetails -> 2,
+          ManageGroupDetails   -> 2,
+          Registration         -> 2,
+          Repayments           -> 2,
+          RFM                  -> 2
+        )
+      ) { (submission, expectedTimeout) =>
+        config.longRunningSubmissionConfig(submission).pollingIntervalSeconds mustBe expectedTimeout
+      }
+
+      "fail if config is missing for a modelled submission" in {
+        val realServicesConfig                            = app.injector.instanceOf[ServicesConfig]
+        val configurationWithOneSubmissionIntervalMissing = Configuration(
+          app.injector
+            .instanceOf[Config]
+            .withoutPath("long-running-submissions.rfm")
+        )
+
+        intercept[ConfigException] {
+          new FrontendAppConfig(
+            configurationWithOneSubmissionIntervalMissing,
+            realServicesConfig
+          )
+        }.getMessage must include("long-running-submissions.rfm")
       }
     }
   }
