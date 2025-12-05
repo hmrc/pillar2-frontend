@@ -509,6 +509,49 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
       }
+
+      "handle MissingReferenceNumberError during submission" in {
+        val mockSessionRepository             = mock[SessionRepository]
+        val userAnswers                       = UserAnswers("id")
+        val initialUserAnswersWithInProgress  = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val finalUserAnswersWithFailException = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailException)
+
+        when(mockSessionRepository.get(userAnswers.id))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+
+        when(mockSessionRepository.set(initialUserAnswersWithInProgress))
+          .thenReturn(Future.successful(true))
+
+        when(mockSessionRepository.set(finalUserAnswersWithFailException))
+          .thenReturn(Future.successful(true))
+
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+          .thenReturn(Future.failed(MissingReferenceNumberError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
+
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
+        }
+      }
+
     }
 
     "onPageLoad" should {
