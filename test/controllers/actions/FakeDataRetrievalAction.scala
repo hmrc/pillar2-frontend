@@ -16,7 +16,7 @@
 
 package controllers.actions
 
-import helpers.SubscriptionLocalDataFixture
+import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.UserAnswers
 import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
@@ -90,8 +90,15 @@ class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends 
   given ExecutionContext = executionContext
 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
-    Future(SessionOptionalDataRequest(request, request.userId, dataToReturn))
+    Future.successful(SessionOptionalDataRequest(request, request.userId, dataToReturn))
+}
 
+class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixture {
+  given executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
+
+  override protected def refine[A](request: SessionOptionalDataRequest[A]): Future[Either[Result, SessionDataRequest[A]]] =
+    Future.successful(Right(SessionDataRequest(request.request, request.userId, request.userAnswers.getOrElse(emptyUserAnswers))))
 }
 
 class FakeObligationsAndSubmissionsDataRetrievalAction(obligationsAndSubmissionsData: ObligationsAndSubmissionsSuccess)
