@@ -83,7 +83,7 @@ class RepaymentService @Inject() (
       }
     }
 
-  def sendRepaymentDetails(data: SendRepaymentDetails)(implicit headerCarrier: HeaderCarrier): Future[Done] =
+  def sendRepaymentDetails(data: SendRepaymentDetails)(using headerCarrier: HeaderCarrier): Future[Done] =
     repaymentConnector.repayment(data)
 
 }

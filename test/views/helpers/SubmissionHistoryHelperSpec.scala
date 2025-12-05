@@ -24,12 +24,12 @@ import org.scalatest.wordspec.AnyWordSpec
 import org.scalatestplus.mockito.MockitoSugar
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.Text
-import utils.DateTimeUtils.ZonedDateTimeOps
+import utils.DateTimeUtils.toDateFormat
 
 import java.time.{LocalDate, ZonedDateTime}
 
 class SubmissionHistoryHelperSpec extends AnyWordSpec with Matchers with MockitoSugar {
-  implicit val messages: Messages = mock[Messages]
+  given messages: Messages = mock[Messages]
 
   "SubmissionHistoryHelper" must {
     "generate a table for each accounting period" in {

@@ -25,7 +25,7 @@ import navigation.ReplaceFilingMemberNavigator
 import pages.{RfmAddSecondaryContactPage, RfmPrimaryContactNamePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.RfmAddSecondaryContactView
 
@@ -41,11 +41,12 @@ class RfmAddSecondaryContactController @Inject() (
   formProvider:                     RfmAddSecondaryContactFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmAddSecondaryContactView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { contactName =>
@@ -56,7 +57,8 @@ class RfmAddSecondaryContactController @Inject() (
       .getOrElse(Redirect(controllers.rfm.routes.RfmJourneyRecoveryController.onPageLoad))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(RfmPrimaryContactNamePage)
       .map { contactName =>

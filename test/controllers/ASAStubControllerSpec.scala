@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import play.api.inject.bind
@@ -46,7 +46,7 @@ class ASAStubControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

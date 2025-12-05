@@ -29,12 +29,13 @@ import javax.inject.Inject
 class JourneyRecoveryController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   journeyRecoveryView:      JourneyRecoveryView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = Action { implicit request =>
+  def onPageLoad(continueUrl: Option[RedirectUrl] = None): Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     val safeUrl: Option[String] = continueUrl.flatMap { unsafeUrl =>
       unsafeUrl.getEither(OnlyRelative) match {
         case Right(safeUrl) =>

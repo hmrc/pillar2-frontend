@@ -28,9 +28,9 @@ import uk.gov.hmrc.play.bootstrap.config.ServicesConfig
 
 class FrontendAppConfigSpec extends SpecBase with TableDrivenPropertyChecks {
 
-  def injector:                   Injector          = app.injector
-  val config:                     FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
-  implicit val mockRequestHeader: RequestHeader     = mock[RequestHeader]
+  def injector:            Injector          = app.injector
+  val config:              FrontendAppConfig = injector.instanceOf[FrontendAppConfig]
+  given mockRequestHeader: RequestHeader     = mock[RequestHeader]
 
   "FrontendAppConfig" when {
 

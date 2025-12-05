@@ -252,6 +252,6 @@ class SubmissionAnswerLookupSpec extends AnyWordSpec with must.Matchers with Sca
   def returnsSpecificAnswerNotFound[A <: LongRunningSubmission](
     submission:      A,
     expectedFailure: Gettable[?]
-  )(implicit lookup: SubmissionAnswerLookup[A]): Assertion =
+  )(using lookup: SubmissionAnswerLookup[A]): Assertion =
     lookup.extractStateFromAnswers(submission, UserAnswers("fake id")).left.value mustBe SpecificAnswerNotFound(expectedFailure)
 }

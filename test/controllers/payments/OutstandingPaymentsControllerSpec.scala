@@ -50,7 +50,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(sampleChargeTransaction))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -78,7 +78,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Test error")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -99,7 +99,7 @@ class OutstandingPaymentsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockFinancialDataService.retrieveFinancialData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(NoResultFound))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 

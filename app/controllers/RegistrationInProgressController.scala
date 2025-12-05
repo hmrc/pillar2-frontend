@@ -21,7 +21,7 @@ import controllers.actions.IdentifierAction
 import models.UnprocessableEntityError
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import play.twirl.api.Html
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -35,12 +35,13 @@ class RegistrationInProgressController @Inject() (
   identify:                 IdentifierAction,
   viewHomepage:             RegistrationInProgressNewView,
   subscriptionService:      SubscriptionService
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { implicit request =>
+  def onPageLoad(plrReference: String): Action[AnyContent] = identify.async { request =>
+    given Request[AnyContent] = request
     val view: String => Html =
       (ref: String) => viewHomepage(ref)
 

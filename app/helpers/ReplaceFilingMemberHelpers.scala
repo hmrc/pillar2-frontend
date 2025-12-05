@@ -25,7 +25,7 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.*
-import viewmodels.govuk.all.{FluentSummaryList, SummaryListViewModel}
+import viewmodels.govuk.all.*
 
 trait ReplaceFilingMemberHelpers {
 
@@ -41,7 +41,7 @@ trait ReplaceFilingMemberHelpers {
     }
   }
 
-  def rfmPrimaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+  def rfmPrimaryContactList(using messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmPrimaryContactNameSummary.row(self),
       RfmPrimaryContactEmailSummary.row(self),
@@ -50,7 +50,7 @@ trait ReplaceFilingMemberHelpers {
     ).flatten
   ).withCssClass(GovUKMarginBottom9.toString)
 
-  def rfmCorporatePositionSummaryList(countryOptions: CountryOptions)(implicit messages: Messages): SummaryList =
+  def rfmCorporatePositionSummaryList(countryOptions: CountryOptions)(using messages: Messages): SummaryList =
     SummaryListViewModel(
       rows = Seq(
         RfmCorporatePositionSummary.row(self),
@@ -65,7 +65,7 @@ trait ReplaceFilingMemberHelpers {
       ).flatten
     ).withCssClass(GovUKMarginBottom9.toString)
 
-  def rfmSecondaryContactList(implicit messages: Messages): SummaryList = SummaryListViewModel(
+  def rfmSecondaryContactList(using messages: Messages): SummaryList = SummaryListViewModel(
     rows = Seq(
       RfmAddSecondaryContactSummary.row(self),
       RfmSecondaryContactNameSummary.row(self),

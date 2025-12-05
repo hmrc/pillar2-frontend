@@ -29,7 +29,7 @@ import play.api.libs.json.Json
 import play.api.mvc.Result
 import play.api.mvc.Results.Redirect
 import uk.gov.hmrc.http.HeaderCarrier
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import java.time.LocalDate
 import javax.inject.{Inject, Singleton}
@@ -42,10 +42,10 @@ class SubscriptionService @Inject() (
   userAnswersConnectors:        UserAnswersConnectors,
   enrolmentConnector:           TaxEnrolmentConnector,
   enrolmentStoreProxyConnector: EnrolmentStoreProxyConnector
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
-  def createSubscription(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] = {
+  def createSubscription(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] = {
     logger.info(s"createSubscription - userAnswers: - ${Json.toJson(userAnswers)}")
     for {
       upeSafeId     <- registerUpe(userAnswers)
@@ -61,25 +61,25 @@ class SubscriptionService @Inject() (
     } yield plrRef
   }
 
-  private def enrolmentExists(plrReference: String)(implicit hc: HeaderCarrier): Future[Boolean] =
+  private def enrolmentExists(plrReference: String)(using hc: HeaderCarrier): Future[Boolean] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).map {
       case Some(_) => true
       case _       => false
     }
 
-  def maybeReadSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[Option[SubscriptionData]] =
+  def maybeReadSubscription(plrReference: String)(using hc: HeaderCarrier): Future[Option[SubscriptionData]] =
     subscriptionConnector.readSubscription(plrReference)
 
-  def readSubscription(plrReference: String)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+  def readSubscription(plrReference: String)(using hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.readSubscription(plrReference).flatMap {
       case Some(subData) => Future.successful(subData)
       case None          => Future.failed(NoResultFound)
     }
 
-  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[SubscriptionData] =
+  def cacheSubscription(parameters: ReadSubscriptionRequestParameters)(using hc: HeaderCarrier): Future[SubscriptionData] =
     subscriptionConnector.cacheSubscription(parameters)
 
-  def getSubscriptionCache(userId: String)(implicit hc: HeaderCarrier): Future[SubscriptionLocalData] =
+  def getSubscriptionCache(userId: String)(using hc: HeaderCarrier): Future[SubscriptionLocalData] =
     subscriptionConnector.getSubscriptionCache(userId).flatMap {
       case Some(readSubscriptionResponse) =>
         Future.successful(readSubscriptionResponse)
@@ -87,7 +87,7 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(implicit
+  def matchingPillar2Records(id: String, sessionPillar2Id: String, sessionRegistrationDate: LocalDate)(using
     hc: HeaderCarrier
   ): Future[Boolean] =
     userAnswersConnectors.getUserAnswer(id).map { maybeUserAnswers =>
@@ -97,7 +97,7 @@ class SubscriptionService @Inject() (
       } yield backendPillar2Id.equals(sessionPillar2Id) & backendRegistrationDate
         .isEqual(sessionRegistrationDate)).getOrElse(false)
     }
-  def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(implicit
+  def amendContactOrGroupDetails(userId: String, plrReference: String, subscriptionLocalData: SubscriptionLocalData)(using
     hc: HeaderCarrier
   ): Future[Done] =
     for {
@@ -105,7 +105,7 @@ class SubscriptionService @Inject() (
       amendData = amendGroupOrContactDetails(plrReference, currentSubscriptionData, subscriptionLocalData)
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
-  private def registerUpe(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  private def registerUpe(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     userAnswers.getUpeSafeID
       .map(Future.successful)
       .getOrElse {
@@ -116,7 +116,7 @@ class SubscriptionService @Inject() (
         } yield safeId
       }
 
-  private def registerNfm(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[Option[String]] =
+  private def registerNfm(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[Option[String]] =
     userAnswers.getFmSafeID
       .map(safeId => Future.successful(Some(safeId)))
       .getOrElse {
@@ -249,19 +249,19 @@ class SubscriptionService @Inject() (
       secondaryContactDetails = requiredInfo.secondaryContactInformation,
       filingMemberDetails = Some(filingMember)
     )
-  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
+  def amendFilingMemberDetails(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
     for {
       result <- subscriptionConnector.amendSubscription(userId, amendData)
     } yield result
 
-  private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[String] =
+  private def registerOrGetNewFilingMemberSafeId(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[String] =
     for {
       safeID         <- userAnswers.get(RfmSafeIdPage).map(Future.successful).getOrElse(registrationConnector.registerNewFilingMember(userAnswers.id))
       updatedAnswers <- Future.fromTry(userAnswers.set(RfmSafeIdPage, safeID))
       _              <- userAnswersConnectors.save(updatedAnswers.id, Json.toJson(updatedAnswers.data))
     } yield safeID
 
-  def deallocateEnrolment(plrReference: String)(implicit hc: HeaderCarrier): Future[Done] =
+  def deallocateEnrolment(plrReference: String)(using hc: HeaderCarrier): Future[Done] =
     enrolmentStoreProxyConnector.getGroupIds(plrReference).flatMap {
       case Some(groupIds) =>
         logger.info(s"deallocateEnrolment groupIds: - $groupIds")
@@ -271,10 +271,10 @@ class SubscriptionService @Inject() (
         Future.failed(InternalIssueError)
     }
 
-  def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
+  def allocateEnrolment(groupId: String, plrReference: String, enrolmentInfo: AllocateEnrolmentParameters)(using hc: HeaderCarrier): Future[Done] =
     enrolmentConnector.allocateEnrolment(groupId, plrReference, enrolmentInfo)
 
-  def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionData, pillar2Reference: String, userId: String)(implicit
+  def getUltimateParentEnrolmentInformation(subscriptionData: SubscriptionData, pillar2Reference: String, userId: String)(using
     hc: HeaderCarrier
   ): Future[AllocateEnrolmentParameters] =
     subscriptionData.upeDetails.customerIdentification1
@@ -302,7 +302,7 @@ class SubscriptionService @Inject() (
           }
       )
 
-  private def getNewFilingMemberDetails(userAnswers: UserAnswers)(implicit hc: HeaderCarrier): Future[FilingMemberAmendDetails] =
+  private def getNewFilingMemberDetails(userAnswers: UserAnswers)(using hc: HeaderCarrier): Future[FilingMemberAmendDetails] =
     userAnswers
       .get(RfmUkBasedPage)
       .flatMap(ukBased =>
@@ -340,7 +340,7 @@ class SubscriptionService @Inject() (
     subscriptionData:   SubscriptionData,
     filingMemberDetail: NewFilingMemberDetail,
     userAnswers:        UserAnswers
-  )(implicit hc: HeaderCarrier): Future[AmendSubscription] =
+  )(using hc: HeaderCarrier): Future[AmendSubscription] =
     if filingMemberDetail.corporatePosition == CorporatePosition.Upe then {
       logger.info("createAmendObjectForReplacingFilingMember - call setUltimateParentAsNewFilingMember")
       setUltimateParentAsNewFilingMember(requiredInfo = filingMemberDetail, subscriptionData = subscriptionData).toFuture

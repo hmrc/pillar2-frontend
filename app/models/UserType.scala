@@ -33,7 +33,7 @@ object UserType {
     val value: String = this.toString
   }
 
-  implicit val format: Format[UserType] = new Format[UserType] {
+  given format: Format[UserType] = new Format[UserType] {
     override def reads(json: JsValue): JsResult[UserType] =
       json.as[String] match {
         case "Upe" => JsSuccess[UserType](Upe)
@@ -51,7 +51,7 @@ object UserType {
       }
   }
 
-  implicit val jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
+  given jsLiteral: JavascriptLiteral[UserType] = new JavascriptLiteral[UserType] {
     override def to(value: UserType): String =
       value match {
         case Upe => "Upe"

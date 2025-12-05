@@ -25,7 +25,7 @@ import play.api.i18n.{Lang, MessagesApi}
 
 class WaitingRoomSpec extends AnyWordSpec with GuiceOneAppPerSuite with must.Matchers with TableDrivenPropertyChecks {
 
-  implicit val messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("EN")))
+  given messages: Messages = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("EN")))
 
   "fromLongRunningSubmission" must {
     "produce the correct page titles" in forAll(

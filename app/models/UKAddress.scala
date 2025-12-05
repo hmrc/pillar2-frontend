@@ -53,12 +53,12 @@ case class UKAddress(
   val postcode:    String = HtmlFormat.escape(postalCode).toString + "<br>"
   val fullAddress: String = field1 + field2 + field3 + field4 + postcode
 
-  def getAddressList(countryOptions: CountryOptions)(implicit messages: Messages): List[String] = {
+  def getAddressList(countryOptions: CountryOptions)(using messages: Messages): List[String] = {
     val country = countryOptions.getCountryNameFromCode(countryCode)
     List(addressLine1, addressLine2.getOrElse(""), addressLine3, addressLine4.getOrElse(""), postalCode, country).filter(_.nonEmpty)
   }
 
 }
 object UKAddress {
-  implicit val format: OFormat[UKAddress] = Json.format[UKAddress]
+  given format: OFormat[UKAddress] = Json.format[UKAddress]
 }

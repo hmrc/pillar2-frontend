@@ -40,13 +40,13 @@ class ASAEnrolmentIdentifierAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val bodyParser:             BodyParsers.Default
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends IdentifierAction
     with AuthorisedFunctions
     with Logging {
 
   override def refine[A](request: Request[A]): Future[Either[Result, IdentifierRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
     authorised(defaultPredicate)
       .retrieve(
         Retrievals.internalId and

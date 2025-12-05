@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import forms.AddSecondaryContactFormProvider
 import navigation.AmendSubscriptionNavigator
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
@@ -135,7 +135,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubAddSecondaryContactPage, true)
@@ -174,7 +174,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubAddSecondaryContactPage, expectedUserAnswers)
       }
     }
@@ -191,7 +191,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
         .build()
       running(application) {
-        when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         val request = FakeRequest(POST, controllers.subscription.manageAccount.routes.AddSecondaryContactController.onSubmit().url)
           .withFormUrlEncodedBody("value" -> "true")
         val result = route(application, request).value
@@ -217,7 +217,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -247,7 +247,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -275,7 +275,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -296,7 +296,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -320,7 +320,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[AmendSubscriptionNavigator]
       when(mockNavigator.nextPage(any(), any())).thenReturn(expectedNextPage)
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptySubscriptionLocalData
         .setOrException(SubAddSecondaryContactPage, true)
@@ -352,7 +352,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         )
         .build()
 
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -365,7 +365,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         val result = route(application, request).value
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(any[HeaderCarrier])
+        verify(mockSubscriptionConnector).save(eqTo("id"), eqTo(Json.toJson(expectedUserAnswers)))(using any[HeaderCarrier])
         verify(mockNavigator).nextPage(SubAddSecondaryContactPage, expectedUserAnswers)
       }
     }

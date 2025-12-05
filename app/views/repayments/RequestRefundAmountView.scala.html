@@ -41,7 +41,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("repayment.requestRepaymentAmount.header")).asPageHeading(Large)
+                label = LabelViewModel(messages("repayment.requestRepaymentAmount.header")).asPageHeadingLabel(Large)
             ).withPrefix(PrefixOrSuffix(content = Text("£")))
             .withWidth(TwoThirds)
         )

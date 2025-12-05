@@ -38,7 +38,7 @@ import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.audit.http.connector.AuditResult
-import utils.DateTimeUtils.{utcZoneId, given}
+import utils.DateTimeUtils.*
 import viewmodels.govuk.SummaryListFluency
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
@@ -63,7 +63,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
     val auditService: AuditService = {
       val service = mock[AuditService]
-      when(service.auditRepayments(any)(any)).thenReturn(Future.successful(AuditResult.Success))
+      when(service.auditRepayments(any)(using any)).thenReturn(Future.successful(AuditResult.Success))
       service
     }
 
@@ -299,7 +299,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             val answersCaptor: ArgumentCaptor[UserAnswers] = ArgumentCaptor.forClass(classOf[UserAnswers])
 
             when(repaymentService.getRepaymentData(any())).thenReturn(Some(validRepaymentPayloadUkBank))
-            when(repaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any())).thenReturn(Future.successful(Done))
+            when(repaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(using any())).thenReturn(Future.successful(Done))
 
             val result: Future[Result] = controller.onSubmit()(request)
 
@@ -338,7 +338,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
 
             when(mockRepaymentService.getRepaymentData(any()))
               .thenReturn(Some(validRepaymentPayloadUkBank))
-            when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(any()))
+            when(mockRepaymentService.sendRepaymentDetails(any[SendRepaymentDetails])(using any()))
               .thenReturn(Future.failed(UnexpectedResponse))
 
             val result: Future[Result] = controller.onSubmit()(request)

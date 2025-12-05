@@ -18,7 +18,7 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.StartPageView
 
@@ -27,11 +27,12 @@ import javax.inject.Inject
 class StartPageController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageView
-)(implicit val appConfig: FrontendAppConfig)
+)(using val appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(view())
   }
 

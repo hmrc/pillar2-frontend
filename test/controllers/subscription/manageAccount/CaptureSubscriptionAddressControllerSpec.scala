@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.SubscriptionConnector
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import forms.CaptureSubscriptionAddressFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -46,7 +46,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
       .build()
 
   def agentApp: Application = {
-    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
       .thenReturn(
         Future.successful(
           Some(randomUUID) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId = randomUUID, providerType = randomUUID))
@@ -62,7 +62,7 @@ class CaptureSubscriptionAddressControllerSpec extends SpecBase {
   def getRequest: FakeRequest[AnyContentAsEmpty.type] =
     FakeRequest(GET, controllers.subscription.manageAccount.routes.CaptureSubscriptionAddressController.onPageLoad().url)
   def postRequest(alterations: (String, String)*): FakeRequest[AnyContentAsFormUrlEncoded] = {
-    when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+    when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     val address = Map(
       "addressLine1" -> "27 House",

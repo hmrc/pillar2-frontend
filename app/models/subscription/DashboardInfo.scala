@@ -26,5 +26,5 @@ case class DashboardInfo(
 )
 
 object DashboardInfo {
-  implicit val format: OFormat[DashboardInfo] = Json.format[DashboardInfo]
+  given format: OFormat[DashboardInfo] = Json.format[DashboardInfo]
 }

@@ -41,8 +41,8 @@ class SecurityQuestionsCheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val list: SummaryList = SummaryListViewModel(
     rows = Seq(
-      RfmSecurityCheckSummary.row(userAnswer)(messages),
-      RfmRegistrationDateSummary.row(userAnswer)(messages)
+      RfmSecurityCheckSummary.row(userAnswer)(using messages),
+      RfmRegistrationDateSummary.row(userAnswer)(using messages)
     ).flatten
   )
 

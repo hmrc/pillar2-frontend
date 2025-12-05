@@ -18,7 +18,7 @@ import play.api.libs.json.*
 
 package object models {
 
-  implicit class RichJsObject(jsObject: JsObject) {
+  extension (jsObject: JsObject) {
 
     def setObject(path: JsPath, value: JsValue): JsResult[JsObject] =
       jsObject.set(path, value).flatMap(_.validate[JsObject])
@@ -27,7 +27,7 @@ package object models {
       jsObject.remove(path).flatMap(_.validate[JsObject])
   }
 
-  implicit class RichJsValue(jsValue: JsValue) {
+  extension (jsValue: JsValue) {
 
     def set(path: JsPath, value: JsValue): JsResult[JsValue] =
       (path.path, jsValue) match {

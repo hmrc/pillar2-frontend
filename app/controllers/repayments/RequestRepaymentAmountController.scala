@@ -25,7 +25,7 @@ import pages.RepaymentsRefundAmountPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.RequestRefundAmountView
@@ -42,14 +42,15 @@ class RequestRepaymentAmountController @Inject() (
   requireSessionData:                     SessionDataRequiredAction,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form:                                Form[BigDecimal]   = formProvider()
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentsRefundAmountPage) match {
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.userAnswers.get(RepaymentsRefundAmountPage) match {
         case None        => form
         case Some(value) => form.fill(value.setScale(2))
       }
@@ -57,7 +58,8 @@ class RequestRepaymentAmountController @Inject() (
     }
 
   def onSubmit(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
       form
         .bindFromRequest()
         .fold(

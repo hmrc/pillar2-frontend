@@ -24,13 +24,13 @@ import play.api.libs.json.*
 
 class RichJsValueSpec extends SpecBase with ScalaCheckPropertyChecks with ModelGenerators {
 
-  implicit def dontShrink[A]: Shrink[A] = Shrink.shrinkAny
+  given dontShrink[A]: Shrink[A] = Shrink.shrinkAny
 
   val min = 2
   val max = 10
   val nonEmptyAlphaStr: Gen[String] = Gen.alphaStr.suchThat(_.nonEmpty)
 
-  def buildJsObj[B](keys: Seq[String], values: Seq[B])(implicit writes: Writes[B]): JsObject =
+  def buildJsObj[B](keys: Seq[String], values: Seq[B])(using writes: Writes[B]): JsObject =
     keys.zip(values).foldLeft(JsObject.empty) { case (acc, (key, value)) =>
       acc + (key -> Json.toJson[B](value))
     }

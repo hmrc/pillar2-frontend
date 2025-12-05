@@ -31,7 +31,7 @@ import play.api.inject.bind
 import play.api.mvc.{AnyContentAsFormUrlEncoded, Request, Result}
 import play.api.test.FakeRequest
 import play.api.test.Helpers.{POST, defaultAwaitTimeout, running}
-import services.BarsServiceSpec.*
+import services.BarsServiceSpec.{request, *}
 import views.html.repayments.BankAccountDetailsView
 
 import scala.concurrent.Future
@@ -52,7 +52,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any())).thenReturn(Future successful barsAccountResponse())
+        when(mockBarsConnector.verify(any(), any(), any())(using any())).thenReturn(Future successful barsAccountResponse())
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
 
@@ -73,7 +73,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Partial, accountName = Some("Epic Adv")))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -96,7 +96,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val view    = application.injector.instanceOf[BankAccountDetailsView]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(accountNumberIsWellFormatted = AccountNumberIsWellFormatted.No))
 
         val formWithError =
@@ -107,7 +107,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
           userAnswer,
           formProvider().fill(bankAccountDetails),
           NormalMode
-        )(hc, request, messages(application))
+        )(using hc, request, messages(application))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe
@@ -135,7 +135,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val view    = application.injector.instanceOf[BankAccountDetailsView]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.No))
 
         val formWithError =
@@ -146,7 +146,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
           userAnswer,
           formProvider().fill(bankAccountDetails),
           NormalMode
-        )(hc, request, messages(application))
+        )(using hc, request, messages(application))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe
@@ -173,7 +173,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Inapplicable))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -195,7 +195,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Indeterminate))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -217,7 +217,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(accountExists = AccountExists.Error))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -240,7 +240,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val view    = application.injector.instanceOf[BankAccountDetailsView]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.No))
 
         val formWithError =
@@ -251,7 +251,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
           userAnswer,
           formProvider().fill(bankAccountDetails),
           NormalMode
-        )(hc, request, messages(application))
+        )(using hc, request, messages(application))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe
@@ -278,7 +278,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Inapplicable))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -300,7 +300,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Indeterminate))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -322,7 +322,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Error))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -345,7 +345,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val view    = application.injector.instanceOf[BankAccountDetailsView]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(sortCodeIsPresentOnEISCD = SortCodeIsPresentOnEISCD.No))
 
         val formWithError =
@@ -356,7 +356,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
           userAnswer,
           formProvider().fill(bankAccountDetails),
           NormalMode
-        )(hc, request, messages(application))
+        )(using hc, request, messages(application))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe
@@ -383,7 +383,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(sortCodeIsPresentOnEISCD = SortCodeIsPresentOnEISCD.Error))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -405,7 +405,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nonStandardAccountDetailsRequiredForBacs = NonStandardAccountDetailsRequiredForBacs.Yes))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -427,7 +427,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(sortCodeSupportsDirectCredit = SortCodeSupportsDirectCredit.Error))
 
         val result = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -449,7 +449,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(Future successful barsAccountResponse(nameMatches = NameMatches.Partial))
 
         val result: Future[Result] = service.verifyBusinessAccount(bankAccountDetails, userAnswer, formProvider(), NormalMode)
@@ -472,7 +472,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val view    = application.injector.instanceOf[BankAccountDetailsView]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(
             Future successful barsAccountResponse(
               sortCodeIsPresentOnEISCD = SortCodeIsPresentOnEISCD.No,
@@ -493,7 +493,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
           userAnswer,
           formProvider().fill(bankAccountDetails),
           NormalMode
-        )(hc, request, messages(application))
+        )(using hc, request, messages(application))
 
         status(result) mustBe BAD_REQUEST
         contentAsString(result) mustBe
@@ -520,7 +520,7 @@ class BarsServiceSpec extends SpecBase with ViewInstances {
       val service = application.injector.instanceOf[BarsService]
 
       running(application) {
-        when(mockBarsConnector.verify(any(), any(), any())(any()))
+        when(mockBarsConnector.verify(any(), any(), any())(using any()))
           .thenReturn(
             Future successful barsAccountResponse(
               sortCodeSupportsDirectCredit = SortCodeSupportsDirectCredit.Error,
@@ -544,7 +544,7 @@ object BarsServiceSpec {
 
   val formProvider: BankAccountDetailsFormProvider = new BankAccountDetailsFormProvider()
 
-  implicit val request: Request[AnyContentAsFormUrlEncoded] =
+  given request: Request[AnyContentAsFormUrlEncoded] =
     FakeRequest(POST, controllers.repayments.routes.BankAccountDetailsController.onSubmit(NormalMode).url)
       .withFormUrlEncodedBody(
         "bankName"          -> bankAccountDetails.bankName,

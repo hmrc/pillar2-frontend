@@ -21,7 +21,7 @@ import controllers.actions.IdentifierAction
 import pages.RedirectToASAHome
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AffinityGroup.{Agent, Individual, Organisation}
@@ -38,13 +38,13 @@ class IndexController @Inject() (
   override val authConnector: AuthConnector,
   sessionRepository:          SessionRepository,
   identify:                   IdentifierAction
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with AuthorisedFunctions
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = identify { implicit request =>
+  def onPageLoad: Action[AnyContent] = identify { request =>
     if request.enrolments.exists(_.key == appConfig.enrolmentKey) then {
       Redirect(routes.HomepageController.onPageLoad())
     } else {
@@ -53,7 +53,8 @@ class IndexController @Inject() (
 
   }
 
-  def onPageLoadBanner(): Action[AnyContent] = Action.async { implicit request =>
+  def onPageLoadBanner(): Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.internalId and Retrievals.affinityGroup and Retrievals.allEnrolments) {
         case Some(_) ~ Some(Organisation) ~ e if hasPillarEnrolment(e) => Future.successful(Redirect(routes.HomepageController.onPageLoad()))

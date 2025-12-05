@@ -64,7 +64,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     "must return OK and the correct view for a GET" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
@@ -84,7 +84,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(userAnswers))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)
@@ -110,7 +110,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
         when(mockSessionRepository.set(any())) thenReturn Future.successful(true)
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request =
@@ -134,7 +134,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
           }
         )
 
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.successful(underEnquiryResponse))
 
         val request =
@@ -188,7 +188,7 @@ class BTNChooseAccountingPeriodControllerSpec extends SpecBase {
     "redirect to BTN error page if obligations service fails" in
       running(application) {
         when(mockSessionRepository.get(any())) thenReturn Future.successful(Some(emptyUserAnswers))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNChooseAccountingPeriodController.onPageLoad(mode).url)

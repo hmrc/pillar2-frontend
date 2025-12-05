@@ -32,7 +32,7 @@ object PaymentState extends Enum[PaymentState] {
 
   val values = findValues
 
-  def unapply(financialData: FinancialData)(implicit clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
+  def unapply(financialData: FinancialData)(using clock: Clock, config: FrontendAppConfig): Some[PaymentState] = {
     val anyChargesAccruingInterest = financialData.overdueAccruingInterestCharges.nonEmpty
     val anyChargesOverdue          = financialData.onlyOverdueOutstandingCharges.nonEmpty
     val anyOutstandingCharges      = financialData.onlyOutstandingCharges.nonEmpty

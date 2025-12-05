@@ -21,7 +21,7 @@ import utils.DateTimeUtils.utcZoneId
 import java.time.{Clock, Instant, LocalDate}
 
 trait TestDateTimeUtils {
-  val fixedNow:            Instant   = Instant.now()
-  implicit val fixedClock: Clock     = Clock.fixed(fixedNow, utcZoneId)
-  val today:               LocalDate = LocalDate.now(fixedClock)
+  val fixedNow:     Instant   = Instant.now()
+  given fixedClock: Clock     = Clock.fixed(fixedNow, utcZoneId)
+  val today:        LocalDate = LocalDate.now(fixedClock)
 }

@@ -24,13 +24,14 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
 import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
+import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
 import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -53,13 +54,14 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService,
   val userAnswersConnectors:              UserAnswersConnectors
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given SubscriptionDataRequest[AnyContent] = request
       sessionRepository.get(request.userId).flatMap {
         case None          => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         case Some(answers) =>
@@ -69,10 +71,10 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             case _ =>
               val list = SummaryListViewModel(
                 rows = Seq(
-                  MneOrDomesticSummary.row,
-                  GroupAccountingPeriodSummary.row,
-                  GroupAccountingPeriodStartDateSummary.row,
-                  GroupAccountingPeriodEndDateSummary.row
+                  MneOrDomesticSummary.row(),
+                  GroupAccountingPeriodSummary.row(),
+                  GroupAccountingPeriodStartDateSummary.row(),
+                  GroupAccountingPeriodEndDateSummary.row()
                 ).flatten
               )
               Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
@@ -81,7 +83,8 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       logger.info(s"[ManageGroupDetailsCheckYourAnswers] Submission started for user ${request.userId}")
       sessionRepository.get(request.userId).flatMap { userAnswers =>
         userAnswers.flatMap(_.get(ManageGroupDetailsStatusPage)) match {
@@ -105,7 +108,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       }
     }
 
-  private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
+  private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -140,7 +143,7 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       .map(_ => ())
   }
 
-  private def setStatusOnFailure(userId: String, status: ManageGroupDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+  private def setStatusOnFailure(userId: String, status: ManageGroupDetailsStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
     sessionRepository
       .get(userId)
       .flatMap { maybeUa =>

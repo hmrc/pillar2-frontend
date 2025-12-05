@@ -36,5 +36,5 @@ case class RepaymentsAuditEvent(
 }
 
 object RepaymentsAuditEvent {
-  implicit val formats: Format[RepaymentsAuditEvent] = Json.format[RepaymentsAuditEvent]
+  given formats: Format[RepaymentsAuditEvent] = Json.format[RepaymentsAuditEvent]
 }

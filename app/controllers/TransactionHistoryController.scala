@@ -32,7 +32,7 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.Text
 import uk.gov.hmrc.govukfrontend.views.viewmodels.pagination.{Pagination, PaginationItem, PaginationLink}
 import uk.gov.hmrc.govukfrontend.views.viewmodels.table.{HeadCell, Table, TableRow}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.*
 import views.ViewUtils.formatCurrencyAmount
 import views.html.paymenthistory.{NoTransactionHistoryView, TransactionHistoryErrorView, TransactionHistoryView}
 
@@ -50,13 +50,14 @@ class TransactionHistoryController @Inject() (
   transactionHistoryView:                         TransactionHistoryView,
   noTransactionHistoryView:                       NoTransactionHistoryView,
   transactionHistoryErrorView:                    TransactionHistoryErrorView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoadTransactionHistory(page: Option[Int]): Action[AnyContent] =
-    (identifierAction andThen dataRetrievalAction).async { implicit request =>
+    (identifierAction andThen dataRetrievalAction).async { request =>
+      given Request[AnyContent] = request
       val result: OptionT[Future, Result] = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -82,8 +83,9 @@ class TransactionHistoryController @Inject() (
     }
 
   def onPageLoadNoTransactionHistory(): Action[AnyContent] =
-    (identifierAction andThen dataRetrievalAction).async { implicit request =>
-      val result = for {
+    (identifierAction andThen dataRetrievalAction).async { request =>
+      given Request[AnyContent] = request
+      val result                = for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
         referenceNumber <- OptionT
@@ -96,7 +98,8 @@ class TransactionHistoryController @Inject() (
       }
     }
 
-  def onPageLoadError(): Action[AnyContent] = Action.async { implicit request =>
+  def onPageLoadError(): Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     Future.successful(Ok(transactionHistoryErrorView()))
   }
 }
@@ -104,7 +107,7 @@ class TransactionHistoryController @Inject() (
 object TransactionHistoryController {
   private val ROWS_ON_PAGE: Int = 10
 
-  private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(implicit
+  private[controllers] def generatePagination(financialHistory: Seq[FinancialHistory], page: Option[Int])(using
     messages: Messages
   ): Option[Pagination] = {
     val paginationIndex = page.getOrElse(1)
@@ -138,7 +141,7 @@ object TransactionHistoryController {
         )
       )
 
-  private def generatePreviousLink(paginationIndex: Int)(implicit messages: Messages): Option[PaginationLink] =
+  private def generatePreviousLink(paginationIndex: Int)(using messages: Messages): Option[PaginationLink] =
     if paginationIndex == 1 then { None }
     else {
       Some(
@@ -151,7 +154,7 @@ object TransactionHistoryController {
       )
     }
 
-  private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(implicit messages: Messages): Option[PaginationLink] =
+  private def generateNextLink(paginationIndex: Int, numberOfPages: Int)(using messages: Messages): Option[PaginationLink] =
     if paginationIndex == numberOfPages then { None }
     else {
       Some(
@@ -164,7 +167,7 @@ object TransactionHistoryController {
       )
     }
 
-  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, financialHistory: Seq[FinancialHistory])(implicit
+  private[controllers] def generateTransactionHistoryTable(paginationIndex: Int, financialHistory: Seq[FinancialHistory])(using
     messages: Messages
   ): Option[Table] = {
     val currentPage: Option[Seq[FinancialHistory]] = financialHistory.grouped(ROWS_ON_PAGE).toSeq.lift(paginationIndex - 1)
@@ -175,7 +178,7 @@ object TransactionHistoryController {
     }
   }
 
-  private def createTable(rows: Seq[Seq[TableRow]])(implicit messages: Messages): Table =
+  private def createTable(rows: Seq[Seq[TableRow]])(using messages: Messages): Table =
     Table(
       rows = rows,
       head = Some(

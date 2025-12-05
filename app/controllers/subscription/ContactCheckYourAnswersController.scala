@@ -22,7 +22,7 @@ import connectors.UserAnswersConnectors
 import controllers.actions.{DataRequiredAction, DataRetrievalAction, IdentifierAction}
 import pages.CheckYourAnswersLogicPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -38,12 +38,13 @@ class ContactCheckYourAnswersController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactCheckYourAnswersView,
   countryOptions:            CountryOptions
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val primaryContactList = SummaryListViewModel(
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val primaryContactList    = SummaryListViewModel(
       rows = Seq(
         ContactNameComplianceSummary.row(request.userAnswers),
         ContactEmailAddressSummary.row(request.userAnswers),

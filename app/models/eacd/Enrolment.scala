@@ -25,5 +25,5 @@ final case class Enrolment(
 )
 
 object Enrolment {
-  implicit val format: OFormat[Enrolment] = Json.format[Enrolment]
+  given format: OFormat[Enrolment] = Json.format[Enrolment]
 }

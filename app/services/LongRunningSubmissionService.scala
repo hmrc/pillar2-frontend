@@ -17,7 +17,7 @@
 package services
 import com.google.inject.Inject
 import mapping.SubmissionAnswerLookup
-import mapping.SubmissionAnswerLookup.Instances.*
+import mapping.SubmissionAnswerLookup.Instances.given
 import models.longrunningsubmissions.{LongRunningSubmission, SubmissionLookupError, SubmissionState}
 import models.requests.UserIdRequest
 import play.api.Logging
@@ -28,13 +28,13 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class LongRunningSubmissionService @Inject() (
   sessionRepository: SessionRepository
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendHeaderCarrierProvider
     with Logging {
 
   def getCurrentState[A <: LongRunningSubmission](
     submission: A
-  )(implicit request: UserIdRequest[?]): Future[Either[SubmissionLookupError, SubmissionState]] =
+  )(using request: UserIdRequest[?]): Future[Either[SubmissionLookupError, SubmissionState]] =
     sessionRepository
       .get(request.userId)
       .map(

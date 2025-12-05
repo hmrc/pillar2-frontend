@@ -18,7 +18,7 @@ package controllers.subscription.manageAccount
 
 import base.SpecBase
 import connectors.{SubscriptionConnector, UserAnswersConnectors}
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import forms.CapturePhoneDetailsFormProvider
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
@@ -97,7 +97,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onSubmit().url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
@@ -120,7 +120,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
     }
 
     "redirect to the next page when save and continue if valid data is provided" in {
-      when(mockSubscriptionConnector.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockSubscriptionConnector.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
       val answers = emptySubscriptionLocalData
 
       val application = applicationBuilder(subscriptionLocalData = Some(answers))
@@ -159,7 +159,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -191,7 +191,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder(subscriptionLocalData = Some(userAnswers))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -221,7 +221,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -229,7 +229,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
         )
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.subscription.manageAccount.routes.ContactCapturePhoneDetailsController.onSubmit().url)
             .withFormUrlEncodedBody(("phoneNumber", "33333222" * 100))
@@ -243,7 +243,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -265,7 +265,7 @@ class ContactCapturePhoneDetailsControllerSpec extends SpecBase {
       val application = applicationBuilder()
         .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

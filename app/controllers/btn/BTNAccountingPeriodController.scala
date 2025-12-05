@@ -23,23 +23,25 @@ import controllers.filteredAccountingPeriodDetails
 import models.obligationsandsubmissions.ObligationType.UKTR
 import models.obligationsandsubmissions.SubmissionType.{BTN, UKTR_AMEND, UKTR_CREATE}
 import models.obligationsandsubmissions.{AccountingPeriodDetails, SubmissionType}
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import models.{MneOrDomestic, Mode}
 import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, SubMneOrDomesticPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.audit.AuditService
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.*
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 import views.html.btn.{BTNAccountingPeriodView, BTNAlreadyInPlaceView, BTNReturnSubmittedView}
 
 import java.time.LocalDate
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 
 class BTNAccountingPeriodController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
@@ -53,12 +55,12 @@ class BTNAccountingPeriodController @Inject() (
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction,
   auditService:                           AuditService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(implicit messages: Messages): SummaryList =
+  private def getSummaryList(startDate: LocalDate, endDate: LocalDate)(using messages: Messages): SummaryList =
     SummaryListViewModel(
       rows = Seq(
         SummaryListRowViewModel(
@@ -74,7 +76,8 @@ class BTNAccountingPeriodController @Inject() (
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
     (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest andThen requireObligationData)
-      .async { implicit request =>
+      .async { request =>
+        given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
         sessionRepository.get(request.userId).flatMap {
           case Some(userAnswers) =>
             val accountingPeriodDetails: Future[AccountingPeriodDetails] = userAnswers.get(BTNChooseAccountingPeriodPage) match {
@@ -130,7 +133,7 @@ class BTNAccountingPeriodController @Inject() (
         }
       }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSubscriptionData).async { request =>
     request.maybeSubscriptionLocalData
       .flatMap(_.get(SubMneOrDomesticPage))
       .map { answer =>

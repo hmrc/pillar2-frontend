@@ -91,7 +91,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
 
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
@@ -117,7 +117,7 @@ class CorporatePositionControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(ua)))
         val request = FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onSubmit(NormalMode).url)
           .withFormUrlEncodedBody("value" -> CorporatePosition.NewNfm.toString)
@@ -210,7 +210,7 @@ class CorporatePositionControllerSpec extends SpecBase {
 
       running(application) {
         when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(None))
         val request =
           FakeRequest(POST, controllers.rfm.routes.CorporatePositionController.onPageLoad(NormalMode).url)
@@ -220,7 +220,7 @@ class CorporatePositionControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
-        verify(mockUserAnswersConnectors).save(eqTo(ua.id), eqTo(ua.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(ua.id), eqTo(ua.data))(using any())
         verify(mockNavigator).nextPage(RfmCorporatePositionPage, NormalMode, ua)
       }
     }

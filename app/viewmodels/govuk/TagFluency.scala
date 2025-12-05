@@ -29,7 +29,7 @@ trait TagFluency {
       Tag(content = content)
   }
 
-  implicit class FluentTag(tag: Tag) {
+  extension (tag: Tag) {
 
     def withCssClass(newClass: String): Tag =
       tag.copy(classes = s"${tag.classes} $newClass")

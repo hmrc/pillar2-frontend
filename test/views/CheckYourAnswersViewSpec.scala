@@ -27,7 +27,7 @@ import org.jsoup.select.Elements
 import org.mockito.Mockito.when
 import pages.*
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import utils.countryOptions.CountryOptions
 import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*

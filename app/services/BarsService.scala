@@ -44,7 +44,7 @@ class BarsService @Inject() (
   sessionRepository: SessionRepository,
   navigator:         RepaymentNavigator,
   view:              BankAccountDetailsView
-)(implicit
+)(using
   ec:        ExecutionContext,
   appConfig: FrontendAppConfig
 ) extends Logging {
@@ -54,7 +54,7 @@ class BarsService @Inject() (
     userAnswers: UserAnswers,
     form:        Form[BankAccountDetails],
     mode:        Mode
-  )(implicit
+  )(using
     hc:       HeaderCarrier,
     request:  Request[?],
     messages: Messages
@@ -73,7 +73,7 @@ class BarsService @Inject() (
     userAnswers:         UserAnswers,
     mode:                Mode,
     form:                Form[BankAccountDetails]
-  )(implicit request: Request[?], messages: Messages): Future[Result] = {
+  )(using request: Request[?], messages: Messages): Future[Result] = {
     import barsAccountResponse.*
     (
       accountNumberIsWellFormatted,
@@ -164,7 +164,7 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request: Request[?], messages: Messages): Result =
+  )(using request: Request[?], messages: Messages): Result =
     accountExists match {
       case AccountExists.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadBankDetailsError())
       case AccountExists.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
@@ -189,7 +189,7 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request: Request[?], messages: Messages): Result =
+  )(using request: Request[?], messages: Messages): Result =
     nameMatches match {
       case NameMatches.Inapplicable  => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
       case NameMatches.Indeterminate => Redirect(routes.RepaymentErrorController.onPageLoadNotConfirmedDetails())
@@ -226,7 +226,7 @@ class BarsService @Inject() (
     userAnswers:                  UserAnswers,
     mode:                         Mode,
     form:                         Form[BankAccountDetails]
-  )(implicit request: Request[?], messages: Messages): Result = {
+  )(using request: Request[?], messages: Messages): Result = {
     val preparedForm = userAnswers.get(BankAccountDetailsPage).map(ua => form.fill(ua)).getOrElse(form)
 
     val maybeFormErrors: Seq[Option[FormError]] =

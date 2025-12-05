@@ -19,6 +19,7 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import pages.{BTNChooseAccountingPeriodPage, BtnConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
@@ -38,11 +39,12 @@ class BTNConfirmationController @Inject() (
   view:                                   BTNConfirmationView,
   sessionRepository:                      SessionRepository,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { request =>
+    given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
     sessionRepository.get(request.userId).map {
       case Some(userAnswers) =>
         val accountingPeriodStartDate: LocalDate = request.subscriptionLocalData.subAccountingPeriod.startDate

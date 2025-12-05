@@ -77,7 +77,7 @@ class RfmConfirmationControllerSpec extends SpecBase {
       mockSessionRepo,
       app.injector.instanceOf[MessagesControllerComponents],
       confirmationView
-    )(app.injector.instanceOf[ExecutionContext], app.injector.instanceOf[FrontendAppConfig])
+    )(using app.injector.instanceOf[ExecutionContext], app.injector.instanceOf[FrontendAppConfig])
   }
 
   "RfmConfirmation Controller" when {

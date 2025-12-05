@@ -26,7 +26,7 @@ object AccountNumberIsWellFormatted {
 
   val values: List[AccountNumberIsWellFormatted] = List(Yes, No, Indeterminate)
 
-  implicit val reads: Reads[AccountNumberIsWellFormatted] =
+  given reads: Reads[AccountNumberIsWellFormatted] =
     JsPath
       .read[String]
       .map {
@@ -35,7 +35,7 @@ object AccountNumberIsWellFormatted {
         case "indeterminate" => Indeterminate
       }
 
-  implicit val writes: Writes[AccountNumberIsWellFormatted] = implicitly[Writes[String]].contramap[AccountNumberIsWellFormatted] {
+  given writes: Writes[AccountNumberIsWellFormatted] = implicitly[Writes[String]].contramap[AccountNumberIsWellFormatted] {
     case Yes           => "yes"
     case No            => "no"
     case Indeterminate => "indeterminate"
@@ -50,7 +50,7 @@ object SortCodeIsPresentOnEISCD {
 
   val values: List[SortCodeIsPresentOnEISCD] = List(Yes, No, Error)
 
-  implicit val reads: Reads[SortCodeIsPresentOnEISCD] =
+  given reads: Reads[SortCodeIsPresentOnEISCD] =
     JsPath
       .read[String]
       .map {
@@ -59,7 +59,7 @@ object SortCodeIsPresentOnEISCD {
         case "error" => Error
       }
 
-  implicit val writes: Writes[SortCodeIsPresentOnEISCD] = implicitly[Writes[String]].contramap[SortCodeIsPresentOnEISCD] {
+  given writes: Writes[SortCodeIsPresentOnEISCD] = implicitly[Writes[String]].contramap[SortCodeIsPresentOnEISCD] {
     case Yes   => "yes"
     case No    => "no"
     case Error => "error"
@@ -74,7 +74,7 @@ object NonStandardAccountDetailsRequiredForBacs {
 
   val values: List[NonStandardAccountDetailsRequiredForBacs] = List(Yes, No, Inapplicable)
 
-  implicit val reads: Reads[NonStandardAccountDetailsRequiredForBacs] =
+  given reads: Reads[NonStandardAccountDetailsRequiredForBacs] =
     JsPath
       .read[String]
       .map {
@@ -83,7 +83,7 @@ object NonStandardAccountDetailsRequiredForBacs {
         case "inapplicable" => Inapplicable
       }
 
-  implicit val writes: Writes[NonStandardAccountDetailsRequiredForBacs] =
+  given writes: Writes[NonStandardAccountDetailsRequiredForBacs] =
     implicitly[Writes[String]].contramap[NonStandardAccountDetailsRequiredForBacs] {
       case Yes          => "yes"
       case No           => "no"
@@ -101,7 +101,7 @@ object AccountExists {
 
   val values: List[AccountExists] = List(Yes, No, Inapplicable, Indeterminate, Error)
 
-  implicit val reads: Reads[AccountExists] =
+  given reads: Reads[AccountExists] =
     JsPath
       .read[String]
       .map {
@@ -112,7 +112,7 @@ object AccountExists {
         case "error"         => Error
       }
 
-  implicit val writes: Writes[AccountExists] =
+  given writes: Writes[AccountExists] =
     implicitly[Writes[String]].contramap[AccountExists] {
       case Yes           => "yes"
       case No            => "no"
@@ -133,7 +133,7 @@ object NameMatches {
 
   val values: List[NameMatches] = List(Yes, No, Inapplicable, Indeterminate, Error)
 
-  implicit val reads: Reads[NameMatches] =
+  given reads: Reads[NameMatches] =
     JsPath
       .read[String]
       .map {
@@ -145,7 +145,7 @@ object NameMatches {
         case "error"         => Error
       }
 
-  implicit val writes: Writes[NameMatches] =
+  given writes: Writes[NameMatches] =
     implicitly[Writes[String]].contramap[NameMatches] {
       case Yes           => "yes"
       case Partial       => "partial"
@@ -164,7 +164,7 @@ object SortCodeSupportsDirectDebit {
 
   val values: List[SortCodeSupportsDirectDebit] = List(Yes, No, Error)
 
-  implicit val reads: Reads[SortCodeSupportsDirectDebit] =
+  given reads: Reads[SortCodeSupportsDirectDebit] =
     JsPath
       .read[String]
       .map {
@@ -173,7 +173,7 @@ object SortCodeSupportsDirectDebit {
         case "error" => Error
       }
 
-  implicit val writes: Writes[SortCodeSupportsDirectDebit] =
+  given writes: Writes[SortCodeSupportsDirectDebit] =
     implicitly[Writes[String]].contramap[SortCodeSupportsDirectDebit] {
       case Yes   => "yes"
       case No    => "no"
@@ -189,7 +189,7 @@ object SortCodeSupportsDirectCredit {
 
   val values: List[SortCodeSupportsDirectCredit] = List(Yes, No, Error)
 
-  implicit val reads: Reads[SortCodeSupportsDirectCredit] =
+  given reads: Reads[SortCodeSupportsDirectCredit] =
     JsPath
       .read[String]
       .map {
@@ -198,7 +198,7 @@ object SortCodeSupportsDirectCredit {
         case "error" => Error
       }
 
-  implicit val writes: Writes[SortCodeSupportsDirectCredit] =
+  given writes: Writes[SortCodeSupportsDirectCredit] =
     implicitly[Writes[String]].contramap[SortCodeSupportsDirectCredit] {
       case Yes   => "yes"
       case No    => "no"

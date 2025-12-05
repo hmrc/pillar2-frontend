@@ -33,7 +33,7 @@ object CorporatePosition extends Enumerable.Implicits {
     NewNfm
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+  def options(using messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
       content = Text(messages(s"rfm.corporatePosition.${value.toString}")),
       value = Some(value.toString),
@@ -41,6 +41,6 @@ object CorporatePosition extends Enumerable.Implicits {
     )
   }
 
-  implicit val enumerable: Enumerable[CorporatePosition] =
+  given enumerable: Enumerable[CorporatePosition] =
     Enumerable(values.map(v => v.toString -> v)*)
 }

@@ -40,7 +40,7 @@ class ObligationsAndSubmissionsServiceSpec extends SpecBase {
   val pillar2Id: String                           = PlrReference
 
   private def setupMockConnector(response: Future[ObligationsAndSubmissionsSuccess]): OngoingStubbing[Future[ObligationsAndSubmissionsSuccess]] =
-    when(mockObligationsAndSubmissionsConnector.getData(any(), any(), any())(any[HeaderCarrier], any[ExecutionContext]))
+    when(mockObligationsAndSubmissionsConnector.getData(any(), any(), any())(using any[HeaderCarrier], any[ExecutionContext]))
       .thenReturn(response)
 
   "handleData" must {

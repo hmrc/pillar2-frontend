@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class OPSRedirectRequest(reference: String, amountInPence: BigDecimal, returnUrl: String, backUrl: String)
 
 object OPSRedirectRequest {
-  implicit val format: OFormat[OPSRedirectRequest] = Json.format[OPSRedirectRequest]
+  given format: OFormat[OPSRedirectRequest] = Json.format[OPSRedirectRequest]
 }

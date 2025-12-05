@@ -26,7 +26,7 @@ import pages.NonUKBankPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.NonUKBankView
@@ -43,15 +43,16 @@ class NonUKBankController @Inject() (
   navigator:                              RepaymentNavigator,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   NonUKBankView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[NonUKBank] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(NonUKBankPage) match {
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.userAnswers.get(NonUKBankPage) match {
         case None        => form
         case Some(value) => form.fill(value)
       }
@@ -59,7 +60,8 @@ class NonUKBankController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
       form
         .bindFromRequest()
         .fold(

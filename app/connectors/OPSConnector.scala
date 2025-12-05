@@ -31,12 +31,12 @@ import java.net.URI
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class OPSConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
 
   lazy private val startUrl = config.opsStartUrl
   lazy private val opsUrl   = s"${config.opsBaseUrl}$startUrl"
 
-  def getRedirectLocation(pillar2Id: String)(implicit hc: HeaderCarrier): Future[String] = {
+  def getRedirectLocation(pillar2Id: String)(using hc: HeaderCarrier): Future[String] = {
     val backUrl = s"${config.host}${paymentRoutes.OutstandingPaymentsController.onPageLoad.url}"
 
     val request =

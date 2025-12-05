@@ -100,7 +100,8 @@ lazy val twirlImports: Seq[String] = Seq(
   "views.ViewUtils._",
   "models.Mode",
   "controllers.routes._",
-  "viewmodels.govuk.all._"
+  "viewmodels.govuk.all._",
+  "viewmodels.implicits.given"
 )
 
 lazy val compilerSettings = Seq(

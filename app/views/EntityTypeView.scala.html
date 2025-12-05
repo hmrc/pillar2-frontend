@@ -44,7 +44,7 @@ govukButton: GovukButton
         @govukRadios(
             RadiosViewModel(
                 field = form("value"),
-                legend = LegendViewModel(messages("entityType.heading")).asPageHeading(Large),
+                legend = LegendViewModel(messages("entityType.heading")).asPageHeadingLegend(Large),
                 items = EntityType.options
             )
         )

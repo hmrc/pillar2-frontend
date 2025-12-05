@@ -23,10 +23,10 @@ import java.time.LocalDate
 final case class FinancialHistory(date: LocalDate, paymentType: String, amountPaid: BigDecimal, amountRepaid: BigDecimal)
 
 object FinancialHistory {
-  implicit val format: OFormat[FinancialHistory] = Json.format[FinancialHistory]
+  given format: OFormat[FinancialHistory] = Json.format[FinancialHistory]
 }
 final case class TransactionHistory(plrReference: String, financialHistory: Seq[FinancialHistory])
 
 object TransactionHistory {
-  implicit val format: OFormat[TransactionHistory] = Json.format[TransactionHistory]
+  given format: OFormat[TransactionHistory] = Json.format[TransactionHistory]
 }

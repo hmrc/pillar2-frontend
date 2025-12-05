@@ -87,7 +87,7 @@ class RfmCapturePrimaryPhoneControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmCapturePrimaryPhoneController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(

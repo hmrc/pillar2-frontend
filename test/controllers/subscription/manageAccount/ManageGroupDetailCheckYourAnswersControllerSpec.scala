@@ -56,7 +56,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
       "must return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -70,7 +70,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockView).apply(any(), any(), any())(any(), any(), any())
+          verify(mockView).apply(any(), any(), any())(using any(), any(), any())
         }
       }
 
@@ -100,7 +100,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(
           userAnswers = Some(userAnswers),
@@ -126,7 +126,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -141,7 +141,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
           status(result) mustEqual OK
 
-          verify(mockView, org.mockito.Mockito.atLeastOnce()).apply(any(), any(), any())(any(), any(), any())
+          verify(mockView, org.mockito.Mockito.atLeastOnce()).apply(any(), any(), any())(using any(), any(), any())
         }
       }
 

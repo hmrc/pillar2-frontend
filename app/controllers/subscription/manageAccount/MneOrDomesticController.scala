@@ -29,7 +29,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.manageAccount.MneOrDomesticView
 
@@ -45,7 +45,7 @@ class MneOrDomesticController @Inject() (
   mneOrDomesticFormProvider:                      MneOrDomesticFormProvider,
   val controllerComponents:                       MessagesControllerComponents,
   mneOrDomesticView:                              MneOrDomesticView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -53,8 +53,9 @@ class MneOrDomesticController @Inject() (
   private val mneOrDomesticForm: Form[MneOrDomestic] = mneOrDomesticFormProvider()
 
   def onPageLoad(): Action[AnyContent] =
-    (identifierAction andThen subscriptionDataRetrievalAction) { implicit request =>
-      val preparedForm = request.maybeSubscriptionLocalData.flatMap(_.get(SubMneOrDomesticPage)) match {
+    (identifierAction andThen subscriptionDataRetrievalAction) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.maybeSubscriptionLocalData.flatMap(_.get(SubMneOrDomesticPage)) match {
         case Some(mneOrDomestic) => mneOrDomesticForm.fill(mneOrDomestic)
         case None                => mneOrDomesticForm
       }
@@ -62,7 +63,8 @@ class MneOrDomesticController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identifierAction andThen subscriptionDataRetrievalAction andThen subscriptionDataRequiredAction).async { implicit request =>
+    (identifierAction andThen subscriptionDataRetrievalAction andThen subscriptionDataRequiredAction).async { request =>
+      given Request[AnyContent] = request
       mneOrDomesticForm
         .bindFromRequest()
         .fold(

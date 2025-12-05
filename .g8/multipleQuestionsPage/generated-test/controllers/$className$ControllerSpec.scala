@@ -7,11 +7,10 @@ import pages.$className$Page
 import play.api.libs.json.Json
 import scala.concurrent.Future
 import play.api.inject.bind
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.$className$View
 import connectors.UserAnswersConnectors
 
@@ -38,7 +37,7 @@ class $className$ControllerSpec extends SpecBase {
     }
 
     "must populate the view correctly on a GET when the question has previously been answered" in {
-       val validAnswer = UserAnswers(
+      val validAnswer = UserAnswers(
         userAnswersId,
         Json.obj(
           $className$Page.toString -> Json.obj(
@@ -90,7 +89,7 @@ class $className$ControllerSpec extends SpecBase {
           )
           .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody("$field1Name$" -> "value 1",
@@ -99,7 +98,7 @@ class $className$ControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
       }
     }
 

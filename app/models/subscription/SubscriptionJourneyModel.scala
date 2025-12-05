@@ -369,7 +369,7 @@ object fmJourney {
 
 object groupJourney {
 
-  def from(answers: UserAnswers)(implicit messages: Messages): EitherNec[Query, groupJourney] =
+  def from(answers: UserAnswers)(using messages: Messages): EitherNec[Query, groupJourney] =
     (
       answers.getEither(SubMneOrDomesticPage),
       answers.getEither(SubAccountingPeriodPage).map(accountingPeriod => accountingPeriod.startDate.toDateFormat),

@@ -47,7 +47,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         .build()
 
       running(application) {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -73,7 +73,7 @@ class SubmissionHistoryControllerSpec extends SpecBase with ObligationsAndSubmis
         .build()
 
       running(application) {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(allFulfilledResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 

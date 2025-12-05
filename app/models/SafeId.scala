@@ -22,7 +22,7 @@ case class SafeId(value: String)
 
 object SafeId {
 
-  implicit val reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
+  given reads: Reads[SafeId] = __.read[String].map(SafeId.apply)
 
-  implicit val writes: Writes[SafeId] = Writes(safeId => JsString(safeId.value))
+  given writes: Writes[SafeId] = Writes(safeId => JsString(safeId.value))
 }

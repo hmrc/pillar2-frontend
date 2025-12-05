@@ -27,7 +27,7 @@ case class WaitingRoom(
 )
 
 object WaitingRoom {
-  def fromLongRunningSubmission(implicit messages: Messages): LongRunningSubmission => WaitingRoom = {
+  def fromLongRunningSubmission(using messages: Messages): LongRunningSubmission => WaitingRoom = {
     case LongRunningSubmission.BTN =>
       WaitingRoom(
         pageTitle = messages("btn.waitingRoom.title"),

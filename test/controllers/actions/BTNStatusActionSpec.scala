@@ -130,7 +130,7 @@ class BTNStatusActionSpec
               eqTo(emptySubscriptionLocalData.plrReference),
               eqTo(emptySubscriptionLocalData.subAccountingPeriod),
               entitiesInsideOutsideUk = eqTo(true)
-            )(any[HeaderCarrier])
+            )(using any[HeaderCarrier])
           ).thenReturn(Future.successful(AuditResult.Success))
 
           val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
@@ -141,7 +141,7 @@ class BTNStatusActionSpec
             eqTo(emptySubscriptionLocalData.plrReference),
             eqTo(emptySubscriptionLocalData.subAccountingPeriod),
             entitiesInsideOutsideUk = eqTo(true)
-          )(any[HeaderCarrier])
+          )(using any[HeaderCarrier])
         }
 
         "entitiesInsideOutsideUk is empty or false" in forAll(Gen.option(false)) { entitiesInsideOutsideUk =>
@@ -168,7 +168,7 @@ class BTNStatusActionSpec
                 eqTo(emptySubscriptionLocalData.plrReference),
                 eqTo(emptySubscriptionLocalData.subAccountingPeriod),
                 entitiesInsideOutsideUk = eqTo(false)
-              )(any[HeaderCarrier])
+              )(using any[HeaderCarrier])
             ).thenReturn(Future.successful(AuditResult.Success))
 
             val result: Result = statusAction.subscriptionRequest.invokeBlock(fakeRequest, successBlock).futureValue
@@ -179,7 +179,7 @@ class BTNStatusActionSpec
               eqTo(emptySubscriptionLocalData.plrReference),
               eqTo(emptySubscriptionLocalData.subAccountingPeriod),
               entitiesInsideOutsideUk = eqTo(false)
-            )(any[HeaderCarrier])
+            )(using any[HeaderCarrier])
           }
         }
       }

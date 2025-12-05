@@ -53,9 +53,9 @@ class WaitingRoomControllerSpec
     with OptionValues
     with ScalaCheckDrivenPropertyChecks {
 
-  implicit val request:  FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
-  implicit val messages: Messages                            = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("EN")))
-  implicit val config:   FrontendAppConfig                   = app.injector.instanceOf[FrontendAppConfig]
+  given request:  FakeRequest[AnyContentAsEmpty.type] = FakeRequest()
+  given messages: Messages                            = app.injector.instanceOf[MessagesApi].preferred(Seq(Lang("EN")))
+  given config:   FrontendAppConfig                   = app.injector.instanceOf[FrontendAppConfig]
 
   val waitingRoomView: WaitingRoomView = app.injector.instanceOf[WaitingRoomView]
 
@@ -73,7 +73,7 @@ class WaitingRoomControllerSpec
       new FakeSubscriptionDataRequiredAction,
       submissionService,
       waitingRoomView
-    )(app.injector.instanceOf[ExecutionContext], config)
+    )(using app.injector.instanceOf[ExecutionContext], config)
   }
 
   case object DummyPage extends Gettable[Unit] with Settable[Unit] {
@@ -93,7 +93,7 @@ class WaitingRoomControllerSpec
   "onPageLoad" must {
     "redirect to the configured submission page on completion" in forAll(Gen.oneOf(LongRunningSubmission.values)) { submission =>
       new WaitingRoomTestCase {
-        when(submissionService.getCurrentState(eqTo(submission))(any[UserIdRequest[_]]))
+        when(submissionService.getCurrentState(eqTo(submission))(using any[UserIdRequest[_]]))
           .thenReturn(Future.successful(SubmissionState.Submitted.asRight))
 
         private val result = controller.onPageLoad(submission)(request)
@@ -106,7 +106,7 @@ class WaitingRoomControllerSpec
     "return the waiting room view and instruct a refresh after the configured interval" in forAll(Gen.oneOf(LongRunningSubmission.values)) {
       submission =>
         new WaitingRoomTestCase {
-          when(submissionService.getCurrentState(eqTo(submission))(any[UserIdRequest[_]])).thenReturn(
+          when(submissionService.getCurrentState(eqTo(submission))(using any[UserIdRequest[_]])).thenReturn(
             Future.successful(SubmissionState.Processing.asRight)
           )
 
@@ -125,7 +125,7 @@ class WaitingRoomControllerSpec
     "redirect to the error route in the model on any modelled failure" in forAll(Gen.oneOf(LongRunningSubmission.values), anyError) {
       (submission, error) =>
         new WaitingRoomTestCase {
-          when(submissionService.getCurrentState(eqTo(submission))(any[UserIdRequest[_]])).thenReturn(
+          when(submissionService.getCurrentState(eqTo(submission))(using any[UserIdRequest[_]])).thenReturn(
             Future.successful(error)
           )
 

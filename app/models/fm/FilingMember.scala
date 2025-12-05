@@ -29,5 +29,5 @@ case class FilingMember(
 )
 
 object FilingMember {
-  implicit val format: OFormat[FilingMember] = Json.format[FilingMember]
+  given format: OFormat[FilingMember] = Json.format[FilingMember]
 }

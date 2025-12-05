@@ -22,11 +22,13 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object RfmSecondaryPhoneSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(RfmSecondaryCapturePhonePage).map { answer =>
       SummaryListRowViewModel(
         key = "rfm.secondaryPhone.checkYourAnswersLabel",

@@ -33,7 +33,7 @@ trait DateFluency {
     def apply(
       field:  Field,
       legend: Legend
-    )(implicit messages: Messages): DateInput =
+    )(using messages: Messages): DateInput =
       apply(
         field = field,
         fieldset = Fieldset(legend = Some(legend))
@@ -42,7 +42,7 @@ trait DateFluency {
     def apply(
       field:    Field,
       fieldset: Fieldset
-    )(implicit messages: Messages): DateInput = {
+    )(using messages: Messages): DateInput = {
 
       val items = Seq(
         InputItem(
@@ -91,7 +91,7 @@ trait DateFluency {
 
   }
 
-  implicit class FluentDate(date: DateInput) {
+  extension (date: DateInput) {
 
     def withNamePrefix(prefix: String): DateInput =
       date.copy(namePrefix = Some(prefix))

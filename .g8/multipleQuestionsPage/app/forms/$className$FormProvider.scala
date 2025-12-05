@@ -4,7 +4,7 @@ import javax.inject.Inject
 
 import forms.mappings.Mappings
 import play.api.data.Form
-import play.api.data.Forms._
+import play.api.data.Forms.*
 import models.$className$
 
 class $className$FormProvider @Inject() extends Mappings {
@@ -15,6 +15,6 @@ class $className$FormProvider @Inject() extends Mappings {
         .verifying(maxLength($field1MaxLength$, "$className;format="decap"$.error.$field1Name$.length")),
       "$field2Name$" -> text("$className;format="decap"$.error.$field2Name$.required")
         .verifying(maxLength($field2MaxLength$, "$className;format="decap"$.error.$field2Name$.length"))
-    )($className$.apply)($className$.unapply)
+    )($className$.apply)($className;format="decap"$ => Some(Tuple.fromProductTyped($className;format="decap"$)))
    )
  }

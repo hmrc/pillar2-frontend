@@ -23,11 +23,11 @@ import java.time.LocalDateTime
 case class SubscriptionResponse(plrReference: String, formBundleNumber: String, processingDate: LocalDateTime)
 
 object SubscriptionResponse {
-  implicit val format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
+  given format: OFormat[SubscriptionResponse] = Json.format[SubscriptionResponse]
 }
 
 case class SuccessResponse(success: SubscriptionResponse)
 
 object SuccessResponse {
-  implicit val format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
+  given format: OFormat[SuccessResponse] = Json.format[SuccessResponse]
 }

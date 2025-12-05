@@ -21,18 +21,18 @@ import play.api.i18n.Messages
 
 object ViewUtils {
 
-  def title(form: Form[?], title: String, section: Option[String] = None)(implicit messages: Messages): String =
+  def title(form: Form[?], title: String, section: Option[String] = None)(using messages: Messages): String =
     titleNoForm(
       title = s"${errorPrefix(form)} ${messages(title)}",
       section = section
     )
 
-  def titleNoForm(title: String, section: Option[String] = None)(implicit messages: Messages): String =
+  def titleNoForm(title: String, section: Option[String] = None)(using messages: Messages): String =
     s"${messages(title)} - ${section.fold("")(messages(_) + " - ")}${messages("service.name")} - ${messages("site.govuk")}"
 
-  def noTitle(implicit messages: Messages): String = s"${messages("service.name")} - ${messages("site.govuk")}"
+  def noTitle(using messages: Messages): String = s"${messages("service.name")} - ${messages("site.govuk")}"
 
-  def errorPrefix(form: Form[?])(implicit messages: Messages): String =
+  def errorPrefix(form: Form[?])(using messages: Messages): String =
     if form.hasErrors || form.hasGlobalErrors then messages("error.browser.title.prefix") else ""
 
   def localDateErrorKey(form: Form[?], fieldKey: String): String = {
@@ -78,6 +78,6 @@ object ViewUtils {
 
   def formatCurrencyAmount(amount: BigDecimal): String = s"£${formatAmount(amount)}"
 
-  def userTypeDependentText(groupText: String, agentText: String)(implicit isAgent: Boolean): String =
+  def userTypeDependentText(groupText: String, agentText: String)(using isAgent: Boolean): String =
     if isAgent then agentText else groupText
 }

@@ -24,7 +24,7 @@ import navigation.BTNNavigator
 import pages.EntitiesInsideOutsideUKPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.btn.{BTNAmendDetailsView, BTNEntitiesInsideOutsideUKView}
@@ -44,13 +44,14 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BTNEntitiesInsideOutsideUKView,
   viewAmend:                              BTNAmendDetailsView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { implicit request =>
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen btnStatus.subscriptionRequest).async { request =>
+      given Request[AnyContent] = request
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
           val form         = formProvider()
@@ -67,7 +68,8 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData).async { implicit request =>
+    (identify andThen getSubscriptionData andThen requireSubscriptionData).async { request =>
+      given Request[AnyContent] = request
       sessionRepository.get(request.userId).flatMap {
         case Some(userAnswers) =>
           val form = formProvider()
@@ -90,7 +92,8 @@ class BTNEntitiesInsideOutsideUKController @Inject() (
       }
     }
 
-  def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { implicit request =>
+  def onPageLoadAmendGroupDetails(): Action[AnyContent] = (identify andThen getSubscriptionData) { request =>
+    given Request[AnyContent] = request
     request.maybeSubscriptionLocalData
       .map(subData => Ok(viewAmend(subData.subMneOrDomestic, request.isAgent)))
       .getOrElse(Redirect(controllers.btn.routes.BTNProblemWithServiceController.onPageLoad))

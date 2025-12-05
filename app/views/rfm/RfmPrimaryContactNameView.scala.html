@@ -43,7 +43,7 @@
         @govukInput(
             InputViewModel(
                 field = form("value"),
-                label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm.rfmPrimaryContactName.heading")).asPageHeadingLabel(Large)
             )
             .withHint(Hint(content = Text(messages("rfm.rfmPrimaryContactName.hint"))))
             .withWidth(TwoThirds)

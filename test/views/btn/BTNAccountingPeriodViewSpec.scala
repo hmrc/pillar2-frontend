@@ -26,8 +26,10 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 import views.html.btn.BTNAccountingPeriodView
+
+import scala.language.implicitConversions
 
 class BTNAccountingPeriodViewSpec extends ViewSpecBase {
 

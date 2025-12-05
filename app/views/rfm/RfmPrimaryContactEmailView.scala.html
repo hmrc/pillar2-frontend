@@ -40,7 +40,7 @@
         @govukInput(
             InputViewModel(
                 field = form("emailAddress"),
-                label = LabelViewModel(messages("rfm-input-business-email.heading", UserName)).asPageHeading(Large)
+                label = LabelViewModel(messages("rfm-input-business-email.heading", UserName)).asPageHeadingLabel(Large)
             )
             .withHint(Hint(content = Text(messages("rfm-input-business-email.hint"))))
             .withWidth(TwoThirds)

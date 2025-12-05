@@ -21,11 +21,13 @@ import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.Constants.{SiteChange, SiteNo, SiteYes}
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object BTNEntitiesInsideOutsideUKSummary {
 
-  def row(answers: UserAnswers, ukOnly: Boolean)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers, ukOnly: Boolean)(using messages: Messages): Option[SummaryListRow] =
     if ukOnly then {
       answers.get(EntitiesInsideOutsideUKPage).map { answer =>
         val value = if answer then SiteYes else SiteNo

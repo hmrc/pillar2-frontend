@@ -38,7 +38,7 @@ object SubmissionAnswerLookup {
 
   object Instances {
 
-    implicit def forAnySubmission[A <: LongRunningSubmission]: SubmissionAnswerLookup[A] =
+    given forAnySubmission[A <: LongRunningSubmission]: SubmissionAnswerLookup[A] =
       (submission: LongRunningSubmission, answers: UserAnswers) =>
         submission match {
           case LongRunningSubmission.BTN                  => forBtn.extractStateFromAnswers(BTN, answers)
@@ -49,14 +49,14 @@ object SubmissionAnswerLookup {
           case LongRunningSubmission.RFM                  => forRfm.extractStateFromAnswers(RFM, answers)
         }
 
-    implicit val forBtn: SubmissionAnswerLookup[BTN.type] = (_, answers: UserAnswers) =>
+    given forBtn: SubmissionAnswerLookup[BTN.type] = (_, answers: UserAnswers) =>
       withField(BTNStatus, answers) {
         case BTNStatus.submitted      => SubmissionState.Submitted.asRight
         case BTNStatus.error          => SubmissionState.Error.GenericTechnical.asRight
         case BTNStatus.processing | _ => SubmissionState.Processing.asRight
       }
 
-    implicit val forContactDetails: SubmissionAnswerLookup[ManageContactDetails.type] = (_, answers: UserAnswers) =>
+    given forContactDetails: SubmissionAnswerLookup[ManageContactDetails.type] = (_, answers: UserAnswers) =>
       withField(ManageContactDetailsStatusPage, answers) {
         case ManageContactDetailsStatus.SuccessfullyCompleted                                               => SubmissionState.Submitted.asRight
         case ManageContactDetailsStatus.InProgress                                                          => SubmissionState.Processing.asRight
@@ -64,7 +64,7 @@ object SubmissionAnswerLookup {
           SubmissionState.Error.GenericTechnical.asRight
       }
 
-    implicit val forGroupDetails: SubmissionAnswerLookup[ManageGroupDetails.type] = (_, answers: UserAnswers) =>
+    given forGroupDetails: SubmissionAnswerLookup[ManageGroupDetails.type] = (_, answers: UserAnswers) =>
       withField(ManageGroupDetailsStatusPage, answers) {
         case ManageGroupDetailsStatus.SuccessfullyCompleted                                             => SubmissionState.Submitted.asRight
         case ManageGroupDetailsStatus.InProgress                                                        => SubmissionState.Processing.asRight
@@ -72,7 +72,7 @@ object SubmissionAnswerLookup {
           SubmissionState.Error.GenericTechnical.asRight
       }
 
-    implicit val forRegistration: SubmissionAnswerLookup[Registration.type] = (_, answers: UserAnswers) =>
+    given forRegistration: SubmissionAnswerLookup[Registration.type] = (_, answers: UserAnswers) =>
       withField(SubscriptionStatusPage, answers) {
         case SubscriptionStatus.SuccessfullyCompletedSubscription        => SubmissionState.Submitted.asRight
         case SubscriptionStatus.RegistrationInProgress                   => SubmissionState.Processing.asRight
@@ -83,7 +83,7 @@ object SubmissionAnswerLookup {
         case SubscriptionStatus.FailedWithNoMneOrDomesticValueFoundError => SubmissionLookupError.SpecificAnswerNotFound(SubMneOrDomesticPage).asLeft
       }
 
-    implicit val forRepayments: SubmissionAnswerLookup[Repayments.type] = (_, answers: UserAnswers) =>
+    given forRepayments: SubmissionAnswerLookup[Repayments.type] = (_, answers: UserAnswers) =>
       withField(RepaymentsStatusPage, answers) {
         case RepaymentsStatus.SuccessfullyCompleted   => SubmissionState.Submitted.asRight
         case RepaymentsStatus.InProgress              => SubmissionState.Processing.asRight
@@ -91,7 +91,7 @@ object SubmissionAnswerLookup {
         case RepaymentsStatus.IncompleteDataError     => SubmissionState.Error.Incomplete.asRight
       }
 
-    implicit val forRfm: SubmissionAnswerLookup[RFM.type] = (_, answers: UserAnswers) =>
+    given forRfm: SubmissionAnswerLookup[RFM.type] = (_, answers: UserAnswers) =>
       withField(RfmStatusPage, answers) {
         case RfmStatus.SuccessfullyCompleted    => SubmissionState.Submitted.asRight
         case RfmStatus.InProgress               => SubmissionState.Processing.asRight
@@ -99,7 +99,7 @@ object SubmissionAnswerLookup {
         case RfmStatus.FailException            => SubmissionState.Error.Incomplete.asRight
       }
 
-    private def withField[A](key: Gettable[A], ua: UserAnswers)(extractor: A => ExtractResult)(implicit reads: Reads[A]): ExtractResult =
+    private def withField[A](key: Gettable[A], ua: UserAnswers)(extractor: A => ExtractResult)(using reads: Reads[A]): ExtractResult =
       ua.get(key).fold[ExtractResult](SubmissionLookupError.SpecificAnswerNotFound(key).asLeft)(extractor)
 
   }

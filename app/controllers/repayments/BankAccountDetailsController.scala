@@ -26,7 +26,7 @@ import pages.{BankAccountDetailsPage, BarsAccountNamePartialPage, RepaymentAccou
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.{I18nSupport, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.BarsService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -45,7 +45,7 @@ class BankAccountDetailsController @Inject() (
   formProvider:                           BankAccountDetailsFormProvider,
   val controllerComponents:               MessagesControllerComponents,
   view:                                   BankAccountDetailsView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
@@ -53,8 +53,9 @@ class BankAccountDetailsController @Inject() (
   val form: Form[BankAccountDetails] = formProvider()
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
-      val preparedForm = request.userAnswers.get(BankAccountDetailsPage) match {
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.userAnswers.get(BankAccountDetailsPage) match {
         case None              => form
         case Some(userAnswers) => form.fill(userAnswers)
       }
@@ -67,7 +68,8 @@ class BankAccountDetailsController @Inject() (
     }
 
   def onSubmit(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
       form
         .bindFromRequest()
         .fold(

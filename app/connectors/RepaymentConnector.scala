@@ -27,14 +27,14 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
-  def repayment(repaymentData: SendRepaymentDetails)(implicit hc: HeaderCarrier): Future[Done] =
+class RepaymentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
+  def repayment(repaymentData: SendRepaymentDetails)(using hc: HeaderCarrier): Future[Done] =
     http
       .post(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/repayment")
       .withBody(Json.toJson(repaymentData))

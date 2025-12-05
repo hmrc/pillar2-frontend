@@ -28,12 +28,12 @@ case class BtnSuccess(processingDate: ZonedDateTime)
 case class BtnError(errorCode: String, message: String)
 
 object BtnSuccess {
-  implicit val reads: Reads[BtnSuccess] =
+  given reads: Reads[BtnSuccess] =
     (__ \ "processingDate").read[ZonedDateTime].map(BtnSuccess.apply)
 }
 
 object BtnError {
-  implicit val reads: Reads[BtnError] = (
+  given reads: Reads[BtnError] = (
     (__ \ "code").read[String] and
       (__ \ "message").read[String]
   )((code, message) => BtnError(errorCode = code, message = message))

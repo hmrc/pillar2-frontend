@@ -30,7 +30,7 @@ class ContactCheckYourAnswersViewSpec extends ViewSpecBase with SubscriptionLoca
 
   lazy val page: ContactCheckYourAnswersView = inject[ContactCheckYourAnswersView]
 
-  implicit val subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
+  given subscriptionDataRequest: SubscriptionDataRequest[AnyContent] =
     SubscriptionDataRequest(request, "", someSubscriptionLocalData, Set.empty, isAgent = false)
 
   lazy val view: Document = Jsoup.parse(

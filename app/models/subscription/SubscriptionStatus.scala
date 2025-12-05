@@ -40,7 +40,7 @@ object SubscriptionStatus extends Enumerable.Implicits {
     RegistrationInProgress
   )
 
-  implicit val enumerable: Enumerable[SubscriptionStatus] =
+  given enumerable: Enumerable[SubscriptionStatus] =
     Enumerable(values.map(v => v.toString -> v)*)
 
 }

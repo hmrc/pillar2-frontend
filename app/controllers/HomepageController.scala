@@ -37,7 +37,7 @@ import services.*
 import uk.gov.hmrc.http.HeaderCarrier
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.Constants.SubmissionAccountingPeriods
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.*
 import views.html.HomepageView
 
 import java.time.{Clock, LocalDate}
@@ -55,7 +55,7 @@ class HomepageController @Inject() (
   sessionRepository:                      SessionRepository,
   osService:                              ObligationsAndSubmissionsService,
   financialDataService:                   FinancialDataService
-)(implicit
+)(using
   ec:        ExecutionContext,
   appConfig: FrontendAppConfig,
   clock:     Clock
@@ -64,7 +64,8 @@ class HomepageController @Inject() (
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+    (identify andThen getData).async { (request: OptionalDataRequest[AnyContent]) =>
+      given OptionalDataRequest[AnyContent] = request
       (for {
         mayBeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
         userAnswers = mayBeUserAnswer.getOrElse(UserAnswers(request.userId))
@@ -98,7 +99,7 @@ class HomepageController @Inject() (
       } yield result).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
-  private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(implicit
+  private def displayHomepage(subscriptionData: SubscriptionData, plrReference: String)(using
     request: OptionalDataRequest[?],
     hc:      HeaderCarrier
   ): Future[Result] = {

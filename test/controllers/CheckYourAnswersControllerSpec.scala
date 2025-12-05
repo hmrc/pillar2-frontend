@@ -132,7 +132,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
         running(application) {
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
@@ -158,7 +158,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
 
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -179,7 +179,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -202,7 +202,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -232,7 +232,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual OK
@@ -262,7 +262,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           .build()
         running(application) {
           when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-          when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+          when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
           val request = FakeRequest(GET, controllers.routes.CheckYourAnswersController.onPageLoad().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
@@ -296,11 +296,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.successful(plrReference))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(expectedSessionData)))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
@@ -333,11 +333,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.successful(plrReference))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.successful(plrReference))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
@@ -379,11 +379,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("123"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.failed(DuplicateSubmissionError))
 
         running(application) {
           val request = FakeRequest(POST, controllers.routes.CheckYourAnswersController.onSubmit().url)
@@ -415,11 +415,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSubscriptionService.createSubscription(any())(any()))
+        when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
@@ -452,11 +452,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSubscriptionService.createSubscription(any())(any()))
+        when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new GatewayTimeoutException("Gateway timeout")))
 
         running(application) {
@@ -488,7 +488,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSafeIdError))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.failed(DuplicateSafeIdError))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
@@ -522,7 +522,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
@@ -556,7 +556,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(DuplicateSubmissionError))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.failed(DuplicateSubmissionError))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
@@ -590,7 +590,7 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockSubscriptionService.createSubscription(any())(any())).thenReturn(Future.failed(UnprocessableEntityError))
+        when(mockSubscriptionService.createSubscription(any())(using any())).thenReturn(Future.failed(UnprocessableEntityError))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
@@ -631,11 +631,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right(companyName))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSubscriptionService.createSubscription(any())(any()))
+        when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new HttpException("Bad Request", BAD_REQUEST)))
 
         val sessionDataWrites = ArgumentCaptor.forClass(classOf[UserAnswers])
@@ -676,11 +676,11 @@ class CheckYourAnswersControllerSpec extends SpecBase with SummaryListFluency {
           )
           .build()
 
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSubscriptionService.getCompanyName(any())).thenReturn(Right("Company Name"))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
-        when(mockSubscriptionService.createSubscription(any())(any()))
+        when(mockSubscriptionService.createSubscription(any())(using any()))
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
 
         running(application) {

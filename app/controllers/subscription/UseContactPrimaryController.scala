@@ -37,11 +37,12 @@ import uk.gov.hmrc.govukfrontend.views.Aliases.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryList
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
 import views.html.subscriptionview.UseContactPrimaryView
 
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
+import scala.language.implicitConversions
 import scala.util.Success
 
 class UseContactPrimaryController @Inject() (
@@ -53,12 +54,13 @@ class UseContactPrimaryController @Inject() (
   formProvider:              UseContactPrimaryFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UseContactPrimaryView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given DataRequest[AnyContent] = request
     (for {
       nfmNominated     <- request.userAnswers.get(NominateFilingMemberPage)
       upeMneOrDomestic <- request.userAnswers.get(UpeRegisteredInUKPage)
@@ -72,7 +74,8 @@ class UseContactPrimaryController @Inject() (
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
   }
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     contactDetail(request) match {
       case Right(contactDetail) =>
         form
@@ -145,7 +148,7 @@ class UseContactPrimaryController @Inject() (
       }
       .getOrElse(Left(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
 
-  private def fmNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
+  private def fmNoID(mode: Mode)(using request: DataRequest[AnyContent]) =
     (for {
       contactName  <- request.userAnswers.get(FmContactNamePage)
       contactEmail <- request.userAnswers.get(FmContactEmailPage)
@@ -162,7 +165,7 @@ class UseContactPrimaryController @Inject() (
       }
     }).getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
 
-  private def upeNoID(mode: Mode)(implicit request: DataRequest[AnyContent]) =
+  private def upeNoID(mode: Mode)(using request: DataRequest[AnyContent]) =
     (for {
       contactName  <- request.userAnswers.get(UpeContactNamePage)
       contactEmail <- request.userAnswers.get(UpeContactEmailPage)
@@ -179,7 +182,7 @@ class UseContactPrimaryController @Inject() (
 }
 
 object UseContactPrimaryController {
-  private[controllers] def contactSummaryList(contactName: String, contactEmail: String, contactTel: Option[String])(implicit
+  private[controllers] def contactSummaryList(contactName: String, contactEmail: String, contactTel: Option[String])(using
     messages: Messages
   ): SummaryList =
     SummaryListViewModel(

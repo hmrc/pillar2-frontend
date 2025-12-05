@@ -53,7 +53,7 @@ package object financialdata {
     fields    <- anyOutstandingChargeFields
   } yield (OutstandingCharge.apply _)(mainTxRef).tupled(fields)
 
-  implicit val anyTransactions: Arbitrary[Seq[FinancialTransaction]] = Arbitrary {
+  given anyTransactions: Arbitrary[Seq[FinancialTransaction]] = Arbitrary {
     Gen.choose(1, 5).flatMap(Gen.listOfN(_, Gen.oneOf(anyPaymentTransaction, outstandingTransaction)))
   }
 

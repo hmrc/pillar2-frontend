@@ -30,7 +30,7 @@ import scala.concurrent.Future
 
 class StubIncorporatedEntityIdentificationFrontendConnector @Inject() () extends IncorporatedEntityIdentificationFrontendConnector {
 
-  override def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
+  override def createLimitedCompanyJourney(userType: UserType, mode: Mode)(using hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] =
     Future.successful(
       GrsCreateRegistrationResponse(
         journeyStartUrl = s"/report-pillar2-top-up-taxes/test-only/stub-grs-journey-data?continueUrl=${mode.toString.toLowerCase}/${userType.toString
@@ -38,7 +38,7 @@ class StubIncorporatedEntityIdentificationFrontendConnector @Inject() () extends
       )
     )
 
-  override def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
+  override def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
     Future.successful(Json.parse(Base64Utils.base64UrlDecode(journeyId)).as[IncorporatedEntityRegistrationData])
 
 }

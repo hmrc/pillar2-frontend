@@ -123,7 +123,7 @@ trait SubscriptionLocalDataFixture {
     contactAddress = NonUKAddress("middle", None, "lane", None, None, "obv")
   )
 
-  def subscriptionDataGroupSummaryList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
+  def subscriptionDataGroupSummaryList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       MneOrDomesticSummary.row(),
       GroupAccountingPeriodSummary.row(),
@@ -132,7 +132,7 @@ trait SubscriptionLocalDataFixture {
     ).flatten
   )
 
-  def subscriptionDataPrimaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
+  def subscriptionDataPrimaryContactList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       ContactNameComplianceSummary.row(),
       ContactEmailAddressSummary.row(),
@@ -141,7 +141,7 @@ trait SubscriptionLocalDataFixture {
     ).flatten
   )
 
-  def subscriptionDataSecondaryContactList()(implicit messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
+  def subscriptionDataSecondaryContactList()(using messages: Messages, request: SubscriptionDataRequest[?]): SummaryList = SummaryListViewModel(
     rows = Seq(
       AddSecondaryContactSummary.row(),
       SecondaryContactNameSummary.row(),
@@ -151,7 +151,7 @@ trait SubscriptionLocalDataFixture {
     ).flatten
   )
 
-  def subscriptionDataAddress(countryOptions: CountryOptions)(implicit
+  def subscriptionDataAddress(countryOptions: CountryOptions)(using
     messages: Messages,
     request:  SubscriptionDataRequest[?]
   ): SummaryList = SummaryListViewModel(

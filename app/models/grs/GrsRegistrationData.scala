@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class GrsRegistrationData(companyId: String, companyName: String, utr: String, crn: String)
 
 object GrsRegistrationData {
-  implicit val format: OFormat[GrsRegistrationData] = Json.format[GrsRegistrationData]
+  given format: OFormat[GrsRegistrationData] = Json.format[GrsRegistrationData]
 }

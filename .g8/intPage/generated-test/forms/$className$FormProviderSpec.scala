@@ -15,7 +15,7 @@ class $className$FormProviderSpec extends IntFieldBehaviours {
     val minimum = $minimum$
     val maximum = $maximum$
 
-    val validDataGenerator = Random.between(minimum, maximum+1).toString
+    val validDataGenerator = Random.between(minimum, maximum).toString
 
     behave like fieldThatBindsValidData(
       form,
