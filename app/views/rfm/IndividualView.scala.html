@@ -44,7 +44,7 @@
 
     @paragraph(link(
         text = messages("rfm.individual.link"),
-        call = Call("GET", controllers.rfm.routes.StartPageController.onPageLoad.url),
+        call = Call("GET", appConfig.rfmGuidanceUrl),
         fullStop = false
     ))
 }

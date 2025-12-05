@@ -56,7 +56,7 @@ class IndividualViewSpec extends ViewSpecBase {
     "have a link" in {
       val link = view.getElementsByClass("govuk-body").last().getElementsByTag("a")
       link.text mustBe "Find out more about who can use this service"
-      link.attr("href") mustBe controllers.rfm.routes.StartPageController.onPageLoad.url
+      link.attr("href") mustBe appConfig.rfmGuidanceUrl
     }
 
   }
