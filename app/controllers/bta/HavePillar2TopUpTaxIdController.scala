@@ -26,7 +26,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.bta.HavePillar2TopUpTaxIdView
 
@@ -41,14 +41,15 @@ class HavePillar2TopUpTaxIdController @Inject() (
   formProvider:              HavePillar2TopUpTaxIdFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      HavePillar2TopUpTaxIdView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val btaAccessEnabled = appConfig.btaAccessEnabled
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val btaAccessEnabled      = appConfig.btaAccessEnabled
     if btaAccessEnabled then {
       val preparedForm = request.userAnswers.get(BtaPillar2ReferencePage) match {
         case Some(value) => form.fill(value)
@@ -60,7 +61,8 @@ class HavePillar2TopUpTaxIdController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

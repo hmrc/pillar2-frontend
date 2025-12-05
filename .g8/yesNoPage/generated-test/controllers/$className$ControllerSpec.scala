@@ -4,13 +4,12 @@ package controllers
 import base.SpecBase
 import forms.$className$FormProvider
 import models.{NormalMode, UserAnswers}
-import org.mockito.ArgumentMatchers.any
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
 import pages.$className$Page
 import play.api.inject.bind
-import org.mockito.ArgumentMatchersSugar.eqTo
 import play.api.test.FakeRequest
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import play.api.libs.json.Json
 import views.html.$className$View
 import connectors.UserAnswersConnectors
@@ -87,7 +86,7 @@ class $className$ControllerSpec extends SpecBase {
           )
           .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, routes.$className$Controller.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("value", "true"))
@@ -95,7 +94,7 @@ class $className$ControllerSpec extends SpecBase {
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
       }
     }
 

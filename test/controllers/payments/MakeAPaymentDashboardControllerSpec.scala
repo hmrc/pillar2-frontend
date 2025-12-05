@@ -18,7 +18,7 @@ package controllers.payments
 
 import base.SpecBase
 import connectors.OPSConnector
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import models.UserAnswers
 import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.when
@@ -65,7 +65,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        when(mockOpsConnector.getRedirectLocation(eqTo("12345678"))(any[HeaderCarrier])) thenReturn Future.successful(
+        when(mockOpsConnector.getRedirectLocation(eqTo("12345678"))(using any[HeaderCarrier])) thenReturn Future.successful(
           "http://localhost:9900/pay-api/pay"
         )
         val request =
@@ -98,7 +98,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        when(mockOpsConnector.getRedirectLocation(eqTo("12345678"))(any[HeaderCarrier])) thenReturn Future.failed(
+        when(mockOpsConnector.getRedirectLocation(eqTo("12345678"))(using any[HeaderCarrier])) thenReturn Future.failed(
           new GatewayTimeoutException("Call to OPS timed out")
         )
         val request =
@@ -190,7 +190,7 @@ class MakeAPaymentDashboardControllerSpec extends SpecBase {
 
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(UserAnswers("id"))))
-        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
           .thenReturn(
             Future.successful(
               Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))

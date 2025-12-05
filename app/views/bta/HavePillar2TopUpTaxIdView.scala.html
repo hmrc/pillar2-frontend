@@ -38,7 +38,7 @@
         @govukRadios(
             RadiosViewModel.yesNo(
                 field = form("value"),
-                legend = LegendViewModel(messages("havePillar2TopUpTaxId.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("havePillar2TopUpTaxId.heading")).asPageHeadingLegend(Large)
             )
             .withHint(Hint(content = Text(messages("havePillar2TopUpTaxId.hint"))))
         )

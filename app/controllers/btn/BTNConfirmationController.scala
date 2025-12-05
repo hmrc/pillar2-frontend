@@ -19,12 +19,12 @@ package controllers.btn
 import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
-import pages.BTNChooseAccountingPeriodPage
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
+import pages.{BTNChooseAccountingPeriodPage, BtnConfirmationPage}
 import play.api.i18n.I18nSupport
 import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.*
 import views.html.btn.BTNConfirmationView
 
 import java.time.LocalDate
@@ -39,34 +39,39 @@ class BTNConfirmationController @Inject() (
   view:                                   BTNConfirmationView,
   sessionRepository:                      SessionRepository,
   requireObligationData:                  ObligationsAndSubmissionsDataRetrievalAction
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData andThen requireObligationData).async { request =>
+    given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
     sessionRepository.get(request.userId).map {
       case Some(userAnswers) =>
-        val submissionDate:            String = LocalDate.now().toDateFormat
-        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
+        val accountingPeriodStartDate: LocalDate = request.subscriptionLocalData.subAccountingPeriod.startDate
 
-        val showUnderEnquiryWarning = userAnswers
-          .get(BTNChooseAccountingPeriodPage)
-          .map { chosenPeriod =>
-            val accountingPeriods = filteredAccountingPeriodDetails
-            chosenPeriod.underEnquiry ||
-            accountingPeriods
-              .filter(_.startDate.isAfter(chosenPeriod.startDate))
-              .exists(_.underEnquiry)
-          }
-          .getOrElse(false)
+        userAnswers.get(BtnConfirmationPage).fold(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())) { submittedAt =>
+          val showUnderEnquiryWarning = userAnswers
+            .get(BTNChooseAccountingPeriodPage)
+            .exists { chosenPeriod =>
+              val accountingPeriods = filteredAccountingPeriodDetails
+              chosenPeriod.underEnquiry ||
+              accountingPeriods
+                .filter(_.startDate.isAfter(chosenPeriod.startDate))
+                .exists(_.underEnquiry)
+            }
 
-        Ok(
-          view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, showUnderEnquiryWarning)
-        )
-      case None =>
-        val submissionDate:            String = LocalDate.now().toDateFormat
-        val accountingPeriodStartDate: String = request.subscriptionLocalData.subAccountingPeriod.startDate.toDateFormat
-        Ok(view(request.subscriptionLocalData.organisationName, submissionDate, accountingPeriodStartDate, request.isAgent, false))
+          Ok(
+            view(
+              request.subscriptionLocalData.organisationName,
+              submittedAt,
+              accountingPeriodStartDate,
+              request.isAgent,
+              showUnderEnquiryWarning
+            )
+          )
+        }
+
+      case None => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())
     }
   }
 }

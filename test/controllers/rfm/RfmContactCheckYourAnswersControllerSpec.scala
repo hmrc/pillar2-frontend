@@ -18,8 +18,10 @@ package controllers.rfm
 
 import base.SpecBase
 import connectors.UserAnswersConnectors
+import controllers.routes
 import models.*
 import models.EnrolmentRequest.AllocateEnrolmentParameters
+import models.longrunningsubmissions.LongRunningSubmission
 import models.rfm.CorporatePosition
 import models.rfm.RfmStatus.{FailException, FailedInternalIssueError, SuccessfullyCompleted}
 import models.subscription.{AmendSubscription, NewFilingMemberDetail, SubscriptionData}
@@ -34,7 +36,7 @@ import play.api.test.Helpers.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import services.audit.AuditService
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 import viewmodels.govuk.SummaryListFluency
 
 import java.time.LocalDate
@@ -54,7 +56,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -101,7 +103,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -151,7 +153,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -204,7 +206,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -243,7 +245,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
         .build()
       running(application) {
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionRepositoryUserAnswers)))
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.rfm.routes.RfmContactCheckYourAnswersController.onPageLoad.url)
         val result  = route(application, request).value
         status(result) mustEqual SEE_OTHER
@@ -277,18 +279,19 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
+          .thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
@@ -296,7 +299,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
@@ -315,18 +318,19 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[AuditService].toInstance(mockAuditService)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
-        when(mockUserAnswersConnectors.remove(any())(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
+          .thenReturn(Future.successful(Done))
+        when(mockUserAnswersConnectors.remove(any())(using any())).thenReturn(Future.successful(Done))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
@@ -334,7 +338,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository, atLeastOnce()).set(any[UserAnswers])
         }
       }
@@ -360,15 +364,15 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
@@ -376,7 +380,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -392,9 +396,9 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.failed(new Exception("no rfm uk based")))
@@ -405,7 +409,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -423,13 +427,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
+          .thenReturn(Future.successful(Done))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.failed(InternalIssueError))
@@ -439,7 +444,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -457,21 +462,21 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
 
         running(application) {
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -489,17 +494,17 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.deallocateEnrolment(any())(any())).thenReturn(Future.successful(Done))
-        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(any()))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.deallocateEnrolment(any())(using any())).thenReturn(Future.successful(Done))
+        when(mockSubscriptionService.getUltimateParentEnrolmentInformation(any[SubscriptionData], any(), any())(using any()))
           .thenReturn(allocateEnrolmentParameters)
-        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(any()))
+        when(mockSubscriptionService.allocateEnrolment(any(), any(), any[AllocateEnrolmentParameters])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
@@ -508,7 +513,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -526,13 +531,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any()))
+          .thenReturn(Future.failed(UnexpectedResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -540,7 +546,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -558,7 +564,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -566,7 +572,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }
@@ -584,13 +590,14 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             bind[SessionRepository].toInstance(mockSessionRepository)
           )
           .build()
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         when(
-          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(
+          mockSubscriptionService.createAmendObjectForReplacingFilingMember(any[SubscriptionData], any[NewFilingMemberDetail], any[UserAnswers])(using
             any()
           )
         ).thenReturn(Future.successful(amendData))
-        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(any())).thenReturn(Future.failed(InternalIssueError))
+        when(mockSubscriptionService.amendFilingMemberDetails(any(), any[AmendSubscription])(using any()))
+          .thenReturn(Future.failed(InternalIssueError))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(sessionData)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
 
@@ -598,7 +605,7 @@ class RfmContactCheckYourAnswersControllerSpec extends SpecBase with SummaryList
           val request = FakeRequest(POST, controllers.rfm.routes.RfmContactCheckYourAnswersController.onSubmit().url)
           val result  = route(application, request).value
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual controllers.rfm.routes.RfmWaitingRoomController.onPageLoad().url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(LongRunningSubmission.RFM).url
           verify(mockSessionRepository).set(eqTo(sessionData))
         }
       }

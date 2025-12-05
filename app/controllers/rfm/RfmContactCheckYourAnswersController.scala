@@ -20,15 +20,16 @@ import cats.implicits.*
 import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.*
-import models.rfm.CorporatePosition
+import models.longrunningsubmissions.LongRunningSubmission.RFM
 import models.rfm.RfmStatus.*
+import models.rfm.{CorporatePosition, RfmStatus}
 import models.subscription.NewFilingMemberDetail
 import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
-import pages.{PlrReferencePage, RfmStatusPage}
+import pages.{PlrReferencePage, RfmConfirmationPage, RfmStatusPage}
 import play.api.Logging
 import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.json.Writes
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import queries.Settable
 import repositories.SessionRepository
 import services.SubscriptionService
@@ -39,8 +40,10 @@ import viewmodels.checkAnswers.*
 import viewmodels.govuk.summarylist.*
 import views.html.rfm.RfmContactCheckYourAnswersView
 
+import java.time.ZonedDateTime
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.Success
 
 class RfmContactCheckYourAnswersController @Inject() (
   override val messagesApi:            MessagesApi,
@@ -55,13 +58,14 @@ class RfmContactCheckYourAnswersController @Inject() (
   sessionRepository:                   SessionRepository,
   view:                                RfmContactCheckYourAnswersView,
   countryOptions:                      CountryOptions
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { implicit request =>
-    implicit val userAnswers: UserAnswers = request.userAnswers
+  def onPageLoad: Action[AnyContent] = (Identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
+    given userAnswers: UserAnswers = request.userAnswers
     val address = SummaryListViewModel(
       rows = Seq(RfmContactAddressSummary.row(request.userAnswers, countryOptions)).flatten
     )
@@ -70,7 +74,7 @@ class RfmContactCheckYourAnswersController @Inject() (
         userAnswer <- optionalUserAnswer
         rfm        <- userAnswer.get(RfmStatusPage)
       } yield rfm) match {
-        case Some(InProgress) => Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad())
+        case Some(InProgress) => Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM))
         case _                =>
           (for {
             userAnswer <- optionalUserAnswer
@@ -91,7 +95,8 @@ class RfmContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (rfmIdentify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     if request.userAnswers.isRfmJourneyCompleted then {
       updateSessionData(request.userAnswers, RfmStatusPage, InProgress)
       val rfmStatus = (for {
@@ -129,10 +134,19 @@ class RfmContactCheckYourAnswersController @Inject() (
         updatedRfmStatus    <- rfmStatus
         optionalSessionData <- sessionRepository.get(request.userAnswers.id)
         sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
-        updatedSessionData <- Future.fromTry(sessionData.set(RfmStatusPage, updatedRfmStatus))
-        _                  <- sessionRepository.set(updatedSessionData)
+        updatedSessionData <- Future.fromTry {
+                                sessionData
+                                  .set(RfmStatusPage, updatedRfmStatus)
+                                  .flatMap { ua =>
+                                    updatedRfmStatus match {
+                                      case RfmStatus.SuccessfullyCompleted => ua.set(RfmConfirmationPage, ZonedDateTime.now())
+                                      case _                               => Success(ua)
+                                    }
+                                  }
+                              }
+        _ <- sessionRepository.set(updatedSessionData)
       } yield (): Unit
-      Future.successful(Redirect(controllers.rfm.routes.RfmWaitingRoomController.onPageLoad()))
+      Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(RFM)))
     } else {
       Future.successful(Redirect(controllers.rfm.routes.RfmIncompleteDataController.onPageLoad))
     }
@@ -153,7 +167,7 @@ class RfmContactCheckYourAnswersController @Inject() (
       _                  <- sessionRepository.set(updatedSessionData)
     } yield (): Unit
 
-  private def updateSessionData[A](userAnswers: UserAnswers, page: Settable[A], value: A)(implicit writes: Writes[A]): Future[Unit] =
+  private def updateSessionData[A](userAnswers: UserAnswers, page: Settable[A], value: A)(using writes: Writes[A]): Future[Unit] =
     for {
       optionalSessionData <- sessionRepository.get(userAnswers.id)
       sessionData = optionalSessionData.getOrElse(UserAnswers(userAnswers.id))

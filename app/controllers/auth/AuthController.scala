@@ -18,7 +18,7 @@ package controllers.auth
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.auth.core.*
 import uk.gov.hmrc.auth.core.AuthProvider.GovernmentGateway
@@ -33,12 +33,13 @@ class AuthController @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   sessionRepository:          SessionRepository
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendBaseController
     with AuthorisedFunctions
     with I18nSupport {
 
-  def signOut(): Action[AnyContent] = Action.async { implicit request =>
+  def signOut(): Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.internalId) { case Some(internalId) =>
         sessionRepository.clear(internalId)
@@ -54,7 +55,8 @@ class AuthController @Inject() (
       }
   }
 
-  def signOutNoSurvey(): Action[AnyContent] = Action.async { implicit request =>
+  def signOutNoSurvey(): Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     authorised(AuthProviders(GovernmentGateway))
       .retrieve(Retrievals.internalId) { case Some(internalId) =>
         sessionRepository.clear(internalId)

@@ -23,11 +23,13 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object MneOrDomesticSummary {
 
-  def row(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
+  def row()(using messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubMneOrDomesticPage).map { answer =>
       val key = if request.isAgent then "mneOrDomestic.agent.checkYourAnswersLabel" else "mneOrDomestic.checkYourAnswersLabel"
 

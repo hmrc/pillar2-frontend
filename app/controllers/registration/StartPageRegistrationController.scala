@@ -20,7 +20,7 @@ import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import models.Mode
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.StartPageRegistrationView
 
@@ -31,11 +31,12 @@ class StartPageRegistrationController @Inject() (
   identify:                 IdentifierAction,
   val controllerComponents: MessagesControllerComponents,
   view:                     StartPageRegistrationView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = identify { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = identify { request =>
+    given Request[AnyContent] = request
     Ok(view(mode))
   }
 

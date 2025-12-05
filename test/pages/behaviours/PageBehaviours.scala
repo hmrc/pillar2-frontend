@@ -30,7 +30,7 @@ import play.api.libs.json.*
 trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyChecks with Generators with OptionValues with TryValues {
 
   class BeRetrievable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(using ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "when being retrieved from UserAnswers" - {
 
         "and the question has not been answered" - {
@@ -67,7 +67,7 @@ trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
   }
 
   class BeSettable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(using ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be set on UserAnswers" in {
 
         val gen = for {
@@ -84,7 +84,7 @@ trait PageBehaviours extends AnyFreeSpec with Matchers with ScalaCheckPropertyCh
   }
 
   class BeRemovable[A] {
-    def apply[P <: QuestionPage[A]](genP: Gen[P])(implicit ev1: Arbitrary[A], ev2: Format[A]): Unit =
+    def apply[P <: QuestionPage[A]](genP: Gen[P])(using ev1: Arbitrary[A], ev2: Format[A]): Unit =
       "must be able to be removed from UserAnswers" in {
 
         val gen = for {

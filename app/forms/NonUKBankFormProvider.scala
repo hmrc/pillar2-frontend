@@ -23,6 +23,7 @@ import play.api.data.Form
 import play.api.data.Forms.mapping
 
 import javax.inject.Inject
+import scala.language.implicitConversions
 
 class NonUKBankFormProvider @Inject() extends Mappings {
 

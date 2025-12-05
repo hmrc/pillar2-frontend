@@ -5,14 +5,15 @@ import pages.$className$Page
 import play.api.i18n.Messages
 import controllers.routes
 import play.twirl.api.HtmlFormat
+import scala.language.implicitConversions
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
-import viewmodels.govuk.summarylist._
-import viewmodels.implicits._
+import viewmodels.govuk.summarylist.*
+import viewmodels.implicits.given
 
 object $className$Summary  {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get($className$Page).map {
       answers =>
 

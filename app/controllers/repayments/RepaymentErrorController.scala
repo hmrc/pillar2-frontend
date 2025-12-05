@@ -24,7 +24,7 @@ import navigation.RepaymentNavigator
 import pages.{BarsAccountNamePartialPage, RepaymentAccountNameConfirmationPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.repayments.*
@@ -45,33 +45,38 @@ class RepaymentErrorController @Inject() (
   bankDetailsErrorView:                   BankDetailsErrorView,
   submissionErrorView:                    RepaymentSubmissionErrorView,
   accountNameConfirmationView:            AccountNameConfirmationView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form:                            Form[Boolean]      = formProvider()
   def onPageLoadNotConfirmedDetails(): Action[AnyContent] =
-    Action { implicit request =>
+    Action { request =>
+      given Request[AnyContent] = request
       Ok(couldNotConfirmDetailsView(NormalMode))
     }
 
-  def onPageLoadError(): Action[AnyContent] = Action { implicit request =>
+  def onPageLoadError(): Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(errorView())
   }
 
   def onPageLoadRepaymentSubmissionFailed(): Action[AnyContent] =
-    Action { implicit request =>
+    Action { request =>
+      given Request[AnyContent] = request
       Ok(submissionErrorView())
     }
 
   def onPageLoadBankDetailsError(): Action[AnyContent] =
-    Action { implicit request =>
+    Action { request =>
+      given Request[AnyContent] = request
       Ok(bankDetailsErrorView(NormalMode))
     }
 
   def onPageLoadPartialNameError(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
-      val preparedForm = request.userAnswers.get(RepaymentAccountNameConfirmationPage) match {
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.userAnswers.get(RepaymentAccountNameConfirmationPage) match {
         case Some(value) => form.fill(value)
         case None        => form
       }
@@ -83,7 +88,8 @@ class RepaymentErrorController @Inject() (
     }
 
   def onSubmitPartialNameError(mode: Mode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
       request.userAnswers
         .get(BarsAccountNamePartialPage)
         .map { accountName =>

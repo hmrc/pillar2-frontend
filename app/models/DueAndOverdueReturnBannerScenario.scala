@@ -27,7 +27,7 @@ object DueAndOverdueReturnBannerScenario extends Enum[DueAndOverdueReturnBannerS
   case object Incomplete extends DueAndOverdueReturnBannerScenario
   case object Received extends DueAndOverdueReturnBannerScenario
 
-  implicit val ordering: Ordering[DueAndOverdueReturnBannerScenario] =
+  given ordering: Ordering[DueAndOverdueReturnBannerScenario] =
     Ordering.by {
       case Overdue    => 4
       case Incomplete => 3

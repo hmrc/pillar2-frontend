@@ -17,9 +17,10 @@
 package controllers.subscription.manageAccount
 
 import base.SpecBase
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import models.*
 import models.fm.{FilingMember, FilingMemberNonUKData}
+import models.longrunningsubmissions.LongRunningSubmission.ManageContactDetails
 import models.subscription.*
 import org.apache.pekko.Done
 import org.mockito.ArgumentMatchers.any
@@ -131,7 +132,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -151,7 +152,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -173,7 +174,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -196,7 +197,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           bind[SessionRepository].toInstance(mockSessionRepository)
         )
         .build()
-      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(any(), any()))
+      when(mockAuthConnector.authorise[AgentRetrievalsType](any(), any())(using any(), any()))
         .thenReturn(
           Future.successful(
             Some(id) ~ pillar2AgentEnrolment ~ Some(Agent) ~ Some(User) ~ Some(Credentials(providerId, providerType))
@@ -204,7 +205,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         )
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request = FakeRequest(GET, controllers.subscription.manageAccount.routes.ManageContactCheckYourAnswersController.onPageLoad().url)
         val result  = route(application, request).value
         status(result) mustEqual OK
@@ -247,7 +248,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         status(result) mustEqual SEE_OTHER
         redirectLocation(
           result
-        ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+        ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
       }
     }
 
@@ -279,7 +280,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedUpdatedAnswers))
         }
       }
@@ -292,7 +293,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.successful(Done))
 
         val application = applicationBuilder(
@@ -313,7 +314,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedFinalAnswers))
@@ -327,7 +328,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
 
         val application = applicationBuilder(
@@ -348,7 +349,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           // Verify initial status update
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
@@ -362,7 +363,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
 
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswers)))
         when(mockSessionRepository.set(any())).thenReturn(Future.successful(true))
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
 
         val application = applicationBuilder(
@@ -383,7 +384,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           // Verify initial status update
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(expectedInitialAnswers))
@@ -403,7 +404,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(new RuntimeException("Unexpected error")))
 
         val application = applicationBuilder(
@@ -422,7 +423,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
@@ -444,7 +445,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailedInternalIssueError)).thenReturn(Future.successful(true)) // Mock for the final set
 
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(InternalIssueError))
 
         val application = applicationBuilder(
@@ -463,7 +464,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailedInternalIssueError))
@@ -483,7 +484,7 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
         when(mockSessionRepository.set(initialUserAnswersWithInProgress)).thenReturn(Future.successful(true))
         when(mockSessionRepository.set(finalUserAnswersWithFailException)).thenReturn(Future.successful(true)) // Mock for the final set
 
-        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(any()))
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
           .thenReturn(Future.failed(UnexpectedResponse))
 
         val application = applicationBuilder(
@@ -502,12 +503,55 @@ class ManageContactCheckYourAnswersControllerSpec extends SpecBase with SummaryL
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual routes.ManageContactDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
 
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
           verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
         }
       }
+
+      "handle MissingReferenceNumberError during submission" in {
+        val mockSessionRepository             = mock[SessionRepository]
+        val userAnswers                       = UserAnswers("id")
+        val initialUserAnswersWithInProgress  = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.InProgress)
+        val finalUserAnswersWithFailException = userAnswers.setOrException(ManageContactDetailsStatusPage, ManageContactDetailsStatus.FailException)
+
+        when(mockSessionRepository.get(userAnswers.id))
+          .thenReturn(Future.successful(Some(userAnswers)))
+          .thenReturn(Future.successful(Some(initialUserAnswersWithInProgress)))
+
+        when(mockSessionRepository.set(initialUserAnswersWithInProgress))
+          .thenReturn(Future.successful(true))
+
+        when(mockSessionRepository.set(finalUserAnswersWithFailException))
+          .thenReturn(Future.successful(true))
+
+        when(mockSubscriptionService.amendContactOrGroupDetails(any(), any(), any[SubscriptionLocalData])(using any()))
+          .thenReturn(Future.failed(MissingReferenceNumberError))
+
+        val application = applicationBuilder(
+          userAnswers = Some(userAnswers),
+          subscriptionLocalData = Some(amendSubscription),
+          enrolments = enrolments
+        )
+          .overrides(
+            bind[SessionRepository].toInstance(mockSessionRepository),
+            bind[SubscriptionService].toInstance(mockSubscriptionService)
+          )
+          .build()
+
+        running(application) {
+          val request = FakeRequest(POST, routes.ManageContactCheckYourAnswersController.onSubmit().url)
+          val result  = route(application, request).value
+
+          status(result) mustEqual SEE_OTHER
+          redirectLocation(result).value mustEqual controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails).url
+
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(initialUserAnswersWithInProgress))
+          verify(mockSessionRepository).set(org.mockito.ArgumentMatchers.eq(finalUserAnswersWithFailException))
+        }
+      }
+
     }
 
     "onPageLoad" should {

@@ -145,7 +145,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[SubscriptionNavigator]
       when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(SubAddSecondaryContactPage, false)
@@ -174,7 +174,7 @@ class AddSecondaryContactControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
         verify(mockNavigator).nextPage(SubAddSecondaryContactPage, NormalMode, expectedUserAnswers)
       }
     }

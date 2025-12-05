@@ -24,8 +24,8 @@ import play.api.mvc.{ActionRefiner, Result}
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SessionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext) extends SessionDataRequiredAction with Logging {
-
+class SessionDataRequiredActionImpl @Inject() (val executionContext: ExecutionContext) extends SessionDataRequiredAction with Logging {
+  given ExecutionContext = executionContext
   override protected def refine[A](request: SessionOptionalDataRequest[A]): Future[Either[Result, SessionDataRequest[A]]] =
     request.userAnswers match {
       case None =>

@@ -25,7 +25,7 @@ import play.api.libs.ws.JsonBodyWritables.writeableOf_JsValue
 import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Named, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
@@ -34,11 +34,11 @@ import scala.concurrent.{ExecutionContext, Future}
 class UserAnswersConnectors @Inject() (
   @Named("pillar2Url") pillar2BaseUrl: String,
   httpClient:                          HttpClientV2
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
   private val url = s"$pillar2BaseUrl/report-pillar2-top-up-taxes"
 
-  def save(id: String, data: JsValue)(implicit headerCarrier: HeaderCarrier): Future[JsValue] =
+  def save(id: String, data: JsValue)(using headerCarrier: HeaderCarrier): Future[JsValue] =
     httpClient
       .post(url"$url/user-cache/registration-subscription/$id")
       .withBody(Json.toJson(data))
@@ -50,7 +50,7 @@ class UserAnswersConnectors @Inject() (
         }
       }
 
-  def get(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
+  def get(id: String)(using headerCarrier: HeaderCarrier): Future[Option[JsValue]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse](using readRaw, ec)
@@ -62,7 +62,7 @@ class UserAnswersConnectors @Inject() (
         }
       }
 
-  def getUserAnswer(id: String)(implicit headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
+  def getUserAnswer(id: String)(using headerCarrier: HeaderCarrier): Future[Option[UserAnswers]] =
     httpClient
       .get(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse](using readRaw, ec)
@@ -74,7 +74,7 @@ class UserAnswersConnectors @Inject() (
         }
       }
 
-  def remove(id: String)(implicit headerCarrier: HeaderCarrier): Future[Done] =
+  def remove(id: String)(using headerCarrier: HeaderCarrier): Future[Done] =
     httpClient
       .delete(url"$url/user-cache/registration-subscription/$id")
       .execute[HttpResponse]

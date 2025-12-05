@@ -32,5 +32,5 @@ final case class BarsAccountResponse(
 )
 
 object BarsAccountResponse {
-  implicit val format: OFormat[BarsAccountResponse] = Json.format[BarsAccountResponse]
+  given format: OFormat[BarsAccountResponse] = Json.format[BarsAccountResponse]
 }

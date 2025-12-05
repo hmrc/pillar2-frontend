@@ -38,7 +38,7 @@ class RfmContactAddressControllerSpec extends SpecBase {
   val defaultUa:           UserAnswers = emptyUserAnswers.set(RfmPrimaryContactNamePage, "Name").success.value
   def application:         Application = applicationBuilder(userAnswers = Some(defaultUa)).build()
   def applicationOverride: Application = {
-    when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+    when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
     applicationBuilder(userAnswers = Some(defaultUa))
       .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))

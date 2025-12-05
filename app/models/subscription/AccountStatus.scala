@@ -27,7 +27,7 @@ object AccountStatus extends Enum[AccountStatus] {
 
   val values: IndexedSeq[AccountStatus] = findValues
 
-  implicit val format: OFormat[AccountStatus] = (JsPath \ "inactive")
+  given format: OFormat[AccountStatus] = (JsPath \ "inactive")
     .format[Boolean]
     .bimap(
       {

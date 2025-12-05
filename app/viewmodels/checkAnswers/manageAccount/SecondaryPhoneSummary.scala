@@ -22,11 +22,13 @@ import play.api.i18n.Messages
 import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object SecondaryPhoneSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
+  def row()(using messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     request.subscriptionLocalData.get(SubSecondaryCapturePhonePage).map { answer =>
       SummaryListRowViewModel(
         key = "secondaryPhone.checkYourAnswersLabel",

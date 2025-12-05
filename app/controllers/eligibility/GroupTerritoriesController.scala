@@ -22,7 +22,7 @@ import models.UserAnswers
 import pages.UpeEqPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.GroupTerritoriesView
@@ -35,13 +35,14 @@ class GroupTerritoriesController @Inject() (
   val controllerComponents: MessagesControllerComponents,
   view:                     GroupTerritoriesView,
   sessionRepository:        SessionRepository
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad: Action[AnyContent] = Action.async { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     hc.sessionId
       .map(_.value)
       .map { sessionID =>
@@ -54,7 +55,8 @@ class GroupTerritoriesController @Inject() (
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
-  def onSubmit: Action[AnyContent] = Action.async { implicit request =>
+  def onSubmit: Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     hc.sessionId
       .map(_.value)
       .map { sessionID =>

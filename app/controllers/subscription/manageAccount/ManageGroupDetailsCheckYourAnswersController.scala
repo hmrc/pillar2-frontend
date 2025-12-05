@@ -23,13 +23,15 @@ import config.FrontendAppConfig
 import connectors.UserAnswersConnectors
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
 import controllers.routes
+import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
+import models.requests.SubscriptionDataRequest
 import models.subscription.ManageGroupDetailsStatus.*
 import models.subscription.{ManageGroupDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, UserAnswers}
+import models.{InternalIssueError, MissingReferenceNumberError, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageGroupDetailsStatusPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -52,26 +54,27 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService,
   val userAnswersConnectors:              UserAnswersConnectors
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given SubscriptionDataRequest[AnyContent] = request
       sessionRepository.get(request.userId).flatMap {
         case None          => Future.successful(Redirect(routes.JourneyRecoveryController.onPageLoad()))
         case Some(answers) =>
           answers.get(ManageGroupDetailsStatusPage) match {
             case Some(InProgress) =>
-              Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+              Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
             case _ =>
               val list = SummaryListViewModel(
                 rows = Seq(
-                  MneOrDomesticSummary.row,
-                  GroupAccountingPeriodSummary.row,
-                  GroupAccountingPeriodStartDateSummary.row,
-                  GroupAccountingPeriodEndDateSummary.row
+                  MneOrDomesticSummary.row(),
+                  GroupAccountingPeriodSummary.row(),
+                  GroupAccountingPeriodStartDateSummary.row(),
+                  GroupAccountingPeriodEndDateSummary.row()
                 ).flatten
               )
               Future.successful(Ok(view(list, request.isAgent, request.subscriptionLocalData.organisationName)))
@@ -80,12 +83,13 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getData andThen requireData).async { implicit request =>
+    (identify andThen getData andThen requireData).async { request =>
+      given Request[AnyContent] = request
       logger.info(s"[ManageGroupDetailsCheckYourAnswers] Submission started for user ${request.userId}")
       sessionRepository.get(request.userId).flatMap { userAnswers =>
         userAnswers.flatMap(_.get(ManageGroupDetailsStatusPage)) match {
           case Some(ManageGroupDetailsStatus.SuccessfullyCompleted) =>
-            Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad))
+            Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails)))
           case _ =>
             for {
               userAnswers <- sessionRepository.get(request.userId)
@@ -98,13 +102,13 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
             } yield {
               updateGroupDetailsInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
               logger.info(s"[ManageGroupDetailsCheckYourAnswers] Redirecting to waiting room for ${request.userId}")
-              Redirect(controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad)
+              Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageGroupDetails))
             }
         }
       }
     }
 
-  private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
+  private def updateGroupDetailsInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -123,7 +127,8 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
     } yield ()
 
-    result.value
+    result
+      .getOrElseF(Future.failed(MissingReferenceNumberError))
       .recoverWith {
         case InternalIssueError =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
@@ -131,11 +136,14 @@ class ManageGroupDetailsCheckYourAnswersController @Inject() (
         case e: Exception =>
           logger.error(s"[ManageGroupDetailsCheckYourAnswers] Subscription update failed for $userId: ${e.getMessage}")
           setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)
+        case MissingReferenceNumberError =>
+          logger.error(s"[ManageGroupDetailsCheckYourAnswers] Pillar 2 Reference Number for $userId not found")
+          setStatusOnFailure(userId, ManageGroupDetailsStatus.FailException)
       }
       .map(_ => ())
   }
 
-  private def setStatusOnFailure(userId: String, status: ManageGroupDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+  private def setStatusOnFailure(userId: String, status: ManageGroupDetailsStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
     sessionRepository
       .get(userId)
       .flatMap { maybeUa =>

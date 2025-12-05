@@ -46,7 +46,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.successful(Some(userAnswersId)))
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
@@ -74,7 +74,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
         val request = FakeRequest(GET, routes.AuthController.signOut().url)
@@ -99,7 +99,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
         val request = FakeRequest(GET, routes.AuthController.signOut().url)
@@ -132,7 +132,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.successful(Some(userAnswersId)))
         when(mockSessionRepository.clear(any())) thenReturn Future.successful(true)
 
@@ -160,7 +160,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.failed(InsufficientEnrolments("failure")))
 
         val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)
@@ -185,7 +185,7 @@ class AuthControllerSpec extends SpecBase {
 
       running(application) {
 
-        when(mockAuthConnector.authorise[Option[String]](any(), any())(any(), any()))
+        when(mockAuthConnector.authorise[Option[String]](any(), any())(using any(), any()))
           .thenReturn(Future.failed(MissingBearerToken("some failure")))
 
         val request = FakeRequest(GET, routes.AuthController.signOutNoSurvey().url)

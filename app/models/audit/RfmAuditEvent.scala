@@ -45,5 +45,5 @@ case class RfmAuditEvent(
 }
 
 object RfmAuditEvent {
-  implicit val formats: Format[RfmAuditEvent] = Json.format[RfmAuditEvent]
+  given formats: Format[RfmAuditEvent] = Json.format[RfmAuditEvent]
 }

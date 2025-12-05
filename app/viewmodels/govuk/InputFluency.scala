@@ -33,7 +33,7 @@ trait InputFluency {
     def apply(
       field: Field,
       label: Label
-    )(implicit messages: Messages): Input =
+    )(using messages: Messages): Input =
       Input(
         id = field.id,
         name = field.name,
@@ -43,7 +43,7 @@ trait InputFluency {
       )
   }
 
-  implicit class FluentInput(input: Input) {
+  extension (input: Input) {
 
     def asEmail(): Input =
       input

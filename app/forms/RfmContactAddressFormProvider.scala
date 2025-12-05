@@ -24,6 +24,7 @@ import play.api.data.Form
 import play.api.data.Forms.{mapping, optional}
 
 import javax.inject.Inject
+import scala.language.implicitConversions
 
 class RfmContactAddressFormProvider @Inject() extends Mappings with AddressMappings {
   def apply(): Form[NonUKAddress] = Form(

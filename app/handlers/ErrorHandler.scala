@@ -27,10 +27,10 @@ import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)(implicit val ec: ExecutionContext, appConfig: FrontendAppConfig)
+class ErrorHandler @Inject() (val messagesApi: MessagesApi, view: ErrorTemplate)(using val ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendErrorHandler
     with I18nSupport {
 
-  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(implicit rh: RequestHeader): Future[Html] =
+  override def standardErrorTemplate(pageTitle: String, heading: String, message: String)(using rh: RequestHeader): Future[Html] =
     Future.successful(view(pageTitle, heading, message))
 }

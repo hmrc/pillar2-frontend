@@ -18,23 +18,25 @@ package controllers
 
 import config.FrontendAppConfig
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.errors.{ErrorTemplate, PageNotFound}
 
 import javax.inject.Inject
 
 class ErrorController @Inject() (val controllerComponents: MessagesControllerComponents, ErrorView: ErrorTemplate, pageNotFoundView: PageNotFound)(
-  implicit appConfig: FrontendAppConfig
+  using appConfig: FrontendAppConfig
 ) extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
-    val view = ErrorView("error.title", "error.heading", "error.message")
+  def onPageLoad: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
+    val view                  = ErrorView("error.title", "error.heading", "error.message")
     NotFound(view)
   }
 
-  def pageNotFoundLoad: Action[AnyContent] = Action { implicit request =>
+  def pageNotFoundLoad: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     NotFound(pageNotFoundView())
   }
 }

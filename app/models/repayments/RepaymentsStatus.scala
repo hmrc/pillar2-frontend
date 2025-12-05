@@ -34,7 +34,7 @@ object RepaymentsStatus extends Enumerable.Implicits {
     InProgress
   )
 
-  implicit val enumerable: Enumerable[RepaymentsStatus] =
+  given enumerable: Enumerable[RepaymentsStatus] =
     Enumerable(values.map(v => v.toString -> v)*)
 
 }

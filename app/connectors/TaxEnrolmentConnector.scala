@@ -28,20 +28,20 @@ import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
 import uk.gov.hmrc.http.{HeaderCarrier, HttpResponse, StringContextOps}
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
 
   private val enrolAndActivateUrl: String = s"${config.taxEnrolmentsUrl1}/service/${config.enrolmentKey}${config.taxEnrolmentsUrl2}"
   private def serviceEnrolmentPattern(plrReference: String) = s"${config.enrolmentKey}~PLRID~$plrReference"
   private def allocateOrDeallocateUrl(groupId: String, plrReference: String): String =
     s"${config.taxEnrolmentsUrl1}/groups/$groupId${config.taxEnrolmentsUrl2 ++ "s"}/${serviceEnrolmentPattern(plrReference)}"
 
-  def enrolAndActivate(enrolmentInfo: EnrolmentInfo)(implicit hc: HeaderCarrier): Future[Done] =
+  def enrolAndActivate(enrolmentInfo: EnrolmentInfo)(using hc: HeaderCarrier): Future[Done] =
     http
       .put(url"$enrolAndActivateUrl")
       .withBody(Json.toJson(enrolmentInfo.convertToEnrolmentRequest))
@@ -56,7 +56,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
         Future.failed(InternalIssueError)
     }
 
-  def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(implicit hc: HeaderCarrier): Future[Done] =
+  def allocateEnrolment(groupId: String, plrReference: String, body: AllocateEnrolmentParameters)(using hc: HeaderCarrier): Future[Done] =
     http
       .post(url"${allocateOrDeallocateUrl(groupId, plrReference)}")
       .withBody(Json.toJson(body))
@@ -71,7 +71,7 @@ class TaxEnrolmentConnector @Inject() (val config: FrontendAppConfig, val http: 
         Future.failed(InternalIssueError)
     }
 
-  def revokeEnrolment(groupId: String, plrReference: String)(implicit hc: HeaderCarrier): Future[Done] = {
+  def revokeEnrolment(groupId: String, plrReference: String)(using hc: HeaderCarrier): Future[Done] = {
     val completeUrl = allocateOrDeallocateUrl(groupId = groupId, plrReference = plrReference)
     http
       .delete(url"$completeUrl")

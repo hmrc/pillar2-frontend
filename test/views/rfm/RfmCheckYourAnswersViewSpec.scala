@@ -41,8 +41,8 @@ class RfmCheckYourAnswersViewSpec extends ViewSpecBase {
 
   val list: SummaryList = SummaryListViewModel(
     rows = Seq(
-      RfmNameRegistrationSummary.row(userAnswer)(messages),
-      RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(messages)
+      RfmNameRegistrationSummary.row(userAnswer)(using messages),
+      RfmRegisteredAddressSummary.row(userAnswer, mockCountryOptions)(using messages)
     ).flatten
   )
 

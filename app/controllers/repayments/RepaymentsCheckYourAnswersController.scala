@@ -18,25 +18,26 @@ package controllers.repayments
 
 import cats.data.OptionT
 import cats.data.OptionT.fromOption
+import cats.syntax.functor.given
 import config.FrontendAppConfig
 import controllers.actions.*
+import models.longrunningsubmissions.LongRunningSubmission.Repayments
 import models.repayments.RepaymentsStatus.*
 import models.{UnexpectedResponse, UserAnswers}
 import pages.*
-import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.RepaymentService
 import services.audit.AuditService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.ZonedDateTimeOps
+import utils.DateTimeUtils.*
 import viewmodels.checkAnswers.repayments.*
 import viewmodels.govuk.summarylist.*
 import views.html.repayments.RepaymentsCheckYourAnswersView
 
-import java.time.ZonedDateTime
+import java.time.{Clock, ZonedDateTime}
 import javax.inject.{Inject, Named}
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -49,19 +50,21 @@ class RepaymentsCheckYourAnswersController @Inject() (
   val controllerComponents:               MessagesControllerComponents,
   view:                                   RepaymentsCheckYourAnswersView,
   auditService:                           AuditService,
-  repaymentService:                       RepaymentService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+  repaymentService:                       RepaymentService,
+  clock:                                  Clock
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      implicit val userAnswers: UserAnswers = request.userAnswers
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      given userAnswers: UserAnswers = request.userAnswers
 
       userAnswers.get(RepaymentsStatusPage) match {
         case Some(InProgress) =>
-          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+          Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments))
         case Some(SuccessfullyCompleted) =>
           Redirect(controllers.repayments.routes.RepaymentErrorReturnController.onPageLoad())
         case _ => Ok(view(listRefund(), listBankAccountDetails(), contactDetailsList()))
@@ -69,19 +72,22 @@ class RepaymentsCheckYourAnswersController @Inject() (
     }
 
   def onSubmit(): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData).async { request =>
+      given Request[AnyContent] = request
       request.userAnswers.get(RepaymentsStatusPage) match {
         case Some(SuccessfullyCompleted) =>
-          Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+          Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments)))
         case _ =>
           if request.userAnswers.isRepaymentsJourneyCompleted then {
-            for {
+            val requirementsToRespond: Future[Unit] = for {
               optionalSessionData <- sessionRepository.get(request.userAnswers.id)
               sessionData = optionalSessionData.getOrElse(UserAnswers(request.userId))
               updatedAnswers <- Future.fromTry(sessionData.set(RepaymentsStatusPage, InProgress))
               _              <- sessionRepository.set(updatedAnswers)
             } yield (): Unit
+
             val repaymentsStatus = (for {
+              _                  <- OptionT.liftF(requirementsToRespond)
               repaymentData      <- OptionT.fromOption[Future](repaymentService.getRepaymentData(request.userAnswers))
               _                  <- OptionT.liftF(repaymentService.sendRepaymentDetails(repaymentData))
               repaymentAuditData <- fromOption[Future](request.userAnswers.getRepaymentAuditDetail)
@@ -104,7 +110,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
-                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, ZonedDateTime.now().toDateTimeGmtFormat))
+                                      .flatMap(_.set(RepaymentConfirmationPage, ZonedDateTime.now(clock).toDateTimeGmtFormat))
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-
@@ -130,14 +136,14 @@ class RepaymentsCheckYourAnswersController @Inject() (
                 if success then Future.fromTry(updatedAnswers9.remove(BankAccountDetailsPage)) else Future.successful(updatedAnswers9)
               _ <- sessionRepository.set(updatedAnswers10)
             } yield (): Unit
-            Redirect(controllers.repayments.routes.RepaymentsWaitingRoomController.onPageLoad())
+            requirementsToRespond.as(Redirect(controllers.routes.WaitingRoomController.onPageLoad(Repayments)))
           } else {
-            Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad)
+            Future.successful(Redirect(controllers.repayments.routes.RepaymentsIncompleteDataController.onPageLoad))
           }
       }
     }
 
-  private def contactDetailsList()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def contactDetailsList()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         RepaymentsContactNameSummary.row(userAnswers),
@@ -147,7 +153,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listBankAccountDetails()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listBankAccountDetails()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         UkOrAbroadBankAccountSummary.row(userAnswers),
@@ -162,7 +168,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
       ).flatten
     ).withCssClass("govuk-!-margin-bottom-9")
 
-  private def listRefund()(implicit messages: Messages, userAnswers: UserAnswers) =
+  private def listRefund()(using messages: Messages, userAnswers: UserAnswers) =
     SummaryListViewModel(
       rows = Seq(
         RequestRefundAmountSummary.row(userAnswers),

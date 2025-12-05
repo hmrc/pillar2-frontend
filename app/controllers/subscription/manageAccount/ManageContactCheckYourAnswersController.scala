@@ -19,12 +19,14 @@ package controllers.subscription.manageAccount
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import models.*
+import models.longrunningsubmissions.LongRunningSubmission.ManageContactDetails
+import models.requests.SubscriptionDataRequest
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ReferenceNumberService, SubscriptionService}
 import uk.gov.hmrc.auth.core.Enrolment
@@ -48,19 +50,20 @@ class ManageContactCheckYourAnswersController @Inject() (
   sessionRepository:                      SessionRepository,
   subscriptionService:                    SubscriptionService,
   referenceNumberService:                 ReferenceNumberService
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given SubscriptionDataRequest[AnyContent] = request
     sessionRepository.get(request.userId).flatMap {
       case None          => Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
       case Some(answers) =>
         answers.get(ManageContactDetailsStatusPage) match {
           case Some(ManageContactDetailsStatus.InProgress) =>
             Future.successful(
-              Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
+              Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails))
             )
           case _ =>
             val primaryContactList = SummaryListViewModel(
@@ -104,12 +107,13 @@ class ManageContactCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     logger.info(s"[ManageContactCheckYourAnswers] Submission started for user ${request.userId}")
     sessionRepository.get(request.userId).flatMap { userAnswers =>
       userAnswers.flatMap(_.get(ManageContactDetailsStatusPage)) match {
         case Some(ManageContactDetailsStatus.SuccessfullyCompleted) =>
-          Future.successful(Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad))
+          Future.successful(Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails)))
         case _ =>
           for {
             userAnswers <- sessionRepository.get(request.userId)
@@ -121,13 +125,13 @@ class ManageContactCheckYourAnswersController @Inject() (
             _ <- sessionRepository.set(updatedAnswers)
           } yield {
             updateSubscriptionInBackground(request.userId, request.subscriptionLocalData, request.enrolments)
-            Redirect(controllers.subscription.manageAccount.routes.ManageContactDetailsWaitingRoomController.onPageLoad)
+            Redirect(controllers.routes.WaitingRoomController.onPageLoad(ManageContactDetails))
           }
       }
     }
   }
 
-  private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(implicit
+  private def updateSubscriptionInBackground(userId: String, subscriptionData: SubscriptionLocalData, enrolments: Set[Enrolment])(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[Unit] = {
@@ -147,7 +151,8 @@ class ManageContactCheckYourAnswersController @Inject() (
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
     } yield ()
 
-    result.value
+    result
+      .getOrElseF(Future.failed(MissingReferenceNumberError))
       .recoverWith {
         case InternalIssueError =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
@@ -158,11 +163,14 @@ class ManageContactCheckYourAnswersController @Inject() (
         case e: Exception =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to generic Exception: ${e.getMessage}", e)
           setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
+        case MissingReferenceNumberError =>
+          logger.error(s"[ManageContactCheckYourAnswers] Pillar 2 Reference Number for $userId not found")
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
       }
       .map(_ => ())
   }
 
-  private def setStatusOnFailure(userId: String, status: ManageContactDetailsStatus)(implicit ec: ExecutionContext): Future[Option[Unit]] =
+  private def setStatusOnFailure(userId: String, status: ManageContactDetailsStatus)(using ec: ExecutionContext): Future[Option[Unit]] =
     sessionRepository
       .get(userId)
       .flatMap { maybeUa =>

@@ -23,5 +23,5 @@ import java.time.LocalDate
 final case class FinancialItem(dueDate: Option[LocalDate], clearingDate: Option[LocalDate])
 
 object FinancialItem {
-  implicit val format: OFormat[FinancialItem] = Json.format[FinancialItem]
+  given format: OFormat[FinancialItem] = Json.format[FinancialItem]
 }

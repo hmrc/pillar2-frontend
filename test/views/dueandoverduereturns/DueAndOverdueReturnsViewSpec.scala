@@ -22,7 +22,7 @@ import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.LocalDateOps
+import utils.DateTimeUtils.toDateFormat
 import views.html.dueandoverduereturns.DueAndOverdueReturnsView
 
 import java.time.LocalDate
@@ -252,6 +252,18 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
         secondTableStatusTags.get(1).text mustBe "Due"
         secondTableStatusTags.get(1).attr("class") mustBe "govuk-tag govuk-tag--blue"
       }
+
+      "show the submission history description" in {
+        val submissionHistoryParagraph: Element =
+          view.select("p.govuk-body").stream.filter(p => p.text.contains("submission and submission amendment")).findFirst().get()
+        submissionHistoryParagraph.text mustBe "Details of submission and submission amendment dates."
+      }
+
+      "show the correct submission history link" in {
+        val submissionHistoryLink: Element = view.getElementsByClass("govuk-link").get(3)
+        submissionHistoryLink.attr("href") mustBe controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url
+      }
+
     }
 
     "displaying agent-specific content" when {
@@ -281,16 +293,6 @@ class DueAndOverdueReturnsViewSpec extends ViewSpecBase with ObligationsAndSubmi
           val howToSubmitAReturnParagraph: Element =
             view.select("p.govuk-body").stream.filter(p => p.text.contains("Find out more")).findFirst().get()
           howToSubmitAReturnParagraph.text mustBe "Find out more about how to report your client’s Pillar 2 Top-up Taxes."
-        }
-      }
-
-      "displaying submission history section" must {
-        lazy val view: Document = Jsoup.parse(page(emptyResponse, fromDate, toDate, agentView = true)(request, appConfig, messages).toString())
-
-        "show the agent-specific submission history description" in {
-          val submissionHistoryParagraph: Element =
-            view.select("p.govuk-body").stream.filter(p => p.text.contains("submission history")).findFirst().get()
-          submissionHistoryParagraph.text mustBe "You can find full details of your client’s submitted returns on the submission history page."
         }
       }
     }

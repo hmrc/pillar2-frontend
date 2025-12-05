@@ -23,7 +23,7 @@ import models.Mode
 import navigation.ReplaceFilingMemberNavigator
 import pages.RfmCheckYourAnswersPage
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import utils.countryOptions.CountryOptions
@@ -42,12 +42,13 @@ class RfmCheckYourAnswersController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             RfmCheckYourAnswersView,
   countryOptions:                   CountryOptions
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val list = SummaryListViewModel(
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val list                  = SummaryListViewModel(
       rows = Seq(
         RfmNameRegistrationSummary.row(request.userAnswers),
         RfmRegisteredAddressSummary.row(request.userAnswers, countryOptions)
@@ -60,7 +61,7 @@ class RfmCheckYourAnswersController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
     Future.successful(Redirect(navigator.nextPage(RfmCheckYourAnswersPage, mode, request.userAnswers)))
   }
 

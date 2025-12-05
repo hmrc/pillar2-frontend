@@ -43,27 +43,27 @@ class RepaymentsCheckYourAnswersViewSpec extends ViewSpecBase {
 
   lazy val listRefund: SummaryList = SummaryListViewModel(
     rows = Seq(
-      RequestRefundAmountSummary.row(userAnswer)(messages),
-      ReasonForRequestingRefundSummary.row(userAnswer)(messages)
+      RequestRefundAmountSummary.row(userAnswer)(using messages),
+      ReasonForRequestingRefundSummary.row(userAnswer)(using messages)
     ).flatten
   )
 
   lazy val listBankAccountDetails: SummaryList = SummaryListViewModel(
     rows = Seq(
-      UkOrAbroadBankAccountSummary.row(userAnswer)(messages),
-      NonUKBankNameSummary.row(userAnswer)(messages),
-      NonUKBankNameOnAccountSummary.row(userAnswer)(messages),
-      NonUKBankBicOrSwiftCodeSummary.row(userAnswer)(messages),
-      NonUKBankIbanSummary.row(userAnswer)(messages)
+      UkOrAbroadBankAccountSummary.row(userAnswer)(using messages),
+      NonUKBankNameSummary.row(userAnswer)(using messages),
+      NonUKBankNameOnAccountSummary.row(userAnswer)(using messages),
+      NonUKBankBicOrSwiftCodeSummary.row(userAnswer)(using messages),
+      NonUKBankIbanSummary.row(userAnswer)(using messages)
     ).flatten
   )
 
   lazy val contactDetailsList: SummaryList = SummaryListViewModel(
     rows = Seq(
-      RepaymentsContactNameSummary.row(userAnswer)(messages),
-      RepaymentsContactEmailSummary.row(userAnswer)(messages),
-      RepaymentsContactByPhoneSummary.row(userAnswer)(messages),
-      RepaymentsPhoneDetailsSummary.row(userAnswer)(messages)
+      RepaymentsContactNameSummary.row(userAnswer)(using messages),
+      RepaymentsContactEmailSummary.row(userAnswer)(using messages),
+      RepaymentsContactByPhoneSummary.row(userAnswer)(using messages),
+      RepaymentsPhoneDetailsSummary.row(userAnswer)(using messages)
     ).flatten
   )
 

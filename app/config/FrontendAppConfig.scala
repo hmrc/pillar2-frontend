@@ -17,6 +17,7 @@
 package config
 
 import com.google.inject.{Inject, Singleton}
+import models.longrunningsubmissions.LongRunningSubmission
 import play.api.Configuration
 import play.api.mvc.RequestHeader
 import uk.gov.hmrc.play.bootstrap.binders.SafeRedirectUrl
@@ -38,10 +39,10 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
 
   val pillar2mailbox: String = configuration.get[String]("features.pillar2mailbox")
 
-  def feedbackUrl(implicit request: RequestHeader): String =
+  def feedbackUrl(using request: RequestHeader): String =
     s"$contactHost/contact/beta-feedback?service=$contactFormServiceIdentifier&backUrl=${SafeRedirectUrl(host + request.uri).encodedUrl}"
 
-  def supportUrl(implicit request: RequestHeader): String =
+  def supportUrl(using request: RequestHeader): String =
     s"$contactHost/contact/report-technical-problem?service=$contactFormServiceIdentifier&referrerUrl=${SafeRedirectUrl(request.uri).encodedUrl}"
 
   val loginUrl:                    String = configuration.get[String]("urls.login")
@@ -116,5 +117,13 @@ class FrontendAppConfig @Inject() (configuration: Configuration, servicesConfig:
   val subscriptionPollingTimeoutSeconds:  Int = configuration.get[Int]("subscription.pollingTimeoutSeconds")
   val subscriptionPollingIntervalSeconds: Int = configuration.get[Int]("subscription.pollingIntervalSeconds")
 
-  val btnWaitingRoomPollIntervalSeconds: Int = configuration.get[Int]("btn.waitingRoom.pollIntervalSeconds")
+  val longRunningSubmissionConfig: LongRunningSubmission => LongRunningSubmissionConfig =
+    LongRunningSubmission.values.map { submission =>
+      submission -> LongRunningSubmissionConfig(
+        submission.configKey,
+        configuration.get[Int](s"long-running-submissions.${submission.configKey}.pollingIntervalSeconds")
+      )
+    }.toMap
 }
+
+case class LongRunningSubmissionConfig(key: String, pollingIntervalSeconds: Int)

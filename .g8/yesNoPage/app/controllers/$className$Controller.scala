@@ -1,6 +1,6 @@
 package controllers
 
-import controllers.actions._
+import controllers.actions.*
 import forms.$className$FormProvider
 import connectors.UserAnswersConnectors
 import play.api.data.Form
@@ -9,7 +9,7 @@ import javax.inject.Inject
 import models.Mode
 import pages.$className$Page
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.{Action, AnyContent, MessagesControllerComponents, Request}
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -25,19 +25,20 @@ class $className;format="cap"$Controller @Inject()(
                                                 formProvider: $className$FormProvider,
                                                 val controllerComponents: MessagesControllerComponents,
                                                 view: $className$View
-                                                )(implicit ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
+                                                )(using ec: ExecutionContext, appConfig: FrontendAppConfig) extends FrontendBaseController with I18nSupport {
 
     val form : Form[Boolean] = formProvider()
 
     def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) {
-       implicit request =>
-        val preparedForm = request.userAnswers.get($className$Page).map(form.fill).getOrElse(form)
+       request =>
+         given Request[AnyContent] = request
+         val preparedForm = request.userAnswers.get($className$Page).map(form.fill).getOrElse(form)
               Ok(view(preparedForm, mode))
   }
 
     def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async {
-      implicit request =>
-
+      request =>
+        given Request[AnyContent] = request
         form.bindFromRequest().fold(
           formWithErrors =>
             Future.successful(BadRequest(view(formWithErrors, mode))),

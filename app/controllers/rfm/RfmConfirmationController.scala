@@ -18,16 +18,14 @@ package controllers.rfm
 
 import config.FrontendAppConfig
 import controllers.actions.*
-import pages.PlrReferencePage
+import pages.{PlrReferencePage, RfmConfirmationPage}
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
-import utils.DateTimeUtils.ZonedDateTimeOps
 import utils.Pillar2Reference
 import views.html.rfm.RfmConfirmationView
 
-import java.time.ZonedDateTime
 import javax.inject.Inject
 import scala.concurrent.ExecutionContext
 
@@ -38,18 +36,20 @@ class RfmConfirmationController @Inject() (
   sessionRepository:        SessionRepository,
   val controllerComponents: MessagesControllerComponents,
   view:                     RfmConfirmationView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     sessionRepository.get(request.userAnswers.id).map { optionalUserAnswers =>
       (for {
         userAnswer <- optionalUserAnswers
         pillar2Id  <- Pillar2Reference
                        .getPillar2ID(request.enrolments, appConfig.enrolmentKey, appConfig.enrolmentIdentifier)
                        .orElse(userAnswer.get(PlrReferencePage))
-      } yield Ok(view(pillar2Id, ZonedDateTime.now().toDateTimeGmtFormat)))
+        submittedAt <- userAnswer.get(RfmConfirmationPage)
+      } yield Ok(view(pillar2Id, submittedAt)))
         .getOrElse(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
   }

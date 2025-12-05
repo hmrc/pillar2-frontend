@@ -37,7 +37,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
           .thenReturn(Future.successful(None))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
@@ -60,7 +60,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
           .thenReturn(Future.successful(Some(subscriptionData)))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
@@ -78,7 +78,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
           .thenReturn(Future.failed(UnprocessableEntityError))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)
@@ -101,7 +101,7 @@ class RegistrationInProgressControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockSubscriptionService.maybeReadSubscription(any())(any()))
+        when(mockSubscriptionService.maybeReadSubscription(any())(using any()))
           .thenReturn(Future.failed(new RuntimeException("Service error")))
 
         val request = FakeRequest(GET, routes.RegistrationInProgressController.onPageLoad("PLRREF123").url)

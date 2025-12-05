@@ -29,12 +29,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class AuditService @Inject() (
   auditConnector: AuditConnector
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends Logging {
 
   def auditGrsReturnForLimitedCompany(
     responseReceived: IncorporatedEntityRegistrationData
-  )(implicit hc: HeaderCarrier): Future[AuditResult] =
+  )(using hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       GrsReturnAuditEvent(
         entityType = EntityType.UkLimitedCompany.toString,
@@ -56,7 +56,7 @@ class AuditService @Inject() (
 
   def auditGrsReturnForLLP(
     responseReceived: PartnershipEntityRegistrationData
-  )(implicit hc: HeaderCarrier): Future[AuditResult] = {
+  )(using hc: HeaderCarrier): Future[AuditResult] = {
     val emptyString    = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
@@ -98,7 +98,7 @@ class AuditService @Inject() (
 
   def auditGrsReturnNfmForLimitedCompany(
     responseReceived: IncorporatedEntityRegistrationData
-  )(implicit hc: HeaderCarrier): Future[AuditResult] =
+  )(using hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       GrsReturnNfmAuditEvent(nfmRegistration =
         NfmRegistration(
@@ -122,7 +122,7 @@ class AuditService @Inject() (
 
   def auditGrsReturnNfmForLLP(
     responseReceived: PartnershipEntityRegistrationData
-  )(implicit hc: HeaderCarrier): Future[AuditResult] = {
+  )(using hc: HeaderCarrier): Future[AuditResult] = {
     val emptyString    = ""
     val companyProfile = responseReceived.companyProfile
       .map(profile => (profile.companyName, profile.companyNumber, profile.dateOfIncorporation.toString))
@@ -163,7 +163,7 @@ class AuditService @Inject() (
     )
   }
 
-  def auditRepayments(repaymentAuditDetail: RepaymentsAuditEvent)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditRepayments(repaymentAuditDetail: RepaymentsAuditEvent)(using hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       RepaymentsAuditEvent(
         repaymentAuditDetail.refundAmount,
@@ -178,7 +178,7 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
 
-  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(implicit hc: HeaderCarrier): Future[AuditResult] =
+  def auditReplaceFilingMember(nfmDetail: NewFilingMemberDetail)(using hc: HeaderCarrier): Future[AuditResult] =
     auditConnector.sendExtendedEvent(
       RfmAuditEvent(
         nfmDetail.plrReference,
@@ -200,7 +200,7 @@ class AuditService @Inject() (
       ).extendedDataEvent
     )
 
-  def sendEventBTN(auditEvent: AuditEvent)(implicit hc: HeaderCarrier): Future[AuditResult] = {
+  def sendEventBTN(auditEvent: AuditEvent)(using hc: HeaderCarrier): Future[AuditResult] = {
     logger.info(s"Sending audit event: ${auditEvent.auditType}")
     auditConnector.sendExtendedEvent(auditEvent.extendedDataEvent)
   }
@@ -210,7 +210,7 @@ class AuditService @Inject() (
     accountingPeriod:           AccountingPeriod,
     entitiesInsideAndOutsideUK: Boolean,
     response:                   ApiResponseData
-  )(implicit hc: HeaderCarrier): Future[AuditResult] =
+  )(using hc: HeaderCarrier): Future[AuditResult] =
     sendEventBTN(
       CreateBtnAuditEvent(
         pillarReference = pillarReference,
@@ -225,7 +225,7 @@ class AuditService @Inject() (
     pillarReference:         String,
     accountingPeriod:        AccountingPeriod,
     entitiesInsideOutsideUk: Boolean
-  )(implicit hc: HeaderCarrier): Future[AuditResult] = sendEventBTN(
+  )(using hc: HeaderCarrier): Future[AuditResult] = sendEventBTN(
     BtnAlreadySubmittedAuditEvent(pillarReference, accountingPeriod, entitiesInsideOutsideUk)
   )
 

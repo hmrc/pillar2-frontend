@@ -23,7 +23,7 @@ import models.UserAnswers
 import pages.AgentClientPillar2ReferencePage
 import play.api.i18n.I18nSupport
 import play.api.i18n.Lang.logger
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.{ObligationsAndSubmissionsService, ReferenceNumberService}
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -44,11 +44,12 @@ class SubmissionHistoryController @Inject() (
   view:                                   SubmissionHistoryView,
   viewNoSubmissions:                      SubmissionHistoryNoSubmissionsView,
   sessionRepository:                      SessionRepository
-)(implicit ec: ExecutionContext, config: FrontendAppConfig)
+)(using ec: ExecutionContext, config: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onPageLoad: Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     (for {
       maybeUserAnswer <- OptionT.liftF(sessionRepository.get(request.userId))
       userAnswers = maybeUserAnswer.getOrElse(UserAnswers(request.userId))

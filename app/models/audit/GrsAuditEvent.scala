@@ -40,8 +40,8 @@ case class GrsReturnAuditEvent(
 }
 
 object GrsReturnAuditEvent {
-  implicit val format: OFormat[GrsReturnAuditEvent] = Json.format[GrsReturnAuditEvent]
-  implicit val writes: OWrites[GrsReturnAuditEvent] = Json.writes[GrsReturnAuditEvent]
+  given format: OFormat[GrsReturnAuditEvent] = Json.format[GrsReturnAuditEvent]
+  given writes: OWrites[GrsReturnAuditEvent] = Json.writes[GrsReturnAuditEvent]
 }
 
 case class GrsReturnAuditEventForLLP(
@@ -65,8 +65,8 @@ case class GrsReturnAuditEventForLLP(
 }
 
 object GrsReturnAuditEventForLLP {
-  implicit val format: OFormat[GrsReturnAuditEventForLLP] = Json.format[GrsReturnAuditEventForLLP]
-  implicit val writes: OWrites[GrsReturnAuditEventForLLP] = Json.writes[GrsReturnAuditEventForLLP]
+  given format: OFormat[GrsReturnAuditEventForLLP] = Json.format[GrsReturnAuditEventForLLP]
+  given writes: OWrites[GrsReturnAuditEventForLLP] = Json.writes[GrsReturnAuditEventForLLP]
 }
 
 case class GrsReturnNfmAuditEvent(
@@ -77,7 +77,7 @@ case class GrsReturnNfmAuditEvent(
 }
 
 object GrsReturnNfmAuditEvent {
-  implicit val formats: Format[GrsReturnNfmAuditEvent] = Json.format[GrsReturnNfmAuditEvent]
+  given formats: Format[GrsReturnNfmAuditEvent] = Json.format[GrsReturnNfmAuditEvent]
 }
 
 case class GrsReturnNfmAuditEventForLlp(
@@ -88,7 +88,7 @@ case class GrsReturnNfmAuditEventForLlp(
 }
 
 object GrsReturnNfmAuditEventForLlp {
-  implicit val formats: Format[GrsReturnNfmAuditEventForLlp] = Json.format[GrsReturnNfmAuditEventForLlp]
+  given formats: Format[GrsReturnNfmAuditEventForLlp] = Json.format[GrsReturnNfmAuditEventForLlp]
 }
 
 case class NfmRegistration(
@@ -109,5 +109,5 @@ case class NfmRegistration(
 )
 
 object NfmRegistration {
-  implicit val formats: Format[NfmRegistration] = Json.format[NfmRegistration]
+  given formats: Format[NfmRegistration] = Json.format[NfmRegistration]
 }

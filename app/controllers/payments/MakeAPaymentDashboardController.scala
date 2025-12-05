@@ -41,17 +41,18 @@ class MakeAPaymentDashboardController @Inject() (
   legacyView:                             LegacyMakeAPaymentDashboardView,
   getData:                                DataRetrievalAction,
   opsConnector:                           OPSConnector
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
-  private def extractReferenceNumber(userAnswers: Option[UserAnswers])(implicit request: OptionalDataRequest[AnyContent]) =
+  private def extractReferenceNumber(userAnswers: Option[UserAnswers])(using request: OptionalDataRequest[AnyContent]) =
     userAnswers
       .flatMap(_.get(AgentClientPillar2ReferencePage))
       .orElse(referenceNumberService.get(userAnswers, request.enrolments))
 
   def onPageLoad(): Action[AnyContent] =
-    (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+    (identify andThen getData).async { (request: OptionalDataRequest[AnyContent]) =>
+      given OptionalDataRequest[AnyContent] = request
       (for {
         userAnswers     <- sessionRepository.get(request.userId)
         referenceNumber <-
@@ -60,7 +61,8 @@ class MakeAPaymentDashboardController @Inject() (
       } yield Ok(view)).recover(_ => Redirect(controllers.routes.JourneyRecoveryController.onPageLoad()))
     }
 
-  def onRedirect(): Action[AnyContent] = (identify andThen getData).async { implicit request: OptionalDataRequest[AnyContent] =>
+  def onRedirect(): Action[AnyContent] = (identify andThen getData).async { (request: OptionalDataRequest[AnyContent]) =>
+    given OptionalDataRequest[AnyContent] = request
     (for {
       userAnswers     <- sessionRepository.get(request.userId)
       referenceNumber <-

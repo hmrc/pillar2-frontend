@@ -31,7 +31,7 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2) extends Logging {
 
-  def getData(pillar2Id: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
+  def getData(pillar2Id: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier,
     ec: ExecutionContext
   ): Future[ObligationsAndSubmissionsSuccess] = {

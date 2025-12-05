@@ -19,7 +19,7 @@ package stubsonly.controllers
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
 import play.api.Logger
 import play.api.libs.json.{JsValue, Json}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import stubsonly.connectors.TestOnlyConnector
 import stubsonly.controllers.actions.TestOnlyAuthorisedAction
 import uk.gov.hmrc.http.HeaderCarrier
@@ -35,29 +35,32 @@ class TestOnlyController @Inject() (
   testOnlyAuthorise:        TestOnlyAuthorisedAction,
   getData:                  DataRetrievalAction,
   testOnlyConnector:        TestOnlyConnector
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends FrontendBaseController {
 
   private val logger = Logger(getClass)
-  def clearAllData(): Action[AnyContent] = Action.async { implicit request =>
+  def clearAllData(): Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     testOnlyConnector.clearAllData().map(httpResponse => Ok(httpResponse.body))
   }
 
-  def clearCurrentData(): Action[AnyContent] = identity.async { implicit request =>
+  def clearCurrentData(): Action[AnyContent] = identity.async { request =>
+    given Request[AnyContent] = request
     testOnlyConnector.clearCurrentData(request.userId).map(httpResponse => Ok(httpResponse.body))
   }
 
-  def getRegistrationData: Action[AnyContent] = (identity andThen getData) { implicit request =>
+  def getRegistrationData: Action[AnyContent] = (identity andThen getData) { request =>
     Ok(Json.toJson(request.userAnswers))
   }
 
-  def getAllRecords: Action[AnyContent] = Action.async { implicit request =>
+  def getAllRecords: Action[AnyContent] = Action.async { request =>
+    given Request[AnyContent] = request
     testOnlyConnector.getAllRecords().map(httpResponse => Ok(httpResponse.json))
   }
 
-  def upsertRecord(id: String): Action[JsValue] = Action.async(parse.json) { implicit request =>
+  def upsertRecord(id: String): Action[JsValue] = Action.async(parse.json) { request =>
     val data = request.body
-    implicit val hc: HeaderCarrier = HeaderCarrier()
+    given hc: HeaderCarrier = HeaderCarrier()
     testOnlyConnector
       .upsertRecord(id, data)
       .map { _ =>
@@ -69,7 +72,8 @@ class TestOnlyController @Inject() (
       }
   }
 
-  def deEnrol(): Action[AnyContent] = testOnlyAuthorise.async { implicit request =>
+  def deEnrol(): Action[AnyContent] = testOnlyAuthorise.async { request =>
+    given Request[AnyContent] = request
     request.pillar2Reference match {
       case Some(reference) =>
         testOnlyConnector

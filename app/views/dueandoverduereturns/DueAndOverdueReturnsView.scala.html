@@ -42,6 +42,8 @@
   )
 }
 
+@submissionHistoryUrl = @{controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad.url}
+
 @layout(pageTitle = titleNoForm(messages("dueAndOverdueReturns.title")), bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
     @tableScrollStyles()
     
@@ -127,13 +129,6 @@
         @paragraphBodyLink(messages("dueAndOverdueReturns.howToSubmitAReturn.link"), linkUrl = appConfig.pillar2TopupGuidance)
 
         <h2 class="govuk-heading-m">@messages("dueAndOverdueReturns.submissionHistory")</h2>
-        <p class="govuk-body">
-            @if(agentView) {
-                @messages("dueAndOverdueReturns.agent.submissionHistory.description1")
-            } else {
-                @messages("dueAndOverdueReturns.submissionHistory.description1")
-            }
-            <a href="@controllers.submissionhistory.routes.SubmissionHistoryController.onPageLoad" class="govuk-link">@messages("dueAndOverdueReturns.submissionHistory.link")</a>
-            @messages("dueAndOverdueReturns.submissionHistory.description2")
-        </p>
+        <p class="govuk-body">@messages("dueAndOverdueReturns.submissionHistory.description1")</p>
+        @paragraphBodyLink(messages("dueAndOverdueReturns.submissionHistory.link"), linkUrl = submissionHistoryUrl)
     }

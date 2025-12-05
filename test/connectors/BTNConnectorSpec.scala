@@ -51,7 +51,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
 
   "submit BTN connector" should {
     "return a BtnSuccess when the pillar-2 backend has returned status 201." in {
-      implicit val pillar2Id: String = "XEPLR0000000000"
+      given pillar2Id: String = "XEPLR0000000000"
       stubResponse(submitBTNPath, CREATED, successfulBTNResponseBody.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result mustBe successfulBtnResponse
@@ -66,7 +66,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
         "code"    -> errorCode,
         "message" -> errorMessage
       )
-      implicit val pillar2Id: String = "XEPLR0000000000"
+      given pillar2Id: String = "XEPLR0000000000"
       stubResponse(submitBTNPath, httpStatusCode, jsonResponse.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result mustBe BtnResponse(
@@ -81,7 +81,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
         "code"           -> errorCode,
         "message"        -> errorMessage
       )
-      implicit val pillar2Id: String = "XEPLR0000000000"
+      given pillar2Id: String = "XEPLR0000000000"
       stubResponse(submitBTNPath, UNPROCESSABLE_ENTITY, jsonResponse.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).futureValue
       result mustBe BtnResponse(
@@ -91,7 +91,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
     }
 
     "raise an Exception when the expected response field-value-checking fails." in {
-      implicit val pillar2Id: String = "XEPLR9999999999"
+      given pillar2Id: String = "XEPLR9999999999"
       stubResponse(submitBTNPath, CREATED, Json.obj().toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow).failed.futureValue
       result mustBe JsResultException(Seq(((__ \ "processingDate"), Seq(JsonValidationError(Seq("error.path.missing"))))))
@@ -100,7 +100,7 @@ class BTNConnectorSpec extends SpecBase with WireMockSupport with WireMockServer
     "return InternalIssueError when the pillar-2 backend returns any unsupported status." in forAll(
       Gen.posNum[Int].retryUntil(code => !Seq(CREATED, BAD_REQUEST, UNPROCESSABLE_ENTITY, INTERNAL_SERVER_ERROR).contains(code))
     ) { (httpStatus: Int) =>
-      implicit val pillar2Id: String = "XEPLR4000000000"
+      given pillar2Id: String = "XEPLR4000000000"
       stubResponse(submitBTNPath, httpStatus, successfulBTNResponseBody.toString())
       val result = connector.submitBTN(btnRequestDatesMinus1YearAndNow)
       result.failed.futureValue mustBe InternalIssueError

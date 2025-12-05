@@ -35,7 +35,7 @@ case class CreateBtnAuditEvent(
 }
 
 object CreateBtnAuditEvent {
-  implicit val writes: OWrites[CreateBtnAuditEvent] = Json.writes[CreateBtnAuditEvent]
+  given writes: OWrites[CreateBtnAuditEvent] = Json.writes[CreateBtnAuditEvent]
 }
 
 sealed trait ApiResponseData {
@@ -59,7 +59,7 @@ final case class ApiResponseFailure(
 ) extends ApiResponseData
 
 object ApiResponseData {
-  def fromBtnResponse(btnResponse: BtnResponse)(implicit clock: Clock): ApiResponseData = btnResponse.result match {
+  def fromBtnResponse(btnResponse: BtnResponse)(using clock: Clock): ApiResponseData = btnResponse.result match {
     case Right(success) =>
       ApiResponseSuccess(
         btnResponse.httpStatusCode,
@@ -74,14 +74,14 @@ object ApiResponseData {
       )
   }
 
-  implicit val writes: Writes[ApiResponseData] = {
+  given writes: Writes[ApiResponseData] = {
     case success @ ApiResponseSuccess(_, _)       => Json.toJson(success)
     case failure @ ApiResponseFailure(_, _, _, _) => Json.toJson(failure)
   }
 }
 
 object ApiResponseSuccess {
-  implicit val writes: Writes[ApiResponseSuccess] = (
+  given writes: Writes[ApiResponseSuccess] = (
     (__ \ "statusCode").write[Int] and
       (__ \ "messageResponseData" \ "success" \ "processingDate").write[Instant] and
       (__ \ "messageResponseData" \ "success" \ "responseMessage").write[String]
@@ -89,7 +89,7 @@ object ApiResponseSuccess {
 }
 
 object ApiResponseFailure {
-  implicit val writes: Writes[ApiResponseFailure] = (
+  given writes: Writes[ApiResponseFailure] = (
     (__ \ "statusCode").write[Int] and
       (__ \ "messageResponseData" \ "failure" \ "processingDate").write[Instant] and
       (__ \ "messageResponseData" \ "failure" \ "responseMessage").write[String] and
@@ -107,7 +107,7 @@ case class BtnAlreadySubmittedAuditEvent(
 }
 
 object BtnAlreadySubmittedAuditEvent {
-  implicit val writes: Writes[BtnAlreadySubmittedAuditEvent] = (
+  given writes: Writes[BtnAlreadySubmittedAuditEvent] = (
     (__ \ "pillarReference").write[String] and
       (__ \ "accountingPeriodStart").write[LocalDate] and
       (__ \ "accountingPeriodEnd").write[LocalDate] and

@@ -22,6 +22,7 @@ import controllers.subscription.manageAccount.routes as manageRoutes
 import forms.mappings.Mappings
 import helpers.AllMocks
 import models.UserAnswers
+import models.longrunningsubmissions.LongRunningSubmission.ManageGroupDetails
 import models.subscription.ManageGroupDetailsStatus
 import org.mockito.ArgumentMatchers.{any, argThat}
 import org.mockito.Mockito.{reset, verify, when}
@@ -55,7 +56,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
       "must return OK and the correct view if all answers are complete" in {
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(emptyUserAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -69,7 +70,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual OK
-          verify(mockView).apply(any(), any(), any())(any(), any(), any())
+          verify(mockView).apply(any(), any(), any())(using any(), any(), any())
         }
       }
 
@@ -99,7 +100,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(
           userAnswers = Some(userAnswers),
@@ -116,7 +117,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           status(result) mustEqual SEE_OTHER
           redirectLocation(
             result
-          ).value mustEqual controllers.subscription.manageAccount.routes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          ).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
         }
       }
 
@@ -125,7 +126,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(Some(userAnswers)))
-        when(mockView.apply(any(), any(), any())(any(), any(), any())).thenReturn(fakeView)
+        when(mockView.apply(any(), any(), any())(using any(), any(), any())).thenReturn(fakeView)
 
         val application = applicationBuilder(userAnswers = Some(userAnswers), subscriptionLocalData = Some(emptySubscriptionLocalData))
           .overrides(
@@ -140,7 +141,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
 
           status(result) mustEqual OK
 
-          verify(mockView, org.mockito.Mockito.atLeastOnce()).apply(any(), any(), any())(any(), any(), any())
+          verify(mockView, org.mockito.Mockito.atLeastOnce()).apply(any(), any(), any())(using any(), any(), any())
         }
       }
 
@@ -182,7 +183,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
 
           // Verify that InProgress status was set
           val expectedAnswers = emptyUserAnswers.setOrException(ManageGroupDetailsStatusPage, ManageGroupDetailsStatus.InProgress)
@@ -205,7 +206,7 @@ class ManageGroupDetailCheckYourAnswersControllerSpec extends SpecBase with Scal
           val result  = route(application, request).value
 
           status(result) mustEqual SEE_OTHER
-          redirectLocation(result).value mustEqual manageRoutes.ManageGroupDetailsWaitingRoomController.onPageLoad.url
+          redirectLocation(result).value mustEqual routes.WaitingRoomController.onPageLoad(ManageGroupDetails).url
 
           verify(mockSessionRepository).set(argThat[UserAnswers] { userAnswers =>
             userAnswers.id == emptyUserAnswers.id &&

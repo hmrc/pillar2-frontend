@@ -1482,7 +1482,6 @@ rfmWaitingRoom.h1 = Submitting...
 rfmWaitingRoom.h2 = Do not leave this page.
 
 registrationWaitingRoom.title = Submitting your registration
-registrationWaitingRoom.heading = Submitting your registration
 registrationWaitingRoom.h1 = Submitting your registration
 registrationWaitingRoom.h2 = Do not leave this page.
 
@@ -1492,7 +1491,6 @@ repaymentsWaitingRoom.h1 = Submitting your repayment request
 repaymentsWaitingRoom.h2 = Do not leave this page.
 
 manageGroupDetails.title = Submitting your group details
-manageGroupDetails.heading = Submitting your group details
 manageGroupDetails.h1 = Submitting your group details
 manageGroupDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
@@ -1536,7 +1534,6 @@ manageContact.cannotReturn.p2 = You can now
 manageContact.cannotReturn.link = report and manage your Pillar 2 Top-up Taxes
 
 manageContactDetails.title = Submitting your contact details
-manageContactDetails.heading = Submitting your contact details
 manageContactDetails.h1 = Submitting your contact details
 manageContactDetails.h2 = Do not press back in your browser or leave this page. It may take up to a minute to process this change.
 
@@ -1609,15 +1606,14 @@ dueAndOverdueReturns.howToSubmitAReturn = How to submit a return
 dueAndOverdueReturns.howToSubmitAReturn.description = Find out more about how to report your Pillar 2 Top-up Taxes.
 dueAndOverdueReturns.howToSubmitAReturn.link = Pillar 2 Top-up Taxes Guidance
 dueAndOverdueReturns.submissionHistory = Submission history
-dueAndOverdueReturns.submissionHistory.description1 = You can find full details of your group’s submitted returns on the
-dueAndOverdueReturns.submissionHistory.link = submission history
+dueAndOverdueReturns.submissionHistory.description1 = Details of submission and submission amendment dates.
+dueAndOverdueReturns.submissionHistory.link = View submission history
 dueAndOverdueReturns.submissionHistory.description2 = page.
 
 dueAndOverdueReturns.agent.multipleReturns = If your client has multiple returns due, they will be separated by accounting periods.
 dueAndOverdueReturns.agent.commercialSoftware = You must submit each return before its due date using your client’s commercial software supplier.
 dueAndOverdueReturns.agent.noReturns = Your client is up to date with their returns for this accounting period.
 dueAndOverdueReturns.agent.howToSubmitAReturn.description = Find out more about how to report your client’s Pillar 2 Top-up Taxes.
-dueAndOverdueReturns.agent.submissionHistory.description1 = You can find full details of your client’s submitted returns on the
 
 ###############################################
 #

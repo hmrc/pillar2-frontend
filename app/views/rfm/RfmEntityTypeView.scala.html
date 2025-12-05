@@ -42,7 +42,7 @@
         @govukRadios(
             RadiosViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("rfmEntityType.heading")).asPageHeading(Large),
+                legend = LegendViewModel(messages("rfmEntityType.heading")).asPageHeadingLegend(Large),
                 items  = EntityType.options
             )
         )

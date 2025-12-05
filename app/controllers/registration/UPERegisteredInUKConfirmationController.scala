@@ -27,7 +27,7 @@ import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.registrationview.UPERegisteredInUKConfirmationView
@@ -44,14 +44,15 @@ class UPERegisteredInUKConfirmationController @Inject() (
   formProvider:              UPERegisteredInUKConfirmationFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      UPERegisteredInUKConfirmationView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(UpeRegisteredInUKPage) match {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val preparedForm          = request.userAnswers.get(UpeRegisteredInUKPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
@@ -59,7 +60,8 @@ class UPERegisteredInUKConfirmationController @Inject() (
     Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

@@ -29,5 +29,5 @@ case class FilingMemberNonUKData(
 )
 
 object FilingMemberNonUKData {
-  implicit val format: OFormat[FilingMemberNonUKData] = Json.format[FilingMemberNonUKData]
+  given format: OFormat[FilingMemberNonUKData] = Json.format[FilingMemberNonUKData]
 }

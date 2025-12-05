@@ -45,7 +45,7 @@ trait MockitoStubUtils extends AnyWordSpec with SpecBase with FutureAwaits with 
   def executeGet[A](urlElement: String): Future[A] = {
     val mockGetRequestBuilder: RequestBuilder = mock[RequestBuilder]
     when(mockGetRequestBuilder.setHeader(any[(String, String)])).thenReturn(mockGetRequestBuilder)
-    when(mockHttpClient.get(argThat(UrlMatcher(urlElement)))(any[HeaderCarrier])).thenReturn(mockGetRequestBuilder)
+    when(mockHttpClient.get(argThat(UrlMatcher(urlElement)))(using any[HeaderCarrier])).thenReturn(mockGetRequestBuilder)
     mockGetRequestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext])
   }
 
@@ -60,7 +60,7 @@ trait MockitoStubUtils extends AnyWordSpec with SpecBase with FutureAwaits with 
     val urlMatcher = urlElement.fold(any[URL])(elem => argThat(UrlMatcher(elem)))
     when(mockHttpClient.post(urlMatcher)(any[HeaderCarrier])).thenReturn(requestBuilder)
     when(requestBuilder.setHeader(any[(String, String)])).thenReturn(requestBuilder)
-    when(requestBuilder.withBody(any())(any(), any(), any())).thenReturn(requestBuilder)
+    when(requestBuilder.withBody(any())(using any(), any(), any())).thenReturn(requestBuilder)
     requestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext])
   }
 
@@ -76,7 +76,7 @@ trait MockitoStubUtils extends AnyWordSpec with SpecBase with FutureAwaits with 
     val mockRequestBuilder: RequestBuilder = mock[RequestBuilder]
     when(mockHttpClient.put(any[URL])(any[HeaderCarrier])).thenReturn(mockRequestBuilder)
     when(mockRequestBuilder.setHeader(any[(String, String)])).thenReturn(mockRequestBuilder)
-    when(mockRequestBuilder.withBody(any())(any(), any(), any())).thenReturn(mockRequestBuilder)
+    when(mockRequestBuilder.withBody(any())(using any(), any(), any())).thenReturn(mockRequestBuilder)
     mockRequestBuilder.execute[A](any[HttpReads[A]], any[ExecutionContext])
   }
 }

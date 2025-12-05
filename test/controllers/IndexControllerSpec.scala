@@ -17,7 +17,7 @@
 package controllers
 
 import base.SpecBase
-import controllers.actions.TestAuthRetrievals.Ops
+import controllers.actions.TestAuthRetrievals.~
 import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.when
 import pages.{AgentClientPillar2ReferencePage, RedirectToASAHome}
@@ -75,7 +75,7 @@ class IndexControllerSpec extends SpecBase {
 
   "redirect Organisation to the tasklist if no pillar 2 reference is found" in {
     val application = applicationBuilder(userAnswers = None).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(Set.empty)))
 
     running(application) {
@@ -98,7 +98,7 @@ class IndexControllerSpec extends SpecBase {
       )
     )
     val application = applicationBuilder(userAnswers = None, enrolments).overrides(bind[AuthConnector].toInstance(mockAuthConnector)).build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ Some(Organisation) ~ Enrolments(enrolments)))
 
     running(application) {
@@ -115,7 +115,7 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolmentWithDelegatedAuth.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ Some(Agent) ~ pillar2AgentEnrolmentWithDelegatedAuth))
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
@@ -132,7 +132,7 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = Some(userAnswer), pillar2AgentEnrolment.enrolments)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector), bind[SessionRepository].toInstance(mockSessionRepository))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ Some(Agent) ~ pillar2AgentEnrolment))
     when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(userAnswer)))
 
@@ -148,7 +148,7 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = None)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ Some(Individual) ~ Enrolments(Set.empty)))
 
     running(application) {
@@ -162,7 +162,7 @@ class IndexControllerSpec extends SpecBase {
     val application = applicationBuilder(userAnswers = None)
       .overrides(bind[AuthConnector].toInstance(mockAuthConnector))
       .build()
-    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(any(), any()))
+    when(mockAuthConnector.authorise[RetrievalsType](any(), any())(using any(), any()))
       .thenReturn(Future.successful(Some(id) ~ None ~ Enrolments(Set.empty)))
 
     running(application) {

@@ -46,14 +46,15 @@ class NfmEntityTypeController @Inject() (
   formProvider:                                      NfmEntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              NfmEntityTypeView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(FmRegisteredInUKPage)
       .map { ukBased =>
@@ -76,7 +77,8 @@ class NfmEntityTypeController @Inject() (
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

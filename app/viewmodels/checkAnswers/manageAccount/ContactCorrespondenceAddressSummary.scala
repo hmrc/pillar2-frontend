@@ -23,11 +23,13 @@ import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import utils.countryOptions.CountryOptions
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object ContactCorrespondenceAddressSummary {
 
-  def row(countryOptions: CountryOptions)(implicit
+  def row(countryOptions: CountryOptions)(using
     messages: Messages,
     request:  SubscriptionDataRequest[?]
   ): Option[SummaryListRow] =

@@ -22,7 +22,7 @@ import helpers.ObligationsAndSubmissionsDataFixture
 import org.jsoup.Jsoup
 import org.jsoup.nodes.{Document, Element}
 import org.jsoup.select.Elements
-import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
+import utils.DateTimeUtils.toDateFormat
 import views.html.submissionhistory.SubmissionHistoryView
 
 import java.time.{LocalDate, ZonedDateTime}

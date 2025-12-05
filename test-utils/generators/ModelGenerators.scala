@@ -23,27 +23,27 @@ import org.scalacheck.{Arbitrary, Gen}
 
 trait ModelGenerators {
 
-  implicit lazy val arbitraryUkOrAbroadBankAccount: Arbitrary[UkOrAbroadBankAccount] =
+  given arbitraryUkOrAbroadBankAccount: Arbitrary[UkOrAbroadBankAccount] =
     Arbitrary {
       Gen.oneOf(UkOrAbroadBankAccount.values.toSeq)
     }
 
-  implicit lazy val arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
+  given arbitraryMneOrDomestic: Arbitrary[MneOrDomestic] =
     Arbitrary {
       Gen.oneOf(MneOrDomestic.values.toSeq)
     }
 
-  implicit lazy val arbitraryEntityType: Arbitrary[EntityType] =
+  given arbitraryEntityType: Arbitrary[EntityType] =
     Arbitrary {
       Gen.oneOf(EntityType.values.toSeq)
     }
 
-  implicit lazy val arbitraryRepaymentsStatus: Arbitrary[RepaymentsStatus] =
+  given arbitraryRepaymentsStatus: Arbitrary[RepaymentsStatus] =
     Arbitrary {
       Gen.oneOf(RepaymentsStatus.values)
     }
 
-  implicit lazy val arbitraryBankAccountDetails: Arbitrary[BankAccountDetails] =
+  given arbitraryBankAccountDetails: Arbitrary[BankAccountDetails] =
     Arbitrary {
       for {
         bankName          <- Gen.alphaStr.suchThat(_.nonEmpty)
@@ -53,7 +53,7 @@ trait ModelGenerators {
       } yield BankAccountDetails(bankName, nameOnBankAccount, sortCode, accountNumber)
     }
 
-  implicit lazy val arbitraryNonUKBank: Arbitrary[NonUKBank] =
+  given arbitraryNonUKBank: Arbitrary[NonUKBank] =
     Arbitrary {
       for {
         bankName          <- Gen.alphaStr.suchThat(_.nonEmpty)

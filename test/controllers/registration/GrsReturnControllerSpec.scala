@@ -55,9 +55,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
@@ -78,9 +78,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
@@ -101,8 +101,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
         val result  = route(application, request).value
@@ -118,8 +118,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse.copy(registration = GrsRegistrationResult(Registered, None, None))))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
         val result  = route(application, request).value
@@ -135,8 +135,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP.copy(registration = GrsRegistrationResult(Registered, None, None))))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
         val result  = route(application, request).value
@@ -153,9 +153,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
@@ -175,8 +175,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[IncorporatedEntityIdentificationFrontendConnector].toInstance(mockIncorporatedEntityIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse.copy(registration = GrsRegistrationResult(Registered, None, None))))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
         val result  = route(application, request).value
@@ -193,9 +193,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
@@ -216,8 +216,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP.copy(registration = GrsRegistrationResult(Registered, None, None))))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
         val result  = route(application, request).value
@@ -234,9 +234,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponse))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -257,9 +257,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -280,8 +280,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP.copy(companyProfile = None)))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
         val result  = route(application, request).value
@@ -297,8 +297,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP.copy(sautr = None)))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
         val result  = route(application, request).value
@@ -314,8 +314,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLP.copy(registration = GrsRegistrationResult(Registered, None, None))))
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
         val result  = route(application, request).value
@@ -331,7 +331,7 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
 
@@ -353,9 +353,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseWithoutPartner))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -377,9 +377,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(validRegisterWithIdResponseForLLPWithoutPartner))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -401,9 +401,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(failedIdentifierLimited))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
@@ -424,9 +424,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(failedIdentifierLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
@@ -448,9 +448,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(registrationFailedLimited))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueFm("journeyId").url)
@@ -471,9 +471,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(registrationFailedLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueUpe("journeyId").url)
@@ -495,9 +495,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockIncorporatedEntityIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(registrationFailedLimited))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -518,9 +518,9 @@ class GrsReturnControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
 
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(Future.successful(failedIdentifierLLP))
 
         val request = FakeRequest(GET, controllers.registration.routes.GrsReturnController.continueRfm("journeyId").url)
@@ -541,8 +541,8 @@ class GrsReturnControllerSpec extends SpecBase {
         .overrides(bind[PartnershipIdentificationFrontendConnector].toInstance(mockPartnershipIdentificationFrontendConnector))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
-        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(any()))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockPartnershipIdentificationFrontendConnector.getJourneyData(any())(using any()))
           .thenReturn(
             Future.successful(
               validRegisterWithIdResponseForLLP

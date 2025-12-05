@@ -29,16 +29,16 @@ import uk.gov.hmrc.http.*
 import uk.gov.hmrc.http.HttpErrorFunctions.is2xx
 import uk.gov.hmrc.http.HttpReads.Implicits.readRaw
 import uk.gov.hmrc.http.client.HttpClientV2
-import utils.FutureConverter.FutureOps
+import utils.FutureConverter.toFuture
 
 import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton
-class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(implicit ec: ExecutionContext) extends Logging {
+class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2)(using ec: ExecutionContext) extends Logging {
   private val subscriptionUrl: String = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/create-subscription"
 
-  def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(implicit hc: HeaderCarrier): Future[String] =
+  def subscribe(subscriptionRequestParameters: SubscriptionRequestParameters)(using hc: HeaderCarrier): Future[String] =
     http
       .post(url"$subscriptionUrl")
       .withBody(Json.toJson(subscriptionRequestParameters))
@@ -61,7 +61,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def cacheSubscription(
     readSubscriptionParameter: ReadSubscriptionRequestParameters
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[SubscriptionData] = {
     val subscriptionUrl = constructUrl(readSubscriptionParameter, config)
     http
       .get(url"$subscriptionUrl")
@@ -77,7 +77,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def readSubscription(
     plrReference: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionData]] = {
     val subscriptionUrl = s"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/read-subscription/$plrReference"
 
     http
@@ -97,7 +97,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
 
   def getSubscriptionCache(
     userId: String
-  )(implicit hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
+  )(using hc: HeaderCarrier, ec: ExecutionContext): Future[Option[SubscriptionLocalData]] =
     http
       .get(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/user-cache/read-subscription/$userId")
       .execute[HttpResponse]
@@ -109,7 +109,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
           None
       }
 
-  def save(userId: String, subscriptionLocalData: JsValue)(implicit
+  def save(userId: String, subscriptionLocalData: JsValue)(using
     hc: HeaderCarrier
   ): Future[JsValue] =
     http
@@ -123,7 +123,7 @@ class SubscriptionConnector @Inject() (val config: FrontendAppConfig, val http: 
         }
       }
 
-  def amendSubscription(userId: String, amendData: AmendSubscription)(implicit hc: HeaderCarrier): Future[Done] =
+  def amendSubscription(userId: String, amendData: AmendSubscription)(using hc: HeaderCarrier): Future[Done] =
     http
       .put(url"${config.pillar2BaseUrl}/report-pillar2-top-up-taxes/subscription/amend-subscription/$userId")
       .withBody(Json.toJson(amendData))

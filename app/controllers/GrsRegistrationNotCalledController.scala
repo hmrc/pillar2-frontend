@@ -19,7 +19,7 @@ package controllers
 import config.FrontendAppConfig
 import controllers.actions.IdentifierAction
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.registrationview.{RegistrationNotCalledNfmView, RegistrationNotCalledRfmView, RegistrationNotCalledUpeView}
 
@@ -32,19 +32,22 @@ class GrsRegistrationNotCalledController @Inject() (
   upeView:                             RegistrationNotCalledUpeView,
   nfmView:                             RegistrationNotCalledNfmView,
   rfmView:                             RegistrationNotCalledRfmView
-)(implicit appConfig: FrontendAppConfig)
+)(using appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoadUpe: Action[AnyContent] = identify { implicit request =>
+  def onPageLoadUpe: Action[AnyContent] = identify { request =>
+    given Request[AnyContent] = request
     Ok(upeView())
   }
 
-  def onPageLoadNfm: Action[AnyContent] = identify { implicit request =>
+  def onPageLoadNfm: Action[AnyContent] = identify { request =>
+    given Request[AnyContent] = request
     Ok(nfmView())
   }
 
-  def onPageLoadRfm: Action[AnyContent] = rfmIdentify { implicit request =>
+  def onPageLoadRfm: Action[AnyContent] = rfmIdentify { request =>
+    given Request[AnyContent] = request
     Ok(rfmView())
   }
 

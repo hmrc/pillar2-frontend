@@ -29,7 +29,7 @@ trait SummaryListFluency {
       SummaryList(rows = rows)
   }
 
-  implicit class FluentSummaryList(list: SummaryList) {
+  extension (list: SummaryList) {
 
     def withoutBorders(): SummaryList =
       list.copy(classes = s"${list.classes} govuk-summary-list--no-border")
@@ -64,7 +64,7 @@ trait SummaryListFluency {
       )
   }
 
-  implicit class FluentSummaryListRow(row: SummaryListRow) {
+  extension (row: SummaryListRow) {
 
     def withCssClass(className: String): SummaryListRow =
       row.copy(classes = s"${row.classes} $className")
@@ -82,7 +82,7 @@ trait SummaryListFluency {
       )
   }
 
-  implicit class FluentActionItem(actionItem: ActionItem) {
+  extension (actionItem: ActionItem) {
 
     def withVisuallyHiddenText(text: String): ActionItem =
       actionItem.copy(visuallyHiddenText = Some(text))
@@ -100,7 +100,7 @@ trait SummaryListFluency {
       Key(content = content)
   }
 
-  implicit class FluentKey(key: Key) {
+  extension (key: Key) {
 
     def withCssClass(className: String): Key =
       key.copy(classes = s"${key.classes} $className")
@@ -112,7 +112,7 @@ trait SummaryListFluency {
       Value(content = content)
   }
 
-  implicit class FluentValue(value: Value) {
+  extension (value: Value) {
 
     def withCssClass(className: String): Value =
       value.copy(classes = s"${value.classes} $className")

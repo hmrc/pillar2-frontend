@@ -26,7 +26,7 @@ import pages.{SubAddSecondaryContactPage, SubRegisteredAddressPage}
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.countryOptions.CountryOptions
 import views.html.subscriptionview.CaptureSubscriptionAddressView
@@ -44,13 +44,14 @@ class CaptureSubscriptionAddressController @Inject() (
   val countryOptions:        CountryOptions,
   val controllerComponents:  MessagesControllerComponents,
   view:                      CaptureSubscriptionAddressView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[NonUKAddress] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     if request.userAnswers.isPageDefined(SubAddSecondaryContactPage) then {
       val preparedForm = request.userAnswers.get(SubRegisteredAddressPage).map(address => form.fill(address)).getOrElse(form)
       Ok(view(preparedForm, mode, countryOptions.options()))
@@ -59,7 +60,8 @@ class CaptureSubscriptionAddressController @Inject() (
     }
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

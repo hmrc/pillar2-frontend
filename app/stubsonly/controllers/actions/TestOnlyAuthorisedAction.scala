@@ -34,7 +34,7 @@ class TestOnlyAuthorisedAction @Inject() (
   override val authConnector: AuthConnector,
   config:                     FrontendAppConfig,
   val parser:                 BodyParsers.Default
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends ActionBuilder[TestOnlyAuthorisedRequest, AnyContent]
     with FrontendHeaderCarrierProvider
     with ActionFunction[Request, TestOnlyAuthorisedRequest]
@@ -56,7 +56,7 @@ class TestOnlyAuthorisedAction @Inject() (
       Redirect(config.loginUrl, Map("continue" -> Seq(s"${config.host}${request.uri}")))
     }
 
-  implicit class OptionOps[T](o: Option[T]) {
-    def getOrElseFail(failureMessage: String): T = o.getOrElse(throw new IllegalStateException(failureMessage))
+  extension [T](o: Option[T]) {
+    private def getOrElseFail(failureMessage: String): T = o.getOrElse(throw new IllegalStateException(failureMessage))
   }
 }

@@ -46,14 +46,15 @@ class EntityTypeController @Inject() (
   formProvider:                                      EntityTypeFormProvider,
   val controllerComponents:                          MessagesControllerComponents,
   view:                                              EntityTypeView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   val form: Form[EntityType] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(UpeRegisteredInUKPage)
       .map { ukBased =>
@@ -74,7 +75,8 @@ class EntityTypeController @Inject() (
       .getOrElse(Future.successful(Redirect(controllers.routes.JourneyRecoveryController.onPageLoad())))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

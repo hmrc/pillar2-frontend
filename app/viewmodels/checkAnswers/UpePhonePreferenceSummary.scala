@@ -21,11 +21,13 @@ import pages.UpePhonePreferencePage
 import play.api.i18n.Messages
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object UpePhonePreferenceSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(UpePhonePreferencePage).map { answer =>
       val value = if answer then "site.yes" else "site.no"
       SummaryListRowViewModel(

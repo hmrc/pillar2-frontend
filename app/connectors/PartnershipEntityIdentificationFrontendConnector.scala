@@ -35,15 +35,15 @@ trait PartnershipIdentificationFrontendConnector {
     userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
-  )(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
+  )(using hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
 
-  def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData]
+  def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[PartnershipEntityRegistrationData]
 }
 
 class PartnershipIdentificationFrontendConnectorImpl @Inject() (
   appConfig:  FrontendAppConfig,
   httpClient: HttpClientV2
-)(implicit
+)(using
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
 ) extends PartnershipIdentificationFrontendConnector {
@@ -53,7 +53,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
     userType:        UserType,
     partnershipType: EntityType,
     mode:            Mode
-  )(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
+  )(using hc: HeaderCarrier): Future[GrsCreateRegistrationResponse] = {
 
     val serviceName         = ServiceName()
     val registrationRequest = IncorporatedEntityCreateRegistrationRequest(
@@ -71,7 +71,7 @@ class PartnershipIdentificationFrontendConnectorImpl @Inject() (
       .execute[GrsCreateRegistrationResponse]
   }
 
-  def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
+  def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[PartnershipEntityRegistrationData] =
     httpClient
       .get(url"$apiUrl/journey/$journeyId")
       .execute[PartnershipEntityRegistrationData]

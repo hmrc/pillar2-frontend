@@ -10,10 +10,9 @@ import pages.$className$Page
 import connectors.UserAnswersConnectors
 import play.api.test.FakeRequest
 import play.api.libs.json.Json
-import org.mockito.ArgumentMatchers.any
-import org.mockito.ArgumentMatchersSugar.eqTo
+import org.mockito.ArgumentMatchers.{any, eq as eqTo}
 import org.mockito.Mockito.{verify, when}
-import play.api.test.Helpers._
+import play.api.test.Helpers.*
 import views.html.$className$View
 import play.api.mvc.{AnyContentAsEmpty, AnyContentAsFormUrlEncoded}
 import scala.concurrent.Future
@@ -42,12 +41,12 @@ class $className$ControllerSpec extends SpecBase {
       val application = applicationBuilder(userAnswers = Some(emptyUserAnswers)).build()
 
       running(application) {
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest()).value
 
         val view = application.injector.instanceOf[$className$View]
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider(), NormalMode)(getRequest, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider(), NormalMode)(getRequest(), applicationConfig, messages(application)).toString
       }
     }
 
@@ -60,10 +59,10 @@ class $className$ControllerSpec extends SpecBase {
       running(application) {
         val view = application.injector.instanceOf[$className$View]
 
-        val result = route(application, getRequest).value
+        val result = route(application, getRequest()).value
 
         status(result) mustEqual OK
-        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode)(getRequest, applicationConfig, messages(application)).toString
+        contentAsString(result) mustEqual view(formProvider().fill(validAnswer), NormalMode)(getRequest(), applicationConfig, messages(application)).toString
       }
     }
 
@@ -98,12 +97,12 @@ class $className$ControllerSpec extends SpecBase {
           )
           .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future(Json.toJson(Json.obj())))
-        val result = route(application, postRequest).value
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future(Json.toJson(Json.obj())))
+        val result = route(application, postRequest()).value
 
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual controllers.routes.UnderConstructionController.onPageLoad.url
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
       }
     }
 

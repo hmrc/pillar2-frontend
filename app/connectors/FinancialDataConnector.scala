@@ -30,9 +30,10 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
+class FinancialDataConnector @Inject() (val config: FrontendAppConfig, val http: HttpClientV2, ec: ExecutionContext) extends Logging {
+  given ExecutionContext = ec
 
-  def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
+  def retrieveTransactionHistory(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier
   ): Future[TransactionHistory] =
     http
@@ -48,7 +49,7 @@ class FinancialDataConnector @Inject() (implicit val config: FrontendAppConfig, 
           Future failed UnexpectedResponse
       }
 
-  def retrieveFinancialData(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(implicit
+  def retrieveFinancialData(plrReference: String, dateFrom: LocalDate, dateTo: LocalDate)(using
     hc: HeaderCarrier
   ): Future[FinancialDataResponse] =
     http

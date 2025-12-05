@@ -26,7 +26,7 @@ import pages.{SubSecondaryContactNamePage, SubSecondaryEmailPage, SubSecondaryPh
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.subscriptionview.SecondaryPhonePreferenceView
 
@@ -42,11 +42,12 @@ class SecondaryPhonePreferenceController @Inject() (
   val controllerComponents:  MessagesControllerComponents,
   navigator:                 SubscriptionNavigator,
   view:                      SecondaryPhonePreferenceView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     (for {
       _           <- request.userAnswers.get(SubSecondaryEmailPage)
       contactName <- request.userAnswers.get(SubSecondaryContactNamePage)
@@ -63,7 +64,8 @@ class SecondaryPhonePreferenceController @Inject() (
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(SubSecondaryContactNamePage)
       .map { contactName =>

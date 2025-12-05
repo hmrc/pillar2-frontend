@@ -21,5 +21,5 @@ import play.api.libs.json.{Json, OFormat}
 case class OPSRedirectResponse(journeyId: String, nextUrl: String)
 
 object OPSRedirectResponse {
-  implicit val format: OFormat[OPSRedirectResponse] = Json.format[OPSRedirectResponse]
+  given format: OFormat[OPSRedirectResponse] = Json.format[OPSRedirectResponse]
 }

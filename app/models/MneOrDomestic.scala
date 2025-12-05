@@ -49,7 +49,7 @@ object MneOrDomestic extends Enumerable.Implicits {
     UkAndOther
   )
 
-  def options(implicit messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
+  def options(using messages: Messages): Seq[RadioItem] = values.zipWithIndex.map { case (value, index) =>
     RadioItem(
       content = Text(messages(s"mneOrDomestic.${value.toString}")),
       value = Some(value.toString),
@@ -63,6 +63,6 @@ object MneOrDomestic extends Enumerable.Implicits {
       case _                => EntityLocationChangeAllowed
     }
 
-  implicit val enumerable: Enumerable[MneOrDomestic] =
+  given enumerable: Enumerable[MneOrDomestic] =
     Enumerable(values.map(v => v.toString -> v)*)
 }

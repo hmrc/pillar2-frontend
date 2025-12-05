@@ -89,7 +89,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[UltimateParentNavigator]
       when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(UpeRegisteredInUKPage, true)
@@ -114,7 +114,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
         verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }
@@ -125,7 +125,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
       val expectedNextPage = Call(GET, "/")
       val mockNavigator    = mock[UltimateParentNavigator]
       when(mockNavigator.nextPage(any(), any(), any())).thenReturn(expectedNextPage)
-      when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.obj()))
+      when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.obj()))
 
       val userAnswers = emptyUserAnswers
         .setOrException(UpeRegisteredInUKPage, false)
@@ -150,7 +150,7 @@ class UPERegisteredInUKConfirmationControllerSpec extends SpecBase {
         status(result) mustEqual SEE_OTHER
         redirectLocation(result).value mustEqual expectedNextPage.url
 
-        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(any())
+        verify(mockUserAnswersConnectors).save(eqTo(expectedUserAnswers.id), eqTo(expectedUserAnswers.data))(using any())
         verify(mockNavigator).nextPage(UpeRegisteredInUKPage, NormalMode, expectedUserAnswers)
       }
     }

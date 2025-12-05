@@ -16,9 +16,12 @@
 
 package controllers.actions
 
+import helpers.{SubscriptionLocalDataFixture, UserAnswersFixture}
 import models.UserAnswers
+import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
 import models.subscription.SubscriptionLocalData
+import play.api.mvc.Result
 
 import scala.concurrent.{ExecutionContext, Future}
 
@@ -37,8 +40,10 @@ class FakeDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends DataRet
       )
     )
 
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
+  given ExecutionContext = executionContext
 }
 
 class FakeSubscriptionDataRetrievalAction(
@@ -56,15 +61,61 @@ class FakeSubscriptionDataRetrievalAction(
       )
     )
 
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
+
+  given ExecutionContext = executionContext
+}
+
+class FakeSubscriptionDataRequiredAction extends SubscriptionDataRequiredAction with SubscriptionLocalDataFixture {
+  override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
+    Future.successful(
+      Right[Result, SubscriptionDataRequest[A]](
+        SubscriptionDataRequest(
+          request,
+          request.userId,
+          request.maybeSubscriptionLocalData.getOrElse(emptySubscriptionLocalData),
+          request.enrolments,
+          request.isAgent
+        )
+      )
+    )
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
 }
 
 class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends SessionDataRetrievalAction {
-  override protected implicit val executionContext: ExecutionContext =
+  override protected val executionContext: ExecutionContext =
     scala.concurrent.ExecutionContext.Implicits.global
 
-  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
-    Future(SessionOptionalDataRequest(request, request.userId, dataToReturn))
+  given ExecutionContext = executionContext
 
+  override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
+    Future.successful(SessionOptionalDataRequest(request, request.userId, dataToReturn))
+}
+
+class FakeSessionDataRequiredAction extends SessionDataRequiredAction with UserAnswersFixture {
+  given executionContext: ExecutionContext =
+    scala.concurrent.ExecutionContext.Implicits.global
+
+  override protected def refine[A](request: SessionOptionalDataRequest[A]): Future[Either[Result, SessionDataRequest[A]]] =
+    Future.successful(Right(SessionDataRequest(request.request, request.userId, request.userAnswers.getOrElse(emptyUserAnswers))))
+}
+
+class FakeObligationsAndSubmissionsDataRetrievalAction(obligationsAndSubmissionsData: ObligationsAndSubmissionsSuccess)
+    extends ObligationsAndSubmissionsDataRetrievalAction {
+  override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, ObligationsAndSubmissionsSuccessDataRequest[A]]] =
+    Future.successful(
+      Right[Result, ObligationsAndSubmissionsSuccessDataRequest[A]](
+        ObligationsAndSubmissionsSuccessDataRequest(
+          request.request,
+          request.userId,
+          request.subscriptionLocalData,
+          obligationsAndSubmissionsData,
+          request.enrolments,
+          request.isAgent
+        )
+      )
+    )
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
 }

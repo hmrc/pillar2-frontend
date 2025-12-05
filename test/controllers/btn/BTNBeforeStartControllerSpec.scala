@@ -54,11 +54,11 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "returns an OK with correct view for when subscription data and obligation data exists with a singular account period" in
       running(application) {
-        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
@@ -77,11 +77,11 @@ class BTNBeforeStartControllerSpec extends SpecBase {
 
     "return an OK with correct view for when subscription data and obligation data exists with multiple account periods" in
       running(application) {
-        when(mockSubscriptionConnector.getSubscriptionCache(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.getSubscriptionCache(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(someSubscriptionLocalData)))
-        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponseMultipleAccounts()))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
@@ -107,7 +107,7 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(obligationsAndSubmissionsSuccessResponse(ObligationStatus.Open)))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)
@@ -128,9 +128,9 @@ class BTNBeforeStartControllerSpec extends SpecBase {
         .build()
 
       running(testApplication) {
-        when(mockSubscriptionConnector.readSubscription(any())(any[HeaderCarrier], any[ExecutionContext]))
+        when(mockSubscriptionConnector.readSubscription(any())(using any[HeaderCarrier], any[ExecutionContext]))
           .thenReturn(Future.successful(Some(subscriptionData)))
-        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any[String], any[LocalDate], any[LocalDate])(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new Exception("Service failed")))
 
         val request = FakeRequest(GET, controllers.btn.routes.BTNBeforeStartController.onPageLoad().url)

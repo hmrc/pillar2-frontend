@@ -32,12 +32,12 @@ import scala.concurrent.{ExecutionContext, Future}
 
 class ObligationsAndSubmissionsDataRetrievalActionImpl @Inject() (
   val obligationsAndSubmissionsService: ObligationsAndSubmissionsService
-)(implicit val executionContext: ExecutionContext)
+)(using val executionContext: ExecutionContext)
     extends ObligationsAndSubmissionsDataRetrievalAction
     with Logging {
 
   override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, ObligationsAndSubmissionsSuccessDataRequest[A]]] = {
-    implicit val hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
+    given hc: HeaderCarrier = HeaderCarrierConverter.fromRequestAndSession(request, request.session)
 
     obligationsAndSubmissionsService
       .handleData(request.subscriptionLocalData.plrReference, now.minusYears(SubmissionAccountingPeriods), now)

@@ -13,7 +13,7 @@
 
 @layout(pageTitle = title(form, messages("$className;format="decap"$.title"))) {
 
-    @formHelper(action = routes.$className$Controller.onSubmit(mode), 'autoComplete -> "off") {
+    @formHelper(action = routes.$className$Controller.onSubmit(mode), Symbol("autoComplete") -> "off") {
 
         @if(form.errors.nonEmpty) {
             @govukErrorSummary(ErrorSummaryViewModel(form, errorLinkOverrides = Map("value" -> "value.day")))
@@ -22,7 +22,7 @@
         @govukDateInput(
             DateViewModel(
                 field  = form("value"),
-                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeading(Large)
+                legend = LegendViewModel(messages("$className;format="decap"$.heading")).asPageHeadingLegend(Large)
             )
             .withHint(HintViewModel(messages("$className;format="decap"$.hint")))
         )

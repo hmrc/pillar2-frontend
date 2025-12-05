@@ -17,7 +17,7 @@
 package controllers
 
 import controllers.actions.{DataRetrievalAction, IdentifierAction}
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 
@@ -29,10 +29,10 @@ class KeepAliveController @Inject() (
   identify:                 IdentifierAction,
   getData:                  DataRetrievalAction,
   sessionRepository:        SessionRepository
-)(implicit ec: ExecutionContext)
+)(using ec: ExecutionContext)
     extends FrontendBaseController {
 
-  def keepAlive: Action[AnyContent] = (identify andThen getData).async { implicit request =>
+  def keepAlive: Action[AnyContent] = (identify andThen getData).async { request =>
     request.userAnswers
       .map { answers =>
         sessionRepository.keepAlive(answers.id).map(_ => Ok)

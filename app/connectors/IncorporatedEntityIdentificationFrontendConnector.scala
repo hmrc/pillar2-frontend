@@ -31,21 +31,21 @@ import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
 trait IncorporatedEntityIdentificationFrontendConnector {
-  def createLimitedCompanyJourney(userType: UserType, mode:      Mode)(implicit hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
-  def getJourneyData(journeyId:             String)(implicit hc: HeaderCarrier):                    Future[IncorporatedEntityRegistrationData]
+  def createLimitedCompanyJourney(userType: UserType, mode:   Mode)(using hc: HeaderCarrier): Future[GrsCreateRegistrationResponse]
+  def getJourneyData(journeyId:             String)(using hc: HeaderCarrier):                 Future[IncorporatedEntityRegistrationData]
 }
 
 class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
   appConfig:  FrontendAppConfig,
   httpClient: HttpClientV2
-)(implicit
+)(using
   val messagesApi: MessagesApi,
   ec:              ExecutionContext
 ) extends IncorporatedEntityIdentificationFrontendConnector {
   private val apiUrl =
     s"${appConfig.incorporatedEntityIdentificationFrontendBaseUrl}/incorporated-entity-identification/api"
 
-  def createLimitedCompanyJourney(userType: UserType, mode: Mode)(implicit
+  def createLimitedCompanyJourney(userType: UserType, mode: Mode)(using
     hc: HeaderCarrier
   ): Future[GrsCreateRegistrationResponse] = {
     val serviceName         = ServiceName()
@@ -64,7 +64,7 @@ class IncorporatedEntityIdentificationFrontendConnectorImpl @Inject() (
       .execute[GrsCreateRegistrationResponse]
   }
 
-  def getJourneyData(journeyId: String)(implicit hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
+  def getJourneyData(journeyId: String)(using hc: HeaderCarrier): Future[IncorporatedEntityRegistrationData] =
     httpClient
       .get(url"$apiUrl/journey/$journeyId")
       .execute[IncorporatedEntityRegistrationData]

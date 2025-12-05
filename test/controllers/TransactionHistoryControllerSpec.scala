@@ -98,8 +98,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any()))
           .thenReturn(Future.successful(transactionHistoryResponse))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
@@ -134,8 +134,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any()))
           .thenReturn(Future.successful(transactionHistoryResponsePagination))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
@@ -170,8 +170,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(NoResultFound))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any())).thenReturn(Future.failed(NoResultFound))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -196,8 +196,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any())).thenReturn(Future.failed(UnexpectedResponse))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any())).thenReturn(Future.failed(UnexpectedResponse))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -219,7 +219,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
         val request = FakeRequest(GET, controllers.routes.TransactionHistoryController.onPageLoadTransactionHistory(None).url)
         when(mockSessionRepository.get(any()))
           .thenReturn(Future.successful(None))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
         val result = route(application, request).value
 
         status(result) mustEqual SEE_OTHER
@@ -243,7 +243,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
 
         val result = route(application, request).value
         val view   = application.injector.instanceOf[NoTransactionHistoryView]
@@ -275,7 +275,7 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.failed(new Exception("")))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
 
         val result = route(application, request).value
 
@@ -319,8 +319,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any()))
           .thenReturn(Future.successful(transactionHistoryResponse))
         val result = route(application, request).value
         val view   = application.injector.instanceOf[TransactionHistoryView]
@@ -367,8 +367,8 @@ class TransactionHistoryControllerSpec extends SpecBase with ViewInstances {
           .thenReturn(Future.successful(Some(emptyUserAnswers)))
         when(mockSessionRepository.set(any()))
           .thenReturn(Future.successful(true))
-        when(mockSubscriptionService.readSubscription(any())(any())).thenReturn(Future.successful(subscriptionData))
-        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(any()))
+        when(mockSubscriptionService.readSubscription(any())(using any())).thenReturn(Future.successful(subscriptionData))
+        when(mockFinancialDataConnector.retrieveTransactionHistory(any(), any(), any())(using any()))
           .thenReturn(Future.successful(transactionHistoryWithDecimals))
         val result = route(application, request).value
 

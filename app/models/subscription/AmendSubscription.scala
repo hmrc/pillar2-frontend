@@ -54,15 +54,15 @@ final case class FilingMemberAmendDetails(
   organisationName:        String
 )
 object AmendSubscription {
-  implicit val format: OFormat[AmendSubscription] = Json.format[AmendSubscription]
+  given format: OFormat[AmendSubscription] = Json.format[AmendSubscription]
 }
 object UpeDetailsAmend {
-  implicit val format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
+  given format: OFormat[UpeDetailsAmend] = Json.format[UpeDetailsAmend]
 }
 object ContactDetailsType {
-  implicit val format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
+  given format: OFormat[ContactDetailsType] = Json.format[ContactDetailsType]
 }
 
 object FilingMemberAmendDetails {
-  implicit val format: OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
+  given format: OFormat[FilingMemberAmendDetails] = Json.format[FilingMemberAmendDetails]
 }

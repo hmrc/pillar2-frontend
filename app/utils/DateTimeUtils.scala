@@ -47,18 +47,18 @@ object DateTimeUtils {
   // 2011-12-03T10:15:30
   val isoLocalDateTimeFormatter: DateTimeFormatter = DateTimeFormatter.ISO_LOCAL_DATE_TIME
 
-  implicit class LocalDateOps(localDate: LocalDate) {
+  extension (localDate: LocalDate) {
     def toDateFormat: String = localDate.format(dateFormatter)
   }
 
-  implicit class ZonedDateTimeOps(zonedDateTime: ZonedDateTime) {
+  extension (zonedDateTime: ZonedDateTime) {
     def toDateFormat:        String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateFormatter)
     def toDateTimeGmtFormat: String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(dateTimeFormatter)
     def toTimeGmtFormat:     String = zonedDateTime.withZoneSameLocal(gmtZoneId).format(timeFormatter)
   }
 
-  private val fixedNow:    Instant   = Instant.now()
-  implicit val fixedClock: Clock     = Clock.fixed(fixedNow, utcZoneId)
-  val today:               LocalDate = LocalDate.now(fixedClock)
+  private val fixedNow: Instant   = Instant.now()
+  given fixedClock:     Clock     = Clock.fixed(fixedNow, utcZoneId)
+  val today:            LocalDate = LocalDate.now(fixedClock)
 
 }

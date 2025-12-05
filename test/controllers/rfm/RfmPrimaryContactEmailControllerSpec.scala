@@ -107,7 +107,7 @@ class RfmPrimaryContactEmailControllerSpec extends SpecBase {
         .build()
 
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.rfm.routes.RfmPrimaryContactEmailController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("emailAddress", "AshleySmith@email.com"))

@@ -18,6 +18,7 @@ package controllers.actions
 
 import controllers.btn.routes.*
 import models.btn.BTNStatus
+import models.longrunningsubmissions.LongRunningSubmission.BTN
 import models.requests.SubscriptionDataRequest
 import models.subscription.SubscriptionLocalData
 import pages.EntitiesInsideOutsideUKPage
@@ -34,7 +35,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class BTNStatusAction @Inject() (
   val sessionRepository: SessionRepository,
   auditService:          AuditService
-)(implicit val ec: ExecutionContext)
+)(using val ec: ExecutionContext)
     extends Logging
     with FrontendHeaderCarrierProvider {
 
@@ -46,7 +47,7 @@ class BTNStatusAction @Inject() (
       override protected def executionContext: ExecutionContext = ec
     }
 
-  private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(implicit
+  private def btnAlreadySubmitted[T <: RequestHeader](userId: String, subscriptionData: SubscriptionLocalData)(using
     request: T
   ): Future[Either[Result, T]] =
     sessionRepository
@@ -67,7 +68,7 @@ class BTNStatusAction @Inject() (
                 entitiesInsideOutsideUk.getOrElse(false)
               )
               .map(_ => Left(Redirect(CheckYourAnswersController.cannotReturnKnockback)))
-          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(BTNWaitingRoomController.onPageLoad)))
+          case Some(BTNStatus.processing) => Future.successful(Left(Redirect(controllers.routes.WaitingRoomController.onPageLoad(BTN))))
           case _                          => Future.successful(Right(request))
         }
       }

@@ -30,7 +30,7 @@ import scala.concurrent.{ExecutionContext, Future}
 class TestOnlyConnector @Inject() (
   appConfig:  FrontendAppConfig,
   httpClient: HttpClientV2
-)(implicit
+)(using
   val ec: ExecutionContext
 ) {
 
@@ -39,16 +39,16 @@ class TestOnlyConnector @Inject() (
   private val pillar2Url: String =
     s"${appConfig.pillar2BaseUrl}/report-pillar2-top-up-taxes/test-only"
 
-  def clearAllData()(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def clearAllData()(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.get(url"$pillar2Url/clear-all").execute[HttpResponse]
 
-  def clearCurrentData(id: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def clearCurrentData(id: String)(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.get(url"$pillar2Url/clear-current/$id").execute[HttpResponse]
 
-  def getAllRecords()(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def getAllRecords()(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.get(url"$pillar2Url/get-all").execute[HttpResponse]
 
-  def upsertRecord(id: String, data: JsValue)(implicit hc: HeaderCarrier): Future[Unit] =
+  def upsertRecord(id: String, data: JsValue)(using hc: HeaderCarrier): Future[Unit] =
     httpClient
       .post(url"$pillar2Url/upsertRecord/$id")
       .withBody(Json.toJson(data))
@@ -67,6 +67,6 @@ class TestOnlyConnector @Inject() (
         }
       }
 
-  def deEnrol(groupId: String, pillar2Reference: String)(implicit hc: HeaderCarrier): Future[HttpResponse] =
+  def deEnrol(groupId: String, pillar2Reference: String)(using hc: HeaderCarrier): Future[HttpResponse] =
     httpClient.get(url"$pillar2Url/de-enrol/$groupId/$pillar2Reference").execute[HttpResponse]
 }

@@ -91,7 +91,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
           FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url).withFormUrlEncodedBody(
             "value" -> "$$"
           )
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val result    = route(application, request).value
         val boundForm = formProvider().bind(Map("value" -> "$$"))
         val view      = application.injector.instanceOf[NominateFilingMemberYesNoView]
@@ -106,7 +106,7 @@ class NominateFilingMemberYesNoControllerSpec extends SpecBase {
         .overrides(bind[UserAnswersConnectors].toInstance(mockUserAnswersConnectors))
         .build()
       running(application) {
-        when(mockUserAnswersConnectors.save(any(), any())(any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
+        when(mockUserAnswersConnectors.save(any(), any())(using any())).thenReturn(Future.successful(Json.toJson(Json.obj())))
         val request =
           FakeRequest(POST, controllers.fm.routes.NominateFilingMemberYesNoController.onSubmit(NormalMode).url)
             .withFormUrlEncodedBody(("nominateFilingMember", "true"))

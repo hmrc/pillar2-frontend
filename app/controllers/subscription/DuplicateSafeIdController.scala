@@ -26,7 +26,7 @@ import pages.DuplicateSafeIdPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import utils.RowStatus
 import views.html.subscriptionview.DuplicateSafeIdView
@@ -43,13 +43,14 @@ class DuplicateSafeIdController @Inject() (
   formProvider:              DuplicateSafeIdFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      DuplicateSafeIdView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     if request.userAnswers.upeStatus == RowStatus.Completed then {
       Ok(view(form))
     } else {
@@ -57,7 +58,8 @@ class DuplicateSafeIdController @Inject() (
     }
   }
 
-  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

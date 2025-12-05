@@ -26,7 +26,7 @@ import pages.RfmUkBasedPage
 import play.api.data.Form
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.rfm.UkBasedFilingMemberView
 
@@ -42,21 +42,23 @@ class UkBasedFilingMemberController @Inject() (
   formProvider:                     NFMRegisteredInUKConfirmationFormProvider,
   val controllerComponents:         MessagesControllerComponents,
   view:                             UkBasedFilingMemberView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[Boolean] = formProvider()
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
-    val preparedForm = request.userAnswers.get(RfmUkBasedPage) match {
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
+    val preparedForm          = request.userAnswers.get(RfmUkBasedPage) match {
       case None        => form
       case Some(value) => form.fill(value)
     }
     Ok(view(preparedForm, mode))
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(

@@ -23,11 +23,13 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object UkOrAbroadBankAccountSummary {
 
-  def row(answers: UserAnswers)(implicit messages: Messages): Option[SummaryListRow] =
+  def row(answers: UserAnswers)(using messages: Messages): Option[SummaryListRow] =
     answers.get(UkOrAbroadBankAccountPage).map { answer =>
       val value = ValueViewModel(
         HtmlContent(

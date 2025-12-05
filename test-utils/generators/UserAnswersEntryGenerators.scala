@@ -23,7 +23,7 @@ import play.api.libs.json.{JsValue, Json}
 
 trait UserAnswersEntryGenerators extends PageGenerators with ModelGenerators {
 
-  implicit lazy val arbitraryTurnOverEligibilityUserAnswersEntry: Arbitrary[(TurnOverEligibilityPage.type, JsValue)] =
+  given arbitraryTurnOverEligibilityUserAnswersEntry: Arbitrary[(TurnOverEligibilityPage.type, JsValue)] =
     Arbitrary {
       for {
         page  <- arbitrary[TurnOverEligibilityPage.type]

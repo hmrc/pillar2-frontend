@@ -29,9 +29,9 @@ import scala.math.BigDecimal.RoundingMode
 
 trait Generators extends UserAnswersGenerator with PageGenerators with ModelGenerators with UserAnswersEntryGenerators {
 
-  implicit val dontShrink: Shrink[String] = Shrink.shrinkAny
+  given dontShrink: Shrink[String] = Shrink.shrinkAny
 
-  implicit val arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char](Arbitrary.arbChar).suchThat(_ > ' '))
+  given arbNonWhitespace: Arbitrary[Char] = Arbitrary(arbitrary[Char](Arbitrary.arbChar).suchThat(_ > ' '))
 
   def genIntersperseString(gen: Gen[String], value: String, frequencyV: Int = 1, frequencyN: Int = 10): Gen[String] = {
 
@@ -234,7 +234,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       .chooseNum(Double.MinValue, Double.MaxValue)
       .map(d => BigDecimal(d).setScale(2, RoundingMode.HALF_UP))
 
-  implicit lazy val financialHistoryArbitrary: Arbitrary[FinancialHistory] =
+  given financialHistoryArbitrary: Arbitrary[FinancialHistory] =
     Arbitrary {
       for {
         date         <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))
@@ -244,7 +244,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       } yield FinancialHistory(date, paymentType, amountPaid, amountRepaid)
     }
 
-  implicit lazy val transactionHistoryArbitrary: Arbitrary[TransactionHistory] =
+  given transactionHistoryArbitrary: Arbitrary[TransactionHistory] =
     Arbitrary {
       for {
         plrReference     <- nonEmptyString
@@ -252,7 +252,7 @@ trait Generators extends UserAnswersGenerator with PageGenerators with ModelGene
       } yield TransactionHistory(plrReference, financialHistory)
     }
 
-  implicit lazy val accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =
+  given accountingPeriodDetailsArbitrary: Arbitrary[AccountingPeriodDetails] =
     Arbitrary {
       for {
         startDate <- datesBetween(LocalDate.of(2000, 1, 1), LocalDate.of(3000, 1, 1))

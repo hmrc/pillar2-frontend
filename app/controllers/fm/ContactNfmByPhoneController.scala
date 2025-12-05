@@ -26,7 +26,7 @@ import pages.{FmContactEmailPage, FmContactNamePage, FmPhonePreferencePage}
 import play.api.i18n.I18nSupport
 import play.api.libs.json.Format.GenericFormat
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
 import views.html.fmview.ContactNfmByPhoneView
 
@@ -42,11 +42,12 @@ class ContactNfmByPhoneController @Inject() (
   formProvider:              ContactNfmByPhoneFormProvider,
   val controllerComponents:  MessagesControllerComponents,
   view:                      ContactNfmByPhoneView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
-  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { implicit request =>
+  def onPageLoad(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData) { request =>
+    given Request[AnyContent] = request
     (for {
       _    <- request.userAnswers.get(FmContactEmailPage)
       name <- request.userAnswers.get(FmContactNamePage)
@@ -62,7 +63,8 @@ class ContactNfmByPhoneController @Inject() (
 
   }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getData andThen requireData).async { request =>
+    given Request[AnyContent] = request
     request.userAnswers
       .get(FmContactNamePage)
       .map { userName =>

@@ -39,11 +39,13 @@ import play.twirl.api.HtmlFormat
 import uk.gov.hmrc.govukfrontend.views.viewmodels.content.HtmlContent
 import uk.gov.hmrc.govukfrontend.views.viewmodels.summarylist.SummaryListRow
 import viewmodels.govuk.summarylist.*
-import viewmodels.implicits.*
+import viewmodels.implicits.given
+
+import scala.language.implicitConversions
 
 object ContactCapturePhoneDetailsSummary {
 
-  def row()(implicit messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
+  def row()(using messages: Messages, request: SubscriptionDataRequest[?]): Option[SummaryListRow] =
     if request.subscriptionLocalData.subPrimaryPhonePreference then {
       request.subscriptionLocalData.get(SubPrimaryCapturePhonePage).map { answer =>
         val value = ValueViewModel(

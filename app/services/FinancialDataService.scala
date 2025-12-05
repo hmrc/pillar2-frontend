@@ -34,10 +34,10 @@ import java.time.LocalDate
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector)(implicit ec: ExecutionContext) {
+class FinancialDataService @Inject() (financialDataConnector: FinancialDataConnector)(using ec: ExecutionContext) {
 
   /** Parses financial data from the API into something a bit easier to take decisions against */
-  def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(implicit hc: HeaderCarrier): Future[FinancialData] =
+  def retrieveFinancialData(pillar2Id: String, fromDate: LocalDate, toDate: LocalDate)(using hc: HeaderCarrier): Future[FinancialData] =
     financialDataConnector
       .retrieveFinancialData(pillar2Id, fromDate, toDate)
       .map(parseFinancialDataResponse)

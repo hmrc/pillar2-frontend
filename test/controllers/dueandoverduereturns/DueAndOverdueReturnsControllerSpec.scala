@@ -55,7 +55,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
   "DueAndOverdueReturnsController" when {
     "onPageLoad" must {
       "return OK and display the correct view for a GET with no returns" in {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(emptyResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -72,7 +72,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
       }
 
       "return OK and display the correct view for a GET with due returns" in {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(dueReturnsResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -89,7 +89,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
       }
 
       "return OK and display the correct view for a GET with overdue returns" in {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.successful(overdueReturnsResponse))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 
@@ -106,7 +106,7 @@ class DueAndOverdueReturnsControllerSpec extends SpecBase with ObligationsAndSub
       }
 
       "redirect to Journey Recovery for a GET if the service call fails" in {
-        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(any[HeaderCarrier]))
+        when(mockObligationsAndSubmissionsService.handleData(any(), any(), any())(using any[HeaderCarrier]))
           .thenReturn(Future.failed(new RuntimeException("Test exception")))
         when(mockSessionRepository.get(any())).thenReturn(Future.successful(Some(emptyUserAnswers)))
 

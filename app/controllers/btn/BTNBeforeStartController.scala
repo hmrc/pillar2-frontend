@@ -22,6 +22,7 @@ import config.FrontendAppConfig
 import controllers.actions.*
 import controllers.filteredAccountingPeriodDetails
 import models.btn.BTNStatus
+import models.requests.ObligationsAndSubmissionsSuccessDataRequest
 import models.{Mode, UserAnswers}
 import pages.{BTNChooseAccountingPeriodPage, EntitiesInsideOutsideUKPage, PlrReferencePage}
 import play.api.i18n.I18nSupport
@@ -45,13 +46,14 @@ class BTNBeforeStartController @Inject() (
   subscriptionService:                    SubscriptionService,
   sessionRepository:                      SessionRepository,
   @Named("EnrolmentIdentifier") identify: IdentifierAction
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport {
 
   def onPageLoad(mode: Mode): Action[AnyContent] =
-    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData).async { implicit request =>
-      implicit val hc: HeaderCarrier =
+    (identify andThen getSubscriptionData andThen requireSubscriptionData andThen requireObligationData).async { request =>
+      given ObligationsAndSubmissionsSuccessDataRequest[AnyContent] = request
+      given hc: HeaderCarrier =
         HeaderCarrierConverter.fromRequestAndSession(request, request.session)
       (
         for {

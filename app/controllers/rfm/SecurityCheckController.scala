@@ -44,19 +44,21 @@ class SecurityCheckController @Inject() (
   val controllerComponents:         MessagesControllerComponents,
   view:                             SecurityCheckView,
   errorView:                        SecurityCheckErrorView
-)(implicit ec: ExecutionContext, appConfig: FrontendAppConfig)
+)(using ec: ExecutionContext, appConfig: FrontendAppConfig)
     extends FrontendBaseController
     with I18nSupport {
 
   val form: Form[String] = formProvider()
 
   def onPageLoad(mode: Mode = NormalMode): Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
-      val preparedForm = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
+      val preparedForm          = request.userAnswers.get(RfmPillar2ReferencePage).map(form.fill).getOrElse(form)
       Ok(view(preparedForm, mode))
     }
 
-  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { implicit request =>
+  def onSubmit(mode: Mode): Action[AnyContent] = (identify andThen getSessionData andThen requireSessionData).async { request =>
+    given Request[AnyContent] = request
     form
       .bindFromRequest()
       .fold(
@@ -71,7 +73,8 @@ class SecurityCheckController @Inject() (
   }
 
   def onPageLoadNotAllowed: Action[AnyContent] =
-    (identify andThen getSessionData andThen requireSessionData) { implicit request =>
+    (identify andThen getSessionData andThen requireSessionData) { request =>
+      given Request[AnyContent] = request
       Ok(errorView())
     }
 
@@ -81,7 +84,7 @@ class SecurityCheckController @Inject() (
     *
     * https://confluence.tools.tax.service.gov.uk/display/GGWRLS/EACD+Concepts%3A+Government+Gateway+Accounts+and+Groups
     */
-  private def redirectSecurityCheck(pillar2Id: String, mode: Mode, updatedAnswers: UserAnswers)(userGroupIdOpt: Option[String])(implicit
+  private def redirectSecurityCheck(pillar2Id: String, mode: Mode, updatedAnswers: UserAnswers)(userGroupIdOpt: Option[String])(using
     hc: HeaderCarrier
   ): Future[Result] =
     enrolmentStoreProxyConnector

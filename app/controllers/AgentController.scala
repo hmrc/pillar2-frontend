@@ -26,7 +26,7 @@ import pages.*
 import play.api.Logging
 import play.api.data.Form
 import play.api.i18n.I18nSupport
-import play.api.mvc.{Action, AnyContent, MessagesControllerComponents}
+import play.api.mvc.*
 import repositories.SessionRepository
 import services.SubscriptionService
 import uk.gov.hmrc.play.bootstrap.frontend.controller.FrontendBaseController
@@ -54,19 +54,21 @@ class AgentController @Inject() (
   sessionDataRetrievalAction:        SessionDataRetrievalAction,
   sessionDataRequiredAction:         SessionDataRequiredAction,
   agentClientPillar2RefFormProvider: AgentClientPillar2ReferenceFormProvider
-)(implicit appConfig: FrontendAppConfig, ec: ExecutionContext)
+)(using appConfig: FrontendAppConfig, ec: ExecutionContext)
     extends FrontendBaseController
     with I18nSupport
     with Logging {
 
   private val agentClientPillar2RefForm: Form[String] = agentClientPillar2RefFormProvider()
 
-  def onPageLoad: Action[AnyContent] = Action { implicit request =>
+  def onPageLoad: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(agentView()).withNewSession
   }
 
   def onPageLoadClientPillarId: Action[AnyContent] =
-    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { implicit request =>
+    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { request =>
+      given Request[AnyContent] = request
       for {
         answersWithoutSubmissionFlag <- Future.fromTry(request.userAnswers.remove(AgentClientConfirmationSubmittedPage))
         answersWithRedirectFlag      <- Future.fromTry(answersWithoutSubmissionFlag.set(RedirectToASAHome, true))
@@ -81,7 +83,8 @@ class AgentController @Inject() (
     }
 
   def onSubmitClientPillarId: Action[AnyContent] =
-    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { implicit request =>
+    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { request =>
+      given Request[AnyContent] = request
       agentClientPillar2RefForm
         .bindFromRequest()
         .fold(
@@ -111,7 +114,8 @@ class AgentController @Inject() (
     }
 
   def onPageLoadConfirmClientDetails: Action[AnyContent] =
-    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { implicit request =>
+    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { request =>
+      given Request[AnyContent] = request
       for {
         updatedAnswers <- Future.fromTry(request.userAnswers.set(RedirectToASAHome, true))
         _              <- sessionRepository.set(updatedAnswers)
@@ -123,7 +127,7 @@ class AgentController @Inject() (
     }
 
   def onSubmitConfirmClientDetails: Action[AnyContent] =
-    (enrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { implicit request =>
+    (enrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction).async { request =>
       val userAnswers: UserAnswers = request.userAnswers
 
       val submitted    = userAnswers.get(AgentClientConfirmationSubmittedPage)
@@ -151,24 +155,29 @@ class AgentController @Inject() (
     }
 
   def onPageLoadNoClientMatch: Action[AnyContent] =
-    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction) { implicit request =>
+    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction) { request =>
+      given Request[AnyContent] = request
       Ok(clientNoMatchView())
     }
 
-  def onPageLoadError: Action[AnyContent] = Action { implicit request =>
+  def onPageLoadError: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(agentErrorView())
   }
 
   def onPageLoadUnauthorised: Action[AnyContent] =
-    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction) { implicit request =>
+    (asaEnrolmentIdentifierAction andThen sessionDataRetrievalAction andThen sessionDataRequiredAction) { request =>
+      given Request[AnyContent] = request
       Ok(agentClientUnauthorisedView())
     }
 
-  def onPageLoadIndividualError: Action[AnyContent] = Action { implicit request =>
+  def onPageLoadIndividualError: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(agentIndividualErrorView())
   }
 
-  def onPageLoadOrganisationError: Action[AnyContent] = Action { implicit request =>
+  def onPageLoadOrganisationError: Action[AnyContent] = Action { request =>
+    given Request[AnyContent] = request
     Ok(agentOrganisationErrorView())
   }
 

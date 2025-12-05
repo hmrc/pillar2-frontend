@@ -25,9 +25,8 @@ import utils.JourneyCheck
 import javax.inject.Inject
 import scala.concurrent.{ExecutionContext, Future}
 
-class SubscriptionDataRequiredActionImpl @Inject() (implicit val executionContext: ExecutionContext)
-    extends SubscriptionDataRequiredAction
-    with Logging {
+class SubscriptionDataRequiredActionImpl @Inject() (val executionContext: ExecutionContext) extends SubscriptionDataRequiredAction with Logging {
+  given ExecutionContext = executionContext
 
   override protected def refine[A](request: OptionalSubscriptionDataRequest[A]): Future[Either[Result, SubscriptionDataRequest[A]]] =
     request.maybeSubscriptionLocalData match {
