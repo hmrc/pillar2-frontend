@@ -15,8 +15,10 @@
  *@
 
 @import config.FrontendAppConfig
-@import views.html.components.gds._
+@import java.time.{LocalDate, ZonedDateTime}
 @import uk.gov.hmrc.govukfrontend.views.html.components._
+@import utils.DateTimeUtils.{LocalDateOps, ZonedDateTimeOps}
+@import views.html.components.gds._
 
 @this(
         layout: templates.Layout,
@@ -31,7 +33,7 @@
         formHelper: FormWithCSRF
 )
 
-@(companyName: Option[String], submissionDate: String, accountingPeriodStartDate: String, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
+@(companyName: Option[String], submissionDate: ZonedDateTime, accountingPeriodStartDate: LocalDate, isAgent: Boolean, showUnderEnquiryWarning: Boolean)(implicit request: Request[_], appConfig: FrontendAppConfig, messages: Messages)
 
 @layout(pageTitle = titleNoForm(messages("btn.confirmation.title")), showBackLink = false, bannerUrl = Some(routes.HomepageController.onPageLoad().url)) {
 
@@ -42,12 +44,12 @@
     ))
 
     @if(isAgent && companyName.isDefined) {
-        @p(messages("btn.confirmation.agent.p1", companyName.get, submissionDate))
+        @p(messages("btn.confirmation.agent.p1", companyName.get, submissionDate.toDateFormat))
     } else {
-        @p(messages("btn.confirmation.group.p1", submissionDate))
+        @p(messages("btn.confirmation.group.p1", submissionDate.toDateFormat))
     }
 
-    @p(messages("btn.confirmation.p2", accountingPeriodStartDate))
+    @p(messages("btn.confirmation.p2", accountingPeriodStartDate.toDateFormat))
 
     @if(showUnderEnquiryWarning) {
         @govukInsetText(InsetText(content = Text(messages("btn.confirmation.underEnquiry.insetText"))))
