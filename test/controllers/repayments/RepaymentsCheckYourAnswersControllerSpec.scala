@@ -29,7 +29,6 @@ import org.mockito.ArgumentMatchers.any
 import org.mockito.Mockito.*
 import org.scalatest.concurrent.Eventually
 import pages.*
-import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.i18n.MessagesApi
 import play.api.mvc.Result
 import play.api.mvc.{MessagesControllerComponents, PlayBodyParsers}
@@ -319,7 +318,7 @@ class RepaymentsCheckYourAnswersControllerSpec extends SpecBase with SummaryList
             val persistOnCompletion: UserAnswers = emptyUserAnswers
               .setOrException(PlrReferencePage, initialPersist.get(PlrReferencePage).value)
               .setOrException(RepaymentsStatusPage, SuccessfullyCompleted)
-              .setOrException(RepaymentConfirmationTimestampPage, ZonedDateTime.ofInstant(fixedNow, utcZoneId).toDateTimeGmtFormat)
+              .setOrException(RepaymentConfirmationPage, ZonedDateTime.ofInstant(fixedNow, utcZoneId).toDateTimeGmtFormat)
               .setOrException(RepaymentCompletionStatus, true)
 
             answersCaptor.getAllValues.asScala.map(_.data) must contain theSameElementsInOrderAs Seq(
