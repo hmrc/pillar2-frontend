@@ -27,14 +27,14 @@ import java.time.ZonedDateTime
 
 class RfmConfirmationViewSpec extends ViewSpecBase {
 
-  lazy val testPillar2ID:      String              = "PLR2ID123"
-  lazy val currentDateTimeGMT: String              = ZonedDateTime.now().toDateTimeGmtFormat
-  lazy val page:               RfmConfirmationView = inject[RfmConfirmationView]
-  lazy val pageTitle:          String              = "Replace filing member successful"
-  lazy val paragraphs:         Elements            = view.getElementsByClass("govuk-body")
+  lazy val testPillar2ID:   String              = "PLR2ID123"
+  lazy val currentDateTime: ZonedDateTime       = ZonedDateTime.now()
+  lazy val page:            RfmConfirmationView = inject[RfmConfirmationView]
+  lazy val pageTitle:       String              = "Replace filing member successful"
+  lazy val paragraphs:      Elements            = view.getElementsByClass("govuk-body")
 
   lazy val view: Document =
-    Jsoup.parse(page(testPillar2ID, currentDateTimeGMT)(request, appConfig, messages).toString())
+    Jsoup.parse(page(testPillar2ID, currentDateTime)(request, appConfig, messages).toString())
 
   "Rfm Confirmation View" should {
     "have a title" in {
@@ -50,7 +50,7 @@ class RfmConfirmationViewSpec extends ViewSpecBase {
 
     "have pillar 2 ID and date time confirmation paragraphs" in {
       paragraphs.get(0).text mustBe s"Group Pillar 2 Top-up Taxes ID: $testPillar2ID"
-      paragraphs.get(1).text mustBe s"Your group’s filing member was replaced on $currentDateTimeGMT"
+      paragraphs.get(1).text mustBe s"Your group’s filing member was replaced on ${currentDateTime.toDateTimeGmtFormat}"
     }
 
     "have an H2 heading for new filing member obligations" in {

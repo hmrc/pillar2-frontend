@@ -14,14 +14,21 @@
  * limitations under the License.
  */
 
-package pages.pdf
+package pages
 
-import pages.QuestionPage
-import play.api.libs.json.JsPath
+import pages.behaviours.PageBehaviours
 
-case object RepaymentConfirmationTimestampPage extends QuestionPage[String] {
+import java.time.ZonedDateTime
 
-  override def path: JsPath = JsPath \ toString
+class RfmConfirmationPageSpec extends PageBehaviours {
 
-  override def toString: String = "repaymentConfirmationTimeStamp"
+  "RfmConfirmationPage must" - {
+
+    beRetrievable[ZonedDateTime](RfmConfirmationPage)
+
+    beSettable[ZonedDateTime](RfmConfirmationPage)
+
+    beRemovable[ZonedDateTime](RfmConfirmationPage)
+
+  }
 }

@@ -18,6 +18,7 @@ package controllers.actions
 
 import helpers.SubscriptionLocalDataFixture
 import models.UserAnswers
+import models.obligationsandsubmissions.ObligationsAndSubmissionsSuccess
 import models.requests.*
 import models.subscription.SubscriptionLocalData
 import play.api.mvc.Result
@@ -91,4 +92,23 @@ class FakeSessionDataRetrievalAction(dataToReturn: Option[UserAnswers]) extends 
   override protected def transform[A](request: IdentifierRequest[A]): Future[SessionOptionalDataRequest[A]] =
     Future(SessionOptionalDataRequest(request, request.userId, dataToReturn))
 
+}
+
+class FakeObligationsAndSubmissionsDataRetrievalAction(obligationsAndSubmissionsData: ObligationsAndSubmissionsSuccess)
+    extends ObligationsAndSubmissionsDataRetrievalAction {
+  override protected def refine[A](request: SubscriptionDataRequest[A]): Future[Either[Result, ObligationsAndSubmissionsSuccessDataRequest[A]]] =
+    Future.successful(
+      Right[Result, ObligationsAndSubmissionsSuccessDataRequest[A]](
+        ObligationsAndSubmissionsSuccessDataRequest(
+          request.request,
+          request.userId,
+          request.subscriptionLocalData,
+          obligationsAndSubmissionsData,
+          request.enrolments,
+          request.isAgent
+        )
+      )
+    )
+
+  override protected def executionContext: ExecutionContext = scala.concurrent.ExecutionContext.global
 }

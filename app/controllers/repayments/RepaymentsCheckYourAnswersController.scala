@@ -24,7 +24,6 @@ import models.longrunningsubmissions.LongRunningSubmission.Repayments
 import models.repayments.RepaymentsStatus.*
 import models.{UnexpectedResponse, UserAnswers}
 import pages.*
-import pages.pdf.RepaymentConfirmationTimestampPage
 import play.api.Logging
 import play.api.i18n.{I18nSupport, Messages, MessagesApi}
 import play.api.mvc.*
@@ -107,7 +106,7 @@ class RepaymentsCheckYourAnswersController @Inject() (
                                   Future.fromTry(
                                     sessionData
                                       .set(RepaymentsStatusPage, updatedStatus)
-                                      .flatMap(_.set(RepaymentConfirmationTimestampPage, ZonedDateTime.now().toDateTimeGmtFormat))
+                                      .flatMap(_.set(RepaymentConfirmationPage, ZonedDateTime.now().toDateTimeGmtFormat))
                                   )
                                 } else Future.successful(sessionData)
               updatedAnswers0 <-

@@ -19,10 +19,10 @@ package controllers.subscription.manageAccount
 import cats.data.OptionT
 import config.FrontendAppConfig
 import controllers.actions.{IdentifierAction, SubscriptionDataRequiredAction, SubscriptionDataRetrievalAction}
+import models.*
 import models.longrunningsubmissions.LongRunningSubmission.ManageContactDetails
 import models.requests.SubscriptionDataRequest
 import models.subscription.{ManageContactDetailsStatus, SubscriptionLocalData}
-import models.{InternalIssueError, UnexpectedResponse, UserAnswers}
 import pages.{AgentClientPillar2ReferencePage, ManageContactDetailsStatusPage, SubAddSecondaryContactPage}
 import play.api.Logging
 import play.api.i18n.I18nSupport
@@ -151,7 +151,8 @@ class ManageContactCheckYourAnswersController @Inject() (
       _ <- OptionT.liftF(sessionRepository.set(updatedAnswersOnSuccess))
     } yield ()
 
-    result.value
+    result
+      .getOrElseF(Future.failed(MissingReferenceNumberError))
       .recoverWith {
         case InternalIssueError =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to InternalIssueError")
@@ -161,6 +162,9 @@ class ManageContactCheckYourAnswersController @Inject() (
           setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
         case e: Exception =>
           logger.error(s"[ManageContactCheckYourAnswers] Subscription update failed for $userId due to generic Exception: ${e.getMessage}", e)
+          setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
+        case MissingReferenceNumberError =>
+          logger.error(s"[ManageContactCheckYourAnswers] Pillar 2 Reference Number for $userId not found")
           setStatusOnFailure(userId, ManageContactDetailsStatus.FailException)
       }
       .map(_ => ())

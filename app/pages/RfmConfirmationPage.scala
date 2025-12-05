@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 HM Revenue & Customs
+ * Copyright 2025 HM Revenue & Customs
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,14 @@
  * limitations under the License.
  */
 
-package models
+package pages
 
-sealed trait ApiError extends Throwable
-case object InternalIssueError extends ApiError
-case object NoResultFound extends ApiError
-case object UnexpectedResponse extends ApiError
-case object UnexpectedJsResult extends ApiError
-case object DuplicateSubmissionError extends ApiError
-case object UnprocessableEntityError extends ApiError
-case object DuplicateSafeIdError extends ApiError
-case object MissingReferenceNumberError extends ApiError
+import play.api.libs.json.JsPath
+
+import java.time.ZonedDateTime
+
+case object RfmConfirmationPage extends QuestionPage[ZonedDateTime] {
+
+  override def path: JsPath = JsPath \ "rfmSubmittedAt"
+
+}

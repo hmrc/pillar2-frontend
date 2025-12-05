@@ -126,9 +126,13 @@ class CheckYourAnswersController @Inject() (
                   resp.result match {
                     case Right(_) =>
                       for {
-                        submittedAnswers <- Future.fromTry(latest.set(BTNStatus, BTNStatus.submitted))
-                        _                <- sessionRepository.set(submittedAnswers)
-                        _                <- auditService.auditBTNSubmission(
+                        submittedAnswers <- Future.fromTry {
+                                              latest
+                                                .set(BTNStatus, BTNStatus.submitted)
+                                                .flatMap(_.set(BtnConfirmationPage, ZonedDateTime.now()))
+                                            }
+                        _ <- sessionRepository.set(submittedAnswers)
+                        _ <- auditService.auditBTNSubmission(
                                pillarReference = pillar2Id,
                                accountingPeriod = subAccountingPeriod,
                                entitiesInsideAndOutsideUK = userAnswers.get(EntitiesInsideOutsideUKPage).getOrElse(false),
